@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<TabbedPage
+    x:Class="DCCPanelController.View.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:controls="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <view:PanelPage Title="Operate" />
+    <view:PanelsPage Title="Panels" />
+    <view:TurnoutsPage Title="Turnouts" />
+    <view:SettingsPage IconImageSource="settingshorizontal.svg" Title="Settings" />
+
+</TabbedPage>

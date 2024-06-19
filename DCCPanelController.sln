@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCPanelController", "DCCPanelController\DCCPanelController.csproj", "{B9D58708-6CFC-4286-B4FC-D7CF6A19D4ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCCircleFinder", "DCCCircleFinder\DCCCircleFinder.csproj", "{1D1965FE-4CFD-4D5B-A2AB-BD6E49A46B9B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCWiThrottleClient", "DCCWiThrottleClient\DCCWiThrottleClient.csproj", "{FD10AA46-6616-40C3-9087-25083619A9E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{B9D58708-6CFC-4286-B4FC-D7CF6A19D4ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B9D58708-6CFC-4286-B4FC-D7CF6A19D4ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B9D58708-6CFC-4286-B4FC-D7CF6A19D4ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1D1965FE-4CFD-4D5B-A2AB-BD6E49A46B9B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1D1965FE-4CFD-4D5B-A2AB-BD6E49A46B9B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1D1965FE-4CFD-4D5B-A2AB-BD6E49A46B9B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1D1965FE-4CFD-4D5B-A2AB-BD6E49A46B9B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD10AA46-6616-40C3-9087-25083619A9E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD10AA46-6616-40C3-9087-25083619A9E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD10AA46-6616-40C3-9087-25083619A9E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD10AA46-6616-40C3-9087-25083619A9E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

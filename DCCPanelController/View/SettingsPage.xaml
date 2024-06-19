@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="DCCPanelController.View.SettingsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <StackLayout Padding="5,25">
+            <Label
+                FontFamily="Bold"
+                FontSize="20"
+                Text="DEBUGGING AND TESTING" />
+
+            <Label FontSize="15" Text="{Binding ServerName}" />
+
+            <Button
+                HorizontalOptions="Center"
+                Text="Find WiThrottle Server"
+                x:Name="FindButton" />
+
+            <Button
+                HorizontalOptions="Center"
+                Text="Connect"
+                x:Name="ConnectButton" />
+
+            <Button
+                HorizontalOptions="Center"
+                Text="Disconnect"
+                x:Name="DisconnectButton" />
+
+            <Entry Placeholder="Enter the WiThrottle Server Address" x:Name="Address" />
+            <Entry Placeholder="Enter the Withrottle Port" x:Name="Port" />
+
+            <ListView ItemsSource="{Binding Messages}" x:Name="DebugListView">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <TextCell Detail="{Binding Time}" Text="{Binding Text}" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
+
+
+<!--  BindingContext="{x:Reference DebugPage}"  -->
