@@ -10,7 +10,7 @@ public class MsgPanel(Turnouts? turnouts) : IClientMsg {
             break;
         case "PTA":
             var turnout = turnouts?.UpdateFromWiThrottle(commandStr[3..]);
-            ActionTaken = "Processed Turnout:" + turnout.Name + "=>" + turnout.State.ToString();
+            ActionTaken = "Processed Turnout:" + turnout?.Name ?? "Unknown" + "=>" + turnout?.State.ToString() ?? "Unknown";
             break;
         case "PFT":
             var fastClock = GetFastClock(commandStr[3..]);

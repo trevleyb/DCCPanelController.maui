@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" version="1.1" viewBox="0 0 256 256" width="256" height="256">
+  <defs/>
+  <g id="Turn" fill-opacity="1" stroke="none" fill="none" stroke-opacity="1" stroke-dasharray="none">
+    <title>Turn</title>
+    <g id="Turn_Layer2">
+      <title>Layer2</title>
+      <g id="Graphic_8">
+        <rect x="103.875" y="61.5" width="25.125" height="109.63636" fill="#dadada"/>
+      </g>
+      <g id="Graphic_7">
+        <path d="M 129.9387 108.5 L 147.392 126.57341 L 121.32829 151.74284 L 103.875 133.66942 Z" fill="#f26077"/>
+      </g>
+      <g id="Graphic_4">
+        <rect x="103.875" y="133.5" width="25.125" height="99" fill="#f26077"/>
+      </g>
+      <g id="Graphic_5">
+        <path d="M 159.5093 79.76818 L 176.96258 97.84159 L 130.96463 142.2613 L 113.51134 124.18789 Z" fill="#f26077"/>
+      </g>
+      <g id="Graphic_6">
+        <path d="M 96.4375 65.5 L 116.4375 38 L 136.4375 65.5 Z" fill="#dadada"/>
+      </g>
+      <g id="Graphic_10">
+        <path d="M 153.6 76.24544 L 187.18757 70.94214 L 181.88427 104.52971 Z" fill="#f26077"/>
+      </g>
+    </g>
+  </g>
+</svg>

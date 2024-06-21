@@ -1,80 +1,153 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
+    IconImageSource="turnouts_green.png"
+    Title="Turnouts List"
+    ios:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.TurnoutsPage"
+    x:DataType="viewmodel:TurnoutStateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <ContentPage.Content>
-        <StackLayout>
-            <Grid Padding="10">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="4*" />
-                    <ColumnDefinition Width="*" />
-                </Grid.ColumnDefinitions>
-                <Label Text="Name" TextColor="Black" />
-                <Label Text="User Name" TextColor="Black" />
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding GetTurnoutStateDataCommand}" Text="Refresh" />
+    </ContentPage.ToolbarItems>
+
+    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        <StackLayout x:Name="MainStackLayout">
+            <Grid
+                ColumnDefinitions="*,3*,32,80"
+                HorizontalOptions="Fill"
+                Padding="10">
                 <Label
-                    HorizontalTextAlignment="Center"
+                    FontAttributes="Bold"
+                    Grid.Column="0"
+                    Style="{StaticResource MediumLabel}"
+                    Text="ID"
+                    TextColor="{StaticResource Primary}" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="1"
+                    Style="{StaticResource MediumLabel}"
+                    Text="Turnout Name"
+                    TextColor="{StaticResource Primary}" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="3"
+                    Style="{StaticResource MediumLabel}"
                     Text="State"
-                    TextColor="Black" />
-                <BoxView
-                    BackgroundColor="Black"
-                    HeightRequest="1"
-                    Margin="0,0,5,0"
-                    VerticalOptions="End" />
-                <BoxView
-                    BackgroundColor="Black"
-                    HeightRequest="1"
-                    Margin="0,0,5,0"
-                    VerticalOptions="End" />
-                <BoxView
-                    BackgroundColor="Black"
-                    HeightRequest="1"
-                    Margin="0,0,5,0"
-                    VerticalOptions="End" />
+                    TextColor="{StaticResource Primary}" />
             </Grid>
-            <CollectionView ItemsSource="{Binding Turnouts}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Grid Padding="10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="4*" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <Label Text="{Binding Name}" />
-                            <Label FontAttributes="Bold" Text="{Binding UserName}" />
-                            <Label HorizontalTextAlignment="Center" Text="{Binding State}">
-                                <Label.Triggers>
-                                    <DataTrigger
-                                        Binding="{Binding State}"
-                                        TargetType="Label"
-                                        Value="Closed">
-                                        <Setter Property="TextColor" Value="White" />
-                                        <Setter Property="BackgroundColor" Value="Green" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding State}"
-                                        TargetType="Label"
-                                        Value="Thrown">
-                                        <Setter Property="TextColor" Value="White" />
-                                        <Setter Property="BackgroundColor" Value="Red" />
-                                    </DataTrigger>
-                                    <DataTrigger
-                                        Binding="{Binding State}"
-                                        TargetType="Label"
-                                        Value="Unknown">
-                                        <Setter Property="TextColor" Value="White" />
-                                        <Setter Property="BackgroundColor" Value="Grey" />
-                                    </DataTrigger>
-                                </Label.Triggers>
-                            </Label>
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
+            <RefreshView Command="{Binding GetTurnoutStateDataCommand}" IsRefreshing="{Binding IsRefreshing}">
+                <CollectionView ItemsSource="{Binding TurnoutStates}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label Text="No Turnout data available" />
+                            </StackLayout>
                         </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:TurnoutState">
+                            <StackLayout Padding="0">
+                                <Grid ColumnDefinitions="*,3*,32, 80" Padding="10">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutStateViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                    <Label
+                                        Grid.Column="0"
+                                        HorizontalOptions="Start"
+                                        LineBreakMode="NoWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Id}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="1"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center" />
+                                    <Image
+                                        Grid.Column="2"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="32">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Closed">
+                                                <Setter Property="Source" Value="turnout_closed.png" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Thrown">
+                                                <Setter Property="Source" Value="turnout_thrown.png" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Unknown">
+                                                <Setter Property="Source" Value="turnout_unknown.png" />
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
+                                    <Label
+                                        Grid.Column="3"
+                                        HorizontalOptions="Fill"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding State}"
+                                        VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Closed">
+                                                <Setter Property="TextColor" Value="Green" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Thrown">
+                                                <Setter Property="TextColor" Value="Red" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Unknown">
+                                                <Setter Property="TextColor" Value="Grey" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                                <BoxView
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="1"
+                                    HorizontalOptions="FillAndExpand" />
+                            </StackLayout>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+            <ActivityIndicator
+                Color="{StaticResource Primary}"
+                HorizontalOptions="Fill"
+                IsRunning="{Binding IsBusy}"
+                IsVisible="{Binding IsBusy}"
+                VerticalOptions="Center" />
+
         </StackLayout>
-    </ContentPage.Content>
+    </Grid>
+
 </ContentPage>

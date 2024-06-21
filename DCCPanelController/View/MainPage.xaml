@@ -1,14 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <TabbedPage
+    iOsSpecific:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.MainPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:controls="clr-namespace:Microsoft.Maui.Controls;assembly=Microsoft.Maui.Controls"
+    xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <view:PanelPage Title="Operate" />
-    <view:PanelsPage Title="Panels" />
-    <view:TurnoutsPage Title="Turnouts" />
-    <view:SettingsPage IconImageSource="settingshorizontal.svg" Title="Settings" />
+
+    <view:PanelPage />
+
+    <NavigationPage IconImageSource="panels_green.png" Title="Panels List">
+        <x:Arguments>
+            <view:PanelsPage />
+        </x:Arguments>
+    </NavigationPage>
+
+    <NavigationPage IconImageSource="turnouts_green.png" Title="Turnout List">
+        <x:Arguments>
+            <view:TurnoutsPage />
+        </x:Arguments>
+    </NavigationPage>
+
+    <NavigationPage IconImageSource="settings_green.png" Title="Settings">
+        <x:Arguments>
+            <view:SettingsPage />
+        </x:Arguments>
+    </NavigationPage>
 
 </TabbedPage>
