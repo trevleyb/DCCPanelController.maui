@@ -36,7 +36,7 @@ public class TurnoutStateService {
                              Name = item["Name"]?.ToString(),
                              State = (TurnoutStateEnum)Enum.Parse(typeof(TurnoutStateEnum), item["State"].ToString() ?? "Unknown")
                          })) {
-                    _turnoutsList.Add(turnout);
+                    _turnoutsList?.Add(turnout);
                 }
             }
         } catch (Exception ex) {

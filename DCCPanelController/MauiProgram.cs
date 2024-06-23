@@ -20,10 +20,11 @@ public static class MauiProgram
         //builder.Services.AddSingleton<PanelPage>();
         //builder.Services.AddSingleton<PanelDetailsPage>();
 
+        builder.Services.AddSingleton<StorageService> ();
         
-        builder.Services.AddSingleton<PanelService> ();
+        builder.Services.AddSingleton<OperateService> ();
         builder.Services.AddSingleton<PanelsService> ();
-        builder.Services.AddTransient<PanelDetailsService> ();
+        builder.Services.AddTransient<PanelsDetailsService> ();
 
         builder.Services.AddSingleton<SettingsPage>();
         builder.Services.AddSingleton<SettingsService> ();
@@ -36,6 +37,9 @@ public static class MauiProgram
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
-        return builder.Build();
+        var app = builder.Build();
+        // Assign the service provider to a static property
+        App.ServiceProvider = app.Services;
+        return app;
     }
 }

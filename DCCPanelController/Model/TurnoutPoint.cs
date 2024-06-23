@@ -12,5 +12,5 @@ public class TurnoutPoint {
     public string Name { get; set; } = string.Empty;
 }
 
-//[JsonSerializable(typeof(List<TurnoutPoint>))]
-//internal sealed partial class TurnoutPointContext : JsonSerializerContext{ }
+[JsonSerializable(typeof(List<TurnoutPoint>))]
+internal sealed partial class TurnoutPointContext : JsonSerializerContext{ }

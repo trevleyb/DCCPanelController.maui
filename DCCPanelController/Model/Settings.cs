@@ -8,6 +8,7 @@ public partial class Settings : ObservableObject {
 
     [ObservableProperty] private string _ipAddress;
     [ObservableProperty] private int _port = 12090;
+    [ObservableProperty] private bool _demoMode = false;
     
     public Settings() {
         _ipAddress = "0.0.0.0";

@@ -1,5 +1,5 @@
 namespace DCCPanelController.Services;
 
-public class PanelDetailsService {
+public class PanelsDetailsService {
     
 }

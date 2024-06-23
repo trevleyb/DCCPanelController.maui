@@ -18,176 +18,252 @@
     </ContentPage.ToolbarItems>
 
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        <Grid RowDefinitions="200,*,220">
+            <StackLayout Grid.Row="0">
+                <Label
+                    Padding="10"
+                    Style="{StaticResource MediumLabel}"
+                    TextColor="{StaticResource Primary}">
+                    Available WiThrottle Servers:
+                </Label>
+                <BoxView
+                    BackgroundColor="{StaticResource Primary}"
+                    HeightRequest="2"
+                    HorizontalOptions="FillAndExpand" />
 
-        <StackLayout>
-            <Label
-                Padding="10"
-                Style="{StaticResource MediumLabel}"
-                TextColor="{StaticResource Primary}">
-                Available WiThrottle Servers:
-            </Label>
-            <BoxView
-                BackgroundColor="{StaticResource Primary}"
-                HeightRequest="2"
-                HorizontalOptions="FillAndExpand" />
+                <Grid HeightRequest="150" RowDefinitions="*">
+                    <RefreshView
+                        Command="{Binding RefreshWiServersCommand}"
+                        Grid.Row="0"
+                        IsRefreshing="{Binding IsRefreshing}">
+                        <Grid HeightRequest="200">
+                            <ActivityIndicator
+                                Color="{StaticResource Primary}"
+                                HorizontalOptions="Fill"
+                                IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                VerticalOptions="Center" />
 
-            <RefreshView Command="{Binding RefreshWiServersCommand}" IsRefreshing="{Binding IsRefreshing}">
-                <Grid>
-                    <ActivityIndicator
-                        Color="{StaticResource Primary}"
-                        HorizontalOptions="Fill"
-                        IsRunning="{Binding IsBusy}"
-                        IsVisible="{Binding IsBusy}"
-                        VerticalOptions="Center" />
-
-                    <CollectionView ItemsSource="{Binding WiServers}" SelectionMode="None">
-                        <CollectionView.EmptyView>
-                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                    <Label Text="No WiThrottle Servers could be found." />
-                                </StackLayout>
-                            </Grid>
-                        </CollectionView.EmptyView>
-
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="model:WiServer">
-                                <StackLayout>
-                                    <Grid ColumnDefinitions="48,*">
-                                        <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer Tapped="OnLabelTapped" />
-                                            <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, Path=SelectWiServerCommand}" CommandParameter="{Binding .}" />
-                                        </Grid.GestureRecognizers>
-                                        <Label
-                                            Grid.Column="0"
-                                            HorizontalOptions="Start"
-                                            Margin="10"
-                                            Text="◉"
-                                            VerticalOptions="Center"
-                                            x:Name="SelectedServerTick" />
-                                        <Label
-                                            Grid.Column="1"
-                                            HorizontalOptions="Start"
-                                            LineBreakMode="NoWrap"
-                                            Margin="0,10,0,10"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding Name}"
-                                            VerticalOptions="Center"
-                                            x:Name="SelectedServerText" />
+                            <CollectionView ItemsSource="{Binding WiServers}" SelectionMode="None">
+                                <CollectionView.EmptyView>
+                                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                            <Label Text="No WiThrottle Servers could be found." />
+                                        </StackLayout>
                                     </Grid>
-                                    <BoxView
-                                        BackgroundColor="{StaticResource Primary}"
-                                        HeightRequest="0.5"
-                                        HorizontalOptions="FillAndExpand" />
-                                </StackLayout>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                </CollectionView.EmptyView>
+
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="model:WiServer">
+                                        <StackLayout>
+                                            <Grid ColumnDefinitions="48,*">
+                                                <Grid.GestureRecognizers>
+                                                    <TapGestureRecognizer Tapped="OnLabelTapped" />
+                                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, Path=SelectWiServerCommand}" CommandParameter="{Binding .}" />
+                                                </Grid.GestureRecognizers>
+                                                <Label
+                                                    Grid.Column="0"
+                                                    HorizontalOptions="Start"
+                                                    Margin="10"
+                                                    Text="◉"
+                                                    VerticalOptions="Center"
+                                                    x:Name="SelectedServerTick" />
+                                                <Label
+                                                    Grid.Column="1"
+                                                    HorizontalOptions="Start"
+                                                    LineBreakMode="NoWrap"
+                                                    Margin="0,10,0,10"
+                                                    Style="{StaticResource MediumLabel}"
+                                                    Text="{Binding Name}"
+                                                    VerticalOptions="Center"
+                                                    x:Name="SelectedServerText" />
+                                            </Grid>
+                                            <BoxView
+                                                BackgroundColor="{StaticResource Primary}"
+                                                HeightRequest="0.5"
+                                                HorizontalOptions="FillAndExpand" />
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </Grid>
+                    </RefreshView>
                 </Grid>
-            </RefreshView>
+            </StackLayout>
 
-            <BoxView
-                BackgroundColor="{StaticResource Primary}"
-                HeightRequest="2"
-                HorizontalOptions="FillAndExpand" />
-
-            <Grid BackgroundColor="{StaticResource CardBackground}">
-                <StackLayout x:Name="MainStackLayout">
-                    <Label
-                        Margin="10,10,0,0"
-                        Style="{StaticResource MediumLabel}"
-                        TextColor="{StaticResource Primary}">
-                        WiThrottle Server Address:
-                    </Label>
-                    <HorizontalStackLayout HorizontalOptions="Center" Margin="-15">
-                        <Frame Style="{StaticResource IpAddress}">
-                            <Entry Focused="OnEntryFocused" Text="{Binding IpAddress1}">
-                                <Entry.Behaviors>
-                                    <view:EntryValidationBehavior />
-                                </Entry.Behaviors>
-                            </Entry>
-                        </Frame>
+            <StackLayout Grid.Row="1">
+                <Grid>
+                    <StackLayout>
+                        <BoxView
+                            BackgroundColor="{StaticResource Primary}"
+                            HeightRequest="2"
+                            HorizontalOptions="FillAndExpand"
+                            IsVisible="{Binding IsLiveMode}" />
                         <Label
-                            FontSize="48"
-                            Margin="2,2,2,30"
-                            Text="."
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
-                        <Frame Style="{StaticResource IpAddress}">
-                            <Entry Focused="OnEntryFocused" Text="{Binding IpAddress2}">
-                                <Entry.Behaviors>
-                                    <view:EntryValidationBehavior />
-                                </Entry.Behaviors>
-                            </Entry>
-                        </Frame>
-                        <Label
-                            FontSize="48"
-                            Margin="2,2,2,30"
-                            Text="."
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
-                        <Frame Style="{StaticResource IpAddress}">
-                            <Entry Focused="OnEntryFocused" Text="{Binding IpAddress3}">
-                                <Entry.Behaviors>
-                                    <view:EntryValidationBehavior />
-                                </Entry.Behaviors>
-                            </Entry>
+                            IsVisible="{Binding IsLiveMode}"
+                            Margin="10,10,0,0"
+                            Style="{StaticResource MediumLabel}"
+                            TextColor="{StaticResource Primary}">
+                            Withrottle Messages:
+                        </Label>
+                        <Grid RowDefinitions="Auto">
+                            <ScrollView IsVisible="{Binding IsLiveMode}">
+                                <StackLayout x:Name="LogEntries" />
+                            </ScrollView>
+                        </Grid>
+                    </StackLayout>
+                </Grid>
+            </StackLayout>
 
-                        </Frame>
+            <StackLayout Grid.Row="2">
+                <BoxView
+                    BackgroundColor="{StaticResource Primary}"
+                    HeightRequest="2"
+                    HorizontalOptions="FillAndExpand" />
+                <Grid BackgroundColor="{StaticResource CardBackground}">
+                    <StackLayout x:Name="MainStackLayout">
                         <Label
-                            FontSize="48"
-                            Margin="2,2,2,30"
-                            Text="."
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
-                        <Frame Style="{StaticResource IpAddress}">
-                            <Entry Focused="OnEntryFocused" Text="{Binding IpAddress4}">
-                                <Entry.Behaviors>
-                                    <view:EntryValidationBehavior />
-                                </Entry.Behaviors>
-                            </Entry>
+                            Margin="10,10,0,0"
+                            Style="{StaticResource MediumLabel}"
+                            TextColor="{StaticResource Primary}">
+                            WiThrottle Server Address:
+                        </Label>
 
-                        </Frame>
-                        <Label
-                            FontSize="48"
-                            HorizontalOptions="Center"
-                            Margin="2,2,2,10"
-                            Text=":"
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
-                        <Frame Style="{StaticResource IpAddress}" WidthRequest="75">
-                            <Entry Focused="OnEntryFocused" Text="{Binding Port}" />
-                        </Frame>
-                    </HorizontalStackLayout>
-                </StackLayout>
-            </Grid>
-            <Grid ColumnDefinitions="*,*">
-                <Button
-                    Grid.Column="0"
-                    HorizontalOptions="Center"
-                    IsEnabled="{Binding IsNotBusy}"
-                    Margin="10"
-                    Padding="20"
-                    Style="{StaticResource ButtonOutline}"
-                    Text="Connect"
-                    WidthRequest="150" />
-                <Button
-                    Grid.Column="1"
-                    HorizontalOptions="Center"
-                    IsEnabled="{Binding IsNotBusy}"
-                    Margin="10"
-                    Padding="20"
-                    Style="{StaticResource ButtonOutline}"
-                    Text="Save Settings"
-                    WidthRequest="150" />
-            </Grid>
+                        <HorizontalStackLayout HorizontalOptions="Center" Margin="-15">
+                            <Frame Style="{StaticResource IpAddress}">
+                                <Entry
+                                    Focused="OnEntryFocused"
+                                    IsEnabled="{Binding IsLiveMode}"
+                                    Text="{Binding IpAddress1}">
+                                    <Entry.Behaviors>
+                                        <view:EntryValidationBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                            </Frame>
+                            <Label
+                                FontSize="48"
+                                Margin="2,2,2,30"
+                                Text="."
+                                TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" />
+                            <Frame Style="{StaticResource IpAddress}">
+                                <Entry
+                                    Focused="OnEntryFocused"
+                                    IsEnabled="{Binding IsLiveMode}"
+                                    Text="{Binding IpAddress2}">
+                                    <Entry.Behaviors>
+                                        <view:EntryValidationBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+                            </Frame>
+                            <Label
+                                FontSize="48"
+                                Margin="2,2,2,30"
+                                Text="."
+                                TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" />
+                            <Frame Style="{StaticResource IpAddress}">
+                                <Entry
+                                    Focused="OnEntryFocused"
+                                    IsEnabled="{Binding IsLiveMode}"
+                                    Text="{Binding IpAddress3}">
+                                    <Entry.Behaviors>
+                                        <view:EntryValidationBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
 
-        </StackLayout>
+                            </Frame>
+                            <Label
+                                FontSize="48"
+                                Margin="2,2,2,30"
+                                Text="."
+                                TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" />
+                            <Frame Style="{StaticResource IpAddress}">
+                                <Entry
+                                    Focused="OnEntryFocused"
+                                    IsEnabled="{Binding IsLiveMode}"
+                                    Text="{Binding IpAddress4}">
+                                    <Entry.Behaviors>
+                                        <view:EntryValidationBehavior />
+                                    </Entry.Behaviors>
+                                </Entry>
+
+                            </Frame>
+                            <Label
+                                FontSize="48"
+                                HorizontalOptions="Center"
+                                Margin="2,2,2,10"
+                                Text=":"
+                                TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" />
+                            <Frame Style="{StaticResource IpPort}" WidthRequest="75">
+                                <Entry
+                                    Focused="OnEntryFocused"
+                                    IsEnabled="{Binding IsLiveMode}"
+                                    Text="{Binding Port}" />
+                            </Frame>
+                        </HorizontalStackLayout>
+                        <Grid ColumnDefinitions="40,*">
+                            <CheckBox
+                                Grid.Column="0"
+                                IsChecked="{Binding IsDemoMode}"
+                                x:Name="DemoModeCheckBox" />
+                            <Label
+                                Grid.Column="1"
+                                Style="{StaticResource SmallLabel}"
+                                Text="Demo Mode (no Server connection)"
+                                VerticalOptions="Center" />
+                        </Grid>
+                        <BoxView
+                            BackgroundColor="{StaticResource Primary}"
+                            HeightRequest="2"
+                            HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+                </Grid>
+
+                <Grid ColumnDefinitions="*">
+                    <Button
+                        HorizontalOptions="Center"
+                        IsEnabled="{Binding IsConnectAvailable}"
+                        Margin="10"
+                        Padding="20"
+                        Style="{StaticResource ButtonOutline}"
+                        Text="Connect"
+                        WidthRequest="150" />
+                </Grid>
+            </StackLayout>
+        </Grid>
     </Grid>
-
-
 </ContentPage>
 
 
 
 
 <!--  BindingContext="{x:Reference DebugPage}"  -->
+<!--
+
+                    <Grid ColumnDefinitions="50,Auto">
+                        <Label Grid.Column="1" Text="Demo Mode (no Server connection)" />
+                    </Grid>
+
+    <CheckBox
+                            Grid.Column="0"
+                            IsChecked="{Binding IsDemoMode}"
+                            x:Name="DemoModeCheckBox">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="CommonStates">
+                                    <VisualState x:Name="Normal">
+                                        <VisualState.Setters>
+                                            <Setter Property="Color" Value="Red" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+
+                                    <VisualState x:Name="IsChecked">
+                                        <VisualState.Setters>
+                                            <Setter Property="Color" Value="Green" />
+                                        </VisualState.Setters>
+                                    </VisualState>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </CheckBox>-->

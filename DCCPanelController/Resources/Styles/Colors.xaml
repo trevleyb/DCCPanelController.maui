@@ -10,6 +10,10 @@
     <Color x:Key="Secondary">#7CC504</Color>
     <Color x:Key="SecondaryDarkText">DarkGreen</Color>
     <Color x:Key="Tertiary">DarkKhaki</Color>
+    <Color x:Key="PrimaryDisabled">#E1E1E1</Color>
+
+    <Color x:Key="UnSelectedDark">#95FFFFFF</Color>
+    <Color x:Key="UnSelectedLight">#95000000</Color>
 
     <Color x:Key="TabSelected">#7CC504</Color>
     <Color x:Key="TabUnSelected">#C8C8C8</Color>

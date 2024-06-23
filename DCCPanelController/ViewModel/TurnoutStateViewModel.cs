@@ -9,7 +9,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutStateViewModel : BaseViewModel {
 
-    public ObservableCollection<TurnoutState>? TurnoutStates { get; } = [];
+    public ObservableCollection<TurnoutState> TurnoutStates { get; } = [];
     private readonly TurnoutStateService _turnoutStateService;
  
     public TurnoutStateViewModel(TurnoutStateService turnoutStateService) {
@@ -24,8 +24,8 @@ public partial class TurnoutStateViewModel : BaseViewModel {
         try {
             IsBusy = true;
             var turnoutStates = await _turnoutStateService.GetTurnoutStates();
-            if(TurnoutStates?.Count != 0) TurnoutStates.Clear();
-            foreach(var turnout in turnoutStates) TurnoutStates.Add(turnout);
+            if (TurnoutStates?.Count != 0) TurnoutStates?.Clear();
+            foreach(var turnout in turnoutStates) TurnoutStates?.Add(turnout);
         }
         catch (Exception ex) {
             Debug.WriteLine($"Unable to get Turnout States: {ex.Message}");

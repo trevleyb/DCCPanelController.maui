@@ -9,14 +9,28 @@ namespace DCCPanelController.View;
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     private Grid? _lastGridSelected;
+    SettingsViewModel? _viewModel;
     
     public SettingsPage() {
         InitializeComponent();
-        var service = new SettingsService();
-        var viewModel = new SettingsViewModel(service);
-        BindingContext = viewModel;
+        var service = App.ServiceProvider?.GetService<SettingsService>();
+        _viewModel = new SettingsViewModel(service);
+        BindingContext = _viewModel;
     }
 
+    protected override void OnDisappearing() {
+        base.OnDisappearing();
+        
+    }
+
+    protected override void OnAppearing() {
+        base.OnAppearing();
+        if (_viewModel is { } viewModel) {
+            _viewModel.SaveSettings();
+            //_ = viewModel.RefreshWiServersAsync();
+        }
+    }
+    
     void OnLabelTapped(object sender, EventArgs args) {
 
         if (_lastGridSelected is not null) {
@@ -27,17 +41,17 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             }
         }
 
-        var grid = (Grid)sender;
-        foreach (var item in grid.Children) {
-            if (item is Label newLabel) {
-                newLabel.TextColor = Colors.Green;
+        if (sender is Grid grid) {
+            foreach (var item in grid.Children) {
+                if (item is Label newLabel) {
+                    newLabel.TextColor = Colors.Green;
+                }
             }
+            _lastGridSelected = grid;
         }
-        _lastGridSelected = grid;
     }
 
-    public void OnEntryFocused(object sender, FocusEventArgs e)
-    {
+    private void OnEntryFocused(object sender, FocusEventArgs e) {
         var entry = sender as Entry;
         if (entry != null) {
             entry.CursorPosition = 0;
@@ -47,27 +61,24 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
 }
 
-public class EntryValidationBehavior : Behavior<Entry>
-{
-    protected override void OnAttachedTo(Entry entry)
-    {
+public class EntryValidationBehavior : Behavior<Entry> {
+    protected override void OnAttachedTo(Entry entry) {
         entry.TextChanged += OnEntryTextChanged;
         base.OnAttachedTo(entry);
     }
 
-    protected override void OnDetachingFrom(Entry entry)
-    {
+    protected override void OnDetachingFrom(Entry entry) {
         entry.TextChanged -= OnEntryTextChanged;
         base.OnDetachingFrom(entry);
     }
 
-    private void OnEntryTextChanged(object sender, TextChangedEventArgs args) {
-        bool isValid = false;
-        if (!string.IsNullOrEmpty(args.NewTextValue)) {
-            if (int.TryParse(args.NewTextValue, out int result)) {
-                isValid = result is >= 0 and <= 255;
+    private void OnEntryTextChanged(object? sender, TextChangedEventArgs args) {
+        if (sender is Entry entry) {
+            if (!string.IsNullOrEmpty(args.NewTextValue)) {
+                if (int.TryParse(args.NewTextValue, out var result)) {
+                    entry.TextColor = (result is >= 0 and <= 255) ? Colors.Black : Colors.Red;
+                }
             }
         }
-        ((Entry)sender).TextColor = isValid ? Colors.Black : Colors.Red;
     }
 }

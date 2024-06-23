@@ -12,16 +12,14 @@ namespace DCCPanelController.ViewModel;
 public partial class SettingsViewModel : BaseViewModel {
 
     public Settings Settings { get; }
-    private SettingsService? _settingsService;
+    private readonly SettingsService? _settingsService;
     
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
     
-    
     public SettingsViewModel(SettingsService settingsService) {
-        Title = "Active Turnouts";
+        Title = "Settings";
         _settingsService = settingsService;
         Settings = _settingsService.GetSettings();
-        Task.WaitAny(Task.Run(RefreshWiServersAsync));
     }
 
     public string IpAddress {
@@ -35,6 +33,19 @@ public partial class SettingsViewModel : BaseViewModel {
             OnPropertyChanged(nameof(IpAddress4));
         }
     }
+    
+    public bool IsDemoMode {
+        get => Settings?.DemoMode ?? false;
+        set {
+            Settings.DemoMode = value;
+            OnPropertyChanged(nameof(IsDemoMode));
+            OnPropertyChanged(nameof(IsLiveMode));
+            OnPropertyChanged(nameof(IsConnectAvailable));
+        }
+    }
+
+    public bool IsLiveMode => !IsDemoMode;
+    public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
     
     public int Port {
         get => Settings?.Port ?? 12090;
@@ -81,8 +92,8 @@ public partial class SettingsViewModel : BaseViewModel {
             }
         }
         catch (Exception ex) {
-            Debug.WriteLine($"Unable to get Turnout States: {ex.Message}");
-            await Shell.Current.DisplayAlert("Error! Cannot get Turnout States", ex.Message, "OK");
+            Debug.WriteLine($"Unable to get Settings: {ex.Message}");
+            await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
         }
         finally {
             IsBusy = false;
