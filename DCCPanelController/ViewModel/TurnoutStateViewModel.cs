@@ -10,9 +10,9 @@ namespace DCCPanelController.ViewModel;
 public partial class TurnoutStateViewModel : BaseViewModel {
 
     public ObservableCollection<TurnoutState> TurnoutStates { get; } = [];
-    private readonly TurnoutStateService _turnoutStateService;
+    private readonly TurnoutStateService? _turnoutStateService;
  
-    public TurnoutStateViewModel(TurnoutStateService turnoutStateService) {
+    public TurnoutStateViewModel(TurnoutStateService? turnoutStateService) {
         Title = "Active Turnouts";
         _turnoutStateService = turnoutStateService;
     }
@@ -20,7 +20,7 @@ public partial class TurnoutStateViewModel : BaseViewModel {
     [RelayCommand]
     public async Task GetTurnoutStateDataAsync()
     {
-        if (IsBusy) return;
+        if (IsBusy || _turnoutStateService == null) return;
         try {
             IsBusy = true;
             var turnoutStates = await _turnoutStateService.GetTurnoutStates();

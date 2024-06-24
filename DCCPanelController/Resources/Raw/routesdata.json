@@ -1,0 +1,27 @@
+[
+  {
+    "Id": "R1",
+    "Name": "Yard to Mainline",
+    "State": "Active"
+  },
+  {
+    "Id": "R2",
+    "Name": "Yard to Metro Power",
+    "State": "Inactive"
+  },
+  {
+    "Id": "R3",
+    "Name": "Metro Power to Stevens Lumber",
+    "State": "Inactive"
+  },
+  {
+    "Id": "R4",
+    "Name": "Metro Power to Industry",
+    "State": "Unknown"
+  },
+  {
+    "Id": "R5",
+    "Name": "Industry to Yard",
+    "State": "Unknown"
+  }
+]

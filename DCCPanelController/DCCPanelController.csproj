@@ -54,6 +54,9 @@
         <MauiImage Update="Resources\Images\turnout_closed.svg" Resize="True" BaseSize="24,24"/>
         <MauiImage Update="Resources\Images\turnout_thrown.svg" Resize="True" BaseSize="24,24"/>
         <MauiImage Update="Resources\Images\turnout_unknown.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\route_active.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24"/>
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*"/>
@@ -80,11 +83,18 @@
       <MauiXaml Update="View\MainPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="View\RoutesPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
       <Compile Update="View\MainPage.xaml.cs">
         <DependentUpon>MainPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\RoutesPage.xaml.cs">
+        <DependentUpon>RoutesPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

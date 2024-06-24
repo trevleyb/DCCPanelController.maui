@@ -6,9 +6,9 @@ using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace DCCPanelController.View;
 
-public partial class TurnoutsPage : ContentPage {
+public partial class RoutesPage : ContentPage {
 
-    public TurnoutsPage() {
+    public RoutesPage() {
         InitializeComponent();
         
         On<iOS>().SetUseSafeArea(false);
@@ -16,9 +16,9 @@ public partial class TurnoutsPage : ContentPage {
         MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
 
         // Resolve the TurnoutStateViewModel dependency
-        var service = App.ServiceProvider?.GetService<TurnoutStateService>();
-        var viewModel = new TurnoutStateViewModel(service);
-        _ = viewModel.GetTurnoutStateDataAsync();
+        var service = App.ServiceProvider?.GetService<RoutesService>();
+        var viewModel = new RoutesViewModel(service);
+        _ = viewModel.GetRoutesDataAsync();
         BindingContext = viewModel;
     }
 }

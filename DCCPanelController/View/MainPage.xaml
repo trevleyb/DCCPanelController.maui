@@ -23,6 +23,12 @@
         </x:Arguments>
     </NavigationPage>
 
+    <NavigationPage IconImageSource="turnouts_green.png" Title="Routes List">
+        <x:Arguments>
+            <view:RoutesPage />
+        </x:Arguments>
+    </NavigationPage>
+
     <NavigationPage IconImageSource="settings_green.png" Title="Settings">
         <x:Arguments>
             <view:SettingsPage />

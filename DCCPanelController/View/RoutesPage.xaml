@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
-    IconImageSource="turnouts_green.png"
-    Title="Turnouts List"
+    IconImageSource="route_active.png"
+    Title="Routes List"
     ios:Page.UseSafeArea="False"
-    x:Class="DCCPanelController.View.TurnoutsPage"
-    x:DataType="viewmodel:TurnoutStateViewModel"
+    x:Class="DCCPanelController.View.RoutesPage"
+    x:DataType="viewmodel:RoutesViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding GetTurnoutStateDataCommand}" Text="Refresh" />
-    </ContentPage.ToolbarItems>
 
     <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
         <StackLayout x:Name="MainStackLayout">
@@ -32,7 +28,7 @@
                     FontAttributes="Bold"
                     Grid.Column="1"
                     Style="{StaticResource MediumLabel}"
-                    Text="Turnout Name"
+                    Text="Route Name"
                     TextColor="{StaticResource Primary}" />
                 <Label
                     FontAttributes="Bold"
@@ -46,22 +42,22 @@
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
 
-            <RefreshView Command="{Binding GetTurnoutStateDataCommand}" IsRefreshing="{Binding IsRefreshing}">
-                <CollectionView ItemsSource="{Binding TurnoutStates}" SelectionMode="None">
+            <RefreshView Command="{Binding GetRoutesDataCommand}" IsRefreshing="{Binding IsRefreshing}">
+                <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Turnout data available" />
+                                <Label Text="No Route data available" />
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:TurnoutState">
+                        <DataTemplate x:DataType="model:Route">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="*,4*,32,80" Padding="10">
+                                <Grid ColumnDefinitions="*,4*,32, 80" Padding="10">
                                     <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutStateViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RoutesViewModel}}, Path=ToggleRoutesStateCommand}" CommandParameter="{Binding .}" />
                                     </Grid.GestureRecognizers>
                                     <Label
                                         Grid.Column="0"
@@ -86,20 +82,20 @@
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Closed">
-                                                <Setter Property="Source" Value="turnout_closed.png" />
+                                                Value="Active">
+                                                <Setter Property="Source" Value="route_active.png" />
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Thrown">
-                                                <Setter Property="Source" Value="turnout_thrown.png" />
+                                                Value="Inactive">
+                                                <Setter Property="Source" Value="route_inactive.png" />
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
                                                 Value="Unknown">
-                                                <Setter Property="Source" Value="turnout_unknown.png" />
+                                                <Setter Property="Source" Value="route_unknown.png" />
                                             </DataTrigger>
                                         </Image.Triggers>
                                     </Image>
@@ -113,13 +109,13 @@
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
-                                                Value="Closed">
+                                                Value="Active">
                                                 <Setter Property="TextColor" Value="Green" />
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
-                                                Value="Thrown">
+                                                Value="Inactive">
                                                 <Setter Property="TextColor" Value="Red" />
                                             </DataTrigger>
                                             <DataTrigger
