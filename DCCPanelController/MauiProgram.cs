@@ -15,17 +15,13 @@ public static class MauiProgram
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         }).UseMauiCommunityToolkit();
-
-        builder.Services.AddSingleton<StorageService> ();
-        builder.Services.AddSingleton<OperateService> ();
         
         builder.Services.AddSingleton<PanelsPage>();
-        builder.Services.AddSingleton<PanelsService> ();
-        builder.Services.AddTransient<PanelsDetailsService> ();
-
         builder.Services.AddSingleton<PanelDetailsPage>();
-        builder.Services.AddSingleton<PanelsDetailsService>();
+        builder.Services.AddSingleton<PanelTurnoutsPage>();
+        
         builder.Services.AddSingleton<PanelsDetailsViewModel>();
+        builder.Services.AddSingleton<PanelsTurnoutsViewModel>();
 
         builder.Services.AddSingleton<SettingsPage>();
         builder.Services.AddSingleton<SettingsService> ();

@@ -10,11 +10,11 @@ namespace DCCPanelController.ViewModel;
 public partial class PanelsViewModel : BaseViewModel {
     
     public ObservableCollection<Panel> Panels { get; } = [];
-    private readonly PanelsService _panelsService;
+    private readonly SettingsService _settingsService;
 
-    public PanelsViewModel(PanelsService panelsService) {
+    public PanelsViewModel(SettingsService settingsService) {
         Title = "Panels List";
-        _panelsService = panelsService;
+        _settingsService = settingsService;
     }
     
     [RelayCommand]
@@ -33,7 +33,7 @@ public partial class PanelsViewModel : BaseViewModel {
         if (IsBusy) return;
         try {
             IsBusy = true;
-            var panels = await _panelsService.GetPanels();
+            var panels = _settingsService.Panels;
             foreach(var panel in panels) Panels.Add(panel);
         }
         catch (Exception ex) {
@@ -45,6 +45,4 @@ public partial class PanelsViewModel : BaseViewModel {
             IsRefreshing = false;
         }
     }
-
-
 }

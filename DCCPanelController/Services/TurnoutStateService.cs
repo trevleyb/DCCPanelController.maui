@@ -43,7 +43,7 @@ public class TurnoutStateService {
             _turnoutsList = [];
             Debug.WriteLine($"Unable to get Turnout States from JSON File: {ex.Message}");
         }
-        return _turnoutsList;
+        return _turnoutsList ?? [];
     }
 
     protected virtual void OnTurnoutStateDataChanged() {

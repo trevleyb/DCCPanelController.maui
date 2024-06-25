@@ -14,7 +14,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     public SettingsPage() {
         InitializeComponent();
         var service = App.ServiceProvider?.GetService<SettingsService>();
-        _viewModel = new SettingsViewModel(service);
+        _viewModel = new SettingsViewModel(service!);
         BindingContext = _viewModel;
     }
 

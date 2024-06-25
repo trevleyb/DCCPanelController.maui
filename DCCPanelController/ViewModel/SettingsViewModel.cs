@@ -19,7 +19,7 @@ public partial class SettingsViewModel : BaseViewModel {
     public SettingsViewModel(SettingsService settingsService) {
         Title = "Settings";
         _settingsService = settingsService;
-        Settings = _settingsService.GetSettings();
+        Settings = _settingsService.Settings;
     }
 
     public string IpAddress {

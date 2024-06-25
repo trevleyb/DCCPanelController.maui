@@ -86,6 +86,9 @@
       <MauiXaml Update="View\RoutesPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="View\PanelTurnoutsPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -97,10 +100,13 @@
         <DependentUpon>RoutesPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="View\PanelTurnoutsPage.xaml.cs">
+        <DependentUpon>PanelTurnoutsPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DCCCircleFinder\DCCCircleFinder.csproj" />
       <ProjectReference Include="..\DCCWiThrottleClient\DCCWiThrottleClient.csproj" />
     </ItemGroup>
 

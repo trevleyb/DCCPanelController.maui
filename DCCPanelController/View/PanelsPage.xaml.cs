@@ -9,8 +9,8 @@ public partial class PanelsPage : ContentPage {
     
     public PanelsPage() {
         InitializeComponent();
-        var service = App.ServiceProvider?.GetService<PanelsService>();
-        _viewModel = new PanelsViewModel(service);
+        var service = App.ServiceProvider?.GetService<SettingsService>();
+        _viewModel = new PanelsViewModel(service!);
         BindingContext = _viewModel;
     }
 }

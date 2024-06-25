@@ -43,7 +43,8 @@ public class RoutesService {
             _routesList = [];
             Debug.WriteLine($"Unable to get Routes from JSON File: {ex.Message}");
         }
-        return _routesList;
+
+        return _routesList ?? [];
     }
 
     protected virtual void OnRouteStateDataChanged() {
