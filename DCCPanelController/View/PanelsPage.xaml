@@ -2,13 +2,17 @@
 
 <ContentPage
     IconImageSource="panels_green.png"
-    Title="Panel List"
+    Title="Panels"
     x:Class="DCCPanelController.View.PanelsPage"
     x:DataType="viewModel:PanelsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding AddNewPanelCommand}" Text="+" />
+    </ContentPage.ToolbarItems>
 
     <Grid
         BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
@@ -23,38 +27,35 @@
             IsRefreshing="{Binding IsRefreshing}">
             <CollectionView ItemsSource="{Binding Panels}" SelectionMode="None">
                 <CollectionView.EmptyView>
-                    <StackLayout Padding="100">
-                        <Image
-                            HeightRequest="160"
-                            HorizontalOptions="Center"
-                            Source="nodata.png"
-                            VerticalOptions="Center"
-                            WidthRequest="160" />
-                    </StackLayout>
+                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                            <Label Text="No Panels were found. Please use + to add a new Panel." />
+                        </StackLayout>
+                    </Grid>
                 </CollectionView.EmptyView>
-                <!--<CollectionView.ItemsLayout>
-                            <GridItemsLayout  Orientation="Horizontal" Span="3"/>
-                        </CollectionView.ItemsLayout>-->
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Panel">
                         <Grid HorizontalOptions="Fill" Padding="10">
-                            <Frame HeightRequest="125" Style="{StaticResource CardView}">
+                            <Frame HeightRequest="275" Style="{StaticResource CardView}">
                                 <Frame.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=GoToDetailsCommand}" CommandParameter="{Binding .}" />
                                 </Frame.GestureRecognizers>
-                                <Grid ColumnDefinitions="125,*" Padding="0">
-                                    <Image
-                                        Aspect="AspectFill"
-                                        HeightRequest="125"
-                                        Source="{Binding Image}"
-                                        WidthRequest="125" />
-                                    <VerticalStackLayout
-                                        Grid.Column="1"
-                                        Padding="10"
-                                        VerticalOptions="Center">
-                                        <Label Style="{StaticResource LargeLabel}" Text="{Binding Id}" />
-                                        <Label Style="{StaticResource MediumLabel}" Text="{Binding Name}" />
-                                    </VerticalStackLayout>
+                                <Grid RowDefinitions="auto,*" ColumnDefinitions="*,2*" Padding="0">
+                                    <StackLayout Grid.Column="0" Padding="10" VerticalOptions="Center">
+                                        <Label Style="{StaticResource MediumLabel}" TextColor="{StaticResource Primary}">
+                                            <MultiBinding StringFormat="{}{0}: {1}">
+                                                <Binding Path="Id" />
+                                                <Binding Path="Name" />
+                                            </MultiBinding>
+                                        </Label>
+                                    </StackLayout>
+
+                                    <Image Grid.ColumnSpan="2"
+                                           Grid.Row="1"
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"
+                                           Aspect="AspectFit"
+                                           Source="{Binding Image}" />
                                 </Grid>
                             </Frame>
                         </Grid>

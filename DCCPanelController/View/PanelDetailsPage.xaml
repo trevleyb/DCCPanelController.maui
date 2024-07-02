@@ -1,8 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
+    Title="Details"
     x:Class="DCCPanelController.View.PanelDetailsPage"
+    x:DataType="model:Panel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    <ContentPage.Content />
+    <StackLayout>
+        <Label
+            HorizontalOptions="CenterAndExpand"
+            Text="Welcome to the Panel Details Page!"
+            VerticalOptions="CenterAndExpand" />
+        <Label
+            HorizontalOptions="CenterAndExpand"
+            Text="The selected Panel is: "
+            VerticalOptions="CenterAndExpand" />
+        <Label
+            HorizontalOptions="CenterAndExpand"
+            Text="{Binding Name}"
+            VerticalOptions="CenterAndExpand" />
+
+
+    </StackLayout>
 </ContentPage>

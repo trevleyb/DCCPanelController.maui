@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 
 namespace DCCPanelController.Services;
@@ -44,6 +45,7 @@ public class SettingsService {
         storage.Panels.Add(new Panel {
             Id = "1",
             Name = "Panel 1",
+            ImageAsBase64 = ImageHelper.Base64EncodedImage,
             Turnouts = new List<TurnoutPoint> {
                 new TurnoutPoint {
                     Id = "1",
@@ -53,7 +55,22 @@ public class SettingsService {
                     Id = "2",
                     Name = "Turnout 2"
                 }
-            }
+            }, 
+        });
+        storage.Panels.Add(new Panel {
+            Id = "2",
+            Name = "Panel 2",
+            ImageAsBase64 = ImageHelper.SampleImageAsBase64,
+            Turnouts = new List<TurnoutPoint> {
+                new TurnoutPoint {
+                    Id = "1",
+                    Name = "Turnout 1"
+                },
+                new TurnoutPoint {
+                    Id = "2",
+                    Name = "Turnout 2"
+                }
+            }, 
         });
         return storage;
     }
@@ -74,5 +91,7 @@ public class SettingsService {
     public List<TurnoutPoint> GetTurnouts(string panelID) => GetPanel(panelID)?.Turnouts ?? [];
     public TurnoutPoint? GetTurnout(string panelID, string turnoutID) => GetTurnouts(panelID).FirstOrDefault(t => t.Id == turnoutID);
     public void AddTurnout(string panelID, TurnoutPoint turnout) => GetTurnouts(panelID).Add(turnout);
-    
+
+    private string SampleImage => ImageHelper.Base64EncodedImage;
 }
+

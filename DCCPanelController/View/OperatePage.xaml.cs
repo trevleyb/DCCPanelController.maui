@@ -1,7 +1,7 @@
 namespace DCCPanelController.View;
 
-public partial class PanelPage : ContentPage {
-    public PanelPage() {
+public partial class OperatePage : ContentPage {
+    public OperatePage() {
         InitializeComponent();
     }
 }

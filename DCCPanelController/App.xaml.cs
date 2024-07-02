@@ -1,4 +1,6 @@
-﻿namespace DCCPanelController;
+﻿using DCCPanelController.View;
+
+namespace DCCPanelController;
 
 public partial class App : Application
 {
@@ -7,6 +9,9 @@ public partial class App : Application
 	public App()
 	{
 		InitializeComponent();
-		MainPage = new View.MainPage();
+		Routing.RegisterRoute("PanelsPage", typeof(View.PanelsPage));
+		Routing.RegisterRoute("PanelDetailsPage", typeof(View.PanelDetailsPage));
+		//MainPage = new AppShell();
+		MainPage = new MainPage();
 	}
 }

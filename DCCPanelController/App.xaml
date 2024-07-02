@@ -16,10 +16,12 @@
                 <Setter Property="CornerRadius" Value="10" />
                 <Setter Property="IsClippedToBounds" Value="True" />
             </Style>
+
             <Style
                 ApplyToDerivedTypes="True"
                 BasedOn="{StaticResource BaseStyle}"
                 TargetType="ShellItem" />
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
