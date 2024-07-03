@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
@@ -43,14 +44,15 @@ public class SettingsService {
 
         storage.Panels = new List<Panel>();
         storage.Panels.Add(new Panel {
-            Id = "1",
-            Name = "Panel 1",
-            ImageAsBase64 = ImageHelper.Base64EncodedImage,
-            Turnouts = new List<TurnoutPoint> {
+            Id = "P01",
+            SortOrder = 5,
+            Name = "Sample Panel #1",
+            ImageAsBase64 = ImageHelper.SampleImageAsBase64,
+            Turnouts = new ObservableCollection<TurnoutPoint>() {
                 new TurnoutPoint {
                     Id = "1",
                     Name = "Turnout 1"
-                        },
+                },
                 new TurnoutPoint {
                     Id = "2",
                     Name = "Turnout 2"
@@ -58,10 +60,11 @@ public class SettingsService {
             }, 
         });
         storage.Panels.Add(new Panel {
-            Id = "2",
-            Name = "Panel 2",
+            Id = "P02",
+            SortOrder = 2,
+            Name = "Sample Panel #2",
             ImageAsBase64 = ImageHelper.SampleImageAsBase64,
-            Turnouts = new List<TurnoutPoint> {
+            Turnouts = new ObservableCollection<TurnoutPoint>(){
                 new TurnoutPoint {
                     Id = "1",
                     Name = "Turnout 1"
@@ -88,7 +91,7 @@ public class SettingsService {
     public List<Panel> Panels => _storage.Panels;
     public Panel? GetPanel(string id) => Panels.FirstOrDefault(p => p.Id == id);
     public void AddPanel(Panel panel) => Panels.Add(panel);
-    public List<TurnoutPoint> GetTurnouts(string panelID) => GetPanel(panelID)?.Turnouts ?? [];
+    public ObservableCollection<TurnoutPoint> GetTurnouts(string panelID) => GetPanel(panelID)?.Turnouts ?? [];
     public TurnoutPoint? GetTurnout(string panelID, string turnoutID) => GetTurnouts(panelID).FirstOrDefault(t => t.Id == turnoutID);
     public void AddTurnout(string panelID, TurnoutPoint turnout) => GetTurnouts(panelID).Add(turnout);
 

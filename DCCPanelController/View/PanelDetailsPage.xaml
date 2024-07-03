@@ -3,25 +3,191 @@
 <ContentPage
     Title="Details"
     x:Class="DCCPanelController.View.PanelDetailsPage"
-    x:DataType="model:Panel"
+    x:DataType="viewModel:PanelsDetailsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    <StackLayout>
-        <Label
-            HorizontalOptions="CenterAndExpand"
-            Text="Welcome to the Panel Details Page!"
-            VerticalOptions="CenterAndExpand" />
-        <Label
-            HorizontalOptions="CenterAndExpand"
-            Text="The selected Panel is: "
-            VerticalOptions="CenterAndExpand" />
-        <Label
-            HorizontalOptions="CenterAndExpand"
-            Text="{Binding Name}"
-            VerticalOptions="CenterAndExpand" />
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding AddNewTurnoutPointCommand}" IconImageSource="plus_circle.png" IsEnabled="{Binding IsNotBusy}"/>
+    </ContentPage.ToolbarItems>
+    
+    <Grid ColumnDefinitions="*,*" RowDefinitions="*,100" ColumnSpacing="10" Margin="10,10,10,-10">
+        <StackLayout Grid.Row="0" Grid.ColumnSpan="2">
+        <Grid ColumnDefinitions="75,*" ColumnSpacing="10" RowDefinitions="20,auto" Margin="10,10,10,10">
+            <Label
+                Grid.Column="0"
+                Grid.Row="0"
+                Style="{StaticResource MediumLabel}"
+                TextColor="{StaticResource Primary}" Text="ID"/>
+            <Entry Grid.Column="0" Grid.Row="1" Text="{Binding Panel.Id}"/>
+            <Label
+                Grid.Column="1"
+                Grid.Row="0"
+                Style="{StaticResource MediumLabel}"
+                TextColor="{StaticResource Primary}" Text="Name or Description"/>
+            <Entry Grid.Column="1" Grid.Row="1" Text="{Binding Panel.Name}"/>
+        </Grid>
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
+            <Label HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="100" Style="{StaticResource MediumLabel}" Text="Add an Image"/>
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
+            <Grid
+                ColumnDefinitions="*,4*,32,80"
+                HorizontalOptions="Fill"
+                Padding="10">
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="0"
+                    Style="{StaticResource MediumLabel}"
+                    Text="ID"
+                    TextColor="{StaticResource Primary}" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="1"
+                    Style="{StaticResource MediumLabel}"
+                    Text="Toggle Button Name"
+                    TextColor="{StaticResource Primary}" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="3"
+                    Style="{StaticResource MediumLabel}"
+                    Text="State"
+                    TextColor="{StaticResource Primary}" />
+            </Grid>
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
 
+            <RefreshView Command="{Binding GetTurnoutPointsCommand}" IsRefreshing="{Binding IsRefreshing}">
+                <CollectionView ItemsSource="{Binding TurnoutPoints}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label Text="No Turnout Points have been defined." />
+                            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
 
-    </StackLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:TurnoutState">
+                            <SwipeView>
+                                <!-- RightItems are revealed when we swipe from right-to-left -->
+                                <!-- Add more SwipeItems to create more actions -->
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+                                        <SwipeItem IconImageSource="trash_solid.png"
+                                                   Text="Delete"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsDetailsViewModel}}, Path=DeleteTurnoutCommand}" 
+                                                   CommandParameter="{Binding .}"
+                                                   BackgroundColor="Red" />
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+
+                                <SwipeView.Content>
+                            
+                            <StackLayout Padding="0">
+                                <Grid ColumnDefinitions="*,4*,32,80" Padding="10">
+                                    <Grid.GestureRecognizers>
+                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}" DragStartingCommandParameter="{Binding .}" />
+                                        <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsDetailsViewModel}}, Path=EditTurnoutPointsCommand}" CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                    <Label
+                                        Grid.Column="0"
+                                        HorizontalOptions="Start"
+                                        LineBreakMode="NoWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Id}"
+                                        VerticalOptions="Center" />
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="1"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center" />
+                                    <Image
+                                        Grid.Column="2"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="32">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Closed">
+                                                <Setter Property="Source" Value="turnout_closed.png" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Thrown">
+                                                <Setter Property="Source" Value="turnout_thrown.png" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Unknown">
+                                                <Setter Property="Source" Value="turnout_unknown.png" />
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
+                                    <Label
+                                        Grid.Column="3"
+                                        HorizontalOptions="Fill"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding State}"
+                                        VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Closed">
+                                                <Setter Property="TextColor" Value="Green" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Thrown">
+                                                <Setter Property="TextColor" Value="Red" />
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Unknown">
+                                                <Setter Property="TextColor" Value="Grey" />
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                                <BoxView
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="1"
+                                    HorizontalOptions="FillAndExpand" />
+                            </StackLayout>
+                                </SwipeView.Content>
+                            </SwipeView>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+            
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
+
+        </StackLayout>
+        <Button Command="{Binding SavePanelCommand}" Grid.Row="1" Grid.Column="0" Style="{StaticResource ButtonOutline}" Text="Save"/>
+        <Button Command="{Binding CancelPanelCommand}" Grid.Row="1" Grid.Column="1" Style="{StaticResource ButtonOutline}" Text="Cancel"/>
+    </Grid>
 </ContentPage>

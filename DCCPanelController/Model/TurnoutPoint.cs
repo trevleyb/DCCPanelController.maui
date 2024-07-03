@@ -1,16 +1,33 @@
+using System.Diagnostics;
 using System.Text.Json.Serialization;
+using CommunityToolkit.Common;
+using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Model;
 
 /// <summary>
-/// A TurnoutPoint is a point on a Panel that represents a Turnout and how it controls
-/// the layout. It defines an ID for the Button, and what it controls when clicked or
-/// disabled. 
+/// Represents a Turnout with its current state.
+/// This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
-public class TurnoutPoint {
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
+[DebuggerDisplay("Id: {Id}, Name: {Name}, State: {State}")]
+public partial class TurnoutPoint : ObservableObject {
+    /// <summary>
+    /// Represents a Turnout with its current state.
+    /// This is controlled by data that comes in via the Withrottle Interface
+    /// </summary>
+    public TurnoutPoint() { }
+    
+    [JsonPropertyName("Id")]
+    [ObservableProperty] 
+    private string? _id;
+    
+    [ObservableProperty] private string? _name;
+    [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private int _sortOrder = 0;
+
 }
 
+[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
 [JsonSerializable(typeof(List<TurnoutPoint>))]
-internal sealed partial class TurnoutPointContext : JsonSerializerContext{ }
+internal sealed partial class TurnoutPointContext : JsonSerializerContext {
+}
