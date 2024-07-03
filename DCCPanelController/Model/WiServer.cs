@@ -2,15 +2,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Model;
 
-public partial class WiServer : ObservableObject {
+public partial class WiServer(string? name = null, string? ipAddress = null, int? port = 12090) : ObservableObject {
     
-    [ObservableProperty] private string _name;
-    [ObservableProperty] private string _ipAddress;
-    [ObservableProperty] private int _port;
+    [ObservableProperty] private string _name = name ?? "WiThrottle";
+    [ObservableProperty] private string _ipAddress = ipAddress ?? DCCWiThrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
+    [ObservableProperty] private int _port = port ?? 12090;
 
-    public WiServer(string name, string ipAddress, int port = 12090) {
-        _name = name;
-        _ipAddress = ipAddress;
-        _port = port;
-    }
+    public WiServer() : this(string.Empty, string.Empty) { }
 }

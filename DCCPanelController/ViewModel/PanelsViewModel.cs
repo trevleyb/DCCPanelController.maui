@@ -32,11 +32,10 @@ public partial class PanelsViewModel : BaseViewModel {
         panel.Name = "Panel " + maxSort;
         panel.SortOrder = maxSort;
         Panels.Add(panel);
-        //await _sender.Navigation.PushAsync(new PanelDetailsPage(panel));
+        
+        _settingsService.Save();
     }
 
-    private static int GetNumericPart(string input) => Convert.ToInt32(MyRegex().Replace(input, ""));
-    
     [RelayCommand]
     public async Task GoToDetailsAsync(Panel panel) {
         Console.WriteLine(panel.Name);

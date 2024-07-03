@@ -6,17 +6,15 @@ namespace DCCPanelController.Model;
 
 public partial class Settings : ObservableObject {
 
-    [ObservableProperty] private string _ipAddress;
-    [ObservableProperty] private int _port = 12090;
-    [ObservableProperty] private bool _demoMode = false;
+    [ObservableProperty] private bool _demoMode;
+    [ObservableProperty] private WiServer _wiServer;
     
     public Settings() {
-        _ipAddress = "0.0.0.0";
-        _port = 12090;
+        var thisIp = DCCWiThrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
+        _wiServer = new WiServer("WiThrottle", thisIp, 12090);
     }
 
     public Settings(string ipAddress = "0.0.0.0", int port = 12090) {
-        _ipAddress = ipAddress;
-        _port = port;
+        _wiServer = new WiServer("WiThrottle", ipAddress, 12090);
     }
 }

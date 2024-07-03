@@ -10,11 +10,16 @@ public class SettingsService {
     private bool _sampleData = false;
     private Storage _storage;
 
-    public SettingsService() {
-        //_storage = Load().Result;
-        _storage = CreateSampleData().Result;
-    }
+    public SettingsService() { }
 
+    public void ReLoad(bool useSampleData = false) {
+        if (useSampleData) {
+            _storage = CreateSampleData().Result;
+        } else {
+            _storage = Load().WaitAsync(new CancellationToken()).Result;
+        }
+    }
+    
     public async Task<Storage> Load() {
         _sampleData = false;
         var filePath = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController.json");
@@ -38,8 +43,7 @@ public class SettingsService {
 
         var storage = new Storage();
         storage.Settings = new Settings {
-            IpAddress = "192.168.0.1",
-            Port = 12090
+            WiServer = new WiServer(),
         };
 
         storage.Panels = new List<Panel>();
@@ -78,7 +82,6 @@ public class SettingsService {
         return storage;
     }
 
-    
     public async void Save() {
         if (!_sampleData) {
             var jsonString = JsonSerializer.Serialize(_storage);

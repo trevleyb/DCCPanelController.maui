@@ -10,8 +10,8 @@ public class TurnoutStateService {
     // Think about where we manage changes to the state?
     public event EventHandler? TurnoutStateDataChanged;
 
-    private List<TurnoutState> _turnoutsList = [];
-    public async Task<List<TurnoutState>> GetTurnoutStates()
+    private List<Turnout> _turnoutsList = [];
+    public async Task<List<Turnout>> GetTurnoutStates()
     {
       
         if (_turnoutsList?.Count > 0) {
@@ -31,7 +31,7 @@ public class TurnoutStateService {
 
             var list = JsonSerializer.Deserialize<List<Dictionary<string, object>>>(contents, options);
             if (list != null) {
-                foreach (var turnout in list.Select(item => new TurnoutState {
+                foreach (var turnout in list.Select(item => new Turnout {
                              Id = item["Id"]?.ToString(),
                              Name = item["Name"]?.ToString(),
                              State = (TurnoutStateEnum)Enum.Parse(typeof(TurnoutStateEnum), item["State"].ToString() ?? "Unknown")

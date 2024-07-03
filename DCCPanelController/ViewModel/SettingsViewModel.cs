@@ -23,9 +23,9 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public string IpAddress {
-        get => Settings?.IpAddress ?? "";
+        get => Settings?.WiServer?.IpAddress ?? "";
         set {
-            Settings.IpAddress = value;
+            Settings.WiServer.IpAddress = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(IpAddress1));
             OnPropertyChanged(nameof(IpAddress2));
@@ -48,9 +48,9 @@ public partial class SettingsViewModel : BaseViewModel {
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
     
     public int Port {
-        get => Settings?.Port ?? 12090;
+        get => Settings?.WiServer?.Port ?? 12090;
         set {
-            Settings.Port = value;
+            Settings.WiServer.Port = value;
             OnPropertyChanged();
         }
     }
@@ -77,9 +77,14 @@ public partial class SettingsViewModel : BaseViewModel {
     
     [RelayCommand]
     public void SaveSettings() {
-        //_settingsService.SaveSettings(Settings);
+        _settingsService?.Save();
     }
-    
+
+    [RelayCommand]
+    public void LoadSettings() {
+        _settingsService?.ReLoad();
+    }
+
     [RelayCommand]
     public async Task RefreshWiServersAsync() {
         if (IsBusy) return;
@@ -100,7 +105,7 @@ public partial class SettingsViewModel : BaseViewModel {
             IsRefreshing = false;
         }
     }
-    
+ 
     [RelayCommand]
     public async Task SelectWiServer(WiServer? server) {
         if (server == null) return;
@@ -114,10 +119,13 @@ public partial class SettingsViewModel : BaseViewModel {
     /// <param name="part">The part number to get where 1= first, 2=second, 3=third, 4=fourth</param>
     /// <returns>The part of the Address</returns>
     private string GetIpAddressParts(int part) {
-        if (Settings?.IpAddress == null) return "";
-        var parts = Settings.IpAddress.Split('.');
-        if (part == 0) part = 1;
-        return parts.Length >= part ? parts[part-1] : "";
+        if (Settings?.WiServer is { } wiServer) {
+            wiServer.IpAddress ??= DCCWiThrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
+            var parts = wiServer.IpAddress.Split('.');
+            if (part == 0) part = 1;
+            return parts.Length >= part ? parts[part - 1] : "0";
+        }
+        return "0";
     }
 
     /// <summary>
@@ -127,14 +135,17 @@ public partial class SettingsViewModel : BaseViewModel {
     /// <param name="value">the value to set</param>
     /// <returns>The full IPAddress</returns>
     private string SetIpAddressParts(int part, string value, [CallerMemberName] string? propertyName = null) {
-        if (Settings?.IpAddress == null) return "0";
-        if (string.IsNullOrEmpty(value)) return Settings.IpAddress;
-        var parts = Settings.IpAddress.Split('.');
+        if (Settings?.WiServer?.IpAddress == null) return "0";
+        if (string.IsNullOrEmpty(value)) return Settings.WiServer.IpAddress;
+        var parts = Settings.WiServer?.IpAddress.Split('.');
         if (part == 0) part = 1;
         if (parts.Length >= part) parts[part-1] = value;
-        Settings.IpAddress = string.Join(".", parts);
-        OnPropertyChanged(propertyName);
-        OnPropertyChanged(nameof(IpAddress));
-        return Settings.IpAddress;
+        if (Settings.WiServer != null) {
+            Settings.WiServer.IpAddress = string.Join(".", parts);
+            OnPropertyChanged(propertyName);
+            OnPropertyChanged(nameof(IpAddress));
+            return Settings.WiServer.IpAddress;
+        }
+        return "0";
     }
 }

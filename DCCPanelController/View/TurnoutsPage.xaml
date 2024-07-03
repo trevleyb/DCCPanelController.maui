@@ -21,7 +21,7 @@
             <Grid
                 ColumnDefinitions="*,4*,32,80"
                 HorizontalOptions="Fill"
-                Padding="10">
+                Padding="5">
                 <Label
                     FontAttributes="Bold"
                     Grid.Column="0"
@@ -57,9 +57,9 @@
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:TurnoutState">
+                        <DataTemplate x:DataType="model:Turnout">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="*,4*,32,80" Padding="10">
+                                <Grid ColumnDefinitions="*,4*,32,80" Padding="5">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutStateViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
                                     </Grid.GestureRecognizers>

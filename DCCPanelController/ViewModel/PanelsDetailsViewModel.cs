@@ -1,17 +1,20 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsDetailsViewModel : BaseViewModel {
 
-    private int _draggingIndex;
     public Panel Panel { get; init; }
     public ObservableCollection<TurnoutPoint> TurnoutPoints => Panel.Turnouts;
-    private Panel? _original;
-    private Page? _page;
+
+    private int _draggingIndex;
+    private readonly Panel? _original;
+    private readonly Page? _page;
     
     // This breaks the view model so we need to solve this later 
     public PanelsDetailsViewModel(Panel panel, Page page) {
@@ -48,7 +51,11 @@ public partial class PanelsDetailsViewModel : BaseViewModel {
 
     [RelayCommand]
     public async Task SavePanelAsync() {
-        if (_page != null) await _page.Navigation.PopAsync();
+        if (_page != null) {
+            var service = App.ServiceProvider?.GetService<SettingsService>();
+            service?.Save();
+            await _page.Navigation.PopAsync();
+        }
     }
 
     [RelayCommand]

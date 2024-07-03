@@ -9,7 +9,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutStateViewModel : BaseViewModel {
 
-    public ObservableCollection<TurnoutState> TurnoutStates { get; } = [];
+    public ObservableCollection<Turnout> TurnoutStates { get; } = [];
     private readonly TurnoutStateService? _turnoutStateService;
  
     public TurnoutStateViewModel(TurnoutStateService? turnoutStateService) {
@@ -38,7 +38,7 @@ public partial class TurnoutStateViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task ToggleTurnoutState(TurnoutState? turnoutState) {
+    public async Task ToggleTurnoutState(Turnout? turnoutState) {
         
         if (turnoutState == null) return;
         turnoutState.State = turnoutState.State switch {

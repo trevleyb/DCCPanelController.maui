@@ -41,12 +41,12 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Panel">
                             <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelFrameGrid">
-                                <Frame Style="{StaticResource CardView}">
-                                    <Frame.GestureRecognizers>
+                                <Border Style="{StaticResource CardView}">
+                                    <Border.GestureRecognizers>
                                         <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}" DragStartingCommandParameter="{Binding .}" />
                                         <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
                                         <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=GoToDetailsCommand}" CommandParameter="{Binding .}" />
-                                    </Frame.GestureRecognizers>
+                                    </Border.GestureRecognizers>
                                     <Grid Padding="0" MinimumHeightRequest="200">
                                         <AbsoluteLayout>
                                             <Image 
@@ -67,8 +67,7 @@
                                                    HorizontalOptions="CenterAndExpand"
                                                    VerticalOptions="CenterAndExpand"
                                                    AbsoluteLayout.LayoutFlags="All"
-                                                   AbsoluteLayout.LayoutBounds="0,0,1,1" 
-                                                   >
+                                                   AbsoluteLayout.LayoutBounds="0,0,1,1" >
                                                 <Label.Triggers>
                                                     <DataTrigger TargetType="Label" Binding="{Binding IsImageAvailable}" Value="False">
                                                         <Setter Property="IsVisible" Value="True" />
@@ -76,12 +75,17 @@
                                                 </Label.Triggers>
                                             </Label>
                                             
+                                            <BoxView
+                                                BackgroundColor="{StaticResource Primary}"
+                                                HeightRequest="2"
+                                                AbsoluteLayout.LayoutBounds="1,1,1,91"
+                                                AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
+                                            
                                             <BoxView Color="{StaticResource PrimaryDisabled}"
                                                      Background="{StaticResource PrimaryDisabled}"
-                                                     Opacity=".90"
+                                                     Opacity=".95"
                                                      AbsoluteLayout.LayoutBounds="0.5,1,1,45"
                                                      AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
-                                                     
                                             <Label Style="{StaticResource MediumLabel}" 
                                                    TextColor="{StaticResource Primary}" 
                                                    FontAttributes="Bold"
@@ -98,30 +102,26 @@
                                                 </MultiBinding>
                                                 </Label>
                                             
-                                            <BoxView Background="{StaticResource PrimaryDisabled}"
-                                                     Opacity="0.9"
-                                                     AbsoluteLayout.LayoutBounds="0,0,25,25"
+                                            <BoxView  
+                                                     Background="{StaticResource PrimaryDisabled}"
+                                                     Opacity="0.95"
+                                                     AbsoluteLayout.LayoutBounds="0,0,20,20"
                                                      AbsoluteLayout.LayoutFlags="PositionProportional"/>
-                                            <Label Style="{StaticResource MediumLabel}" 
-                                                   TextColor="{StaticResource Primary}" 
+                                            <Label Style="{StaticResource SmallLabel}" 
+                                                   TextColor="{StaticResource Black}" 
                                                    Text = "{Binding SortOrder}"
-                                                   FontAttributes="Bold"
-                                                   Padding="2"
-                                                   VerticalOptions="Center"
-                                                   HorizontalOptions="Center"
                                                    AbsoluteLayout.LayoutFlags="None"
-                                                   AbsoluteLayout.LayoutBounds="0,0,25,25"
+                                                   AbsoluteLayout.LayoutBounds="0,0,20,20"
                                                    VerticalTextAlignment="Center"
                                                    HorizontalTextAlignment="Center"/>
 
                                             
                                         </AbsoluteLayout>
                                     </Grid>
-                                </Frame>
+                                </Border>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
-                
                 </CollectionView>
             </RefreshView>
         

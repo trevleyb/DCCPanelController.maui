@@ -230,6 +230,7 @@
                         Padding="20"
                         Style="{StaticResource ButtonOutline}"
                         Text="Connect"
+                        Clicked="Button_OnClicked"
                         WidthRequest="150" />
                 </Grid>
             </StackLayout>

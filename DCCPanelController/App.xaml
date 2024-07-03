@@ -7,21 +7,6 @@
 
     <Application.Resources>
         <ResourceDictionary>
-
-            <Style TargetType="Frame" x:Key="CardView">
-                <Setter Property="BorderColor" Value="#DDDDDD" />
-                <Setter Property="HasShadow" Value="{OnPlatform iOS=false, MacCatalyst=false, Default=true}" />
-                <Setter Property="Padding" Value="0" />
-                <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource CardBackground}, Dark={StaticResource CardBackgroundDark}}" />
-                <Setter Property="CornerRadius" Value="10" />
-                <Setter Property="IsClippedToBounds" Value="True" />
-            </Style>
-
-            <Style
-                ApplyToDerivedTypes="True"
-                BasedOn="{StaticResource BaseStyle}"
-                TargetType="ShellItem" />
-
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

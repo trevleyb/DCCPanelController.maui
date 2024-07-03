@@ -11,6 +11,7 @@ namespace DCCPanelController.View;
 
 public partial class PanelDetailsPage : ContentPage {
     private readonly PanelsDetailsViewModel _viewModel;
+    
     public PanelDetailsPage(Panel panel) {
         InitializeComponent();
         _viewModel = new PanelsDetailsViewModel(panel, this);

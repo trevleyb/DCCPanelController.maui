@@ -21,25 +21,16 @@ public partial class PanelsPage : ContentPage {
     }
 
     private void OnSizeChanged(object? sender, EventArgs e) {
-
         // Adjust the Span based on orientation
-            if (Width > Height) {
-                // Landscape mode
-                if (PanelsCollectionView.ItemsLayout is GridItemsLayout { } landscape) {
-                    landscape.Span = 2;
-                }
-            } else {
-                if (PanelsCollectionView.ItemsLayout is GridItemsLayout { } portrait) {
-                    portrait.Span = 1;
-                }
+        if (Width > Height) {
+            // Landscape mode
+            if (PanelsCollectionView.ItemsLayout is GridItemsLayout { } landscape) {
+                landscape.Span = 2;
             }
-    }
-    
-    private async void ToolBarAddNewItemClicked(object? sender, EventArgs e) {
-        try {
-            await Navigation.PushAsync(new PanelDetailsPage(new Panel()));
-        } catch (Exception ex) {
-            Debug.WriteLine($"Unable to navigate to Panel Details: {ex.Message}");
+        } else {
+            if (PanelsCollectionView.ItemsLayout is GridItemsLayout { } portrait) {
+                portrait.Span = 1;
+            }
         }
     }
 }

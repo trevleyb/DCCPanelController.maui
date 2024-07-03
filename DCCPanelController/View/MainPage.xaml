@@ -10,19 +10,19 @@
 
     <view:OperatePage />
 
-    <NavigationPage IconImageSource="panels_green.png" Title="Panels List">
+    <NavigationPage IconImageSource="panels_green.png" Title="Panels">
         <x:Arguments>
             <view:PanelsPage />
         </x:Arguments>
     </NavigationPage>
 
-    <NavigationPage IconImageSource="turnouts_green.png" Title="Turnout List">
+    <NavigationPage IconImageSource="turnouts_green.png" Title="Turnouts">
         <x:Arguments>
             <view:TurnoutsPage />
         </x:Arguments>
     </NavigationPage>
 
-    <NavigationPage IconImageSource="turnouts_green.png" Title="Routes List">
+    <NavigationPage IconImageSource="turnouts_green.png" Title="Routes">
         <x:Arguments>
             <view:RoutesPage />
         </x:Arguments>

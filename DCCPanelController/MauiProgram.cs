@@ -10,11 +10,12 @@ public static class MauiProgram
     public static MauiApp CreateMauiApp()
     {
         var builder = MauiApp.CreateBuilder();
-        builder.UseMauiApp<App>().ConfigureFonts(fonts =>
-        {
+        builder.UseMauiApp<App>().ConfigureFonts(fonts => {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         }).UseMauiCommunityToolkit();
+
+        builder.Services.AddSingleton<ConnectionService>();
         
         builder.Services.AddSingleton<PanelsPage>();
         builder.Services.AddSingleton<PanelDetailsPage>();
@@ -34,7 +35,7 @@ public static class MauiProgram
         builder.Services.AddSingleton<TurnoutsPage>();
         builder.Services.AddSingleton<TurnoutStateViewModel> ();
         builder.Services.AddSingleton<TurnoutStateService> ();
-
+        
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
