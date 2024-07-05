@@ -7,7 +7,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
     
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddNewTurnoutPointCommand}" IconImageSource="plus_circle.png" IsEnabled="{Binding IsNotBusy}"/>
@@ -21,18 +22,63 @@
                 Grid.Row="0"
                 Style="{StaticResource MediumLabel}"
                 TextColor="{StaticResource Primary}" Text="ID"/>
-            <Entry Text="{Binding Panel.Id}" Grid.Column="0" Grid.Row="1"/>
+            <Entry ClearButtonVisibility="WhileEditing" MaxLength="10" Text="{Binding Panel.Id, Mode=TwoWay}" Grid.Column="0" Grid.Row="1">
+                <Entry.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommand}" />
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry"
+                                 Binding="{Binding HasErrors}"
+                                 Value="true">
+                        <Setter Property="TextColor" Value="Red" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Entry"
+                                 Binding="{Binding HasErrors}"
+                                 Value="false">
+                        <Setter Property="TextColor" Value="Black" />
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
             <Label
                 Grid.Column="1"
                 Grid.Row="0"
                 Style="{StaticResource MediumLabel}"
                 TextColor="{StaticResource Primary}" Text="Name or Description"/>
-            <Entry Grid.Column="1" Grid.Row="1" Text="{Binding Panel.Name}"/>
+            <Entry ClearButtonVisibility="WhileEditing" Grid.Column="1" Grid.Row="1" Text="{Binding Panel.Name, Mode=TwoWay}">
+                <Entry.Behaviors>
+                    <toolkit:EventToCommandBehavior EventName="TextChanged" Command="{Binding ValidateCommand}" />
+                </Entry.Behaviors>
+                <Entry.Triggers>
+                    <DataTrigger TargetType="Entry"
+                                 Binding="{Binding HasErrors}"
+                                 Value="true">
+                        <Setter Property="TextColor" Value="Red" />
+                    </DataTrigger>
+                    <DataTrigger TargetType="Entry"
+                                 Binding="{Binding HasErrors}"
+                                 Value="false">
+                        <Setter Property="TextColor" Value="Black" />
+                    </DataTrigger>
+                </Entry.Triggers>
+            </Entry>
         </Grid>
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
+            <StackLayout Padding="20" Spacing="20">
+                <Image x:Name="SelectedImage"
+                       WidthRequest="200"
+                       HeightRequest="200"
+                       Aspect="AspectFit"
+                       BackgroundColor="LightGray">
+                       <Image.GestureRecognizers>
+                           <DropGestureRecognizer x:Name="ImageDrop" />
+                       </Image.GestureRecognizers>
+                    </Image>
+                <Button Text="Select from File System"/>
+                <Button Text="Select from Photos"/>
+            </StackLayout>
             <Label HorizontalOptions="Center" VerticalOptions="Center" HeightRequest="100" Style="{StaticResource MediumLabel}" Text="Add an Image"/>
             <BoxView
                 BackgroundColor="{StaticResource Primary}"

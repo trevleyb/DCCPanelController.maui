@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
+using DCCWiThrottleClient.Client.Messages;
 
 namespace DCCPanelController.View;
 
@@ -13,44 +14,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     
     public SettingsPage() {
         InitializeComponent();
-        var service = App.ServiceProvider?.GetService<SettingsService>();
-        _viewModel = new SettingsViewModel(service!);
+        _viewModel =  App.ServiceProvider?.GetService<SettingsViewModel>();
         BindingContext = _viewModel;
     }
 
-    protected override void OnDisappearing() {
-        base.OnDisappearing();
-    }
-
-    private void Button_OnClicked(object? sender, EventArgs e) {
-        ConnectAsync().WaitAsync(new CancellationToken());
-    }
-
-    public async Task ConnectAsync() {
-        if (!_viewModel.Settings.DemoMode) {
-            try {
-                var service = App.ServiceProvider?.GetService<ConnectionService>();
-                service?.Connect(_viewModel.Settings.WiServer);
-            } catch (Exception ex) {
-                var result = await DisplayAlert("Unable to Connect", "Unable to connect to the specified WiThrottle Service.", "DemoMode", "Settings");
-                if (result) {
-                    _viewModel.Settings.DemoMode = true;
-                    _viewModel.LoadSettingsCommand.Execute(null);
-                }
-            }
-        }
-    }
-
-    protected override void OnAppearing() {
-        base.OnAppearing();
-        if (_viewModel is { } viewModel) {
-            _viewModel.SaveSettings();
-            _ = viewModel.RefreshWiServersAsync();
-        }
-    }
-    
     void OnLabelTapped(object sender, EventArgs args) {
-
         if (_lastGridSelected is not null) {
             foreach (var item in _lastGridSelected.Children) {
                 if (item is Label oldLabel) {
@@ -75,6 +43,13 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             entry.CursorPosition = 0;
             entry.SelectionLength = entry.Text?.Length ?? 0;
         }
+    }
+
+    private void About_OnClicked(object? sender, EventArgs e) {
+        Navigation.PushAsync(new AboutPage());
+    }
+    private void Instructions_OnClicked(object? sender, EventArgs e) {
+        Navigation.PushAsync(new InstructionsPage());
     }
 }
 

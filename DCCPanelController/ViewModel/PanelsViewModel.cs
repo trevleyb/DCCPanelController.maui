@@ -17,16 +17,15 @@ public partial class PanelsViewModel : BaseViewModel {
     private int _draggingIndex;
     
     public PanelsViewModel(SettingsService settingsService, PanelsPage sender) {
-        Title = "Panels List";
         _settingsService = settingsService;
         _sender = sender;
-        GetPanelsCommand.Execute(null);
+        Panels = settingsService.Panels;
     }
     
     [RelayCommand]
     public async Task AddNewPanelAsync() {
         var panel = new Panel();
-        var maxSort = Panels.Max(p => p.SortOrder) + 1;
+        var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
         
         panel.Id = "new" + maxSort;
         panel.Name = "Panel " + maxSort;
@@ -64,35 +63,6 @@ public partial class PanelsViewModel : BaseViewModel {
             }
         }
     } 
-
-    [RelayCommand]
-    public async Task GetPanelsAsync()
-    {
-        if (Panels.Count > 0 || IsBusy) {
-            IsBusy = false;
-            IsRefreshing = false;
-            return;
-        }
-        
-        try {
-            IsBusy = true;
-            var panels = _settingsService.Panels;
-            var sortOrder = 1;
-            Panels.Clear();
-            foreach (var panel in panels.OrderBy(p => p.SortOrder)) {
-                panel.SortOrder = sortOrder++;
-                Panels.Add(panel);
-            }
-        }
-        catch (Exception ex) {
-            Debug.WriteLine($"Unable to get Panels: {ex.Message}");
-            await Shell.Current.DisplayAlert("Error! Cannot get Panels States", ex.Message, "OK");
-        }
-        finally {
-            IsBusy = false;
-            IsRefreshing = false;
-        }
-    }
 
     [GeneratedRegex(@"[^0-9]")]
     private static partial Regex MyRegex();

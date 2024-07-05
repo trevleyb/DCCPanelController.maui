@@ -1,17 +1,27 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 
 namespace DCCPanelController.Model;
 
 /// <summary>
 /// Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
-public partial class Panel : ObservableObject, ICloneable {
-    [ObservableProperty] private string _id = "new";
-    [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] private int _sortOrder = 0;
-    [ObservableProperty] private ObservableCollection<TurnoutPoint> _turnouts = [];
+public partial class Panel : ObservableValidator, ICloneable {
+    [ObservableProperty]
+    [Required][NoSpaces]
+    private string _id = "new";
+    
+    [ObservableProperty] 
+    private string _name = string.Empty;
+    
+    [ObservableProperty] 
+    private int _sortOrder = 0;
+    
+    [ObservableProperty] 
+    private ObservableCollection<TurnoutPoint> _turnouts = [];
 
     public bool IsImageAvailable => Image != null;
     
@@ -59,5 +69,5 @@ public partial class Panel : ObservableObject, ICloneable {
     }
 }
 
-//[JsonSerializable(typeof(List<Panel>))]
-//internal sealed partial class PanelStateContext : JsonSerializerContext{ }
+[JsonSerializable(typeof(List<Panel>))]
+internal sealed partial class PanelStateContext : JsonSerializerContext{ }

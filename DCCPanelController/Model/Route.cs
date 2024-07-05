@@ -24,7 +24,7 @@ public partial class Route : ObservableObject {
 internal sealed partial class RouteContext : JsonSerializerContext {
 }
 
-[JsonConverter(typeof(JsonStringEnumConverter<TurnoutStateEnum>))]
+[JsonConverter(typeof(JsonStringEnumConverter<RouteStateEnum>))]
 public enum RouteStateEnum {
     Active, 
     Inactive, 

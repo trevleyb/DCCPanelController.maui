@@ -10,12 +10,13 @@ namespace DCCPanelController.View;
 public partial class PanelsPage : ContentPage {
     
     private int _draggingIndex;
-    private PanelsViewModel _viewModel;
+    private PanelsViewModel? _viewModel;
     
     public PanelsPage() {
         InitializeComponent();
-        var service = App.ServiceProvider?.GetService<SettingsService>();
-        _viewModel = new PanelsViewModel(service!, this);
+        //var service = App.ServiceProvider?.GetService<SettingsService>();
+        _viewModel =App.ServiceProvider?.GetService<PanelsViewModel>();
+        //_viewModel = new PanelsViewModel(service!, this);
         BindingContext = _viewModel;
         this.SizeChanged += OnSizeChanged;
     }

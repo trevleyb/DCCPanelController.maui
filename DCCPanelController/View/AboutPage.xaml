@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    IconImageSource="info_circle.png"
+    Title="About"
+    iOsSpecific:Page.UseSafeArea="True"
+    x:Class="DCCPanelController.View.AboutPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <Label Text="About"/>
+    </ContentPage.Content>
+</ContentPage>

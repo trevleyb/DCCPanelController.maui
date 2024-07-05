@@ -5,49 +5,42 @@
     Title="Turnouts List"
     ios:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.TurnoutsPage"
-    x:DataType="viewmodel:TurnoutStateViewModel"
+    x:DataType="viewmodel:TurnoutsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding GetTurnoutStateDataCommand}" Text="Refresh" />
-    </ContentPage.ToolbarItems>
-
-    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
         <StackLayout x:Name="MainStackLayout">
             <Grid
-                ColumnDefinitions="*,4*,32,80"
+                ColumnDefinitions="75,*,32,80"
                 HorizontalOptions="Fill"
                 Padding="5">
-                <Label
-                    FontAttributes="Bold"
+                <Button
                     Grid.Column="0"
-                    Style="{StaticResource MediumLabel}"
-                    Text="ID"
-                    TextColor="{StaticResource Primary}" />
-                <Label
-                    FontAttributes="Bold"
+                    Style="{StaticResource ButtonLabel}"
+                    HorizontalOptions="StartAndExpand"
+                    VerticalOptions="CenterAndExpand"
+                    Text="{Binding ColumnLabelID}"
+                    Command="{Binding SortByColumnCommand}" CommandParameter="ID"/>
+                <Button
                     Grid.Column="1"
-                    Style="{StaticResource MediumLabel}"
-                    Text="Turnout Name"
-                    TextColor="{StaticResource Primary}" />
-                <Label
-                    FontAttributes="Bold"
+                    Style="{StaticResource ButtonLabel}"
+                    Text="{Binding ColumnLabelName}"
+                    Command="{Binding SortByColumnCommand}" CommandParameter="Name"/>
+                <Button
                     Grid.Column="3"
-                    Style="{StaticResource MediumLabel}"
-                    Text="State"
-                    TextColor="{StaticResource Primary}" />
+                    Style="{StaticResource ButtonLabel}"
+                    Text="{Binding ColumnLabelState}"
+                    Command="{Binding SortByColumnCommand}" CommandParameter="State"/>
             </Grid>
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
-
-            <RefreshView Command="{Binding GetTurnoutStateDataCommand}" IsRefreshing="{Binding IsRefreshing}">
-                <CollectionView ItemsSource="{Binding TurnoutStates}" SelectionMode="None">
+            <Grid VerticalOptions="FillAndExpand" Padding="5">
+                <CollectionView ItemsSource="{Binding Turnouts}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -59,9 +52,9 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Turnout">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="*,4*,32,80" Padding="5">
+                                <Grid ColumnDefinitions="75,*,32,80" Padding="5">
                                     <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutStateViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
                                     </Grid.GestureRecognizers>
                                     <Label
                                         Grid.Column="0"
@@ -140,15 +133,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </RefreshView>
-            <ActivityIndicator
-                Color="{StaticResource Primary}"
-                HorizontalOptions="Fill"
-                IsRunning="{Binding IsBusy}"
-                IsVisible="{Binding IsBusy}"
-                VerticalOptions="Center" />
-
+                </Grid>
         </StackLayout>
-    </Grid>
 
 </ContentPage>

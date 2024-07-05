@@ -7,14 +7,14 @@ using Timer = System.Timers.Timer;
 
 namespace DCCWiThrottleClient.Client;
 
-public class Client(ClientInfo clientInfo, Turnouts? turnouts) {
+public class Client(ClientInfo clientInfo, Turnouts? turnouts, Routes? routes) {
     private TcpClient?     _client;
     private Timer?         _heartbeatTimer;
     private bool           _running;
     private NetworkStream? _stream;
 
-    public Client(string address, int    port,    Turnouts? turnouts) : this(new ClientInfo(address, port), turnouts) { }
-    public Client(string name,    string address, int       port, Turnouts? turnouts) : this(new ClientInfo(name, address, port), turnouts) { }
+    public Client(string address, int    port,    Turnouts? turnouts, Routes? routes) : this(new ClientInfo(address, port), turnouts, routes) { }
+    public Client(string name,    string address, int       port, Turnouts? turnouts, Routes? routes) : this(new ClientInfo(name, address, port), turnouts, routes) { }
 
     public bool                      Echo { get; set; } = true;
     public event Action<IClientMsg>? MessageProcessed;
@@ -80,7 +80,7 @@ public class Client(ClientInfo clientInfo, Turnouts? turnouts) {
     }
 
     private void ProcessMessage(string message) {
-        var clientMsg = new MessageProcessor(turnouts).Interpret(message);
+        var clientMsg = new MessageProcessor(turnouts, routes).Interpret(message);
         switch (clientMsg) {
         case MsgQuit quit:
             _running = false;

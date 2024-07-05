@@ -9,9 +9,6 @@ public partial class App : Application
 	public App()
 	{
 		InitializeComponent();
-		Routing.RegisterRoute("PanelsPage", typeof(View.PanelsPage));
-		Routing.RegisterRoute("PanelDetailsPage", typeof(View.PanelDetailsPage));
-		//MainPage = new AppShell();
 		MainPage = new MainPage();
 	}
 }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
@@ -9,8 +10,8 @@ namespace DCCPanelController.ViewModel;
 
 public partial class PanelsDetailsViewModel : BaseViewModel {
 
-    public Panel Panel { get; init; }
-    public ObservableCollection<TurnoutPoint> TurnoutPoints => Panel.Turnouts;
+    [ObservableProperty] private Panel _panel;
+    [ObservableProperty] private ObservableCollection<TurnoutPoint> _turnoutPoints;
 
     private int _draggingIndex;
     private readonly Panel? _original;
@@ -19,9 +20,15 @@ public partial class PanelsDetailsViewModel : BaseViewModel {
     // This breaks the view model so we need to solve this later 
     public PanelsDetailsViewModel(Panel panel, Page page) {
         Panel = panel;
+        TurnoutPoints = Panel.Turnouts;
         _original = (Panel?)panel.Clone();
         _page = page;
         GetTurnoutPointsCommand.Execute(null);
+    }
+
+    [RelayCommand]
+    void Validate() {
+        ValidateAllProperties();
     }
 
     [RelayCommand]
@@ -57,7 +64,7 @@ public partial class PanelsDetailsViewModel : BaseViewModel {
             await _page.Navigation.PopAsync();
         }
     }
-
+    
     [RelayCommand]
     public async Task CancelPanelAsync() {
         if (_page != null) {

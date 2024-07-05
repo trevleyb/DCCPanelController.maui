@@ -2,7 +2,7 @@ using DCCWiThrottleClient.Client.Messages;
 
 namespace DCCWiThrottleClient.Client;
 
-public class MessageProcessor(Turnouts? turnouts) {
+public class MessageProcessor(Turnouts? turnouts, Routes? routes) {
     /// <summary>
     ///     Simply, given an input string, this will return a Command Object that
     ///     needs to be managed and processed based on the commandStr provided.
@@ -26,7 +26,7 @@ public class MessageProcessor(Turnouts? turnouts) {
                 CommandTypeEnum.Name          => new MsgName(),
                 CommandTypeEnum.Hardware      => new MsgHardware(),
                 CommandTypeEnum.MultiThrottle => new MsgMultiThrottle(),
-                CommandTypeEnum.Panel         => new MsgPanel(turnouts),
+                CommandTypeEnum.Panel         => new MsgPanel(turnouts, routes),
                 CommandTypeEnum.Roster        => new MsgRoster(),
                 CommandTypeEnum.Heartbeat     => new MsgHeartbeat(),
                 CommandTypeEnum.Quit          => new MsgQuit(),

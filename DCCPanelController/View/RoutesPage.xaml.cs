@@ -16,9 +16,8 @@ public partial class RoutesPage : ContentPage {
         MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
 
         // Resolve the TurnoutStateViewModel dependency
-        var service = App.ServiceProvider?.GetService<RoutesService>();
-        var viewModel = new RoutesViewModel(service);
-        _ = viewModel.GetRoutesDataAsync();
+        //var service = App.ServiceProvider?.GetService<RoutesService>();
+        var viewModel = App.ServiceProvider?.GetService<RoutesViewModel>();
         BindingContext = viewModel;
     }
 }

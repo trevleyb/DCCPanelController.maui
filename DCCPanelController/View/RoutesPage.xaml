@@ -12,37 +12,34 @@
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
         <StackLayout x:Name="MainStackLayout">
             <Grid
-                ColumnDefinitions="*,4*,32,80"
+                ColumnDefinitions="75,*,32,80"
                 HorizontalOptions="Fill"
                 Padding="5">
-                <Label
-                    FontAttributes="Bold"
+                <Button
                     Grid.Column="0"
-                    Style="{StaticResource MediumLabel}"
-                    Text="ID"
-                    TextColor="{StaticResource Primary}" />
-                <Label
-                    FontAttributes="Bold"
+                    HorizontalOptions="CenterAndExpand"
+                    Style="{StaticResource ButtonLabel}"
+                    Text="{Binding ColumnLabelID}"
+                    Margin="-5,0,0,0"
+                    Command="{Binding SortByColumnCommand}" CommandParameter="ID"/>
+                <Button
                     Grid.Column="1"
-                    Style="{StaticResource MediumLabel}"
-                    Text="Route Name"
-                    TextColor="{StaticResource Primary}" />
-                <Label
-                    FontAttributes="Bold"
+                    Style="{StaticResource ButtonLabel}"
+                    Text="{Binding ColumnLabelName}"
+                    Command="{Binding SortByColumnCommand}" CommandParameter="Name"/>
+                <Button
                     Grid.Column="3"
-                    Style="{StaticResource MediumLabel}"
-                    Text="State"
-                    TextColor="{StaticResource Primary}" />
+                    Style="{StaticResource ButtonLabel}"
+                    Text="{Binding ColumnLabelState}"
+                    Command="{Binding SortByColumnCommand}" CommandParameter="State"/>
             </Grid>
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
-
-            <RefreshView Command="{Binding GetRoutesDataCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <Grid VerticalOptions="FillAndExpand" Padding="5">
                 <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
@@ -55,7 +52,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="model:Route">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="*,4*,32, 80" Padding="5">
+                                <Grid ColumnDefinitions="75,*,32, 80" Padding="5">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RoutesViewModel}}, Path=ToggleRoutesStateCommand}" CommandParameter="{Binding .}" />
                                     </Grid.GestureRecognizers>
@@ -71,6 +68,8 @@
                                         Grid.Column="1"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
                                         VerticalOptions="Center" />
                                     <Image
                                         Grid.Column="2"
@@ -136,15 +135,8 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </RefreshView>
-            <ActivityIndicator
-                Color="{StaticResource Primary}"
-                HorizontalOptions="Fill"
-                IsRunning="{Binding IsBusy}"
-                IsVisible="{Binding IsBusy}"
-                VerticalOptions="Center" />
+                </Grid>
 
         </StackLayout>
-    </Grid>
 
 </ContentPage>

@@ -19,11 +19,6 @@
         <Grid x:Name="MainGrid"
               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
                                           Dark={StaticResource DarkBackground}}">
-            <RefreshView
-                Command="{Binding GetPanelsCommand}"
-                Grid.Row = "0"
-                Grid.ColumnSpan="2"
-                IsRefreshing="{Binding IsRefreshing}">
         
                 <CollectionView MinimumWidthRequest="250" ItemsSource="{Binding Panels}" SelectionMode="None" x:Name="PanelsCollectionView">
                     <CollectionView.EmptyView>
@@ -123,7 +118,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </RefreshView>
         
             <ActivityIndicator
                 Color="{StaticResource Primary}"

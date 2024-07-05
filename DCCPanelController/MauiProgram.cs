@@ -33,8 +33,8 @@ public static class MauiProgram
         builder.Services.AddSingleton<RoutesService> ();
 
         builder.Services.AddSingleton<TurnoutsPage>();
-        builder.Services.AddSingleton<TurnoutStateViewModel> ();
-        builder.Services.AddSingleton<TurnoutStateService> ();
+        builder.Services.AddSingleton<TurnoutsViewModel> ();
+        builder.Services.AddSingleton<TurnoutsService> ();
         
 #if DEBUG
         builder.Logging.AddDebug();

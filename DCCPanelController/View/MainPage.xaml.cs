@@ -1,38 +1,25 @@
 ﻿using DCCPanelController.Model;
 using DCCPanelController.Services;
+using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
 public partial class MainPage : TabbedPage
 {
 	ConnectionService? _connectionService;
-	public MainPage()
-	{
+	public MainPage() {
 		InitializeComponent();
 		_ = LoadAndConnect().WaitAsync(new CancellationToken());
 	}
 
 	private async Task LoadAndConnect() {
-		var settings = App.ServiceProvider?.GetService<SettingsService>();
-		if (settings is not null) {
-			await settings.Load();
-			if (!settings.Settings.DemoMode) {
-				try {
-					var service = App.ServiceProvider?.GetService<ConnectionService>();
-					service?.Connect(settings.Settings.WiServer);
-				} catch (Exception ex) {
-					var result = await DisplayAlert("Unable to Connect", "Unable to connect to the specified WiThrottle Service.", "DemoMode", "Settings");
-					if (result) {
-						settings.Settings.DemoMode = true;
-						settings.Load();
-					} else {
-						Navigation.PushAsync(new SettingsPage());
-					}
-				}
-			}
+		//var settings = App.ServiceProvider?.GetService<SettingsService>();
+		//var settingsViewModel = new SettingsViewModel(settings);
+		var settingsViewModel = App.ServiceProvider?.GetService<SettingsViewModel>();
+		if (settingsViewModel != null) {
+			await settingsViewModel.RefreshWiServersAsync();
+			await settingsViewModel.ConnectAsync();
 		}
-
-
 	}
 }
 

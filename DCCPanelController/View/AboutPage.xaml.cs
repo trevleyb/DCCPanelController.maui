@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace DCCPanelController.View;
 
-public partial class AppShell : Shell {
-    public AppShell() {
+public partial class AboutPage : ContentPage {
+    public AboutPage() {
         InitializeComponent();
     }
-    
 }

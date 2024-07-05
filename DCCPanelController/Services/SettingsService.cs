@@ -10,14 +10,28 @@ public class SettingsService {
     private bool _sampleData = false;
     private Storage _storage;
 
-    public SettingsService() { }
+    public SettingsService() {
+        _storage = Load().WaitAsync(new CancellationToken()).Result;
+        AddSampleData(_storage);
+    }
+    
+    public Settings Settings => _storage.Settings;
+    public ObservableCollection<Panel> Panels => _storage.Panels;
+    public ObservableCollection<Turnout> Turnouts => _storage.Turnouts;
+    public ObservableCollection<Route> Routes => _storage.Routes;
+    private string SampleImage => ImageHelper.Base64EncodedImage;
 
-    public void ReLoad(bool useSampleData = false) {
-        if (useSampleData) {
-            _storage = CreateSampleData().Result;
-        } else {
-            _storage = Load().WaitAsync(new CancellationToken()).Result;
+    public async void Save() {
+        if (!_sampleData) {
+            var jsonString = JsonSerializer.Serialize(_storage);
+            var filePath = Path.Combine(FileSystem.AppDataDirectory, "storage.json");
+            await File.WriteAllTextAsync(filePath, jsonString);
         }
+    }
+    
+    public void ReLoad(bool useSampleData = false) {
+        _storage = Load().WaitAsync(new CancellationToken()).Result;
+        if (useSampleData) AddSampleData(_storage);
     }
     
     public async Task<Storage> Load() {
@@ -30,23 +44,9 @@ public class SettingsService {
         return new Storage();
     }
 
-    public async Task<Storage> LoadSampleData() {
-        _sampleData = true;
-        await using var stream = await FileSystem.OpenAppPackageFileAsync("sampledata.json");
-        using var reader = new StreamReader(stream);
-        var contents = await reader.ReadToEndAsync();
-        return JsonSerializer.Deserialize<Storage>(contents) ?? new Storage();
-    }
+    public void AddSampleData(Storage storage) {
 
-    public async Task<Storage> CreateSampleData() {
-        _sampleData = true;
-
-        var storage = new Storage();
-        storage.Settings = new Settings {
-            WiServer = new WiServer(),
-        };
-
-        storage.Panels = new List<Panel>();
+        storage.Panels.Clear();
         storage.Panels.Add(new Panel {
             Id = "P01",
             SortOrder = 5,
@@ -79,25 +79,29 @@ public class SettingsService {
                 }
             }, 
         });
-        return storage;
-    }
 
-    public async void Save() {
-        if (!_sampleData) {
-            var jsonString = JsonSerializer.Serialize(_storage);
-            var filePath = Path.Combine(FileSystem.AppDataDirectory, "storage.json");
-            await File.WriteAllTextAsync(filePath, jsonString);
+        // Load the Sample Turnouts Data
+        try {
+            using var stream = FileSystem.OpenAppPackageFileAsync("turnoutsdata.json").WaitAsync(new CancellationToken()).Result;
+            using var reader = new StreamReader(stream);
+            var contents = reader.ReadToEnd();
+            _storage.Turnouts = JsonSerializer.Deserialize<ObservableCollection<Turnout>>(contents) ?? new ObservableCollection<Turnout>();
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+            _storage.Turnouts = new ObservableCollection<Turnout>();
         }
+
+        // Load the Sample Routes Data
+        try {
+            using var stream = FileSystem.OpenAppPackageFileAsync("routesdata.json").WaitAsync(new CancellationToken()).Result;
+            using var reader = new StreamReader(stream);
+            var contents = reader.ReadToEnd();
+            _storage.Routes = JsonSerializer.Deserialize<ObservableCollection<Route>>(contents) ?? new ObservableCollection<Route>();
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+            _storage.Routes = new ObservableCollection<Route>();
+        }
+        
     }
-
-    public Settings Settings => _storage.Settings;
-    public List<Panel> Panels => _storage.Panels;
-    public Panel? GetPanel(string id) => Panels.FirstOrDefault(p => p.Id == id);
-    public void AddPanel(Panel panel) => Panels.Add(panel);
-    public ObservableCollection<TurnoutPoint> GetTurnouts(string panelID) => GetPanel(panelID)?.Turnouts ?? [];
-    public TurnoutPoint? GetTurnout(string panelID, string turnoutID) => GetTurnouts(panelID).FirstOrDefault(t => t.Id == turnoutID);
-    public void AddTurnout(string panelID, TurnoutPoint turnout) => GetTurnouts(panelID).Add(turnout);
-
-    private string SampleImage => ImageHelper.Base64EncodedImage;
 }
 

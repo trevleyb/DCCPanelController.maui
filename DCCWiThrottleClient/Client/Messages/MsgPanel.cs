@@ -1,6 +1,6 @@
 namespace DCCWiThrottleClient.Client.Messages;
 
-public class MsgPanel(Turnouts? turnouts) : IClientMsg {
+public class MsgPanel(Turnouts? turnouts, Routes? routes) : IClientMsg {
     public void Process(string commandStr) {
         var command = commandStr[0..3];
         switch (command) {
@@ -11,6 +11,14 @@ public class MsgPanel(Turnouts? turnouts) : IClientMsg {
         case "PTA":
             var turnout = turnouts?.UpdateFromWiThrottle(commandStr[3..]);
             ActionTaken = "Processed Turnout:" + turnout?.Name ?? "Unknown" + "=>" + turnout?.State.ToString() ?? "Unknown";
+            break;
+        case "PRL":
+            ActionTaken = "Processed Routes List";
+            routes?.AddFromWiThrottle(commandStr[3..]);
+            break;
+        case "PRA":
+            var route = routes?.UpdateFromWiThrottle(commandStr[3..]);
+            ActionTaken = "Processed Route:" + route?.Name ?? "Unknown" + "=>" + route?.State.ToString() ?? "Unknown";
             break;
         case "PFT":
             var fastClock = GetFastClock(commandStr[3..]);

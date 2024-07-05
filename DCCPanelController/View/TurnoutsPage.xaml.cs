@@ -16,9 +16,8 @@ public partial class TurnoutsPage : ContentPage {
         MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
 
         // Resolve the TurnoutStateViewModel dependency
-        var service = App.ServiceProvider?.GetService<TurnoutStateService>();
-        var viewModel = new TurnoutStateViewModel(service);
-        _ = viewModel.GetTurnoutStateDataAsync();
+        //var service = App.ServiceProvider?.GetService<TurnoutsService>();
+        var viewModel = App.ServiceProvider?.GetService<TurnoutsViewModel>();
         BindingContext = viewModel;
     }
 }

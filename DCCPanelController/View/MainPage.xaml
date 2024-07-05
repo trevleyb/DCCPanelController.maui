@@ -8,8 +8,13 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <view:OperatePage />
+    <NavigationPage IconImageSource="control_green.png" Title="Operate">
+        <x:Arguments>
+            <view:OperatePage />
+        </x:Arguments>
+    </NavigationPage>
 
+    
     <NavigationPage IconImageSource="panels_green.png" Title="Panels">
         <x:Arguments>
             <view:PanelsPage />
@@ -33,4 +38,5 @@
             <view:SettingsPage />
         </x:Arguments>
     </NavigationPage>
+    
 </TabbedPage>
