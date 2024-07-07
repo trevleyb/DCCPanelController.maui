@@ -6,7 +6,6 @@ namespace DCCPanelController.View;
 
 public partial class MainPage : TabbedPage
 {
-	ConnectionService? _connectionService;
 	public MainPage() {
 		InitializeComponent();
 		_ = LoadAndConnect().WaitAsync(new CancellationToken());

@@ -8,9 +8,6 @@ namespace DCCPanelController.Services;
 
 public class TurnoutsService {
     
-    // Think about where we manage changes to the state?
-    public event EventHandler? TurnoutStateDataChanged;
-
     public ObservableCollection<Turnout> Turnouts = [];
 
     public TurnoutsService(SettingsService settingsService) {

@@ -67,7 +67,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
             _                       => TurnoutStateEnum.Closed
         };
         
-        var connectionSerice = App.ServiceProvider.GetService<ConnectionService>();
+        var connectionSerice = App.ServiceProvider?.GetService<ConnectionService>();
         if (connectionSerice != null && !string.IsNullOrEmpty(turnout.Id)) {
             connectionSerice.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
         }

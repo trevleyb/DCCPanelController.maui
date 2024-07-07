@@ -13,8 +13,8 @@ namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
     
-    private Turnouts _turnouts;     // Turnouts Managed by the Client 
-    private Routes _routes;         // Routes Managed by the Client
+    private Turnouts _turnouts = new Turnouts();     // Turnouts Managed by the Client 
+    private Routes _routes = new Routes();         // Routes Managed by the Client
     private Client _client;
     private TurnoutsService? _turnoutsService;
     private RoutesService? _routesService;

@@ -29,24 +29,26 @@ public partial class RoutesViewModel : BaseViewModel {
     public async Task SortByColumn(string columnName) {
 
         List<Route> sortedRoutes;
-        if (!_isAscending) {
-            sortedRoutes = columnName.ToLower() switch {
-                "name"  => Routes.OrderBy(x => x.Name).ToList(),
-                "id"    => Routes.OrderBy(x => x.Id).ToList(),
-                "state" => Routes.OrderBy(x => x.State).ToList(),
-                _       => Routes.ToList(),
-            };
-        } else {
-            sortedRoutes = columnName.ToLower() switch {
-                "name"  => Routes.OrderByDescending(x => x.Name).ToList(),
-                "id"    => Routes.OrderByDescending(x => x.Id).ToList(),
-                "state" => Routes.OrderByDescending(x => x.State).ToList(),
-                _       => Routes.ToList(),
-            };
+        if (Routes != null) {
+            if (!_isAscending) {
+                sortedRoutes = columnName.ToLower() switch {
+                    "name"  => Routes.OrderBy(x => x.Name).ToList(),
+                    "id"    => Routes.OrderBy(x => x.Id).ToList(),
+                    "state" => Routes.OrderBy(x => x.State).ToList(),
+                    _       => Routes.ToList(),
+                };
+            } else {
+                sortedRoutes = columnName.ToLower() switch {
+                    "name"  => Routes.OrderByDescending(x => x.Name).ToList(),
+                    "id"    => Routes.OrderByDescending(x => x.Id).ToList(),
+                    "state" => Routes.OrderByDescending(x => x.State).ToList(),
+                    _       => Routes.ToList(),
+                };
+            }
+            Routes = new ObservableCollection<Route>(sortedRoutes);
         }
         _sortColumn = columnName;
         _isAscending = !_isAscending;
-        Routes = new ObservableCollection<Route>(sortedRoutes);
         OnPropertyChanged(nameof(Routes));
         SetLabels();
     }
@@ -67,7 +69,7 @@ public partial class RoutesViewModel : BaseViewModel {
             _                       => RouteStateEnum.Active
         };
         
-        var connectionSerice = App.ServiceProvider.GetService<ConnectionService>();
+        var connectionSerice = App.ServiceProvider?.GetService<ConnectionService>();
         if (connectionSerice != null && !string.IsNullOrEmpty(route.Id)) {
             connectionSerice.SendRouteStateChangeCommand(route.Id, route.State);
         }

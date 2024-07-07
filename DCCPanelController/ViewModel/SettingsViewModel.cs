@@ -66,7 +66,7 @@ public partial class SettingsViewModel : BaseViewModel {
                         AddMessage("Connected.");
                     }
                 }
-            } catch (Exception ex) {
+            } catch {
                 IsBusy = false;
                 AddMessage("Unable to Connect.");
             } 
@@ -209,10 +209,12 @@ public partial class SettingsViewModel : BaseViewModel {
                 if (part == 0) part = 1;
                 if (parts?.Length >= part) parts[part - 1] = value;
 
-                wiServer.IpAddress = string.Join(".", parts);
-                OnPropertyChanged(propertyName);
-                OnPropertyChanged(nameof(IpAddress));
-                return Settings.WiServer.IpAddress;
+                if (parts is not null) {
+                    wiServer.IpAddress = string.Join(".", parts);
+                    OnPropertyChanged(propertyName);
+                    OnPropertyChanged(nameof(IpAddress));
+                }
+                return Settings?.WiServer?.IpAddress ?? "0.0.0.0";
             }
         }
         return "0";
