@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="90" height="90">
+  <defs/>
+  <g id="Components" stroke="none" stroke-dasharray="none" fill-opacity="1" fill="none" stroke-opacity="1">
+    <title>Components</title>
+    <g id="Components_Crossing">
+      <title>Crossing</title>
+      <g id="Graphic_2729">
+        <rect x="33.75" y="0" width="22.5" height="90" fill="black"/>
+      </g>
+      <g id="Graphic_2727">
+        <rect x="39.375" y="61.171875" width="11.25" height="17.578125" fill="white"/>
+      </g>
+      <g id="Graphic_2733">
+        <rect x="0" y="33.75" width="90" height="22.5" fill="black"/>
+      </g>
+      <g id="Graphic_2731">
+        <rect x="11.25" y="39.375" width="16.875" height="11.25" fill="white"/>
+      </g>
+      <g id="Graphic_2728">
+        <rect x="39.375" y="11.25" width="11.25" height="16.875" fill="white"/>
+      </g>
+      <g id="Graphic_2740">
+        <rect x="61.875" y="39.375" width="16.875" height="11.25" fill="white"/>
+      </g>
+      <g id="Graphic_2741">
+        <rect x="39.375" y="39.375" width="11.25" height="11.25" fill="white"/>
+      </g>
+    </g>
+  </g>
+</svg>

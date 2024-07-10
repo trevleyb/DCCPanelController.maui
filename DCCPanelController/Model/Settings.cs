@@ -8,9 +8,11 @@ public partial class Settings : ObservableObject {
 
     [ObservableProperty] private bool _demoMode;
     [ObservableProperty] private WiServer _wiServer;
+    [ObservableProperty] private int _gridWidth  = 90;
+    [ObservableProperty] private int _gridHeight = 90;
     
     public Settings() {
-        var thisIp = DCCWiThrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
+        var thisIp = DCCWithrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
         _wiServer = new WiServer("WiThrottle", thisIp, 12090);
     }
 

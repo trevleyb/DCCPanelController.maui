@@ -28,7 +28,7 @@ public partial class Turnout : ObservableObject {
 
 [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
 [JsonSerializable(typeof(List<Turnout>))]
-internal sealed partial class TurnoutStateContext : JsonSerializerContext {
+internal sealed partial class TurnoutContext : JsonSerializerContext {
 }
 
 [JsonConverter(typeof(JsonStringEnumConverter<TurnoutStateEnum>))]

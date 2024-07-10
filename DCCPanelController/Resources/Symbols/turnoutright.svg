@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 90 90" width="90" height="90">
+  <defs/>
+  <g id="Components" stroke="none" stroke-dasharray="none" fill-opacity="1" fill="none" stroke-opacity="1">
+    <title>Components</title>
+    <g id="Components_TurnoutRight">
+      <title>TurnoutRight</title>
+      <g id="Group_2757">
+        <g id="Graphic_2759">
+          <path d="M 90 33.75 L 33.75 90 L 56.25 90 L 90 56.25 Z" fill="black"/>
+        </g>
+        <g id="Graphic_2758">
+          <path d="M 69.147524 57.897524 L 47.829584 79.215465 L 55.784535 87.17042 L 77.10248 65.852476 Z" fill="white"/>
+        </g>
+      </g>
+      <g id="Graphic_2692">
+        <rect x="0" y="33.75" width="90" height="22.5" fill="black"/>
+      </g>
+      <g id="Graphic_2690">
+        <rect x="5.625" y="39.375" width="33.75" height="11.25" fill="white"/>
+      </g>
+      <g id="Graphic_2689">
+        <rect x="50.625" y="39.375" width="33.75" height="11.25" fill="white"/>
+      </g>
+    </g>
+  </g>
+</svg>

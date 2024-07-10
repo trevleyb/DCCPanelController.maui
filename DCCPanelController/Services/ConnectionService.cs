@@ -2,20 +2,20 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
-using DCCWiThrottleClient.Client;
-using DCCWiThrottleClient.Client.Messages;
-using Route = DCCWiThrottleClient.Client.Route;
-using RouteStateEnum = DCCWiThrottleClient.Client.RouteStateEnum;
-using Turnout = DCCWiThrottleClient.Client.Turnout;
-using TurnoutStateEnum = DCCWiThrottleClient.Client.TurnoutStateEnum;
+using DCCWithrottleClient;
+using DCCWithrottleClient.Client;
+using DCCWithrottleClient.Client.Entities;
+using DCCWithrottleClient.Client.Messages;
+using Route = DCCPanelController.Model.Route;
+
 
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
     
-    private Turnouts _turnouts = new Turnouts();     // Turnouts Managed by the Client 
-    private Routes _routes = new Routes();         // Routes Managed by the Client
-    private Client _client;
+    private Turnouts _turnouts = new();     // Turnouts Managed by the Client 
+    private Routes _routes = new();         // Routes Managed by the Client
+    private Client? _client;
     private TurnoutsService? _turnoutsService;
     private RoutesService? _routesService;
     
@@ -53,10 +53,13 @@ public partial class ConnectionService : ObservableObject {
         _turnouts.EntityChangedEvent -= TurnoutsOnEntityChangedEvent;
         _routes.CollectionChanged    -= RoutesOnCollectionChanged;
         _routes.EntityChangedEvent   -= RoutesOnEntityChangedEvent;
-        _client.MessageProcessed     -= ClientOnMessageProcessed;
-        _client.ConnectionError      -= ClientOnConnectionError;
-        _client.DataReceived         -= ClientOnDataReceived;
-        _client.Disconnect();
+        if (_client != null) {
+            _client.MessageProcessed -= ClientOnMessageProcessed;
+            _client.ConnectionError -= ClientOnConnectionError;
+            _client.DataReceived -= ClientOnDataReceived;
+            _client.Disconnect();
+        }
+
         IsConnected = false;
     }
 
@@ -72,18 +75,18 @@ public partial class ConnectionService : ObservableObject {
         MessageProcessed?.Invoke(obj);
     }
 
-    public void SendTurnoutStateChangeCommand(string ID, Model.TurnoutStateEnum state) {
+    public void SendTurnoutStateChangeCommand(string id, Model.TurnoutStateEnum state) {
         // This should be finished and managed as message objects - TODO
         //PTATLT304
-        var message = $"PTA{(state == Model.TurnoutStateEnum.Closed ? "C" : "T")}{ID}";
-        _client.SendMessage(message);
+        var message = $"PTA{(state == Model.TurnoutStateEnum.Closed ? "C" : "T")}{id}";
+        _client?.SendMessage(message);
     }
 
-    public void SendRouteStateChangeCommand(string ID, Model.RouteStateEnum state) {
+    public void SendRouteStateChangeCommand(string id, Model.RouteStateEnum state) {
         // This should be finished and managed as message objects - TODO
         //PTATLT304
-        var message = $"PRA{(state == Model.RouteStateEnum.Active ? "2" : "4")}{ID}";
-        _client.SendMessage(message);
+        var message = $"PRA{(state == Model.RouteStateEnum.Active ? "2" : "4")}{id}";
+        _client?.SendMessage(message);
     }
     
     /// <summary>
@@ -95,7 +98,7 @@ public partial class ConnectionService : ObservableObject {
 
         if (e.NewItems != null) {
             foreach (var item in e.NewItems) {
-                if (item is Turnout { } turnout) {
+                if (item is DCCWithrottleClient.Client.Entities.Turnout { } turnout) {
                     switch (e.Action) {
                     case NotifyCollectionChangedAction.Add:
                         TurnoutsOnEntityChangedEvent(turnout);
@@ -114,25 +117,25 @@ public partial class ConnectionService : ObservableObject {
         }
     }
 
-    private void TurnoutsOnEntityChangedEvent(Turnout obj) {
+    private void TurnoutsOnEntityChangedEvent(DCCWithrottleClient.Client.Entities.Turnout obj) {
         var found = _turnoutsService?.GetTurnoutByIdAsync(obj.Name).Result;
         if (found == null) {
             _turnoutsService?.AddTurnoutAsync(new Model.Turnout() {
                 Id = obj.Name,
                 Name = obj.UserName,
                 State = obj.StateEnum switch {
-                    TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
-                    TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                    _                       => Model.TurnoutStateEnum.Unknown
+                    DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
+                    DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
+                    _                                                           => Model.TurnoutStateEnum.Unknown
                 }
             });
         } else { 
             found.Id = obj.Name;
             found.Name = obj.UserName;
             found.State = obj.StateEnum switch {
-                TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
-                TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                _ => Model.TurnoutStateEnum.Unknown,
+                DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
+                DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
+                _                                                           => Model.TurnoutStateEnum.Unknown,
             };
         }
     }
@@ -145,7 +148,7 @@ public partial class ConnectionService : ObservableObject {
     private void RoutesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         if (e.NewItems != null) {
             foreach (var item in e.NewItems) {
-                if (item is Route { } route) {
+                if (item is DCCWithrottleClient.Client.Entities.Route { } route) {
                     switch (e.Action) {
                     case NotifyCollectionChangedAction.Add:
                         RoutesOnEntityChangedEvent(route);
@@ -164,25 +167,25 @@ public partial class ConnectionService : ObservableObject {
         }
     }
 
-    private void RoutesOnEntityChangedEvent(Route obj) {
+    private void RoutesOnEntityChangedEvent(DCCWithrottleClient.Client.Entities.Route obj) {
         var found = _routesService?.GetRouteByIdAsync(obj.Name).Result;
         if (found == null) {
             _routesService?.AddRouteAsync(new Model.Route() {
                 Id = obj.Name,
                 Name = obj.UserName,
                 State = obj.StateEnum switch {
-                    RouteStateEnum.Active   => Model.RouteStateEnum.Active,
-                    RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
-                    _                       => Model.RouteStateEnum.Unknown
+                    DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
+                    DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
+                    _                                                           => Model.RouteStateEnum.Unknown
                 }
             });
         } else {
             found.Id = obj.Name;
             found.Name = obj.UserName;
             found.State = obj.StateEnum switch {
-                RouteStateEnum.Active   => Model.RouteStateEnum.Active,
-                RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
-                _                       => Model.RouteStateEnum.Unknown
+                DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
+                DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
+                _                                                           => Model.RouteStateEnum.Unknown
             };
         }
     }

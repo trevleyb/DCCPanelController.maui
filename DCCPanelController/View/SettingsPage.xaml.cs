@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
-using DCCWiThrottleClient.Client.Messages;
 
 namespace DCCPanelController.View;
 

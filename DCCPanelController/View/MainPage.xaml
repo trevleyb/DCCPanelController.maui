@@ -17,7 +17,7 @@
     
     <NavigationPage IconImageSource="panels_green.png" Title="Panels">
         <x:Arguments>
-            <view:PanelsPage />
+            <view:PanelEditor />
         </x:Arguments>
     </NavigationPage>
 

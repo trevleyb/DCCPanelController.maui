@@ -16,8 +16,8 @@ public partial class MainPage : TabbedPage
 		//var settingsViewModel = new SettingsViewModel(settings);
 		var settingsViewModel = App.ServiceProvider?.GetService<SettingsViewModel>();
 		if (settingsViewModel != null) {
-			await settingsViewModel.RefreshWiServersAsync();
-			await settingsViewModel.ConnectAsync();
+			//await settingsViewModel.RefreshWiServersAsync();
+			//await settingsViewModel.ConnectAsync();
 		}
 	}
 }

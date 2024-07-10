@@ -7,8 +7,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
-using DCCWiThrottleClient.Client.Messages;
-using DCCWiThrottleClient.Helpers;
+using DCCWithrottleClient;
+using DCCWithrottleClient.Client.Messages;
 
 namespace DCCPanelController.ViewModel;
 
@@ -156,7 +156,7 @@ public partial class SettingsViewModel : BaseViewModel {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
             ObservableCollection<WiServer> newList = [];
-            var servers = DCCWiThrottleClient.ServiceHelper.ServiceFinder.FindServices("withrottle",3000);
+            var servers = DCCWithrottleClient.ServiceHelper.ServiceFinder.FindServices("withrottle",3000);
             foreach (var server in servers) {
                 newList.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
             }

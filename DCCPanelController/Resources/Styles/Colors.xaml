@@ -11,7 +11,12 @@
     <Color x:Key="SecondaryDarkText">DarkGreen</Color>
     <Color x:Key="Tertiary">DarkKhaki</Color>
     <Color x:Key="PrimaryDisabled">#E1E1E1</Color>
-
+    
+    <Color x:Key="Red">Red</Color>
+    <Color x:Key="Yellow">Yellow</Color>
+    <Color x:Key="Green">Green</Color>
+    <Color x:Key="Blue">Blue</Color>
+    
     <Color x:Key="UnSelectedDark">#95FFFFFF</Color>
     <Color x:Key="UnSelectedLight">#95000000</Color>
 

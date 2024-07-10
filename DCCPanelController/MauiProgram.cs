@@ -15,26 +15,28 @@ public static class MauiProgram
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         }).UseMauiCommunityToolkit();
 
+        builder.Services.AddSingleton<SettingsService> ();
         builder.Services.AddSingleton<ConnectionService>();
         
         builder.Services.AddSingleton<PanelsPage>();
-        builder.Services.AddSingleton<PanelDetailsPage>();
-        builder.Services.AddSingleton<PanelTurnoutsPage>();
+        builder.Services.AddSingleton<PanelsViewModel>();
+        builder.Services.AddSingleton<RoutesService> ();
+        builder.Services.AddSingleton<TurnoutsService> ();
         
+        builder.Services.AddSingleton<PanelDetailsPage>();
         builder.Services.AddSingleton<PanelsDetailsViewModel>();
+
+        builder.Services.AddSingleton<PanelTurnoutsPage>();
         builder.Services.AddSingleton<PanelsTurnoutsViewModel>();
 
         builder.Services.AddSingleton<SettingsPage>();
-        builder.Services.AddSingleton<SettingsService> ();
         builder.Services.AddSingleton<SettingsViewModel> ();
 
         builder.Services.AddSingleton<RoutesPage>();
         builder.Services.AddSingleton<RoutesViewModel> ();
-        builder.Services.AddSingleton<RoutesService> ();
 
         builder.Services.AddSingleton<TurnoutsPage>();
         builder.Services.AddSingleton<TurnoutsViewModel> ();
-        builder.Services.AddSingleton<TurnoutsService> ();
         
 #if DEBUG
         builder.Logging.AddDebug();

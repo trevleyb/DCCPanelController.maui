@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     IconImageSource="panels_green.png"
@@ -15,110 +15,138 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        
+
         <Grid x:Name="MainGrid"
               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
                                           Dark={StaticResource DarkBackground}}">
-        
-                <CollectionView MinimumWidthRequest="250" ItemsSource="{Binding Panels}" SelectionMode="None" x:Name="PanelsCollectionView">
-                    <CollectionView.EmptyView>
-                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Panels were found. Please use + to add a new Panel." />
-                            </StackLayout>
-                        </Grid>
-                    </CollectionView.EmptyView>
-                    
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="1" />
-                    </CollectionView.ItemsLayout>
-                
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:Panel">
-                            <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelFrameGrid">
-                                <Border Style="{StaticResource CardView}">
-                                    <Border.GestureRecognizers>
-                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}" DragStartingCommandParameter="{Binding .}" />
-                                        <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}" DropCommandParameter="{Binding .}" />
-                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=GoToDetailsCommand}" CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <Grid Padding="0" MinimumHeightRequest="200">
-                                        <AbsoluteLayout>
-                                            <Image 
-                                                   HorizontalOptions="CenterAndExpand"
-                                                   VerticalOptions="CenterAndExpand"
-                                                   AbsoluteLayout.LayoutFlags="All"
-                                                   AbsoluteLayout.LayoutBounds="0,0,1,1" 
-                                                   Aspect="AspectFill"
-                                                   Source="{Binding Image}">
-                                                <Image.Triggers>
-                                                    <DataTrigger TargetType="Image" Binding="{Binding IsImageAvailable}" Value="False">
-                                                        <Setter Property="IsVisible" Value="False" />
-                                                    </DataTrigger>
-                                                </Image.Triggers>
-                                            </Image>
-                                            <Label Text="No Panel Image." 
-                                                   IsVisible="False"
-                                                   HorizontalOptions="CenterAndExpand"
-                                                   VerticalOptions="CenterAndExpand"
-                                                   AbsoluteLayout.LayoutFlags="All"
-                                                   AbsoluteLayout.LayoutBounds="0,0,1,1" >
-                                                <Label.Triggers>
-                                                    <DataTrigger TargetType="Label" Binding="{Binding IsImageAvailable}" Value="False">
-                                                        <Setter Property="IsVisible" Value="True" />
-                                                    </DataTrigger>
-                                                </Label.Triggers>
-                                            </Label>
-                                            
-                                            <BoxView
-                                                BackgroundColor="{StaticResource Primary}"
-                                                HeightRequest="2"
-                                                AbsoluteLayout.LayoutBounds="1,1,1,91"
-                                                AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
-                                            
-                                            <BoxView Color="{StaticResource PrimaryDisabled}"
-                                                     Background="{StaticResource PrimaryDisabled}"
-                                                     Opacity=".95"
-                                                     AbsoluteLayout.LayoutBounds="0.5,1,1,45"
-                                                     AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
-                                            <Label Style="{StaticResource MediumLabel}" 
-                                                   TextColor="{StaticResource Primary}" 
-                                                   FontAttributes="Bold"
-                                                   Padding="10"
-                                                   VerticalOptions="End"
-                                                   HorizontalOptions="Center"
-                                                   AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
-                                                   AbsoluteLayout.LayoutBounds="0.5,1,1,45"
-                                                   VerticalTextAlignment="Center"
-                                                   HorizontalTextAlignment="Center">
-                                                <MultiBinding StringFormat="{}{0}: {1}">
-                                                    <Binding Path="Id" />
-                                                    <Binding Path="Name" />
-                                                </MultiBinding>
-                                                </Label>
-                                            
-                                            <BoxView  
-                                                     Background="{StaticResource PrimaryDisabled}"
-                                                     Opacity="0.95"
-                                                     AbsoluteLayout.LayoutBounds="0,0,20,20"
-                                                     AbsoluteLayout.LayoutFlags="PositionProportional"/>
-                                            <Label Style="{StaticResource SmallLabel}" 
-                                                   TextColor="{StaticResource Black}" 
-                                                   Text = "{Binding SortOrder}"
-                                                   AbsoluteLayout.LayoutFlags="None"
-                                                   AbsoluteLayout.LayoutBounds="0,0,20,20"
-                                                   VerticalTextAlignment="Center"
-                                                   HorizontalTextAlignment="Center"/>
 
-                                            
-                                        </AbsoluteLayout>
-                                    </Grid>
-                                </Border>
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-        
+            <CollectionView MinimumWidthRequest="250" ItemsSource="{Binding Panels}" SelectionMode="None" x:Name="PanelsCollectionView">
+                <CollectionView.EmptyView>
+                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                            <Label Text="No Panels were found. Please use + to add a new Panel." />
+                        </StackLayout>
+                    </Grid>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="1" x:Name="PanelCardGridItemsLayout" />
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="model:Panel">
+
+                        <SwipeView x:Name="PanelCardSwipeView">
+                            <!-- RightItems are revealed when we swipe from right-to-left -->
+                            <!-- Add more SwipeItems to create more actions -->
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem IconImageSource="trash_solid.png"
+                                               Text="Delete"
+                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DeletePanelCommand}"
+                                               CommandParameter="{Binding .}"
+                                               BackgroundColor="Red" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
+                            <SwipeView.Content>
+
+                                <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard" HeightRequest="{Binding CardHeight}">
+                                    <Border Style="{StaticResource CardView}">
+                                        <Border.GestureRecognizers>
+                                            <DragGestureRecognizer
+                                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}"
+                                                DragStartingCommandParameter="{Binding .}" />
+                                            <DropGestureRecognizer
+                                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}"
+                                                DropCommandParameter="{Binding .}" />
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=GoToDetailsCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <Grid Padding="0">
+                                            <AbsoluteLayout>
+                                                <Image
+                                                    HorizontalOptions="CenterAndExpand"
+                                                    VerticalOptions="CenterAndExpand"
+                                                    AbsoluteLayout.LayoutFlags="All"
+                                                    AbsoluteLayout.LayoutBounds="0,0,1,1"
+                                                    Aspect="AspectFill"
+                                                    Source="{Binding Image}">
+                                                    <Image.Triggers>
+                                                        <DataTrigger TargetType="Image"
+                                                                     Binding="{Binding IsImageAvailable}" Value="False">
+                                                            <Setter Property="IsVisible" Value="False" />
+                                                        </DataTrigger>
+                                                    </Image.Triggers>
+                                                </Image>
+                                                <Label Text="No Panel Image."
+                                                       IsVisible="False"
+                                                       HorizontalOptions="CenterAndExpand"
+                                                       VerticalOptions="CenterAndExpand"
+                                                       AbsoluteLayout.LayoutFlags="All"
+                                                       AbsoluteLayout.LayoutBounds="0,0,1,1">
+                                                    <Label.Triggers>
+                                                        <DataTrigger TargetType="Label"
+                                                                     Binding="{Binding IsImageAvailable}" Value="False">
+                                                            <Setter Property="IsVisible" Value="True" />
+                                                        </DataTrigger>
+                                                    </Label.Triggers>
+                                                </Label>
+
+                                                <BoxView
+                                                    BackgroundColor="{StaticResource Primary}"
+                                                    HeightRequest="2"
+                                                    AbsoluteLayout.LayoutBounds="1,1,1,91"
+                                                    AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
+
+                                                <BoxView Color="{StaticResource PrimaryDisabled}"
+                                                         Background="{StaticResource PrimaryDisabled}"
+                                                         Opacity=".95"
+                                                         AbsoluteLayout.LayoutBounds="0.5,1,1,45"
+                                                         AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
+                                                <Label Style="{StaticResource MediumLabel}"
+                                                       TextColor="{StaticResource Primary}"
+                                                       FontAttributes="Bold"
+                                                       Padding="10"
+                                                       VerticalOptions="End"
+                                                       HorizontalOptions="Center"
+                                                       AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
+                                                       AbsoluteLayout.LayoutBounds="0.5,1,1,45"
+                                                       VerticalTextAlignment="Center"
+                                                       HorizontalTextAlignment="Center">
+                                                    <MultiBinding StringFormat="{}{0}: {1} ({2} x {3})">
+                                                        <Binding Path="Id" />
+                                                        <Binding Path="Name" />
+                                                        <Binding Path="OriginalImageWidth" />
+                                                        <Binding Path="OriginalImageHeight" />
+                                                    </MultiBinding>
+                                                </Label>
+
+                                                <BoxView
+                                                    Background="{StaticResource PrimaryDisabled}"
+                                                    Opacity="0.95"
+                                                    AbsoluteLayout.LayoutBounds="0,0,30,30"
+                                                    AbsoluteLayout.LayoutFlags="PositionProportional" />
+                                                <Label Style="{StaticResource MediumLabel}"
+                                                       TextColor="{StaticResource Black}"
+                                                       Text="{Binding SortOrder}"
+                                                       AbsoluteLayout.LayoutFlags="None"
+                                                       AbsoluteLayout.LayoutBounds="0,0,30,30"
+                                                       VerticalTextAlignment="Center"
+                                                       HorizontalTextAlignment="Center" />
+
+
+                                            </AbsoluteLayout>
+                                        </Grid>
+                                    </Border>
+                                </Grid>
+                            </SwipeView.Content>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
             <ActivityIndicator
                 Color="{StaticResource Primary}"
                 Grid.ColumnSpan="2"
@@ -126,7 +154,7 @@
                 HorizontalOptions="Fill"
                 IsRunning="{Binding IsBusy}"
                 IsVisible="{Binding IsBusy}"
-                VerticalOptions="Center" />    
+                VerticalOptions="Center" />
         </Grid>
     </ContentPage.Content>
 </ContentPage>
