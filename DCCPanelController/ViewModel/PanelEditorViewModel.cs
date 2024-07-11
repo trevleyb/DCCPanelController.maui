@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
@@ -14,20 +15,28 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public readonly int MaxColumns = 24;
     public readonly int MaxRows = 18;
 
+    [NotifyPropertyChangedFor(nameof(IsPropertyAllowed))]
     [NotifyPropertyChangedFor(nameof(IsTrackSelected))]
+    [ObservableProperty] private ObservableCollection<ITrackViewModel> _selectedTracks;
     [ObservableProperty] private ITrackViewModel? _selectedTrack;
     [ObservableProperty] private SymbolViewModel? _selectedSymbol;
     [ObservableProperty] private ObservableCollection<SymbolViewModel> _symbols;
     [ObservableProperty] private ObservableCollection<ITrackViewModel> _tracks;
+    
     [ObservableProperty] private string _lastCoordinate = string.Empty;
     [ObservableProperty] private TrackActionEnum _trackAction = TrackActionEnum.None;
-
-    public bool IsTrackSelected => (SelectedTrack is not null);
+    
+    [ObservableProperty] private bool _isPropertyAllowed = false;
+    [ObservableProperty] private bool _multiSelectMode = false;
+    [ObservableProperty] private bool _isTrackSelected = false;
+    [ObservableProperty] private bool _isDropZoneOccupied = false;
+    
     public GridHelper? GridHelper = null;
 
     public PanelEditorViewModel() {
         Symbols = BuildSymbolsList();
         Tracks = new ObservableCollection<ITrackViewModel>();
+        SelectedTracks = new ObservableCollection<ITrackViewModel>();
     }
 
     /// <summary>
@@ -53,14 +62,25 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// Rotate, Delete and Properties
     /// </summary>
     public void SetSelectedTrack(ITrackViewModel? trackView) {
-        if (trackView != SelectedTrack && trackView is not null) {
-            if (SelectedTrack is not null) SelectedTrack.IsSelected = false;
-            SelectedTrack = trackView;
-            SelectedTrack.IsSelected = true;
-        } else {
-            if (SelectedTrack is not null) SelectedTrack.IsSelected = false;
-            SelectedTrack = null;
+        if (trackView != null) {
+            if (SelectedTracks.Contains(trackView)) {
+                trackView.IsSelected = false;
+                SelectedTracks.Remove(trackView);
+            } else {
+                if (!MultiSelectMode) ClearSelectedTracks();
+                trackView.IsSelected = true;
+                SelectedTracks.Add(trackView);
+            }
+            IsTrackSelected   = SelectedTracks.Any();
+            IsPropertyAllowed = SelectedTracks.Count == 1;
         }
+    }
+
+    public void ClearSelectedTracks() {
+        foreach (var track in SelectedTracks) track.IsSelected = false;
+        SelectedTracks.Clear();
+        IsPropertyAllowed = false;
+        IsTrackSelected   = false;
     }
     
     /// <summary>
@@ -81,48 +101,73 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// <returns>The X and Y locations</returns>
     public GridData SetLastCoordinates(int posX, int posY) {
         LastCoordinate = GridHelper?.GetGridReference(posX, posY) ?? "";
+        IsDropZoneOccupied = IsCoordinatesOccupied(LastCoordinate);    
         return GridHelper?.GetGridCoordinates(LastCoordinate) ?? GridData.Error();
+    }
+
+    public bool IsCoordinatesOccupied(int posX, int posY) {
+        var gridRef = GridHelper?.GetGridReference(posX, posY) ?? "";
+        return IsCoordinatesOccupied(gridRef);
+    }
+    
+    public bool IsCoordinatesOccupied(string gridRef) {
+        return Tracks.Any(x => x.Track.Coordinate.Equals(gridRef));
     }
 
     [RelayCommand]
     public async Task RotateSelectedTrack() {
-        if (SelectedTrack is not null) {
-            SelectedTrack.Track.Rotation += 90;
-            if (SelectedTrack.Track.Rotation > 360) SelectedTrack.Track.Rotation = 0;
+        foreach (var track in SelectedTracks) {
+            track.Track.Rotation += 90;
+            if (track.Track.Rotation >= 360) track.Track.Rotation = 0;
         }
     }
 
     [RelayCommand]
     public async Task DeleteSelectedTrack() {
-        if (SelectedTrack is not null) {
-            if (!Tracks.Remove(SelectedTrack)) {
-                Debug.WriteLine("Could not find or remove item:" + SelectedTrack.Track.Coordinate);
-            }
-            TrackAction = TrackActionEnum.None;
-            SelectedTrack = null;
+        var deleteTracks = SelectedTracks.ToList();
+        foreach (var track in deleteTracks) {
+            Tracks.Remove(track);
         }
+        IsTrackSelected  = false;
+        IsPropertyAllowed = false;
+        TrackAction = TrackActionEnum.None;
     }
 
     [RelayCommand]
+    public async Task PropertiesSelectedTrack() {
+    }
+
+    
+    [RelayCommand]
     public async Task TrackDragAsync(TrackView track) {
         TrackAction = TrackActionEnum.MovingInGrid;
-        if (SelectedTrack != null) SelectedTrack.IsSelected = false;
         SelectedTrack = track.ViewModel;
-        SelectedTrack.IsSelected = true;
     }
     
     [RelayCommand]
-    public async Task DragSymbolAsync(SymbolViewModel symbol) {
+    public async Task SymbolDragAsync(SymbolViewModel symbol) {
         TrackAction = TrackActionEnum.AddingFromToolbox;
         SelectedSymbol = symbol;
     }
 
     [RelayCommand]
+    public async Task ToggleMultiSelectAsync() {
+        MultiSelectMode = !MultiSelectMode;
+        if (!MultiSelectMode) {
+            ClearSelectedTracks();
+            IsTrackSelected   = false;
+            IsPropertyAllowed = false;
+        }
+    } 
+    
+    [RelayCommand]
     public async Task DropAsync(object obj) {
+
+        if (IsCoordinatesOccupied(LastCoordinate)) return;
+        
         // Add a track from the toolbox to the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.AddingFromToolbox && SelectedSymbol is not null) {
-            if (SelectedTrack is not null) SelectedTrack.IsSelected = false;
            
             var viewModel = TrackViewModelFactory.GetViewModel(SelectedSymbol.TrackType);
             viewModel.Track = new TrackPiece() {
@@ -134,8 +179,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
             if (gridData is { IsOk: true } gd) {
                 viewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
                 Tracks.Add(viewModel);
-                SelectedTrack = viewModel;
-                SelectedTrack.IsSelected = true;
             }
             TrackAction = TrackActionEnum.None;
         }
@@ -143,17 +186,15 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Move an item on the Main Grid to another location on the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.MovingInGrid && SelectedTrack is not null) {
-            var selectedTrack = SelectedTrack;
-            await DeleteSelectedTrack();
+            Tracks.Remove(SelectedTrack);
 
             // Update the new Coordinates (Last Coordinate should be set by the Dragging)
             // --------------------------------------------------------------------------
-            selectedTrack.Track.Coordinate = LastCoordinate;
+            SelectedTrack.Track.Coordinate = LastCoordinate;
             var gridData = GridHelper?.GetGridCoordinates(LastCoordinate);
             if (gridData is { IsOk: true } gd) {
-                selectedTrack.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
-                Tracks.Add(selectedTrack);
-                SelectedTrack = selectedTrack;
+                SelectedTrack.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
+                Tracks.Add(SelectedTrack);
                 SelectedTrack.IsSelected = false;
             }
             TrackAction = TrackActionEnum.None;

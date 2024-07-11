@@ -11,7 +11,8 @@
     <Color x:Key="SecondaryDarkText">DarkGreen</Color>
     <Color x:Key="Tertiary">DarkKhaki</Color>
     <Color x:Key="PrimaryDisabled">#E1E1E1</Color>
-    
+
+    <Color x:Key="Transparent">Transparent</Color>
     <Color x:Key="Red">Red</Color>
     <Color x:Key="Yellow">Yellow</Color>
     <Color x:Key="Green">Green</Color>

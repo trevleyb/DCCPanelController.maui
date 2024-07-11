@@ -1,4 +1,5 @@
 using System.Collections.Specialized;
+using DCCPanelController.Symbols;
 using DCCPanelController.Symbols.Tracks;
 using DCCPanelController.Symbols.TrackViewModels;
 using DCCPanelController.ViewModel;
@@ -9,7 +10,7 @@ namespace DCCPanelController.View;
 public partial class PanelEditor : ContentPage {
 
     private readonly PanelEditorViewModel _viewModel;
-    private Border? _dropZoneView;
+    private DropZone? _dropZone;
     private int _lastX;
     private int _lastY;
 
@@ -17,14 +18,19 @@ public partial class PanelEditor : ContentPage {
         InitializeComponent();
         _viewModel = new PanelEditorViewModel();
         _viewModel.Tracks.CollectionChanged += TracksOnCollectionChanged;
-        PanelEditorViewPane.SizeChanged += PanelEditorContainerSizeChanged;
+        PanelEditorContainer.SizeChanged += PanelEditorContainerSizeChanged;
         BindingContext = _viewModel;
     }
-
+    
     private void PanelEditorContainerSizeChanged(object? sender, EventArgs e) {
-        if (sender is AbsoluteLayout layout) {
-            // Set the Panel View Bounds in the View Model
+        if (sender is AbsoluteLayout layout && sender == PanelEditorContainer) {
             _viewModel.SetPanelEditorBounds((int)layout.Width, (int)layout.Height);
+            // Set the inner Absolute View Pane to be in the middle of the Container
+            if (_viewModel is { GridHelper: { } grid }) {
+                var rect = new Rect(grid.XMargin, grid.YMargin, grid.PanelWidth, grid.PanelHeight);
+                PanelEditorContainer.SetLayoutBounds(PanelEditorViewPane, rect);
+                PanelEditorContainer.SetLayoutFlags(PanelEditorViewPane,AbsoluteLayoutFlags.None);
+            }
         }
     }
 
@@ -49,14 +55,13 @@ public partial class PanelEditor : ContentPage {
                     var tapGestureRecognizer = new TapGestureRecognizer();
                     tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
                     track.GestureRecognizers.Add(tapGestureRecognizer);
-                    
+
                     var dragGestureRecognizer = new DragGestureRecognizer {
                         DragStartingCommand = ((PanelEditorViewModel)this.BindingContext).TrackDragCommand,
                         DragStartingCommandParameter = track
                     };
 
                     track.GestureRecognizers.Add(dragGestureRecognizer);
-                    
                     PanelEditorViewPane.Children.Add(track);
                 }
             }
@@ -82,6 +87,7 @@ public partial class PanelEditor : ContentPage {
     private void TapGestureRecognizerOnTapped(object? sender, TappedEventArgs e) {
         switch (sender) {
         case TrackView trackView:
+            Console.WriteLine(e.Buttons.ToString());
             _viewModel.SetSelectedTrack(trackView.ViewModel);
             break;
         case AbsoluteLayout layout when layout == PanelEditorViewPane:
@@ -95,6 +101,19 @@ public partial class PanelEditor : ContentPage {
             _viewModel.SetSelectedTrack(null);
         }
     }
+    
+    private void Symbol_OnDragStarting(object? sender, DragStartingEventArgs e) {
+        //if (sender is DragGestureRecognizer { Parent: SymbolView symbolView }) {
+        //    symbolView.Scale = 0.5;
+        //}
+    }
+    
+    private void Symbol_OnDragFinished(object? sender, DropCompletedEventArgs e) {
+        //if (sender is DragGestureRecognizer { Parent: SymbolView symbolView }) {
+        //    symbolView.Scale = 1.0;
+        //}
+    }
+
 
     private void DropGestureRecognizer_OnDragOver(object? sender, DragEventArgs e) {
         var pos = e.GetPosition(PanelEditorViewPane);
@@ -103,7 +122,7 @@ public partial class PanelEditor : ContentPage {
             // ---------------------------------------------------------------------------------------
             var loc = _viewModel.SetLastCoordinates((int)pos.Value.X, (int)pos.Value.Y);
             if (loc is { XOffset: > -1, YOffset: > -1 }) {
-                DrawDropZone(loc.XOffset, loc.YOffset);
+                CheckDropZone(loc.XOffset, loc.YOffset, loc.BoxSize);
                 return;
             }
         }
@@ -111,13 +130,18 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void DropGestureRecognizer_OnDragLeave(object? sender, DragEventArgs e) {
-        if (_dropZoneView is not null) {
+        var pos = e.GetPosition(PanelEditorViewPane);
+        if (pos.HasValue && _viewModel.GridHelper != null && 
+            (pos.Value.X < 0 || pos.Value.Y < 0 || 
+             pos.Value.X > _viewModel.GridHelper.ViewWidth || 
+             pos.Value.Y > _viewModel.GridHelper.ViewHeight) 
+            && _dropZone is not null) {
             RemoveDropZone();
-        }
+        } 
     }
 
     private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
-        if (_dropZoneView is not null) {
+        if (_dropZone is not null) {
             RemoveDropZone();
         }
     }
@@ -125,35 +149,45 @@ public partial class PanelEditor : ContentPage {
     #region Manage the Drop Zone Box that is used for Drag/Drop Operations
     
     private void RemoveDropZone() {
-        PanelEditorViewPane.Children.Remove(_dropZoneView);
-        _dropZoneView = null;
+        PanelEditorViewPane.Children.Remove(_dropZone);
+        _dropZone = null;
     }
 
-    private void DrawDropZone(int x, int y) {
-        var loc = _viewModel.SetLastCoordinates(x, y);
-        if (loc is { XOffset: > -1, YOffset: > -1 }) {
-            if (loc.XCenter != _lastX || loc.YCenter != _lastY) {
-                _lastX = loc.XOffset;
-                _lastY = loc.YOffset;
-                SetDropZoneView(_lastX, _lastY, loc.BoxSize, loc.BoxSize);
-            }
+    private void CheckDropZone(int x, int y, int boxSize) {
+        if (x != _lastX || y != _lastY) {
+            DrawDropZone(x, y, boxSize);
         }
     }
     
-    private void SetDropZoneView(int x, int y, int width, int height) {
-        if (_dropZoneView is null) {
-            _dropZoneView = new Border( );
-            if (Application.Current != null && Application.Current.Resources.TryGetValue("CardView", out var cardViewStyle)) _dropZoneView.Style = (Style) cardViewStyle;
-            PanelEditorViewPane.Children.Add(_dropZoneView);
+    private void DrawDropZone(int x, int y, int boxSize) {
+        if (_dropZone is null) {
+            Console.WriteLine("Creating Drop Zone");
+            _dropZone = new DropZone(_viewModel);
+            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(x, y, boxSize, boxSize)); // X=50, Y=100, Width=200, Height=200
+            PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
+            PanelEditorViewPane.Children.Add(_dropZone);
+        } else {
+            Console.WriteLine("Updating Drop Zone");
+            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(x, y, boxSize, boxSize)); // X=50, Y=100, Width=200, Height=200
+            PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
         }
+        _lastX = x;
+        _lastY = y;
+    }
+    #endregion
 
-        var xWidth   = width + 10;   // Adding some bounds AROUND the drag object
-        var yHeight  = height + 10; // Adding some bounds AROUND the drag object
-        var xPos = x - (xWidth / 2);
-        var yPos = y - (yHeight / 2);
-        
-        PanelEditorViewPane.SetLayoutBounds(_dropZoneView, new Rect(xPos, yPos, xWidth, yHeight)); // X=50, Y=100, Width=200, Height=200
-        PanelEditorViewPane.SetLayoutFlags(_dropZoneView, AbsoluteLayoutFlags.None);               // None means the Rectangle properties are absolute values
+    #region Manage the buttons on the toolbar if needed
+    private void MultiSelectToolbarItem_OnClicked(object? sender, EventArgs e) {
+        MultiSelectToolbarItem.IconImageSource = _viewModel.MultiSelectMode ? "xmark_circle.png" : "check_circle.png";
+    }
+
+    private void PropertiesToolbarItem_OnClicked(object? sender, EventArgs e) {
+    }
+
+    private void DeleteTrackToolbarItem_OnClicked(object? sender, EventArgs e) {
+    }
+
+    private void RotateTrackToolbarItem_OnClicked(object? sender, EventArgs e) {
     }
     #endregion
 }

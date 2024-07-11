@@ -5,17 +5,34 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
     public GridHelper(double viewWidth, double viewHeight, int? panelCols = 24, int? panelRows = 18) 
         : this ((int)viewWidth, (int)viewHeight, panelCols, panelRows) {}
 
+    /// <summary>
+    /// View width and height are the width and height of the original View Panel
+    /// </summary>
     public int ViewWidth    { get; init; } = viewWidth;
     public int ViewHeight   { get; init; } = viewHeight;
+
+    /// <summary>
+    /// Panel Cols and Rows are the number of Rows and Cols that we have on our view pane 
+    /// </summary>
     public int PanelCols    { get; init; } = panelCols ?? 24;
     public int PanelRows    { get; init; } = panelRows ?? 18;
-
-    public int BoxSize     => (Math.Min(ViewWidth / PanelCols, ViewHeight / PanelRows) / 2) * 2; 
+    
+    /// <summary>
+    /// Panel width and height are the total size of the viewable area excluding any margins
+    /// </summary>
     public int PanelWidth  => BoxSize * PanelCols;
     public int PanelHeight => BoxSize * PanelRows;
     
-    public int HorizontalMargin => (ViewWidth - PanelWidth) / 2;
-    public int VerticalMargin   => (ViewHeight - PanelHeight) / 2;
+    /// <summary>
+    /// Margins are the left and top margins that allo us to center the view pane in the window 
+    /// </summary>
+    public int XMargin  => (ViewWidth - PanelWidth) / 2;
+    public int YMargin  => (ViewHeight - PanelHeight) / 2;
+
+    /// <summary>
+    /// Box size is the size of the box so that it is always a square height/width box
+    /// </summary>
+    public int BoxSize     => (Math.Min(ViewWidth / PanelCols, ViewHeight / PanelRows) / 2) * 2; 
     
     // Helper function: Converts a grid reference (x,y) into a Grid Reference 'Xnn' and 
     // then uses that to return the center point of the location. 
@@ -32,11 +49,11 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
         var coordinates = ConvertGridReferenceToCoordinates(gridReference);
 
         // Calculate the center coordinates of the specified cell
-        var topLeftX = HorizontalMargin + (coordinates.col * BoxSize);
-        var topLeftY = VerticalMargin + (coordinates.row * BoxSize);
+        var topLeftX = coordinates.col * BoxSize;
+        var topLeftY = coordinates.row * BoxSize;
         var centerX  = topLeftX + (BoxSize / 2);
         var centerY  = topLeftY + (BoxSize / 2);
-        return new GridData(topLeftX, topLeftY, centerX, centerY, BoxSize); 
+        return new GridData(topLeftX, topLeftY, centerX, centerY, XMargin, YMargin, BoxSize); 
     }
 
     /// <summary>
@@ -48,12 +65,9 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
 
         if (PanelWidth == 0 || PanelHeight == 0) return string.Empty;
         
-        // Calculate the column and row indices
-        // Example: Width is 105, Box is 10, x position = 45
-        var colIndex = (x-HorizontalMargin) / BoxSize; 
-        var rowIndex = (y-VerticalMargin)   / BoxSize;
+        var colIndex = x / BoxSize; 
+        var rowIndex = y / BoxSize;
 
-        // Ensure indices are within bounds
         if (colIndex <= 0) colIndex = 0;
         if (colIndex >= PanelCols) colIndex = PanelCols - 1;
         if (rowIndex <= 0) rowIndex = 0;

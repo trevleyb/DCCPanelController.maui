@@ -10,7 +10,12 @@
     
     <ContentView.Content>
         <Border HeightRequest="50" WidthRequest="50"
-            Style="{StaticResource CardView}" Margin="5,5,5,5" Padding="5,5,5,5">
+                Style="{StaticResource CardView}"
+                BackgroundColor="{StaticResource Transparent}"
+                Margin="5,5,5,5" Padding="5,5,5,5">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="10,10,10,10"/>
+            </Border.StrokeShape>
             <Image Source="{Binding Image}"
                    HorizontalOptions="CenterAndExpand"
                    VerticalOptions="CenterAndExpand"/>

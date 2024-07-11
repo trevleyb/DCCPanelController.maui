@@ -21,6 +21,14 @@
         </Setter>
     </Style>
 
+    <Style TargetType="Border" x:Key="DropZoneFree" BasedOn="{StaticResource CardView}"/>
+    <Style TargetType="Border" x:Key="DropZoneOccupied" BasedOn="{StaticResource CardView}">
+        <Setter Property="Stroke" Value="{StaticResource Red}" />
+        <Setter Property="StrokeThickness" Value="5" />
+        <Setter Property="StrokeShape">
+            <RoundRectangle CornerRadius="0,0,0,0"/>
+        </Setter>
+    </Style>
     
     <Style TargetType="Element" x:Key="BaseStyle">
         <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />

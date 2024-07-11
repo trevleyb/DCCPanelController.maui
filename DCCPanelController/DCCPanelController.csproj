@@ -95,6 +95,12 @@
       <MauiXaml Update="View\InstructionsPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="View\PanelEditor.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Symbols\TrackView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -112,6 +118,14 @@
       </Compile>
       <Compile Update="View\InstructionsPage.xaml.cs">
         <DependentUpon>InstructionsPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\PanelEditor.xaml.cs">
+        <DependentUpon>PanelEditorBackup.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Symbols\TrackView.xaml.cs">
+        <DependentUpon>TrackView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

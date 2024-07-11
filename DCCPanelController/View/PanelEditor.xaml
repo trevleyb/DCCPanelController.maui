@@ -13,45 +13,52 @@
     xmlns:symbols="clr-namespace:DCCPanelController.Symbols">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding DeleteSelectedTrackCommand}" IconImageSource="trash_solid.png"
-                     IsEnabled="{Binding IsTrackSelected}" />
-        <ToolbarItem Command="{Binding RotateSelectedTrackCommand}" IconImageSource="crop_rotate_br.png"
-                     IsEnabled="{Binding IsTrackSelected}" />
+        <ToolbarItem x:Name="MultiSelectToolbarItem" Clicked="MultiSelectToolbarItem_OnClicked"  Command="{Binding ToggleMultiSelectCommand}" IconImageSource="check_circle.png" IsEnabled="{Binding IsTrackSelected}" />
+        <ToolbarItem x:Name="PropertiesToolbarItem"  Clicked="PropertiesToolbarItem_OnClicked"   Command="{Binding PropertiesSelectedTrackCommand}" IconImageSource="edit.png" IsEnabled="{Binding IsPropertyAllowed}" />
+        <ToolbarItem x:Name="DeleteTrackToolbarItem" Clicked="DeleteTrackToolbarItem_OnClicked"  Command="{Binding DeleteSelectedTrackCommand}" IconImageSource="trash_solid.png" IsEnabled="{Binding IsTrackSelected}" />
+        <ToolbarItem x:Name="RotateTrackToolbarItem" Clicked="RotateTrackToolbarItem_OnClicked"  Command="{Binding RotateSelectedTrackCommand}" IconImageSource="crop_rotate_br.png" IsEnabled="{Binding IsTrackSelected}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid x:Name="EditorContainer" ColumnDefinitions="*,10,auto">
-            <AbsoluteLayout x:Name="PanelEditorViewPane"
-                            BackgroundColor="{StaticResource PrimaryDisabled}">
+        <Grid x:Name="EditorContainer" ColumnDefinitions="*,5,auto">
+            <AbsoluteLayout x:Name="PanelEditorContainer" BackgroundColor="{StaticResource Gray100}">
+                    <AbsoluteLayout x:Name="PanelEditorViewPane" BackgroundColor="{StaticResource White}">
+                        <AbsoluteLayout.GestureRecognizers>
+                            <DropGestureRecognizer
+                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=DropCommand}"
+                                DropCommandParameter="{Binding .}"
+                                DragLeave="DropGestureRecognizer_OnDragLeave"
+                                Drop="DropGestureRecognizer_OnDrop" />
+                            <DropGestureRecognizer DragOver="DropGestureRecognizer_OnDragOver" />
+                            <TapGestureRecognizer Tapped="TapGestureRecognizerBlankEditor" />
+                        </AbsoluteLayout.GestureRecognizers>
+                    </AbsoluteLayout>
                 <AbsoluteLayout.GestureRecognizers>
-                    <DropGestureRecognizer
-                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=DropCommand}"
-                        DropCommandParameter="{Binding .}"
-                        DragLeave="DropGestureRecognizer_OnDragLeave"
-                        Drop="DropGestureRecognizer_OnDrop" />
-                    <DropGestureRecognizer DragOver="DropGestureRecognizer_OnDragOver" />
                     <TapGestureRecognizer Tapped="TapGestureRecognizerBlankEditor" />
                 </AbsoluteLayout.GestureRecognizers>
             </AbsoluteLayout>
 
-            <Grid x:Name="LineBreak" Grid.Column="1">
+            <Grid Grid.Column="1">
                 <BoxView BackgroundColor="{StaticResource Primary}"
                          WidthRequest="5"
                          VerticalOptions="FillAndExpand" />
             </Grid>
 
-            <Grid Grid.Column="2" WidthRequest="60"
+            <Grid Grid.Column="2" 
+                    WidthRequest="60"
                   BackgroundColor="{StaticResource CardBackground}"
                   IsEnabled="{Binding IsNotBusy}">
                 <CollectionView ItemsSource="{Binding Symbols}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="symbols:SymbolViewModel">
-                            <StackLayout> 
+                            <StackLayout>
                                 <symbols:SymbolView>
 
                                     <symbols:SymbolView.GestureRecognizers>
                                         <DragGestureRecognizer
-                                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=DragSymbolCommand}"
+                                            DragStarting="Symbol_OnDragStarting"
+                                            DropCompleted="Symbol_OnDragFinished"
+                                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"
                                             DragStartingCommandParameter="{Binding .}" />
                                     </symbols:SymbolView.GestureRecognizers>
 
@@ -64,25 +71,3 @@
         </Grid>
     </ContentPage.Content>
 </ContentPage>
-
-
-<!-- 
-                                        <Image Grid.Row="0" Source="{Binding Image}"
-                                               Margin="0,10,0,0"
-                                               HorizontalOptions="Center"
-                                               VerticalOptions="Center">
-                                            <Image.GestureRecognizers>
-                                                <DragGestureRecognizer
-                                                    DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=DragSymbolCommand}"
-                                                    DragStartingCommandParameter="{Binding .}"
-                                                    DragStarting="DragGestureRecognizer_OnDragStarting" />
-                                            </Image.GestureRecognizers>
-                                        </Image>
-                                        <Label Grid.Row="1" Text="{Binding Name}"
-                                               LineBreakMode="WordWrap"
-                                               Margin="0,0,0,10"
-                                               HorizontalOptions="CenterAndExpand"
-                                               VerticalOptions="End" TextColor="{StaticResource Primary}"
-                                               Style="{StaticResource SmallLabel}" />
-
--->
