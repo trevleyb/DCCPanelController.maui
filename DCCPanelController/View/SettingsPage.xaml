@@ -21,8 +21,8 @@
     </ContentPage.Resources>
     
     <ContentPage.ToolbarItems>
-        <ToolbarItem Clicked="About_OnClicked" IconImageSource="info_circle.png" />
-        <ToolbarItem Clicked="Instructions_OnClicked" IconImageSource="help_circle.png" />
+        <ToolbarItem Clicked="About_OnClicked" IconImageSource="help.png" />
+        <ToolbarItem Clicked="Instructions_OnClicked" IconImageSource="information.png" />
     </ContentPage.ToolbarItems>
     
         <Grid RowDefinitions="220,160,*">

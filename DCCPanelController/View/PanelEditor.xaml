@@ -13,10 +13,10 @@
     xmlns:symbols="clr-namespace:DCCPanelController.Symbols">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="MultiSelectToolbarItem" Clicked="MultiSelectToolbarItem_OnClicked"  Command="{Binding ToggleMultiSelectCommand}" IconImageSource="check_circle.png" IsEnabled="{Binding IsTrackSelected}" />
+        <ToolbarItem x:Name="MultiSelectToolbarItem" Clicked="MultiSelectToolbarItem_OnClicked"  Command="{Binding ToggleMultiSelectCommand}" IconImageSource="select.png" IsEnabled="{Binding IsTrackSelected}" />
         <ToolbarItem x:Name="PropertiesToolbarItem"  Clicked="PropertiesToolbarItem_OnClicked"   Command="{Binding PropertiesSelectedTrackCommand}" IconImageSource="edit.png" IsEnabled="{Binding IsPropertyAllowed}" />
-        <ToolbarItem x:Name="DeleteTrackToolbarItem" Clicked="DeleteTrackToolbarItem_OnClicked"  Command="{Binding DeleteSelectedTrackCommand}" IconImageSource="trash_solid.png" IsEnabled="{Binding IsTrackSelected}" />
-        <ToolbarItem x:Name="RotateTrackToolbarItem" Clicked="RotateTrackToolbarItem_OnClicked"  Command="{Binding RotateSelectedTrackCommand}" IconImageSource="crop_rotate_br.png" IsEnabled="{Binding IsTrackSelected}" />
+        <ToolbarItem x:Name="DeleteTrackToolbarItem" Clicked="DeleteTrackToolbarItem_OnClicked"  Command="{Binding DeleteSelectedTrackCommand}" IconImageSource="trash.png" IsEnabled="{Binding IsTrackSelected}" />
+        <ToolbarItem x:Name="RotateTrackToolbarItem" Clicked="RotateTrackToolbarItem_OnClicked"  Command="{Binding RotateSelectedTrackCommand}" IconImageSource="rotate180d.png" IsEnabled="{Binding IsTrackSelected}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -45,10 +45,15 @@
             </Grid>
 
             <Grid Grid.Column="2" 
-                    WidthRequest="60"
+                  RowDefinitions="auto,*,80"
+                  WidthRequest="60"
                   BackgroundColor="{StaticResource CardBackground}"
                   IsEnabled="{Binding IsNotBusy}">
-                <CollectionView ItemsSource="{Binding Symbols}">
+                <StackLayout Grid.Row="0" HorizontalOptions="Fill" BackgroundColor="{StaticResource Primary}">
+                    <Label Text="Tracks" HorizontalOptions="Center"  TextColor="{StaticResource White}"/>
+                    <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="FillAndExpand" />
+                </StackLayout>
+                <CollectionView Grid.Row="1" ItemsSource="{Binding Symbols}">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="symbols:SymbolViewModel">
                             <StackLayout>
@@ -67,6 +72,10 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+                <StackLayout Grid.Row="2">
+                    <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="FillAndExpand" />                    <Label Text="Cols"/>
+                    <Label Text="Rows"/>
+                </StackLayout>
             </Grid>
         </Grid>
     </ContentPage.Content>

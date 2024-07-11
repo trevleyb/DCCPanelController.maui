@@ -47,6 +47,7 @@
 
         <!-- Images -->
         <MauiImage Include="Resources\Images\*"/>
+        <MauiImage Include="Resources\Icons\*"/>
         <MauiImage Include="Resources\Symbols\*"/>
         <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24"/>
         <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24"/>
@@ -133,6 +134,10 @@
     <ItemGroup>
       <ProjectReference Include="..\..\DCCWithrottleClient\DCCWithrottleClient\DCCWithrottleClient.csproj" />
       <ProjectReference Include="..\..\ImageDetection\ImageDetection\ImageDetection.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Icons\" />
     </ItemGroup>
 
 </Project>

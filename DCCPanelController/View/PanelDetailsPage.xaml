@@ -12,11 +12,8 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding SavePanelCommand}" IconImageSource="save.png" IsEnabled="{Binding IsNotBusy}" />
-        <ToolbarItem Command="{Binding RestorePanelCommand}" IconImageSource="undo_circle.png"
-                     IsEnabled="{Binding IsNotBusy}" />
-        <ToolbarItem Command="{Binding ClearImageCommand}" IconImageSource="erase.png" IsEnabled="{Binding IsNotBusy}" />
-        <ToolbarItem Command="{Binding AddNewTurnoutPointCommand}" IconImageSource="plus_circle.png"
-                     IsEnabled="{Binding IsNotBusy}" />
+        <ToolbarItem Command="{Binding ClearImageCommand}" IconImageSource="subtract.png" IsEnabled="{Binding IsNotBusy}" />
+        <ToolbarItem Command="{Binding AddNewTurnoutPointCommand}" IconImageSource="add.png" IsEnabled="{Binding IsNotBusy}" />
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="100,*,10">

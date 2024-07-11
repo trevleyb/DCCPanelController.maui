@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
-    IconImageSource="help_circle.png"
+    IconImageSource="information.png"
     Title="Instructions"
     iOsSpecific:Page.UseSafeArea="True"
     x:Class="DCCPanelController.View.InstructionsPage"

@@ -11,7 +11,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddNewPanelCommand}" IconImageSource="plus_circle.png" />
+        <ToolbarItem Command="{Binding AddNewPanelCommand}" IconImageSource="add.png" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -41,7 +41,7 @@
                             <!-- Add more SwipeItems to create more actions -->
                             <SwipeView.RightItems>
                                 <SwipeItems>
-                                    <SwipeItem IconImageSource="trash_solid.png"
+                                    <SwipeItem IconImageSource="trash.png"
                                                Text="Delete"
                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DeletePanelCommand}"
                                                CommandParameter="{Binding .}"

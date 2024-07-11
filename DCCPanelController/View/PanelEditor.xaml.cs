@@ -87,7 +87,6 @@ public partial class PanelEditor : ContentPage {
     private void TapGestureRecognizerOnTapped(object? sender, TappedEventArgs e) {
         switch (sender) {
         case TrackView trackView:
-            Console.WriteLine(e.Buttons.ToString());
             _viewModel.SetSelectedTrack(trackView.ViewModel);
             break;
         case AbsoluteLayout layout when layout == PanelEditorViewPane:
@@ -161,13 +160,11 @@ public partial class PanelEditor : ContentPage {
     
     private void DrawDropZone(int x, int y, int boxSize) {
         if (_dropZone is null) {
-            Console.WriteLine("Creating Drop Zone");
             _dropZone = new DropZone(_viewModel);
             PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(x, y, boxSize, boxSize)); // X=50, Y=100, Width=200, Height=200
             PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
             PanelEditorViewPane.Children.Add(_dropZone);
         } else {
-            Console.WriteLine("Updating Drop Zone");
             PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(x, y, boxSize, boxSize)); // X=50, Y=100, Width=200, Height=200
             PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
         }
@@ -178,7 +175,7 @@ public partial class PanelEditor : ContentPage {
 
     #region Manage the buttons on the toolbar if needed
     private void MultiSelectToolbarItem_OnClicked(object? sender, EventArgs e) {
-        MultiSelectToolbarItem.IconImageSource = _viewModel.MultiSelectMode ? "xmark_circle.png" : "check_circle.png";
+        MultiSelectToolbarItem.IconImageSource = _viewModel.MultiSelectMode ? "deselect.png" : "select.png";
     }
 
     private void PropertiesToolbarItem_OnClicked(object? sender, EventArgs e) {
