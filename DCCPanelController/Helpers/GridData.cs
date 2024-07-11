@@ -9,8 +9,8 @@ public class GridData(bool ok, int? xOffset, int? yOffset, int? xCenter, int? yC
     public int YOffset { get; init; } = yOffset ?? -1;
     public int XCenter { get; init; } = xCenter ?? -1;
     public int YCenter { get; init; } = yCenter ?? -1;
-    public int XMargin { get; init; } = boxSize ?? 0;
-    public int YMargin { get; init; } = boxSize ?? 0;
+    public int XMargin { get; init; } = xMargin ?? 0;
+    public int YMargin { get; init; } = yMargin ?? 0;
     public int BoxSize { get; init; } = boxSize ?? -1;
     public bool IsOk { get; init; } = ok;
     public string ErrorMessage { get; init; } = string.Empty;

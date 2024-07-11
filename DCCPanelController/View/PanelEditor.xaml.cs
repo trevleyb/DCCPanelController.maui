@@ -1,4 +1,6 @@
 using System.Collections.Specialized;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model;
 using DCCPanelController.Symbols;
 using DCCPanelController.Symbols.Tracks;
 using DCCPanelController.Symbols.TrackViewModels;
@@ -25,12 +27,15 @@ public partial class PanelEditor : ContentPage {
     private void PanelEditorContainerSizeChanged(object? sender, EventArgs e) {
         if (sender is AbsoluteLayout layout && sender == PanelEditorContainer) {
             _viewModel.SetPanelEditorBounds((int)layout.Width, (int)layout.Height);
-            // Set the inner Absolute View Pane to be in the middle of the Container
-            if (_viewModel is { GridHelper: { } grid }) {
-                var rect = new Rect(grid.XMargin, grid.YMargin, grid.PanelWidth, grid.PanelHeight);
-                PanelEditorContainer.SetLayoutBounds(PanelEditorViewPane, rect);
-                PanelEditorContainer.SetLayoutFlags(PanelEditorViewPane,AbsoluteLayoutFlags.None);
-            }
+            ResizePanelViewArea();
+        }
+    }
+
+    private void ResizePanelViewArea() {
+        if (_viewModel is { GridHelper: { } grid }) {
+            var rect = new Rect(grid.XMargin, grid.YMargin, grid.PanelWidth, grid.PanelHeight);
+            PanelEditorContainer.SetLayoutBounds(PanelEditorViewPane, rect);
+            PanelEditorContainer.SetLayoutFlags(PanelEditorViewPane,AbsoluteLayoutFlags.None);
         }
     }
 
@@ -42,43 +47,53 @@ public partial class PanelEditor : ContentPage {
     /// <param name="e"></param>
     /// <exception cref="NotImplementedException"></exception>
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        
-        // Add any new items added to the collection.
-        // ---------------------------------------------------------
-        if (e.NewItems is not null && e.NewItems.Count > 0) {
-            foreach (var item in e.NewItems) {
-                if (item is ITrackViewModel viewModel) {
-                    var track = new TrackView(viewModel);
-                    AbsoluteLayout.SetLayoutBounds(track, viewModel.Bounds);
-                    AbsoluteLayout.SetLayoutFlags(track, AbsoluteLayoutFlags.None);
+
+        switch (e.Action) {
+        case NotifyCollectionChangedAction.Add:
+            // Add any new items added to the collection.
+            // ---------------------------------------------------------
+            if (e.NewItems is not null && e.NewItems.Count > 0) {
+                foreach (var item in e.NewItems) {
+                    if (item is ITrackViewModel viewModel) {
+                        var track = new TrackView(viewModel);
+                        AbsoluteLayout.SetLayoutBounds(track, viewModel.Bounds);
+                        AbsoluteLayout.SetLayoutFlags(track, AbsoluteLayoutFlags.None);
                     
-                    var tapGestureRecognizer = new TapGestureRecognizer();
-                    tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
-                    track.GestureRecognizers.Add(tapGestureRecognizer);
+                        var tapGestureRecognizer = new TapGestureRecognizer();
+                        tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
+                        track.GestureRecognizers.Add(tapGestureRecognizer);
 
-                    var dragGestureRecognizer = new DragGestureRecognizer {
-                        DragStartingCommand = ((PanelEditorViewModel)this.BindingContext).TrackDragCommand,
-                        DragStartingCommandParameter = track
-                    };
+                        var dragGestureRecognizer = new DragGestureRecognizer {
+                            DragStartingCommand = ((PanelEditorViewModel)this.BindingContext).TrackDragCommand,
+                            DragStartingCommandParameter = track
+                        };
 
-                    track.GestureRecognizers.Add(dragGestureRecognizer);
-                    PanelEditorViewPane.Children.Add(track);
-                }
-            }
-        }
-        
-        // Remove any deleted items added to the collection.
-        // ---------------------------------------------------------
-        if (e.OldItems is not null && e.OldItems.Count > 0) {
-            foreach (var item in e.OldItems) {
-                if (item is ITrackViewModel track) {
-                    var itemsToDelete = PanelEditorViewPane.Children.OfType<TrackView>().Where(view => view.ViewModel.Track.Coordinate.Equals(track.Track.Coordinate)).ToList();
-
-                    foreach (var view in itemsToDelete) {
-                        PanelEditorViewPane.Children.Remove(view);
+                        track.GestureRecognizers.Add(dragGestureRecognizer);
+                        PanelEditorViewPane.Children.Add(track);
                     }
                 }
             }
+            break;
+        case NotifyCollectionChangedAction.Remove:
+            // Remove any deleted items added to the collection.
+            // ---------------------------------------------------------
+            if (e.OldItems is not null && e.OldItems.Count > 0) {
+                foreach (var item in e.OldItems) {
+                    if (item is ITrackViewModel track) {
+                        var itemsToDelete = PanelEditorViewPane.Children.OfType<TrackView>().Where(view => view.ViewModel.Track.Coordinate.Equals(track.Track.Coordinate)).ToList();
+                        foreach (var view in itemsToDelete) {
+                            PanelEditorViewPane.Children.Remove(view);
+                        }
+                    }
+                }
+            }
+            break;
+        case NotifyCollectionChangedAction.Reset:
+            var itemsToReset = PanelEditorViewPane.Children.OfType<TrackView>().ToList();
+            foreach (var view in itemsToReset) {
+                PanelEditorViewPane.Children.Remove(view);
+            }
+            break;
         }
     }
 
@@ -119,13 +134,9 @@ public partial class PanelEditor : ContentPage {
         if (pos.HasValue) {
             // This stores the last Coordinates and returns a new X,Y which is the centre of the grid.
             // ---------------------------------------------------------------------------------------
-            var loc = _viewModel.SetLastCoordinates((int)pos.Value.X, (int)pos.Value.Y);
-            if (loc is { XOffset: > -1, YOffset: > -1 }) {
-                CheckDropZone(loc.XOffset, loc.YOffset, loc.BoxSize);
-                return;
-            }
+            var coordinate = _viewModel.SetLastCoordinates((int)pos.Value.X, (int)pos.Value.Y);
+            CheckDropZone(coordinate);
         }
-        RemoveDropZone();
     }
 
     private void DropGestureRecognizer_OnDragLeave(object? sender, DragEventArgs e) {
@@ -152,24 +163,27 @@ public partial class PanelEditor : ContentPage {
         _dropZone = null;
     }
 
-    private void CheckDropZone(int x, int y, int boxSize) {
-        if (x != _lastX || y != _lastY) {
-            DrawDropZone(x, y, boxSize);
+    private void CheckDropZone(Coordinate coordinate) {
+        if (coordinate.Column != _lastX || coordinate.Row != _lastY) {
+            DrawDropZone(coordinate);
         }
     }
     
-    private void DrawDropZone(int x, int y, int boxSize) {
+    private void DrawDropZone(Coordinate coordinate) {
+        
+        var loc = _viewModel.GridHelper.GetGridCoordinates(coordinate);
+        
         if (_dropZone is null) {
             _dropZone = new DropZone(_viewModel);
-            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(x, y, boxSize, boxSize)); // X=50, Y=100, Width=200, Height=200
+            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, loc.BoxSize, loc.BoxSize)); // X=50, Y=100, Width=200, Height=200
             PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
             PanelEditorViewPane.Children.Add(_dropZone);
         } else {
-            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(x, y, boxSize, boxSize)); // X=50, Y=100, Width=200, Height=200
+            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, loc.BoxSize, loc.BoxSize)); // X=50, Y=100, Width=200, Height=200
             PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
         }
-        _lastX = x;
-        _lastY = y;
+        _lastX = coordinate.Column;
+        _lastY = coordinate.Row;
     }
     #endregion
 
@@ -187,4 +201,9 @@ public partial class PanelEditor : ContentPage {
     private void RotateTrackToolbarItem_OnClicked(object? sender, EventArgs e) {
     }
     #endregion
+
+    private void Stepper_OnValueChanged(object? sender, ValueChangedEventArgs e) {
+        ResizePanelViewArea();
+    }
+
 }

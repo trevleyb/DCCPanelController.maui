@@ -7,7 +7,7 @@ public partial class TrackPiece : ObservableObject {
 
     [ObservableProperty] private TrackTypesEnum _trackType = TrackTypesEnum.None;
     [ObservableProperty] private Color  _color = Colors.Black;
-    [ObservableProperty] private string _coordinate = string.Empty;
+    [ObservableProperty] private Coordinate _coordinate;
     [ObservableProperty] private int _rotation = 0;
 
 }

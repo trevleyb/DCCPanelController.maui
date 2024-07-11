@@ -137,6 +137,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Converters\" />
       <Folder Include="Resources\Icons\" />
     </ItemGroup>
 
