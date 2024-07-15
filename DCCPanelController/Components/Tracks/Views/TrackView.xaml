@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:DCCPanelController.Components.Tracks"
+             xmlns:tracks="clr-namespace:DCCPanelController.Components.Tracks"
+             x:Class="DCCPanelController.Components.Tracks.Views.TrackView"
+             x:DataType="tracks:ITrackViewModel">
+    
+    <ContentView.Content>
+        <Border HeightRequest="{Binding Bounds.Height}"
+              WidthRequest="{Binding Bounds.Width}"
+              BackgroundColor="Transparent"
+              AbsoluteLayout.LayoutBounds="{Binding Bounds}"
+              AbsoluteLayout.LayoutFlags="None">
+            <Image Source="{Binding Image}"
+                   Rotation="{Binding Track.Rotation}"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"/>
+            
+            <Border.Triggers>
+                <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">
+                    <Setter Property="Style" Value="{StaticResource SelectedTrackView}" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="false">
+                    <Setter Property="Style" Value="{StaticResource UnSelectedTrackView}" />
+                </DataTrigger>
+            </Border.Triggers>
+        </Border>
+    </ContentView.Content>
+    
+</ContentView>
+

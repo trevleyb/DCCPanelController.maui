@@ -20,7 +20,8 @@
               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
                                           Dark={StaticResource DarkBackground}}">
 
-            <CollectionView MinimumWidthRequest="250" ItemsSource="{Binding Panels}" SelectionMode="None" x:Name="PanelsCollectionView">
+            <CollectionView MinimumWidthRequest="250" ItemsSource="{Binding Panels}" SelectionMode="None"
+                            x:Name="PanelsCollectionView">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -51,7 +52,7 @@
 
                             <SwipeView.Content>
 
-                                <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard" HeightRequest="{Binding CardHeight}">
+                                <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard" HeightRequest="250">
                                     <Border Style="{StaticResource CardView}">
                                         <Border.GestureRecognizers>
                                             <DragGestureRecognizer
@@ -65,79 +66,7 @@
                                                 CommandParameter="{Binding .}" />
                                         </Border.GestureRecognizers>
                                         <Grid Padding="0">
-                                            <AbsoluteLayout>
-                                                <Image
-                                                    HorizontalOptions="CenterAndExpand"
-                                                    VerticalOptions="CenterAndExpand"
-                                                    AbsoluteLayout.LayoutFlags="All"
-                                                    AbsoluteLayout.LayoutBounds="0,0,1,1"
-                                                    Aspect="AspectFill"
-                                                    Source="{Binding Image}">
-                                                    <Image.Triggers>
-                                                        <DataTrigger TargetType="Image"
-                                                                     Binding="{Binding IsImageAvailable}" Value="False">
-                                                            <Setter Property="IsVisible" Value="False" />
-                                                        </DataTrigger>
-                                                    </Image.Triggers>
-                                                </Image>
-                                                <Label Text="No Panel Image."
-                                                       IsVisible="False"
-                                                       HorizontalOptions="CenterAndExpand"
-                                                       VerticalOptions="CenterAndExpand"
-                                                       AbsoluteLayout.LayoutFlags="All"
-                                                       AbsoluteLayout.LayoutBounds="0,0,1,1">
-                                                    <Label.Triggers>
-                                                        <DataTrigger TargetType="Label"
-                                                                     Binding="{Binding IsImageAvailable}" Value="False">
-                                                            <Setter Property="IsVisible" Value="True" />
-                                                        </DataTrigger>
-                                                    </Label.Triggers>
-                                                </Label>
 
-                                                <BoxView
-                                                    BackgroundColor="{StaticResource Primary}"
-                                                    HeightRequest="2"
-                                                    AbsoluteLayout.LayoutBounds="1,1,1,91"
-                                                    AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
-
-                                                <BoxView Color="{StaticResource PrimaryDisabled}"
-                                                         Background="{StaticResource PrimaryDisabled}"
-                                                         Opacity=".95"
-                                                         AbsoluteLayout.LayoutBounds="0.5,1,1,45"
-                                                         AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
-                                                <Label Style="{StaticResource MediumLabel}"
-                                                       TextColor="{StaticResource Primary}"
-                                                       FontAttributes="Bold"
-                                                       Padding="10"
-                                                       VerticalOptions="End"
-                                                       HorizontalOptions="Center"
-                                                       AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
-                                                       AbsoluteLayout.LayoutBounds="0.5,1,1,45"
-                                                       VerticalTextAlignment="Center"
-                                                       HorizontalTextAlignment="Center">
-                                                    <MultiBinding StringFormat="{}{0}: {1} ({2} x {3})">
-                                                        <Binding Path="Id" />
-                                                        <Binding Path="Name" />
-                                                        <Binding Path="OriginalImageWidth" />
-                                                        <Binding Path="OriginalImageHeight" />
-                                                    </MultiBinding>
-                                                </Label>
-
-                                                <BoxView
-                                                    Background="{StaticResource PrimaryDisabled}"
-                                                    Opacity="0.95"
-                                                    AbsoluteLayout.LayoutBounds="0,0,30,30"
-                                                    AbsoluteLayout.LayoutFlags="PositionProportional" />
-                                                <Label Style="{StaticResource MediumLabel}"
-                                                       TextColor="{StaticResource Black}"
-                                                       Text="{Binding SortOrder}"
-                                                       AbsoluteLayout.LayoutFlags="None"
-                                                       AbsoluteLayout.LayoutBounds="0,0,30,30"
-                                                       VerticalTextAlignment="Center"
-                                                       HorizontalTextAlignment="Center" />
-
-
-                                            </AbsoluteLayout>
                                         </Grid>
                                     </Border>
                                 </Grid>

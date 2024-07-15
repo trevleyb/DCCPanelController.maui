@@ -1,107 +1,73 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Core.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Components.Symbols;
+using DCCPanelController.Components.Tracks;
+using DCCPanelController.Components.Tracks.Views;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
-using DCCPanelController.Symbols;
-using DCCPanelController.Symbols.Tracks;
-using DCCPanelController.Symbols.TrackViewModels;
-using SixLabors.Fonts.WellKnownIds;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
 
-    [ObservableProperty] private string _panelName;
-    [ObservableProperty] private string _panelId;
+    [ObservableProperty] private Panel _panel;
     
     [NotifyPropertyChangedFor(nameof(IsPropertyAllowed))]
     [NotifyPropertyChangedFor(nameof(IsTrackSelected))]
-    [ObservableProperty] private ObservableCollection<ITrackViewModel> _selectedTracks;
     [ObservableProperty] private ITrackViewModel? _selectedTrack;
     [ObservableProperty] private SymbolViewModel? _selectedSymbol;
     [ObservableProperty] private ObservableCollection<SymbolViewModel> _symbols;
-    [ObservableProperty] private ObservableCollection<ITrackViewModel> _tracks;
+    [ObservableProperty] private ObservableCollection<ITrackViewModel> _tracks = [];
+    [ObservableProperty] private ObservableCollection<ITrackViewModel> _selectedTracks = [];
 
     [ObservableProperty] private Coordinate _lastCoordinate;
     [ObservableProperty] private TrackActionEnum _trackAction = TrackActionEnum.None;
 
-    [NotifyPropertyChangedFor(nameof(PanelRatio))]
-    [ObservableProperty] private int _panelRows;
-    [NotifyPropertyChangedFor(nameof(PanelRatio))]
-    [ObservableProperty] private int _panelCols;
-
-    [ObservableProperty] private int _minPanelRows;
-    [ObservableProperty] private int _minPanelCols;
-    [ObservableProperty] private int _maxPanelRows;
-    [ObservableProperty] private int _maxPanelCols;
+    [ObservableProperty] private int _minPanelRows = 12;
+    [ObservableProperty] private int _minPanelCols = 9;
+    [ObservableProperty] private int _maxPanelRows = 36;
+    [ObservableProperty] private int _maxPanelCols = 27;
     
     [ObservableProperty] private bool _isPropertyAllowed = false;
     [ObservableProperty] private bool _multiSelectMode = false;
     [ObservableProperty] private bool _isTrackSelected = false;
     [ObservableProperty] private bool _isDropZoneOccupied = false;
+    [ObservableProperty] private bool _isPropertyPanelVisible = false;
 
-    public string PanelRatio => CalculateRatio(PanelCols, PanelRows); 
     public GridHelper? GridHelper = null;
 
-    public PanelEditorViewModel() {
-        Symbols = BuildSymbolsList();
-        Tracks = new ObservableCollection<ITrackViewModel>();
-        SelectedTracks = new ObservableCollection<ITrackViewModel>();
-        PanelRows = 18; // Needs to get loaded when we reload the panel 
-        PanelCols = 24; // Needs to get loaded when we reload the panel
-        MinPanelCols = 12;
-        MinPanelRows = 9;
-        MaxPanelCols = 36;
-        MaxPanelRows = 27;
+    public PanelEditorViewModel(Panel panel) {
+        Symbols = SymbolFactory.AvailableTracks();
         LastCoordinate = Coordinate.Unreferenced;
-        PropertyChanged += OnPropertyChanged;
+        IsPropertyPanelVisible = false;
+        Panel = panel;
+        Panel.PropertyChanged += PanelOnPropertyChanged;
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e is { PropertyName: nameof(PanelCols) or nameof(PanelRows) }) {
+    private void LoadTrackPlan() {
+        ClearTrackPlan();
+        foreach (var track in Panel.Tracks) {
+            var viewModel = CreateTrackViewModel(track);
+            AddTrackToPlan(viewModel);
+        }
+    }
+    
+    private void ClearTrackPlan() {
+        Tracks.Clear();
+        //var clearTracks = Tracks.Select(x => x);
+        //foreach (var track in clearTracks) Tracks.
+    }
+
+    
+    private void PanelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e is { PropertyName: nameof(Panel.Cols) or nameof(Panel.Rows) }) {
             UpdatePanelEditorGrid();
         }
     }
-
-    /// <summary>
-    /// Build up the Toolbar Icons that will allow drag onto the main canvas
-    /// </summary>
-    /// <returns></returns>
-    private ObservableCollection<SymbolViewModel> BuildSymbolsList() {
-        var symbols = new ObservableCollection<SymbolViewModel> {
-            new() { TrackType = TrackTypesEnum.StraightTrack,   Name = "Straight",   Image = ImageSource.FromFile("straight.png") },
-            new() { TrackType = TrackTypesEnum.Terminator,      Name = "Terminate",  Image = ImageSource.FromFile("terminate.png") },
-            new() { TrackType = TrackTypesEnum.Crossing,        Name = "Crossing",   Image = ImageSource.FromFile("crossing.png") },
-            new() { TrackType = TrackTypesEnum.LeftTrack,       Name = "Left",       Image = ImageSource.FromFile("angleleft.png") },
-            new() { TrackType = TrackTypesEnum.RightTrack,      Name = "Right",      Image = ImageSource.FromFile("angleright.png") },
-            new() { TrackType = TrackTypesEnum.LeftTurnout,     Name = "Turnout(L)", Image = ImageSource.FromFile("turnoutleft.png") },
-            new() { TrackType = TrackTypesEnum.RightTurnout,    Name = "Turnout(R)", Image = ImageSource.FromFile("turnoutright.png") },
-            new() { TrackType = TrackTypesEnum.WyeJunction,     Name = "Wye-Junction", Image = ImageSource.FromFile("yjunction.png") },
-            new() { TrackType = TrackTypesEnum.StraightTrack,   Name = "Straight",   Image = ImageSource.FromFile("straight.png") },
-            new() { TrackType = TrackTypesEnum.Terminator,      Name = "Terminate",  Image = ImageSource.FromFile("terminate.png") },
-            new() { TrackType = TrackTypesEnum.Crossing,        Name = "Crossing",   Image = ImageSource.FromFile("crossing.png") },
-            new() { TrackType = TrackTypesEnum.LeftTrack,       Name = "Left",       Image = ImageSource.FromFile("angleleft.png") },
-            new() { TrackType = TrackTypesEnum.RightTrack,      Name = "Right",      Image = ImageSource.FromFile("angleright.png") },
-            new() { TrackType = TrackTypesEnum.LeftTurnout,     Name = "Turnout(L)", Image = ImageSource.FromFile("turnoutleft.png") },
-            new() { TrackType = TrackTypesEnum.RightTurnout,    Name = "Turnout(R)", Image = ImageSource.FromFile("turnoutright.png") },
-            new() { TrackType = TrackTypesEnum.WyeJunction,     Name = "Wye-Junction", Image = ImageSource.FromFile("yjunction.png") },
-            new() { TrackType = TrackTypesEnum.StraightTrack,   Name = "Straight",   Image = ImageSource.FromFile("straight.png") },
-        new() { TrackType = TrackTypesEnum.Terminator,      Name = "Terminate",  Image = ImageSource.FromFile("terminate.png") },
-        new() { TrackType = TrackTypesEnum.Crossing,        Name = "Crossing",   Image = ImageSource.FromFile("crossing.png") },
-        new() { TrackType = TrackTypesEnum.LeftTrack,       Name = "Left",       Image = ImageSource.FromFile("angleleft.png") },
-        new() { TrackType = TrackTypesEnum.RightTrack,      Name = "Right",      Image = ImageSource.FromFile("angleright.png") },
-        new() { TrackType = TrackTypesEnum.LeftTurnout,     Name = "Turnout(L)", Image = ImageSource.FromFile("turnoutleft.png") },
-        new() { TrackType = TrackTypesEnum.RightTurnout,    Name = "Turnout(R)", Image = ImageSource.FromFile("turnoutright.png") },
-        new() { TrackType = TrackTypesEnum.WyeJunction,     Name = "Wye-Junction", Image = ImageSource.FromFile("yjunction.png") }
-
-        };
-        return symbols;
-    }
-
+    
     /// <summary>
     /// Sets the track that has been selected which will allow functions such as
     /// Rotate, Delete and Properties
@@ -116,9 +82,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
                 trackView.IsSelected = true;
                 SelectedTracks.Add(trackView);
             }
-            IsTrackSelected   = SelectedTracks.Any();
-            IsPropertyAllowed = SelectedTracks.Count == 1;
+        } else {
+            ClearSelectedTracks();
         }
+        IsTrackSelected   = SelectedTracks.Any();
+        IsPropertyAllowed = SelectedTracks.Count == 1;
     }
 
     public void ClearSelectedTracks() {
@@ -134,7 +102,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// <param name="width">Width of the View Panel</param>
     /// <param name="height">Height of the View Panel</param>
     public void SetPanelEditorBounds(int width, int height) {
-        GridHelper = new GridHelper(width, height, PanelCols, PanelRows);
+        GridHelper = new GridHelper(width, height, Panel.Cols, Panel.Rows);
+        LoadTrackPlan();
     }
     
     public void UpdatePanelEditorGrid() {
@@ -147,20 +116,20 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     private void CalculateMinGridSize() {
-        var minCol = Tracks.Any() ? Tracks.Max(x => x.Track.Coordinate.Column) : 12;
+        var minCol = Tracks.Any() ? Tracks.Max(x => x.Track.Coordinate.Col) : 12;
         var minRow = Tracks.Any() ? Tracks.Max(x => x.Track.Coordinate.Row) : 9;
         MinPanelCols = minCol;
         MinPanelRows = minRow;
 
-        PanelCols = Math.Max(Math.Max(PanelCols,minCol),12);
-        PanelRows = Math.Max(Math.Max(PanelRows,minRow),9);
+        Panel.Cols = Math.Max(Math.Max(Panel.Cols,minCol),12);
+        Panel.Rows= Math.Max(Math.Max(Panel.Rows,minRow),9);
         
         // This will force a recalculation of the layout bounds which is used when we 
         // redraw the items on the layout
         // --------------------------------------------------------------------------
         if (GridHelper != null) {
-            GridHelper.PanelCols = PanelCols;
-            GridHelper.PanelRows = PanelRows;
+            GridHelper.PanelCols = Panel.Cols;
+            GridHelper.PanelRows = Panel.Rows;
         }
     }
 
@@ -171,8 +140,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         var tracks = trackPieces.Select(x => x);
         Tracks.Clear();
         foreach (var track in tracks) {
-            var viewModel = CreateTrackViewModel(track.Track.TrackType, track.Track.Coordinate);
-            AddTrackToPlan(viewModel,track.Track.Coordinate);
+            AddTrackToPlan(track);
         }
     }
 
@@ -223,6 +191,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     [RelayCommand]
     public async Task PropertiesSelectedTrack() {
+        if (IsPropertyPanelVisible) {
+            // Manage the Properties of the main Panel
+        } else {
+            // Manage the other stuff
+        }
     }
 
     
@@ -255,8 +228,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Add a track from the toolbox to the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.AddingFromToolbox && SelectedSymbol is not null) {
-            var viewModel = CreateTrackViewModel(SelectedSymbol.TrackType, LastCoordinate);
-            AddTrackToPlan(viewModel,LastCoordinate);
+            var track = new Track() {
+                TrackType = SelectedSymbol.TrackType,
+                Color = Colors.Black,
+                Coordinate = LastCoordinate,
+            };
+            Panel.Tracks.Add(track);
+            var viewModel = CreateTrackViewModel(track);
+            AddTrackToPlan(viewModel);
             TrackAction = TrackActionEnum.None;
         }
 
@@ -265,23 +244,20 @@ public partial class PanelEditorViewModel : BaseViewModel {
         if (TrackAction == TrackActionEnum.MovingInGrid && SelectedTrack is not null) {
             Tracks.Remove(SelectedTrack);
             SelectedTrack.Track.Coordinate = LastCoordinate;
-            AddTrackToPlan(SelectedTrack, LastCoordinate);
+            AddTrackToPlan(SelectedTrack);
             SelectedTrack.IsSelected = false;
             TrackAction = TrackActionEnum.None;
         }
     }
 
-    private ITrackViewModel CreateTrackViewModel(TrackTypesEnum trackType, Coordinate coordinate) {
-        var viewModel = TrackViewModelFactory.GetViewModel(trackType);
-        viewModel.Track = new TrackPiece() {
-            Color = Colors.Black,
-            Coordinate = coordinate,
-        };
+    private ITrackViewModel CreateTrackViewModel(Track track) {
+        var viewModel = TrackViewModelFactory.GetViewModel(track.TrackType);
+        viewModel.Track = track;
         return viewModel;
     }
-
-    private void AddTrackToPlan(ITrackViewModel viewModel, Coordinate coordinate) {
-        var gridData = GridHelper?.GetGridCoordinates(coordinate);
+    
+    private void AddTrackToPlan(ITrackViewModel viewModel) {
+        var gridData = GridHelper?.GetGridCoordinates(viewModel.Track.Coordinate);
         if (gridData is { IsOk: true } gd) {
             viewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
             Tracks.Add(viewModel);
@@ -289,21 +265,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
         CalculateMinGridSize();
     }
     
-    public static string CalculateRatio(int col, int row) {
-        double GCD(double a, double b) {
-            while (b != 0) {
-                double temp = b;
-                b = a % b;
-                a = temp;
-            }
-            return a;
-        }
-
-        var gcd = GCD(col, row);
-        var X = col / gcd;
-        var Y = row / gcd;
-        return $"{X:0.#}:{Y:0.#}";
-    }
 }
 
 public enum TrackActionEnum {

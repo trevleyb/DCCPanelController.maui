@@ -12,8 +12,7 @@ public partial class MainPage : TabbedPage
 	}
 
 	private async Task LoadAndConnect() {
-		//var settings = App.ServiceProvider?.GetService<SettingsService>();
-		//var settingsViewModel = new SettingsViewModel(settings);
+		var settings = App.ServiceProvider?.GetService<SettingsService>();
 		var settingsViewModel = App.ServiceProvider?.GetService<SettingsViewModel>();
 		if (settingsViewModel != null) {
 			//await settingsViewModel.RefreshWiServersAsync();

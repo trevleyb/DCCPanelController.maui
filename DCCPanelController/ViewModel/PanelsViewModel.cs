@@ -15,25 +15,16 @@ public partial class PanelsViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
     private int _draggingIndex;
     
-    private const int minCardHeight = 200;
-    
     public PanelsViewModel(SettingsService settingsService) {
         _settingsService = settingsService;
         Panels = settingsService.Panels;
     }
     
+    public async void Save() => _settingsService?.Save();
+    public async void Load() => _settingsService?.Load();
+    
     public PanelsPage? Sender { get; set; }
     
-    public int CardHeight { get; set; } = minCardHeight;
-
-    public void SetCardHeight(double width, double height) {
-        var imageWidth = Panels.Average(x => x.OriginalImageWidth);
-        var imageHeight = Panels.Average(x => x.OriginalImageHeight);
-        var itemHeight = (int)(height / CalculateItemsToShow (imageWidth, imageHeight));
-        CardHeight = (int)(itemHeight > minCardHeight ? itemHeight : minCardHeight);
-        foreach (var item in Panels) item.CardHeight = CardHeight;
-    }
-
     public int CalculateItemsToShow (double width, double height) {
         // What is the proportion of the Height to the width of the current Image. 
         // Based on this, determine if we should have 2, 3, or 4 items visible
@@ -52,10 +43,7 @@ public partial class PanelsViewModel : BaseViewModel {
         panel.Id = "new" + maxSort;
         panel.Name = "Panel " + maxSort;
         panel.SortOrder = maxSort;
-        panel.CardHeight = CardHeight;
         Panels.Add(panel);
-        
-        await _settingsService.Save();
     }
 
     [RelayCommand]
@@ -64,13 +52,14 @@ public partial class PanelsViewModel : BaseViewModel {
         for (int index = 0; index < Panels.Count; index++) {
             Panels[index].SortOrder = index+1;
         }
-        await _settingsService.Save();
+        Save();
     }
 
     [RelayCommand]
     public async Task GoToDetailsAsync(Panel panel) {
         if (Sender != null) {
-            await Sender.Navigation.PushAsync(new PanelDetailsPage(panel));
+            await Sender.Navigation.PushAsync(new PanelEditorPage(panel));
+            Save();
         }
     }
 

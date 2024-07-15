@@ -11,85 +11,54 @@ namespace DCCPanelController.Model;
 /// Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableValidator, ICloneable {
+    
+    [ObservableProperty] private string _id = "new";
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private int _sortOrder = 0;
+    
+    [NotifyPropertyChangedFor(nameof(PanelRatio))]
+    [ObservableProperty] private int _cols = 24;
 
-    [ObservableProperty]
-    [Required][NoSpaces]
-    private string _id = "new";
+    [NotifyPropertyChangedFor(nameof(PanelRatio))]
+    [ObservableProperty] private int _rows = 18;
     
-    [ObservableProperty] 
-    private string _name = string.Empty;
-    
-    [ObservableProperty] 
-    private int _sortOrder = 0;
-    
-    [ObservableProperty] 
-    private ObservableCollection<TurnoutPoint> _turnouts = [];
-
-    [ObservableProperty]
-    [JsonIgnore]
-    private int _cardHeight;
-
-    [ObservableProperty] private int _originalImageWidth;
-    [ObservableProperty] private int _originalImageHeight;
-    
-    [ObservableProperty] 
-    [NotifyPropertyChangedFor(nameof(Image))]
-    [NotifyPropertyChangedFor(nameof(IsImageAvailable))]
-    private string? _imageAsBase64;
-    
-    [JsonIgnore]
-    public bool IsImageAvailable => Image != null;
-    
-    public ImageSource? Image {
-        get {
-            if (string.IsNullOrEmpty(ImageAsBase64)) return null;
-            try {
-                var imageBytes = Convert.FromBase64String(ImageAsBase64);
-                var image = PlatformImage.FromStream(new MemoryStream(imageBytes));
-                OriginalImageHeight = (int)image.Height;
-                OriginalImageWidth = (int)image.Width;
-                return ImageSource.FromStream(() => new MemoryStream(imageBytes));
-            } catch (Exception ex) {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }
-    }
-    
-    public static async Task<string?> ConvertToBase64Async(FileResult? fileResult) {
-        if (fileResult == null) return null;
-        using (var stream = await fileResult.OpenReadAsync()) {
-            using (var memoryStream = new MemoryStream()) {
-                await stream.CopyToAsync(memoryStream);
-                var imageBytes = memoryStream.ToArray();
-                return Convert.ToBase64String(imageBytes);
-            }
-        }
-    }
-
-    public void CopyTo(Panel target) {
-        CopyTo(this, target);
-    }
-
-    public Panel CopyTo(Panel source, Panel target) {
-        ArgumentNullException.ThrowIfNull(source);
-        ArgumentNullException.ThrowIfNull(target);
-        target.Id = source.Id;
-        target.Name = source.Name;
-        target.SortOrder = source.SortOrder;
-        target.ImageAsBase64 = source.ImageAsBase64;
-        target.Turnouts = [];
-        foreach (var tp in source.Turnouts) {
-            target.Turnouts.Add(new TurnoutPoint { Id = tp.Id, Name = tp.Name, State = tp.State });
-        }
-        return target;
-    }
+    [ObservableProperty] private ObservableCollection<Track> _tracks = new();
 
     [JsonIgnore]
-    public Panel Duplicate => (Panel)Clone();
-    
+    public string PanelRatio => CalculateRatio(Cols, Rows);
+
+    /// <summary>
+    /// Create a deep copy of the Panel object.
+    /// </summary>
+    /// <returns>A new instance of the Panel object with the same property values as the original.</returns>
     public object Clone() {
-        return CopyTo(this,new Panel());
+        var newPanel = new Panel {
+            Id = Id,
+            Name = Name,
+            SortOrder = SortOrder,
+            Cols = Cols,
+            Rows = Rows
+        };    
+        foreach (var track in _tracks) newPanel.Tracks.Add(track);
+        return newPanel;
+    }
+
+    public Panel? Copy => Clone() as Panel;
+    
+    private static string CalculateRatio(int col, int row) {
+        double GCD(double a, double b) {
+            while (b != 0) {
+                var temp = b;
+                b = a % b;
+                a = temp;
+            }
+            return a;
+        }
+
+        var gcd = GCD(col, row);
+        var x = col / gcd;
+        var y = row / gcd;
+        return $"{x:0.#}:{y:0.#}";
     }
 }
 

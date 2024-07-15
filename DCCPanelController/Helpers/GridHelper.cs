@@ -52,7 +52,7 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
 
         // Calculate the center coordinates of the specified cell
         // Assume everything is 1 offset not 0
-        var topLeftX = (coordinates.Column -1) * BoxSize;
+        var topLeftX = (coordinates.Col -1) * BoxSize;
         var topLeftY = (coordinates.Row -1) * BoxSize;
         var centerX  = topLeftX + (BoxSize / 2);
         var centerY  = topLeftY + (BoxSize / 2);

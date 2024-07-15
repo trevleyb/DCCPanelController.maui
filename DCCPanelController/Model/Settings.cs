@@ -6,10 +6,8 @@ namespace DCCPanelController.Model;
 
 public partial class Settings : ObservableObject {
 
-    [ObservableProperty] private bool _demoMode;
+    [ObservableProperty] private bool _useConnection;
     [ObservableProperty] private WiServer _wiServer;
-    [ObservableProperty] private int _gridWidth  = 90;
-    [ObservableProperty] private int _gridHeight = 90;
     
     public Settings() {
         var thisIp = DCCWithrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();

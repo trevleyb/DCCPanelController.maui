@@ -1,7 +1,26 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui">
 
+    
+    <Style TargetType="Label" x:Key="PanelInfoLabel">
+        <Setter Property="Margin" Value="5,5,5,5"/>
+        <Setter Property="Padding" Value="0,0,0,0"/>
+        <Setter Property="FontSize" Value="{maui:OnScreenSize Medium=12, Large=12, ExtraLarge=12, Default=14}"/> 
+        <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+    </Style>
+
+    <Style TargetType="Stepper" x:Key="PanelInfoStepper">
+        <Setter Property="Margin" Value="0,5,5,5"/>
+        <Setter Property="Width" Value="40"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="HorizontalOptions" Value="Center"/>
+        <Setter Property="VerticalOptions" Value="Center"/>
+    </Style>
+    
     <Style TargetType="Border" x:Key="CardView">
         <Setter Property="Stroke" Value="{StaticResource Primary}" />
         <Setter Property="StrokeThickness" Value="2" />
@@ -27,6 +46,26 @@
         <Setter Property="StrokeThickness" Value="5" />
         <Setter Property="StrokeShape">
             <RoundRectangle CornerRadius="0,0,0,0"/>
+        </Setter>
+    </Style>
+    
+    <Style TargetType="Entry" x:Key="PanelEntry">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
+        <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
+        <Setter Property="FontFamily" Value="OpenSansRegular" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
         </Setter>
     </Style>
     
@@ -277,14 +316,17 @@
         </Setter>
     </Style>
 
+<!--
+    <Setter Property="MinimumHeightRequest" Value="{maui:OnScreenSize Medium=18, Large=18, ExtraLarge=24, Default=24}" />
+    <Setter Property="MinimumWidthRequest" Value="{maui:OnScreenSize Medium=40, Large=40, ExtraLarge=40, Default=40}" />
+-->
+    
     <Style TargetType="Entry">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{maui:OnScreenSize Medium=12, Large=12, ExtraLarge=14, Default=14}" />
         <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
-        <Setter Property="MinimumHeightRequest" Value="24" />
-        <Setter Property="MinimumWidthRequest" Value="44" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -298,7 +340,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-
+    
     <Style TargetType="Frame">
         <Setter Property="HasShadow" Value="False" />
         <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />

@@ -102,9 +102,9 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public bool IsDemoMode {
-        get => Settings?.DemoMode ?? false;
+        get => Settings?.UseConnection ?? false;
         set {
-            Settings.DemoMode = value;
+            Settings.UseConnection = value;
             OnPropertyChanged(nameof(IsDemoMode));
             OnPropertyChanged(nameof(IsLiveMode));
             OnPropertyChanged(nameof(IsConnectAvailable));
@@ -146,7 +146,7 @@ public partial class SettingsViewModel : BaseViewModel {
 
     [RelayCommand]
     public void LoadSettings() {
-        _settingsService?.ReLoad();
+        _settingsService?.Load();
     }
 
     [RelayCommand]

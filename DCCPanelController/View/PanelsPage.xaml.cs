@@ -32,7 +32,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
     
     private void OnSizeChanged(object? sender, EventArgs e) {
         if (Width > 0 && Height > 0) {
-            if (BindingContext is PanelsViewModel viewMode) viewMode.SetCardHeight(Width, Height);
+            //if (BindingContext is PanelsViewModel viewMode) viewMode.SetCardHeight(Width, Height);
 
             if (PanelsCollectionView.ItemsLayout is GridItemsLayout { } layout) {
                 if (Width > Height) {

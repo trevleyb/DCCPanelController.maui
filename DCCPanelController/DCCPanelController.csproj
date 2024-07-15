@@ -46,6 +46,7 @@
         <MauiSplashScreen Include="Resources\Splash\splash.png" Color="#512BD4" BaseSize="128,128"/>
 
         <!-- Images -->
+        <MauiImage Remove="Resources\Images\.DS_Store" />
         <MauiImage Include="Resources\Images\*"/>
         <MauiImage Include="Resources\Icons\*"/>
         <MauiImage Include="Resources\Symbols\*"/>
@@ -81,6 +82,7 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
         <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.61" />
         <PackageReference Include="NUnit" Version="4.1.0" />
+        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
     </ItemGroup>
 
     <ItemGroup>
@@ -90,16 +92,22 @@
       <MauiXaml Update="View\RoutesPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="View\PanelTurnoutsPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
       <MauiXaml Update="View\InstructionsPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="View\PanelEditor.xaml">
+      <MauiXaml Update="View\PanelEditorPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
       <MauiXaml Update="Symbols\TrackView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\Tracks\Views\TrackView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\DropZone.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\Panel\PanelViewer.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
     </ItemGroup>
@@ -113,15 +121,11 @@
         <DependentUpon>RoutesPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="View\PanelTurnoutsPage.xaml.cs">
-        <DependentUpon>PanelTurnoutsPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="View\InstructionsPage.xaml.cs">
         <DependentUpon>InstructionsPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="View\PanelEditor.xaml.cs">
+      <Compile Update="View\PanelEditorPage.xaml.cs">
         <DependentUpon>PanelEditorBackup.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
@@ -129,16 +133,32 @@
         <DependentUpon>TrackView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Components\Tracks\Views\TrackView.xaml.cs">
+        <DependentUpon>TrackView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\DropZone.xaml.cs">
+        <DependentUpon>DropZone.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Panel\PanelViewer.xaml.cs">
+        <DependentUpon>PanelViewer.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\DCCWithrottleClient\DCCWithrottleClient\DCCWithrottleClient.csproj" />
-      <ProjectReference Include="..\..\ImageDetection\ImageDetection\ImageDetection.csproj" />
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Components\TrackViewModels\" />
       <Folder Include="Converters\" />
       <Folder Include="Resources\Icons\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Components\Symbols\SymbolView.xaml" />
     </ItemGroup>
 
 </Project>
