@@ -4,7 +4,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
              x:DataType="viewModel:PanelEditorViewModel"
-             x:Class="DCCPanelController.Components.DropZone">
+             x:Class="DCCPanelController.Components.DropZone.DropZone">
     
     <ContentView.Content>
         <Border>

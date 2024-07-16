@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 
-namespace DCCPanelController.Components.Tracks.ViewModels;
+namespace DCCPanelController.Components.Tracks.Base;
 
 public partial class TrackViewModelBase : BaseViewModel, ITrackViewModel {
     
@@ -11,6 +11,9 @@ public partial class TrackViewModelBase : BaseViewModel, ITrackViewModel {
     [ObservableProperty] 
     private ImageSource? _image;
     
+    [ObservableProperty] 
+    private ImageSource? _text;
+
     [ObservableProperty]
     private Track _track;
     

@@ -28,9 +28,7 @@
         <Grid x:Name="MainGrid"
               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
-            <CollectionView x:Name="PanelsCollectionView" 
-                            ItemsSource="{Binding Panels}"
-                            SelectionMode="None">
+            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding Panels}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -40,9 +38,9 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="{maui:OnScreenSize Large=2, ExtraLarge=3, Default=1}" x:Name="PanelCardGridItemsLayout" />
+                    <GridItemsLayout x:Name="PanelsCollectionViewLayout" Orientation="Vertical" Span="2" />
                 </CollectionView.ItemsLayout>
-
+                
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
 

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using DCCPanelController.Components.Tracks;
+using DCCPanelController.Components.Tracks.Base;
 using DCCPanelController.Components.Tracks.Views;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;

@@ -1,6 +1,6 @@
 using DCCPanelController.ViewModel;
 
-namespace DCCPanelController.Components;
+namespace DCCPanelController.Components.DropZone;
 
 public partial class DropZone : ContentView {
     public DropZone(PanelEditorViewModel viewModel) {

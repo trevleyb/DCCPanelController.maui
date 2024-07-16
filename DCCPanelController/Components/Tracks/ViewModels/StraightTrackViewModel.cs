@@ -1,6 +1,6 @@
 namespace DCCPanelController.Components.Tracks.ViewModels;
 
-public partial class StraightTrackViewModel : TrackViewModelBase {
+public partial class StraightTrackViewModel : Base.TrackViewModelBase {
     
     public StraightTrackViewModel() {
         Image = ImageSource.FromFile("straight.png");

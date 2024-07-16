@@ -104,13 +104,19 @@
       <MauiXaml Update="Components\Tracks\Views\TrackView.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="Components\DropZone.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
       <MauiXaml Update="Components\Panel\PanelViewer.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
       <MauiXaml Update="Components\Tracks\TrackViews\StraightTrackView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\Tracks\Views\TextView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\Tracks\Views\ImageView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\DropZone\DropZone.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
     </ItemGroup>
@@ -140,16 +146,24 @@
         <DependentUpon>TrackView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Components\DropZone.xaml.cs">
-        <DependentUpon>DropZone.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
       <Compile Update="Components\Panel\PanelViewer.xaml.cs">
         <DependentUpon>PanelViewer.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
       <Compile Update="Components\Tracks\TrackViews\StraightTrackView.xaml.cs">
         <DependentUpon>TrackView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Tracks\Views\TextView.xaml.cs">
+        <DependentUpon>TextView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Tracks\Views\ImageView.xaml.cs">
+        <DependentUpon>ImageView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\DropZone\DropZone.xaml.cs">
+        <DependentUpon>DropZone.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

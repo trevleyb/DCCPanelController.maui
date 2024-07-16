@@ -5,7 +5,7 @@
              xmlns:viewModel="clr-namespace:DCCPanelController.Components.Tracks"
              xmlns:tracks="clr-namespace:DCCPanelController.Components.Tracks"
              xmlns:base="clr-namespace:DCCPanelController.Components.Tracks.Base"
-             x:Class="DCCPanelController.Components.Tracks.Views.TrackView"
+             x:Class="DCCPanelController.Components.Tracks.Views.ImageView"
              x:DataType="base:ITrackViewModel">
     
     <ContentView.Content>
@@ -14,12 +14,14 @@
               BackgroundColor="Transparent"
               AbsoluteLayout.LayoutBounds="{Binding Bounds}"
               AbsoluteLayout.LayoutFlags="None">
-             <Image Source="{Binding Image}"
+            <!--
+            <Image Source="{Binding Image}"
                    BackgroundColor="{StaticResource Transparent}"
                    Rotation="{Binding Track.Rotation}"
                    HorizontalOptions="CenterAndExpand"
                    VerticalOptions="CenterAndExpand"/>
-             <Border.Triggers>
+            -->
+            <Border.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">
                     <Setter Property="Style" Value="{StaticResource SelectedTrackView}" />
                 </DataTrigger>
