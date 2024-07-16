@@ -25,7 +25,7 @@ public static class MauiProgram
 
         builder.Services.AddTransient<PanelEditorPage>();
         builder.Services.AddTransient<PanelEditorViewModel> ();
-        
+
         builder.Services.AddSingleton<RoutesPage>();
         builder.Services.AddSingleton<RoutesViewModel> ();
 

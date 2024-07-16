@@ -25,16 +25,6 @@ public partial class PanelsViewModel : BaseViewModel {
     
     public PanelsPage? Sender { get; set; }
     
-    public int CalculateItemsToShow (double width, double height) {
-        // What is the proportion of the Height to the width of the current Image. 
-        // Based on this, determine if we should have 2, 3, or 4 items visible
-        if (height <= 0 || width <= 0) return 2;
-
-        var ratio = 2;
-        ratio = height > width ? Math.Max((int)(height / width), 2) : Math.Max((int)(width / height), 2);
-        return ratio;
-    }
-
     [RelayCommand]
     public async Task AddNewPanelAsync() {
         var panel = new Panel();
@@ -58,9 +48,17 @@ public partial class PanelsViewModel : BaseViewModel {
     [RelayCommand]
     public async Task GoToDetailsAsync(Panel panel) {
         if (Sender != null) {
-            await Sender.Navigation.PushAsync(new PanelEditorPage(panel));
-            Save();
+            var editorPage = new PanelEditorPage(panel);
+            editorPage.OnFinished += EditorPageOnOnFinished;
+            await Sender.Navigation.PushAsync(editorPage);
         }
+    }
+
+    private void EditorPageOnOnFinished(Panel panel) {
+        // What we need to do is force the Panel/Card that we are associated with
+        // to refresh. It should be doing this as the Name/ID are refreshing, but not
+        // the PanelViewer.
+        Panels[Panels.IndexOf(panel)] = panel;
     }
 
     [RelayCommand]

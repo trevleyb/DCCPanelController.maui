@@ -47,51 +47,44 @@
                         <Entry Grid.Column="1" Grid.Row="1" Style="{StaticResource PanelEntry}"
                                ClearButtonVisibility="WhileEditing" Text="{Binding Panel.Name, Mode=TwoWay}" />
                     </Grid>
-                    <StackLayout>
-                        <BoxView BackgroundColor="{StaticResource Primary}"
-                                 HeightRequest="1"
-                                 HorizontalOptions="FillAndExpand" />
-                        <Grid ColumnDefinitions="*,*,*">
-                            <StackLayout Grid.Column="0" Padding="5">
-                                <Label Style="{StaticResource PanelInfoLabel}">
+                        <Grid ColumnDefinitions="auto,auto,*" RowDefinitions="auto,auto,auto">
+                                <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource PanelInfoLabel}">
                                     <MultiBinding StringFormat="{}Columns: {0}">
                                         <Binding Path="Panel.Cols" />
                                     </MultiBinding>
                                 </Label>
-                                <Stepper ValueChanged="Stepper_OnValueChanged"
+                                <Stepper Grid.Column="0" Grid.Row="1" 
+                                         ValueChanged="Stepper_OnValueChanged"
                                          Style="{StaticResource PanelInfoStepper}"
                                          Value="{Binding Panel.Cols}"
                                          Maximum="{Binding MaxPanelCols}"
                                          Minimum="{Binding MinPanelCols}" />
-                            </StackLayout>
 
-                            <StackLayout Grid.Column="1" Padding="5">
-
-                                <Label Style="{StaticResource PanelInfoLabel}">
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource PanelInfoLabel}">
                                     <MultiBinding StringFormat="{}Rows: {0}">
                                         <Binding Path="Panel.Rows" />
                                     </MultiBinding>
                                 </Label>
-                                <Stepper ValueChanged="Stepper_OnValueChanged"
+                                <Stepper Grid.Column="1" Grid.Row="1" 
+                                         ValueChanged="Stepper_OnValueChanged"
                                          Style="{StaticResource PanelInfoStepper}"
                                          Value="{Binding Panel.Rows}"
                                          Maximum="{Binding MaxPanelRows}"
                                          Minimum="{Binding MinPanelRows}" />
-                            </StackLayout>
 
-                            <StackLayout Grid.Column="2" HorizontalOptions="Center" VerticalOptions="Center">
+                                <Grid Grid.Column="0" Grid.Row="2" ColumnSpan="2">
                                 <Label Style="{StaticResource PanelInfoLabel}">
                                     <MultiBinding StringFormat="{}Ratio {0}">
                                         <Binding Path="Panel.PanelRatio" />
                                     </MultiBinding>
                                 </Label>
-                            </StackLayout>
+                                </Grid>
                         </Grid>
-                    </StackLayout>
                     <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="3"
                              HorizontalOptions="FillAndExpand" />
                 </StackLayout>
 
+                
                 <AbsoluteLayout Grid.Row="1" x:Name="PanelEditorContainer" BackgroundColor="{StaticResource Gray100}">
                     <AbsoluteLayout x:Name="PanelEditorViewPane" BackgroundColor="{StaticResource White}">
                         <AbsoluteLayout.GestureRecognizers>
@@ -108,6 +101,7 @@
                         <TapGestureRecognizer Tapped="TapGestureRecognizerBlankEditor" />
                     </AbsoluteLayout.GestureRecognizers>
                 </AbsoluteLayout>
+                
             </Grid>
 
             <Grid Grid.Column="1">

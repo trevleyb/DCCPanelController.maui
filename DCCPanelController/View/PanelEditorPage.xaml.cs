@@ -20,7 +20,12 @@ public partial class PanelEditorPage : ContentPage {
     
     private ObservableCollection<Line> _lines = new();
     
-    
+    public event Action<Panel> OnFinished;
+    protected override void OnDisappearing() {
+        base.OnDisappearing();
+        OnFinished?.Invoke(_viewModel.Panel);
+    }
+
     public PanelEditorPage(Panel panel) {
         InitializeComponent();
         _viewModel = new PanelEditorViewModel(panel);
@@ -41,17 +46,22 @@ public partial class PanelEditorPage : ContentPage {
             var rect = new Rect(grid.XMargin, grid.YMargin, grid.PanelWidth, grid.PanelHeight);
             PanelEditorContainer.SetLayoutBounds(PanelEditorViewPane, rect);
             PanelEditorContainer.SetLayoutFlags(PanelEditorViewPane,AbsoluteLayoutFlags.None);
-            DrawGridLines();
+            DrawBorder();
+            DrawGridLines();    // Need to do this before we draw the tracks
         }
     }
 
+    private void DrawBorder() { }
+
     private void DrawGridLines() {
-        // Remove all of them ensuring each is evented so the UI updates 
+        // Remove all of them ensuring each is evented so the UI updates
+        // Have to copy the collection first so we don't modify a collection we are iterating on
         if (_lines.Any()) {
-            foreach (var line in _lines) {
+            var removeLines = _lines.ToList();
+            foreach (var line in removeLines) {
                 PanelEditorViewPane.Children.Remove(line);
+                _lines.Remove(line);
             }
-            _lines.Clear();
         }
 
         if (_viewModel.GridHelper is not null) {
@@ -59,10 +69,10 @@ public partial class PanelEditorPage : ContentPage {
             var height = _viewModel.GridHelper.BoxSize * _viewModel.GridHelper.PanelRows;
             var width = _viewModel.GridHelper.BoxSize * _viewModel.GridHelper.PanelCols;
             
-            for (var i = 0; i <= _viewModel.Panel.Cols; i++) {
+            for (var i = 1; i < _viewModel.Panel.Cols; i++) {
                 AddGridLine(i * gridSize, i * gridSize, 0, height, (i==0 || i==_viewModel.Panel.Cols));
             }
-            for (var i = 0; i <= _viewModel.Panel.Rows; i++) {
+            for (var i = 1; i < _viewModel.Panel.Rows; i++) {
                 AddGridLine(0, width, i * gridSize, i * gridSize, (i==0 || i==_viewModel.Panel.Rows));
             }
         }
@@ -74,6 +84,8 @@ public partial class PanelEditorPage : ContentPage {
             X2 = x2,
             Y1 = y1,
             Y2 = y2,
+            IsEnabled = false,
+            ZIndex = 5,
             Stroke = Colors.DarkGray,
             StrokeThickness = 3,
         };
@@ -116,6 +128,7 @@ public partial class PanelEditorPage : ContentPage {
                             DragStartingCommandParameter = track
                         };
 
+                        track.ZIndex = 10;
                         track.GestureRecognizers.Add(dragGestureRecognizer);
                         PanelEditorViewPane.Children.Add(track);
                     }
@@ -206,10 +219,11 @@ public partial class PanelEditorPage : ContentPage {
     
     private void DrawDropZone(Coordinate coordinate) {
         
-        var loc = _viewModel.GridHelper.GetGridCoordinates(coordinate);
+        var loc = _viewModel.GridHelper?.GetGridCoordinates(coordinate);
+        if (loc is null) return;
         
         if (_dropZone is null) {
-            _dropZone = new DropZone(_viewModel);
+            _dropZone = new DropZone(_viewModel) { ZIndex = 20 };
             PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, loc.BoxSize, loc.BoxSize)); // X=50, Y=100, Width=200, Height=200
             PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
             PanelEditorViewPane.Children.Add(_dropZone);

@@ -9,4 +9,5 @@ public partial class TrackView : ContentView {
         InitializeComponent();
         BindingContext = ViewModel;
     }
+   
 }

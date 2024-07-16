@@ -19,7 +19,6 @@ public class SettingsService {
     public ObservableCollection<Panel> Panels => _storage.Panels;
     public ObservableCollection<Turnout> Turnouts => _storage.Turnouts;
     public ObservableCollection<Route> Routes => _storage.Routes;
-    private string SampleImage => ImageHelper.Base64EncodedImage;
 
     public void Save() => Save(StorageFileame);
     

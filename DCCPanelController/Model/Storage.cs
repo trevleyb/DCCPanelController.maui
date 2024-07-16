@@ -16,6 +16,7 @@ public class Storage {
     public void ReOrderPanels() {
         for (var index = 0; index < Panels.Count; index++) {
             Panels[index].SortOrder = index + 1;
+            Panels[index].Validate();
         }
     }
 }

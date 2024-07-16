@@ -7,8 +7,8 @@ public partial class Coordinate : ObservableObject {
 
     public Coordinate() {}
     public Coordinate(int col, int row, bool? isValid = true) {
-        _col = col;
-        _row = row;
+        Col = col;
+        Row = row;
         IsValid = isValid ?? true;
     }
 

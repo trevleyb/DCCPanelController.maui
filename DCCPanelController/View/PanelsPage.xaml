@@ -8,8 +8,17 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:panel="clr-namespace:DCCPanelController.Components.Panel"
+    xmlns:converters="clr-namespace:DCCPanelController.Converters"
+    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:PanelToCardHeightConverter x:Key="PanelToCardHeightConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddNewPanelCommand}" IconImageSource="add.png" />
     </ContentPage.ToolbarItems>
@@ -17,11 +26,11 @@
     <ContentPage.Content>
 
         <Grid x:Name="MainGrid"
-              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground},
-                                          Dark={StaticResource DarkBackground}}">
+              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
-            <CollectionView MinimumWidthRequest="250" ItemsSource="{Binding Panels}" SelectionMode="None"
-                            x:Name="PanelsCollectionView">
+            <CollectionView x:Name="PanelsCollectionView" 
+                            ItemsSource="{Binding Panels}"
+                            SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -31,11 +40,11 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="1" x:Name="PanelCardGridItemsLayout" />
+                    <GridItemsLayout Orientation="Vertical" Span="{maui:OnScreenSize Large=2, ExtraLarge=3, Default=1}" x:Name="PanelCardGridItemsLayout" />
                 </CollectionView.ItemsLayout>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="model:Panel">
+                    <DataTemplate>
 
                         <SwipeView x:Name="PanelCardSwipeView">
                             <!-- RightItems are revealed when we swipe from right-to-left -->
@@ -51,22 +60,61 @@
                             </SwipeView.RightItems>
 
                             <SwipeView.Content>
-
-                                <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard" HeightRequest="250">
+                                <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard">
+                                    <Grid.HeightRequest>
+                                        <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
+                                            <Binding Path="." />
+                                            <Binding Source="{x:Reference PanelCard}" Path="Width" />
+                                        </MultiBinding>
+                                    </Grid.HeightRequest>
+                                
                                     <Border Style="{StaticResource CardView}">
                                         <Border.GestureRecognizers>
                                             <DragGestureRecognizer
                                                 DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}"
-                                                DragStartingCommandParameter="{Binding .}" />
+                                                DragStartingCommandParameter="{Binding}" />
                                             <DropGestureRecognizer
                                                 DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}"
-                                                DropCommandParameter="{Binding .}" />
+                                                DropCommandParameter="{Binding}" />
                                             <TapGestureRecognizer
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=GoToDetailsCommand}"
-                                                CommandParameter="{Binding .}" />
+                                                CommandParameter="{Binding}" />
                                         </Border.GestureRecognizers>
                                         <Grid Padding="0">
+                                            <AbsoluteLayout>
+                                                <panel:PanelViewer Panel="{Binding Mode=TwoWay}"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"
+                                                    AbsoluteLayout.LayoutFlags="All"
+                                                    AbsoluteLayout.LayoutBounds="0,0,1,1"/>
+                                                
+                                                <BoxView
+                                                    BackgroundColor="{StaticResource Primary}"
+                                                    HeightRequest="2"
+                                                    AbsoluteLayout.LayoutBounds="1,1,1,91"
+                                                    AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
 
+                                                <BoxView Color="{StaticResource PrimaryDisabled}"
+                                                         Background="{StaticResource PrimaryDisabled}"
+                                                         Opacity=".95"
+                                                         AbsoluteLayout.LayoutBounds="0.5,1,1,45"
+                                                         AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
+                                                <Label Style="{StaticResource MediumLabel}"
+                                                       TextColor="{StaticResource Primary}"
+                                                       FontAttributes="Bold"
+                                                       Padding="10"
+                                                       VerticalOptions="End"
+                                                       HorizontalOptions="Center"
+                                                       AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
+                                                       AbsoluteLayout.LayoutBounds="0.5,1,1,45"
+                                                       VerticalTextAlignment="Center"
+                                                       HorizontalTextAlignment="Center">
+                                                    <MultiBinding StringFormat="{}{0}: {1}">
+                                                        <Binding Path="Id" />
+                                                        <Binding Path="Name" />
+                                                    </MultiBinding>
+                                                </Label>
+                                            </AbsoluteLayout>
                                         </Grid>
                                     </Border>
                                 </Grid>

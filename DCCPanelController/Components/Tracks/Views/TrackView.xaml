@@ -13,11 +13,13 @@
               BackgroundColor="Transparent"
               AbsoluteLayout.LayoutBounds="{Binding Bounds}"
               AbsoluteLayout.LayoutFlags="None">
+            <!--
             <Image Source="{Binding Image}"
+                   BackgroundColor="{StaticResource Transparent}"
                    Rotation="{Binding Track.Rotation}"
                    HorizontalOptions="CenterAndExpand"
                    VerticalOptions="CenterAndExpand"/>
-            
+            -->
             <Border.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">
                     <Setter Property="Style" Value="{StaticResource SelectedTrackView}" />

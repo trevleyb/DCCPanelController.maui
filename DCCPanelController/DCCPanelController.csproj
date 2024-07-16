@@ -110,6 +110,9 @@
       <MauiXaml Update="Components\Panel\PanelViewer.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="Components\Tracks\TrackViews\StraightTrackView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -145,6 +148,10 @@
         <DependentUpon>PanelViewer.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Components\Tracks\TrackViews\StraightTrackView.xaml.cs">
+        <DependentUpon>TrackView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -152,8 +159,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Components\TrackViewModels\" />
-      <Folder Include="Converters\" />
       <Folder Include="Resources\Icons\" />
     </ItemGroup>
 

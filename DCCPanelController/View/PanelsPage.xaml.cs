@@ -10,7 +10,7 @@ using DCCPanelController.ViewModel;
 namespace DCCPanelController.View;
 
 public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
-    
+
     public PanelsPage() {
         InitializeComponent();
         var viewModel = App.ServiceProvider?.GetService<PanelsViewModel>();
@@ -22,25 +22,9 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
 
     protected override void OnAppearing() {
         base.OnAppearing();
-        SizeChanged += OnSizeChanged;
-    }
-    
-    protected override void OnDisappearing() {
-        base.OnDisappearing();
-        SizeChanged -= OnSizeChanged;
-    }
-    
-    private void OnSizeChanged(object? sender, EventArgs e) {
-        if (Width > 0 && Height > 0) {
-            //if (BindingContext is PanelsViewModel viewMode) viewMode.SetCardHeight(Width, Height);
-
-            if (PanelsCollectionView.ItemsLayout is GridItemsLayout { } layout) {
-                if (Width > Height) {
-                    layout.Span = 2;
-                } else {
-                    layout.Span = 1;
-                }
-            }
+        if (BindingContext is PanelsViewModel viewModel) {
+            viewModel.Save();
+            
         }
     }
 }

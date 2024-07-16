@@ -48,19 +48,12 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     private void LoadTrackPlan() {
-        ClearTrackPlan();
+        Tracks.Clear();
         foreach (var track in Panel.Tracks) {
             var viewModel = CreateTrackViewModel(track);
             AddTrackToPlan(viewModel);
         }
     }
-    
-    private void ClearTrackPlan() {
-        Tracks.Clear();
-        //var clearTracks = Tracks.Select(x => x);
-        //foreach (var track in clearTracks) Tracks.
-    }
-
     
     private void PanelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e is { PropertyName: nameof(Panel.Cols) or nameof(Panel.Rows) }) {
@@ -137,7 +130,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// Forces a refresh of all the tracks on the screen. 
     /// </summary>
     private void RefreshPlanLayoutTracks(List<ITrackViewModel> trackPieces) {
-        var tracks = trackPieces.Select(x => x);
+        var tracks = trackPieces.ToList();
         Tracks.Clear();
         foreach (var track in tracks) {
             AddTrackToPlan(track);
@@ -207,6 +200,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     
     [RelayCommand]
     public async Task SymbolDragAsync(SymbolViewModel symbol) {
+        ClearSelectedTracks();
         TrackAction = TrackActionEnum.AddingFromToolbox;
         SelectedSymbol = symbol;
     }
@@ -237,6 +231,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             var viewModel = CreateTrackViewModel(track);
             AddTrackToPlan(viewModel);
             TrackAction = TrackActionEnum.None;
+            SetSelectedTrack(viewModel);
         }
 
         // Move an item on the Main Grid to another location on the Main Grid
