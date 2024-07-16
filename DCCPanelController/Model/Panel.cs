@@ -1,10 +1,7 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.Attributes;
-using Microsoft.Maui.Graphics.Platform;
+
 
 namespace DCCPanelController.Model;
 
@@ -74,7 +71,7 @@ public partial class Panel : ObservableValidator, ICloneable {
             Cols = Cols,
             Rows = Rows
         };    
-        foreach (var track in _tracks) newPanel.Tracks.Add(track);
+        foreach (var track in Tracks) newPanel.Tracks.Add(track);
         return newPanel;
     }
 
@@ -82,7 +79,12 @@ public partial class Panel : ObservableValidator, ICloneable {
     public Panel? Copy => Clone() as Panel;
     
     private static string CalculateRatio(int col, int row) {
-        double GCD(double a, double b) {
+        var gcd = Gcd(col, row);
+        var x = col / gcd;
+        var y = row / gcd;
+        return $"{x:0.#}:{y:0.#}";
+
+        double Gcd(double a, double b) {
             while (b != 0) {
                 var temp = b;
                 b = a % b;
@@ -90,16 +92,6 @@ public partial class Panel : ObservableValidator, ICloneable {
             }
             return a;
         }
-
-        var gcd = GCD(col, row);
-        var x = col / gcd;
-        var y = row / gcd;
-        return $"{x:0.#}:{y:0.#}";
-    }
-
-    public void RaiseChangedEvent() {
-        OnPropertyChanged(nameof(Tracks));
-        OnPropertyChanged(nameof(Name));
     }
 }
 

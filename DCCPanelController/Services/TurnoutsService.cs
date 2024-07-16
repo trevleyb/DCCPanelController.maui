@@ -14,7 +14,7 @@ public class TurnoutsService {
         Turnouts = settingsService.Turnouts;
     }
 
-    public async Task AddTurnoutAsync(Turnout turnout) {
+    public void AddTurnoutAsync(Turnout turnout) {
         try {
             Turnouts.Add(turnout);
         } catch (Exception ex) {
@@ -34,7 +34,7 @@ public class TurnoutsService {
     
     public async Task<Turnout?> GetTurnoutByIdAsync(string id) {
         try {
-            return Turnouts.FirstOrDefault(t => t.Id != null && t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+            return await Task.Run(() => Turnouts.FirstOrDefault(t => t.Id != null && t.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
         } catch (Exception ex) {
             Console.WriteLine("Failed to find turnout: " + ex.Message);
         }

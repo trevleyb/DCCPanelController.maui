@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
-using DCCPanelController.Helpers;
 using DCCPanelController.Model;
+using Environment = System.Environment;
 
 namespace DCCPanelController.Services;
 
@@ -52,11 +52,13 @@ public class SettingsService {
                     var result = JsonSerializer.Deserialize<Storage>(jsonString);
                     return result ?? new Storage();
                 } catch (Exception ex) {
+                    Console.WriteLine("Could not deserialize settings. New set created: " + ex.Message);
                     return new Storage();
                 }
             } 
             return new Storage();
         } catch (Exception ex) {
+            Console.WriteLine("Could not access settings. New set created: " + ex.Message);
             return new Storage();
         } 
     }

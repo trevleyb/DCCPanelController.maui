@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace DCCPanelController.ViewModel;
 

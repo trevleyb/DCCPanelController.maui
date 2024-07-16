@@ -5,7 +5,7 @@ namespace DCCPanelController.Model;
 
 public partial class Coordinate : ObservableObject {
 
-    public Coordinate() {}
+    public Coordinate() : this(0, 0, false) { }
     public Coordinate(int col, int row, bool? isValid = true) {
         Col = col;
         Row = row;

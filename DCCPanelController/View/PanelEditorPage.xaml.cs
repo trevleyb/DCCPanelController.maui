@@ -22,7 +22,7 @@ public partial class PanelEditorPage : ContentPage {
     
     private ObservableCollection<Line> _lines = new();
     
-    public event Action<Panel> OnFinished;
+    public event Action<Panel>? OnFinished;
     protected override void OnDisappearing() {
         base.OnDisappearing();
         OnFinished?.Invoke(_viewModel.Panel);

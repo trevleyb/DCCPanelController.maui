@@ -12,10 +12,10 @@ public partial class TrackViewModelBase : BaseViewModel, ITrackViewModel {
     private ImageSource? _image;
     
     [ObservableProperty] 
-    private ImageSource? _text;
+    private string? _text;
 
     [ObservableProperty]
-    private Track _track;
+    private Track? _track;
     
     [ObservableProperty] 
     private Rect _bounds;
