@@ -14,22 +14,24 @@ namespace DCCPanelController.ViewModel;
 public partial class PanelEditorViewModel : BaseViewModel {
 
     [ObservableProperty] private Panel _panel;
+    [ObservableProperty] private List<string> _symbolSets = SymbolLoader.Symbols.SetNames;
+    [ObservableProperty] private string _selectedSet;
+    [ObservableProperty] private ObservableCollection<SymbolViewModel> _filteredSymbols = [];
     
     [NotifyPropertyChangedFor(nameof(IsPropertyAllowed))]
     [NotifyPropertyChangedFor(nameof(IsTrackSelected))]
     [ObservableProperty] private IElementView? _selectedElement;
     [ObservableProperty] private SymbolViewModel? _selectedSymbol;
-    [ObservableProperty] private ObservableCollection<SymbolViewModel> _symbols;
     [ObservableProperty] private ObservableCollection<IElementView> _panelElements = [];
     [ObservableProperty] private ObservableCollection<IElementView> _selectedElements = [];
 
     [ObservableProperty] private Coordinate _lastCoordinate;
     [ObservableProperty] private TrackActionEnum _trackAction = TrackActionEnum.None;
 
+    [ObservableProperty] private int _maxPanelCols = 40;
+    [ObservableProperty] private int _minPanelCols = 16;
     [ObservableProperty] private int _minPanelRows = 12;
-    [ObservableProperty] private int _minPanelCols = 9;
-    [ObservableProperty] private int _maxPanelRows = 36;
-    [ObservableProperty] private int _maxPanelCols = 27;
+    [ObservableProperty] private int _maxPanelRows = 30;
     
     [ObservableProperty] private bool _isPropertyAllowed;
     [ObservableProperty] private bool _multiSelectMode;
@@ -40,7 +42,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public GridHelper? GridHelper;
 
     public PanelEditorViewModel(Panel panel) {
-        Symbols = SymbolFactory.AvailableSymbols().ToObservableCollection();
+        SetSelectedSet(0);
         LastCoordinate = Coordinate.Unreferenced;
         IsPropertyPanelVisible = false;
         Panel = panel;
@@ -242,6 +244,13 @@ public partial class PanelEditorViewModel : BaseViewModel {
         CalculateMinGridSize();
     }
 
+    public void SetSelectedSet(int index) {
+        if (index >= 0 && index < SymbolSets.Count) {
+            SelectedSet = SymbolSets[index];
+            FilteredSymbols.Clear();
+            FilteredSymbols = SymbolFactory.AvailableSymbols(SelectedSet).ToObservableCollection();
+        }
+    }
 }
 
 public enum TrackActionEnum {

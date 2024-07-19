@@ -249,5 +249,13 @@ public partial class PanelEditorPage : ContentPage {
     private void Stepper_OnValueChanged(object? sender, ValueChangedEventArgs e) {
         ResizePanelViewArea();
     }
-    
+
+    private void Picker_OnSelectedIndexChanged(object? sender, EventArgs e) {
+        if (sender is Picker picker) {
+            var selectedIndex = picker.SelectedIndex;
+            if (selectedIndex != -1 && selectedIndex < _viewModel.SymbolSets.Count) {
+                _viewModel.SetSelectedSet(selectedIndex);        
+            }
+        }
+    }
 }

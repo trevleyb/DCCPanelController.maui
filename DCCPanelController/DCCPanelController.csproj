@@ -179,4 +179,9 @@
       <ProjectReference Include="..\..\DCCWithrottleClient\DCCWithrottleClient\DCCWithrottleClient.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Remove="Resources\Raw\symbols.json" />
+      <Resource Include="Resources\Raw\symbols.json" />
+    </ItemGroup>
+
 </Project>

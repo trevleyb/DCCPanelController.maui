@@ -35,7 +35,9 @@
                      IsEnabled="{Binding IsTrackSelected}" />
         <ToolbarItem x:Name="PropertiesToolbarItem" Clicked="PropertiesToolbarItem_OnClicked"
                      ToolTipProperties.Text="Select an Item"
-                     Command="{Binding PropertiesSelectedElementCommand}" IconImageSource="chevron_up.png" />
+                     IsEnabled="{Binding IsTrackSelected}"
+                     Command="{Binding PropertiesSelectedElementCommand}" 
+                     IconImageSource="settings_adjust.png" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -48,13 +50,14 @@
                                 <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource MediumLabel}"
                                        TextColor="{StaticResource Primary}" Text="ID" LineBreakMode="NoWrap" />
                                 <Entry Grid.Column="0" Grid.Row="1" Style="{StaticResource PanelEntry}"
-                                       ClearButtonVisibility="WhileEditing" MaxLength="10"
+                                       WidthRequest="80"
+                                       ClearButtonVisibility="Never"  MaxLength="10"
                                        Text="{Binding Panel.Id, Mode=TwoWay}" />
                                 <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource MediumLabel}"
                                        TextColor="{StaticResource Primary}" Text="Name or Description"
                                        LineBreakMode="NoWrap" />
                                 <Entry Grid.Column="1" Grid.Row="1" Style="{StaticResource PanelEntry}"
-                                       ClearButtonVisibility="WhileEditing" Text="{Binding Panel.Name, Mode=TwoWay}" />
+                                       ClearButtonVisibility="Never" Text="{Binding Panel.Name, Mode=TwoWay}" />
                                 <Image Grid.Column="2" Grid.Row="1" Source="{Binding Source={x:Reference MyExpander}, Path=IsExpanded, Converter={StaticResource BooleanToArrowConverter}}" />
                             </Grid>
                     </toolkit:Expander.Header>
@@ -124,14 +127,16 @@
             </Grid>
 
             <Grid Grid.Column="2"
-                  RowDefinitions="*"
+                  RowDefinitions="auto,*"
                   WidthRequest="{markups:OnScreenSize Medium=50, Large=50, ExtraLarge=120, Default=120}"
                   BackgroundColor="{StaticResource CardBackground}"
                   IsEnabled="{Binding IsNotBusy}">
 
-                <ScrollView>
+                <Picker HorizontalTextAlignment="Start" HorizontalOptions="Fill" Title="Symbol Set" ItemsSource="{Binding SymbolSets}" SelectedIndexChanged="Picker_OnSelectedIndexChanged" />
+                
+                <ScrollView Grid.Row="1">
                     <FlexLayout Direction="Row" JustifyContent="Center" AlignItems="Start">
-                        <CollectionView ItemsSource="{Binding Symbols}">
+                        <CollectionView ItemsSource="{Binding FilteredSymbols}">
                             <CollectionView.ItemsLayout>
                                 <GridItemsLayout Orientation="Vertical"
                                                  Span="{markups:OnScreenSize Medium=1, Large=1, ExtraLarge=2, Default=2}" />

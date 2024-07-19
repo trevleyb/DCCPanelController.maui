@@ -1,8 +1,4 @@
-using System.Collections.ObjectModel;
 using DCCPanelController.Components.Elements.ViewModels;
-using DCCPanelController.Components.Elements.Views;
-using DCCPanelController.Model;
-
 namespace DCCPanelController.Components.Elements;
 
 /// <summary>
@@ -13,31 +9,16 @@ namespace DCCPanelController.Components.Elements;
 /// </summary>
 public static class SymbolFactory {
 
-    private static readonly Dictionary<string, ImageSource> Symbols = new() {
-        { "Straight",       ImageSource.FromFile("straight.png") },
-        { "Terminate",      ImageSource.FromFile("terminate.png") },
-        { "Crossing",       ImageSource.FromFile("crossing.png") },
-        { "Left",           ImageSource.FromFile("angleleft.png") },
-        { "Right",          ImageSource.FromFile("angleright.png") },
-        { "Turnout(L)",     ImageSource.FromFile("turnoutleft.png") },
-        { "Turnout(R)",     ImageSource.FromFile("turnoutright.png") },
-        { "Wye-Junction",   ImageSource.FromFile("yjunction.png") },
-        { "Text",           ImageSource.FromFile("yjunction.png") },
-    };
-    
-    public static SymbolViewModel? CreateView(string name) {
-        return Symbols.TryGetValue(name, out var symbol) ? new SymbolViewModel(name, symbol) : null;
+    public static SymbolViewModel CreateView(string key) {
+        var sd = SymbolLoader.Symbols.Find(key);
+        if (sd == null) throw new KeyNotFoundException($"Could not find a Symbol with a key of: {key}");
+        return new SymbolViewModel(sd.Set, sd.Name, sd.Image, sd.Width, sd.Height);
     }
 
-    public static List<SymbolViewModel> AvailableSymbols() {
-        var symbols = Symbols.Select(symbol => CreateView(symbol.Key)).Where(view => view is not null).ToList();
+    public static List<SymbolViewModel> AvailableSymbols(string set) {
+        var symbols = SymbolLoader.Symbols.DetailsForSet(set).Select(symbol => CreateView(symbol.Key)).ToList();
         return symbols!;
     }
 
-    public static async IAsyncEnumerable<SymbolViewModel> AvailableSymbolsAsync() {
-        foreach (var symbolViewModel in Symbols.Select(symbol => CreateView(symbol.Key)).OfType<SymbolViewModel>()) {
-            yield return symbolViewModel;
-        }
-    }
-
+    public static List<string> AvailableSets => SymbolLoader.Symbols.SetNames;
 }

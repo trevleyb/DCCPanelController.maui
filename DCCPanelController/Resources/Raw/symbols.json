@@ -1,0 +1,46 @@
+{
+  "sets": [
+    {
+      "Name": "Default",
+      "Symbols": [
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "straight.png" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+      ]
+    },
+    {
+      "Name": "Mainline",
+      "Symbols": [
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "angleleft.png" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "angleright.png" }
+      ]
+    },
+    {
+      "Name": "Branchline",
+      "Symbols": [
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "terminate.png" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+      ]
+    },
+    {
+      "Name": "Mainline (Dashed)",
+      "Symbols": [
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "crossing.png" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+      ]
+    },
+    {
+      "Name": "Branchline (Dashed)",
+      "Symbols": [
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "turnoutleft.png" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "turnoutright.png" }
+      ]
+    },
+    {
+      "Name": "Special",
+      "Symbols": [
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "yjunction.png" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+      ]
+    }
+  ]
+}
