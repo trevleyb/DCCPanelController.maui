@@ -196,7 +196,6 @@ public partial class PanelEditorPage : ContentPage {
     
     private void RemoveDropZone() {
         PanelEditorViewPane.Children.Remove(_dropZone);
-        SetPropertiesToolbarIcon();
         _dropZone = null;
     }
 

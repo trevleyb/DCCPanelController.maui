@@ -214,7 +214,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Add a track from the toolbox to the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.AddingFromToolbox && SelectedSymbol is not null) {
-            var element = ElementFactory.GetElementView(SelectedSymbol.Name);
+            var element = ElementFactory.GetElementView(SelectedSymbol.Key);
             element.ViewModel.Element.Coordinate = LastCoordinate;
             AddElementToPlan(element);
             Panel.Elements.Add(element.ViewModel.Element);
