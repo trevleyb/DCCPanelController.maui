@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using DCCPanelController.Model.Elements;
 
 namespace DCCPanelController.Model;
 
@@ -13,6 +13,7 @@ public partial class Panel : ObservableValidator, ICloneable {
     [ObservableProperty] private string _id = "new";
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private int _sortOrder = 0;
+    [ObservableProperty] private ImageSource? _panelImage;
     
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
     [ObservableProperty] private int _cols = 24;
@@ -20,7 +21,7 @@ public partial class Panel : ObservableValidator, ICloneable {
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
     [ObservableProperty] private int _rows = 18;
     
-    [ObservableProperty] private ObservableCollection<Track> _tracks = [];
+    [ObservableProperty] private ObservableCollection<PanelElement> _elements = [];
 
     [JsonIgnore]
     public string PanelRatio => CalculateRatio(Cols, Rows);
@@ -29,34 +30,34 @@ public partial class Panel : ObservableValidator, ICloneable {
 
         // Make sure that all the Coordinates for the Track Pieces are valid and 
         // if not, make sure they are within the bounds of the Panel. 
-        if (Tracks.Any()) {
-            foreach (var track in Tracks) {
-                if (track.Coordinate.Col <= 0) track.Coordinate.Col = 1;
-                if (track.Coordinate.Col >= Cols) track.Coordinate.Col = Cols;
-                if (track.Coordinate.Row <= 0) track.Coordinate.Row = 1;
-                if (track.Coordinate.Row >= Rows) track.Coordinate.Row = Rows;
+        if (Elements.Any()) {
+            foreach (var element in Elements) {
+                if (element.Coordinate.Col <= 0) element.Coordinate.Col = 1;
+                if (element.Coordinate.Col >= Cols) element.Coordinate.Col = Cols;
+                if (element.Coordinate.Row <= 0) element.Coordinate.Row = 1;
+                if (element.Coordinate.Row >= Rows) element.Coordinate.Row = Rows;
             }
         }
 
         // Validate that none of the tracks overlap any other tracks. If they do, 
         // then we need to remove them or move them (lets try to move them). 
-        List<Track> invalidTracks = new();
-        foreach (var track in Tracks) {
-            while (Tracks.Any(t => t.Coordinate.Col == track.Coordinate.Col && t.Coordinate.Row == track.Coordinate.Row && t != track)) {
-                track.Coordinate.Col += 1;
-                if (track.Coordinate.Col >= Cols) {
-                    track.Coordinate.Col = 1;
-                    track.Coordinate.Row += 1;
-                    if (track.Coordinate.Row >= Rows) {
-                        track.Coordinate.Row = -1;
-                        track.Coordinate.Col = -1;
-                        invalidTracks.Add(track);
+        List<PanelElement> invalidElements = new();
+        foreach (var element in Elements) {
+            while (Elements.Any(t => t.Coordinate.Col == element.Coordinate.Col && t.Coordinate.Row == element.Coordinate.Row && t != element)) {
+                element.Coordinate.Col += 1;
+                if (element.Coordinate.Col >= Cols) {
+                    element.Coordinate.Col = 1;
+                    element.Coordinate.Row += 1;
+                    if (element.Coordinate.Row >= Rows) {
+                        element.Coordinate.Row = -1;
+                        element.Coordinate.Col = -1;
+                        invalidElements.Add(element);
                         break;
                     }
                 }
             }
         }
-        foreach (var invalidTrack in invalidTracks) Tracks.Remove(invalidTrack);
+        foreach (var invalidElement in invalidElements) Elements.Remove(invalidElement);
     }
 
     /// <summary>
@@ -68,10 +69,11 @@ public partial class Panel : ObservableValidator, ICloneable {
             Id = Id,
             Name = Name,
             SortOrder = SortOrder,
+            PanelImage = PanelImage,
             Cols = Cols,
             Rows = Rows
         };    
-        foreach (var track in Tracks) newPanel.Tracks.Add(track);
+        foreach (var element in Elements) newPanel.Elements.Add(element);
         return newPanel;
     }
 

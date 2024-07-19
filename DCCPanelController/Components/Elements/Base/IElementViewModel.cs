@@ -1,12 +1,11 @@
 using DCCPanelController.Model;
+using DCCPanelController.Model.Elements;
 
-namespace DCCPanelController.Components.Tracks.Base;
+namespace DCCPanelController.Components.Elements.Base;
 
-public interface ITrackViewModel {
+public interface IElementViewModel {
  
-    Track Track { get; set; }
-    string Text { get; set; }
-    ImageSource Image { get; set; }
+    PanelElement Element { get; set; }
     Rect Bounds { get; set; }
     
     bool IsBusy { get; }

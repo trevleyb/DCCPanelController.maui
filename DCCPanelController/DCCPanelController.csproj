@@ -119,6 +119,9 @@
       <MauiXaml Update="Components\DropZone\DropZone.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="Components\Elements\Views\SymbolView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -166,18 +169,14 @@
         <DependentUpon>DropZone.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="Components\Elements\Views\SymbolView.xaml.cs">
+        <DependentUpon>SymbolView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\..\DCCWithrottleClient\DCCWithrottleClient\DCCWithrottleClient.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Resources\Icons\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Components\Symbols\SymbolView.xaml" />
     </ItemGroup>
 
 </Project>

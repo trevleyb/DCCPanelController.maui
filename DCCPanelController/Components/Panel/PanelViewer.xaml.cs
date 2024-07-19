@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using DCCPanelController.Components.Tracks;
-using DCCPanelController.Components.Tracks.Base;
-using DCCPanelController.Components.Tracks.Views;
+using DCCPanelController.Components.Elements;
+using DCCPanelController.Components.Elements.Base;
+using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.ViewModel;
@@ -14,23 +14,19 @@ namespace DCCPanelController.Components.Panel;
 
 public partial class PanelViewer : ContentView {
 
-    public GridHelper? GridHelper;
-    private readonly ObservableCollection<ITrackViewModel> _tracks = [];
+    private GridHelper? GridHelper;
+    private readonly ObservableCollection<IElementView> Elements = [];
     
     public PanelViewer() {
         InitializeComponent();
         PanelEditorContainer.SizeChanged += PanelEditorContainerSizeChanged;
-        _tracks.CollectionChanged += TracksOnCollectionChanged;
+        Elements.CollectionChanged += TracksOnCollectionChanged;
+        //BindingContext = this;
     }
 
     public static readonly BindableProperty PanelProperty =
-        BindableProperty.Create(
-            nameof(Panel),
-            typeof(Model.Panel),
-            typeof(PanelViewer),
-            null,
-            BindingMode.TwoWay,
-            propertyChanged: OnPanelChanged);
+        BindableProperty.Create(nameof(Panel), typeof(Model.Panel), typeof(PanelViewer), null,
+                                BindingMode.TwoWay, propertyChanged: OnPanelChanged);
 
     public Model.Panel Panel {
         get => (Model.Panel)GetValue(PanelProperty);
@@ -49,9 +45,7 @@ public partial class PanelViewer : ContentView {
         control.OnPanelChanged((Model.Panel)oldValue, (Model.Panel)newValue);
     }
 
-    private void OnPanelChanged(Model.Panel oldPanel, Model.Panel newPanel) {
-        
-    }
+    private void OnPanelChanged(Model.Panel oldPanel, Model.Panel newPanel) { }
     
     private void PanelEditorContainerSizeChanged(object? sender, EventArgs e) {
         if (sender is AbsoluteLayout layout && sender == PanelEditorContainer) {
@@ -62,12 +56,11 @@ public partial class PanelViewer : ContentView {
     }
     
     private void LoadTrackPlan() {
-        _tracks.Clear();
-        if (Panel?.Tracks != null) {
-            foreach (var track in Panel.Tracks) {
-                var viewModel = TrackViewModelFactory.GetViewModel(track.TrackType);
-                viewModel.Track = track;
-                AddTrackToPlan(viewModel);
+        Elements.Clear();
+        if (Panel?.Elements != null) {
+            foreach (var element in Panel.Elements) {
+                var view = ElementFactory.GetElementView(element);
+                AddTrackToPlan(view);
             }
         }
     }
@@ -80,29 +73,25 @@ public partial class PanelViewer : ContentView {
         }
     }
     
-    private void AddTrackToPlan(ITrackViewModel viewModel) {
-        var gridData = GridHelper?.GetGridCoordinates(viewModel.Track.Coordinate);
+    private void AddTrackToPlan(IElementView view) {
+        var gridData = GridHelper?.GetGridCoordinates(view.ViewModel.Element.Coordinate);
         if (gridData is { IsOk: true } gd) {
-            viewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
-            _tracks.Add(viewModel);
-        }
-    }
-    
-    public void UpdatePanelEditorGrid() {
-        RefreshPlanLayoutTracks(_tracks.ToList());
-    }
-    
-    /// <summary>
-    /// Forces a refresh of all the tracks on the screen. 
-    /// </summary>
-    private void RefreshPlanLayoutTracks(List<ITrackViewModel> trackPieces) {
-        var tracks = trackPieces.ToList();
-        _tracks.Clear();
-        foreach (var track in tracks) {
-            AddTrackToPlan(track);
+            view.ViewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
+            Elements.Add(view);
         }
     }
 
+    /// <summary>
+    /// Forces a refresh of all the tracks on the screen. 
+    /// </summary>
+    private void RefreshPlanLayout() => RefreshPlanLayout(Elements.ToList());
+
+    private void RefreshPlanLayout(List<IElementView> elements) {
+        Elements.Clear();
+        foreach (var element in elements) {
+            AddTrackToPlan(element);
+        }
+    }
     
     /// <summary>
     /// Manual Create/Update the display of the Tracks on the Screen as using a CollectionView
@@ -118,17 +107,19 @@ public partial class PanelViewer : ContentView {
             // ---------------------------------------------------------
             if (e.NewItems is not null && e.NewItems.Count > 0) {
                 foreach (var item in e.NewItems) {
-                    if (item is ITrackViewModel viewModel) {
-                        var track = new TrackView(viewModel);
-                        AbsoluteLayout.SetLayoutBounds(track, viewModel.Bounds);
-                        AbsoluteLayout.SetLayoutFlags(track, AbsoluteLayoutFlags.None);
-                    
-                        var tapGestureRecognizer = new TapGestureRecognizer();
-                        tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
-                        track.GestureRecognizers.Add(tapGestureRecognizer);
-                        
-                        track.ZIndex = 10;
-                        PanelEditorViewPane.Children.Add(track);
+                    if (item is IElementView elementView) {
+                        if (elementView is Microsoft.Maui.Controls.View view) {
+                            AbsoluteLayout.SetLayoutBounds(view, elementView.ViewModel.Bounds);
+                            AbsoluteLayout.SetLayoutFlags(view, AbsoluteLayoutFlags.None);
+
+                            var tapGestureRecognizer = new TapGestureRecognizer();
+                            tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
+                            view.GestureRecognizers.Add(tapGestureRecognizer);
+
+                            view.ZIndex = 10;
+                            PanelEditorViewPane.Children.Add(view);
+
+                        }
                     }
                 }
             }
@@ -139,8 +130,8 @@ public partial class PanelViewer : ContentView {
             // ---------------------------------------------------------
             if (e.OldItems is not null && e.OldItems.Count > 0) {
                 foreach (var item in e.OldItems) {
-                    if (item is ITrackViewModel track) {
-                        var itemsToDelete = PanelEditorViewPane.Children.OfType<TrackView>().Where(view => view.ViewModel.Track.Coordinate.Equals(track.Track.Coordinate)).ToList();
+                    if (item is IElementView elementView) {
+                        var itemsToDelete = PanelEditorViewPane.Children.OfType<IElementView>().Where(view => view.ViewModel.Element.Coordinate.Equals(elementView.ViewModel.Element.Coordinate)).ToList();
                         foreach (var view in itemsToDelete) {
                             PanelEditorViewPane.Children.Remove(view);
                         }

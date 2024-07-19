@@ -4,8 +4,7 @@
     x:Class="DCCPanelController.Components.Panel.PanelViewer"
     xmlns:markups="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModel="clr-namespace:DCCPanelController.Components.Panel">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.Content>
         <AbsoluteLayout x:Name="PanelEditorContainer">

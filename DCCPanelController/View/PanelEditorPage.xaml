@@ -10,9 +10,15 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:symbols="clr-namespace:DCCPanelController.Components.Symbols"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:symbols1="clr-namespace:DCCPanelController.Components.Symbols">
+    xmlns:views="clr-namespace:DCCPanelController.Components.Elements.Views"
+    xmlns:converters="clr-namespace:DCCPanelController.Converters">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BooleanToArrowConverter x:Key="BooleanToArrowConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="MultiSelectToolbarItem" Clicked="MultiSelectToolbarItem_OnClicked"
@@ -21,70 +27,76 @@
                      IsEnabled="{Binding IsTrackSelected}" />
         <ToolbarItem x:Name="DeleteTrackToolbarItem" Clicked="DeleteTrackToolbarItem_OnClicked"
                      ToolTipProperties.Text="Delete an Item"
-                     Command="{Binding DeleteSelectedTrackCommand}" IconImageSource="trash.png"
+                     Command="{Binding DeleteSelectedElementCommand}" IconImageSource="trash.png"
                      IsEnabled="{Binding IsTrackSelected}" />
         <ToolbarItem x:Name="RotateTrackToolbarItem" Clicked="RotateTrackToolbarItem_OnClicked"
                      ToolTipProperties.Text="Rotate Selected Items 90\u00B0"
-                     Command="{Binding RotateSelectedTrackCommand}" IconImageSource="rotate180d.png"
+                     Command="{Binding RotateSelectedElementCommand}" IconImageSource="rotate180d.png"
                      IsEnabled="{Binding IsTrackSelected}" />
         <ToolbarItem x:Name="PropertiesToolbarItem" Clicked="PropertiesToolbarItem_OnClicked"
                      ToolTipProperties.Text="Select an Item"
-                     Command="{Binding PropertiesSelectedTrackCommand}" IconImageSource="chevron_up.png" />
+                     Command="{Binding PropertiesSelectedElementCommand}" IconImageSource="chevron_up.png" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid x:Name="EditorContainer" ColumnDefinitions="*,5,auto">
+
             <Grid RowDefinitions="auto,*" Grid.Column="0">
-                <StackLayout Grid.Row="0" IsVisible="{Binding IsPropertyPanelVisible}">
-                    <Grid ColumnDefinitions="auto,*" ColumnSpacing="10" RowDefinitions="auto,auto" Margin="10,10,10,10">
-                        <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource MediumLabel}"
-                               TextColor="{StaticResource Primary}" Text="ID" LineBreakMode="NoWrap" />
-                        <Entry Grid.Column="0" Grid.Row="1" Style="{StaticResource PanelEntry}"
-                               ClearButtonVisibility="WhileEditing" MaxLength="10"
-                               Text="{Binding Panel.Id, Mode=TwoWay}" />
-                        <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource MediumLabel}"
-                               TextColor="{StaticResource Primary}" Text="Name or Description" LineBreakMode="NoWrap" />
-                        <Entry Grid.Column="1" Grid.Row="1" Style="{StaticResource PanelEntry}"
-                               ClearButtonVisibility="WhileEditing" Text="{Binding Panel.Name, Mode=TwoWay}" />
-                    </Grid>
+                <toolkit:Expander x:Name="MyExpander" IsExpanded="False">
+                    <toolkit:Expander.Header>
+                            <Grid ColumnDefinitions="auto,*,auto" ColumnSpacing="10" RowDefinitions="auto,auto" Margin="10,10,10,10">
+                                <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource MediumLabel}"
+                                       TextColor="{StaticResource Primary}" Text="ID" LineBreakMode="NoWrap" />
+                                <Entry Grid.Column="0" Grid.Row="1" Style="{StaticResource PanelEntry}"
+                                       ClearButtonVisibility="WhileEditing" MaxLength="10"
+                                       Text="{Binding Panel.Id, Mode=TwoWay}" />
+                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource MediumLabel}"
+                                       TextColor="{StaticResource Primary}" Text="Name or Description"
+                                       LineBreakMode="NoWrap" />
+                                <Entry Grid.Column="1" Grid.Row="1" Style="{StaticResource PanelEntry}"
+                                       ClearButtonVisibility="WhileEditing" Text="{Binding Panel.Name, Mode=TwoWay}" />
+                                <Image Grid.Column="2" Grid.Row="1" Source="{Binding Source={x:Reference MyExpander}, Path=IsExpanded, Converter={StaticResource BooleanToArrowConverter}}" />
+                            </Grid>
+                    </toolkit:Expander.Header>
+                    <StackLayout>
                         <Grid ColumnDefinitions="auto,auto,*" RowDefinitions="auto,auto,auto">
-                                <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource PanelInfoLabel}">
-                                    <MultiBinding StringFormat="{}Columns: {0}">
-                                        <Binding Path="Panel.Cols" />
-                                    </MultiBinding>
-                                </Label>
-                                <Stepper Grid.Column="0" Grid.Row="1" 
-                                         ValueChanged="Stepper_OnValueChanged"
-                                         Style="{StaticResource PanelInfoStepper}"
-                                         Value="{Binding Panel.Cols}"
-                                         Maximum="{Binding MaxPanelCols}"
-                                         Minimum="{Binding MinPanelCols}" />
+                            <Label Grid.Column="0" Grid.Row="0" Style="{StaticResource PanelInfoLabel}">
+                                <MultiBinding StringFormat="{}Columns: {0}">
+                                    <Binding Path="Panel.Cols" />
+                                </MultiBinding>
+                            </Label>
+                            <Stepper Grid.Column="0" Grid.Row="1"
+                                     ValueChanged="Stepper_OnValueChanged"
+                                     Style="{StaticResource PanelInfoStepper}"
+                                     Value="{Binding Panel.Cols}"
+                                     Maximum="{Binding MaxPanelCols}"
+                                     Minimum="{Binding MinPanelCols}" />
 
-                                <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource PanelInfoLabel}">
-                                    <MultiBinding StringFormat="{}Rows: {0}">
-                                        <Binding Path="Panel.Rows" />
-                                    </MultiBinding>
-                                </Label>
-                                <Stepper Grid.Column="1" Grid.Row="1" 
-                                         ValueChanged="Stepper_OnValueChanged"
-                                         Style="{StaticResource PanelInfoStepper}"
-                                         Value="{Binding Panel.Rows}"
-                                         Maximum="{Binding MaxPanelRows}"
-                                         Minimum="{Binding MinPanelRows}" />
+                            <Label Grid.Column="1" Grid.Row="0" Style="{StaticResource PanelInfoLabel}">
+                                <MultiBinding StringFormat="{}Rows: {0}">
+                                    <Binding Path="Panel.Rows" />
+                                </MultiBinding>
+                            </Label>
+                            <Stepper Grid.Column="1" Grid.Row="1"
+                                     ValueChanged="Stepper_OnValueChanged"
+                                     Style="{StaticResource PanelInfoStepper}"
+                                     Value="{Binding Panel.Rows}"
+                                     Maximum="{Binding MaxPanelRows}"
+                                     Minimum="{Binding MinPanelRows}" />
 
-                                <Grid Grid.Column="0" Grid.Row="2" ColumnSpan="2">
+                            <Grid Grid.Column="0" Grid.Row="2" ColumnSpan="2">
                                 <Label Style="{StaticResource PanelInfoLabel}">
                                     <MultiBinding StringFormat="{}Ratio {0}">
                                         <Binding Path="Panel.PanelRatio" />
                                     </MultiBinding>
                                 </Label>
-                                </Grid>
+                            </Grid>
                         </Grid>
-                    <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="3"
-                             HorizontalOptions="FillAndExpand" />
-                </StackLayout>
+                        <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="3"
+                                 HorizontalOptions="FillAndExpand" />
+                    </StackLayout>
+                </toolkit:Expander>
 
-                
                 <AbsoluteLayout Grid.Row="1" x:Name="PanelEditorContainer" BackgroundColor="{StaticResource Gray100}">
                     <AbsoluteLayout x:Name="PanelEditorViewPane" BackgroundColor="{StaticResource White}">
                         <AbsoluteLayout.GestureRecognizers>
@@ -101,7 +113,7 @@
                         <TapGestureRecognizer Tapped="TapGestureRecognizerBlankEditor" />
                     </AbsoluteLayout.GestureRecognizers>
                 </AbsoluteLayout>
-                
+
             </Grid>
 
             <Grid Grid.Column="1">
@@ -125,16 +137,14 @@
                                                  Span="{markups:OnScreenSize Medium=1, Large=1, ExtraLarge=2, Default=2}" />
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="symbols1:SymbolViewModel">
-                                    <symbols1:SymbolView Margin="5,5,5,5"
-                                                        WidthRequest="40"
-                                                        HeightRequest="40">
-                                        <symbols1:SymbolView.GestureRecognizers>
+                                <DataTemplate>
+                                    <views:SymbolView Margin="5,5,5,5" WidthRequest="40" HeightRequest="40">
+                                        <views:SymbolView.GestureRecognizers>
                                             <DragGestureRecognizer
                                                 DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"
                                                 DragStartingCommandParameter="{Binding .}" />
-                                        </symbols1:SymbolView.GestureRecognizers>
-                                    </symbols1:SymbolView>
+                                        </views:SymbolView.GestureRecognizers>
+                                    </views:SymbolView>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>

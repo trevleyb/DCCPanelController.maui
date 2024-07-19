@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:DCCPanelController.Components.Elements.ViewModels"
+             x:Class="DCCPanelController.Components.Elements.Views.SymbolView"
+             x:DataType="viewModels:SymbolViewModel"
+             >
+
+    <ContentView.Content>
+        <Grid HeightRequest="50" WidthRequest="50" Margin="5,5,5,5">
+            <Border
+                Style="{StaticResource CardView}"
+                BackgroundColor="{StaticResource Transparent}"
+                Margin="5,5,5,5"
+                Padding="5,5,5,5">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10,10,10,10" />
+                </Border.StrokeShape>
+                <Image Source="{Binding Image}"
+                       HorizontalOptions="CenterAndExpand"
+                       VerticalOptions="CenterAndExpand" />
+            </Border>
+        </Grid>
+    </ContentView.Content>
+
+</ContentView>

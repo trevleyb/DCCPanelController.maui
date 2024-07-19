@@ -3,9 +3,8 @@ using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components;
 using DCCPanelController.Components.DropZone;
-using DCCPanelController.Components.Tracks;
-using DCCPanelController.Components.Tracks.Base;
-using DCCPanelController.Components.Tracks.Views;
+using DCCPanelController.Components.Elements.Base;
+using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Model;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Controls.Shapes;
@@ -15,12 +14,12 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorPage : ContentPage {
 
+    private readonly ObservableCollection<Line> _lines = [];
     private readonly PanelEditorViewModel _viewModel;
+
     private DropZone? _dropZone;
     private int _lastX;
     private int _lastY;
-    
-    private ObservableCollection<Line> _lines = new();
     
     public event Action<Panel>? OnFinished;
     protected override void OnDisappearing() {
@@ -31,7 +30,7 @@ public partial class PanelEditorPage : ContentPage {
     public PanelEditorPage(Panel panel) {
         InitializeComponent();
         _viewModel = new PanelEditorViewModel(panel);
-        _viewModel.Tracks.CollectionChanged += TracksOnCollectionChanged;
+        _viewModel.PanelElements.CollectionChanged += PanelElementsOnCollectionChanged;
         PanelEditorContainer.SizeChanged += PanelEditorContainerSizeChanged;
         BindingContext = _viewModel;
     }
@@ -81,22 +80,9 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void AddGridLine(int x1, int x2, int y1, int y2, bool isEdge) {
-        var line = new Line() {
-            X1 = x1,
-            X2 = x2,
-            Y1 = y1,
-            Y2 = y2,
-            IsEnabled = false,
-            ZIndex = 5,
-            Stroke = Colors.DarkGray,
-            StrokeThickness = 3,
+        var line = new Line() { X1 = x1, X2 = x2, Y1 = y1, Y2 = y2,
+            IsEnabled = false, ZIndex = 5, Stroke = Colors.DarkGray, StrokeThickness = 1,
         };
-
-        if (!isEdge) {
-            line.StrokeThickness = 1;
-            line.StrokeDashArray = new DoubleCollection([1, 1]);
-            line.StrokeDashOffset = 6;
-        }
         _lines.Add(line);
         PanelEditorViewPane.Children.Add(line);
     }
@@ -108,7 +94,7 @@ public partial class PanelEditorPage : ContentPage {
     /// <param name="sender"></param>
     /// <param name="e"></param>
     /// <exception cref="NotImplementedException"></exception>
-    private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+    private void PanelElementsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
 
         switch (e.Action) {
         case NotifyCollectionChangedAction.Add:
@@ -116,34 +102,36 @@ public partial class PanelEditorPage : ContentPage {
             // ---------------------------------------------------------
             if (e.NewItems is not null && e.NewItems.Count > 0) {
                 foreach (var item in e.NewItems) {
-                    if (item is ITrackViewModel viewModel) {
-                        var track = new TrackView(viewModel);
-                        AbsoluteLayout.SetLayoutBounds(track, viewModel.Bounds);
-                        AbsoluteLayout.SetLayoutFlags(track, AbsoluteLayoutFlags.None);
-                    
-                        var tapGestureRecognizer = new TapGestureRecognizer();
-                        tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
-                        track.GestureRecognizers.Add(tapGestureRecognizer);
+                    if (item is IElementView elementView) {
+                        if (elementView is Microsoft.Maui.Controls.View view) {
+                            AbsoluteLayout.SetLayoutBounds(view, elementView.ViewModel.Bounds);
+                            AbsoluteLayout.SetLayoutFlags(view, AbsoluteLayoutFlags.None);
 
-                        var dragGestureRecognizer = new DragGestureRecognizer {
-                            DragStartingCommand = ((PanelEditorViewModel)this.BindingContext).TrackDragCommand,
-                            DragStartingCommandParameter = track
-                        };
+                            var tapGestureRecognizer = new TapGestureRecognizer();
+                            tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
+                            view.GestureRecognizers.Add(tapGestureRecognizer);
 
-                        track.ZIndex = 10;
-                        track.GestureRecognizers.Add(dragGestureRecognizer);
-                        PanelEditorViewPane.Children.Add(track);
+                            var dragGestureRecognizer = new DragGestureRecognizer {
+                                DragStartingCommand = ((PanelEditorViewModel)this.BindingContext).ElementDragCommand,
+                                DragStartingCommandParameter = view
+                            };
+
+                            view.ZIndex = 10;
+                            view.GestureRecognizers.Add(dragGestureRecognizer);
+                            PanelEditorViewPane.Children.Add(view);
+                        }
                     }
                 }
             }
             break;
+        
         case NotifyCollectionChangedAction.Remove:
             // Remove any deleted items added to the collection.
             // ---------------------------------------------------------
             if (e.OldItems is not null && e.OldItems.Count > 0) {
                 foreach (var item in e.OldItems) {
-                    if (item is ITrackViewModel track) {
-                        var itemsToDelete = PanelEditorViewPane.Children.OfType<TrackView>().Where(view => view.ViewModel.Track.Coordinate.Equals(track.Track.Coordinate)).ToList();
+                    if (item is IElementView elementView) {
+                        var itemsToDelete = PanelEditorViewPane.Children.OfType<IElementView>().Where(view => view.ViewModel.Element.Coordinate.Equals(elementView.ViewModel.Element.Coordinate)).ToList();
                         foreach (var view in itemsToDelete) {
                             PanelEditorViewPane.Children.Remove(view);
                         }
@@ -165,18 +153,16 @@ public partial class PanelEditorPage : ContentPage {
     private void TapGestureRecognizerOnTapped(object? sender, TappedEventArgs e) {
         switch (sender) {
         case TrackView trackView:
-            _viewModel.SetSelectedTrack(trackView.ViewModel);
+            _viewModel.SetSelectedTrack(trackView);
             break;
         case AbsoluteLayout layout when layout == PanelEditorViewPane:
             _viewModel.SetSelectedTrack(null);
             break;
         }
-        SetPropertiesToolbarIcon();
     }
 
     private void TapGestureRecognizerBlankEditor(object? sender, TappedEventArgs e) {
         _viewModel.SetSelectedTrack(null);
-        SetPropertiesToolbarIcon();
     }
     
     private void DropGestureRecognizer_OnDragOver(object? sender, DragEventArgs e) {
@@ -210,6 +196,7 @@ public partial class PanelEditorPage : ContentPage {
     
     private void RemoveDropZone() {
         PanelEditorViewPane.Children.Remove(_dropZone);
+        SetPropertiesToolbarIcon();
         _dropZone = null;
     }
 
@@ -241,7 +228,6 @@ public partial class PanelEditorPage : ContentPage {
     #region Manage the buttons on the toolbar if needed
     private void MultiSelectToolbarItem_OnClicked(object? sender, EventArgs e) {
         MultiSelectToolbarItem.IconImageSource = _viewModel.MultiSelectMode ? "deselect.png" : "select.png";
-        SetPropertiesToolbarIcon();
     }
 
     private void PropertiesToolbarItem_OnClicked(object? sender, EventArgs e) {
@@ -252,7 +238,6 @@ public partial class PanelEditorPage : ContentPage {
                 _viewModel.IsPropertyPanelVisible = true;
             }
         }
-        SetPropertiesToolbarIcon();
     }
 
     private void DeleteTrackToolbarItem_OnClicked(object? sender, EventArgs e) {
@@ -264,18 +249,6 @@ public partial class PanelEditorPage : ContentPage {
 
     private void Stepper_OnValueChanged(object? sender, ValueChangedEventArgs e) {
         ResizePanelViewArea();
-    }
-
-    private void SetPropertiesToolbarIcon() {
-        if (_viewModel.IsTrackSelected) {
-            PropertiesToolbarItem.IconImageSource = "edit.png";
-        } else {
-            if (_viewModel.IsPropertyPanelVisible) {
-                PropertiesToolbarItem.IconImageSource = "chevron_down.png";
-            } else {
-                PropertiesToolbarItem.IconImageSource = "chevron_up.png";
-            }
-        }
     }
     
 }
