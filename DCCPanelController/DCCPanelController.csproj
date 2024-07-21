@@ -41,31 +41,32 @@
     <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
+        <MauiImage Include="Resources\Symbols\Special\text.svg" />
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.png" Color="#512BD4" BaseSize="128,128"/>
+        <MauiSplashScreen Include="Resources\Splash\splash.png" Color="#512BD4" BaseSize="128,128" />
 
         <!-- Images -->
         <MauiImage Remove="Resources\Images\.DS_Store" />
-        <MauiImage Include="Resources\Images\*"/>
-        <MauiImage Include="Resources\Icons\*"/>
-        <MauiImage Include="Resources\Symbols\*"/>
-        <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\panels_green.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\turnouts_green.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\turnout_closed.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\turnout_thrown.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\turnout_unknown.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\route_active.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24"/>
-        <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Include="Resources\Icons\*" />
+        <MauiImage Include="Resources\Symbols\*" />
+        <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\panels_green.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\turnouts_green.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\turnout_closed.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\turnout_thrown.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\turnout_unknown.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\route_active.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24" />
+        <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24" />
 
         <!-- Custom Fonts -->
-        <MauiFont Include="Resources\Fonts\*"/>
+        <MauiFont Include="Resources\Fonts\*" />
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
         <MauiImage Update="Resources\Images\turnouts_closed.svg">
           <Resize>True</Resize>
           <BaseSize>48,48</BaseSize>
@@ -77,9 +78,9 @@
         <PackageReference Include="CommunityToolkit.Maui" Version="9.0.1" />
         <PackageReference Include="CommunityToolkit.Maui.Core" Version="9.0.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.61" />
         <PackageReference Include="NUnit" Version="4.1.0" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
@@ -119,7 +120,7 @@
       <MauiXaml Update="Components\DropZone\DropZone.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="Components\Elements\Views\SymbolView.xaml">
+      <MauiXaml Update="Components\Symbols\SymbolView.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
     </ItemGroup>
@@ -169,7 +170,7 @@
         <DependentUpon>DropZone.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="Components\Elements\Views\SymbolView.xaml.cs">
+      <Compile Update="Components\Symbols\SymbolView.xaml.cs">
         <DependentUpon>SymbolView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
@@ -182,6 +183,13 @@
     <ItemGroup>
       <None Remove="Resources\Raw\symbols.json" />
       <Resource Include="Resources\Raw\symbols.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Symbols\Branchline-Dashed\" />
+      <Folder Include="Resources\Symbols\Branchline\" />
+      <Folder Include="Resources\Symbols\Mainline-Dashed\" />
+      <Folder Include="Resources\Symbols\Mainline\" />
     </ItemGroup>
 
 </Project>

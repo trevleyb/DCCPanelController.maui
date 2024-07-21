@@ -37,6 +37,12 @@ public partial class ElementViewModelBase : BaseViewModel, IElementViewModel {
     [ObservableProperty]
     private Coordinate _coordinates;
     
+    [ObservableProperty]
+    private int _width = 1;
+
+    [ObservableProperty]
+    private int _height = 1;
+    
     [ObservableProperty] 
     private Rect _bounds;
 

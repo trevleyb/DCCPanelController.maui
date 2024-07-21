@@ -17,11 +17,13 @@ public partial class PanelViewer : ContentView {
     private GridHelper? GridHelper;
     private readonly ObservableCollection<IElementView> Elements = [];
     
+    /// <summary>
+    /// Binding context is set from the parent by binding to a Panel
+    /// </summary>
     public PanelViewer() {
         InitializeComponent();
         PanelEditorContainer.SizeChanged += PanelEditorContainerSizeChanged;
         Elements.CollectionChanged += TracksOnCollectionChanged;
-        //BindingContext = this;
     }
 
     public static readonly BindableProperty PanelProperty =
@@ -35,9 +37,7 @@ public partial class PanelViewer : ContentView {
     
     protected override void OnBindingContextChanged() {
         base.OnBindingContextChanged();
-        if (BindingContext is Model.Panel panel) {
-            // We have now bound to a Panel, so we need to do something about it.
-        }
+        if (BindingContext is Model.Panel panel) { }
     }
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
@@ -76,7 +76,7 @@ public partial class PanelViewer : ContentView {
     private void AddTrackToPlan(IElementView view) {
         var gridData = GridHelper?.GetGridCoordinates(view.ViewModel.Element.Coordinate);
         if (gridData is { IsOk: true } gd) {
-            view.ViewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize, gd.BoxSize);
+            view.ViewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize * view.ViewModel.Element.Coordinate.Width, gd.BoxSize * view.ViewModel.Element.Coordinate.Height);
             Elements.Add(view);
         }
     }
@@ -107,19 +107,17 @@ public partial class PanelViewer : ContentView {
             // ---------------------------------------------------------
             if (e.NewItems is not null && e.NewItems.Count > 0) {
                 foreach (var item in e.NewItems) {
-                    if (item is IElementView elementView) {
-                        if (elementView is Microsoft.Maui.Controls.View view) {
-                            AbsoluteLayout.SetLayoutBounds(view, elementView.ViewModel.Bounds);
-                            AbsoluteLayout.SetLayoutFlags(view, AbsoluteLayoutFlags.None);
+                    if (item is IElementView elementView and Microsoft.Maui.Controls.View view) {
+                        AbsoluteLayout.SetLayoutBounds(view, elementView.ViewModel.Bounds);
+                        AbsoluteLayout.SetLayoutFlags(view, AbsoluteLayoutFlags.None);
 
-                            var tapGestureRecognizer = new TapGestureRecognizer();
-                            tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
-                            view.GestureRecognizers.Add(tapGestureRecognizer);
+                        var tapGestureRecognizer = new TapGestureRecognizer();
+                        tapGestureRecognizer.Tapped += TapGestureRecognizerOnTapped;
+                        view.GestureRecognizers.Add(tapGestureRecognizer);
 
-                            view.ZIndex = 10;
-                            PanelEditorViewPane.Children.Add(view);
+                        view.ZIndex = 10;
+                        PanelEditorViewPane.Children.Add(view);
 
-                        }
                     }
                 }
             }

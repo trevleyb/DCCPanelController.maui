@@ -47,12 +47,9 @@ public partial class PanelEditorPage : ContentPage {
             var rect = new Rect(grid.XMargin, grid.YMargin, grid.PanelWidth, grid.PanelHeight);
             PanelEditorContainer.SetLayoutBounds(PanelEditorViewPane, rect);
             PanelEditorContainer.SetLayoutFlags(PanelEditorViewPane,AbsoluteLayoutFlags.None);
-            DrawBorder();
             DrawGridLines();    // Need to do this before we draw the tracks
         }
     }
-
-    private void DrawBorder() { }
 
     private void DrawGridLines() {
         // Remove all of them ensuring each is evented so the UI updates
@@ -204,20 +201,27 @@ public partial class PanelEditorPage : ContentPage {
             DrawDropZone(coordinate);
         }
     }
-    
+
     private void DrawDropZone(Coordinate coordinate) {
-        
+
         var loc = _viewModel.GridHelper?.GetGridCoordinates(coordinate);
         if (loc is null) return;
-        
+
+        var width = loc.BoxSize * coordinate.Width;
+        var height = loc.BoxSize * coordinate.Height;
+        if (loc.XOffset + width > _viewModel?.GridHelper?.ViewWidth || loc.YOffset + height > _viewModel?.GridHelper?.ViewHeight) {
+            width = loc.BoxSize;
+            height = loc.BoxSize;
+        }
+
         if (_dropZone is null) {
-            _dropZone = new DropZone(_viewModel) { ZIndex = 20 };
-            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, loc.BoxSize, loc.BoxSize)); // X=50, Y=100, Width=200, Height=200
-            PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
+            _dropZone = new DropZone(_viewModel!) { ZIndex = 20 };
+            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, width, height)); // X=50, Y=100, Width=200, Height=200
+            PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);                           // None means the Rectangle properties are absolute values
             PanelEditorViewPane.Children.Add(_dropZone);
         } else {
-            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, loc.BoxSize, loc.BoxSize)); // X=50, Y=100, Width=200, Height=200
-            PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);          // None means the Rectangle properties are absolute values
+            PanelEditorViewPane.SetLayoutBounds(_dropZone, new Rect(loc.XOffset, loc.YOffset, width, height)); // X=50, Y=100, Width=200, Height=200
+            PanelEditorViewPane.SetLayoutFlags(_dropZone, AbsoluteLayoutFlags.None);                           // None means the Rectangle properties are absolute values
         }
         _lastX = coordinate.Col;
         _lastY = coordinate.Row;

@@ -26,6 +26,45 @@ public partial class Panel : ObservableValidator, ICloneable {
     [JsonIgnore]
     public string PanelRatio => CalculateRatio(Cols, Rows);
 
+    /// <summary>
+    /// This looks to see if the coordinates provided are currently occupied already.
+    /// This looks at the Width and Height of each item in the panel and returns true
+    /// if any of them clash with the provided coordinate. 
+    /// </summary>
+    /// <param name="coordinates">The coordinates to check</param>
+    /// <returns>True if the coordinate is already occupied. </returns>
+    public bool IsCellOccupied(Coordinate coordinates, PanelElement? activeElement) {
+        foreach (var element in Elements) {
+            if (activeElement is null || element != activeElement) {
+                for (var coordX = 0; coordX < coordinates.Width; coordX++) {
+                    for (var coordY = 0; coordY < coordinates.Height; coordY++) {
+                        for (var elementX = 0; elementX < element.Coordinate.Width; elementX++) {
+                            for (var elementY = 0; elementY < element.Coordinate.Height; elementY++) {
+                                if (element.Coordinate.Col + elementX == coordinates.Col + coordX && element.Coordinate.Row + elementY == coordinates.Row + coordY) {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    } 
+
+    /// <summary>
+    /// Works out if the coordinates provided, plus any height/width of the element are inside or outside
+    /// the bounds of the Panel. Will return true if it is outside the bounds. 
+    /// </summary>
+    /// <param name="coordinates"></param>
+    /// <param name="width"></param>
+    /// <param name="height"></param>
+    /// <returns></returns>
+    public bool IsOutsideBounds(Coordinate coordinates) {
+        var isOutOfBounds = (coordinates.Col + (coordinates.Width- 1) > Cols || coordinates.Row + (coordinates.Height -1) > Rows);
+        return isOutOfBounds;
+    } 
+
     public void Validate() {
 
         // Make sure that all the Coordinates for the Track Pieces are valid and 

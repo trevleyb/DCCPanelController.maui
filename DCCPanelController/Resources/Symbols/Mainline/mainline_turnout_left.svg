@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns:xl="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg" xmlns:dc="http://purl.org/dc/elements/1.1/" viewBox="0 0 180 90" width="180" height="90">
+  <defs/>
+  <g id="Cell_1x2" stroke-dasharray="none" stroke-opacity="1" stroke="none" fill-opacity="1" fill="none">
+    <title>Cell 1x2</title>
+    <g id="Cell_1x2_Single_Cell">
+      <title>Single Cell</title>
+      <g id="Group_7">
+        <g id="Group_9">
+          <g id="Graphic_11">
+            <rect x="0" y="26.25" width="180" height="37.5" fill="black"/>
+          </g>
+          <g id="Graphic_10">
+            <path d="M 71.35759 89.88778 L 45.274575 64.00583 L 82.39241 63.862215 L 108.47543 89.74417 Z" fill="black"/>
+          </g>
+        </g>
+        <g id="Graphic_8">
+          <rect x="0" y="0" width="180" height="90" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

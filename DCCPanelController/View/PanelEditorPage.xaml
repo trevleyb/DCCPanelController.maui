@@ -143,7 +143,7 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <views:SymbolView Margin="5,5,5,5" WidthRequest="40" HeightRequest="40">
+                                    <views:SymbolView Margin="5,5,5,5">
                                         <views:SymbolView.GestureRecognizers>
                                             <DragGestureRecognizer
                                                 DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"

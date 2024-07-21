@@ -3,15 +3,14 @@
     {
       "Name": "Default",
       "Symbols": [
-        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "straight.png" },
-        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+        { "Name": "Text", "Height": 1, "Width": 1,"Image": "text.png" }
       ]
     },
     {
       "Name": "Mainline",
       "Symbols": [
-        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "angleleft.png" },
-        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "angleright.png" }
+        { "Name": "Left Turnout", "Height": 1, "Width": 2,"Image": "mainline_turnout_left.png" },
+        { "Name": "Left Angle",   "Height": 2, "Width": 1,"Image": "mainline_long_angle.png" }
       ]
     },
     {

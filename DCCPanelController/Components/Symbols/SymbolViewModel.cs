@@ -1,7 +1,9 @@
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Components.Elements.ViewModels;
 
+[DebuggerDisplay("{Key}")]
 public partial class SymbolViewModel : ObservableObject {
     [ObservableProperty] private string _key;
     [ObservableProperty] private string _set;
@@ -9,6 +11,10 @@ public partial class SymbolViewModel : ObservableObject {
     [ObservableProperty] private int _width;
     [ObservableProperty] private int _height;
     [ObservableProperty] private ImageSource _image;
+    [ObservableProperty] private int _iconWidth;
+    [ObservableProperty] private int _iconHeight;
+
+    private const int IconSize = 50;
     
     /// <summary>
     /// Represents a view model for a symbol. Stores and manages the data associated
@@ -26,6 +32,8 @@ public partial class SymbolViewModel : ObservableObject {
         Image = image;
         Height = height;
         Width = width;
+        IconHeight = IconSize; // Need to fix this so that it shows the correct icon in the toolbox 
+        IconWidth = IconSize;  // Need to fix this so that it shows the correct icon in the toolbox
     }
     public SymbolViewModel(string name, ImageSource image, int width, int height) : this ("default",name,image,width,height) { }
     public SymbolViewModel(string name, ImageSource image) : this ("default", name,image,1,1) { }
