@@ -1,18 +1,19 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Components.Elements.ViewModels;
+namespace DCCPanelController.Components.Symbols;
 
 [DebuggerDisplay("{Key}")]
 public partial class SymbolViewModel : ObservableObject {
+    
     [ObservableProperty] private string _key;
     [ObservableProperty] private string _set;
     [ObservableProperty] private string _name;
     [ObservableProperty] private int _width;
     [ObservableProperty] private int _height;
+    [ObservableProperty] private int _iconWidth = IconSize;
+    [ObservableProperty] private int _iconHeight = IconSize;
     [ObservableProperty] private ImageSource _image;
-    [ObservableProperty] private int _iconWidth;
-    [ObservableProperty] private int _iconHeight;
 
     private const int IconSize = 50;
     

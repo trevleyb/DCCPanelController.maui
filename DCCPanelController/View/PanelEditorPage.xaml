@@ -12,7 +12,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:views="clr-namespace:DCCPanelController.Components.Elements.Views"
-    xmlns:converters="clr-namespace:DCCPanelController.Converters">
+    xmlns:converters="clr-namespace:DCCPanelController.Converters"
+    xmlns:symbols="clr-namespace:DCCPanelController.Components.Symbols">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -143,13 +144,13 @@
                             </CollectionView.ItemsLayout>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate>
-                                    <views:SymbolView Margin="5,5,5,5">
-                                        <views:SymbolView.GestureRecognizers>
+                                    <symbols:SymbolView Margin="5,5,5,5">
+                                        <symbols:SymbolView.GestureRecognizers>
                                             <DragGestureRecognizer
                                                 DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"
                                                 DragStartingCommandParameter="{Binding .}" />
-                                        </views:SymbolView.GestureRecognizers>
-                                    </views:SymbolView>
+                                        </symbols:SymbolView.GestureRecognizers>
+                                    </symbols:SymbolView>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>

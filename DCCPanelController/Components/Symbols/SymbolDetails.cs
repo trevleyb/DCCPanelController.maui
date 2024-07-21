@@ -1,6 +1,4 @@
-using System.Text.Json;
-
-namespace DCCPanelController.Components.Elements;
+namespace DCCPanelController.Components.Symbols;
 
 public class Symbols {
     public List<SymbolSet> Sets { get; init; } = [];

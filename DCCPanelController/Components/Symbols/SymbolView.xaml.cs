@@ -1,7 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Components.Elements.ViewModels;
-
-namespace DCCPanelController.Components.Elements.Views;
+namespace DCCPanelController.Components.Symbols;
 
 public partial class SymbolView : ContentView {
 

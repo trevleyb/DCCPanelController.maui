@@ -3,8 +3,9 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:DCCPanelController.Components.Elements.ViewModels"
-             x:Class="DCCPanelController.Components.Elements.Views.SymbolView"
-             x:DataType="viewModels:SymbolViewModel"
+             xmlns:symbols="clr-namespace:DCCPanelController.Components.Symbols"
+             x:Class="DCCPanelController.Components.Symbols.SymbolView"
+             x:DataType="symbols:SymbolViewModel"
              >
 
     <ContentView.Content>

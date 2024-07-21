@@ -6,9 +6,11 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Components.Elements;
 using DCCPanelController.Components.Elements.ViewModels;
 using DCCPanelController.Components.Elements.Views;
+using DCCPanelController.Components.Symbols;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Elements;
+using SymbolViewModel = DCCPanelController.Components.Symbols.SymbolViewModel;
 
 namespace DCCPanelController.ViewModel;
 

@@ -1,5 +1,4 @@
-using DCCPanelController.Components.Elements.ViewModels;
-namespace DCCPanelController.Components.Elements;
+namespace DCCPanelController.Components.Symbols;
 
 /// <summary>
 /// The 'SymbolFactory' returns a list of available symbols and a View for each of the symbols.
