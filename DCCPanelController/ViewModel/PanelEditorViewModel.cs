@@ -43,6 +43,9 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [ObservableProperty] private bool _isDropZoneOccupied;
     [ObservableProperty] private bool _isPropertyPanelVisible;
 
+    [ObservableProperty] private bool _isTextBlockExpandable;
+    [ObservableProperty] private bool _isTextBlockContractable;
+    
     [ObservableProperty] private Coordinate _lastCoordinate;
     
     public GridHelper? GridHelper;
@@ -149,8 +152,26 @@ public partial class PanelEditorViewModel : BaseViewModel {
         } else {
             ClearSelectedTracks();
         }
-        IsTrackSelected   = SelectedElements.Any();
+
+        IsTrackSelected = SelectedElements.Any();
         IsPropertyAllowed = SelectedElements.Count == 1;
+        SetTextOptions();
+    }
+
+    private void SetTextOptions() {
+        var allCanExpand = true;
+        var allCanContract = true;
+        var foundTextBlock = false;
+        foreach (var element in SelectedElements) {
+            if (element is TextElementView elementView) {
+                var coord = elementView.ViewModel.Element.Coordinate;
+                if (coord.Width <= 1) allCanContract = false;
+                if (coord.Col + (coord.Width - 1) >= GridHelper?.PanelCols) allCanExpand = false;
+                foundTextBlock = true;
+            }
+        }
+        IsTextBlockContractable = foundTextBlock && allCanContract;
+        IsTextBlockExpandable = foundTextBlock && allCanExpand;
     }
 
     public void ClearSelectedTracks() {
@@ -162,10 +183,20 @@ public partial class PanelEditorViewModel : BaseViewModel {
     #endregion
     
     [RelayCommand]
+    public async Task Save() {
+        try {
+            IsBusy = true;
+            App.ServiceProvider?.GetService<PanelsViewModel>()?.Save();
+        } finally {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
     void Validate() {
         ValidateAllProperties();
     }
-    
+
     [RelayCommand]
     public async Task RotateSelectedElement() {
         foreach (var element in SelectedElements) {
@@ -177,7 +208,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
                 element.ViewModel.Element.Coordinate.Width = height;
                 element.ViewModel.Element.Coordinate.Height = width;
             }
-            RecalculateBounds(element);
+            UpdateElementOnPlan(element);
         }
     }
 
@@ -200,7 +231,31 @@ public partial class PanelEditorViewModel : BaseViewModel {
             // Manage the other stuff
         }
     }
-    
+
+    [RelayCommand]
+    public async Task ExpandTextSize() {
+        foreach (var element in SelectedElements) {
+            if (element is TextElementView) {
+                // TODO: Add support that if it is rotated 90/270 then it is Height that changes
+                element.ViewModel.Element.Coordinate.Width++;
+                if (element.ViewModel.Element.Coordinate.Width > GridHelper?.PanelCols) element.ViewModel.Element.Coordinate.Width = GridHelper?.PanelCols ?? 1;
+                UpdateElementOnPlan(element);
+            }
+        }
+    }
+
+    [RelayCommand]
+    public async Task ContractTextSize() {
+        foreach (var element in SelectedElements) {
+            if (element is TextElementView) {
+                // TODO: Add support that if it is rotated 90/270 then it is Height that changes
+                element.ViewModel.Element.Coordinate.Width--;
+                if (element.ViewModel.Element.Coordinate.Width < 1) element.ViewModel.Element.Coordinate.Width = 1;
+                UpdateElementOnPlan(element);
+            }
+        }
+    }
+
     [RelayCommand]
     public async Task ElementDragAsync(IElementView view) {
         TrackAction = TrackActionEnum.MovingInGrid;
@@ -252,7 +307,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             PanelElements.Remove(SelectedElement);
             SelectedElement.ViewModel.Element.Coordinate = LastCoordinate;
             AddElementToPlan(SelectedElement);
-            SelectedElement.ViewModel.IsSelected = false;
+            SetSelectedTrack(SelectedElement);
             TrackAction = TrackActionEnum.None;
         }
     }
@@ -263,6 +318,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
             view.ViewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize * view.ViewModel.Element.Coordinate.Width, gd.BoxSize * view.ViewModel.Element.Coordinate.Height);
         }
         CalculateMinGridSize();
+    }
+    
+    private void UpdateElementOnPlan(IElementView view) {
+        PanelElements.Remove(view);
+        AddElementToPlan(view);
     }
 
     private void AddElementToPlan(IElementView view) {

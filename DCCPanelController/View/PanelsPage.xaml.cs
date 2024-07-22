@@ -34,9 +34,9 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
     
     protected override void OnAppearing() {
         base.OnAppearing();
-        if (BindingContext is PanelsViewModel viewModel) {
-            viewModel.Save();
-            
-        }
+        //if (BindingContext is PanelsViewModel viewModel) {
+        //    viewModel.Save();
+        //    
+        //}
     }
 }
