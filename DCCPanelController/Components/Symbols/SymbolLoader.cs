@@ -20,7 +20,20 @@ public static class SymbolLoader {
         var data = JsonSerializer.Deserialize<Symbols>(jsonContent, options)
                    ?? throw new InvalidOperationException("Failed to deserialize JSON to SymbolRoot.");
 
-        data.ApplySets();
+        FixDataAndUpdateSetDetails(data);
         return data;
+    }
+    
+    // We only store the set name at the top of the collection, but each 
+    // symbol needs to know which set it is a part of. 
+    private static void FixDataAndUpdateSetDetails(Symbols data) {
+        foreach (var set in data.Sets) {
+            if (set.Name != "All") {
+                foreach (var symbol in set.Symbols) {
+                    symbol.Set = set.Name;
+                }
+            }
+        }
+        data.Sets.Insert(0, new SymbolSet() {Name = "All", Symbols = data.Sets.SelectMany(set => set.Symbols).ToList() });
     }
 }

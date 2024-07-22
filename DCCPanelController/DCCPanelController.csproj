@@ -41,7 +41,6 @@
     <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
-        <MauiImage Include="Resources\Symbols\Special\text.svg" />
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.png" Color="#512BD4" BaseSize="128,128" />
@@ -67,14 +66,6 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-        <MauiImage Update="Resources\Images\turnouts_closed.svg">
-          <Resize>True</Resize>
-          <BaseSize>48,48</BaseSize>
-        </MauiImage>
-        <None Remove="Resources\Symbols\Mainline\mainline_long_angle.svg" />
-        <MauiImage Include="Resources\Symbols\Mainline\mainline_long_angle.svg" />
-        <None Remove="Resources\Symbols\Mainline\mainline_turnout_left.svg" />
-        <MauiImage Include="Resources\Symbols\Mainline\mainline_turnout_left.svg" />
     </ItemGroup>
 
     <ItemGroup>
@@ -201,13 +192,6 @@
     <ItemGroup>
       <None Remove="Resources\Raw\symbols.json" />
       <Resource Include="Resources\Raw\symbols.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Resources\Symbols\Branchline-Dashed\" />
-      <Folder Include="Resources\Symbols\Branchline\" />
-      <Folder Include="Resources\Symbols\Mainline-Dashed\" />
-      <Folder Include="Resources\Symbols\Mainline\" />
     </ItemGroup>
 
 </Project>

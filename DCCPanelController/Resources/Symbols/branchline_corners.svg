@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="0 0 90 90" width="90" height="90">
+  <defs/>
+  <g id="Cell_1x1" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Cell 1x1</title>
+    <g id="Cell_1x1_Single_Cell">
+      <title>Single Cell</title>
+      <g id="Group_81">
+        <title>branchline_corners</title>
+        <g id="Group_85">
+          <g id="Graphic_87">
+            <path d="M 90 37.5 L 52.5 -13500312e-20 L 37.5 3375078e-19 L 90 52.5 Z" fill="black"/>
+          </g>
+          <g id="Graphic_86">
+            <rect x="0" y="-39790393e-20" width="90" height="90" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"/>
+          </g>
+        </g>
+        <g id="Group_82">
+          <g id="Graphic_84">
+            <path d="M 37.5 90 L 10658141e-21 52.5 L 781597e-19 37.5 L 52.5 90 Z" fill="black"/>
+          </g>
+          <g id="Graphic_83">
+            <rect x="0" y="2842171e-19" width="90" height="90" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

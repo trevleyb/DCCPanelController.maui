@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="0 0 90 90" width="90" height="90">
+  <defs/>
+  <g id="Cell_1x1" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none">
+    <title>Cell 1x1</title>
+    <g id="Cell_1x1_Single_Cell">
+      <title>Single Cell</title>
+      <g id="Group_117">
+        <title>branchline_right_angle</title>
+        <g id="Graphic_119">
+          <path d="M 37.5 90 L 10658141e-21 52.5 L 781597e-19 37.5 L 52.5 90 Z" fill="black"/>
+        </g>
+        <g id="Graphic_118">
+          <rect x="0" y="0" width="90" height="90" stroke="gray" stroke-linecap="round" stroke-linejoin="round" stroke-width="0"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
