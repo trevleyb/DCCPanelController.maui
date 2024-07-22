@@ -2,9 +2,11 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:base1="clr-namespace:DCCPanelController.Components.Elements.Base"
-             x:Class="DCCPanelController.Components.Elements.Views.ImageView"
-             x:DataType="base1:IElementViewModel">
+             xmlns:base="clr-namespace:DCCPanelController.Components.Elements.Base"
+             xmlns:viewModels="clr-namespace:DCCPanelController.Components.Elements.ViewModels"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             x:Class="DCCPanelController.Components.Elements.Views.RouteElementView"
+             x:DataType="viewModels:RouteElementViewModel">
     
     <ContentView.Content>
         <Border HeightRequest="{Binding Bounds.Height}"
@@ -12,14 +14,13 @@
               BackgroundColor="Transparent"
               AbsoluteLayout.LayoutBounds="{Binding Bounds}"
               AbsoluteLayout.LayoutFlags="None">
-            <!--
-            <Image Source="{Binding Image}"
+             <Image Source="{Binding Image}"
                    BackgroundColor="{StaticResource Transparent}"
-                   Rotation="{Binding Track.Rotation}"
+                   Rotation="{Binding Element.Rotation}"
                    HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="CenterAndExpand"/>
-            -->
-            <Border.Triggers>
+                   VerticalOptions="CenterAndExpand">
+             </Image>
+             <Border.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">
                     <Setter Property="Style" Value="{StaticResource SelectedTrackView}" />
                 </DataTrigger>

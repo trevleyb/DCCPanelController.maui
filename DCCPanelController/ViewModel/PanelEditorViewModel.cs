@@ -58,8 +58,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     private void LoadTrackPlan() {
         PanelElements.Clear();
         foreach (var element in Panel.Elements) {
-            var elementView = ElementFactory.GetElementView(element);
-            AddElementToPlan(elementView);
+            var view = ElementFactory.CreateElementView(element);
+            if (view is not null) AddElementToPlan(view);
         }
     }
 
@@ -126,7 +126,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
     #endregion
 
-    private bool IsCoordinatesOccupied(Coordinate coordinate, PanelElement? activeElement) {
+    private bool IsCoordinatesOccupied(Coordinate coordinate, IPanelElement? activeElement) {
         if (GridHelper is null) return true;
         return (Panel.IsCellOccupied(coordinate, activeElement) || Panel.IsOutsideBounds(coordinate));
     }   
@@ -171,6 +171,13 @@ public partial class PanelEditorViewModel : BaseViewModel {
         foreach (var element in SelectedElements) {
             element.ViewModel.Element.Rotation += 90;
             if (element.ViewModel.Element.Rotation >= 360) element.ViewModel.Element.Rotation = 0;
+            if (element.ViewModel.Element.Coordinate.Height != element.ViewModel.Element.Coordinate.Width) {
+                var width = element.ViewModel.Element.Coordinate.Width;
+                var height = element.ViewModel.Element.Coordinate.Height;
+                element.ViewModel.Element.Coordinate.Width = height;
+                element.ViewModel.Element.Coordinate.Height = width;
+            }
+            RecalculateBounds(element);
         }
     }
 
@@ -228,12 +235,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.AddingFromToolbox && SelectedSymbol is not null) {
             if (IsCoordinatesOccupied(LastCoordinate, null)) return;
-            var element = ElementFactory.GetElementView(SelectedSymbol.Key);
-            element.ViewModel.Element.Coordinate = LastCoordinate;
-            AddElementToPlan(element);
-            Panel.Elements.Add(element.ViewModel.Element);
-            TrackAction = TrackActionEnum.None;
-            SetSelectedTrack(element);
+            var elementView = ElementFactory.CreateElementView(SelectedSymbol.Key);
+            if (elementView is not null) {
+                elementView.ViewModel.Element.Coordinate = LastCoordinate;
+                AddElementToPlan(elementView);
+                Panel.Elements.Add(elementView.ViewModel.Element);
+                TrackAction = TrackActionEnum.None;
+                SetSelectedTrack(elementView);
+            }
         }
 
         // Move an item on the Main Grid to another location on the Main Grid
@@ -247,14 +256,18 @@ public partial class PanelEditorViewModel : BaseViewModel {
             TrackAction = TrackActionEnum.None;
         }
     }
-    
-    private void AddElementToPlan(IElementView view) {
+
+    private void RecalculateBounds(IElementView view) {
         var gridData = GridHelper?.GetGridCoordinates(view.ViewModel.Element.Coordinate);
         if (gridData is { IsOk: true } gd) {
             view.ViewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize * view.ViewModel.Element.Coordinate.Width, gd.BoxSize * view.ViewModel.Element.Coordinate.Height);
-            PanelElements.Add(view);
         }
         CalculateMinGridSize();
+    }
+
+    private void AddElementToPlan(IElementView view) {
+        RecalculateBounds(view);
+        PanelElements.Add(view);
     }
 
     public void SetSelectedSet(int index) {

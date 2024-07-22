@@ -1,5 +1,5 @@
 namespace DCCPanelController.Model.Elements;
 
-public class ImagePanelElement : PanelElement {
-    
+public partial class ImagePanelElement : PanelElement, IPanelElement {
+    public string ElementType => GetType()?.Name ?? "ImagePanelElement";
 }

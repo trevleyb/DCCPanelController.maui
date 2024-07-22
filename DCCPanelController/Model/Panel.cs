@@ -13,7 +13,7 @@ public partial class Panel : ObservableValidator, ICloneable {
     [ObservableProperty] private string _id = "new";
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private int _sortOrder = 0;
-    [ObservableProperty] private ImageSource? _panelImage;
+    //[ObservableProperty] private ImageSource? _panelImage;
     
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
     [ObservableProperty] private int _cols = 24;
@@ -21,7 +21,7 @@ public partial class Panel : ObservableValidator, ICloneable {
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
     [ObservableProperty] private int _rows = 18;
     
-    [ObservableProperty] private ObservableCollection<PanelElement> _elements = [];
+    [ObservableProperty] private ObservableCollection<IPanelElement> _elements = [];
 
     [JsonIgnore]
     public string PanelRatio => CalculateRatio(Cols, Rows);
@@ -33,7 +33,7 @@ public partial class Panel : ObservableValidator, ICloneable {
     /// </summary>
     /// <param name="coordinates">The coordinates to check</param>
     /// <returns>True if the coordinate is already occupied. </returns>
-    public bool IsCellOccupied(Coordinate coordinates, PanelElement? activeElement) {
+    public bool IsCellOccupied(Coordinate coordinates, IPanelElement? activeElement) {
         foreach (var element in Elements) {
             if (activeElement is null || element != activeElement) {
                 for (var coordX = 0; coordX < coordinates.Width; coordX++) {
@@ -80,7 +80,7 @@ public partial class Panel : ObservableValidator, ICloneable {
 
         // Validate that none of the tracks overlap any other tracks. If they do, 
         // then we need to remove them or move them (lets try to move them). 
-        List<PanelElement> invalidElements = new();
+        List<IPanelElement> invalidElements = new();
         foreach (var element in Elements) {
             while (Elements.Any(t => t.Coordinate.Col == element.Coordinate.Col && t.Coordinate.Row == element.Coordinate.Row && t != element)) {
                 element.Coordinate.Col += 1;
@@ -108,7 +108,7 @@ public partial class Panel : ObservableValidator, ICloneable {
             Id = Id,
             Name = Name,
             SortOrder = SortOrder,
-            PanelImage = PanelImage,
+            //PanelImage = PanelImage,
             Cols = Cols,
             Rows = Rows
         };    

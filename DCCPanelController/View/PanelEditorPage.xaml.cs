@@ -137,7 +137,7 @@ public partial class PanelEditorPage : ContentPage {
             }
             break;
         case NotifyCollectionChangedAction.Reset:
-            var itemsToReset = PanelEditorViewPane.Children.OfType<TrackView>().ToList();
+            var itemsToReset = PanelEditorViewPane.Children.OfType<IElementView>().ToList();
             foreach (var view in itemsToReset) {
                 PanelEditorViewPane.Children.Remove(view);
             }
@@ -149,7 +149,7 @@ public partial class PanelEditorPage : ContentPage {
     // ------------------------------------------------------------------------
     private void TapGestureRecognizerOnTapped(object? sender, TappedEventArgs e) {
         switch (sender) {
-        case TrackView trackView:
+        case IElementView trackView:
             _viewModel.SetSelectedTrack(trackView);
             break;
         case AbsoluteLayout layout when layout == PanelEditorViewPane:

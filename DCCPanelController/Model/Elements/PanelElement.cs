@@ -3,12 +3,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Model.Elements;
 
-[DebuggerDisplay("Type={Type} at {Coordinate},{Width}x{Height}")]
-public partial class PanelElement : ObservableObject {
+[DebuggerDisplay("Type={Type} at {Coordinate}")]
+public abstract partial class PanelElement : ObservableObject {
 
-    [ObservableProperty] private string _type = "unknown";
-    [ObservableProperty] private Color  _color = Colors.Black;
+    [ObservableProperty] private string _symbolType = "set:unknown";
     [ObservableProperty] private Coordinate _coordinate = new Coordinate();
+    [ObservableProperty] private Color  _color = Colors.Black;
     [ObservableProperty] private int _rotation = 0;
 }
 

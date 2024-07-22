@@ -59,8 +59,8 @@ public partial class PanelViewer : ContentView {
         Elements.Clear();
         if (Panel?.Elements != null) {
             foreach (var element in Panel.Elements) {
-                var view = ElementFactory.GetElementView(element);
-                AddTrackToPlan(view);
+                var view = ElementFactory.CreateElementView(element);
+                if (view is not null) AddTrackToPlan(view);
             }
         }
     }
@@ -139,7 +139,7 @@ public partial class PanelViewer : ContentView {
             break;
 
         case NotifyCollectionChangedAction.Reset:
-            var itemsToReset = PanelEditorViewPane.Children.OfType<TrackView>().ToList();
+            var itemsToReset = PanelEditorViewPane.Children.OfType<IElementView>().ToList();
             foreach (var view in itemsToReset) {
                 PanelEditorViewPane.Children.Remove(view);
             }

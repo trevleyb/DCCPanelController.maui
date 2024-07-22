@@ -1,0 +1,31 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Components.Symbols;
+using DCCPanelController.Model;
+using DCCPanelController.Model.Elements;
+
+namespace DCCPanelController.Components.Elements.Base;
+
+public abstract partial class ElementViewModel : BaseViewModel {
+    
+    /// <summary>
+    /// Details and information on the Element itself. This will include what grid reference it is in
+    /// </summary>
+    [ObservableProperty]
+    private IPanelElement _element;
+
+    [ObservableProperty] 
+    private ImageSource _image;
+    
+    [ObservableProperty] 
+    private Rect _bounds;
+
+    [ObservableProperty] 
+    private bool _isDesignMode;
+
+    /// <inheritdoc/>
+    protected ElementViewModel(IPanelElement element, SymbolDetails details) {
+        _element = element;
+        _image = details.Image;
+        _element.SymbolType = details.Key;
+    }
+}

@@ -21,10 +21,10 @@ public partial class Coordinate : ObservableObject {
 
     [JsonIgnore]
     public bool IsValid { get; set; } = true;
-
+    
     [JsonIgnore]
     public static Coordinate Unreferenced => new Coordinate(-1, -1, 1, 1, false);
     
-    public override string ToString() => $"{Col},{Row}";
+    public override string ToString() => $"{Col},{Row}:{Width}x{Height}";
     
 }

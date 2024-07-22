@@ -5,8 +5,8 @@ public class Symbols {
     public List<string> SetNames => Sets.Select(s => s.Name).ToList();
     public List<SymbolDetails> DetailsForSet(string set) => Sets.FirstOrDefault(s => s.Name == set)?.Symbols ?? [];
     public List<SymbolDetails> AllDetails() => Sets.SelectMany(set => set.Symbols).ToList();
-    public SymbolDetails? Find(string key) {
-        return Sets.Select(set => set.Symbols?.Find(d => d.Key == key)).OfType<SymbolDetails>().FirstOrDefault();
+    public SymbolDetails? GetByKey(string key) {
+        return Sets.Select(set => set.Symbols.Find(d => d.Key == key)).OfType<SymbolDetails>().FirstOrDefault();
     }
 
     // We only store the set name at the top of the collection, but each 
@@ -24,7 +24,7 @@ public class Symbols {
 }
 
 public class SymbolSet {
-    public string Name { get; init; }
+    public string Name { get; set; } = string.Empty;
     public List<SymbolDetails> Symbols { get; init; } = [];
 }
 
@@ -40,10 +40,10 @@ public class SymbolDetails {
     }
     public string Key => $"{Set}:{Name}";
     public string Set { get; set; }
-    public string Name { get; init; }
-    public int Height { get; init; } = 1;
-    public int Width { get; init; } = 1;
-    public string Image { get; init; }
+    public string Name { get; set; }
+    public int Height { get; set; } = 1;
+    public int Width { get; set; } = 1;
+    public string Image { get; set; }
     public string ViewModel { get; init; }
 }
 

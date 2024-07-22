@@ -3,42 +3,42 @@
     {
       "Name": "Default",
       "Symbols": [
-        { "Name": "Text", "Height": 1, "Width": 1,"Image": "text.png" }
+        { "Name": "Text", "Height": 1, "Width": 1,"Image": "text.png", "ViewModel": "Text"  }
       ]
     },
     {
       "Name": "Mainline",
       "Symbols": [
-        { "Name": "Left Turnout", "Height": 1, "Width": 2,"Image": "mainline_turnout_left.png" },
-        { "Name": "Left Angle",   "Height": 2, "Width": 1,"Image": "mainline_long_angle.png" }
+        { "Name": "Left Turnout", "Height": 1, "Width": 2,"Image": "mainline_turnout_left.png", "ViewModel": "Turnout" },
+        { "Name": "Left Angle",   "Height": 2, "Width": 1,"Image": "mainline_long_angle.png", "ViewModel": "Track" }
       ]
     },
     {
       "Name": "Branchline",
       "Symbols": [
-        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "terminate.png" },
-        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+        { "Name": "Symbol1", "Height": 2, "Width": 1,"Image": "terminate.png", "ViewModel": "Track"  },
+        { "Name": "Symbol2", "Height": 1, "Width": 2,"Image": "straight.png", "ViewModel": "Track" }
       ]
     },
     {
       "Name": "Mainline (Dashed)",
       "Symbols": [
-        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "crossing.png" },
-        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "crossing.png", "ViewModel": "Track" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png", "ViewModel": "Track" }
       ]
     },
     {
       "Name": "Branchline (Dashed)",
       "Symbols": [
-        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "turnoutleft.png" },
-        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "turnoutright.png" }
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "turnoutleft.png", "ViewModel": "Track" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "turnoutright.png", "ViewModel": "Track" }
       ]
     },
     {
       "Name": "Special",
       "Symbols": [
-        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "yjunction.png" },
-        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png" }
+        { "Name": "Symbol1", "Height": 1, "Width": 1,"Image": "yjunction.png", "ViewModel": "Track" },
+        { "Name": "Symbol2", "Height": 1, "Width": 1,"Image": "straight.png", "ViewModel": "Track" }
       ]
     }
   ]

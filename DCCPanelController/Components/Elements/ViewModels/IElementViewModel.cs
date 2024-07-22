@@ -5,10 +5,11 @@ namespace DCCPanelController.Components.Elements.Base;
 
 public interface IElementViewModel {
  
-    PanelElement Element { get; set; }
-    Coordinate Coordinates { get; set; }
+    IPanelElement Element { get; set; }
+    ImageSource Image { get; set; }
     Rect Bounds { get; set; }
     
+    bool IsDesignMode { get; set; }
     bool IsBusy { get; }
     bool IsNotBusy => !IsBusy;    
     bool IsSelected { get; set; }

@@ -71,6 +71,10 @@
           <Resize>True</Resize>
           <BaseSize>48,48</BaseSize>
         </MauiImage>
+        <None Remove="Resources\Symbols\Mainline\mainline_long_angle.svg" />
+        <MauiImage Include="Resources\Symbols\Mainline\mainline_long_angle.svg" />
+        <None Remove="Resources\Symbols\Mainline\mainline_turnout_left.svg" />
+        <MauiImage Include="Resources\Symbols\Mainline\mainline_turnout_left.svg" />
     </ItemGroup>
 
     <ItemGroup>
@@ -123,6 +127,12 @@
       <MauiXaml Update="Components\Symbols\SymbolView.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="Components\Elements\Views\TurnoutElementView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\Elements\Views\RouteElementView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -172,6 +182,14 @@
       </Compile>
       <Compile Update="Components\Symbols\SymbolView.xaml.cs">
         <DependentUpon>SymbolView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Elements\Views\TurnoutElementView.xaml.cs">
+        <DependentUpon>TurnoutElementView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Elements\Views\RouteElementView.xaml.cs">
+        <DependentUpon>RouteElementView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>
