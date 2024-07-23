@@ -28,6 +28,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<IElementView> _panelElements = [];
     [ObservableProperty] private ObservableCollection<IElementView> _selectedElements = [];
 
+    [ObservableProperty] private string _message = "";
     [ObservableProperty] private TrackActionEnum _trackAction = TrackActionEnum.None;
 
     [ObservableProperty] private int _maxPanelCols = 40;
@@ -47,6 +48,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [ObservableProperty] private bool _isTextBlockContractable;
     
     [ObservableProperty] private Coordinate _lastCoordinate;
+    [ObservableProperty] private int _lastZIndex;
     
     public GridHelper? GridHelper;
 
@@ -80,7 +82,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// <returns>The X and Y locations</returns>
     public Coordinate SetLastCoordinates(int posX, int posY) {
         if (GridHelper != null) {
-            LastCoordinate = GridHelper.GetGridReference(posX, posY, SelectedWidth, SelectedHeight);
+            LastCoordinate = GridHelper.GetGridReference(posX, posY, SelectedWidth, SelectedHeight, LastZIndex);
             IsDropZoneOccupied = IsCoordinatesOccupied(LastCoordinate, TrackAction == TrackActionEnum.None ? SelectedElement?.ViewModel.Element ?? null : null);
             return LastCoordinate;
         }
@@ -131,8 +133,49 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     private bool IsCoordinatesOccupied(Coordinate coordinate, IPanelElement? activeElement) {
         if (GridHelper is null) return true;
-        return (Panel.IsCellOccupied(coordinate, activeElement) || Panel.IsOutsideBounds(coordinate));
+        return (IsCellOccupied(coordinate, activeElement) || IsOutsideBounds(coordinate));
     }   
+    
+    /// <summary>
+    /// This looks to see if the coordinates provided are currently occupied already.
+    /// This looks at the Width and Height of each item in the panel and returns true
+    /// if any of them clash with the provided coordinate. 
+    /// </summary>
+    public bool IsCellOccupied(Coordinate coordinates, IPanelElement? activeElement) {
+        foreach (var element in Panel.Elements) {
+            if (activeElement is null || element != activeElement) {
+                for (var coordX = 0; coordX < coordinates.Width; coordX++) {
+                    for (var coordY = 0; coordY < coordinates.Height; coordY++) {
+                        for (var elementX = 0; elementX < element.Coordinate.Width; elementX++) {
+                            for (var elementY = 0; elementY < element.Coordinate.Height; elementY++) {
+                                
+                                // if the same Col,Row is occupied and the ZIndex >= the selected one 
+                                // this allows things like a Text Box or Circle to sit over the top of another item
+                                // --------------------------------------------------------------------------------
+                                if (element.Coordinate.Col + elementX == coordinates.Col + coordX && 
+                                    element.Coordinate.Row + elementY == coordinates.Row + coordY && 
+                                    element.Coordinate.ZIndex >= coordinates.ZIndex) {
+                                    Message = $"Coordinate {coordinates.Col},{coordinates.Row},{element.Coordinate.Width},{element.Coordinate.Height} is Occupied";
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    } 
+
+    /// <summary>
+    /// Works out if the coordinates provided, plus any height/width of the element are inside or outside
+    /// the bounds of the Panel. Will return true if it is outside the bounds. 
+    /// </summary>
+    public bool IsOutsideBounds(Coordinate coordinates) {
+        var isOutOfBounds = (coordinates.Col + (coordinates.Width- 1) > GridHelper?.PanelCols || coordinates.Row + (coordinates.Height -1) > GridHelper?.PanelRows);
+        if (isOutOfBounds) Message = $"{coordinates.Col}:{coordinates.Width},{coordinates.Row}:{coordinates.Height} => {GridHelper?.PanelCols} x {GridHelper?.PanelRows} Out of Bounds";
+        return isOutOfBounds;
+    } 
     
     #region Manage the selected elements
     /// <summary>
@@ -216,6 +259,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public async Task DeleteSelectedElement() {
         var deleteElements = SelectedElements.ToList();
         foreach (var element in deleteElements) {
+            Panel.Elements.Remove(element.ViewModel.Element);
             PanelElements.Remove(element);
         }
         IsTrackSelected  = false;
@@ -262,6 +306,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         SelectedElement = view;
         SelectedWidth   = view.ViewModel.Element.Coordinate.Width;
         SelectedHeight  = view.ViewModel.Element.Coordinate.Height;
+        LastZIndex      = view.ViewModel.Element.Coordinate.ZIndex;
     }
     
     [RelayCommand]
@@ -271,6 +316,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         SelectedSymbol = symbol;
         SelectedWidth  = symbol.Width;
         SelectedHeight = symbol.Height;
+        LastZIndex     = symbol.ZIndex;
     }
 
     [RelayCommand]
@@ -293,6 +339,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             var elementView = ElementFactory.CreateElementView(SelectedSymbol.Key);
             if (elementView is not null) {
                 elementView.ViewModel.Element.Coordinate = LastCoordinate;
+                elementView.ViewModel.Element.Coordinate.ZIndex = SelectedSymbol.ZIndex;
                 AddElementToPlan(elementView);
                 Panel.Elements.Add(elementView.ViewModel.Element);
                 TrackAction = TrackActionEnum.None;
@@ -310,6 +357,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
             SetSelectedTrack(SelectedElement);
             TrackAction = TrackActionEnum.None;
         }
+        LastZIndex = 0;
+        LastCoordinate = Coordinate.Unreferenced;
     }
 
     private void RecalculateBounds(IElementView view) {

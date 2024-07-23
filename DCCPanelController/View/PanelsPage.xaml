@@ -81,11 +81,10 @@
                                         <Grid Padding="0">
                                             <AbsoluteLayout>
                                                 <panel:PanelViewer Panel="{Binding Mode=TwoWay}"
-                                                    HorizontalOptions="FillAndExpand"
-                                                    VerticalOptions="FillAndExpand"
-                                                    AbsoluteLayout.LayoutFlags="All"
-                                                    AbsoluteLayout.LayoutBounds="0,0,1,1"/>
-                                                
+                                                                   HorizontalOptions="FillAndExpand"
+                                                                   VerticalOptions="FillAndExpand"
+                                                                   AbsoluteLayout.LayoutFlags="All"
+                                                                   AbsoluteLayout.LayoutBounds="0,0,1,1"/>
                                                 <BoxView
                                                     BackgroundColor="{StaticResource Primary}"
                                                     HeightRequest="2"

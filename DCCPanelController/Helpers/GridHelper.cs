@@ -63,9 +63,9 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
     ///1 Looks at an X,Y location and works out which cells these would fall into 
     /// to determine the Coordinates as a Xnn format (ie: B12) 
     /// </summary>
-    public Coordinate GetGridReference(int x, int y, int width, int height) {
+    public Coordinate GetGridReference(int x, int y, int width, int height, int zIndex = 0) {
 
-        if (PanelWidth == 0 || PanelHeight == 0) return new Coordinate(-1, -1, width, height);
+        if (PanelWidth == 0 || PanelHeight == 0) return Coordinate.Unreferenced;
 
         var colIndex = (int)(x / BoxSize) + 1; // Move to 1 offset not 0 
         var rowIndex = (int)(y / BoxSize) + 1; // Move to 1 offset not 0
@@ -75,6 +75,6 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
         if (rowIndex <= 0) rowIndex = 1;
         if (rowIndex >= PanelRows) rowIndex = PanelRows;
         
-        return new Coordinate(colIndex, rowIndex, width, height);
+        return new Coordinate(colIndex, rowIndex, width, height, zIndex);
     }
 }

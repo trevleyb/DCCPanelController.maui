@@ -11,6 +11,7 @@ public partial class SymbolViewModel : ObservableObject {
     [ObservableProperty] private string _name;
     [ObservableProperty] private int _width;
     [ObservableProperty] private int _height;
+    [ObservableProperty] private int _zIndex;
     [ObservableProperty] private int _iconWidth = IconSize;
     [ObservableProperty] private int _iconHeight = IconSize;
     [ObservableProperty] private ImageSource _image;
@@ -26,16 +27,15 @@ public partial class SymbolViewModel : ObservableObject {
     /// <param name="image">The symbol image associated with this item</param>
     /// <param name="width">The number of cells wide this element takes</param>
     /// <param name="height">The number of cells high this element takes</param>
-    public SymbolViewModel(string set, string name, ImageSource image, int width, int height) {
-        Key = $"{set}:{name}";
-        Set = set;
-        Name = name;
-        Image = image;
-        Height = height;
-        Width = width;
+    public SymbolViewModel(SymbolDetails symbolDetails) {
+        Key     = symbolDetails.Key;
+        Set     = symbolDetails.Set;
+        Name    = symbolDetails.Name;
+        Image   = symbolDetails.Image;
+        Height  = symbolDetails.Height;
+        Width   = symbolDetails.Width;
+        ZIndex  = symbolDetails.ZIndex;
         IconHeight = IconSize; // Need to fix this so that it shows the correct icon in the toolbox 
         IconWidth = IconSize;  // Need to fix this so that it shows the correct icon in the toolbox
     }
-    public SymbolViewModel(string name, ImageSource image, int width, int height) : this ("default",name,image,width,height) { }
-    public SymbolViewModel(string name, ImageSource image) : this ("default", name,image,1,1) { }
 }

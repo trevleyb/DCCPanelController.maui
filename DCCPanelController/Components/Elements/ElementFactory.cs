@@ -28,12 +28,14 @@ public static class ElementFactory {
         var details = SymbolLoader.Symbols.GetByKey(elementKey);
         if (details is not null && !string.IsNullOrEmpty(details.ViewModel)) {
             IElementView? view = details.ViewModel.ToLower() switch {
-                "track"   => new TrackElementView(new TrackElementViewModel((TrackPanelElement)(element ?? new TrackPanelElement()), details)),
-                "text"    => new TextElementView(new TextElementViewModel((TextPanelElement)(element ?? new TextPanelElement()), details)),
-                "image"   => new ImageElementView(new ImageElementViewModel((ImagePanelElement)(element ?? new ImagePanelElement()), details)),
-                "turnout" => new TurnoutElementView(new TurnoutElementViewModel((TurnoutPanelElement)(element ?? new TurnoutPanelElement()), details)),
-                "route"   => new RouteElementView(new RouteElementViewModel((RoutePanelElement)(element ?? new RoutePanelElement()), details)),
-                _         => throw new InvalidOperationException($"Unknown element type: {details.ViewModel}")
+                "track"      => new TrackElementView(new TrackElementViewModel((TrackPanelElement)(element ?? new TrackPanelElement()), details)),
+                "text"       => new TextElementView(new TextElementViewModel((TextPanelElement)(element ?? new TextPanelElement()), details)),
+                "image"      => new ImageElementView(new ImageElementViewModel((ImagePanelElement)(element ?? new ImagePanelElement()), details)),
+                "turnout"    => new TurnoutElementView(new TurnoutElementViewModel((TurnoutPanelElement)(element ?? new TurnoutPanelElement()), details)),
+                "route"      => new RouteElementView(new RouteElementViewModel((RoutePanelElement)(element ?? new RoutePanelElement()), details)),
+                "button"     => new ButtonElementView(new ButtonElementViewModel((ButtonPanelElement)(element ?? new ButtonPanelElement()), details)),
+                "circletext" => new CircleTextElementView(new TextElementViewModel((TextPanelElement)(element ?? new TextPanelElement()), details)),
+                _            => throw new InvalidOperationException($"Unknown element type: {details.ViewModel}")
             };
             return view;
         }

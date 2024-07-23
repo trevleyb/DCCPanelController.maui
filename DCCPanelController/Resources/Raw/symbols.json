@@ -41,10 +41,21 @@
       ]
     },
     {
+      "Name": "Buttons",
+      "Symbols": [
+        {"ID" :"BUTTONS", "Name": "Button (Small)", "Height": 1, "Width": 1, "Image": "button_small.png", "ViewModel": "Button" },
+        {"ID" :"BUTTONM", "Name": "Button (Medium)", "Height": 1, "Width": 1, "Image": "button_medium.png", "ViewModel": "Button" },
+        {"ID" :"BUTTONL", "Name": "Button (Large)", "Height": 1, "Width": 1, "Image": "button_large.png", "ViewModel": "Button" },
+        {"ID" :"BUTTONXL", "Name": "Button (X-Large)", "Height": 1, "Width": 1, "Image": "button_xlarge.png", "ViewModel": "Button" },
+        {"ID" :"ROUTE", "Name": "Route", "Height": 1, "Width": 1, "Image": "route.png", "ViewModel": "Route" }
+      ]
+    },
+    {
       "Name": "Other",
       "Symbols": [
-        {"ID" :"ROUTE", "Name": "Route", "Height": 1, "Width": 1, "Image": "route.png", "ViewModel": "Route" },
         {"ID" :"TEXT",  "Name": "Text Block", "Height": 1, "Width": 1, "Image": "text.png", "ViewModel": "Text" },
+        {"ID" :"CIRCLE1",  "Name": "Text Circle", "Height": 1, "Width": 1, "Image": "circle_single.png", "ViewModel": "CircleText" },
+        {"ID" :"CIRCLE2",  "Name": "Text Circle", "Height": 1, "Width": 1, "Image": "circle_filled.png", "ViewModel": "CircleText" },
         {"ID" :"IMAGE", "Name": "Image", "Height": 1, "Width": 1, "Image": "image.png", "ViewModel": "Image" }
       ]
     }

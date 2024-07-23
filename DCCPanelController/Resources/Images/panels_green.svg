@@ -1,0 +1,12 @@
+<svg width="256" height="256" viewBox="0 0 256 256" style="color:#7CC504" xmlns="http://www.w3.org/2000/svg"
+     class="h-full w-full">
+    <rect width="256" height="256" x="0" y="0" rx="30" fill="transparent" stroke="transparent" stroke-width="0"
+          stroke-opacity="100%"></rect>
+    <svg width="256px" height="256px" viewBox="0 0 32 32" fill="#7CC504" x="0" y="0" role="img"
+         style="display:inline-block;vertical-align:middle" xmlns="http://www.w3.org/2000/svg">
+        <g fill="#7CC504">
+            <path fill="currentColor"
+                  d="M16 8h14v2H16zm0 14h14v2H16zm-6-8H4a2.002 2.002 0 0 1-2-2V6a2.002 2.002 0 0 1 2-2h6a2.002 2.002 0 0 1 2 2v6a2.002 2.002 0 0 1-2 2zM4 6v6h6.001L10 6zm6 22H4a2.002 2.002 0 0 1-2-2v-6a2.002 2.002 0 0 1 2-2h6a2.002 2.002 0 0 1 2 2v6a2.002 2.002 0 0 1-2 2zm-6-8v6h6.001L10 20z"/>
+        </g>
+    </svg>
+</svg>

@@ -112,6 +112,7 @@
                                     </MultiBinding>
                                 </Label>
                             </Grid>
+                            <Label Grid.Column="2" Grid.Row="1" Text="{Binding Message}"/>
                         </Grid>
                         <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="3"
                                  HorizontalOptions="FillAndExpand" />

@@ -50,6 +50,7 @@
         <MauiImage Include="Resources\Images\*" />
         <MauiImage Include="Resources\Icons\*" />
         <MauiImage Include="Resources\Symbols\*" />
+        
         <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\panels_green.svg" Resize="True" BaseSize="24,24" />
@@ -124,6 +125,12 @@
       <MauiXaml Update="Components\Elements\Views\RouteElementView.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="Components\Elements\Views\ButtonElementView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="Components\Elements\Views\CircleTextElementView.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -181,6 +188,14 @@
       </Compile>
       <Compile Update="Components\Elements\Views\RouteElementView.xaml.cs">
         <DependentUpon>RouteElementView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Elements\Views\ButtonElementView.xaml.cs">
+        <DependentUpon>ButtonElementView.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="Components\Elements\Views\CircleTextElementView.xaml.cs">
+        <DependentUpon>CircleTextElementView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

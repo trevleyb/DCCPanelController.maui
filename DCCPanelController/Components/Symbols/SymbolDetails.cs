@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace DCCPanelController.Components.Symbols;
 
 public class Symbols {
@@ -9,23 +11,26 @@ public class Symbols {
     }
 }
 
+[DebuggerDisplay("{Name} with {Symbols.Count} symbols")]
 public class SymbolSet {
     public string Name { get; set; } = string.Empty;
     public List<SymbolDetails> Symbols { get; init; } = [];
 }
 
+[DebuggerDisplay("{Key}: {Name}")]
 public class SymbolDetails {
     public SymbolDetails() {}
-    public string Key => $"{ID}:{Name}";
+    public string Key => $"{Set}:{ID}";
     public string Set { get; set; }
     public string ID { get; set; }
     public string Name { get; set; }
-    public int Height { get; set; } = 1;
-    public int Width { get; set; } = 1;
     public string ViewModel { get; init; }
     public string Image { get; set; }
     public string Closed { get; set; }
     public string Thrown { get; set; }
+    public int ZIndex { get; set; } = 0;
+    public int Height { get; set; } = 1;
+    public int Width { get; set; } = 1;
 }
 
 
