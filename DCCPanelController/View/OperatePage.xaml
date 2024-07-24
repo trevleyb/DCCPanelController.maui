@@ -1,35 +1,52 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     IconImageSource="control_green.png"
     Title="Operate"
     ios:Page.UseSafeArea="True"
+    x:DataType="viewModel:OperateViewModel"
     x:Class="DCCPanelController.View.OperatePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    <StackLayout HorizontalOptions="Center" VerticalOptions="CenterAndExpand">
-        <StackLayout >
-        <Label HorizontalOptions="Center" Text="Welcome to the Operate Layout Page!" FontAttributes="Bold"/>
-        <Label HorizontalOptions="Center" Text="   "/>
-        <Label HorizontalOptions="Center" Text="This page will populate once you have created"/>
-        <Label HorizontalOptions="Center" Text="panels and turnout control. To get started, head over"/>
-        <Label HorizontalOptions="Center" Text="to the instructions page and then to Settings to "/>
-        <Label HorizontalOptions="Center" Text="connect to your WiThrottle server."/>
-        <Label HorizontalOptions="Center" Text="   "/>
-        </StackLayout>
-        <StackLayout HorizontalOptions="CenterAndExpand" 
-                     VerticalOptions="CenterAndExpand"
-                     Padding="20">
-            <Button Style="{StaticResource ButtonOutline}" 
-                    Text="Instructions"
-                    Margin="0,10,0,10"
-                    Clicked="ButtonInstructions_OnClicked" />
-            <Button Style="{StaticResource ButtonOutline}" 
-                    Text="About"
-                    Margin="0,10,0,10"
-                    Clicked="ButtonAbout_OnClicked" />
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:panel="clr-namespace:DCCPanelController.Components.Panel">
+    
+    <ContentPage.Content>
+        <CarouselView ItemsSource="{Binding Panels}">
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="10" Spacing="10" 
+                                 VerticalOptions="CenterAndExpand"
+                                 HorizontalOptions="CenterAndExpand">
+                        
+                        <panel:PanelViewer Panel="{Binding Mode=TwoWay}"
+                                           HorizontalOptions="FillAndExpand"
+                                           VerticalOptions="FillAndExpand"
+                                           AbsoluteLayout.LayoutFlags="All"
+                                           AbsoluteLayout.LayoutBounds="0,0,1,1"/>
+                    </StackLayout>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
             
-        </StackLayout>
-    </StackLayout>
+            <CarouselView.EmptyView>
+                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
+                    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
+                        <Label HorizontalOptions="Center" Text="Welcome to the Operate Layout Page!" FontAttributes="Bold" />
+                        <Label HorizontalOptions="Center" Text="   " />
+                        <Label HorizontalOptions="Center" Text="This page will populate once you have created" />
+                        <Label HorizontalOptions="Center" Text="panels and turnout control. To get started, head over" />
+                        <Label HorizontalOptions="Center" Text="to the instructions page and then to Settings to " />
+                        <Label HorizontalOptions="Center" Text="connect to your WiThrottle server." />
+                        <Label HorizontalOptions="Center" Text="   " />
+                    </StackLayout>
+                    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
+                        <Button Style="{StaticResource ButtonOutline}" ImageSource="help.png" Text="Instructions" Margin="0,10,0,10" Clicked="ButtonInstructions_OnClicked" />
+                        <Button Style="{StaticResource ButtonOutline}" ImageSource="information.png" Text="About" Margin="0,10,0,10" Clicked="ButtonAbout_OnClicked" />
+                    </StackLayout>
+                </StackLayout>
+            </CarouselView.EmptyView>
+        </CarouselView>
+
+    </ContentPage.Content>
 </ContentPage>

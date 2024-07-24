@@ -1,4 +1,4 @@
-namespace DCCPanelController.Model.Elements;
+namespace DCCPanelController.Model.Elements.Base;
 
 public interface IPanelElement {
 

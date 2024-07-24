@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using DCCPanelController.Components.Elements;
-using DCCPanelController.Components.Elements.Base;
 using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;

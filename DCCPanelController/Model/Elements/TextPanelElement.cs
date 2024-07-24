@@ -1,8 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.Elements.Base;
 
 namespace DCCPanelController.Model.Elements;
 
-public partial class TextPanelElement : PanelElement, IPanelElement {
+public partial class TextPanelElement : Base.PanelElement, IPanelElement {
     
     [ObservableProperty] private string _text = "This is some text";
     [ObservableProperty] private string _font = "";

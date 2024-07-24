@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Model.Elements;
+namespace DCCPanelController.Model.Elements.Base;
 
 [DebuggerDisplay("Type={Type} at {Coordinate}")]
 public abstract partial class PanelElement : ObservableObject {

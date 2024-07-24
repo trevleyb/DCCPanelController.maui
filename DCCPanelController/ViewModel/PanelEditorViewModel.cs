@@ -4,12 +4,12 @@ using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Components.Elements;
-using DCCPanelController.Components.Elements.ViewModels;
 using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Components.Symbols;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Elements;
+using DCCPanelController.Model.Elements.Base;
 using SymbolViewModel = DCCPanelController.Components.Symbols.SymbolViewModel;
 
 namespace DCCPanelController.ViewModel;

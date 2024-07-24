@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Elements;
+using DCCPanelController.Model.Elements.Base;
 
 namespace DCCPanelController.Model;
 
@@ -13,7 +14,6 @@ public partial class Panel : ObservableValidator, ICloneable {
     [ObservableProperty] private string _id = "new";
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private int _sortOrder = 0;
-    //[ObservableProperty] private ImageSource? _panelImage;
     
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
     [ObservableProperty] private int _cols = 24;

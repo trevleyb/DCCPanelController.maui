@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Components.Elements.Base;
 using DCCPanelController.Components.Symbols;
 using DCCPanelController.Model.Elements;
 

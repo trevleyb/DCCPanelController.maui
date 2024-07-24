@@ -1,9 +1,9 @@
 using System.Reflection;
-using DCCPanelController.Components.Elements.Base;
 using DCCPanelController.Components.Elements.ViewModels;
 using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Components.Symbols;
 using DCCPanelController.Model.Elements;
+using DCCPanelController.Model.Elements.Base;
 
 namespace DCCPanelController.Components.Elements;
 

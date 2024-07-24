@@ -1,7 +1,6 @@
-using DCCPanelController.Model;
-using DCCPanelController.Model.Elements;
+using DCCPanelController.Model.Elements.Base;
 
-namespace DCCPanelController.Components.Elements.Base;
+namespace DCCPanelController.Components.Elements.ViewModels;
 
 public interface IElementViewModel {
  
