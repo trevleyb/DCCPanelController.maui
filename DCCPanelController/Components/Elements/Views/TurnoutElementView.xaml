@@ -11,14 +11,17 @@
     <ContentView.Content>
         <Border HeightRequest="{Binding Bounds.Height}"
               WidthRequest="{Binding Bounds.Width}"
-              BackgroundColor="Transparent"
+              Background="Transparent"
               AbsoluteLayout.LayoutBounds="{Binding Bounds}"
               AbsoluteLayout.LayoutFlags="None">
-             <Image Source="{Binding Image}"
+             <Image Source="{Binding TurnoutImage}"
                    BackgroundColor="{StaticResource Transparent}"
                    Rotation="{Binding Element.Rotation}"
                    HorizontalOptions="CenterAndExpand"
                    VerticalOptions="CenterAndExpand">
+                 <Image.GestureRecognizers>
+                     <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding ToggleTurnoutCommand}" />
+                 </Image.GestureRecognizers>
              </Image>
              <Border.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">

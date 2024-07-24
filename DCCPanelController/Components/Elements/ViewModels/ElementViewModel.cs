@@ -12,7 +12,7 @@ public abstract partial class ElementViewModel : BaseViewModel {
     /// </summary>
     [ObservableProperty]
     private IPanelElement _element;
-
+    
     [ObservableProperty] 
     private ImageSource _image;
     
@@ -22,10 +22,13 @@ public abstract partial class ElementViewModel : BaseViewModel {
     [ObservableProperty] 
     private bool _isDesignMode;
 
+    protected readonly SymbolDetails _symbolDetails;
+    
     /// <inheritdoc/>
     protected ElementViewModel(IPanelElement element, SymbolDetails details) {
         _element = element;
         _image = details.Image;
         _element.SymbolType = details.Key;
+        _symbolDetails = details;
     }
 }

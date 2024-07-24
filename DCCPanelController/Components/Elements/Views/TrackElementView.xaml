@@ -11,7 +11,7 @@
     <ContentView.Content>
         <Border HeightRequest="{Binding Bounds.Height}"
               WidthRequest="{Binding Bounds.Width}"
-              BackgroundColor="Transparent"
+              Background="Transparent"
               AbsoluteLayout.LayoutBounds="{Binding Bounds}"
               AbsoluteLayout.LayoutFlags="None">
              <Image Source="{Binding Image}"

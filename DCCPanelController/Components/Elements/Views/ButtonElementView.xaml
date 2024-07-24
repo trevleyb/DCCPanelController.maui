@@ -5,29 +5,25 @@
              xmlns:base="clr-namespace:DCCPanelController.Components.Elements.Base"
              xmlns:viewModels="clr-namespace:DCCPanelController.Components.Elements.ViewModels"
              xmlns:elements="clr-namespace:DCCPanelController.Model.Elements"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              x:Class="DCCPanelController.Components.Elements.Views.ButtonElementView"
-             x:DataType="viewModels:TextElementViewModel">
+             x:DataType="viewModels:ButtonElementViewModel">
 
     <ContentView.Content>
         <Border HeightRequest="{Binding Bounds.Height}"
                 WidthRequest="{Binding Bounds.Width}"
-                BackgroundColor="Transparent"
+                Background="Transparent"
                 AbsoluteLayout.LayoutBounds="{Binding Bounds}"
                 AbsoluteLayout.LayoutFlags="None">
-            <Label Text="{Binding Text}"
-                   FontSize="{Binding FontSize}"
+            <Image Source="{Binding ButtonStateImage}"
                    BackgroundColor="{StaticResource Transparent}"
                    Rotation="{Binding Element.Rotation}"
                    HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="CenterAndExpand" />
-            
-            <FlyoutBase.ContextFlyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem Text="Black"/>
-                </MenuFlyout>
-            </FlyoutBase.ContextFlyout>
-
-            
+                   VerticalOptions="CenterAndExpand">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer NumberOfTapsRequired="2" Command="{Binding ToggleButtonCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
             <Border.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">
                     <Setter Property="Style" Value="{StaticResource SelectedTrackView}" />

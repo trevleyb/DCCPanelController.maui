@@ -43,13 +43,12 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
         return GetGridCoordinatesFromReference(coordinate);
     }
 
-    public GridData GetGridCoordinates(int x, int y, int width, int height) {
-        var reference = GetGridReference(x, y, width, height);
+    public GridData GetGridCoordinates(int x, int y, int width, int height, int zIndex) {
+        var reference = GetGridReference(x, y, width, height, zIndex);
         return GetGridCoordinatesFromReference(reference);
     }
 
     public GridData GetGridCoordinatesFromReference(Coordinate coordinates) {
-
         // Calculate the center coordinates of the specified cell
         // Assume everything is 1 offset not 0
         var topLeftX = (coordinates.Col -1) * BoxSize;
@@ -63,7 +62,7 @@ public class GridHelper(int viewWidth, int viewHeight, int? panelCols = 24, int?
     ///1 Looks at an X,Y location and works out which cells these would fall into 
     /// to determine the Coordinates as a Xnn format (ie: B12) 
     /// </summary>
-    public Coordinate GetGridReference(int x, int y, int width, int height, int zIndex = 0) {
+    public Coordinate GetGridReference(int x, int y, int width, int height, int zIndex) {
 
         if (PanelWidth == 0 || PanelHeight == 0) return Coordinate.Unreferenced;
 

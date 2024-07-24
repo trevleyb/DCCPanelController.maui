@@ -11,7 +11,7 @@ public partial class Coordinate : ObservableObject {
         Row = row;
         Width = width;
         Height = height;
-        ZIndex = ZIndex;
+        ZIndex = zIndex;
         IsValid = isValid ?? true;
     }
 

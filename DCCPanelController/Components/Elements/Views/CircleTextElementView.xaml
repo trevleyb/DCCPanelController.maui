@@ -11,23 +11,15 @@
     <ContentView.Content>
         <Border HeightRequest="{Binding Bounds.Height}"
                 WidthRequest="{Binding Bounds.Width}"
-                BackgroundColor="Transparent"
+                Background="Transparent"
                 AbsoluteLayout.LayoutBounds="{Binding Bounds}"
                 AbsoluteLayout.LayoutFlags="None">
-            <Label Text="{Binding Text}"
-                   FontSize="{Binding FontSize}"
+            <Image Source="{Binding Image}"
                    BackgroundColor="{StaticResource Transparent}"
                    Rotation="{Binding Element.Rotation}"
                    HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="CenterAndExpand" />
-            
-            <FlyoutBase.ContextFlyout>
-                <MenuFlyout>
-                    <MenuFlyoutItem Text="Black"/>
-                </MenuFlyout>
-            </FlyoutBase.ContextFlyout>
-
-            
+                   VerticalOptions="CenterAndExpand">
+            </Image>
             <Border.Triggers>
                 <DataTrigger Binding="{Binding IsSelected}" TargetType="Border" Value="true">
                     <Setter Property="Style" Value="{StaticResource SelectedTrackView}" />

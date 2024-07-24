@@ -7,8 +7,10 @@ namespace DCCPanelController.Components.Elements.ViewModels;
 
 public partial class TextElementViewModel : ElementViewModel, IElementViewModel {
     
+    public TextPanelElement TextElement => (TextPanelElement)Element; 
     public TextElementViewModel(TextPanelElement element, SymbolDetails details) : base(element, details) { }
 
+    /*
     public string Text {
         get => ((TextPanelElement)Element).Text;
         set {
@@ -33,4 +35,19 @@ public partial class TextElementViewModel : ElementViewModel, IElementViewModel 
         }
     }
     
+    public Color FontColor {
+        get => ((TextPanelElement)Element).FontColor;
+        set {
+            ((TextPanelElement)Element).FontColor = value;
+            OnPropertyChanged(nameof(FontColor));
+        }
+    }
+    public Color BackgroundColor {
+        get => ((TextPanelElement)Element).BackgroundColor;
+        set {
+            ((TextPanelElement)Element).BackgroundColor = value;
+            OnPropertyChanged(nameof(BackgroundColor));
+        }
+    }
+    */
 }

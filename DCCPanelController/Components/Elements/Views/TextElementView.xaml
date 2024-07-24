@@ -11,13 +11,14 @@
     <ContentView.Content>
         <Border HeightRequest="{Binding Bounds.Height}"
                 WidthRequest="{Binding Bounds.Width}"
-                BackgroundColor="Transparent"
+                Background="{Binding TextElement.BackgroundColor}"
                 AbsoluteLayout.LayoutBounds="{Binding Bounds}"
                 AbsoluteLayout.LayoutFlags="None">
-            <Label Text="{Binding Text}"
-                   FontSize="{Binding FontSize}"
-                   BackgroundColor="{StaticResource Transparent}"
-                   Rotation="{Binding Element.Rotation}"
+            <Label Text="{Binding TextElement.Text}"
+                   FontSize="{Binding TextElement.FontSize}"
+                   TextColor="{Binding TextElement.FontColor}"
+                   BackgroundColor="{Binding TextElement.BackgroundColor}"
+                   Rotation="{Binding TextElement.Rotation}"
                    HorizontalOptions="CenterAndExpand"
                    VerticalOptions="CenterAndExpand" />
             

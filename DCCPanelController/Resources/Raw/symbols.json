@@ -43,7 +43,7 @@
     {
       "Name": "Buttons",
       "Symbols": [
-        {"ID" :"BUTTONS", "Name": "Button (Small)", "Height": 1, "Width": 1, "Image": "button_small.png", "ViewModel": "Button" , "ZIndex" : 10},
+        {"ID" :"BUTTONS", "Name": "Button (Small)", "Height": 1, "Width": 1, "Image": "button_small.png", "ViewModel": "Button" , "ZIndex" : 10 },
         {"ID" :"BUTTONM", "Name": "Button (Medium)", "Height": 1, "Width": 1, "Image": "button_medium.png", "ViewModel": "Button" , "ZIndex" : 10},
         {"ID" :"BUTTONL", "Name": "Button (Large)", "Height": 1, "Width": 1, "Image": "button_large.png", "ViewModel": "Button" , "ZIndex" : 10},
         {"ID" :"BUTTONXL", "Name": "Button (X-Large)", "Height": 1, "Width": 1, "Image": "button_xlarge.png", "ViewModel": "Button" , "ZIndex" : 10},

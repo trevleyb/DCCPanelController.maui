@@ -83,7 +83,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public Coordinate SetLastCoordinates(int posX, int posY) {
         if (GridHelper != null) {
             LastCoordinate = GridHelper.GetGridReference(posX, posY, SelectedWidth, SelectedHeight, LastZIndex);
-            IsDropZoneOccupied = IsCoordinatesOccupied(LastCoordinate, TrackAction == TrackActionEnum.None ? SelectedElement?.ViewModel.Element ?? null : null);
+            IsDropZoneOccupied = IsCellOccupied(LastCoordinate, TrackAction == TrackActionEnum.None ? SelectedElement?.ViewModel.Element ?? null : null);
             return LastCoordinate;
         }
         return Coordinate.Unreferenced;
@@ -131,11 +131,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
     #endregion
 
-    private bool IsCoordinatesOccupied(Coordinate coordinate, IPanelElement? activeElement) {
-        if (GridHelper is null) return true;
-        return (IsCellOccupied(coordinate, activeElement) || IsOutsideBounds(coordinate));
-    }   
-    
     /// <summary>
     /// This looks to see if the coordinates provided are currently occupied already.
     /// This looks at the Width and Height of each item in the panel and returns true
@@ -153,10 +148,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
                                 // this allows things like a Text Box or Circle to sit over the top of another item
                                 // --------------------------------------------------------------------------------
                                 if (element.Coordinate.Col + elementX == coordinates.Col + coordX && 
-                                    element.Coordinate.Row + elementY == coordinates.Row + coordY && 
-                                    element.Coordinate.ZIndex >= coordinates.ZIndex) {
-                                    Message = $"Coordinate {coordinates.Col},{coordinates.Row},{element.Coordinate.Width},{element.Coordinate.Height} is Occupied";
-                                    return true;
+                                    element.Coordinate.Row + elementY == coordinates.Row + coordY) {
+                                    if (element.Coordinate.ZIndex >= coordinates.ZIndex) {
+                                        Message = $"Coordinate {coordinates.Col},{coordinates.Row},{element.Coordinate.Width},{element.Coordinate.Height} is Occupied";
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -335,7 +331,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Add a track from the toolbox to the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.AddingFromToolbox && SelectedSymbol is not null) {
-            if (IsCoordinatesOccupied(LastCoordinate, null)) return;
+            if (IsCellOccupied(LastCoordinate, null)) return;
             var elementView = ElementFactory.CreateElementView(SelectedSymbol.Key);
             if (elementView is not null) {
                 elementView.ViewModel.Element.Coordinate = LastCoordinate;
@@ -350,7 +346,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Move an item on the Main Grid to another location on the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.MovingInGrid && SelectedElement is not null) {
-            if (IsCoordinatesOccupied(LastCoordinate, SelectedElement.ViewModel.Element)) return;
+            if (IsCellOccupied(LastCoordinate, SelectedElement.ViewModel.Element)) return;
             PanelElements.Remove(SelectedElement);
             SelectedElement.ViewModel.Element.Coordinate = LastCoordinate;
             AddElementToPlan(SelectedElement);
