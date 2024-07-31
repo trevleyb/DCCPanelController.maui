@@ -59,9 +59,15 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid x:Name="EditorContainer" ColumnDefinitions="*,5,auto">
 
-            <Grid RowDefinitions="auto,*" Grid.Column="0">
+        <Grid x:Name="EditorContainer">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition x:Name="RightPanelColumn" Width="{markups:OnScreenSize Medium=50, Large=50, ExtraLarge=120, Default=120}"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid Grid.Column="0" RowDefinitions="auto,*" >
                 <toolkit:Expander x:Name="MyExpander" IsExpanded="False">
                     <toolkit:Expander.Header>
                             <Grid ColumnDefinitions="auto,*,auto" ColumnSpacing="10" RowDefinitions="auto,auto" Margin="10,10,10,10">
@@ -145,36 +151,96 @@
                 </BoxView>
             </Grid>
 
-            <Grid Grid.Column="2"
-                  RowDefinitions="auto,*"
-                  WidthRequest="{markups:OnScreenSize Medium=50, Large=50, ExtraLarge=120, Default=120}"
-                  BackgroundColor="{StaticResource CardBackground}"
-                  IsEnabled="{Binding IsNotBusy}">
+            <!-- Right Panel -->
+        <Grid Grid.Column="2" x:Name = "Toolbox" Margin="5">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="5" />
+                <RowDefinition Height="{markups:OnScreenSize Medium=50, Large=50, ExtraLarge=120, Default=120}" />
+            </Grid.RowDefinitions>
 
-                <Picker HorizontalTextAlignment="Start" HorizontalOptions="Fill" Title="Symbol Set" ItemsSource="{Binding SymbolSets}" SelectedIndexChanged="Picker_OnSelectedIndexChanged" />
-                
-                <ScrollView Grid.Row="1">
-                    <FlexLayout Direction="Row" JustifyContent="Center" AlignItems="Start">
-                        <CollectionView ItemsSource="{Binding FilteredSymbols}">
-                            <CollectionView.ItemsLayout>
-                                <GridItemsLayout Orientation="Vertical"
-                                                 Span="{markups:OnScreenSize Medium=1, Large=1, ExtraLarge=2, Default=2}" />
-                            </CollectionView.ItemsLayout>
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate>
-                                    <symbols:SymbolView Margin="5,5,5,5">
-                                        <symbols:SymbolView.GestureRecognizers>
-                                            <DragGestureRecognizer
-                                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"
-                                                DragStartingCommandParameter="{Binding .}" />
-                                        </symbols:SymbolView.GestureRecognizers>
-                                    </symbols:SymbolView>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </FlexLayout>
-                </ScrollView>
+            <!-- Drop Down -->
+            <Picker x:Name="SetPicker" 
+                    VerticalOptions="Center" 
+                    HorizontalOptions="Center"
+                    ItemsSource="{Binding SymbolSets}" 
+                    SelectedItem="{Binding SelectedSet}"
+                    SelectedIndexChanged="Picker_OnSelectedIndexChanged"/>
+
+            <BoxView Grid.Row="1"
+                     BackgroundColor="{StaticResource Primary}"
+                     HeightRequest="3"
+                     VerticalOptions="FillAndExpand"/>
+
+            <!-- Collection View for Symbols -->
+            <CollectionView Grid.Row="2"
+                            ItemsSource="{Binding FilteredSymbols}" 
+                            SelectionMode="Single" >
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <ContentView>
+                            <symbols:SymbolView Margin="5,5,5,5" WidthRequest="50" HeightRequest="50">
+                                <symbols:SymbolView.GestureRecognizers>
+                                    <DragGestureRecognizer
+                                        DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"
+                                        DragStartingCommandParameter="{Binding .}" />
+                                </symbols:SymbolView.GestureRecognizers>
+                            </symbols:SymbolView>
+                        </ContentView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" 
+                                     Span="{Binding Span}" />
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+
+            <BoxView Grid.Row="3"
+                     BackgroundColor="{StaticResource Primary}"
+                     HeightRequest="3"
+                     VerticalOptions="FillAndExpand"/>
+
+            <!-- Color Grid -->
+            <Grid x:Name="ColorGrid" Grid.Row="4" HorizontalOptions="Center" VerticalOptions="Center">
+                <!-- Generate Color Grid (16x16) -->
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Populate Grid with Buttons for Colors -->
+                <!-- Example for two colors, repeat for all 256 color cells -->
+                <!--
+                <BoxView Grid.Column="0" Grid.Row="0" BackgroundColor="#000000" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="0" Grid.Row="1" BackgroundColor="#FFFFFF" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="0" Grid.Row="2" BackgroundColor="#FF0000" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="0" Grid.Row="3" BackgroundColor="#008000" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="1" Grid.Row="0" BackgroundColor="#0000FF" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="1" Grid.Row="1" BackgroundColor="#FFFF00" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="1" Grid.Row="2" BackgroundColor="#00FFFF" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="1" Grid.Row="3" BackgroundColor="#FF00FF" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="2" Grid.Row="0" BackgroundColor="#C0C0C0" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="2" Grid.Row="1" BackgroundColor="#808080" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="2" Grid.Row="2" BackgroundColor="#800000" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="2" Grid.Row="3" BackgroundColor="#808000" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="3" Grid.Row="0" BackgroundColor="#800080" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="3" Grid.Row="1" BackgroundColor="#008080" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="3" Grid.Row="2" BackgroundColor="#000080" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                <BoxView Grid.Column="3" Grid.Row="3" BackgroundColor="#00FF00" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
+                -->
             </Grid>
+        </Grid>
+
         </Grid>
     </ContentPage.Content>
 </ContentPage>

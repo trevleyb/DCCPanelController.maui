@@ -2,7 +2,7 @@
 
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:base="clr-namespace:DCCPanelController.Components.Elements.Base"
+             xmlns:base="clr-namespace:DCCPanelController.Components.Elements"
              xmlns:viewModels="clr-namespace:DCCPanelController.Components.Elements.ViewModels"
              xmlns:elements="clr-namespace:DCCPanelController.Model.Elements"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"

@@ -49,6 +49,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     
     [ObservableProperty] private Coordinate _lastCoordinate;
     [ObservableProperty] private int _lastZIndex;
+    [ObservableProperty] private int _span;
     
     public GridHelper? GridHelper;
 
@@ -58,6 +59,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         IsPropertyPanelVisible = false;
         Panel = panel;
         Panel.PropertyChanged += PanelOnPropertyChanged;
+        Span = 2;
     }
 
     private void LoadTrackPlan() {
@@ -83,7 +85,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public Coordinate SetLastCoordinates(int posX, int posY) {
         if (GridHelper != null) {
             LastCoordinate = GridHelper.GetGridReference(posX, posY, SelectedWidth, SelectedHeight, LastZIndex);
-            IsDropZoneOccupied = IsCellOccupied(LastCoordinate, TrackAction == TrackActionEnum.None ? SelectedElement?.ViewModel.Element ?? null : null);
+            IsDropZoneOccupied = TrackAction switch {
+                TrackActionEnum.None              => false,
+                TrackActionEnum.Color             => false,
+                TrackActionEnum.AddingFromToolbox => IsCellOccupied(LastCoordinate, SelectedElement?.ViewModel.Element),
+                TrackActionEnum.MovingInGrid      => IsCellOccupied(LastCoordinate, SelectedElement?.ViewModel.Element),
+                _                                 => false,
+            };
+            if (IsOutsideBounds(LastCoordinate)) IsDropZoneOccupied = true;
             return LastCoordinate;
         }
         return Coordinate.Unreferenced;
@@ -343,6 +352,12 @@ public partial class PanelEditorViewModel : BaseViewModel {
             }
         }
 
+        // Apply the Color if the Drop is a Valid Element
+        // ----------------------------------------------
+        if (TrackAction == TrackActionEnum.Color) {
+            Message = "We got here";
+        }
+        
         // Move an item on the Main Grid to another location on the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.MovingInGrid && SelectedElement is not null) {
@@ -387,5 +402,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
 public enum TrackActionEnum {
     AddingFromToolbox, 
     MovingInGrid,
+    Color,
     None
 }
