@@ -84,7 +84,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <MauiXaml Update="View\MainPage.xaml">
+      <MauiXaml Update="View\MainPageTabbed.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
       <MauiXaml Update="View\RoutesPage.xaml">
@@ -135,7 +135,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="View\MainPage.xaml.cs">
+      <Compile Update="View\MainPageTabbed.xaml.cs">
         <DependentUpon>MainPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

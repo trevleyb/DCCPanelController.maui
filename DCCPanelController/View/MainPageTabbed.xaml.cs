@@ -4,9 +4,9 @@ using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class MainPage : TabbedPage
+public partial class MainPageTabbed : TabbedPage
 {
-	public MainPage() {
+	public MainPageTabbed() {
 		InitializeComponent();
 		_ = LoadAndConnect().WaitAsync(new CancellationToken());
 	}
