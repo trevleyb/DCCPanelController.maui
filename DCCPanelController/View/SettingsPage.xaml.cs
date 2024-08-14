@@ -13,8 +13,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     
     public SettingsPage() {
         InitializeComponent();
-        _viewModel =  App.ServiceProvider?.GetService<SettingsViewModel>();
-        BindingContext = _viewModel;
     }
 
     void OnLabelTapped(object sender, EventArgs args) {

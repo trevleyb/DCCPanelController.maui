@@ -8,16 +8,6 @@ public partial class MainPageTabbed : TabbedPage
 {
 	public MainPageTabbed() {
 		InitializeComponent();
-		_ = LoadAndConnect().WaitAsync(new CancellationToken());
-	}
-
-	private async Task LoadAndConnect() {
-		var settings = App.ServiceProvider?.GetService<SettingsService>();
-		var settingsViewModel = App.ServiceProvider?.GetService<SettingsViewModel>();
-		if (settingsViewModel != null) {
-			//await settingsViewModel.RefreshWiServersAsync();
-			//await settingsViewModel.ConnectAsync();
-		}
 	}
 }
 

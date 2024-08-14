@@ -5,6 +5,5 @@ namespace DCCPanelController.View;
 public partial class OperatePage : ContentPage {
     public OperatePage() {
         InitializeComponent();
-        BindingContext = new OperateViewModel();
     }
 }

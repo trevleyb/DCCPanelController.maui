@@ -14,10 +14,5 @@ public partial class RoutesPage : ContentPage {
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();
         MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
-
-        // Resolve the TurnoutStateViewModel dependency
-        //var service = App.ServiceProvider?.GetService<RoutesService>();
-        var viewModel = App.ServiceProvider?.GetService<RoutesViewModel>();
-        BindingContext = viewModel;
     }
 }

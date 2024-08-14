@@ -14,10 +14,10 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
 
     public PanelsPage() {
         InitializeComponent();
-        var viewModel = App.ServiceProvider?.GetService<PanelsViewModel>();
-        if (viewModel != null) {
-            viewModel.Sender = this;
-            BindingContext = viewModel;
+
+        // TODO: Fix this as ViewModel should not know about the view. This is BAD
+        if (BindingContext != null) {
+            ((PanelsViewModel)BindingContext).Sender = this;
         }
         this.SizeChanged += (_, __) => UpdateLayout();
     }
