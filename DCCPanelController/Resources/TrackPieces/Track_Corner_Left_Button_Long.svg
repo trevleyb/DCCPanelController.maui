@@ -1,0 +1,15 @@
+
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Track-Parts" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Track_Corner_Left_Button_Long">
+            <polygon id="Track" fill="#BDBDBD" transform="translate(17, 23.9999) rotate(-180) translate(-17, -23.9999)" points="8 19.99991 26 19.99991 26 27.999908 8 27.9998088"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 14) rotate(-180) translate(-35.5, -14)" points="23.0000019 28.0000001 23 22.9999829 45.999999 -6.2942505e-05 48 7.99994538 28.0000025 28.0000001"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(15.5, 19) rotate(-180) translate(-15.5, -19)" points="7.9999027 17.999893 22.9999013 18.0000914 22.9999997 20.0000914 7.9999027 20.0000914"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(17, 28.9999) rotate(-180) translate(-17, -28.9999)" points="8 27.9999 26 27.9999992 26 29.9999992 8 29.9999"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(36.5, 17.5) scale(-1, 1) rotate(90) translate(-36.5, -17.5)" points="24.000011 29.0000116 47.0000145 5.9999886 49.000011 6.99998859 27.0000125 29.0000116"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(32.5002, 9.9999) rotate(-180) translate(-32.5002, -9.9999)" points="22.000303 19.9999084 42.0003227 -8.9645386e-05 43.000122 2.00871075 25.0003008 19.9999084 23.9478128 19.9999084"></polygon>
+            <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="32" cy="16" r="7"></circle>
+            <circle id="Button" fill="#90C418" cx="32" cy="16" r="6"></circle>
+        </g>
+    </g>
+</svg>

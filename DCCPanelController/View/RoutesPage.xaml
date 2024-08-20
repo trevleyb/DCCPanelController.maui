@@ -12,6 +12,10 @@
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="add.png" />
+    </ContentPage.ToolbarItems>
+
         <StackLayout x:Name="MainStackLayout">
             <Grid
                 ColumnDefinitions="75,*,32,80"
@@ -136,7 +140,10 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
                 </Grid>
-
+            <BoxView
+                BackgroundColor="{StaticResource Primary}"
+                HeightRequest="1"
+                HorizontalOptions="FillAndExpand" />
         </StackLayout>
 
 </ContentPage>

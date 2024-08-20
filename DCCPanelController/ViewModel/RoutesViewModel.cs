@@ -11,19 +11,22 @@ namespace DCCPanelController.ViewModel;
 public partial class RoutesViewModel : BaseViewModel {
     
     public ObservableCollection<Route>? Routes { get; set; } = [];
+    private ConnectionService? ConnectionService { get; }
     private readonly RoutesService? _routesService;
     private bool _isAscending = false;
     private string _sortColumn = "";
     
-    public RoutesViewModel(RoutesService? routesService) {
-        _routesService = routesService;
-        Routes = _routesService?.Routes ?? new ObservableCollection<Route>();
+    public RoutesViewModel(RoutesService? routesService, ConnectionService? connectionService) {
+        ConnectionService = connectionService;
+        Routes = routesService?.Routes ?? [];
+        CanToggleRoutesState = ConnectionService is not null && ConnectionService.IsConnected;
         SetLabels();
     }
     
-    [ObservableProperty] private string columnLabelID       = "ID";
-    [ObservableProperty] private string columnLabelName     = "Route Name";
-    [ObservableProperty] private string columnLabelState    = "State";
+    [ObservableProperty] private bool   _canToggleRoutesState;
+    [ObservableProperty] private string _columnLabelID       = "ID";
+    [ObservableProperty] private string _columnLabelName     = "Route Name";
+    [ObservableProperty] private string _columnLabelState    = "State";
     
     [RelayCommand]
     public async Task SortByColumn(string columnName) {
@@ -59,7 +62,7 @@ public partial class RoutesViewModel : BaseViewModel {
         ColumnLabelState = "State" + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
     public async Task ToggleRoutesState(Route? route) {
         
         if (route == null) return;
@@ -69,9 +72,6 @@ public partial class RoutesViewModel : BaseViewModel {
             _                       => RouteStateEnum.Active
         };
         
-        var connectionSerice = App.ServiceProvider?.GetService<ConnectionService>();
-        if (connectionSerice != null && !string.IsNullOrEmpty(route.Id)) {
-            connectionSerice.SendRouteStateChangeCommand(route.Id, route.State);
-        }
+        if (!string.IsNullOrEmpty(route.Id)) ConnectionService?.SendRouteStateChangeCommand(route.Id, route.State);
     }
 }

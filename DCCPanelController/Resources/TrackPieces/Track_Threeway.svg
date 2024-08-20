@@ -1,0 +1,18 @@
+
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Track-Parts" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Track_Threeway">
+            <polygon id="Track" fill="#BDBDBD" transform="translate(24, 23.9999) rotate(180) translate(-24, -23.9999)" points="8 19.99988 40 19.99988 40 27.999878 8 27.9997788"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 14) rotate(180) translate(-35.5, -14)" points="22.9999983 27.9999692 22.999998 22.9999639 46.0001273 -6.484985e-05 48.0000025 7.99993518 28.0000257 27.9999692"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(34, 35.5) rotate(-90) translate(-34, -35.5)" points="21.5000153 49.500014 21.500015 44.5000087 44.5001443 21.49998 46.5000195 29.49998 26.5000427 49.500014"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(15.5, 19) rotate(180) translate(-15.5, -19)" points="7.9999027 17.999893 22.9999013 18.0000914 22.9999997 20.0000914 7.9999027 20.0000914"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(15.5, 28.9999) rotate(180) translate(-15.5, -28.9999)" points="10.0955175 27.9999 23 27.9999992 23 29.9999992 7.999997 29.9999 8.9999971 28.0000221"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(38, 18.9999) rotate(180) translate(-38, -18.9999)" points="36 17.9999 40 17.9999 39.3333337 19.9999992 36 19.9999"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)" points="22.000303 19.9999084 42.0003227 -8.9645386e-05 43.000122 2.00871075 25.0003008 19.9999084 23.9478128 19.9999084"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(40.5, 12.5) scale(-1, 1) rotate(90) translate(-40.5, -12.5)" points="33.000015 20.0000136 48.000014 4.9999876 48.000014 7.9999877 36.0000184 20.0000136"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(36.5, 28.9942) rotate(180) translate(-36.5, -28.9942)" points="33 27.988403 38.0000014 27.988403 39.9999995 29.9999997 33 29.9999023"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(32.2374, 38.7625) rotate(-135) translate(-32.2374, -38.7625)" points="28.7374197 37.68406 45.6724091 37.7196893 46.37953 39.8410286 18.09526 39.8409973 20.2165978 37.7197198"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(42.25, 35.75) rotate(-135) translate(-42.25, -35.75)" points="35.8859122 34.6895594 51.442373 34.6893 49.3210451 36.8106527 35.1789398 36.8106228 33.057602 34.6893153"></polygon>
+        </g>
+    </g>
+</svg>

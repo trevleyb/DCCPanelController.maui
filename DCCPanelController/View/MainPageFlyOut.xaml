@@ -26,8 +26,7 @@
 
     <!-- Flyout Header -->
     <Shell.FlyoutHeader>
-        
-        <StackLayout Padding="10" BackgroundColor="{StaticResource PrimaryDark}">
+        <StackLayout HeightRequest="39" Padding="10" BackgroundColor="{StaticResource PrimaryDark}">
             <Label Text="DCC Panel Controller" FontSize="18" TextColor="White" HorizontalOptions="Center" />
         </StackLayout>
     </Shell.FlyoutHeader>
@@ -50,11 +49,11 @@
         <ShellContent Title="Edit Panels" ContentTemplate="{DataTemplate view:PanelEditorPage}" Route="PanelEditor"></ShellContent>
     </FlyoutItem>
         
-    <FlyoutItem Title="Turnouts" Icon="turnout_thrown.png">
+    <FlyoutItem Title="Turnouts" Icon="turnouts_green.png">
         <ShellContent Title="Turnouts" ContentTemplate="{DataTemplate view:TurnoutsPage}" Route="Turnouts"></ShellContent>
     </FlyoutItem>
 
-    <FlyoutItem Title="Routes" Icon="route_active.png">
+    <FlyoutItem Title="Routes" Icon="turnouts_green.png">
         <ShellContent Title="Routes" ContentTemplate="{DataTemplate view:RoutesPage}" Route="Routes"></ShellContent>
     </FlyoutItem>
 

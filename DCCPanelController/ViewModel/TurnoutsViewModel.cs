@@ -12,21 +12,23 @@ namespace DCCPanelController.ViewModel;
 public partial class TurnoutsViewModel : BaseViewModel {
 
     public ObservableCollection<Turnout> Turnouts { get; set; }
-    private readonly TurnoutsService? _turnoutStateService;
+    private ConnectionService? ConnectionService { get; }
     private bool _isAscending = false;
     private string _sortColumn = "";
     
-    public TurnoutsViewModel(TurnoutsService? turnoutStateService) {
-        _turnoutStateService = turnoutStateService;
-        Turnouts = _turnoutStateService?.Turnouts ?? new ObservableCollection<Turnout>();
+    public TurnoutsViewModel(TurnoutsService? turnoutStateService, ConnectionService? connectionService) {
+        ConnectionService = connectionService;
+        Turnouts = turnoutStateService?.Turnouts ?? [];
+        CanToggleTurnoutState = ConnectionService is not null && ConnectionService.IsConnected;
         SetLabels();
     }
 
-    [ObservableProperty] private string columnLabelID       = "ID";
-    [ObservableProperty] private string columnLabelName     = "Turnout Name";
-    [ObservableProperty] private string columnLabelState    = "State";
+    [ObservableProperty] private bool   _canToggleTurnoutState;
+    [ObservableProperty] private string _columnLabelID       = "ID";
+    [ObservableProperty] private string _columnLabelName     = "Turnout Name";
+    [ObservableProperty] private string _columnLabelState    = "State";
     
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(CanToggleTurnoutState))]
     public async Task SortByColumn(string columnName) {
         List<Turnout> sortedTurnout;
         if (!_isAscending) {
@@ -67,10 +69,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
             _                       => TurnoutStateEnum.Closed
         };
-        
-        var connectionSerice = App.ServiceProvider?.GetService<ConnectionService>();
-        if (connectionSerice != null && !string.IsNullOrEmpty(turnout.Id)) {
-            connectionSerice.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
-        }
+
+        if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
     }
 }

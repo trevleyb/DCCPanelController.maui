@@ -1,0 +1,20 @@
+
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Track-Parts" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Track_Turnout_Left_Label">
+            <polygon id="Track" fill="#BDBDBD" transform="translate(24, 23.9999) rotate(180) translate(-24, -23.9999)" points="8 19.99988 40 19.99988 40 27.999878 8 27.9997788"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 10) rotate(180) translate(-35.5, -10)" points="23.0000023 20.0000009 22.999998 15.0000059 37.9999942 -1.9073486e-05 48 -1.9073486e-05 28.0000164 20.0000009"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(23.9889, 19) rotate(180) translate(-23.9889, -19)" points="7.9997406 17.999907 39.9778178 18.0001054 39.9780276 20.0001232 22.9534764 20.0001206 24.9546971 17.999907"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(24, 28.9999) rotate(180) translate(-24, -28.9999)" points="8 27.9999 40 27.9999992 40 29.9999992 8 29.9999"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)" points="22.000303 19.9998778 42.0003227 -0.000120162964 43.000122 2.00868024 25.0003008 19.9998778 23.9478128 19.9998778"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(40.5, 12.5) scale(-1, 1) rotate(90) translate(-40.5, -12.5)" points="33.000023 20.000022 48.000022 4.999979 48.000022 7.9999789 36.0000285 20.000022"></polygon>
+            <polygon id="Border" fill="#000000" points="40 18 40 20 36 19.999985 38.0000002 18"></polygon>
+            <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="24" cy="24" r="10"></circle>
+            <circle id="Border" stroke="#000000" cx="24" cy="24" r="8"></circle>
+            <circle id="Button" fill="#90C418" cx="24" cy="24" r="7.5"></circle>
+            <text id="Text" transform="translate(24, 24) scale(1, -1) translate(-24, -24)" font-family="Inter-Regular, Inter" font-size="7" font-weight="normal" fill="#FFFFFF">
+                <tspan x="17.4524148" y="15">999</tspan>
+            </text>
+        </g>
+    </g>
+</svg>

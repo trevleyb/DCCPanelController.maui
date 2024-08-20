@@ -1,0 +1,14 @@
+
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Track-Parts" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Track_Turnout_Left">
+            <polygon id="Track" fill="#BDBDBD" transform="translate(24, 23.9999) rotate(180) translate(-24, -23.9999)" points="8 19.99991 40 19.99991 40 27.999908 8 27.9998088"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 10) rotate(180) translate(-35.5, -10)" points="23.0000023 20.0000143 22.999998 15.0000193 37.9999942 -5.722046e-06 48 -5.722046e-06 28.0000164 20.0000143"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(23.9889, 19) rotate(180) translate(-23.9889, -19)" points="7.9997406 17.999876 39.9778178 18.0000744 39.9780276 20.0000922 22.9534764 20.0000896 24.9546971 17.999876"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(24, 28.9999) rotate(180) translate(-24, -28.9999)" points="8 27.9999 40 27.9999992 40 29.9999992 8 29.9999"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)" points="22.000303 19.9999084 42.0003227 -8.9645386e-05 43.000122 2.00871075 25.0003008 19.9999084 23.9478128 19.9999084"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(40.5, 12.5) scale(-1, 1) rotate(90) translate(-40.5, -12.5)" points="33.00003 20.000022 48.000029 4.999979 48.000029 7.9999789 36.0000355 20.000022"></polygon>
+            <polygon id="Border" fill="#000000" points="40.000004 18.000015 40.000004 20.000015 36.000004 20 38.0000042 18.000015"></polygon>
+        </g>
+    </g>
+</svg>

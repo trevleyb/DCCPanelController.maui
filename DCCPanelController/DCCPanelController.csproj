@@ -80,6 +80,7 @@
         <PackageReference Include="Microsoft.Maui.Essentials" Version="8.0.61" />
         <PackageReference Include="NUnit" Version="4.1.0" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
+        <PackageReference Include="Svg.Skia" Version="2.0.0" />
         <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1" />
     </ItemGroup>
 
@@ -204,6 +205,87 @@
     <ItemGroup>
       <None Remove="Resources\Raw\symbols.json" />
       <Resource Include="Resources\Raw\symbols.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Resources\TrackPieces\Track_Angle.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Button.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Button.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Button_Short.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Button_Short.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Terminator_Long.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator_Long.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Terminator_Short.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator_Short.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Terminator_Short_Lines.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator_Short_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Continuation_Arrow.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Continuation_Arrow.svg" />
+      <None Remove="Resources\TrackPieces\Track_Continuation_Lines.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Continuation_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Left.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Left_Button.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Button.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Left_Button_Long.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Button_Long.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Left_Button_Short.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Button_Short.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Right.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Right_Button.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Button.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Right_Button_Long.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Button_Long.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Right_Button_Short.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Button_Short.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
+      <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Crossing_Angle.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Crossing_Angle.svg" />
+      <None Remove="Resources\TrackPieces\Track_Crossing_Straight.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Crossing_Straight.svg" />
+      <None Remove="Resources\TrackPieces\Track_Straight.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight.svg" />
+      <None Remove="Resources\TrackPieces\Track_Straight_Button.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Button.svg" />
+      <None Remove="Resources\TrackPieces\Track_Terminator.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Terminator.svg" />
+      <None Remove="Resources\TrackPieces\Track_Threeway.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway.svg" />
+      <None Remove="Resources\TrackPieces\Track_Threeway_Left.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Left.svg" />
+      <None Remove="Resources\TrackPieces\Track_Threeway_Right.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Right.svg" />
+      <None Remove="Resources\TrackPieces\Track_Threeway_Straight.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Straight.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Left.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Left_Label.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Label.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Right.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Right_Label.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Label.svg" />
+      <None Remove="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Reference\" />
     </ItemGroup>
 
 </Project>
