@@ -1,0 +1,12 @@
+
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="TrackParts-(new)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Track_Angle_Terminator">
+            <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(12, 36) rotate(180) translate(-12, -36)" points="0 43.0000008 0 43.0000008 19.0000234 24 24 24 24 29.0000006 4.99762032 48"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(9.4865, 33.5057) rotate(180) translate(-9.4865, -33.5057)" points="18.9730855 24.011368 18.9730855 27.0113725 2.98450626 43 7.6293945e-06 42.9844512"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(14.5067, 38.4963) scale(-1, 1) rotate(90) translate(-14.5067, -38.4963)" points="5.0029774 48.0029728 5.00965909 47.9962883 24.0103554 28.989668 24.0103554 31.9896786 7.9374324 48.003"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(22.3137, 25.6569) rotate(-45) translate(-22.3137, -25.6569)" points="18.31371 13.656855 26.31371 13.656855 26.31371 37.656855 18.31371 37.656855"></polygon>
+            <line x1="4" y1="44" x2="19" y2="29" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+        </g>
+    </g>
+</svg>
