@@ -5,12 +5,13 @@ using TrackImage = DCCPanelController.Components.TrackImages.TrackImage;
 namespace DCCPanelController.ViewModel;
 
 public partial class AboutViewModel : BaseViewModel {
-    
+
     [ObservableProperty] private List<TrackPiece> tracks;
     [ObservableProperty] public int scale = 10;
     [ObservableProperty] public int componentWidth = 48;
     [ObservableProperty] public int componentHeight = 48;
     [ObservableProperty] public int rotation = 0;
+    [ObservableProperty] private string _label;
 
     public AboutViewModel() {
         BuildTrackPiecesCollection();

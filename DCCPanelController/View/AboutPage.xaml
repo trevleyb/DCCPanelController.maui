@@ -7,14 +7,17 @@
     x:Class="DCCPanelController.View.AboutPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    x:DataType="view:AboutPage"
+    x:DataType="viewModel:AboutViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:view="clr-namespace:DCCPanelController.View">
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel">
     <ContentPage.Content>
+        <ScrollView>
         <StackLayout>
             <Grid x:Name="TestPiecesGrid" ColumnSpacing="8" RowSpacing="8" HorizontalOptions="Center" ColumnDefinitions="48,48,48,48,48,48" RowDefinitions="48,48,48,48,48,48" Padding="50" Margin="50"/>
             <StackLayout Padding="10">
-                <Slider Value="{Binding Scale }" WidthRequest="300" HorizontalOptions="Center" Minimum="1" Maximum="20" ValueChanged="Slider_OnValueChanged"/>
+                <Entry Text="{Binding Label}"/>
+                <Slider Value="{Binding Scale}" WidthRequest="300" HorizontalOptions="Center" Minimum="1" Maximum="20" ValueChanged="Slider_OnValueChanged"/>
                 <Button Text="Toggle Overlap"               WidthRequest="300" Clicked="Button_OnClicked"></Button>
                 <Button Text="Set Style Mainline"           WidthRequest="300" Clicked="Mainline_Button_OnClicked"/>
                 <Button Text="Set Style Branchline"         WidthRequest="300" Clicked="Branchline_Button_OnClicked"/>
@@ -24,5 +27,6 @@
                 <Button Text="Rotate"                       WidthRequest="300" Clicked="Rotate_Button_OnClicked"></Button>
             </StackLayout>
         </StackLayout>
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>

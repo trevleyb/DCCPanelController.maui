@@ -33,10 +33,12 @@ public partial class AboutPage : ContentPage {
         viewModel.ComponentHeight = (int)(gridSize * _factor);
 
         foreach (var track in viewModel.Tracks) {
-            track.Track.ApplyStyle(style);
-            AddTrackPiece(track, grid);
-            if (_drawCompass) AddCompass(track, grid);
-            
+            if (track.Track is { } piece) {
+                piece.ApplyStyle(style);
+                if (piece.SupportsLabel) piece.SetLabel(viewModel.Label);
+                AddTrackPiece(track, grid);
+                if (_drawCompass) AddCompass(track, grid);
+            }
         }
         // DrawGridLines();
     }

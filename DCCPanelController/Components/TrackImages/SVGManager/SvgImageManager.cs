@@ -45,7 +45,7 @@ public class SvgImageManager {
         var scaleY = DefaultHeight / svg.Picture?.CullRect.Height ?? DefaultHeight;
 
         var stream = new MemoryStream();
-        svg.Save(stream,SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
+        svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
         stream.Seek(0, SeekOrigin.Begin);
         return ImageSource.FromStream(() => stream);
     }
@@ -60,7 +60,7 @@ public class SvgImageManager {
         stream.Position = 0;
         return stream;
     }
-    
+
     private static XDocument LoadSvg(string resourceName) {
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(resourceName);
@@ -76,14 +76,9 @@ public class SvgImageManager {
         }
     }
 
-    public void SetElementValue(string elementName, string attributeName, string attributeValue) {
-        foreach (var element in FindElements(elementName)) {
-            SetAttributeValue(element, attributeName, attributeValue);
-        }
-    }
-    
     #region Manage Changing Colors and Opacity using the attribute for the tem to change
     protected List<XElement> FindElements(string attributeID) => FindElementsAttribute("id", attributeID).ToList();
+
     protected List<XElement> FindElementsAttribute(string attributeName, string attributeValue) {
         ArgumentNullException.ThrowIfNull(_svgImageXDoc);
         var elements = new List<XElement>();
@@ -94,9 +89,40 @@ public class SvgImageManager {
                 }
             }
         }
+
         return elements;
     }
 
+    public bool IsElementSupported(string name) => SupportedElements.Contains(name, StringComparer.OrdinalIgnoreCase);
+    public List<string> SupportedElements => _svgImageXDoc.Descendants()
+        .SelectMany(element => element.Attributes()
+        .Where(attribute => attribute.Name.LocalName == "id")
+        .Select(attribute => attribute.Value))
+        .Distinct().ToList();
+    
+    /// <summary>
+    /// Sets the value of a given Attribute within a given Element
+    /// </summary>
+    /// <param name="elementName">The element to find with an ID = to the element name</param>
+    /// <param name="attributeName">The attribute name to modify</param>
+    /// <param name="attributeValue">The value to apply</param>
+    public void SetElementAttributeValue(string elementName, string attributeName, string attributeValue) {
+        foreach (var element in FindElements(elementName)) {
+            SetAttributeValue(element, attributeName, attributeValue);
+        }
+    }
+
+    /// <summary>
+    /// Sets the Element value for an element that has the given ID
+    /// </summary>
+    /// <param name="elementName">The element that has id='<elementname>'</param>
+    /// <param name="elementValue"The value to populate the element value with></param>
+    public void SetElementValue(string elementName, string elementValue) {
+        foreach (var element in FindElements(elementName)) {
+            element.Value = elementValue;
+        }
+    }
+    
     public string GetElementType(string elementName) {
         var element = FindElements(elementName).FirstOrDefault();
         return element?.Name?.LocalName ?? "unknown";

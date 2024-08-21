@@ -27,6 +27,12 @@ public partial class TrackImage : ObservableObject {
         TrackStyles.ApplyStyle(styleName, this);
     }
 
+    public bool SupportsLabel => ImageManager.IsElementSupported("text");
+    public void SetLabel(string label) {
+        if (string.IsNullOrEmpty(label)) return;
+        if (ImageManager.IsElementSupported("text")) ImageManager.SetElementValue("text", label);
+    }
+
     public void ApplyStyle(TrackStyle style) {
         foreach (var element in style.StyleElements) {
             foreach (var attribute in element.Attributes) {
@@ -39,21 +45,27 @@ public partial class TrackImage : ObservableObject {
         switch (attributeName) {
         case "Color":
             if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
-                ImageManager.SetElementValue(elementName, "stroke", attributeValue);
+                ImageManager.SetElementAttributeValue(elementName, "stroke", attributeValue);
             } else {
-                ImageManager.SetElementValue(elementName, "fill", attributeValue);
+                ImageManager.SetElementAttributeValue(elementName, "fill", attributeValue);
             }
             break;
         case "Opacity":
-            ImageManager.SetElementValue(elementName, "opacity", attributeValue);
+            ImageManager.SetElementAttributeValue(elementName, "opacity", attributeValue);
             break;
+        case "Text":
+            if (ImageManager.GetElementType(elementName).Equals("text", StringComparison.OrdinalIgnoreCase)) {
+                ImageManager.SetElementValue(elementName, attributeValue);
+            }
+            break;
+
         case "Dashed":
             if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
                 if (attributeValue.Equals("1") || attributeValue.Equals("true", StringComparison.OrdinalIgnoreCase)) {
-                    ImageManager.SetElementValue(elementName, "stroke-dasharray", "2,6");
-                    ImageManager.SetElementValue(elementName, "stroke-linecap", "square");
+                    ImageManager.SetElementAttributeValue(elementName, "stroke-dasharray", "2,6");
+                    ImageManager.SetElementAttributeValue(elementName, "stroke-linecap", "square");
                 } else {
-                    ImageManager.SetElementValue(elementName, "stroke-dasharray", "0,0");
+                    ImageManager.SetElementAttributeValue(elementName, "stroke-dasharray", "0,0");
                 }
             }
             break;
