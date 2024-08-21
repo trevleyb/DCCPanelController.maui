@@ -38,7 +38,11 @@ public partial class TrackImage : ObservableObject {
     public void SetElementAttribute(string elementName, string attributeName, string attributeValue) {
         switch (attributeName) {
         case "Color":
-            ImageManager.SetElementValue(elementName, "fill", attributeValue);
+            if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
+                ImageManager.SetElementValue(elementName, "stroke", attributeValue);
+            } else {
+                ImageManager.SetElementValue(elementName, "fill", attributeValue);
+            }
             break;
         case "Opacity":
             ImageManager.SetElementValue(elementName, "opacity", attributeValue);
@@ -47,6 +51,7 @@ public partial class TrackImage : ObservableObject {
             if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
                 if (attributeValue.Equals("1") || attributeValue.Equals("true", StringComparison.OrdinalIgnoreCase)) {
                     ImageManager.SetElementValue(elementName, "stroke-dasharray", "2,6");
+                    ImageManager.SetElementValue(elementName, "stroke-linecap", "square");
                 } else {
                     ImageManager.SetElementValue(elementName, "stroke-dasharray", "0,0");
                 }

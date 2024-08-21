@@ -4,7 +4,7 @@
         <g id="Track_Straight_Continuation_Arrow">
             <polygon id="Border" fill="#000000" points="7 18 28 18 28 20 7 20"></polygon>
             <polygon id="Border" fill="#000000" points="7 28 28 28 28 30 7 30"></polygon>
-            <polygon id="MainlineTrack" fill="#BDBDBD" points="7 20 28 20 28 28 7 28"></polygon>
+            <polygon id="Mainline" fill="#BDBDBD" points="7 20 28 20 28 28 7 28"></polygon>
             <polygon id="Continuation" fill="#000000" transform="translate(34, 24) rotate(90) translate(-34, -24)" points="34 18 46 30 22 30"></polygon>
             <line x1="11" y1="24" x2="25" y2="24" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>

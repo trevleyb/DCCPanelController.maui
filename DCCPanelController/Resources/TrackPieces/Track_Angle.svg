@@ -4,7 +4,7 @@
         <g id="Track_Angle">
             <polygon id="Border" fill="#000000" transform="translate(21.5, 21.5) rotate(180) translate(-21.5, -21.5)" points="0 42.9999996 42.9999957 -9.536743e-05 43 2.99990516 3.00000271 42.9999996 1.94751386 42.9999996"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(26.5, 26.5) scale(-1, 1) rotate(90) translate(-26.5, -26.5)" points="5.000019 48.000017 48.000019 4.999983 48.000019 7.99998426 8.00001849 48.000017"></polygon>
-            <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(24, 24) rotate(180) translate(-24, -24)" points="-1.5258789e-05 42.9999878 43.0000028 -1.1444092e-05 47.9999997 -1.1444092e-05 47.9999997 4.99999504 4.99998474 47.9999986 -1.5258789e-05 47.999987"></polygon>
+            <polygon id="Mainline" fill="#BDBDBD" transform="translate(24, 24) rotate(180) translate(-24, -24)" points="-1.5258789e-05 42.9999878 43.0000028 -1.1444092e-05 47.9999997 -1.1444092e-05 47.9999997 4.99999504 4.99998474 47.9999986 -1.5258789e-05 47.999987"></polygon>
             <line x1="4" y1="44" x2="44" y2="4" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
     </g>

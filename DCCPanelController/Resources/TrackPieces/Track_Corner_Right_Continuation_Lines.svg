@@ -2,16 +2,16 @@
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="TrackParts-(new)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Corner_Right_Continuation_Lines" transform="translate(24, 24) scale(1, -1) translate(-24, -24)">
-            <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(16, 23.9999) rotate(180) translate(-16, -23.9999)" points="9.00000041 19.99988 25.0000018 19.99988 25.0000018 27.999878 9.00000041 27.9997788 7 19.99988"></polygon>
-            <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(31.0057, 18.5005) rotate(180) translate(-31.0057, -18.5005)" points="23.000042 22.9896781 37.0114141 9.000969 39.011368 17.0009812 28.0104249 28"></polygon>
+            <polygon id="Mainline" fill="#BDBDBD" transform="translate(16, 23.9999) rotate(180) translate(-16, -23.9999)" points="9.00000041 19.99988 25.0000018 19.99988 25.0000018 27.999878 9.00000041 27.9997788 7 19.99988"></polygon>
+            <polygon id="Mainline" fill="#BDBDBD" transform="translate(31.0057, 18.5005) rotate(180) translate(-31.0057, -18.5005)" points="23.000042 22.9896781 37.0114141 9.000969 39.011368 17.0009812 28.0104249 28"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(15, 19) rotate(180) translate(-15, -19)" points="6.9999027 17.999924 22.9998947 18.0001224 22.9999997 20.0001224 6.9999027 20.0001224"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(16.5, 28.9999) rotate(180) translate(-16.5, -28.9999)" points="7 27.9999 26 27.9999992 26 29.9999992 7 29.9999"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(32.75, 22) scale(-1, 1) rotate(90) translate(-32.75, -22)" points="24.750008 28.2499903 38.7500328 14.24999 40.749998 15.2499907 26.2500181 29.75"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)" points="22.000303 19.9999084 42.0003227 -8.9645386e-05 43.000122 2.00871075 32.5004252 12.4998185 30.9647809 11.0354633"></polygon>
-            <polygon id="Continuation" fill="#000000" transform="translate(36.8685, 11.1612) rotate(-45) translate(-36.8685, -11.1612)" points="36.368507 -0.8388243 37.368429 -0.8388243 37.368429 23.1611757 36.368507 23.1611757"></polygon>
-            <polygon id="Continuation" fill="#000000" transform="translate(38.2825, 9.7471) rotate(-45) translate(-38.2825, -9.7471)" points="37.78257 -2.2528868 38.7824919 -2.2528868 38.7824919 21.7471132 37.78257 21.7471132"></polygon>
+            <polygon id="Continuation" fill="#000000" transform="translate(36.8685, 11.1612) rotate(-45) translate(-36.8685, -11.1612)" points="36.368507 -0.83882356 37.368429 -0.83882356 37.368429 23.1611764 36.368507 23.1611764"></polygon>
+            <polygon id="Continuation" fill="#000000" transform="translate(38.2825, 9.7471) rotate(-45) translate(-38.2825, -9.7471)" points="37.78257 -2.252886 38.7824919 -2.252886 38.7824919 21.747114 37.78257 21.747114"></polygon>
             <line x1="11" y1="24" x2="24" y2="24" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <line x1="34" y1="14" x2="24" y2="24" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="33.9999999" y1="14" x2="24" y2="24.0000002" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
     </g>
 </svg>

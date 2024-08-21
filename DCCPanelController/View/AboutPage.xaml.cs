@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.Tracks;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Controls.Shapes;
@@ -12,7 +13,7 @@ public partial class AboutPage : ContentPage {
     private readonly ObservableCollection<Line> _lines = [];
     private double _factor = 1;
     private bool _drawCompass = false;
-    private string style = "Mainline";
+    private string style = "";
     
     public AboutPage() {
         InitializeComponent();
@@ -69,28 +70,29 @@ public partial class AboutPage : ContentPage {
     private void SetCompassColor(TrackImage compass, string compassId, TrackConnectionsEnum connection) {
         switch (connection) {
         case TrackConnectionsEnum.Terminator:
-            compass.SetElementAttribute(compassId, "Color", Colors.Yellow.ToHex());
+            compass.SetElementAttribute(compassId, "Color", Colors.Yellow.ToRgbaHex());
             compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Straight:
-            compass.SetElementAttribute(compassId, "Color", Colors.Blue.ToHex());
+            compass.SetElementAttribute(compassId, "Color", Colors.Blue.ToRgbaHex());
             compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Closed:
-            compass.SetElementAttribute(compassId, "Color", Colors.Green.ToHex());
+            compass.SetElementAttribute(compassId, "Color", Colors.Green.ToRgbaHex());
             compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Diverging:
-            compass.SetElementAttribute(compassId, "Color", Colors.Red.ToHex());
+            compass.SetElementAttribute(compassId, "Color", Colors.Red.ToRgbaHex());
             compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Connector:
-            compass.SetElementAttribute(compassId, "Color", Colors.Magenta.ToHex());
+            compass.SetElementAttribute(compassId, "Color", Colors.Magenta.ToRgbaHex());
             compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
+        case TrackConnectionsEnum.None:
         default:
-            compass.SetElementAttribute(compassId, "Color", Colors.Transparent.ToHex());
-            compass.SetElementAttribute(compassId, "Opacity", "100");
+            compass.SetElementAttribute(compassId, "Color", Colors.Transparent.ToRgbaHex());
+            compass.SetElementAttribute(compassId, "Opacity", "0");
             break;
         }
     }

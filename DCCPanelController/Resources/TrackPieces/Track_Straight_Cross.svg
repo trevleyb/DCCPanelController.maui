@@ -4,9 +4,9 @@
         <g id="Track_Straight_Cross">
             <polygon id="Border" fill="#000000" points="7 18 41 18 41 20 7 20"></polygon>
             <polygon id="Border" fill="#000000" points="7 28 41 28 41 30 7 30"></polygon>
-            <polygon id="MainlineTrack" fill="#BDBDBD" points="7 20 41 20 41 28 7 28"></polygon>
+            <polygon id="Mainline" fill="#BDBDBD" points="7 20 41 20 41 28 7 28"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(19, 34.5) rotate(90) translate(-19, -34.5)" points="12.5 33.5 25.5 33.5 25.5 35.5 12.5 35.5"></polygon>
-            <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(24, 24) rotate(90) translate(-24, -24)" points="7 20 41 20 41 28 7 28"></polygon>
+            <polygon id="Mainline" fill="#BDBDBD" transform="translate(24, 24) rotate(90) translate(-24, -24)" points="7 20 41 20 41 28 7 28"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(29, 34.5) rotate(90) translate(-29, -34.5)" points="22.5 33.5 35.5 33.5 35.5 35.5 22.5 35.5"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(29, 13.5) rotate(90) translate(-29, -13.5)" points="22.5 12.5 35.5 12.5 35.5 14.5 22.5 14.5"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(19, 13.5) rotate(90) translate(-19, -13.5)" points="12.5 12.5 25.5 12.5 25.5 14.5 12.5 14.5"></polygon>

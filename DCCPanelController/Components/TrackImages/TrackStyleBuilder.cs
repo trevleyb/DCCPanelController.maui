@@ -28,6 +28,12 @@ public class StyleElementBuilder(TrackStyleBuilder styleBuilder, StyleElement el
         return this;
     }
 
+    public StyleElementBuilder Color(Color attributeValue) {
+        var attribute = new StyleAttribute("Color", attributeValue.ToArgbHex());
+        element.AddAttribute(attribute);
+        return this;
+    }
+
     public StyleElementBuilder Color(string attributeValue) {
         var attribute = new StyleAttribute("Color", attributeValue);
         element.AddAttribute(attribute);
