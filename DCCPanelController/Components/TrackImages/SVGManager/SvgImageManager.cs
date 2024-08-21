@@ -76,28 +76,30 @@ public class SvgImageManager {
         }
     }
 
-    public void SetElementColor(string elementName, Color? color, int? opacity) {
+    public void SetElementValue(string elementName, string attributeName, string attributeValue) {
         foreach (var element in FindElements(elementName)) {
-            if (color is not null) SetAttributeValue(element, "fill", color.ToHex());
-            if (opacity is >= 0 and <= 100) SetAttributeValue(element, "fill-opacity", opacity.ToString() ?? "100");
+            SetAttributeValue(element, attributeName, attributeValue);
         }
     }
     
     #region Manage Changing Colors and Opacity using the attribute for the tem to change
-    protected List<XElement> FindElements(string elementName) => FindElementsAttribute("", "id", elementName).ToList();
-    protected List<XElement> FindElementsAttribute(string elementName, string attributeName, string attributeValue) {
+    protected List<XElement> FindElements(string attributeID) => FindElementsAttribute("id", attributeID).ToList();
+    protected List<XElement> FindElementsAttribute(string attributeName, string attributeValue) {
         ArgumentNullException.ThrowIfNull(_svgImageXDoc);
         var elements = new List<XElement>();
         foreach (var element in _svgImageXDoc.Descendants()) {
-            if (string.IsNullOrEmpty(elementName) || element.Name.LocalName.Equals(elementName, StringComparison.OrdinalIgnoreCase)) {
-                foreach (var attr in element.Attributes()) {
-                    if (attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(attributeValue, StringComparison.OrdinalIgnoreCase)) {
-                        elements.Add(element);
-                    }
+            foreach (var attr in element.Attributes()) {
+                if (attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(attributeValue, StringComparison.OrdinalIgnoreCase)) {
+                    elements.Add(element);
                 }
             }
         }
         return elements;
+    }
+
+    public string GetElementType(string elementName) {
+        var element = FindElements(elementName).FirstOrDefault();
+        return element?.Name?.LocalName ?? "unknown";
     }
     
     protected static void SetAttributeValue(XElement element, string attributeName, string attributeValue) {

@@ -1,6 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components.Tracks;
 using DCCPanelController.Components.Tracks.SVGManager;
+using Microsoft.Maui.Handlers;
+using ShimSkiaSharp;
 
 namespace DCCPanelController.Components.TrackImages;
 
@@ -21,28 +23,36 @@ public partial class TrackImage : ObservableObject {
 
     public ImageSource? Image => ImageManager.Image;
 
-    public void SetImageStyle() {}
-    
-    public void SetElementColorByName(string id, Color color, int opacity) {
-        ImageManager.SetElementColor(id, color, opacity);
+    public void ApplyStyle(string styleName) {
+        TrackStyles.ApplyStyle(styleName, this);
     }
 
-    public void SetElementMainline(Color track) {
-        //ImageManager.SetBorderColor(Colors.Black,100);
-        //ImageManager.SetContinuationColor(Colors.Black,100);
-        //ImageManager.SetTerminatorColor(Colors.Black,100);
-        //ImageManager.SetTrackColor(track,100);
-        //ImageManager.SetDivergingColor(track,100);
-        OnPropertyChanged(nameof(Image));
+    public void ApplyStyle(TrackStyle style) {
+        foreach (var element in style.StyleElements) {
+            foreach (var attribute in element.Attributes) {
+                SetElementAttribute(element.Name, attribute.Name, attribute.Value);
+            }
+        }
     }
     
-    public void SetElementBranchLine(Color track) {
-        //ImageManager.SetBorderColor(Colors.Black,0);
-        //ImageManager.SetContinuationColor(track,100);
-        //ImageManager.SetTerminatorColor(track,100);
-        //ImageManager.SetTrackColor(track,100);
-        //ImageManager.SetDivergingColor(track,100);
-        OnPropertyChanged(nameof(Image));
+    public void SetElementAttribute(string elementName, string attributeName, string attributeValue) {
+        switch (attributeName) {
+        case "Color":
+            ImageManager.SetElementValue(elementName, "fill", attributeValue);
+            break;
+        case "Opacity":
+            ImageManager.SetElementValue(elementName, "opacity", attributeValue);
+            break;
+        case "Dashed":
+            if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
+                if (attributeValue.Equals("1") || attributeValue.Equals("true", StringComparison.OrdinalIgnoreCase)) {
+                    ImageManager.SetElementValue(elementName, "stroke-dasharray", "2,6");
+                } else {
+                    ImageManager.SetElementValue(elementName, "stroke-dasharray", "0,0");
+                }
+            }
+            break;
+        }
     }
     
 }

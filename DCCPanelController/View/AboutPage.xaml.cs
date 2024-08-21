@@ -12,6 +12,7 @@ public partial class AboutPage : ContentPage {
     private readonly ObservableCollection<Line> _lines = [];
     private double _factor = 1;
     private bool _drawCompass = false;
+    private string style = "Mainline";
     
     public AboutPage() {
         InitializeComponent();
@@ -31,6 +32,7 @@ public partial class AboutPage : ContentPage {
         viewModel.ComponentHeight = (int)(gridSize * _factor);
 
         foreach (var track in viewModel.Tracks) {
+            track.Track.ApplyStyle(style);
             AddTrackPiece(track, grid);
             if (_drawCompass) AddCompass(track, grid);
             
@@ -67,22 +69,28 @@ public partial class AboutPage : ContentPage {
     private void SetCompassColor(TrackImage compass, string compassId, TrackConnectionsEnum connection) {
         switch (connection) {
         case TrackConnectionsEnum.Terminator:
-            compass.SetElementColorByName(compassId, Colors.Yellow, 100);
+            compass.SetElementAttribute(compassId, "Color", Colors.Yellow.ToHex());
+            compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Straight:
-            compass.SetElementColorByName(compassId, Colors.Blue, 100);
+            compass.SetElementAttribute(compassId, "Color", Colors.Blue.ToHex());
+            compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Closed:
-            compass.SetElementColorByName(compassId, Colors.Green, 100);
+            compass.SetElementAttribute(compassId, "Color", Colors.Green.ToHex());
+            compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Diverging:
-            compass.SetElementColorByName(compassId, Colors.Red, 100);
+            compass.SetElementAttribute(compassId, "Color", Colors.Red.ToHex());
+            compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Connector:
-            compass.SetElementColorByName(compassId, Colors.Magenta, 100);
+            compass.SetElementAttribute(compassId, "Color", Colors.Magenta.ToHex());
+            compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         default:
-            compass.SetElementColorByName(compassId, Colors.Transparent, 0);
+            compass.SetElementAttribute(compassId, "Color", Colors.Transparent.ToHex());
+            compass.SetElementAttribute(compassId, "Opacity", "100");
             break;
         }
     }
@@ -136,18 +144,22 @@ public partial class AboutPage : ContentPage {
     }
 
     private void Mainline_Button_OnClicked(object? sender, EventArgs e) {
+        style = "Mainline";
         BuildTrackPieceGrid();
     }
 
     private void Branchline_Button_OnClicked(object? sender, EventArgs e) {
+        style = "Branchline";
         BuildTrackPieceGrid();
     }
 
     private void MainlineHidden_Button_OnClicked(object? sender, EventArgs e) {
+        style = "MainlineDashed";
         BuildTrackPieceGrid();
     }
 
     private void BranchlineHidden_Button_OnClicked(object? sender, EventArgs e) {
+        style = "BranchlineDashed";
         BuildTrackPieceGrid();
     }
 
