@@ -25,6 +25,7 @@
                 <Button Text="Set Style Branchline Hidden"  WidthRequest="300" Clicked="BranchlineHidden_Button_OnClicked"/>
                 <Button Text="Toggle Compass"               WidthRequest="300" Clicked="CompassOn_Button_OnClicked"></Button>
                 <Button Text="Rotate"                       WidthRequest="300" Clicked="Rotate_Button_OnClicked"></Button>
+                <Button Text="Export"                       WidthRequest="300" Clicked="Export_Button_OnClicked"></Button>
             </StackLayout>
         </StackLayout>
         </ScrollView>

@@ -183,6 +183,10 @@ public partial class AboutPage : ContentPage {
         BuildTrackPieceGrid();
     }
 
+    private void Export_Button_OnClicked(object? sender, EventArgs e) {
+        var json = TrackStyles.Export();
+        TrackStyles.Import(json);
+    }
     
     private void Button_OnClicked(object? sender, EventArgs e) {
         _factor = _factor < 1.5 ? 1.5 : 1.0;

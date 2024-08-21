@@ -1,6 +1,6 @@
 namespace DCCPanelController.Components.TrackImages;
 
-public class TrackStyleBuilder(string styleName) {
+public class TrackStylesBuilder(string styleName) {
     public string Name => _style.Name;
     private readonly TrackStyle _style = new(styleName);
 
@@ -15,7 +15,7 @@ public class TrackStyleBuilder(string styleName) {
     }
 }
 
-public class StyleElementBuilder(TrackStyleBuilder styleBuilder, StyleElement element) {
+public class StyleElementBuilder(TrackStylesBuilder stylesBuilder, StyleElement element) {
     public StyleElementBuilder AddAttribute(string attributeName, string attributeValue) {
         var attribute = new StyleAttribute(attributeName, attributeValue);
         element.AddAttribute(attribute);
@@ -54,7 +54,7 @@ public class StyleElementBuilder(TrackStyleBuilder styleBuilder, StyleElement el
         return this;
     }
     
-    public TrackStyleBuilder Done() {
-        return styleBuilder;
+    public TrackStylesBuilder Done() {
+        return stylesBuilder;
     }
 }

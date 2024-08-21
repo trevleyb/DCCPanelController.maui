@@ -34,7 +34,7 @@ public partial class TrackImage : ObservableObject {
     }
 
     public void ApplyStyle(TrackStyle style) {
-        foreach (var element in style.StyleElements) {
+        foreach (var element in style.Elements) {
             foreach (var attribute in element.Attributes) {
                 SetElementAttribute(element.Name, attribute.Name, attribute.Value);
             }
