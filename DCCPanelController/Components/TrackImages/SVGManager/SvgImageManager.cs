@@ -10,7 +10,6 @@ public class SvgImageManager {
 
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
-    private const string StyleAttribute = "style=";
     private readonly XDocument _svgImageXDoc;
 
     /// <summary>
@@ -77,15 +76,43 @@ public class SvgImageManager {
         }
     }
 
-    private ISvgModifier StyleModifier => _svgImageXDoc.ToString().Contains(StyleAttribute) ? new SvgStyle(_svgImageXDoc) : new SvgAttribute(_svgImageXDoc);
+    public void SetElementColor(string elementName, Color? color, int? opacity) {
+        foreach (var element in FindElements(elementName)) {
+            if (color is not null) SetAttributeValue(element, "fill", color.ToHex());
+            if (opacity is >= 0 and <= 100) SetAttributeValue(element, "fill-opacity", opacity.ToString() ?? "100");
+        }
+    }
+    
+    #region Manage Changing Colors and Opacity using the attribute for the tem to change
+    protected List<XElement> FindElements(string elementName) => FindElementsAttribute("", "id", elementName).ToList();
+    protected List<XElement> FindElementsAttribute(string elementName, string attributeName, string attributeValue) {
+        ArgumentNullException.ThrowIfNull(_svgImageXDoc);
+        var elements = new List<XElement>();
+        foreach (var element in _svgImageXDoc.Descendants()) {
+            if (string.IsNullOrEmpty(elementName) || element.Name.LocalName.Equals(elementName, StringComparison.OrdinalIgnoreCase)) {
+                foreach (var attr in element.Attributes()) {
+                    if (attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(attributeValue, StringComparison.OrdinalIgnoreCase)) {
+                        elements.Add(element);
+                    }
+                }
+            }
+        }
+        return elements;
+    }
+    
+    protected static void SetAttributeValue(XElement element, string attributeName, string attributeValue) {
+        ArgumentNullException.ThrowIfNull(element);
+        var attribute = (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr).FirstOrDefault();
+        if (attribute is not null) {
+            attribute.Value = attributeValue;
+        } else {
+            element.Add(new XAttribute(attributeName, attributeValue));
+        }
+    }
 
-    public void SetElementOccupied(Color? color, int? opacity = null) => StyleModifier.SetElementOccupied(color, opacity);
-    public void SetElementFree(Color? color, int? opacity = null) => StyleModifier.SetElementFree(color, opacity);
-    public void SetElementRoute(Color? color, int? opacity = null) => StyleModifier.SetElementRoute(color, opacity);
-    public void SetButtonColor(Color? color, int? opacity = null) => StyleModifier.SetButtonColor(color, opacity);
-    public void SetTrackColor(Color? color, int? opacity = null) => StyleModifier.SetTrackColor(color, opacity);
-    public void SetBorderColor(Color? color, int? opacity = null) => StyleModifier.SetBorderColor(color, opacity);
-    public void SetDivergingColor(Color? color, int? opacity = null) => StyleModifier.SetDivergingColor(color, opacity);
-    public void SetTerminatorColor(Color? color, int? opacity = null) => StyleModifier.SetTerminatorColor(color, opacity);
-    public void SetContinuationColor(Color? color, int? opacity = null) => StyleModifier.SetContinuationColor(color, opacity);
+    protected static string? GetAttributeValue(XElement element, string attributeName) {
+        ArgumentNullException.ThrowIfNull(element);
+        return (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr.Value).FirstOrDefault();
+    }
+    #endregion
 }

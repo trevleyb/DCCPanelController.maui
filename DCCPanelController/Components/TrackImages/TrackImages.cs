@@ -12,7 +12,7 @@ public static class TrackImages {
 
     public static Dictionary<string,TrackImageFile> AvailableTracks => AvailableImages.Count != 0 ? AvailableImages : InitializeTracks();
 
-    public static TrackImage? Create(string name) {
+    public static Components.TrackImages.TrackImage? Create(string name) {
         if (AvailableTracks.ContainsKey(name)) return AvailableTracks[name].Create;
         var closestMatch = AvailableTracks.Keys.FirstOrDefault(key => key.Contains(name, StringComparison.OrdinalIgnoreCase));
         if (closestMatch != null) return AvailableTracks[closestMatch].Create;
@@ -33,6 +33,7 @@ public static class TrackImages {
     private static void AddTrackImages() {
         Add("********","Button"                                         ,"Track_Button");
         Add("********","Label"                                          ,"Track_Label");
+        Add("********","Compass"                                        ,"Track_Compass");
         
         Add("**S***S*","Track (Straight)"                               ,"Track_Straight");
         Add("**C***S*","Track Page Continuation Arrow (Straight)"       ,"Track_Straight_Continuation_Arrow");
@@ -69,9 +70,13 @@ public static class TrackImages {
     }
 
     private static void Add(string directions, string name, string reference) {
-        var fullPath = SvgImageFinder.GetFullPathOfResource(reference);
-        if (!string.IsNullOrEmpty(fullPath)) {
-            AvailableImages.Add(reference, new TrackImageFile(name, fullPath, directions));
+        try {
+            var fullPath = SvgImageFinder.GetFullPathOfResource(reference);
+            if (!string.IsNullOrEmpty(fullPath)) {
+                AvailableImages.Add(reference, new TrackImageFile(name, fullPath, directions));
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Could not find {reference} in the resources.");
         }
     } 
 }
@@ -80,7 +85,7 @@ public class TrackImageFile(string name, string svgFilename, string directions) 
     public string Name { get; set; } = name;
     public string SvgFilename { get; set; } = svgFilename;
     public TrackConnections Connections { get; } = new TrackConnections(directions);
-    public TrackImage Create => new TrackImage(Name,SvgFilename,0,Connections);    
+    public Components.TrackImages.TrackImage Create => new Components.TrackImages.TrackImage(Name,SvgFilename,0,Connections);    
 }
 
 public class TrackConnections {
@@ -94,6 +99,7 @@ public class TrackConnections {
                 't' => TrackConnectionsEnum.Terminator,
                 's' => TrackConnectionsEnum.Straight,
                 'd' => TrackConnectionsEnum.Diverging,
+                'c' => TrackConnectionsEnum.Connector,
                 'x' => TrackConnectionsEnum.Closed,
                 _   => TrackConnectionsEnum.None
             };
@@ -101,8 +107,7 @@ public class TrackConnections {
     }
     
     private TrackConnectionsEnum[] ConnectionsArray { get; } = new TrackConnectionsEnum[8];
-
-    public TrackConnectionsEnum[] Connections(int rotation = 0) {
+    public TrackConnectionsEnum[]  ConnectionPointsRotated(int rotation = 0) {
 
         var rotationIndex = rotation switch {
             >= 0 and <= 90    => 0,
@@ -115,14 +120,14 @@ public class TrackConnections {
         
         var result = new TrackConnectionsEnum[8];
         for (var i = 0; i < 8; ++i) {
-            var newIndex = (i + rotationIndex) % 4;
+            var newIndex = (i + rotationIndex) % 8;
             result[newIndex] = ConnectionsArray[i];
         }
         return result;
     }
 
     public TrackConnectionsEnum Connection(TrackDirectionEnum direction, int rotation = 0) {
-        var connections = Connections(rotation);
+        var connections = ConnectionPointsRotated(rotation);
         return connections[(int)direction];
     }
 }
@@ -143,5 +148,6 @@ public enum TrackConnectionsEnum {
     Terminator  = 'T', 
     Straight    = 'S',
     Closed      = 'X',
-    Diverging   = 'D'
+    Diverging   = 'D',
+    Connector   = 'C'
 }

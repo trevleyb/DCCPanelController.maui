@@ -5,8 +5,8 @@
             <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(13.25, 34.75) rotate(180) translate(-13.25, -34.75)" points="-5.722046e-06 43.0000023 21.5000253 21.5 26.5000003 21.5 26.5000003 26.5000017 4.99999474 47.9999984"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(11, 31.5) rotate(180) translate(-11, -31.5)" points="21.9999996 20 21.9999996 23.0000117 2.00000776 43 7.6293945e-06 42.0000002"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(16.75, 37) scale(-1, 1) rotate(90) translate(-16.75, -37)" points="5.7499847 47.2500109 27.7500167 25.250015 27.7500167 28.2500318 7.24998472 48.750015"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(23.7929, 23.1317) rotate(-45) translate(-23.7929, -23.1317)" points="23.292936 11.131729 24.292936 11.131729 24.292936 35.131729 23.292936 35.131729"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(25.2071, 22.1317) rotate(-45) translate(-25.2071, -22.1317)" points="24.70712 10.131729 25.70712 10.131729 25.70712 34.131729 24.70712 34.131729"></polygon>
+            <polygon id="Continuation" fill="#000000" transform="translate(23.7929, 23.1317) rotate(-45) translate(-23.7929, -23.1317)" points="23.292936 11.131729 24.292936 11.131729 24.292936 35.131729 23.292936 35.131729"></polygon>
+            <polygon id="Continuation" fill="#000000" transform="translate(25.2071, 22.1317) rotate(-45) translate(-25.2071, -22.1317)" points="24.70712 10.131729 25.70712 10.131729 25.70712 34.131729 24.70712 34.131729"></polygon>
             <line x1="4" y1="44" x2="22" y2="26" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
     </g>

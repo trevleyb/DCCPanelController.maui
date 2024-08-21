@@ -5,7 +5,7 @@
             <polygon id="MainlineTrack" fill="#BDBDBD" transform="translate(17.75, 30.25) rotate(180) translate(-17.75, -30.25)" points="-7.6293945e-06 43.0000004 30.4999982 12.5 35.5000004 12.5 35.5000004 17.5000028 4.99999313 48"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(15, 27.25) rotate(180) translate(-15, -27.25)" points="29.9999388 11.500002 29.9999388 14.500007 1.49996371 43 -3.6239624e-05 41.5000142"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(20.75, 33) scale(-1, 1) rotate(90) translate(-20.75, -33)" points="5.7499657 47.2499554 35.7500347 17.250004 35.7500347 20.2500137 7.2499657 48.750002"></polygon>
-            <polygon id="Triangle" fill="#000000" transform="translate(35.0097, 13.0292) rotate(45) translate(-35.0097, -13.0292)" points="35.0095729 7.3585334 46.350859 18.6997864 23.668509 18.6997059"></polygon>
+            <polygon id="Continuation" fill="#000000" transform="translate(35.0097, 13.0292) rotate(45) translate(-35.0097, -13.0292)" points="35.0095729 7.3585334 46.350859 18.6997864 23.668509 18.6997059"></polygon>
             <line x1="4" y1="44" x2="30" y2="18" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
     </g>

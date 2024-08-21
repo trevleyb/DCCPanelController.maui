@@ -7,8 +7,22 @@
     x:Class="DCCPanelController.View.AboutPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    x:DataType="view:AboutPage"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:view="clr-namespace:DCCPanelController.View">
     <ContentPage.Content>
-        <Label Text="About"/>
+        <StackLayout>
+            <Grid x:Name="TestPiecesGrid" HorizontalOptions="Center" ColumnDefinitions="48,48,48,48,48,48" RowDefinitions="48,48,48,48,48,48" Padding="50" Margin="50"/>
+            <StackLayout Padding="10">
+                <Slider Value="{Binding Scale }" WidthRequest="300" HorizontalOptions="Center" Minimum="1" Maximum="20" ValueChanged="Slider_OnValueChanged"/>
+                <Button Text="Toggle Overlap"               WidthRequest="300" Clicked="Button_OnClicked"></Button>
+                <Button Text="Set Style Mainline"           WidthRequest="300" Clicked="Mainline_Button_OnClicked"/>
+                <Button Text="Set Style Branchline"         WidthRequest="300" Clicked="Branchline_Button_OnClicked"/>
+                <Button Text="Set Style Mainline Hidden"    WidthRequest="300" Clicked="MainlineHidden_Button_OnClicked"/>
+                <Button Text="Set Style Branchline Hidden"  WidthRequest="300" Clicked="BranchlineHidden_Button_OnClicked"/>
+                <Button Text="Toggle Compass"               WidthRequest="300" Clicked="CompassOn_Button_OnClicked"></Button>
+                <Button Text="Rotate"                       WidthRequest="300" Clicked="Rotate_Button_OnClicked"></Button>
+            </StackLayout>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>
