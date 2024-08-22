@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components.TrackImages;
 
@@ -11,26 +12,20 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     
     [ObservableProperty] private string _name;
     [ObservableProperty] private string _style;
+    [ObservableProperty] private TrackState _state = TrackState.Unknown;
     [ObservableProperty] private int _rotation;
     [ObservableProperty] private int _xCoordinate;
     [ObservableProperty] private int _yCoordinate;
     [ObservableProperty] private ImageSource _image;
 
-    protected int _points = 8;
-    protected int _images = 0;
+    protected int _points = 8;          // The number of compass points supports (4 or 8 generally)
     protected int _activeRotation = 0;
     protected int[] _rotationMatrix = { 0, 90, 180, 270 };
     protected readonly List<TrackImage> _tracks = [];
-
-    //public ImageSource Image {
-    //    get {
-    //        if (_activeImage < _trackImages.Count) return _trackImages?[_activeImage]?.Image ?? throw new InvalidOperationException("Track image defined but invalid.");
-    //        return TrackImages.TrackImages.Create("Track_Unknown")?.Image ?? throw new InvalidOperationException("Track image is not active");
-    //    }
-    //}
-
+    
     protected abstract void Setup();
 
+    protected int LoadedImages => _tracks.Count;
     public void RotateLeft() => RotateRelative(-(360 / _points));
     public void RotateRight() => RotateRelative(360 / _points);
 
@@ -39,9 +34,8 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     /// </summary>
     public void Initialise() {
         Setup();
-        _images = _tracks.Count;
     }
-    
+
     /// <summary>
     /// Rotate the image to an absolute compass point but take into account then number of points that
     /// this Track Piece supports (most support either 8 or 4)
@@ -75,10 +69,26 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     /// </summary>
     protected (int imageNo, int compassPoint) GetImageReference() {
         var rotationPoint = ((int)(_activeRotation / (360 / _points)));
-        var imageNo = rotationPoint % _images;
+        var imageNo = AdjustImageNoByState(rotationPoint % LoadedImages);
+        if (imageNo >= LoadedImages) {
+            Console.WriteLine($"Invalid image number {imageNo}");
+            imageNo = 0;
+        }
         return (imageNo, rotationPoint);
     }
 
+    protected int AdjustImageNoByState(int imageNo) {
+        return imageNo * State switch {
+            TrackState.Unknown        => 1,
+            TrackState.Normal         => 1,
+            TrackState.Straight       => 2,
+            TrackState.Diverging      => 3,
+            TrackState.DivergingLeft  => 3,
+            TrackState.DivergingRight => 4,
+            _                         => 1
+        };
+    }
+    
     /// <summary>
     /// Set up the Active Image. For example, as a straight image, if it is in position 0 then it is straight.
     /// If we rotate +45 then it is the Angle image at 180 rotation
@@ -87,14 +97,14 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     protected void SetActiveImage() {
         try {
             var imageReference = GetImageReference();
+            if (imageReference.imageNo >= LoadedImages) throw new NullReferenceException("Image number calculated is invalid.");
             Image = _tracks[imageReference.imageNo].Image ?? throw new NullReferenceException("Referenced an invalid Image.");
-            Rotation = _rotationMatrix[imageReference.compassPoint % (_points / _images)];
+            Rotation = _rotationMatrix[imageReference.compassPoint % (_points / LoadedImages)];
         } catch (Exception ex) {
             Console.WriteLine($"Should not be here: {ex.Message}");
             Rotation = 0;
         }
     } 
-
     
     /// <summary>
     /// Helper to add a TrackImage to the collection of images. 
@@ -103,4 +113,13 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     protected void AddTrackImage(TrackImage? trackImage) {
         if (trackImage != null) _tracks.Add(trackImage);
     }
+}
+
+public enum TrackState {
+    Normal,
+    Straight, 
+    Diverging, 
+    DivergingLeft,
+    DivergingRight,
+    Unknown
 }
