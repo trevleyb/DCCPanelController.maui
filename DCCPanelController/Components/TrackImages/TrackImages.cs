@@ -1,24 +1,21 @@
 using System.Diagnostics;
-using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.Tracks.SVGManager;
 
-namespace DCCPanelController.Components.Tracks;
+namespace DCCPanelController.Components.TrackImages;
 
 /// <summary>
 /// Track Images is a helper class that provides information about each image that is contained in the resource file
 /// </summary>
 public static class TrackImages {
 
+    public static TrackImage UnknownImage => Create("Track_Unknown") ?? throw new ArgumentNullException(nameof(UnknownImage));  
     private static readonly Dictionary<string,TrackImageFile> AvailableImages = [];
     private static readonly object LockObject = new();
 
     public static Dictionary<string,TrackImageFile> AvailableTracks => AvailableImages.Count != 0 ? AvailableImages : InitializeTracks();
 
-    public static Components.TrackImages.TrackImage? Create(string name) {
-        if (AvailableTracks.ContainsKey(name)) return AvailableTracks[name].Create;
-        var closestMatch = AvailableTracks.Keys.FirstOrDefault(key => key.Contains(name, StringComparison.OrdinalIgnoreCase));
-        if (closestMatch != null) return AvailableTracks[closestMatch].Create;
-        return null;    
+    public static TrackImage Create(string id) {
+        return AvailableTracks.ContainsKey(id) ? AvailableTracks[id].Create : UnknownImage;
     }
 
     private static Dictionary<string, TrackImageFile> InitializeTracks() {
@@ -33,49 +30,55 @@ public static class TrackImages {
     /// that represents the in and out paths that the track can support. 
     /// </summary>
     private static void AddTrackImages() {
-        Add("********","Button"                                         ,"Track_Button");
-        Add("********","Label"                                          ,"Track_Label");
-        Add("********","Compass"                                        ,"Track_Compass");
+        Add("Button",           "********","Track_Button");
+        Add("Label",            "********","Track_Label");
+        Add("Compass",          "********","Track_Compass");
+        Add("Unknown",          "********","Track_Unknown");
         
-        Add("**S***S*","Track (Straight)"                               ,"Track_Straight");
-        Add("**C***S*","Track Page Continuation Arrow (Straight)"       ,"Track_Straight_Continuation_Arrow");
-        Add("**C***S*","Track Page Continuation Lines (Straight)"       ,"Track_Straight_Continuation_Lines");
-        Add("S*S*S*S*","Track Crossing (Straight)"                      ,"Track_Straight_Cross");
-        Add("**T***S*","Track Terminator (Straight)"                    ,"Track_Straight_Terminator");
+        Add("Straight1",        "**S***S*","Track_Straight");
+        Add("Straight2",        "*S***S**","Track_Angle");
+        
+        Add("Terminator1",      "**T***S*","Track_Straight_Terminator");
+        Add("Terminator2",      "*T***S**","Track_Angle_Terminator");
+        
+        Add("ContinuationSA1",  "**C***S*","Track_Straight_Continuation_Arrow");
+        Add("ContinuationSA2",  "*C***S**","Track_Angle_Continuation_Arrow");
        
-        Add("*S***S**","Track (Angle)"                                  ,"Track_Angle");
-        Add("*C***S**","Track Page Continuation Arrow (Angle)"          ,"Track_Angle_Continuation_Arrow");
-        Add("*C***S**","Track Page Continuation Lines (Angle)"          ,"Track_Angle_Continuation_Lines");
-        Add("*S*S*S*S","Track Crossing (Angle)"                         ,"Track_Angle_Cross");
-        Add("*T***S**","Track Terminator (Angle)"                       ,"Track_Angle_Terminator");
+        Add("ContinuationSL1",  "**C***S*","Track_Straight_Continuation_Lines");
+        Add("ContinuationSL2",  "*C***S**","Track_Angle_Continuation_Lines");
+
+        Add("Cross1",           "S*S*S*S*","Track_Straight_Cross");
+        Add("Cross2",           "*S*S*S*S","Track_Angle_Cross");
         
-        Add("*S****S*","Track Corner (Left)"                            ,"Track_Corner_Left");
-        Add("*C****S*","Track Corner Page Continuation Arrow (Left)"    ,"Track_Corner_Left_Continuation_Arrow");
-        Add("*C****S*","Track Corner Page Continuation Lines (Left)"    ,"Track_Corner_Left_Continuation_Lines");
+        Add("CornerL",          "*S****S*","Track_Corner_Left");
+        Add("CornerR",          "***S**S*","Track_Corner_Right");
 
-        Add("***S**S*","Track Corner (Right)","Track_Corner_Right");
-        Add("***C**S*","Track Corner Page Continuation Arrow (Right)"   ,"Track_Corner_Right_Continuation_Arrow");
-        Add("***C**S*","Track Corner Page Continuation Lines (Right)"   ,"Track_Corner_Right_Continuation_Lines");
+        Add("ContinuationCA1",  "*C****S*","Track_Corner_Left_Continuation_Arrow");
+        Add("ContinuationCA2",  "***C**S*","Track_Corner_Right_Continuation_Arrow");
+
+        Add("ContinuationCL1",  "*C****S*","Track_Corner_Left_Continuation_Lines");
+        Add("ContinuationCL2",  "***C**S*","Track_Corner_Right_Continuation_Lines");
+
+        Add("TurnoutL1",        "*DS***S*","Track_Turnout_Left");
+        Add("TurnoutL2",        "*DX***S*","Track_Turnout_Left_Diverging");
+        Add("TurnoutL3",        "*XS***S*","Track_Turnout_Left_Straight");
+
+        Add("TurnoutR1",        "**SD**S*","Track_Turnout_Right");
+        Add("TurnoutR2",        "**XD**S*","Track_Turnout_Right_Diverging");
+        Add("TurnoutR3",        "**SX**S*","Track_Turnout_Right_Straight");
         
-        Add("*SSS**S*","Track Threeway"                                 ,"Track_Threeway");
-        Add("*DXX**S*","Track Threeway (Left)"                          ,"Track_Threeway_Left");
-        Add("*XXD**S*","Track Threeway (Right)"                         ,"Track_Threeway_Right");
-        Add("*XSX**S*","Track Threeway (Straight)"                      ,"Track_Threeway_Straight");
-
-        Add("*DS***S*","Track Turnout (Left)"                           ,"Track_Turnout_Left");
-        Add("*DX***S*","Track Turnout (Left) Diverging"                 ,"Track_Turnout_Left_Diverging");
-        Add("*XS***S*","Track Turnout (Left) Straight"                  ,"Track_Turnout_Left_Straight");
-
-        Add("**SD**S*","Track Turnout (Right)"                          ,"Track_Turnout_Right");
-        Add("**XD**S*","Track Turnout (Right) Diverging"                ,"Track_Turnout_Right_Diverging");
-        Add("**SX**S*","Track Turnout (Right) Straight"                 ,"Track_Turnout_Right_Straight");
+        Add("Threeway1",        "*SSS**S*","Track_Threeway");
+        Add("Threeway2",        "*DXX**S*","Track_Threeway_Left");
+        Add("Threeway3",        "*XXD**S*","Track_Threeway_Right");
+        Add("Threeway4",        "*XSX**S*","Track_Threeway_Straight");
+        
     }
 
-    private static void Add(string directions, string name, string reference) {
+    private static void Add(string id, string directions, string reference) {
         try {
             var fullPath = SvgImageFinder.GetFullPathOfResource(reference);
             if (!string.IsNullOrEmpty(fullPath)) {
-                AvailableImages.Add(reference, new TrackImageFile(name, fullPath, directions));
+                AvailableImages.Add(id, new TrackImageFile(id, fullPath, directions));
             }
         } catch (Exception ex) {
             Console.WriteLine($"Could not find {reference} in the resources.");
@@ -83,11 +86,23 @@ public static class TrackImages {
     } 
 }
 
-[DebuggerDisplay("{Name}")]
-public class TrackImageFile(string name, string svgFilename, string directions) {
-    public string Name { get; set; } = name;
+public enum TrackViewModelType {
+    Straight,
+    Terminator,
+    Corner, 
+    StraightContinuation,
+    CornerContinuation,
+    Crossing, 
+    LeftTurnout,
+    RightTurnout,
+    Threeway
+}
+
+[DebuggerDisplay("{Id}")]
+public class TrackImageFile(string id, string svgFilename, string directions) {
+    public string Id { get; set; } = id;
     public string SvgFilename { get; set; } = svgFilename;
     public TrackConnections Connections { get; } = new TrackConnections(directions);
-    public Components.TrackImages.TrackImage Create => new Components.TrackImages.TrackImage(Name,SvgFilename,0,Connections);    
+    public TrackImage Create => new TrackImage(id, SvgFilename,0,Connections);    
 }
 

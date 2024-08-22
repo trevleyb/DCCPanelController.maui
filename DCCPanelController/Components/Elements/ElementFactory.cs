@@ -44,7 +44,7 @@ public static class ElementFactory {
     }
 
     /// <summary>
-    /// Uses reflection to find and create the ViewModel taht will be associated with this element tyoe. 
+    /// Uses reflection to find and create the ViewModel that will be associated with this element tyoe. 
     /// </summary>
     /// <param name="viewModelName">The name of the ViewModel to use</param>
     /// <returns></returns>

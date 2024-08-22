@@ -10,14 +10,14 @@ namespace DCCPanelController.Components.TrackImages;
 [DebuggerDisplay("{Name} [{Rotation}]")]
 public partial class TrackImage : ObservableObject {
 
-    [ObservableProperty] private string _name;
+    [ObservableProperty] private string _id;
     [ObservableProperty] private int _rotation;
 
     [ObservableProperty] private SvgImageManager _imageManager;
     [ObservableProperty] private TrackConnections _connections;
     
-    public TrackImage(string name, string imageName, int rotation, TrackConnections connections) {
-        Name = name;
+    public TrackImage(string id, string imageName, int rotation, TrackConnections connections) {
+        Id = id;
         Rotation = rotation;
         Connections = connections;
         ImageManager = new SvgImageManager(imageName);

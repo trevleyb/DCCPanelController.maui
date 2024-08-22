@@ -150,7 +150,7 @@ public partial class ElementTestPage : ContentPage {
     }
 
     private void Rotate_Button_OnClicked(object? sender, EventArgs e) {
-        _viewModel.Rotation += 90;
+        _viewModel.Rotation += 45;
         if (_viewModel.Rotation >= 360) _viewModel.Rotation = 0;
         BuildTrackPieceGrid();
     }

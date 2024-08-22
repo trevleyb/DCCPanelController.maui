@@ -133,6 +133,9 @@
       <MauiXaml Update="View\PanelViewer.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="View\TrackPieceTestPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -200,6 +203,10 @@
         <DependentUpon>PanelViewer.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
+      <Compile Update="View\TrackPieceTestPage.xaml.cs">
+        <DependentUpon>TrackPieceTestPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -208,6 +215,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
       <None Remove="Resources\TrackPieces\Track_Angle.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg" />
       <None Remove="Resources\TrackPieces\Track_Angle_Button.svg" />

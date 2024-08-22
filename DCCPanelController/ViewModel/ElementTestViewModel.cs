@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.Tracks;
 using TrackImage = DCCPanelController.Components.TrackImages.TrackImage;
 
