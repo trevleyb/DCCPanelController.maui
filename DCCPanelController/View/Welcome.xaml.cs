@@ -10,7 +10,10 @@ public partial class Welcome : ContentPage {
     public Welcome() {
         InitializeComponent();
     }
-    
+
+    private void ButtonTest_OnClicked(object? sender, EventArgs e) {
+        Navigation.PushAsync(new ElementTestPage());
+    }
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }

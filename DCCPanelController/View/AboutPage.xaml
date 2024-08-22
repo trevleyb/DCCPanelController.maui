@@ -13,21 +13,7 @@
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel">
     <ContentPage.Content>
         <ScrollView>
-        <StackLayout>
-            <Grid x:Name="TestPiecesGrid" ColumnSpacing="8" RowSpacing="8" HorizontalOptions="Center" ColumnDefinitions="48,48,48,48,48,48" RowDefinitions="48,48,48,48,48,48" Padding="50" Margin="50"/>
-            <StackLayout Padding="10">
-                <Entry Text="{Binding Label}"/>
-                <Slider Value="{Binding Scale}" WidthRequest="300" HorizontalOptions="Center" Minimum="1" Maximum="20" ValueChanged="Slider_OnValueChanged"/>
-                <Button Text="Toggle Overlap"               WidthRequest="300" Clicked="Button_OnClicked"></Button>
-                <Button Text="Set Style Mainline"           WidthRequest="300" Clicked="Mainline_Button_OnClicked"/>
-                <Button Text="Set Style Branchline"         WidthRequest="300" Clicked="Branchline_Button_OnClicked"/>
-                <Button Text="Set Style Mainline Hidden"    WidthRequest="300" Clicked="MainlineHidden_Button_OnClicked"/>
-                <Button Text="Set Style Branchline Hidden"  WidthRequest="300" Clicked="BranchlineHidden_Button_OnClicked"/>
-                <Button Text="Toggle Compass"               WidthRequest="300" Clicked="CompassOn_Button_OnClicked"></Button>
-                <Button Text="Rotate"                       WidthRequest="300" Clicked="Rotate_Button_OnClicked"></Button>
-                <Button Text="Export"                       WidthRequest="300" Clicked="Export_Button_OnClicked"></Button>
-            </StackLayout>
-        </StackLayout>
+            <Label>About Page</Label>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

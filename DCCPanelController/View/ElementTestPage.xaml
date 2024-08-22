@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+             x:DataType="viewModel:ElementTestViewModel"
+             x:Class="DCCPanelController.View.ElementTestPage">
+    <ContentPage.Content>
+        <ScrollView>
+            <StackLayout>
+                <Grid x:Name="TestPiecesGrid" ColumnSpacing="8" RowSpacing="8" HorizontalOptions="Center" ColumnDefinitions="48,48,48,48,48,48" RowDefinitions="48,48,48,48,48,48" Padding="50" Margin="50"/>
+                <StackLayout Padding="10">
+                    <Entry Text="{Binding Label}"/>
+                    <Slider Value="{Binding Scale}" WidthRequest="300" HorizontalOptions="Center" Minimum="1" Maximum="20" ValueChanged="Slider_OnValueChanged"/>
+                    
+                    <FlexLayout Padding="10" Margin="10">
+                        <Button Text="Toggle Overlap"               WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="Button_OnClicked"/>
+                        <Button Text="Set Style Mainline"           WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="Mainline_Button_OnClicked"/>
+                        <Button Text="Set Style Branchline"         WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="Branchline_Button_OnClicked"/>
+                        <Button Text="Set Style Mainline Hidden"    WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="MainlineHidden_Button_OnClicked"/>
+                        <Button Text="Set Style Branchline Hidden"  WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="BranchlineHidden_Button_OnClicked"/>
+                        <Button Text="Toggle Compass"               WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="CompassOn_Button_OnClicked"/>
+                        <Button Text="Rotate"                       WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="Rotate_Button_OnClicked"/>
+                        <Button Text="Export"                       WidthRequest="250" Style="{StaticResource ButtonOutline}" Clicked="Export_Button_OnClicked"/>
+                    </FlexLayout>
+                    
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content></ContentPage>
