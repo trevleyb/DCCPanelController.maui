@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.Tracks.SVGManager;
 
@@ -82,6 +83,7 @@ public static class TrackImages {
     } 
 }
 
+[DebuggerDisplay("{Name}")]
 public class TrackImageFile(string name, string svgFilename, string directions) {
     public string Name { get; set; } = name;
     public string SvgFilename { get; set; } = svgFilename;

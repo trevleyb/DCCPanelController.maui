@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components.Tracks;
 using DCCPanelController.Components.Tracks.SVGManager;
@@ -6,6 +7,7 @@ using ShimSkiaSharp;
 
 namespace DCCPanelController.Components.TrackImages;
 
+[DebuggerDisplay("{Name} [{Rotation}]")]
 public partial class TrackImage : ObservableObject {
 
     [ObservableProperty] private string _name;

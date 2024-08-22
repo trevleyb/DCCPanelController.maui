@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,7 +14,7 @@ namespace DCCPanelController.View;
 
 public partial class ElementTestPage : ContentPage {
     
-    private ElementTestViewModel viewModel;
+    private readonly ElementTestViewModel _viewModel;
     private readonly ObservableCollection<Line> _lines = [];
     private double _factor = 1;
     private bool _drawCompass = false;
@@ -21,25 +22,29 @@ public partial class ElementTestPage : ContentPage {
     
     public ElementTestPage() {
         InitializeComponent();
-        viewModel = new ElementTestViewModel();
-        BindingContext = viewModel;
-        BuildTrackPieceGrid();
+        try {
+            _viewModel = new ElementTestViewModel();
+            BindingContext = _viewModel;
+            BuildTrackPieceGrid();
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private void BuildTrackPieceGrid() {
         var grid = TestPiecesGrid;
         grid.Children.Clear();
 
-        var gridSize = viewModel.Scale * 16;
-        for (var i = 0; i < 6; i++) TestPiecesGrid.RowDefinitions[i].Height = new GridLength(gridSize); 
+        var gridSize = _viewModel.Scale * 16;
+        for (var i = 0; i < 5; i++) TestPiecesGrid.RowDefinitions[i].Height = new GridLength(gridSize); 
         for (var j = 0; j < 6; j++) TestPiecesGrid.ColumnDefinitions[j].Width = new GridLength(gridSize);
-        viewModel.ComponentWidth = (int)(gridSize * _factor);
-        viewModel.ComponentHeight = (int)(gridSize * _factor);
+        _viewModel.ComponentWidth = (int)(gridSize * _factor);
+        _viewModel.ComponentHeight = (int)(gridSize * _factor);
 
-        foreach (var track in viewModel.Tracks) {
+        foreach (var track in _viewModel.Tracks) {
             if (track.Track is { } piece) {
                 piece.ApplyStyle(style);
-                if (piece.SupportsLabel) piece.SetLabel(viewModel.Label);
+                if (piece.SupportsLabel) piece.SetLabel(_viewModel.Label);
                 AddTrackPiece(track, grid);
                 if (_drawCompass) AddCompass(track, grid);
             }
@@ -49,21 +54,21 @@ public partial class ElementTestPage : ContentPage {
 
     private void AddCompass(TrackPiece track, Grid grid) {
         var compass = TrackImages.Create("Track_Compass");
-        if (compass is not null) {
+        if (compass is not null && track.Track is not null) {
 
-            SetCompassColor(compass, "CompassN", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[0]);
-            SetCompassColor(compass, "CompassNE", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[1]);
-            SetCompassColor(compass, "CompassE", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[2]);
-            SetCompassColor(compass, "CompassSE", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[3]);
-            SetCompassColor(compass, "CompassS", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[4]);
-            SetCompassColor(compass, "CompassSW", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[5]);
-            SetCompassColor(compass, "CompassW", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[6]);
-            SetCompassColor(compass, "CompassNW", track.Track.Connections.ConnectionPointsRotated(viewModel.Rotation)[7]);
+            SetCompassColor(compass, "CompassN", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[0]);
+            SetCompassColor(compass, "CompassNE", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[1]);
+            SetCompassColor(compass, "CompassE", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[2]);
+            SetCompassColor(compass, "CompassSE", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[3]);
+            SetCompassColor(compass, "CompassS", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[4]);
+            SetCompassColor(compass, "CompassSW", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[5]);
+            SetCompassColor(compass, "CompassW", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[6]);
+            SetCompassColor(compass, "CompassNW", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[7]);
             
             var image = new Image {
                 Source = compass.Image,
-                HeightRequest = viewModel.ComponentHeight,
-                WidthRequest = viewModel.ComponentWidth,
+                HeightRequest = _viewModel.ComponentHeight,
+                WidthRequest = _viewModel.ComponentWidth,
                 ZIndex = 10
             };
 
@@ -106,49 +111,13 @@ public partial class ElementTestPage : ContentPage {
     private void AddTrackPiece(TrackPiece track, Grid grid) {
         var image = new Image();
         image.Source = track?.Track?.Image;
-        image.HeightRequest = viewModel.ComponentHeight;
-        image.WidthRequest = viewModel.ComponentWidth;
-        image.Rotation = viewModel.Rotation;
+        image.HeightRequest = _viewModel.ComponentHeight;
+        image.WidthRequest = _viewModel.ComponentWidth;
+        image.Rotation = _viewModel.Rotation;
         image.ZIndex = 0;
         grid.Children.Add(image);
         grid.SetColumn(image,track.Col);
         grid.SetRow(image, track.Row);
-    }
-
-    private void DrawGridLines() {
-        
-        var grid = TestPiecesGrid;
-        if (_lines.Any()) {
-            var removeLines = _lines.ToList();
-            foreach (var line in removeLines) {
-                grid.Children.Remove(line);
-                _lines.Remove(line);
-            }
-        }
-        
-        var gridSize = viewModel.Scale * 16;
-        var height = gridSize * grid.ColumnDefinitions.Count;
-        var width =  gridSize * grid.RowDefinitions.Count;
-
-        for (var i = 1; i < grid.ColumnDefinitions.Count; i++) {
-            AddGridLine(grid, i * gridSize, i * gridSize, 0, height);
-        }
-        for (var i = 1; i < grid.RowDefinitions.Count; i++) {
-            AddGridLine(grid, 0, width, i * gridSize, i * gridSize);
-        }
-    }
-    
-    private void AddGridLine(Grid grid, int x1, int x2, int y1, int y2) {
-        var line = new Line() {
-            X1 = x1, X2 = x2, Y1 = y1, Y2 = y2,
-            IsEnabled = false, 
-            ZIndex = 5, 
-            Stroke = Colors.DarkGray, 
-            StrokeThickness = 1,
-        };
-
-        _lines.Add(line);
-        grid.Children.Add(line);
     }
 
     private void Mainline_Button_OnClicked(object? sender, EventArgs e) {
@@ -176,14 +145,13 @@ public partial class ElementTestPage : ContentPage {
         BuildTrackPieceGrid();
     }
 
-
     private void Slider_OnValueChanged(object? sender, ValueChangedEventArgs e) {
         BuildTrackPieceGrid();
     }
 
     private void Rotate_Button_OnClicked(object? sender, EventArgs e) {
-        viewModel.Rotation += 90;
-        if (viewModel.Rotation >= 360) viewModel.Rotation = 0;
+        _viewModel.Rotation += 90;
+        if (_viewModel.Rotation >= 360) _viewModel.Rotation = 0;
         BuildTrackPieceGrid();
     }
 
@@ -195,5 +163,12 @@ public partial class ElementTestPage : ContentPage {
     private void Button_OnClicked(object? sender, EventArgs e) {
         _factor = _factor < 1.5 ? 1.5 : 1.0;
         BuildTrackPieceGrid();
+    }
+
+    private void BindableObject_OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (_viewModel == null || _viewModel.Tracks == null) return;
+        foreach (var track in _viewModel.Tracks) {
+            if (track.Track is { SupportsLabel: true } piece) piece.SetLabel(_viewModel.Label ?? "");
+        }
     }
 }
