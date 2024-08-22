@@ -12,7 +12,7 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     
     [ObservableProperty] private string _name;
     [ObservableProperty] private string _style;
-    [ObservableProperty] private TrackState _state = TrackState.Unknown;
+    [ObservableProperty] private TrackState _state = new TrackState();
     [ObservableProperty] private int _rotation;
     [ObservableProperty] private int _xCoordinate;
     [ObservableProperty] private int _yCoordinate;
@@ -69,7 +69,7 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     /// </summary>
     protected (int imageNo, int compassPoint) GetImageReference() {
         var rotationPoint = ((int)(_activeRotation / (360 / _points)));
-        var imageNo = AdjustImageNoByState(rotationPoint % LoadedImages);
+        var imageNo = (rotationPoint % LoadedImages) * State.GetOffset;
         if (imageNo >= LoadedImages) {
             Console.WriteLine($"Invalid image number {imageNo}");
             imageNo = 0;
@@ -77,17 +77,7 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
         return (imageNo, rotationPoint);
     }
 
-    protected int AdjustImageNoByState(int imageNo) {
-        return imageNo * State switch {
-            TrackState.Unknown        => 1,
-            TrackState.Normal         => 1,
-            TrackState.Straight       => 2,
-            TrackState.Diverging      => 3,
-            TrackState.DivergingLeft  => 3,
-            TrackState.DivergingRight => 4,
-            _                         => 1
-        };
-    }
+
     
     /// <summary>
     /// Set up the Active Image. For example, as a straight image, if it is in position 0 then it is straight.
@@ -113,13 +103,4 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     protected void AddTrackImage(TrackImage? trackImage) {
         if (trackImage != null) _tracks.Add(trackImage);
     }
-}
-
-public enum TrackState {
-    Normal,
-    Straight, 
-    Diverging, 
-    DivergingLeft,
-    DivergingRight,
-    Unknown
 }
