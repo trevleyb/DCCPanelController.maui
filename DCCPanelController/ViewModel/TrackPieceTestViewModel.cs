@@ -1,6 +1,9 @@
+using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Components.TrackImages;
+using DCCPanelController.Components.TrackPieces;
 using DCCPanelController.Components.Tracks;
 using TrackImage = DCCPanelController.Components.TrackImages.TrackImage;
 
@@ -8,15 +11,18 @@ namespace DCCPanelController.ViewModel;
 
 public partial class TrackPieceTestViewModel : BaseViewModel {
 
-    [ObservableProperty] private List<TrackPiece> _tracks;
-    [ObservableProperty] private int _scale = 10;
-    [ObservableProperty] private int _componentWidth = 48;
-    [ObservableProperty] private int _componentHeight = 48;
-    [ObservableProperty] private int _rotation = 0;
-    [ObservableProperty] private string _label;
+    [ObservableProperty] private ITrackPiece _trackPiece;
 
     public TrackPieceTestViewModel() {
+        _trackPiece = new StraightPiece();
     }
-    
+
+    [RelayCommand] public void RotateLeft() => TrackPiece?.RotateLeft();
+    [RelayCommand] public void RotateRight() => TrackPiece?.RotateRight();
+    [RelayCommand] public void NextState() => TrackPiece?.NextState();
+    [RelayCommand] public void PrevState() => TrackPiece?.PrevState();
+
+    [RelayCommand]
+    public void NextImage() { }
 }
 
