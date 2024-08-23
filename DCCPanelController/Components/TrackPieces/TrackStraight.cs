@@ -1,12 +1,18 @@
+using DCCPanelController.Components.TrackPieces.Base;
+
 namespace DCCPanelController.Components.TrackPieces;
 
-public class StraightPiece : Base.TrackPiece {
+public class TrackStraight : TrackPiece {
     
     protected override void Setup() {
-        SetRotationMatrix([0, 90, 90, 0, 0, 90, 90, 0]);
-        State.SetStates(("Normal", 1));
-        AddTrackImage("Straight1");
-        AddTrackImage("Straight2");
+        AddTrackImage(0,   "Normal", "Straight1", -90);
+        AddTrackImage(45,  "Normal", "Straight2", 0);
+        AddTrackImage(90,  "Normal", "Straight1", 0);
+        AddTrackImage(135, "Normal", "Straight2", 90);
+        AddTrackImage(180, "Normal", "Straight1", 90);
+        AddTrackImage(225, "Normal", "Straight2", 0);
+        AddTrackImage(270, "Normal", "Straight1", 0);
+        AddTrackImage(315, "Normal", "Straight2", -90);
     }
     
 }

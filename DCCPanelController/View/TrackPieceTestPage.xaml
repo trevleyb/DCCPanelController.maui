@@ -8,12 +8,28 @@
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
-                <Grid x:Name="TestPiecesGrid" ColumnSpacing="8" RowSpacing="8" HorizontalOptions="Center" ColumnDefinitions="48,48,48,48,48,48" RowDefinitions="48,48,48,48,48,0" Padding="50" Margin="50"/>
                 <StackLayout Padding="10">
 
-                    <Image Source="{Binding TrackPiece.Image}" Rotation="{Binding TrackPiece.Rotation}" WidthRequest="96" HeightRequest="96" HorizontalOptions="Center" VerticalOptions="Center"/>
-                    <Label Text="State="></Label>
-                    <Label Text="{Binding TrackPiece.State.State}"/>
+                    <Image IsLoading="{Binding IsBusy}" Source="{Binding TrackPiece.Image}" Rotation="{Binding TrackPiece.ImageRotation}" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                    <Label Style="{StaticResource PanelInfoLabel}">
+                        <MultiBinding StringFormat="{}Track= {0}">
+                            <Binding Path="TrackPiece.Name" />
+                        </MultiBinding>
+                    </Label>
+                    
+                    <Label Style="{StaticResource PanelInfoLabel}">
+                        <MultiBinding StringFormat="{}State= {0}">
+                            <Binding Path="TrackPiece.State.State" />
+                        </MultiBinding>
+                    </Label>
+
+                    <Label Style="{StaticResource PanelInfoLabel}">
+                        <MultiBinding StringFormat="{}Rotation= Image={0} Track={1}">
+                            <Binding Path="TrackPiece.ImageRotation" />
+                            <Binding Path="TrackPiece.TrackDirection" />
+                        </MultiBinding>
+                    </Label>
                     
                     <FlexLayout Wrap="Wrap" Padding="10" Margin="10" HorizontalOptions="Center" >
                         <Button Text="Rotate Left" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding RotateLeftCommand}"/>

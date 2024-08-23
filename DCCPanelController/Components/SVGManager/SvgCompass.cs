@@ -1,3 +1,5 @@
+using DCCPanelController.Components.TrackPieces.Base;
+
 namespace DCCPanelController.Components.SVGManager;
 
 public class SvgCompass {
@@ -42,7 +44,7 @@ public class SvgCompass {
         return result;
     }
 
-    public TrackConnectionsEnum Connection(TrackDirectionEnum direction, int rotation = 0) {
+    public TrackConnectionsEnum Connection(CompassPoints direction, int rotation = 0) {
         var connections = ConnectionPointsRotated(rotation);
         return connections[(int)direction];
     }
@@ -55,15 +57,4 @@ public enum TrackConnectionsEnum {
     Closed      = 'X',
     Diverging   = 'D',
     Connector   = 'C'
-}
-
-public enum TrackDirectionEnum {
-    North       = 0, 
-    NorthEast   = 1, 
-    East        = 2, 
-    SouthEast   = 3, 
-    South       = 4, 
-    SouthWest   = 5, 
-    West        = 6, 
-    NorthWest   = 7
 }

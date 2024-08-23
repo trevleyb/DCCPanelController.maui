@@ -16,17 +16,11 @@ public partial class TrackPieceTestPage : ContentPage {
     
     public TrackPieceTestPage() {
         InitializeComponent();
-        this.PropertyChanged += OnPropertyChanged;
         try {
             _viewModel = new TrackPieceTestViewModel();
-            _viewModel.PropertyChanged += OnPropertyChanged;
             BindingContext = _viewModel;
         } catch (Exception ex) {
             Console.WriteLine(ex.Message);
         }
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Property {e.PropertyName} changed");
     }
 }

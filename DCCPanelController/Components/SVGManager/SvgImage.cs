@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Components.SVGManager;
 
-[DebuggerDisplay("{Name} [{Rotation}]")]
+[DebuggerDisplay("{Id} [{Rotation}]")]
 public partial class SvgImage : ObservableObject {
 
     [ObservableProperty] private string _id;
