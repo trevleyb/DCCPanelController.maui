@@ -20,7 +20,12 @@ public class TrackImages {
     public int RotateBy => 8 / NumberOfPoints; 
 
     public void Add(int trackRotation, string trackState, string imageSource, int rotation) {
-        ImageRotations[(Compass.ConvertFromDegress(trackRotation), trackState)] = new TrackImage(imageSource, rotation);
+        try {
+            var svgImage = new TrackImage(imageSource, rotation);
+            ImageRotations[(Compass.ConvertFromDegress(trackRotation), trackState)] = new TrackImage(imageSource, rotation);
+        } catch {
+            Console.WriteLine($"Failed to add track image: {imageSource} as it does not exist.");
+        }
     }
 
     public TrackImage Get(int trackRotation, TrackState trackState) => Get(Compass.ConvertFromDegress(trackRotation), trackState.State);

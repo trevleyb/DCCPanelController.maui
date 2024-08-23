@@ -1,5 +1,3 @@
-using System.ComponentModel;
-using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Components.TrackPieces;
@@ -10,9 +8,10 @@ namespace DCCPanelController.ViewModel;
 public partial class TrackPieceTestViewModel : BaseViewModel {
 
     [ObservableProperty] private ITrackPiece _trackPiece;
+    [ObservableProperty] private ITrackPiece? _overlay;
 
-    private int currentPiece = 0;
-    private List<ITrackPiece> _trackPieces = [];
+    private int _currentPiece = 0;
+    private readonly List<ITrackPiece> _trackPieces = [];
 
     public TrackPieceTestViewModel() {
         _trackPieces.Add(new TrackStraight());
@@ -33,10 +32,43 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
     [RelayCommand] public void PrevState() => TrackPiece?.PrevState();
 
     [RelayCommand]
+    public void AddButton() {
+        if (Overlay != null) {
+            Overlay = null;
+        } else {
+            var button = new TrackButton();
+            //button.SetCompassPoints(TrackPiece);
+            Overlay = button;
+        }
+    }
+
+    [RelayCommand]
+    public void AddLabel() {
+        if (Overlay != null) {
+            Overlay = null;
+        } else {
+            var label = new TrackLabel();
+            //compass.SetCompassPoints(TrackPiece);
+            Overlay = label;
+        }
+    }
+
+    [RelayCommand]
+    public void AddCompass() {
+        if (Overlay != null) {
+            Overlay = null;
+        } else {
+            var compass = new TrackCompass();
+            compass.SetCompassPoints(TrackPiece);
+            Overlay = compass;
+        }
+    }
+
+    [RelayCommand]
     public void NextImage() {
-        currentPiece++;
-        if (currentPiece >= _trackPieces.Count) currentPiece = 0;
-        TrackPiece = _trackPieces[currentPiece];
+        _currentPiece++;
+        if (_currentPiece >= _trackPieces.Count) _currentPiece = 0;
+        TrackPiece = _trackPieces[_currentPiece];
         OnPropertyChanged(nameof(TrackPiece));
     }
 }

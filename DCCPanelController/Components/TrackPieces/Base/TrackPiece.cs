@@ -24,18 +24,19 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     [ObservableProperty] private int _y;
     [ObservableProperty] private TrackState _state = new TrackState();
 
-    public ImageSource? Image => _activeImage?.ImageSource?.Image;
-    
-    private TrackImage?     _activeImage = null;
-    private TrackImages     _trackImages = new TrackImages();
+    public ImageSource?   Image => ActiveImage?.ImageSource?.Image;
+    protected TrackImage? ActiveImage = null;
+    protected TrackImages TrackImages = new TrackImages();
+
+    public SvgCompass Connections => ActiveImage?.ImageSource?.Connections ?? new SvgCompass("********"); 
 
     public void RotateLeft() {
-        TrackDirection = Compass.ToCompass(TrackDirection).Prev(_trackImages.RotateBy).ToRotation();
+        TrackDirection = Compass.ToCompass(TrackDirection).Prev(TrackImages.RotateBy).ToRotation();
         SetActiveImage();
     }
 
     public void RotateRight() {
-        TrackDirection = Compass.ToCompass(TrackDirection).Next(_trackImages.RotateBy).ToRotation();
+        TrackDirection = Compass.ToCompass(TrackDirection).Next(TrackImages.RotateBy).ToRotation();
         SetActiveImage();
     }
     
@@ -83,8 +84,8 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             // have and the current state. However, the rotation of the image itself might be different so we 
             // set Rotation to the value defined against the active image. 
             // -----------------------------------------------------------------------------------------------
-            _activeImage = _trackImages.Get(TrackDirection, State);
-            ImageRotation = _activeImage.Value.Rotation;
+            ActiveImage = TrackImages.Get(TrackDirection, State);
+            ImageRotation = ActiveImage.Value.Rotation;
             OnPropertyChanged(nameof(Image));
             OnPropertyChanged(nameof(ImageRotation));
         } catch (Exception ex) {
@@ -104,7 +105,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     /// <param name="imageRotation">What rotation should this image be at for this state and track rotation</param>
     protected void AddTrackImage(int trackRotation, string trackState, string imageSource, int imageRotation) {
         State.AddState(trackState);
-        _trackImages.Add(trackRotation, trackState, imageSource, imageRotation);
+        TrackImages.Add(trackRotation, trackState, imageSource, imageRotation);
     }
 
 }

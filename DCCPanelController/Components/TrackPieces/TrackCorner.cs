@@ -4,14 +4,14 @@ namespace DCCPanelController.Components.TrackPieces;
 
 public class TrackCorner : TrackPiece  {
     protected override void Setup() {
-        AddTrackImage(0,   "Normal", "CornerL", -90);
-        AddTrackImage(45,  "Normal", "CornerR", 0);
-        AddTrackImage(90,  "Normal", "CornerL", 0);
-        AddTrackImage(135, "Normal", "CornerR", 90);
-        AddTrackImage(180, "Normal", "CornerL", 90);
-        AddTrackImage(225, "Normal", "CornerR", 0);
-        AddTrackImage(270, "Normal", "CornerL", 0);
-        AddTrackImage(315, "Normal", "CornerR", -90);
+        AddTrackImage(0,   "Normal", "CornerR", 0);
+        AddTrackImage(45,  "Normal", "CornerL", 270);
+        AddTrackImage(90,  "Normal", "CornerR", 90);
+        AddTrackImage(135, "Normal", "CornerL", 0);
+        AddTrackImage(180, "Normal", "CornerR", 180);
+        AddTrackImage(225, "Normal", "CornerL", 90);
+        AddTrackImage(270, "Normal", "CornerR", 270);
+        AddTrackImage(315, "Normal", "CornerL", 180);
     } 
     
 }

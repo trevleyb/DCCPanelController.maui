@@ -1,3 +1,5 @@
+using DCCPanelController.Components.SVGManager;
+
 namespace DCCPanelController.Components.TrackPieces.Base;
 
 public interface ITrackPiece {
@@ -17,4 +19,6 @@ public interface ITrackPiece {
     public void RotateLeft();
     public void RotateRight();
     public void RotateAbsolute(int degrees);
+    
+    public SvgCompass Connections { get; }
 }

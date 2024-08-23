@@ -3,15 +3,35 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+             xmlns:converters="clr-namespace:DCCPanelController.Converters"
              x:DataType="viewModel:TrackPieceTestViewModel"
              x:Class="DCCPanelController.View.TrackPieceTestPage">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:BoolToVisibilityConverter x:Key="DccPanelController.Converters. .BoolToVisibilityConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
     <ContentPage.Content>
         <ScrollView>
             <StackLayout>
                 <StackLayout Padding="10">
+                    <Grid x:Name="TrackPieceGrid" ColumnSpacing="5" RowSpacing="5" ColumnDefinitions="150,150,150" RowDefinitions="150,150,150" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                        <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="LightBlue" />
+                        <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="LightCoral" />
+                        <Frame Grid.Row="0" Grid.Column="2" BackgroundColor="LightGoldenrodYellow" />
+        
+                        <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="LightGreen" />
+                        <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="LightPink" />
+                        <Frame Grid.Row="1" Grid.Column="2" BackgroundColor="LightSkyBlue" />
 
-                    <Image IsLoading="{Binding IsBusy}" Source="{Binding TrackPiece.Image}" Rotation="{Binding TrackPiece.ImageRotation}" WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center"/>
-
+                        <Frame Grid.Row="2" Grid.Column="0" BackgroundColor="LightSlateGray" />
+                        <Frame Grid.Row="2" Grid.Column="1" BackgroundColor="LightSteelBlue" />
+                        <Frame Grid.Row="2" Grid.Column="2" BackgroundColor="LightYellow" />
+                        
+                        <Image Grid.Column="1" Grid.Row="1" Source="{Binding TrackPiece.Image}" Scale="1.5" Rotation="{Binding TrackPiece.ImageRotation}" />
+                        <Image Grid.Column="1" Grid.Row="1" Source="{Binding Overlay.Image}" Scale="1.5" Rotation="{Binding Overlay.ImageRotation}" />
+                    </Grid>
                     <Label Style="{StaticResource PanelInfoLabel}">
                         <MultiBinding StringFormat="{}Track= {0}">
                             <Binding Path="TrackPiece.Name" />
@@ -37,6 +57,9 @@
                         <Button Text="Next State" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding NextStateCommand}"/>
                         <Button Text="Previous State" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding PrevStateCommand}"/>
                         <Button Text="Next Image" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding NextImageCommand}"/>
+                        <Button Text="Add/Remove Button" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding AddButtonCommand}"/>
+                        <Button Text="Add/Remove Label" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding AddLabelCommand}"/>
+                        <Button Text="Add/Remove Compass" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding AddCompassCommand}"/>
                     </FlexLayout>
                     
                 </StackLayout>
