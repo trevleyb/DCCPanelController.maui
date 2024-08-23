@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Components.Elements;
 using DCCPanelController.Components.Elements.Views;
-using DCCPanelController.Components.Symbols;
 using DCCPanelController.Components.TrackComponents;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;

@@ -1,7 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Components.Elements.ViewModels;
 using DCCPanelController.Components.Elements.Views;
-using DCCPanelController.Components.Symbols;
 using DCCPanelController.Components.TrackComponents;
 using DCCPanelController.Model.Elements;
 using DCCPanelController.Model.Elements.Base;

@@ -6,8 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DCCPanelController.Components.SVGManager;
-using DCCPanelController.Components.TrackImages;
-using DCCPanelController.Components.Tracks;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Controls.Shapes;
 using SvgImage = DCCPanelController.Components.SVGManager.SvgImage;

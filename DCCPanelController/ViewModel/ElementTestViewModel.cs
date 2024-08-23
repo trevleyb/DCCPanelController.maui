@@ -1,8 +1,6 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components.SVGManager;
-using DCCPanelController.Components.TrackImages;
-using DCCPanelController.Components.Tracks;
 using SvgImage = DCCPanelController.Components.SVGManager.SvgImage;
 
 namespace DCCPanelController.ViewModel;

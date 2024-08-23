@@ -2,10 +2,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.TrackPieces;
 using DCCPanelController.Components.TrackPieces.Base;
-using DCCPanelController.Components.Tracks;
 
 namespace DCCPanelController.ViewModel;
 

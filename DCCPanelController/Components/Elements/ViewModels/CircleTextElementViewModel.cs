@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Components.Symbols;
 using DCCPanelController.Components.TrackComponents;
 using DCCPanelController.Model.Elements;
 
