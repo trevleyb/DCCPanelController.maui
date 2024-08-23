@@ -1,13 +1,13 @@
 namespace DCCPanelController.Components.TrackImages;
 
-public class TrackConnections {
+public class SvgCompass {
     public const int CompassPoints = 8;
     
     /// <summary>
     /// Track what connections this particular component supports based on a Rotation of '0'
     /// </summary>
     /// <param name="directions">A string representing the compass Directions. Example, straight is = '**S***S*'</param>
-    public TrackConnections(string directions) {
+    public SvgCompass(string directions) {
         for (var i = 0; i < Math.Min(directions.Length, 8); ++i) {
             ConnectionsArray[i] = char.ToLower(directions[i]) switch {
                 't' => TrackConnectionsEnum.Terminator,

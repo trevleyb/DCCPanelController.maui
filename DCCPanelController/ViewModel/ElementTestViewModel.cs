@@ -2,7 +2,6 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.Tracks;
-using TrackImage = DCCPanelController.Components.TrackImages.TrackImage;
 
 namespace DCCPanelController.ViewModel;
 
@@ -26,7 +25,7 @@ public partial class ElementTestViewModel : BaseViewModel {
         Tracks = [];
         var col = 0;
         var row = 0;
-        foreach (var track in TrackImages.AvailableTracks.Where(track => !track.Key.Contains("Compass"))) {
+        foreach (var track in SvgImages.AvailableTracks.Where(track => !track.Key.Contains("Compass"))) {
             Tracks.Add(new TrackPiece(track.Value.Create, col, row));
             col++;
             if (col > 5) {
@@ -38,8 +37,8 @@ public partial class ElementTestViewModel : BaseViewModel {
 }
 
 [DebuggerDisplay("{Track?.Name}")]
-public class TrackPiece (TrackImage track, int col, int row) {
-    public TrackImage? Track { get; set; } = track;
+public class TrackPiece (SvgImage svg, int col, int row) {
+    public SvgImage? Svg { get; set; } = svg;
     public int Col { get; set; } = col;
     public int Row { get; set; } = row;
 }

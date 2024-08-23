@@ -27,8 +27,8 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     private int _points = 8;          // The number of compass points supports (4 or 8 generally)
     private int _activeRotation = 0;
     private int[] _rotationMatrix = { 0, 90, 180, 270 };
-    private TrackImage? _activeTrackImage = null;
-    private readonly List<TrackImage> Tracks = [];
+    private SvgImage? _activeTrackImage = null;
+    private readonly List<SvgImage> Tracks = [];
     
     protected abstract void Setup();
 
@@ -113,8 +113,8 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     /// <summary>
     /// Helper to add a TrackImage to the collection of images. 
     /// </summary>
-    protected void AddTrackImage(string imageName) => AddTrackImage(TrackImages.TrackImages.Create(imageName));
-    protected void AddTrackImage(TrackImage? trackImage) {
+    protected void AddTrackImage(string imageName) => AddTrackImage(TrackImages.SvgImages.Create(imageName));
+    protected void AddTrackImage(SvgImage? trackImage) {
         if (trackImage != null) Tracks.Add(trackImage);
     }
 }

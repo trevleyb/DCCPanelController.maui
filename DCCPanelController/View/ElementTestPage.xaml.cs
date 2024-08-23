@@ -42,7 +42,7 @@ public partial class ElementTestPage : ContentPage {
         _viewModel.ComponentHeight = (int)(gridSize * _factor);
 
         foreach (var track in _viewModel.Tracks) {
-            if (track.Track is { } piece) {
+            if (track.Svg is { } piece) {
                 piece.ApplyStyle(style);
                 if (piece.SupportsLabel) piece.SetLabel(_viewModel.Label);
                 AddTrackPiece(track, grid);
@@ -53,17 +53,17 @@ public partial class ElementTestPage : ContentPage {
     }
 
     private void AddCompass(TrackPiece track, Grid grid) {
-        var compass = TrackImages.Create("Track_Compass");
-        if (compass is not null && track.Track is not null) {
+        var compass = SvgImages.Create("Track_Compass");
+        if (compass is not null && track.Svg is not null) {
 
-            SetCompassColor(compass, "CompassN", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[0]);
-            SetCompassColor(compass, "CompassNE", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[1]);
-            SetCompassColor(compass, "CompassE", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[2]);
-            SetCompassColor(compass, "CompassSE", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[3]);
-            SetCompassColor(compass, "CompassS", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[4]);
-            SetCompassColor(compass, "CompassSW", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[5]);
-            SetCompassColor(compass, "CompassW", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[6]);
-            SetCompassColor(compass, "CompassNW", track.Track.Connections.ConnectionPointsRotated(_viewModel.Rotation)[7]);
+            SetCompassColor(compass, "CompassN", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[0]);
+            SetCompassColor(compass, "CompassNE", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[1]);
+            SetCompassColor(compass, "CompassE", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[2]);
+            SetCompassColor(compass, "CompassSE", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[3]);
+            SetCompassColor(compass, "CompassS", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[4]);
+            SetCompassColor(compass, "CompassSW", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[5]);
+            SetCompassColor(compass, "CompassW", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[6]);
+            SetCompassColor(compass, "CompassNW", track.Svg.Connections.ConnectionPointsRotated(_viewModel.Rotation)[7]);
             
             var image = new Image {
                 Source = compass.Image,
@@ -78,7 +78,7 @@ public partial class ElementTestPage : ContentPage {
         }
     }
 
-    private void SetCompassColor(TrackImage compass, string compassId, TrackConnectionsEnum connection) {
+    private void SetCompassColor(SvgImage compass, string compassId, TrackConnectionsEnum connection) {
         switch (connection) {
         case TrackConnectionsEnum.Terminator:
             compass.SetElementAttribute(compassId, "Color", Colors.Yellow.ToRgbaHex());
@@ -110,7 +110,7 @@ public partial class ElementTestPage : ContentPage {
 
     private void AddTrackPiece(TrackPiece track, Grid grid) {
         var image = new Image();
-        image.Source = track?.Track?.Image;
+        image.Source = track?.Svg?.Image;
         image.HeightRequest = _viewModel.ComponentHeight;
         image.WidthRequest = _viewModel.ComponentWidth;
         image.Rotation = _viewModel.Rotation;
@@ -156,8 +156,8 @@ public partial class ElementTestPage : ContentPage {
     }
 
     private void Export_Button_OnClicked(object? sender, EventArgs e) {
-        var json = TrackStyles.Export();
-        TrackStyles.Import(json);
+        var json = SvgStyles.Export();
+        SvgStyles.Import(json);
     }
     
     private void Button_OnClicked(object? sender, EventArgs e) {
@@ -168,7 +168,7 @@ public partial class ElementTestPage : ContentPage {
     private void BindableObject_OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (_viewModel == null || _viewModel.Tracks == null) return;
         foreach (var track in _viewModel.Tracks) {
-            if (track.Track is { SupportsLabel: true } piece) piece.SetLabel(_viewModel.Label ?? "");
+            if (track.Svg is { SupportsLabel: true } piece) piece.SetLabel(_viewModel.Label ?? "");
         }
     }
 }

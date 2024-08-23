@@ -8,15 +8,15 @@ using ShimSkiaSharp;
 namespace DCCPanelController.Components.TrackImages;
 
 [DebuggerDisplay("{Name} [{Rotation}]")]
-public partial class TrackImage : ObservableObject {
+public partial class SvgImage : ObservableObject {
 
     [ObservableProperty] private string _id;
     [ObservableProperty] private int _rotation;
 
     [ObservableProperty] private SvgImageManager _imageManager;
-    [ObservableProperty] private TrackConnections _connections;
+    [ObservableProperty] private SvgCompass _connections;
     
-    public TrackImage(string id, string imageName, int rotation, TrackConnections connections) {
+    public SvgImage(string id, string imageName, int rotation, SvgCompass connections) {
         Id = id;
         Rotation = rotation;
         Connections = connections;
@@ -26,7 +26,7 @@ public partial class TrackImage : ObservableObject {
     public ImageSource? Image => ImageManager.Image;
 
     public void ApplyStyle(string styleName) {
-        TrackStyles.ApplyStyle(styleName, this);
+        SvgStyles.ApplyStyle(styleName, this);
     }
 
     public bool SupportsLabel => ImageManager.IsElementSupported("text");
@@ -35,7 +35,7 @@ public partial class TrackImage : ObservableObject {
         if (ImageManager.IsElementSupported("text")) ImageManager.SetElementValue("text", label);
     }
 
-    public void ApplyStyle(TrackStyle style) {
+    public void ApplyStyle(SvgStyle style) {
         foreach (var element in style.Elements) {
             foreach (var attribute in element.Attributes) {
                 SetElementAttribute(element.Name, attribute.Name, attribute.Value);

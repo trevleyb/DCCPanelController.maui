@@ -5,11 +5,11 @@ namespace DCCPanelController.Components.TrackImages;
 
 [Serializable]
 [DebuggerDisplay("{Name}")]
-public class TrackStyle(string name, List<StyleElement>? elements = null) {
+public class SvgStyle(string name, List<StyleElement>? elements = null) {
     public string Name { get; set; } = name;
     public List<StyleElement> Elements { get; set; } = elements ?? [];
     public void AddElement(StyleElement element) => Elements.Add(element);
-    public void ApplyStyle(TrackImage trackImage) => trackImage.ApplyStyle(this);
+    public void ApplyStyle(SvgImage svgImage) => svgImage.ApplyStyle(this);
 }
 
 [Serializable]

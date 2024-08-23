@@ -1,8 +1,8 @@
 namespace DCCPanelController.Components.TrackImages;
 
-public class TrackStylesBuilder(string styleName) {
+public class SvgStylesBuilder(string styleName) {
     public string Name => _style.Name;
-    private readonly TrackStyle _style = new(styleName);
+    private readonly SvgStyle _style = new(styleName);
 
     public StyleElementBuilder AddElement(string elementType) {
         var element = new StyleElement(elementType);
@@ -10,12 +10,12 @@ public class TrackStylesBuilder(string styleName) {
         return new StyleElementBuilder(this, element);
     }
 
-    public TrackStyle Build() {
+    public SvgStyle Build() {
         return _style;
     }
 }
 
-public class StyleElementBuilder(TrackStylesBuilder stylesBuilder, StyleElement element) {
+public class StyleElementBuilder(SvgStylesBuilder stylesBuilder, StyleElement element) {
     public StyleElementBuilder AddAttribute(string attributeName, string attributeValue) {
         var attribute = new StyleAttribute(attributeName, attributeValue);
         element.AddAttribute(attribute);
@@ -54,7 +54,7 @@ public class StyleElementBuilder(TrackStylesBuilder stylesBuilder, StyleElement 
         return this;
     }
     
-    public TrackStylesBuilder Done() {
+    public SvgStylesBuilder Done() {
         return stylesBuilder;
     }
 }

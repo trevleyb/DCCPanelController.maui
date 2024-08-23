@@ -6,15 +6,15 @@ namespace DCCPanelController.Components.TrackImages;
 /// <summary>
 /// Track Images is a helper class that provides information about each image that is contained in the resource file
 /// </summary>
-public static class TrackImages {
+public static class SvgImages {
 
-    public static TrackImage UnknownImage => Create("Track_Unknown") ?? throw new ArgumentNullException(nameof(UnknownImage));  
+    public static SvgImage UnknownImage => Create("Track_Unknown") ?? throw new ArgumentNullException(nameof(UnknownImage));  
     private static readonly Dictionary<string,TrackImageFile> AvailableImages = [];
     private static readonly object LockObject = new();
 
     public static Dictionary<string,TrackImageFile> AvailableTracks => AvailableImages.Count != 0 ? AvailableImages : InitializeTracks();
 
-    public static TrackImage Create(string id) {
+    public static SvgImage Create(string id) {
         return AvailableTracks.ContainsKey(id) ? AvailableTracks[id].Create : UnknownImage;
     }
 
@@ -102,7 +102,7 @@ public enum TrackViewModelType {
 public class TrackImageFile(string id, string svgFilename, string directions) {
     public string Id { get; set; } = id;
     public string SvgFilename { get; set; } = svgFilename;
-    public TrackConnections Connections { get; } = new TrackConnections(directions);
-    public TrackImage Create => new TrackImage(id, SvgFilename,0,Connections);    
+    public SvgCompass Connections { get; } = new SvgCompass(directions);
+    public SvgImage Create => new SvgImage(id, SvgFilename,0,Connections);    
 }
 

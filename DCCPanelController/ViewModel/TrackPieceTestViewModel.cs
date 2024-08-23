@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Components.TrackImages;
 using DCCPanelController.Components.TrackPieces;
 using DCCPanelController.Components.Tracks;
-using TrackImage = DCCPanelController.Components.TrackImages.TrackImage;
 
 namespace DCCPanelController.ViewModel;
 
