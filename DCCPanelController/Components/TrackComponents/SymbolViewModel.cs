@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Components.Symbols;
+namespace DCCPanelController.Components.TrackComponents;
 
 [DebuggerDisplay("{Key}")]
 public partial class SymbolViewModel : ObservableObject {

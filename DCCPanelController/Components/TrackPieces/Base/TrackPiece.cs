@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Components.TrackImages;
+using DCCPanelController.Components.SVGManager;
 
-namespace DCCPanelController.Components.TrackPieces;
+namespace DCCPanelController.Components.TrackPieces.Base;
 
 public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
 
@@ -113,7 +113,7 @@ public abstract partial class TrackPiece  : ObservableObject, ITrackPiece {
     /// <summary>
     /// Helper to add a TrackImage to the collection of images. 
     /// </summary>
-    protected void AddTrackImage(string imageName) => AddTrackImage(TrackImages.SvgImages.Create(imageName));
+    protected void AddTrackImage(string imageName) => AddTrackImage(SvgImages.Create(imageName));
     protected void AddTrackImage(SvgImage? trackImage) {
         if (trackImage != null) Tracks.Add(trackImage);
     }

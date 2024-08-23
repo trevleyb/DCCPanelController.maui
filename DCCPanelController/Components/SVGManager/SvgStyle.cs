@@ -1,7 +1,6 @@
 using System.Diagnostics;
-using System.Text.Json.Serialization;
 
-namespace DCCPanelController.Components.TrackImages;
+namespace DCCPanelController.Components.SVGManager;
 
 [Serializable]
 [DebuggerDisplay("{Name}")]

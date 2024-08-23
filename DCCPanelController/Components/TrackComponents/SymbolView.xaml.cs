@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.Symbols;
+namespace DCCPanelController.Components.TrackComponents;
 
 public partial class SymbolView : ContentView {
 

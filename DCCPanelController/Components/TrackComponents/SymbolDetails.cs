@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace DCCPanelController.Components.Symbols;
+namespace DCCPanelController.Components.TrackComponents;
 
 public class Symbols {
     public List<SymbolSet> Sets { get; init; } = [];

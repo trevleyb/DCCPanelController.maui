@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackImages;
+namespace DCCPanelController.Components.SVGManager;
 
 public class SvgStylesBuilder(string styleName) {
     public string Name => _style.Name;

@@ -9,9 +9,9 @@
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:panel="clr-namespace:DCCPanelController.Components.Panel"
     xmlns:converters="clr-namespace:DCCPanelController.Converters"
-    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui">
+    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui"
+    xmlns:view="clr-namespace:DCCPanelController.View">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -80,7 +80,7 @@
                                         </Border.GestureRecognizers>
                                         <Grid Padding="0">
                                             <AbsoluteLayout>
-                                                <panel:PanelViewer Panel="{Binding Mode=TwoWay}"
+                                                <view:PanelViewer Panel="{Binding Mode=TwoWay}"
                                                                    HorizontalOptions="FillAndExpand"
                                                                    VerticalOptions="FillAndExpand"
                                                                    AbsoluteLayout.LayoutFlags="All"

@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces;
+namespace DCCPanelController.Components.TrackPieces.Base;
 
 public class TrackState {
 

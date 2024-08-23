@@ -4,8 +4,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:DCCPanelController.Components.Elements.ViewModels"
              xmlns:symbols="clr-namespace:DCCPanelController.Components.Symbols"
-             x:Class="DCCPanelController.Components.Symbols.SymbolView"
-             x:DataType="symbols:SymbolViewModel"
+             xmlns:trackComponents="clr-namespace:DCCPanelController.Components.TrackComponents"
+             x:Class="DCCPanelController.Components.TrackComponents.SymbolView"
+             x:DataType="trackComponents:SymbolViewModel"
              >
 
     <ContentView.Content>

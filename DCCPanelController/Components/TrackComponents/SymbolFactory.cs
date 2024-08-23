@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.Symbols;
+namespace DCCPanelController.Components.TrackComponents;
 
 /// <summary>
 /// The 'SymbolFactory' returns a list of available symbols and a View for each of the symbols.

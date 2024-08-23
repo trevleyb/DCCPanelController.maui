@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace DCCPanelController.Components.Tracks.SVGManager;
+namespace DCCPanelController.Components.SVGManager;
 
 public static class SvgImageFinder {
     

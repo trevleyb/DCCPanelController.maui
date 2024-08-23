@@ -10,7 +10,7 @@
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:panel="clr-namespace:DCCPanelController.Components.Panel">
+    xmlns:view="clr-namespace:DCCPanelController.View">
     
     <ContentPage.Content>
         <CarouselView ItemsSource="{Binding Panels}">
@@ -20,7 +20,7 @@
                                  VerticalOptions="CenterAndExpand"
                                  HorizontalOptions="CenterAndExpand">
                         
-                        <panel:PanelViewer Panel="{Binding Mode=TwoWay}"
+                        <view:PanelViewer Panel="{Binding Mode=TwoWay}"
                                            HorizontalOptions="FillAndExpand"
                                            VerticalOptions="FillAndExpand"
                                            AbsoluteLayout.LayoutFlags="All"

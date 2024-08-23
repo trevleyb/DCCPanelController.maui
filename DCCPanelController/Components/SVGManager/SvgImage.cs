@@ -1,11 +1,7 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Components.Tracks;
-using DCCPanelController.Components.Tracks.SVGManager;
-using Microsoft.Maui.Handlers;
-using ShimSkiaSharp;
 
-namespace DCCPanelController.Components.TrackImages;
+namespace DCCPanelController.Components.SVGManager;
 
 [DebuggerDisplay("{Name} [{Rotation}]")]
 public partial class SvgImage : ObservableObject {

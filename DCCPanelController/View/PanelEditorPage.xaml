@@ -13,7 +13,8 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:views="clr-namespace:DCCPanelController.Components.Elements.Views"
     xmlns:converters="clr-namespace:DCCPanelController.Converters"
-    xmlns:symbols="clr-namespace:DCCPanelController.Components.Symbols">
+    xmlns:symbols="clr-namespace:DCCPanelController.Components.Symbols"
+    xmlns:trackComponents="clr-namespace:DCCPanelController.Components.TrackComponents">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -181,13 +182,13 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <ContentView>
-                            <symbols:SymbolView Margin="5,5,5,5" WidthRequest="50" HeightRequest="50">
-                                <symbols:SymbolView.GestureRecognizers>
+                            <trackComponents:SymbolView Margin="5,5,5,5" WidthRequest="50" HeightRequest="50">
+                                <trackComponents:SymbolView.GestureRecognizers>
                                     <DragGestureRecognizer
                                         DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}, Path=SymbolDragCommand}"
                                         DragStartingCommandParameter="{Binding .}" />
-                                </symbols:SymbolView.GestureRecognizers>
-                            </symbols:SymbolView>
+                                </trackComponents:SymbolView.GestureRecognizers>
+                            </trackComponents:SymbolView>
                         </ContentView>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

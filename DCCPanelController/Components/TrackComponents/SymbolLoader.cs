@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace DCCPanelController.Components.Symbols;
+namespace DCCPanelController.Components.TrackComponents;
 
 public static class SymbolLoader {
 

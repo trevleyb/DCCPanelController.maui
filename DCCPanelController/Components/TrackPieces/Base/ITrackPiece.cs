@@ -1,6 +1,4 @@
-using CommunityToolkit.Mvvm.ComponentModel;
-
-namespace DCCPanelController.Components.TrackPieces;
+namespace DCCPanelController.Components.TrackPieces.Base;
 
 public interface ITrackPiece {
  

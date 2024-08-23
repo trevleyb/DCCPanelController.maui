@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Components.Symbols;
+using DCCPanelController.Components.TrackComponents;
 using DCCPanelController.Model.Elements;
 
 namespace DCCPanelController.Components.Elements.ViewModels;

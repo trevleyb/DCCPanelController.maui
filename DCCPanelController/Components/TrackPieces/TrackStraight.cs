@@ -1,6 +1,6 @@
 namespace DCCPanelController.Components.TrackPieces;
 
-public class StraightPiece : TrackPiece {
+public class StraightPiece : Base.TrackPiece {
     
     protected override void Setup() {
         SetRotationMatrix([0, 90, 90, 0, 0, 90, 90, 0]);
