@@ -30,9 +30,11 @@ public static class SvgImages {
     /// </summary>
     private static void AddTrackImages() {
         Add("Button",           "********","Track_Button");
+        Add("Button_Corner",    "********","Track_Button_Corner");
         Add("Label",            "********","Track_Label");
         Add("Compass",          "********","Track_Compass");
         Add("Unknown",          "********","Track_Unknown");
+        Add("Sample",           "********","Sample");
         
         Add("Straight1",        "**S***S*","Track_Straight");
         Add("Straight2",        "*S***S**","Track_Angle");
