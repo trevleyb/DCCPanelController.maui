@@ -1,11 +1,13 @@
 
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="TrackParts-(new)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Straight">
             <polygon id="Border" fill="#000000" points="7 18 41 18 41 20 7 20"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="41 16 41 18 7 18 7 16"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="41 30 41 32 7 32 7 30"></polygon>
             <polygon id="Border" fill="#000000" points="7 28 41 28 41 30 7 30"></polygon>
-            <polygon id="Mainline" fill="#BDBDBD" points="7 20 41 20 41 28 7 28"></polygon>
-            <line x1="11" y1="24" x2="38" y2="24" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <polygon id="Track" fill="#BDBDBD" points="7 20 41 20 41 28 7 28"></polygon>
+            <line x1="11" y1="24" x2="38.0000002" y2="24" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
     </g>
 </svg>

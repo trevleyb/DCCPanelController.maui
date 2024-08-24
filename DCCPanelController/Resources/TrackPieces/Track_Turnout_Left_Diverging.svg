@@ -1,18 +1,22 @@
 
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="TrackParts-(new)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Turnout_Left_Diverging">
-            <polygon id="Mainline" fill="#BDBDBD" transform="translate(16, 23.9999) rotate(180) translate(-16, -23.9999)" points="7 19.99988 25 19.99988 25 27.999878 7 27.9997788"></polygon>
-            <polygon id="Mainline" fill="#BDBDBD" transform="translate(35.5, 14) rotate(180) translate(-35.5, -14)" points="23.0000017 27.9999998 22.999998 23.0000125 46.0000073 3.8146973e-06 48 8.00000391 28.0000149 27.9999998"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(16, 23.9999) rotate(180) translate(-16, -23.9999)" points="7 19.99988 25 19.99988 25 27.999878 7 27.9997788"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 14) rotate(180) translate(-35.5, -14)" points="23.0000017 27.9999998 22.999998 23.0000125 46.0000073 3.8146973e-06 48 8.00000391 28.0000149 27.9999998"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(14.9999, 18.9999) rotate(180) translate(-14.9999, -18.9999)" points="22.9999004 17.9998933 23.0000006 19.9999111 8.02171329 19.999939 6.9997406 17.999878"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(16.5, 28.9999) rotate(180) translate(-16.5, -28.9999)" points="26 27.9999992 26 29.9999992 8.00000002 29.9999 7 27.9999"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="26 30 26 32 7 32 7 30"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="22 16 22 18 7 18 7 16"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="37.9289776 -8.96453887e-05 40 3.81469724e-06 22 17.9999995 22 15.9999997"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="48.00007 8.000008 47.9999974 9.99990928 26 31.9999994 26 29.9999992"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(31.5001, 9.9999) rotate(180) translate(-31.5001, -9.9999)" points="20 19.9999084 40.0000252 -8.96379645e-05 43.0001243 -8.9645386e-05 22.9999984 19.9999084 21.9475103 19.9999084"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(35.5, 17.5) scale(-1, 1) rotate(90) translate(-35.5, -17.5)" points="23.000038 30.0000335 48.00004 4.9999685 48.00004 7.9999684 26.000046 30.0000335"></polygon>
-            <polygon id="Mainline" fill="#BDBDBD" transform="translate(35.5, 24) rotate(180) translate(-35.5, -24)" points="30.9998779 20 41.000001 20 32.9956002 28.000001 30 28.0000005 30 20"></polygon>
+            <polygon id="TrackDiverging" fill="#BDBDBD" transform="translate(35.5, 24) rotate(180) translate(-35.5, -24)" points="30.9998779 20 41.000001 20 32.9956002 28.000001 30 28.0000005 30 20"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(34.4647, 28.9978) rotate(180) translate(-34.4647, -28.9978)" points="27.929379 28 41.000001 28 38.9293792 29.9955069 27.929379 29.9955069"></polygon>
             <polygon id="Border" fill="#000000" points="41.0000013 20.0000007 38 20.0000007 40.0000013 18 41.0000007 18.0000255"></polygon>
-            <line x1="11" y1="24" x2="24" y2="24" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <line x1="44.0000001" y1="4" x2="27" y2="21" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="11" y1="24" x2="24" y2="24" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="44.0000001" y1="4" x2="27" y2="21" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
     </g>
 </svg>

@@ -1,25 +1,25 @@
 
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="TrackParts-(new)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Compass">
             <rect id="CompassNW" fill="#757575" transform="translate(5, 5) rotate(135) translate(-5, -5)" x="4" y="3" width="2" height="4"></rect>
-            <polygon id="CompassNW" fill="#BDBDBD" transform="translate(2.9781, 2.9852) rotate(-45) translate(-2.9781, -2.9852)" points="2.9674366 0.98523 5.978149 4.98523 -0.021851 4.98523"></polygon>
+            <polygon id="CompassNW" fill="#BDBDBD" transform="translate(2.9781, 2.9852) rotate(-45) translate(-2.9781, -2.9852)" points="2.96743678 0.98522997 5.97814918 4.98522997 -0.021850824 4.98522997"></polygon>
             <rect id="CompassW" fill="#757575" transform="translate(6, 24) rotate(90) translate(-6, -24)" x="5" y="22" width="2" height="4"></rect>
-            <polygon id="CompassW" fill="#BDBDBD" transform="translate(2.9781, 23.9852) rotate(-90) translate(-2.9781, -23.9852)" points="2.9674366 21.98523 5.978149 25.98523 -0.021851 25.98523"></polygon>
+            <polygon id="CompassW" fill="#BDBDBD" transform="translate(2.9781, 23.9852) rotate(-90) translate(-2.9781, -23.9852)" points="2.9674366 21.98523 5.978149 25.98523 -0.021851003 25.98523"></polygon>
             <rect id="CompassSW" fill="#757575" transform="translate(5, 43) rotate(45) translate(-5, -43)" x="4" y="41" width="2" height="4"></rect>
-            <polygon id="CompassSW" fill="#BDBDBD" transform="translate(2.9781, 44.9852) rotate(-135) translate(-2.9781, -44.9852)" points="2.9674366 42.98523 5.978149 46.98523 -0.021851 46.98523"></polygon>
+            <polygon id="CompassSW" fill="#BDBDBD" transform="translate(2.9781, 44.9852) rotate(-135) translate(-2.9781, -44.9852)" points="2.96743654 42.98523 5.97814894 46.98523 -0.021851063 46.98523"></polygon>
             <rect id="CompassS" fill="#757575" x="23" y="40" width="2" height="4"></rect>
-            <polygon id="CompassS" fill="#BDBDBD" transform="translate(23.9781, 44.9852) rotate(180) translate(-23.9781, -44.9852)" points="23.9674376 42.98523 26.97815 46.98523 20.97815 46.98523"></polygon>
+            <polygon id="CompassS" fill="#BDBDBD" transform="translate(23.9782, 44.9852) rotate(180) translate(-23.9782, -44.9852)" points="23.9674376 42.98523 26.97815 46.98523 20.97815 46.98523"></polygon>
             <rect id="CompassSE" fill="#757575" transform="translate(43, 43) rotate(135) translate(-43, -43)" x="42" y="41" width="2" height="4"></rect>
-            <polygon id="CompassSE" fill="#BDBDBD" transform="translate(44.9781, 44.9852) rotate(135) translate(-44.9781, -44.9852)" points="44.9674376 42.98523 47.97815 46.98523 41.97815 46.98523"></polygon>
+            <polygon id="CompassSE" fill="#BDBDBD" transform="translate(44.9782, 44.9852) rotate(135) translate(-44.9782, -44.9852)" points="44.9674376 42.98523 47.97815 46.98523 41.97815 46.98523"></polygon>
             <rect id="CompassE" fill="#757575" transform="translate(42, 24) rotate(90) translate(-42, -24)" x="41" y="22" width="2" height="4"></rect>
-            <polygon id="CompassE" fill="#BDBDBD" transform="translate(44.9781, 23.9852) rotate(90) translate(-44.9781, -23.9852)" points="44.9674376 21.98523 47.97815 25.98523 41.97815 25.98523"></polygon>
-            <rect id="CompassNE" fill="#757575" transform="translate(43, 5) rotate(45) translate(-43, -5)" x="42" y="3" width="2" height="4"></rect>
-            <polygon id="CompassNE" fill="#BDBDBD" transform="translate(44.9781, 2.9852) rotate(45) translate(-44.9781, -2.9852)" points="44.9674376 0.9852295 47.97815 4.9852295 41.97815 4.9852295"></polygon>
+            <polygon id="CompassE" fill="#BDBDBD" transform="translate(44.9782, 23.9852) rotate(90) translate(-44.9782, -23.9852)" points="44.9674376 21.98523 47.97815 25.98523 41.97815 25.98523"></polygon>
+            <rect id="CompassNE" fill="#757575" transform="translate(43, 5) rotate(45) translate(-43, -5)" x="42" y="3.0000007" width="2" height="4"></rect>
+            <polygon id="CompassNE" fill="#BDBDBD" transform="translate(44.9782, 2.9852) rotate(45) translate(-44.9782, -2.9852)" points="44.9674376 0.9852295 47.97815 4.9852295 41.97815 4.9852295"></polygon>
             <rect id="CompassN" fill="#757575" x="23" y="4" width="2" height="4"></rect>
             <polygon id="CompassN" fill="#757575" points="23.9674376 0.9852295 26.97815 4.9852295 20.97815 4.9852295"></polygon>
-            <rect id="Rectangle" stroke-opacity="0.5" stroke="#979797" x="0.5" y="0.5" width="47" height="47"></rect>
-            <rect id="Rectangle" stroke-opacity="0.25" stroke="#979797" x="8.5" y="8.5" width="31" height="31"></rect>
+            <rect id="Rectangle" stroke-opacity="0.5019608" stroke="#979797" x="0.5" y="0.5" width="47" height="47"></rect>
+            <rect id="Rectangle" stroke-opacity="0.2509804" stroke="#979797" x="8.5" y="8.5" width="31" height="31"></rect>
         </g>
     </g>
 </svg>

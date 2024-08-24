@@ -1,17 +1,25 @@
 
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <g id="TrackParts-(new)" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Straight_Cross">
             <polygon id="Border" fill="#000000" points="7 18 41 18 41 20 7 20"></polygon>
             <polygon id="Border" fill="#000000" points="7 28 41 28 41 30 7 30"></polygon>
-            <polygon id="Mainline" fill="#BDBDBD" points="7 20 41 20 41 28 7 28"></polygon>
+            <polygon id="Track" fill="#BDBDBD" points="7 20 41 20 41 28 7 28"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(19, 34.5) rotate(90) translate(-19, -34.5)" points="12.5 33.5 25.5 33.5 25.5 35.5 12.5 35.5"></polygon>
-            <polygon id="Mainline" fill="#BDBDBD" transform="translate(24, 24) rotate(90) translate(-24, -24)" points="7 20 41 20 41 28 7 28"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(24, 24) rotate(90) translate(-24, -24)" points="7 20 41 20 41 28 7 28"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(29, 34.5) rotate(90) translate(-29, -34.5)" points="22.5 33.5 35.5 33.5 35.5 35.5 22.5 35.5"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(29, 13.5) rotate(90) translate(-29, -13.5)" points="22.5 12.5 35.5 12.5 35.5 14.5 22.5 14.5"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(19, 13.5) rotate(90) translate(-19, -13.5)" points="12.5 12.5 25.5 12.5 25.5 14.5 12.5 14.5"></polygon>
-            <line x1="11" y1="24" x2="37" y2="24" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <line x1="24" y1="11" x2="24" y2="39" id="Branchline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="11" y1="24" x2="37.0000002" y2="24" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="24" y1="11" x2="24" y2="38.9999994" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <polygon id="Occupied" fill="#FF0000" points="18 30 18 32 7 32 7 30"></polygon>
+            <polygon id="Occupied" fill="#FF0000" transform="translate(17, 35.5) rotate(90) translate(-17, -35.5)" points="22.5 34.5 22.5 36.5 11.5 36.5 11.5 34.5"></polygon>
+            <polygon id="Occupied" fill="#FF0000" transform="translate(31, 35.5) rotate(90) translate(-31, -35.5)" points="36.5 34.5 36.5 36.5 25.5 36.5 25.5 34.5"></polygon>
+            <polygon id="Occupied" fill="#FF0000" transform="translate(17, 12.5) rotate(90) translate(-17, -12.5)" points="22.5 11.5 22.5 13.5 11.5 13.5 11.5 11.5"></polygon>
+            <polygon id="Occupied" fill="#FF0000" transform="translate(31, 12.5) rotate(90) translate(-31, -12.5)" points="36.5 11.5 36.5 13.5 25.5 13.5 25.5 11.5"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="41 30 41 32 30 32 30 30"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="18 16 18 18 7 18 7 16"></polygon>
+            <polygon id="Occupied" fill="#FF0000" points="41 16 41 18 30 18 30 16"></polygon>
         </g>
     </g>
 </svg>
