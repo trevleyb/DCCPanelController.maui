@@ -1,8 +1,8 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Components.SVGManager;
 using DCCPanelController.Components.TrackPieces;
 using DCCPanelController.Components.TrackPieces.Base;
+using DCCPanelController.Components.TrackPieces.SVGManager;
 
 namespace DCCPanelController.ViewModel;
 

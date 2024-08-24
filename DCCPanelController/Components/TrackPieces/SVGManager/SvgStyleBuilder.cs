@@ -1,10 +1,6 @@
 using System.Diagnostics;
 
-namespace DCCPanelController.Components.SVGManager;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
+namespace DCCPanelController.Components.TrackPieces.SVGManager;
 
 [Serializable, DebuggerDisplay("{Name}")]
 public class SvgStyle {

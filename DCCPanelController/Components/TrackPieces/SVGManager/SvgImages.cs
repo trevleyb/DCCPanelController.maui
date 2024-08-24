@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace DCCPanelController.Components.SVGManager;
+namespace DCCPanelController.Components.TrackPieces.SVGManager;
 
 /// <summary>
 /// Track Images is a helper class that provides information about each image that is contained in the resource file

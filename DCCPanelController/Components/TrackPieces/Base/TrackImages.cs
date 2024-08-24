@@ -1,5 +1,3 @@
-using DCCPanelController.Components.SVGManager;
-
 namespace DCCPanelController.Components.TrackPieces.Base;
 
 public class TrackImages {

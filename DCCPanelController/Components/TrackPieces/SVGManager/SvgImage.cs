@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 
-namespace DCCPanelController.Components.SVGManager;
+namespace DCCPanelController.Components.TrackPieces.SVGManager;
 
 [DebuggerDisplay("{Id} [{Rotation}]")]
 public partial class SvgImage : ObservableObject {

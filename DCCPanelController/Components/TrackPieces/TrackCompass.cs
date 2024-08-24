@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using DCCPanelController.Components.SVGManager;
 using DCCPanelController.Components.TrackPieces.Base;
+using DCCPanelController.Components.TrackPieces.SVGManager;
 
 namespace DCCPanelController.Components.TrackPieces;
 
