@@ -26,7 +26,7 @@ public class SvgCompass {
     public TrackConnectionsEnum[]  ConnectionPointsRotated(int rotation = 0) {
 
         // Fix the rotation. If it is < 0 then inverse it (-90 = +270) and then work out what index 
-        // the position would be. So a rotation of -90, is +270 which would be position 6. 
+        // the position would be. So a rotation of -90 is +270 which would be position 6. 
         // N(0)=0, NE(45)=1, E(90)=2, SE(135)=3, S(180)=4, SW(225)=5, W(270)=6, NW(315)=7, N(360)=0
         // ----------------------------------------------------------------------------------------
         if (rotation < 0) rotation = 360 + rotation; 

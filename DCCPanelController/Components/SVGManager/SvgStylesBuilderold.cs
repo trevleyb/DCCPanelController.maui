@@ -1,6 +1,6 @@
 namespace DCCPanelController.Components.SVGManager;
-
-public class SvgStylesBuilder(string styleName) {
+/*
+public class SvgStylesBuilderold(string styleName) {
     public string Name => _style.Name;
     private readonly SvgStyle _style = new(styleName);
 
@@ -9,7 +9,20 @@ public class SvgStylesBuilder(string styleName) {
         _style.AddElement(element);
         return new StyleElementBuilder(this, element);
     }
-
+    
+    public StyleElementBuilder AddStyle(string styleName) {
+        var style = SvgStyles.GetStyle(styleName);
+        foreach (var element in style.Elements) {
+            var newElement = new StyleElement(element.Name);
+            foreach (var attribute in element.Attributes) {
+                var newAttribute = new StyleAttribute(attribute.Name, attribute.Value);
+                newElement.AddAttribute(newAttribute);
+            }
+            _style.AddElement(newElement);
+        }
+        return new StyleElementBuilder(this, null);
+    }
+    
     public SvgStyle Build() {
         return _style;
     }
@@ -58,3 +71,4 @@ public class StyleElementBuilder(SvgStylesBuilder stylesBuilder, StyleElement el
         return stylesBuilder;
     }
 }
+*/

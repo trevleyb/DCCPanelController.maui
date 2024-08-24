@@ -1,5 +1,8 @@
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 
 namespace DCCPanelController.Components.SVGManager;
 
@@ -8,66 +11,112 @@ public partial class SvgImage : ObservableObject {
 
     [ObservableProperty] private string _id;
     [ObservableProperty] private int _rotation;
-
+    [ObservableProperty] private bool _isOccupied;
     [ObservableProperty] private SvgImageManager _imageManager;
     [ObservableProperty] private SvgCompass _connections;
+    public ImageSource? Image => ImageManager.Image;
     
     public SvgImage(string id, string imageName, int rotation, SvgCompass connections) {
         Id = id;
         Rotation = rotation;
         Connections = connections;
         ImageManager = new SvgImageManager(imageName);
+        IsOccupied = false;
+        PropertyChanged += OnPropertyChanged;
     }
 
-    public ImageSource? Image => ImageManager.Image;
-
-    public void ApplyStyle(string styleName) {
-        SvgStyles.ApplyStyle(styleName, this);
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName is nameof(IsOccupied)) {
+            ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
+        } 
     }
 
-    public bool SupportsLabel => ImageManager.IsElementSupported("text");
+    public bool SupportsLabel => ImageManager.IsSupported(SvgElementEnum.Text);
     public void SetLabel(string label) {
         if (string.IsNullOrEmpty(label)) return;
-        if (ImageManager.IsElementSupported("text")) ImageManager.SetElementValue("text", label);
+        if (SupportsLabel) ImageManager.SetAllAttributeValues(SvgElementEnum.Text, "text", label);
     }
-
+    
+    public void ApplyStyle(string style) => ApplyStyle(SvgStyles.GetStyle(style));
+    
     public void ApplyStyle(SvgStyle style) {
+        if (string.IsNullOrEmpty(style.Name)) return; 
         foreach (var element in style.Elements) {
-            foreach (var attribute in element.Attributes) {
-                SetElementAttribute(element.Name, attribute.Name, attribute.Value);
+            foreach (var styleAttribute in element.Value.Attributes) {
+                ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
             }
         }
     }
     
-    public void SetElementAttribute(string elementName, string attributeName, string attributeValue) {
-        switch (attributeName) {
-        case "Color":
-            if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
-                ImageManager.SetElementAttributeValue(elementName, "stroke", attributeValue);
-            } else {
-                ImageManager.SetElementAttributeValue(elementName, "fill", attributeValue);
-            }
+    // Element Types Supported Include
+    // ---------------------------------------------------------------------------
+    // <rect>       - fill, fill-opacity
+    // <polygon>    - fill, fill-opacity
+    // <text>       - fill, fill-opacity
+    // <line>       - stroke, stroke-opacity, dash-array
+    // <circle>     - Border= stroke, stroke-opacity, Button=fill, fill-opacity 
+    
+    // Supported Attributes for Styles
+    // ---------------------------------------------------------------------------
+    // Color        - sets the color of the element
+    // Opacity      - sets the opacity of the element
+    // Dashed       - sets if the line is dashed or not dashed (valid on a line only)
+    // Visible      - sets if the element should be visible or not 
+    
+    public void ApplyElementStyle(SvgElementEnum elementEnum, string attributeName, string value) => ApplyElementStyle(SvgElement.ToString(elementEnum), attributeName, value);
+    public void ApplyElementStyle(string elementName, string attributeName, string attributeValue) {
+        // Get back all the elements that have an ID = the element name provided (such as "border")
+        // -----------------------------------------------------------------------------------------
+        foreach (var element in ImageManager.FindElements(elementName)) {
+            _ = ImageManager.ElementType(element) switch {
+                "rect"    => SetFillType(element, attributeName, attributeValue),
+                "polygon" => SetFillType(element, attributeName, attributeValue),
+                "text"    => SetFillType(element, attributeName, attributeValue),
+                "line"    => SetStrokeType(element, attributeName, attributeValue),
+                "circle" => elementName.ToLowerInvariant() switch {
+                    "border" => SetStrokeType(element, attributeName, attributeValue),
+                    "button" => SetFillType(element, attributeName, attributeValue),
+                    _ => false
+                },
+                _ => false,
+            };
+        }
+    }
+    
+    private bool SetFillType(XElement element, string attributeName, string attributeValue) {
+        switch (attributeName.ToLowerInvariant()) {
+        case "color":
+            ImageManager.SetAttributeValue(element, "fill", attributeValue);
             break;
-        case "Opacity":
-            ImageManager.SetElementAttributeValue(elementName, "opacity", attributeValue);
+        case "opacity":
+            ImageManager.SetAttributeValue(element, "fill-opacity", attributeValue);
             break;
-        case "Text":
-            if (ImageManager.GetElementType(elementName).Equals("text", StringComparison.OrdinalIgnoreCase)) {
-                ImageManager.SetElementValue(elementName, attributeValue);
-            }
+        case "visible":
+            ImageManager.SetAttributeValue(element, "fill-opacity", attributeValue.IsTrue() ? "100" : "0");
             break;
+        default:
+            return false;
+        }
+        return true;
+    }
 
-        case "Dashed":
-            if (ImageManager.GetElementType(elementName).Equals("line", StringComparison.OrdinalIgnoreCase)) {
-                if (attributeValue.Equals("1") || attributeValue.Equals("true", StringComparison.OrdinalIgnoreCase)) {
-                    ImageManager.SetElementAttributeValue(elementName, "stroke-dasharray", "2,6");
-                    ImageManager.SetElementAttributeValue(elementName, "stroke-linecap", "square");
-                } else {
-                    ImageManager.SetElementAttributeValue(elementName, "stroke-dasharray", "0,0");
-                }
-            }
+    private bool SetStrokeType(XElement element, string attributeName, string attributeValue) {
+        switch (attributeName.ToLowerInvariant()) {
+        case "color":
+            ImageManager.SetAttributeValue(element, "stroke", attributeValue);
             break;
+        case "opacity":
+            ImageManager.SetAttributeValue(element, "stroke-opacity", attributeValue);
+            break;
+        case "dashed":
+            ImageManager.SetAttributeValue(element, "stroke-dasharray", attributeValue.IsTrue() ? "2,6" : "0,0");
+            break;
+        case "visible":
+            ImageManager.SetAttributeValue(element, "stroke-opacity", attributeValue.IsTrue() ? "100" : "0");
+            break;
+        default:
+            return false;
         }
+        return true;
     }
-    
 }

@@ -85,18 +85,6 @@ public static class SvgImages {
     } 
 }
 
-public enum TrackViewModelType {
-    Straight,
-    Terminator,
-    Corner, 
-    StraightContinuation,
-    CornerContinuation,
-    Crossing, 
-    LeftTurnout,
-    RightTurnout,
-    Threeway
-}
-
 [DebuggerDisplay("{Id}")]
 public class TrackImageFile(string id, string svgFilename, string directions) {
     public string Id { get; set; } = id;

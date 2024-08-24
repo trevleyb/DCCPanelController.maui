@@ -22,14 +22,19 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     [ObservableProperty] private int _trackDirection;
     [ObservableProperty] private int _x;
     [ObservableProperty] private int _y;
+    [ObservableProperty] private bool _isOccupied = false;
     [ObservableProperty] private TrackState _state = new TrackState();
 
     public ImageSource?   Image => ActiveImage?.ImageSource?.Image;
     protected TrackImage? ActiveImage = null;
     protected TrackImages TrackImages = new TrackImages();
 
-    public SvgCompass Connections => ActiveImage?.ImageSource?.Connections ?? new SvgCompass("********"); 
+    public SvgCompass Connections => ActiveImage?.ImageSource?.Connections ?? new SvgCompass("********");
 
+    /// <summary>
+    /// Indicates f this element can be rotated. 
+    /// </summary>
+    public bool CanRotate => TrackImages.RotateBy > 1;
     public void RotateLeft() {
         TrackDirection = Compass.ToCompass(TrackDirection).Prev(TrackImages.RotateBy).ToRotation();
         SetActiveImage();
@@ -85,6 +90,8 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             // set Rotation to the value defined against the active image. 
             // -----------------------------------------------------------------------------------------------
             ActiveImage = TrackImages.Get(TrackDirection, State);
+            ActiveImage.Value.ImageSource.ApplyStyle(Style);
+            ActiveImage.Value.ImageSource.IsOccupied = IsOccupied;
             ImageRotation = ActiveImage.Value.Rotation;
             OnPropertyChanged(nameof(Image));
             OnPropertyChanged(nameof(ImageRotation));

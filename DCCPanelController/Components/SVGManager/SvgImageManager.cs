@@ -10,7 +10,8 @@ public class SvgImageManager {
 
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
-    private readonly XDocument _svgImageXDoc;
+    private readonly XDocument _svgDocument;
+    private ImageSource? _imageSource;
 
     /// <summary>
     /// Creates an instance of the Image Manager with the given name of the
@@ -22,13 +23,18 @@ public class SvgImageManager {
     /// <exception cref="Exception">Will throw FileNot Found if it cannot find the file. </exception>
     public SvgImageManager(string imageName) {
         try {
-            _svgImageXDoc = LoadSvg(SvgImageFinder.GetFullPathOfResource(imageName));
+            _svgDocument = LoadSvg(SvgImageFinder.GetFullPathOfResource(imageName));
         } catch (Exception e) {
             throw new FileNotFoundException($"Unable to load image {imageName}: {e.Message}");
         }
     }
 
-    public ImageSource Image => GetSvgAsImage();
+    /// <summary>
+    /// Returns the image. We store it so that we only need to re-calculate it if we have made a
+    /// change to any of the elements. The change functions will set _imageSource to null which will
+    /// cause a call to the image function to re-calculate/re-draw the image itself. 
+    /// </summary>
+    public ImageSource Image => _imageSource ?? GetSvgAsImage();
 
     /// <summary>
     /// Converts the SVG Impage into a PNG. Upscales it to the default size as part of the process. 
@@ -37,7 +43,7 @@ public class SvgImageManager {
     /// <exception cref="ApplicationException"></exception>
     private ImageSource GetSvgAsImage() {
         var svg = new SKSvg();
-        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgImageXDoc.ToString())));
+        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
         if (svg is null) throw new ApplicationException("Unable to load svg");
 
         const int quality = 100;
@@ -47,25 +53,27 @@ public class SvgImageManager {
         var stream = new MemoryStream();
         svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
         stream.Seek(0, SeekOrigin.Begin);
-        return ImageSource.FromStream(() => stream);
+        _imageSource = ImageSource.FromStream(() => stream); 
+        return _imageSource;
     }
 
     /// <summary>
     /// Converts the XDocument SVG Image into a stream which can be consumed by
     /// the ImageSource.FromStream method
     /// </summary>
-    private static Stream ConvertXDocumentToStream(XDocument svgDocument) {
+    private Stream ConvertXDocumentToStream(XDocument svgDocument) {
         var stream = new MemoryStream();
         svgDocument.Save(stream);
         stream.Position = 0;
         return stream;
     }
 
-    private static XDocument LoadSvg(string resourceName) {
+    private XDocument LoadSvg(string resourceName) {
+        _imageSource = null;
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(resourceName);
         if (stream == null) throw new FileNotFoundException("Resource not found.", resourceName);
-
+        
         using var reader = new StreamReader(stream);
         var svgContent = reader.ReadToEnd();
         try {
@@ -75,72 +83,71 @@ public class SvgImageManager {
             throw new FileLoadException("Failed to load the SVG image.", ex);
         }
     }
+    
+    /// <summary>
+    /// Function that checks if the element is supported.  
+    /// </summary>
+    public bool IsSupported(SvgElementEnum svgElement) => IsSupported(SvgElement.ToString(svgElement));
+    public bool IsSupported(string name) => SupportedElements.Contains(name, StringComparer.OrdinalIgnoreCase);
+    public List<string> SupportedElements => _svgDocument.Descendants()
+        .SelectMany(element => element.Attributes()
+                        .Where(attribute => attribute.Name.LocalName == "id")
+                        .Select(attribute => attribute.Value))
+        .Distinct().ToList();
 
-    #region Manage Changing Colors and Opacity using the attribute for the tem to change
-    protected List<XElement> FindElements(string attributeID) => FindElementsAttribute("id", attributeID).ToList();
-
-    protected List<XElement> FindElementsAttribute(string attributeName, string attributeValue) {
-        ArgumentNullException.ThrowIfNull(_svgImageXDoc);
+    /// <summary>
+    /// Forces a set of any attributes defined in the element to the value. Does not add the attribute if it does not exist
+    /// </summary>
+    public void SetAllAttributeValues(SvgElementEnum svgElement, string attributeName, string attributeValue) {
+        foreach (var element in FindElements(svgElement)) {
+            SetAttributeValue(element, attributeName, attributeValue, false);
+        }
+    }
+    
+    /// <summary>
+    /// This will search through the document and find all elements where the id= the name of the element to find.
+    /// As an example, give the following XML for a Button:
+    /// <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="24" cy="24" r="7"></circle>
+    /// Then a search for 'Border' will match on this ID, and the <circle> element will be returned. 
+    /// </summary>
+    public List<XElement> FindElements(SvgElementEnum svgElement) => FindElements(SvgElement.ToString(svgElement));
+    public List<XElement> FindElements(string elementName) {
         var elements = new List<XElement>();
-        foreach (var element in _svgImageXDoc.Descendants()) {
+        foreach (var element in _svgDocument.Descendants()) {
             foreach (var attr in element.Attributes()) {
-                if (attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(attributeValue, StringComparison.OrdinalIgnoreCase)) {
+                if (attr.Name.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(elementName, StringComparison.OrdinalIgnoreCase)) {
                     elements.Add(element);
                 }
             }
         }
-
-        return elements;
+        return elements;        
     }
 
-    public bool IsElementSupported(string name) => SupportedElements.Contains(name, StringComparer.OrdinalIgnoreCase);
-    public List<string> SupportedElements => _svgImageXDoc.Descendants()
-        .SelectMany(element => element.Attributes()
-        .Where(attribute => attribute.Name.LocalName == "id")
-        .Select(attribute => attribute.Value))
-        .Distinct().ToList();
+    public string ElementType(XElement element) => element.Name.LocalName.ToLowerInvariant();
+    public bool IsElementOfType(XElement element, string type) => element.Name.LocalName.Equals(type, StringComparison.OrdinalIgnoreCase); 
     
     /// <summary>
-    /// Sets the value of a given Attribute within a given Element
+    /// Given an element, set the attribute property to the value provided 
     /// </summary>
-    /// <param name="elementName">The element to find with an ID = to the element name</param>
-    /// <param name="attributeName">The attribute name to modify</param>
-    /// <param name="attributeValue">The value to apply</param>
-    public void SetElementAttributeValue(string elementName, string attributeName, string attributeValue) {
-        foreach (var element in FindElements(elementName)) {
-            SetAttributeValue(element, attributeName, attributeValue);
-        }
-    }
-
-    /// <summary>
-    /// Sets the Element value for an element that has the given ID
-    /// </summary>
-    /// <param name="elementName">The element that has id='<elementname>'</param>
-    /// <param name="elementValue"The value to populate the element value with></param>
-    public void SetElementValue(string elementName, string elementValue) {
-        foreach (var element in FindElements(elementName)) {
-            element.Value = elementValue;
-        }
-    }
-    
-    public string GetElementType(string elementName) {
-        var element = FindElements(elementName).FirstOrDefault();
-        return element?.Name?.LocalName ?? "unknown";
-    }
-    
-    protected static void SetAttributeValue(XElement element, string attributeName, string attributeValue) {
+    public void SetAttributeValue(XElement element, string attributeName, string attributeValue, bool addIfNotExist = true) {
         ArgumentNullException.ThrowIfNull(element);
         var attribute = (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr).FirstOrDefault();
         if (attribute is not null) {
             attribute.Value = attributeValue;
+            _imageSource = null;
         } else {
-            element.Add(new XAttribute(attributeName, attributeValue));
+            if (addIfNotExist) {
+                element.Add(new XAttribute(attributeName, attributeValue));
+                _imageSource = null;
+            }
         }
     }
 
-    protected static string? GetAttributeValue(XElement element, string attributeName) {
+    /// <summary>
+    /// Get the value of an attribute given an element
+    /// </summary>
+    public static string? GetAttributeValue(XElement element, string attributeName) {
         ArgumentNullException.ThrowIfNull(element);
         return (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr.Value).FirstOrDefault();
     }
-    #endregion
 }

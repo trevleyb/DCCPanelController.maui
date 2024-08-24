@@ -1,7 +1,7 @@
 using System.Diagnostics;
 
 namespace DCCPanelController.Components.SVGManager;
-
+/*
 [Serializable]
 [DebuggerDisplay("{Name}")]
 public class SvgStyle(string name, List<StyleElement>? elements = null) {
@@ -25,3 +25,4 @@ public class StyleAttribute(string name, string value) {
     public string Name { get; set; } = name;
     public string Value { get; set; } = value;
 }
+*/

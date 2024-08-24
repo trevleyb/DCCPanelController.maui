@@ -215,6 +215,8 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Resources\TrackPieces\Sample.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
       <None Remove="Resources\TrackPieces\Track_Angle.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg" />

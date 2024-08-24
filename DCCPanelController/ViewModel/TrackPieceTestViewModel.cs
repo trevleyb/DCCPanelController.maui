@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Components.SVGManager;
 using DCCPanelController.Components.TrackPieces;
 using DCCPanelController.Components.TrackPieces.Base;
 
@@ -9,10 +10,13 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
 
     [ObservableProperty] private ITrackPiece _trackPiece;
     [ObservableProperty] private ITrackPiece? _overlay;
-
+    [ObservableProperty] private List<string> _styles;
+    
+    private bool isCompassOn = false;
     private int _currentPiece = 0;
     private readonly List<ITrackPiece> _trackPieces = [];
 
+    
     public TrackPieceTestViewModel() {
         _trackPieces.Add(new TrackStraight());
         _trackPieces.Add(new TrackCorner());
@@ -24,12 +28,31 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
         _trackPieces.Add(new TrackStraightContinuation());
         _trackPieces.Add(new TrackCornerContinuation());
         TrackPiece = _trackPieces[0];
+        Styles = SvgStyles.AvailableStyles;
     }
 
-    [RelayCommand] public void RotateLeft() => TrackPiece?.RotateLeft();
-    [RelayCommand] public void RotateRight() => TrackPiece?.RotateRight();
-    [RelayCommand] public void NextState() => TrackPiece?.NextState();
-    [RelayCommand] public void PrevState() => TrackPiece?.PrevState();
+    [RelayCommand]
+    public void RotateLeft() {
+        TrackPiece?.RotateLeft();
+        if (isCompassOn) SetCompassOverlay();
+    }
+
+    [RelayCommand] public void RotateRight() {
+        TrackPiece?.RotateRight();
+        if (isCompassOn) SetCompassOverlay();
+    }
+
+    [RelayCommand]
+    public void NextState() {
+        TrackPiece?.NextState();
+        if (isCompassOn) SetCompassOverlay();
+    }
+
+    [RelayCommand]
+    public void PrevState() {
+        TrackPiece?.PrevState();
+        if (isCompassOn) SetCompassOverlay();
+    }
 
     [RelayCommand]
     public void AddButton() {
@@ -37,8 +60,8 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
             Overlay = null;
         } else {
             var button = new TrackButton();
-            //button.SetCompassPoints(TrackPiece);
             Overlay = button;
+            isCompassOn = false;
         }
     }
 
@@ -48,8 +71,8 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
             Overlay = null;
         } else {
             var label = new TrackLabel();
-            //compass.SetCompassPoints(TrackPiece);
             Overlay = label;
+            isCompassOn = false;
         }
     }
 
@@ -57,18 +80,26 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
     public void AddCompass() {
         if (Overlay != null) {
             Overlay = null;
+            isCompassOn = false;
         } else {
-            var compass = new TrackCompass();
-            compass.SetCompassPoints(TrackPiece);
-            Overlay = compass;
+            SetCompassOverlay();
         }
     }
 
+    private void SetCompassOverlay() {
+        Overlay = null;
+        var compass = new TrackCompass();
+        compass.SetCompassPoints(TrackPiece);
+        Overlay = compass;
+        isCompassOn = true;
+    }
+    
     [RelayCommand]
     public void NextImage() {
         _currentPiece++;
         if (_currentPiece >= _trackPieces.Count) _currentPiece = 0;
         TrackPiece = _trackPieces[_currentPiece];
+        if (isCompassOn) SetCompassOverlay();
         OnPropertyChanged(nameof(TrackPiece));
     }
 }

@@ -26,29 +26,29 @@ public class TrackCompass : TrackPiece {
         
         switch (connection) {
         case TrackConnectionsEnum.Terminator:
-            svgImage.SetElementAttribute(compassId, "Color", Colors.Yellow.ToRgbaHex());
-            svgImage.SetElementAttribute(compassId, "Opacity", "100");
+            svgImage.ApplyElementStyle(compassId, "Color", Colors.Yellow.ToRgbaHex());
+            svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Straight:
-            svgImage.SetElementAttribute(compassId, "Color", Colors.Blue.ToRgbaHex());
-            svgImage.SetElementAttribute(compassId, "Opacity", "100");
+            svgImage.ApplyElementStyle(compassId, "Color", Colors.Blue.ToRgbaHex());
+            svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Closed:
-            svgImage.SetElementAttribute(compassId, "Color", Colors.Green.ToRgbaHex());
-            svgImage.SetElementAttribute(compassId, "Opacity", "100");
+            svgImage.ApplyElementStyle(compassId, "Color", Colors.Green.ToRgbaHex());
+            svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Diverging:
-            svgImage.SetElementAttribute(compassId, "Color", Colors.Red.ToRgbaHex());
-            svgImage.SetElementAttribute(compassId, "Opacity", "100");
+            svgImage.ApplyElementStyle(compassId, "Color", Colors.Red.ToRgbaHex());
+            svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.Connector:
-            svgImage.SetElementAttribute(compassId, "Color", Colors.Magenta.ToRgbaHex());
-            svgImage.SetElementAttribute(compassId, "Opacity", "100");
+            svgImage.ApplyElementStyle(compassId, "Color", Colors.Magenta.ToRgbaHex());
+            svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
         case TrackConnectionsEnum.None:
         default:
-            svgImage.SetElementAttribute(compassId, "Color", Colors.Transparent.ToRgbaHex());
-            svgImage.SetElementAttribute(compassId, "Opacity", "0");
+            svgImage.ApplyElementStyle(compassId, "Color", Colors.Transparent.ToRgbaHex());
+            svgImage.ApplyElementStyle(compassId, "Opacity", "0");
             break;
         }
     }

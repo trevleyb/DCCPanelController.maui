@@ -15,9 +15,6 @@ public partial class Welcome : ContentPage {
     private void TrackTest_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new TrackPieceTestPage());
     }
-    private void ButtonTest_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new ElementTestPage());
-    }
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
