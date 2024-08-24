@@ -26,6 +26,7 @@ public class SvgDefaultStyles {
                 .AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGreen).Visible())
                 .AddElement(e => e.WithName(SvgElementEnum.Terminator).WithColor(Colors.Black).Visible())
                 .AddElement(e => e.WithName(SvgElementEnum.Continuation).WithColor(Colors.Black).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden())
                 .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden())
                 .Build();
 
@@ -36,6 +37,7 @@ public class SvgDefaultStyles {
                 .AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible())
                 .AddElement(e => e.WithName(SvgElementEnum.Terminator).WithColor(Colors.DarkGray).Visible())
                 .AddElement(e => e.WithName(SvgElementEnum.Continuation).WithColor(Colors.DarkGray).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden())
                 .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden())
                 .Build();
         

@@ -36,6 +36,10 @@ public partial class SvgImage : ObservableObject {
         if (string.IsNullOrEmpty(label)) return;
         if (SupportsLabel) ImageManager.SetAllAttributeValues(SvgElementEnum.Text, "text", label);
     }
+
+    public void SetOccupied(bool isOccupied) {
+        IsOccupied = isOccupied;
+    }
     
     public void ApplyStyle(string style) => ApplyStyle(SvgStyles.GetStyle(style));
     

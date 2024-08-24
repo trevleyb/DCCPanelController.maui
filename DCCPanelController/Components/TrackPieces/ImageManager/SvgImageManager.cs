@@ -34,13 +34,17 @@ public class SvgImageManager {
     /// change to any of the elements. The change functions will set _imageSource to null which will
     /// cause a call to the image function to re-calculate/re-draw the image itself. 
     /// </summary>
-    public ImageSource Image => _imageSource ?? GetSvgAsImage();
+    public ImageSource Image => GetSvgAsImage(); 
 
     /// <summary>
-    /// Converts the SVG Impage into a PNG. Upscales it to the default size as part of the process. 
+    /// Forces the system to refresh the image. We need to do this after we have changed any elements 
+    /// </summary>
+    public void ForceImageRefresh() => _imageSource = GetSvgAsImage();
+    
+    /// <summary>
+    /// Converts the SVG Image into a PNG. Up-scales it to the default size as part of the process. 
     /// </summary>
     /// <returns>A PNG Image of the SVG</returns>
-    /// <exception cref="ApplicationException"></exception>
     private ImageSource GetSvgAsImage() {
         var svg = new SKSvg();
         svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
@@ -53,8 +57,7 @@ public class SvgImageManager {
         var stream = new MemoryStream();
         svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
         stream.Seek(0, SeekOrigin.Begin);
-        _imageSource = ImageSource.FromStream(() => stream); 
-        return _imageSource;
+        return ImageSource.FromStream(() => stream); 
     }
 
     /// <summary>
@@ -134,11 +137,9 @@ public class SvgImageManager {
         var attribute = (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr).FirstOrDefault();
         if (attribute is not null) {
             attribute.Value = attributeValue;
-            _imageSource = null;
         } else {
             if (addIfNotExist) {
                 element.Add(new XAttribute(attributeName, attributeValue));
-                _imageSource = null;
             }
         }
     }

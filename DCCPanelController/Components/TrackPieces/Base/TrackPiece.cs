@@ -90,9 +90,9 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             // set Rotation to the value defined against the active image. 
             // -----------------------------------------------------------------------------------------------
             ActiveImage = TrackImages.Get(TrackDirection, State);
-            ActiveImage.Value.ImageSource.ApplyStyle(Style);
-            ActiveImage.Value.ImageSource.IsOccupied = IsOccupied;
-            ImageRotation = ActiveImage.Value.Rotation;
+            ActiveImage?.ImageSource.ApplyStyle(Style);
+            ActiveImage?.ImageSource.SetOccupied(IsOccupied);
+            ImageRotation = ActiveImage?.Rotation ?? 0;
             OnPropertyChanged(nameof(Image));
             OnPropertyChanged(nameof(ImageRotation));
         } catch (Exception ex) {
