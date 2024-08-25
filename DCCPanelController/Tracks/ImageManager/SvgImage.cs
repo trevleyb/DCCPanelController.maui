@@ -48,7 +48,6 @@ public partial class SvgImage : ObservableObject {
     public void ApplyStyle(string style) => ApplyStyle(SvgStyles.GetStyle(style));
     
     public void ApplyStyle(SvgStyle style) {
-        if (string.IsNullOrEmpty(style.Name)) return; 
         foreach (var element in style.Elements) {
             foreach (var styleAttribute in element.Value.Attributes) {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);

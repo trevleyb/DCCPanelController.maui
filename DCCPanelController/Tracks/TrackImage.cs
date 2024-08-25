@@ -4,6 +4,6 @@ namespace DCCPanelController.Tracks;
 
 public class TrackImage : TrackPiece {
     protected override void Setup() {
-        throw new NotImplementedException();
+        Layer = 0;
     }
 }

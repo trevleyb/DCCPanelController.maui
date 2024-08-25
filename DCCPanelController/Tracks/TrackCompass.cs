@@ -7,6 +7,7 @@ namespace DCCPanelController.Tracks;
 public class TrackCompass : TrackPiece {
     protected override void Setup() {
         AddTrackImage(0,   "Normal", "Compass", 0);
+        Layer = 2;
     }
 
     public void SetCompassPoints(ITrackPiece track) {

@@ -7,12 +7,7 @@ namespace DCCPanelController.Tracks.Base;
 
 public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
 
-    protected TrackPiece(string name = "Track", string style = "Default", int rotation = 0, int x = 0, int y = 0) {
-        Name = name;
-        Style = style;
-        TrackDirection = rotation;
-        X = x;
-        Y = y;
+    protected TrackPiece() {
         IsOccupied = false;
         Initialise();
         OnPropertyChanged(nameof(Image));
@@ -30,18 +25,21 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         }
     }
 
-    [ObservableProperty] private string _name;
-    [ObservableProperty] private string _style;
     [ObservableProperty] private int _imageRotation; 
     [ObservableProperty] private int _trackDirection;
-    [ObservableProperty] private int _x;
-    [ObservableProperty] private int _y;
-    [ObservableProperty] private bool _isOccupied = false;
+    [ObservableProperty] private int _x;                    // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _y;                    // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _width  = 1;           // How Width is it (normally 1, Text might be 2)
+    [ObservableProperty] private int _height = 1;           // How High is it (Normally 1, Text might be 2)
+    [ObservableProperty] private int _layer  = 1;           // What layer is this on? Only 1 element per layer.
+    [ObservableProperty] private bool _isOccupied = false;  // Is this element currently occupied?
+    [ObservableProperty] private bool _isResizable = false; // Can this element be resized? Normally False
+    [ObservableProperty] private string? _style;
     [ObservableProperty] private TrackState _state = new TrackState();
 
     public ImageSource?   Image => ActiveImage?.ImageSource?.Image;
     protected TrackImage? ActiveImage = null;
-    protected TrackImages TrackImages = new TrackImages();
+    protected readonly TrackImages TrackImages = new TrackImages();
 
     public SvgCompass Connections => ActiveImage?.ImageSource?.Connections ?? new SvgCompass("********");
 

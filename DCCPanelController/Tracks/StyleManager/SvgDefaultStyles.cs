@@ -5,6 +5,7 @@ namespace DCCPanelController.Tracks.StyleManager;
 public class SvgDefaultStyles {
 
     public static void AddDefaultStyles(Dictionary<string, SvgStyle> styles) {
+        AddStyle("Default", styles);
         AddStyle("Mainline", styles);
         AddStyle("Branchline", styles);
         AddStyle("Mainline-Hidden", styles);
@@ -20,7 +21,16 @@ public class SvgDefaultStyles {
     public static SvgStyle? GetStyle(string styleName) {
         switch (styleName.ToLowerInvariant()) {
         case "default":
-            break;
+            return new SvgStyleBuilder(styleName)
+                .AddElement(e => e.WithName(SvgElementEnum.Border).WithColor(Colors.Black).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.DarkGreen).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGreen).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.Terminator).WithColor(Colors.Black).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.Continuation).WithColor(Colors.Black).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden())
+                .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden())
+                .Build();
+
         case "mainline":
             return new SvgStyleBuilder(styleName)
                 .AddElement(e => e.WithName(SvgElementEnum.Border).WithColor(Colors.Black).Visible())
