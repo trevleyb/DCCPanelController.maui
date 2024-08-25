@@ -9,9 +9,9 @@
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:DCCPanelController.Converters"
     xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui"
-    xmlns:view="clr-namespace:DCCPanelController.View">
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters">
 
     <ContentPage.Resources>
         <ResourceDictionary>

@@ -1,8 +1,6 @@
-namespace DCCPanelController.Converters;
-
-using System;
 using System.Globalization;
-using Microsoft.Maui.Controls;
+
+namespace DCCPanelController.Helpers.Converters;
 
 public class BooleanToArrowConverter : IValueConverter {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

@@ -1,4 +1,4 @@
-namespace DCCPanelController.Helpers;
+namespace DCCPanelController.Helpers.Result;
 
 public interface IResult {
     bool       Success   { get; }

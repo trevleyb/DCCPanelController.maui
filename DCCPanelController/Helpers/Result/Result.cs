@@ -1,4 +1,4 @@
-namespace DCCPanelController.Helpers;
+namespace DCCPanelController.Helpers.Result;
 
 public class Result(bool success, string message = "", Exception? exception = null) : IResult {
     // Constructors
