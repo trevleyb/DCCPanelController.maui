@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Components.TrackPieces.SVGManager;
+using DCCPanelController.Components.TrackPieces.ImageManager;
+using DCCPanelController.Components.TrackPieces.Interfaces;
 
 namespace DCCPanelController.Components.TrackPieces.Base;
 
