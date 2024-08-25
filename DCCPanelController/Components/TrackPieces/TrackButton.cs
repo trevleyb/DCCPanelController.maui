@@ -8,10 +8,5 @@ public class TrackButton : TrackPiece {
         AddTrackImage(0,"Normal", "Button", 0);
         AddTrackImage(0,"Normal", "Button", 0);
         AddTrackImage(0,"Normal", "Button", 0);
-        
-        AddTrackImage(0,"Corner", "Button_Corner", 0);
-        AddTrackImage(0,"Corner", "Button_Corner", 90);
-        AddTrackImage(0,"Corner", "Button_Corner", 180);
-        AddTrackImage(0,"Corner", "Button_Corner", 270);
     }
 }

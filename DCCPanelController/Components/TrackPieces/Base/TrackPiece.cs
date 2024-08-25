@@ -12,10 +12,23 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         TrackDirection = rotation;
         X = x;
         Y = y;
+        IsOccupied = false;
         Initialise();
         OnPropertyChanged(nameof(Image));
+        PropertyChanged += OnPropertyChanged;
     }
-    
+
+    /// <summary>
+    /// Manage when properties have changed as we may need to redraw the image
+    /// </summary>
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        switch (e.PropertyName) {
+        case nameof(IsOccupied):
+            SetActiveImage();
+            break;
+        }
+    }
+
     [ObservableProperty] private string _name;
     [ObservableProperty] private string _style;
     [ObservableProperty] private int _imageRotation; 
@@ -35,6 +48,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     /// Indicates f this element can be rotated. 
     /// </summary>
     public bool CanRotate => TrackImages.RotateBy > 1;
+    
     public void RotateLeft() {
         TrackDirection = Compass.ToCompass(TrackDirection).Prev(TrackImages.RotateBy).ToRotation();
         SetActiveImage();
@@ -92,7 +106,9 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             ActiveImage = TrackImages.Get(TrackDirection, State);
             ActiveImage?.ImageSource.ApplyStyle(Style);
             ActiveImage?.ImageSource.SetOccupied(IsOccupied);
+            ActiveImage?.ImageSource.ForceImageRefresh();
             ImageRotation = ActiveImage?.Rotation ?? 0;
+            
             OnPropertyChanged(nameof(Image));
             OnPropertyChanged(nameof(ImageRotation));
         } catch (Exception ex) {

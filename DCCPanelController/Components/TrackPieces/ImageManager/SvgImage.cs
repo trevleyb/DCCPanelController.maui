@@ -14,8 +14,10 @@ public partial class SvgImage : ObservableObject {
     [ObservableProperty] private bool _isOccupied;
     [ObservableProperty] private SvgImageManager _imageManager;
     [ObservableProperty] private SvgCompass _connections;
+
     public ImageSource? Image => ImageManager.Image;
-    
+    public void ForceImageRefresh() => ImageManager.ForceImageRefresh();
+
     public SvgImage(string id, string imageName, int rotation, SvgCompass connections) {
         Id = id;
         Rotation = rotation;
@@ -39,6 +41,7 @@ public partial class SvgImage : ObservableObject {
 
     public void SetOccupied(bool isOccupied) {
         IsOccupied = isOccupied;
+        ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
     }
     
     public void ApplyStyle(string style) => ApplyStyle(SvgStyles.GetStyle(style));

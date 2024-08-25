@@ -29,6 +29,7 @@ public partial class TrackPieceTestViewModel : BaseViewModel {
         _trackPieces.Add(new TrackCornerContinuation());
         TrackPiece = _trackPieces[0];
         Styles = SvgStyles.AvailableStyles;
+        
     }
 
     [RelayCommand]
