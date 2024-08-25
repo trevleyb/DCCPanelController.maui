@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces;
+namespace DCCPanelController.Tracks;
 
 public class TrackPieceFactory {
     

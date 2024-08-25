@@ -1,9 +1,9 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Components.TrackPieces.ImageManager;
-using DCCPanelController.Components.TrackPieces.Interfaces;
+using DCCPanelController.Tracks.ImageManager;
+using DCCPanelController.Tracks.Interfaces;
 
-namespace DCCPanelController.Components.TrackPieces.Base;
+namespace DCCPanelController.Tracks.Base;
 
 public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
 
@@ -105,7 +105,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             // set Rotation to the value defined against the active image. 
             // -----------------------------------------------------------------------------------------------
             ActiveImage = TrackImages.Get(TrackDirection, State);
-            ActiveImage?.ImageSource.ApplyStyle(Style);
+            (ActiveImage?.ImageSource).ApplyStyle((string)Style);
             ActiveImage?.ImageSource.SetOccupied(IsOccupied);
             ActiveImage?.ImageSource.ForceImageRefresh();
             ImageRotation = ActiveImage?.Rotation ?? 0;

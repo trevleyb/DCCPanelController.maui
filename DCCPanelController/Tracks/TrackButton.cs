@@ -1,7 +1,7 @@
-using DCCPanelController.Components.TrackPieces.Base;
-using DCCPanelController.Components.TrackPieces.Interfaces;
+using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 
-namespace DCCPanelController.Components.TrackPieces;
+namespace DCCPanelController.Tracks;
 
 public class TrackButton : TrackPiece, ITrackButton  {
     protected override void Setup() {

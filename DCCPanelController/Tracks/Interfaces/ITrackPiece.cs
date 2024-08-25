@@ -1,7 +1,7 @@
-using DCCPanelController.Components.TrackPieces.Base;
-using DCCPanelController.Components.TrackPieces.ImageManager;
+using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.ImageManager;
 
-namespace DCCPanelController.Components.TrackPieces.Interfaces;
+namespace DCCPanelController.Tracks.Interfaces;
 
 public interface ITrackPiece {
  

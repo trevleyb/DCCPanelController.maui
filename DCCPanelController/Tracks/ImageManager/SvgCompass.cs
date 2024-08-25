@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces.ImageManager;
+namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgCompass {
     public const int CompassPoints = 8;

@@ -1,6 +1,6 @@
-using DCCPanelController.Components.TrackPieces.ImageManager;
+using DCCPanelController.Tracks.ImageManager;
 
-namespace DCCPanelController.Components.TrackPieces.StyleManager;
+namespace DCCPanelController.Tracks.StyleManager;
 
 public class SvgDefaultStyles {
 

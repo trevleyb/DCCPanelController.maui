@@ -1,6 +1,6 @@
-using DCCPanelController.Components.TrackPieces.Base;
+using DCCPanelController.Tracks.Base;
 
-namespace DCCPanelController.Components.TrackPieces;
+namespace DCCPanelController.Tracks;
 
 public class Sample : TrackPiece{
     protected override void Setup() {

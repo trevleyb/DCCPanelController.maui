@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces.Base;
+namespace DCCPanelController.Tracks.Base;
 
 public class TrackImages {
     

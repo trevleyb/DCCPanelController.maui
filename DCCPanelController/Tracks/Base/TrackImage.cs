@@ -1,7 +1,7 @@
-using DCCPanelController.Components.TrackPieces.ImageManager;
-using SvgImage = DCCPanelController.Components.TrackPieces.ImageManager.SvgImage;
+using DCCPanelController.Tracks.ImageManager;
+using SvgImage = DCCPanelController.Tracks.ImageManager.SvgImage;
 
-namespace DCCPanelController.Components.TrackPieces.Base;
+namespace DCCPanelController.Tracks.Base;
 
 public struct TrackImage(SvgImage imageSource, int rotation) {
     public TrackImage(string imageName, int rotation) : this(SvgImages.Create(imageName), rotation) { }

@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces.ImageManager;
+namespace DCCPanelController.Tracks.ImageManager;
 
 public static class SvgElement {
 

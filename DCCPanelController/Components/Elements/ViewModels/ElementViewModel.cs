@@ -4,7 +4,7 @@ using DCCPanelController.Model.Elements.Base;
 
 namespace DCCPanelController.Components.Elements.ViewModels;
 
-public abstract partial class ElementViewModel : BaseViewModel {
+public abstract partial class ElementViewModel : Tracks.BaseViewModel {
     
     /// <summary>
     /// Details and information on the Element itself. This will include what grid reference it is in

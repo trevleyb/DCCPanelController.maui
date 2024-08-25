@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.Components;
+namespace DCCPanelController.Tracks;
 
 public partial class BaseViewModel : ObservableObject {
     

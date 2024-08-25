@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces.Interfaces;
+namespace DCCPanelController.Tracks.Interfaces;
 
 /// <summary>
 /// Interface to indicate that the TrackPiece supports a toggle button
