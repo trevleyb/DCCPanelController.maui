@@ -1,8 +1,9 @@
 using DCCPanelController.Components.TrackPieces.Base;
+using DCCPanelController.Components.TrackPieces.Interfaces;
 
 namespace DCCPanelController.Components.TrackPieces;
 
-public class TrackThreeway : TrackPiece{
+public class TrackThreeway : TrackPiece, ITrackThreeway {
     protected override void Setup() {
         AddTrackImage(0,   "Unknown", "Threeway1", 0);
         AddTrackImage(90,  "Unknown", "Threeway1", 90);

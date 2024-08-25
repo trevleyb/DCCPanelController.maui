@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace DCCPanelController.Components.TrackPieces.SVGManager;
+namespace DCCPanelController.Components.TrackPieces.StyleManager;
 
 public static class SvgStyles {
     

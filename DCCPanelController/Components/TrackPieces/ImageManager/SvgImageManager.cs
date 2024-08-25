@@ -4,7 +4,7 @@ using System.Xml.Linq;
 using SkiaSharp;
 using Svg.Skia;
 
-namespace DCCPanelController.Components.TrackPieces.SVGManager;
+namespace DCCPanelController.Components.TrackPieces.ImageManager;
 
 public class SvgImageManager {
 

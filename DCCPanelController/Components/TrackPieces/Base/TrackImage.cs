@@ -1,5 +1,5 @@
-using DCCPanelController.Components.TrackPieces.SVGManager;
-using SvgImage = DCCPanelController.Components.TrackPieces.SVGManager.SvgImage;
+using DCCPanelController.Components.TrackPieces.ImageManager;
+using SvgImage = DCCPanelController.Components.TrackPieces.ImageManager.SvgImage;
 
 namespace DCCPanelController.Components.TrackPieces.Base;
 

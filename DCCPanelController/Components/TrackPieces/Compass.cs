@@ -1,4 +1,4 @@
-namespace DCCPanelController.Components.TrackPieces.Base;
+namespace DCCPanelController.Components.TrackPieces;
 
 public static class Compass {
     

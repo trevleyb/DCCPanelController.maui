@@ -1,6 +1,7 @@
-using DCCPanelController.Components.TrackPieces.SVGManager;
+using DCCPanelController.Components.TrackPieces.Base;
+using DCCPanelController.Components.TrackPieces.ImageManager;
 
-namespace DCCPanelController.Components.TrackPieces.Base;
+namespace DCCPanelController.Components.TrackPieces.Interfaces;
 
 public interface ITrackPiece {
  

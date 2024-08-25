@@ -1,8 +1,9 @@
 using DCCPanelController.Components.TrackPieces.Base;
+using DCCPanelController.Components.TrackPieces.Interfaces;
 
 namespace DCCPanelController.Components.TrackPieces;
 
-public class TrackLeftTurnout : TrackPiece {
+public class TrackLeftTurnout : TrackPiece, ITrackTurnout {
     protected override void Setup() {
         AddTrackImage(0,   "Unknown", "TurnoutL1", 0);
         AddTrackImage(90,  "Unknown", "TurnoutL1", 90);
