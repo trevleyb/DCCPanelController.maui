@@ -54,14 +54,15 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public GridHelper? GridHelper;
 
     public PanelEditorViewModel(Panel panel) {
-        SetSelectedSet(0);
+        //SetSelectedSet(0);
         LastCoordinate = Coordinate.Unreferenced;
         IsPropertyPanelVisible = false;
         Panel = panel;
-        Panel.PropertyChanged += PanelOnPropertyChanged;
+        //Panel.PropertyChanged += PanelOnPropertyChanged;
         Span = 2;
     }
 
+    /*
     private void LoadTrackPlan() {
         PanelElements.Clear();
         foreach (var element in Panel.Elements) {
@@ -230,6 +231,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
     #endregion
     
+    */
+    
     [RelayCommand]
     public async Task Save() {
         try {
@@ -264,7 +267,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public async Task DeleteSelectedElement() {
         var deleteElements = SelectedElements.ToList();
         foreach (var element in deleteElements) {
-            Panel.Elements.Remove(element.ViewModel.Element);
+            //Panel.Elements.Remove(element.ViewModel.Element);
             PanelElements.Remove(element);
         }
         IsTrackSelected  = false;
@@ -316,7 +319,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     
     [RelayCommand]
     public async Task SymbolDragAsync(SymbolViewModel symbol) {
-        ClearSelectedTracks();
+        //ClearSelectedTracks();
         TrackAction = TrackActionEnum.AddingFromToolbox;
         SelectedSymbol = symbol;
         SelectedWidth  = symbol.Width;
@@ -328,7 +331,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public async Task ToggleMultiSelectAsync() {
         MultiSelectMode = !MultiSelectMode;
         if (!MultiSelectMode) {
-            ClearSelectedTracks();
+            //ClearSelectedTracks();
             IsTrackSelected   = false;
             IsPropertyAllowed = false;
         }
@@ -340,15 +343,15 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Add a track from the toolbox to the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.AddingFromToolbox && SelectedSymbol is not null) {
-            if (IsCellOccupied(LastCoordinate, null)) return;
+            //if (IsCellOccupied(LastCoordinate, null)) return;
             var elementView = ElementFactory.CreateElementView(SelectedSymbol.Key);
             if (elementView is not null) {
                 elementView.ViewModel.Element.Coordinate = LastCoordinate;
                 elementView.ViewModel.Element.Coordinate.ZIndex = SelectedSymbol.ZIndex;
                 AddElementToPlan(elementView);
-                Panel.Elements.Add(elementView.ViewModel.Element);
+                //Panel.Elements.Add(elementView.ViewModel.Element);
                 TrackAction = TrackActionEnum.None;
-                SetSelectedTrack(elementView);
+                //SetSelectedTrack(elementView);
             }
         }
 
@@ -361,11 +364,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
         // Move an item on the Main Grid to another location on the Main Grid
         // ----------------------------------------------------------------------------------
         if (TrackAction == TrackActionEnum.MovingInGrid && SelectedElement is not null) {
-            if (IsCellOccupied(LastCoordinate, SelectedElement.ViewModel.Element)) return;
+            //if (IsCellOccupied(LastCoordinate, SelectedElement.ViewModel.Element)) return;
             PanelElements.Remove(SelectedElement);
             SelectedElement.ViewModel.Element.Coordinate = LastCoordinate;
             AddElementToPlan(SelectedElement);
-            SetSelectedTrack(SelectedElement);
+            //SetSelectedTrack(SelectedElement);
             TrackAction = TrackActionEnum.None;
         }
         LastZIndex = 0;
@@ -377,7 +380,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         if (gridData is { IsOk: true } gd) {
             view.ViewModel.Bounds = new Rect(gd.XOffset, gd.YOffset, gd.BoxSize * view.ViewModel.Element.Coordinate.Width, gd.BoxSize * view.ViewModel.Element.Coordinate.Height);
         }
-        CalculateMinGridSize();
+        //CalculateMinGridSize();
     }
     
     private void UpdateElementOnPlan(IElementView view) {

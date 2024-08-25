@@ -45,11 +45,12 @@ public partial class PanelViewer : ContentView {
     private void PanelEditorContainerSizeChanged(object? sender, EventArgs e) {
         if (sender is AbsoluteLayout layout && sender == PanelEditorContainer) {
             GridHelper = new GridHelper((int)layout.Width, (int)layout.Height);
-            LoadTrackPlan();
+            //LoadTrackPlan();
             ResizePanelViewArea();
         }
     }
-    
+
+    /*
     private void LoadTrackPlan() {
         Elements.Clear();
         if (Panel?.Elements != null) {
@@ -59,6 +60,7 @@ public partial class PanelViewer : ContentView {
             }
         }
     }
+    */
     
     private void ResizePanelViewArea() {
         if (GridHelper is not null) {

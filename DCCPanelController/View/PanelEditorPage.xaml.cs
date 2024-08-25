@@ -59,7 +59,7 @@ public partial class PanelEditorPage : ContentPage {
 
     private void PanelEditorContainerSizeChanged(object? sender, EventArgs e) {
         if (sender is AbsoluteLayout layout && sender == PanelEditorContainer) {
-            _viewModel.SetPanelEditorBounds((int)layout.Width, (int)layout.Height);
+            //_viewModel.SetPanelEditorBounds((int)layout.Width, (int)layout.Height);
             ResizePanelViewArea();
         }
     }
@@ -178,16 +178,16 @@ public partial class PanelEditorPage : ContentPage {
     private void TapGestureRecognizerOnTapped(object? sender, TappedEventArgs e) {
         switch (sender) {
         case IElementView trackView:
-            _viewModel.SetSelectedTrack(trackView);
+            //_viewModel.SetSelectedTrack(trackView);
             break;
         case AbsoluteLayout layout when layout == PanelEditorViewPane:
-            _viewModel.SetSelectedTrack(null);
+            //_viewModel.SetSelectedTrack(null);
             break;
         }
     }
 
     private void TapGestureRecognizerBlankEditor(object? sender, TappedEventArgs e) {
-        _viewModel.SetSelectedTrack(null);
+        //_viewModel.SetSelectedTrack(null);
     }
 
     private void DropGestureRecognizer_OnDragOver(object? sender, DragEventArgs e) {
@@ -195,8 +195,8 @@ public partial class PanelEditorPage : ContentPage {
         if (pos.HasValue) {
             // This stores the last Coordinates and returns a new X,Y which is the centre of the grid.
             // ---------------------------------------------------------------------------------------
-            var coordinate = _viewModel.SetLastCoordinates((int)pos.Value.X, (int)pos.Value.Y);
-            CheckDropZone(coordinate);
+            //var coordinate = _viewModel.SetLastCoordinates((int)pos.Value.X, (int)pos.Value.Y);
+            //CheckDropZone(coordinate);
         }
     }
 
