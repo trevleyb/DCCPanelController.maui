@@ -78,6 +78,7 @@
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.0-preview.7.24407.4" />
+        <PackageReference Include="MiniProfiler" Version="4.3.8" />
         <PackageReference Include="NUnit" Version="4.1.0" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
         <PackageReference Include="Svg.Skia" Version="2.0.0" />

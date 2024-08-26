@@ -11,6 +11,20 @@
     </ContentPage.BindingContext>
     
     <ContentPage.Content>
-        <Grid x:Name="ControlPanelGrid"/>
+        <ScrollView>
+            <StackLayout>
+            <Label Text="Show Grid"/>
+            <CheckBox IsChecked="{Binding ShowGrid}"/>
+            <Grid x:Name="ControlPanelLayout"
+                  HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type IView}}, Path=Height}" 
+                  WidthRequest ="{Binding Source={RelativeSource AncestorType={x:Type IView}}, Path=Width}" 
+                  HorizontalOptions="Center"  
+                  VerticalOptions="Center" >
+            
+                <Grid x:Name="ControlPanelGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
+            </Grid>
+            </StackLayout>
+        
+        </ScrollView>
     </ContentPage.Content>
 </ContentPage>
