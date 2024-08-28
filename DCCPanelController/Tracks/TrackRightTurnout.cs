@@ -7,10 +7,10 @@ public class TrackRightTurnout : TrackPiece, ITrackTurnout {
     
     protected override void Setup() {
         Name = "Right Turnout";
-        AddTrackImage(0,   "Unknown", "TurnoutR1", 0);
-        AddTrackImage(90,  "Unknown", "TurnoutR1", 90);
-        AddTrackImage(180, "Unknown", "TurnoutR1", 180);
-        AddTrackImage(270, "Unknown", "TurnoutR1", 270);
+        AddTrackImage(0,   UnknownState, "TurnoutR1", 0);
+        AddTrackImage(90,  UnknownState, "TurnoutR1", 90);
+        AddTrackImage(180, UnknownState, "TurnoutR1", 180);
+        AddTrackImage(270, UnknownState, "TurnoutR1", 270);
 
         AddTrackImage(0,   "Straight", "TurnoutR2", 0);
         AddTrackImage(90,  "Straight", "TurnoutR2", 90);

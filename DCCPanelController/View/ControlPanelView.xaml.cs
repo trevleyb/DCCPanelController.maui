@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DCCPanelController.Tracks.Base;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Layouts;
 
@@ -59,6 +60,9 @@ namespace DCCPanelController.View {
 
             AddOutlineToGrid();
             AddTrackPiecesToGrid();
+
+            DynamicGrid.WidthRequest = _viewModel.ViewWidth;
+            DynamicGrid.HeightRequest = _viewModel.ViewHeight;
         }
 
         /// <summary>
@@ -68,6 +72,7 @@ namespace DCCPanelController.View {
             if (_viewModel?.ShowGrid ?? false) {
                 var gridLines = new GridLinesDrawable(_viewModel.Rows, _viewModel.Cols);
                 var graphicsView = new GraphicsView {
+                    InputTransparent = true,
                     Drawable = gridLines,
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
@@ -106,17 +111,24 @@ namespace DCCPanelController.View {
 
                         // Setup trigger control to trap if we click on or select the track item
                         // -------------------------------------------------------------------------------------------
-                        var tapGestureRecognizer = new TapGestureRecognizer();
-                        tapGestureRecognizer.Command = _viewModel.TrackImageTappedCommand;
-                        tapGestureRecognizer.CommandParameter = track;
-                        image.GestureRecognizers.Add(tapGestureRecognizer);
+                        // Create TapGestureRecognizer
+                        var tapGesture = new TapGestureRecognizer();
+                        tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
+                        image.GestureRecognizers.Add(tapGesture);
                         
+                        // Add the Track Image to the appropriate grid position
+                        // ------------------------------------------------------
                         DynamicGrid.SetRow(image, track.Y);
                         DynamicGrid.SetColumn(image, track.X);
                         DynamicGrid.Children.Add(image);
                     }
                 }
             }
+        }
+        
+        private void OnTrackPieceTapped(ITrackPiece track) {
+            var viewModel = BindingContext as ControlPanelViewModel;
+            viewModel?.HandleTrackPieceTapped(track);
         }
     }
 

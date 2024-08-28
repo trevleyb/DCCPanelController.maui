@@ -4,28 +4,20 @@
              x:DataType="viewModel:ControlPanelViewModel"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel">
 
-    <Grid
-        ColumnDefinitions="*"
-        RowDefinitions="*"
-        HorizontalOptions="Fill" 
-        VerticalOptions="Fill">
-        
         <Grid x:Name="MainGrid" 
-              Padding="0" Margin="0"
-              Grid.Column="0" Grid.Row="1"
-              HorizontalOptions="Fill" 
-              VerticalOptions="Fill">
+              Padding="0" 
+              Margin="0"
+              HorizontalOptions="Fill" VerticalOptions="Fill">
             <AbsoluteLayout  
                 x:Name="ControlPanelLayout"
+                Padding="0" Margin="0"
                 HorizontalOptions="Fill" 
                 VerticalOptions="Fill">
-                <Grid x:Name="DynamicGrid" 
+                <Grid x:Name="DynamicGrid"
+                      Padding="0" Margin="0"
                       BackgroundColor="Transparent"
-                      WidthRequest="{Binding ViewWidth}"
-                      HeightRequest="{Binding ViewHeight}"
                       AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
                       AbsoluteLayout.LayoutFlags="PositionProportional" />
             </AbsoluteLayout>
         </Grid>
-    </Grid>
 </ContentView>

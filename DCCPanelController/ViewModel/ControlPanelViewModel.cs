@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.ViewModel;
 
@@ -31,9 +32,28 @@ public partial class ControlPanelViewModel : BaseViewModel {
         ViewWidth = GridSize * Cols;
         ViewHeight = GridSize * Rows;
     }
-
-    [RelayCommand]
-    private void TrackImageTapped(TrackPiece track) {
-        Console.WriteLine($"You just tapped on {track.Name} which is in a state of {track.State}");
+    
+    public void HandleTrackPieceTapped(ITrackPiece track) {
+        if (track is ITrackInteractive) {
+            switch (track) {
+            case ITrackButton:
+                Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
+                track.NextState();
+                break;
+            case ITrackThreeway:
+                Console.WriteLine($"You just tapped on {track.Name} - its a threeway so we will cycle states. ");
+                track.NextState();
+                break;
+            case ITrackTurnout:
+                Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
+                track.NextState();
+                break;
+            }
+        } else {
+            Console.WriteLine($"You just tapped on {track.Name} but it is not interactive so we will rotate it.");
+            track.RotateLeft();
+        }
+        
+        
     }
 }

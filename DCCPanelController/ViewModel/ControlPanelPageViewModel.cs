@@ -51,6 +51,19 @@ public partial class ControlPanelPageViewModel : BaseViewModel {
         
         panel.Tracks.Add(new TrackStraight() { X = 4, Y = 4, ImageRotation = 270 });
         panel.Tracks.Add(new TrackStraight() { X = 5, Y = 5, ImageRotation = 0 });
+        
+        panel.Tracks.Add(new TrackButton()      { X = 10, Y = 8, ImageRotation = 0 });
+        panel.Tracks.Add(new TrackCrossing()    { X = 11, Y = 9, ImageRotation = 0 });
+        panel.Tracks.Add(new TrackTerminator()  { X = 12, Y = 10, ImageRotation = 0 });
+        panel.Tracks.Add(new TrackThreeway()    { X = 13, Y = 11, ImageRotation = 0 });
+        panel.Tracks.Add(new TrackLeftTurnout() { X = 14, Y = 12, ImageRotation = 0 });
+        panel.Tracks.Add(new TrackRightTurnout(){ X = 15, Y = 8, ImageRotation = 0 });
+
+
+
+
+
+        
         return panel;
     }
     

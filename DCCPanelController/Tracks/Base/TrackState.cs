@@ -2,8 +2,7 @@ namespace DCCPanelController.Tracks.Base;
 
 public class TrackState {
 
-    private const string DefaultState = "Unknown";
-    public string _state = DefaultState;
+    public string _state = TrackPiece.UnknownState;
     public List<string> States = [];
 
     /// <summary>
@@ -19,38 +18,50 @@ public class TrackState {
     /// </summary>
     public void Next() {
         try {
-            var currentIndex = States.FindIndex(item => item == _state);
-            if (currentIndex == -1) _state = DefaultState;
-            var nextIndex = (currentIndex + 1) % States.Count;
-            State = States[nextIndex];
+            State = GetNextValidState(1);
         } catch {
-            _state = DefaultState;
+            State = TrackPiece.UnknownState;
         }
     }
 
-    /// <summary>
-    /// Step to the previous state in the list. If this was the first state, cycle to the last
-    /// </summary>
     public void Prev() {
         try {
-            var currentIndex = States.FindIndex(item => item == _state);
-            if (currentIndex == -1) _state = DefaultState;
-            var prevIndex = (currentIndex - 1 + States.Count) % States.Count;
-            _state = States[prevIndex];
+            State = GetNextValidState(-1);
         } catch {
-            _state = DefaultState;
+            State = TrackPiece.UnknownState;
         }
     }
 
+    private string GetNextValidState(int direction) {
+        var nextState = GetNextState(direction);
+        if (nextState.Equals(TrackPiece.UnknownState) && States.Count > 1) {
+            nextState = GetNextStateFrom(nextState, direction);
+        }
+        return nextState;
+    }
+
+    private string GetNextState(int direction) {
+        return GetNextStateFrom(_state, direction);
+    }
+
+    private string GetNextStateFrom(string currentState, int direction) {
+        var currentIndex = States.FindIndex(item => item == currentState);
+    
+        if (currentIndex == -1) return TrackPiece.UnknownState;
+
+        var nextIndex = (currentIndex + direction + States.Count) % States.Count;
+        return States[nextIndex];
+    }
+    
     public void First() {
-        _state = States.Count > 0 ? States[0] : DefaultState;
+        _state = States.Count > 0 ? States[0] : TrackPiece.UnknownState;
     }
     
     /// <summary>
     /// Set the State but ensure it is one of the valid states 
     /// </summary>
     public string State {
-        get => _state ?? DefaultState;
-        set => _state = States.Contains(value) ? value : DefaultState;
+        get => _state ?? TrackPiece.UnknownState;
+        set => _state = States.Contains(value) ? value : TrackPiece.UnknownState;
     }
 }

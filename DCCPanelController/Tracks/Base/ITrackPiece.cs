@@ -4,6 +4,7 @@ namespace DCCPanelController.Tracks.Base;
 
 public interface ITrackPiece {
  
+    public string Name          { get; set; }
     public string Style         { get; set; }
     public bool IsOccupied      { get; set; }
     public int ImageRotation    { get; set; }
@@ -14,7 +15,6 @@ public interface ITrackPiece {
     public int Height           { get; set; }
     public int Layer            { get; } 
     public ImageSource? Image   { get; }
-    public TrackState State     { get; }
 
     public void NextState();
     public void PrevState();
