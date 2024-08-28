@@ -19,6 +19,7 @@ public partial class OperateViewModel : BaseViewModel {
         Panels.Add(new ControlPanelViewModel(CreateTestPanel("Page 1")));
         Panels.Add(new ControlPanelViewModel(CreateTestPanel("Page 2")));
         Panels.Add(new ControlPanelViewModel(CreateTestPanel("Page 3")));
+        SelectedPanel = Panels[0];
         this.PropertyChanged += OnPropertyChanged;
     }
     
