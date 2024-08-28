@@ -6,9 +6,6 @@ public partial class Welcome : ContentPage {
         InitializeComponent();
     }
 
-    private void ControlPanel_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new ControlPanelPage());
-    }
     private void TrackTest_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new TrackPieceTestPage());
     }

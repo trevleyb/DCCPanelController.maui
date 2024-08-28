@@ -14,8 +14,10 @@ public partial class ControlPanelViewModel : BaseViewModel {
     [ObservableProperty] private double _viewWidth;
     [ObservableProperty] private double _viewHeight;
     [ObservableProperty] private double _gridSize;
-    
+
+    [ObservableProperty] private bool _designMode = true;
     [ObservableProperty] private bool _showGrid = true;
+    
     [ObservableProperty] private Panel? _panel;
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
 
