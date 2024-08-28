@@ -5,6 +5,7 @@ namespace DCCPanelController.Tracks;
 public class TrackStraight : TrackPiece {
     
     protected override void Setup() {
+        Name = "Straight";
         AddTrackImage(0,   "Normal", "Straight1", -90);
         AddTrackImage(45,  "Normal", "Straight2", 0);
         AddTrackImage(90,  "Normal", "Straight1", 0);

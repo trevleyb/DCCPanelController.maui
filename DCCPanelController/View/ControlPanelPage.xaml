@@ -3,28 +3,43 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-             x:DataType="viewModel:ControlPanelViewModel"
+             xmlns:view="clr-namespace:DCCPanelController.View"
+             Title="{Binding SelectedPanel.Name}"
+             x:DataType="viewModel:ControlPanelPageViewModel"
              x:Class="DCCPanelController.View.ControlPanelPage">
     
     <ContentPage.BindingContext>
-        <viewModel:ControlPanelViewModel />
+        <viewModel:ControlPanelPageViewModel />
     </ContentPage.BindingContext>
     
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout>
-            <Label Text="Show Grid"/>
-            <CheckBox IsChecked="{Binding ShowGrid}"/>
-            <Grid x:Name="ControlPanelLayout"
-                  HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type IView}}, Path=Height}" 
-                  WidthRequest ="{Binding Source={RelativeSource AncestorType={x:Type IView}}, Path=Width}" 
-                  HorizontalOptions="Center"  
-                  VerticalOptions="Center" >
-            
-                <Grid x:Name="ControlPanelGrid" HorizontalOptions="Center" VerticalOptions="Center"/>
-            </Grid>
+        <Grid ColumnDefinitions="*,auto" RowDefinitions="auto,*" Margin="10"> 
+            <StackLayout x:Name="ControlPanelStack" Grid.Column="0" Grid.Row="0">
+                <HorizontalStackLayout VerticalOptions="Center">
+                    <CheckBox IsChecked="{Binding ShowGrid}"  VerticalOptions="Center"  />
+                    <Label Text="Show Grid" VerticalOptions="Center"/>
+                </HorizontalStackLayout>
             </StackLayout>
-        
-        </ScrollView>
+            
+            <CarouselView x:Name="PanelCarousel" Grid.Column="0" Grid.Row="1" >
+                <CarouselView.EmptyView>
+                    <Label>There are no Panels to display</Label>
+                </CarouselView.EmptyView>
+                
+                <CarouselView.ItemsSource>
+                    <Binding Path="Panels" />
+                </CarouselView.ItemsSource>
+                
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <view:ControlPanelView BindingContext="{Binding .}" 
+                                               BackgroundColor="White"
+                                               HorizontalOptions="Fill"
+                                               VerticalOptions="Fill"/>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+            
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

@@ -4,6 +4,7 @@ namespace DCCPanelController.Tracks;
 
 public class TrackCornerContinuation : TrackPiece {
     protected override void Setup() {
+        Name = "Corner Continued...";
         AddTrackImage(0,   "Arrow", "ContinuationCA1", 0);
         AddTrackImage(45,  "Arrow", "ContinuationCA2", 90);
         AddTrackImage(90,  "Arrow", "ContinuationCA1", 90);

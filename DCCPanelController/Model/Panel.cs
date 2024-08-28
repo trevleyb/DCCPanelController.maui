@@ -2,8 +2,6 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
-using DCCPanelController.Model.Elements;
-using DCCPanelController.Model.Elements.Base;
 using DCCPanelController.Tracks.Base;
 
 namespace DCCPanelController.Model;

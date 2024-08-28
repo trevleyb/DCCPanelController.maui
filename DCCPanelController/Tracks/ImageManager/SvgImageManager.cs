@@ -34,7 +34,7 @@ public class SvgImageManager {
     /// change to any of the elements. The change functions will set _imageSource to null which will
     /// cause a call to the image function to re-calculate/re-draw the image itself. 
     /// </summary>
-    public ImageSource? Image => _imageSource; // GetSvgAsImage(); 
+    public ImageSource? Image => GetSvgAsImage(); 
 
     /// <summary>
     /// Forces the system to refresh the image. We need to do this after we have changed any elements 

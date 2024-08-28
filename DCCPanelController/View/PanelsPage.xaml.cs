@@ -1,10 +1,4 @@
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Model;
-using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
 using OnScreenSizeMarkup.Maui.Helpers;
 

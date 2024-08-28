@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCWithrottleClient;
 
 namespace DCCPanelController.Model;
 

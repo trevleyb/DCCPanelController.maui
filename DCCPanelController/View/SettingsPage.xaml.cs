@@ -1,7 +1,4 @@
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;

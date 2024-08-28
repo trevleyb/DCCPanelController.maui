@@ -5,6 +5,7 @@ namespace DCCPanelController.Tracks;
 public class TrackCrossing : TrackPiece {
     
     protected override void Setup() {
+        Name="Crossing";
         AddTrackImage(0,   "Normal", "Cross1", -90);
         AddTrackImage(45,  "Normal", "Cross2", 0);
         AddTrackImage(90,  "Normal", "Cross1", 0);

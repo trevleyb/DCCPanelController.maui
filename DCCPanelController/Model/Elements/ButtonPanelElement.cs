@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Elements.Base;
 
 namespace DCCPanelController.Model.Elements;

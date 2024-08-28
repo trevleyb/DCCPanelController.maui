@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
-using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks.Base;
 
@@ -35,6 +34,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     [ObservableProperty] private bool _isOccupied = false;  // Is this element currently occupied?
     [ObservableProperty] private bool _isResizable = false; // Can this element be resized? Normally False
     [ObservableProperty] private string? _style;
+    [ObservableProperty] private string _name = "Track";
     [ObservableProperty] private TrackState _state = new TrackState();
 
     public ImageSource?   Image => ActiveImage?.ImageSource?.Image;

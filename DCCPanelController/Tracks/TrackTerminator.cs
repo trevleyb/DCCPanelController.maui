@@ -4,6 +4,7 @@ namespace DCCPanelController.Tracks;
 
 public class TrackTerminator :TrackPiece  {
     protected override void Setup() {
+        Name = "Terminator";
         AddTrackImage(0,   "Normal", "Terminator1", 0);
         AddTrackImage(45,  "Normal", "Terminator2", 90);
         AddTrackImage(90,  "Normal", "Terminator1", 90);

@@ -5,6 +5,7 @@ namespace DCCPanelController.Tracks;
 
 public class TrackLeftTurnout : TrackPiece, ITrackTurnout {
     protected override void Setup() {
+        Name = "Left Turnout";
         AddTrackImage(0,   "Unknown", "TurnoutL1", 0);
         AddTrackImage(90,  "Unknown", "TurnoutL1", 90);
         AddTrackImage(180, "Unknown", "TurnoutL1", 180);

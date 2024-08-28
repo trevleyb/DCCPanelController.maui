@@ -5,6 +5,7 @@ namespace DCCPanelController.Tracks;
 
 public class TrackThreeway : TrackPiece, ITrackThreeway {
     protected override void Setup() {
+        Name = "Threeway";
         AddTrackImage(0,   "Unknown", "Threeway1", 0);
         AddTrackImage(90,  "Unknown", "Threeway1", 90);
         AddTrackImage(180, "Unknown", "Threeway1", 180);

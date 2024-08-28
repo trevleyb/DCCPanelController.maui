@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -8,8 +7,6 @@ using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Components.TrackComponents;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
-using DCCPanelController.Model.Elements;
-using DCCPanelController.Model.Elements.Base;
 using SymbolViewModel = DCCPanelController.Components.TrackComponents.SymbolViewModel;
 
 namespace DCCPanelController.ViewModel;
