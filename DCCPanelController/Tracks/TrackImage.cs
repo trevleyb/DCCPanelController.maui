@@ -7,4 +7,8 @@ public class TrackImage : TrackPiece {
         Name = "Image";
         Layer = 0;
     }
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal","Mainline");
+    }
+
 }

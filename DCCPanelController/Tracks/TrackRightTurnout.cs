@@ -7,6 +7,9 @@ public class TrackRightTurnout : TrackPiece, ITrackTurnout {
     
     protected override void Setup() {
         Name = "Right Turnout";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   UnknownState, "TurnoutR1", 0);
         AddTrackImage(90,  UnknownState, "TurnoutR1", 90);
         AddTrackImage(180, UnknownState, "TurnoutR1", 180);
@@ -22,4 +25,10 @@ public class TrackRightTurnout : TrackPiece, ITrackTurnout {
         AddTrackImage(180, "Diverging", "TurnoutR3", 180);
         AddTrackImage(270, "Diverging", "TurnoutR3", 270);
     }
+    protected override void AddTrackStyles() {
+        AddTrackStyle(UnknownState,"Mainline");
+        AddTrackStyle("Straight","Mainline-Straight");
+        AddTrackStyle("Diverging","Mainline-Diverging");
+    }
+
 }

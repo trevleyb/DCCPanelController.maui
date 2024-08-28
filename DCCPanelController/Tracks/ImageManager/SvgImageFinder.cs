@@ -20,6 +20,7 @@ public static class SvgImageFinder {
     }
 
     public static string GetFullPathOfResource(string filename) {
-        return AvailableSymbols.FirstOrDefault(x => !string.IsNullOrEmpty(x) && x.Contains(filename)) ?? throw new FileNotFoundException($"File not found: {filename}");
+        if (!filename.EndsWith(".svg")) filename += ".svg";
+        return AvailableSymbols.FirstOrDefault(x => !string.IsNullOrEmpty(x) && x.EndsWith(filename,StringComparison.InvariantCultureIgnoreCase)) ?? throw new FileNotFoundException($"File not found: {filename}");
     }
 }

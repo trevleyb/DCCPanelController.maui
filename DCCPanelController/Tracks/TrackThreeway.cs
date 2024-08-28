@@ -6,6 +6,9 @@ namespace DCCPanelController.Tracks;
 public class TrackThreeway : TrackPiece, ITrackThreeway {
     protected override void Setup() {
         Name = "Threeway";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   UnknownState, "Threeway1", 0);
         AddTrackImage(90,  UnknownState, "Threeway1", 90);
         AddTrackImage(180, UnknownState, "Threeway1", 180);
@@ -25,6 +28,12 @@ public class TrackThreeway : TrackPiece, ITrackThreeway {
         AddTrackImage(90,  "Diverging-Right", "Threeway4", 90);
         AddTrackImage(180, "Diverging-Right", "Threeway4", 180);
         AddTrackImage(270, "Diverging-Right", "Threeway4", 270);
+    }
 
+    protected override void AddTrackStyles() {
+        AddTrackStyle(UnknownState, "Mainline");
+        AddTrackStyle("Straight", "Mainline-Straight");
+        AddTrackStyle("Diverging-Left", "Mainline-Diverging");
+        AddTrackStyle("Diverging-Right", "Mainline-Diverging");
     }
 }

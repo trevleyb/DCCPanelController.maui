@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks.Base;
 
@@ -26,6 +27,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         }
     }
 
+    [ObservableProperty] private string _name = "Track";
     [ObservableProperty] private int _imageRotation; 
     [ObservableProperty] private int _trackDirection;
     [ObservableProperty] private int _x;                    // What Grid Position (Horizontal) is this component?
@@ -35,14 +37,13 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     [ObservableProperty] private int _layer  = 1;           // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private bool _isOccupied = false;  // Is this element currently occupied?
     [ObservableProperty] private bool _isResizable = false; // Can this element be resized? Normally False
-    [ObservableProperty] private string? _style;
-    [ObservableProperty] private string _name = "Track";
 
     public ImageSource?   Image => ActiveImage?.ImageSource?.Image;
     protected TrackImage? ActiveImage = null;
     protected readonly TrackImages TrackImages = new TrackImages();
     protected readonly TrackState State = new TrackState();
-
+    protected Dictionary<string, SvgStyle> TrackStyles = [];
+    
     public SvgCompass Connections => ActiveImage?.ImageSource?.Connections ?? new SvgCompass("********");
 
     /// <summary>
@@ -80,13 +81,21 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         SetActiveImage();
     }
 
-    protected abstract void Setup();
+    protected virtual void Setup() {}
+
+    protected virtual void AddTrackImages() { }
+
+    protected virtual void AddTrackStyles() {
+        TrackStyles = new Dictionary<string, SvgStyle>();
+    }
 
     /// <summary>
     /// Used to initialise the instance of this class and setup the parameters for any derived instances
     /// </summary>
     protected void Initialise() {
         Setup();
+        AddTrackImages();
+        AddTrackStyles();
         State.First();
         SetActiveImage();
     }
@@ -105,11 +114,12 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             // set Rotation to the value defined against the active image. 
             // -----------------------------------------------------------------------------------------------
             ActiveImage = TrackImages.Get(TrackDirection, State);
-            (ActiveImage?.ImageSource).ApplyStyle((string)Style);
-            ActiveImage?.ImageSource.SetOccupied(IsOccupied);
-            ActiveImage?.ImageSource.ForceImageRefresh();
-            ImageRotation = ActiveImage?.Rotation ?? 0;
-            
+            if (ActiveImage is {ImageSource: not null } activeImage) {
+                activeImage.ImageSource.ApplyStyle(GetTrackStyle(State.State));
+                activeImage.ImageSource.SetOccupied(IsOccupied);
+                activeImage.ImageSource.ForceImageRefresh();
+                ImageRotation = ActiveImage?.Rotation ?? 0;
+            }
             OnPropertyChanged(nameof(Image));
             OnPropertyChanged(nameof(ImageRotation));
         } catch (Exception ex) {
@@ -123,13 +133,26 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     /// <summary>
     /// Helper to add a Track Image to the collection of available images that could be displayed. 
     /// </summary>
-    /// <param name="trackRotation">What is the rotation of the track piece</param>
-    /// <param name="trackState">What state is this image related to</param>
-    /// <param name="imageSource">What is the source of this image</param>
-    /// <param name="imageRotation">What rotation should this image be at for this state and track rotation</param>
     protected void AddTrackImage(int trackRotation, string trackState, string imageSource, int imageRotation) {
         State.AddState(trackState);
         TrackImages.Add(trackRotation, trackState, imageSource, imageRotation);
     }
-
+    
+    protected void SetTrackStyle(string stateName, string styleName) => SetTrackStyle(stateName,SvgStyles.GetStyle(styleName));
+    protected void SetTrackStyle(string stateName, SvgStyle style) {
+        if (TrackStyles.ContainsKey(stateName)) {
+            TrackStyles[stateName.ToLowerInvariant()] = style;
+        } else {
+            AddTrackStyle(stateName.ToLowerInvariant(), style);
+        }
+    }
+    
+    protected void AddTrackStyle(string stateName, string styleName) => AddTrackStyle(stateName,SvgStyles.GetStyle(styleName.ToLowerInvariant()));
+    protected void AddTrackStyle(string stateName, SvgStyle style) {
+        TrackStyles.TryAdd(stateName.ToLowerInvariant(), style);
+    }
+    
+    protected SvgStyle GetTrackStyle(string stateName) {
+        return TrackStyles.TryGetValue(stateName.ToLowerInvariant(), out var value) ? value : SvgStyles.DefaultStyle;
+    }
 }

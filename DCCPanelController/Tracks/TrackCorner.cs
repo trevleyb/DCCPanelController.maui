@@ -5,6 +5,9 @@ namespace DCCPanelController.Tracks;
 public class TrackCorner : TrackPiece  {
     protected override void Setup() {
         Name = "Corner";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   "Normal", "CornerR", 0);
         AddTrackImage(45,  "Normal", "CornerL", 270);
         AddTrackImage(90,  "Normal", "CornerR", 90);
@@ -14,5 +17,8 @@ public class TrackCorner : TrackPiece  {
         AddTrackImage(270, "Normal", "CornerR", 270);
         AddTrackImage(315, "Normal", "CornerL", 180);
     } 
-    
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal","Mainline");
+    }
+
 }

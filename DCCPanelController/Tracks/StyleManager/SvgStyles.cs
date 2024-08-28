@@ -16,7 +16,8 @@ public static class SvgStyles {
         }
     }
 
-    public static List<string> AvailableStyles => _styles.Keys?.ToList() ?? new List<string>(); 
+    public static List<string> AvailableStyles => _styles.Keys?.ToList() ?? new List<string>();
+    public static SvgStyle DefaultStyle => SvgDefaultStyles.DefaultStyle;
     public static SvgStyle GetStyle(string styleName) {
         if (string.IsNullOrEmpty(styleName)) styleName = "default";
         return _styles.TryGetValue(styleName, out var style) ? style : SvgDefaultStyles.GetStyle(styleName) ?? new SvgStyle(styleName);

@@ -5,6 +5,9 @@ namespace DCCPanelController.Tracks;
 public class TrackCornerContinuation : TrackPiece {
     protected override void Setup() {
         Name = "Corner Continued...";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   "Arrow", "ContinuationCA1", 0);
         AddTrackImage(45,  "Arrow", "ContinuationCA2", 90);
         AddTrackImage(90,  "Arrow", "ContinuationCA1", 90);
@@ -24,4 +27,9 @@ public class TrackCornerContinuation : TrackPiece {
         AddTrackImage(315, "Lines", "ContinuationCL2", 0);
 
     }
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Arrow","Mainline");
+        AddTrackStyle("Lines","Mainline");
+    }
+
 }

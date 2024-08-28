@@ -6,6 +6,9 @@ public class TrackCrossing : TrackPiece {
     
     protected override void Setup() {
         Name="Crossing";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   "Normal", "Cross1", -90);
         AddTrackImage(45,  "Normal", "Cross2", 0);
         AddTrackImage(90,  "Normal", "Cross1", 0);
@@ -15,4 +18,8 @@ public class TrackCrossing : TrackPiece {
         AddTrackImage(270, "Normal", "Cross1", 0);
         AddTrackImage(315, "Normal", "Cross2", -90);
     }
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal","Mainline");
+    }
+
 }

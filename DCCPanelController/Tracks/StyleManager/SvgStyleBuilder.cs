@@ -71,6 +71,11 @@ public class SvgStyleBuilder(string name) {
         return this;
     }
 
+    public SvgStyleBuilder AddExistingStyle(string existingStyleName) {
+        _style.MergeStyle(SvgStyles.GetStyle(existingStyleName));
+        return this;
+    }
+
     public SvgStyle Build() => _style;
 }
 

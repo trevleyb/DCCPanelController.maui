@@ -10,6 +10,10 @@ public class TrackCompass : TrackPiece {
         Layer = 2;
     }
 
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal","Mainline");
+    }
+    
     public void SetCompassPoints(ITrackPiece track) {
         SetCompassColor("CompassN", track.Connections.ConnectionPointsRotated(track.ImageRotation)[0]);
         SetCompassColor("CompassNE", track.Connections.ConnectionPointsRotated(track.ImageRotation)[1]);

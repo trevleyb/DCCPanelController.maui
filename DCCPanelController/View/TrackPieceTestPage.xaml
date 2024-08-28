@@ -56,11 +56,6 @@
                         <Label Text="Is Occupied?" VerticalOptions="Center"/>
                     </HorizontalStackLayout>
                     
-                    <VerticalStackLayout>
-                        <Picker Title="Select a Style" ItemsSource="{Binding Styles}" SelectedItem="{Binding TrackPiece.Style}" />
-                        <Label Text="{Binding TrackPiece.Style}" VerticalOptions="Center" HorizontalOptions="Center" />
-                    </VerticalStackLayout>
-                    
                     <FlexLayout Wrap="Wrap" Padding="10" Margin="10" HorizontalOptions="Center" >
                         <Button Text="Rotate Left" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding RotateLeftCommand}"/>
                         <Button Text="Rotate Right" WidthRequest="250" Style="{StaticResource ButtonOutline}" Command="{Binding RotateRightCommand}"/>

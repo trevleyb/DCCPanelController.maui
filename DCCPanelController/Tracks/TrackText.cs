@@ -8,4 +8,9 @@ public class TrackText : TrackPiece{
         Layer = 2;
         IsResizable = true;
     }
+
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal","Mainline");
+    }
+
 }

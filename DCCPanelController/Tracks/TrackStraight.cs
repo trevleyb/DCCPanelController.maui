@@ -1,3 +1,4 @@
+using System.Text;
 using DCCPanelController.Tracks.Base;
 
 namespace DCCPanelController.Tracks;
@@ -6,6 +7,9 @@ public class TrackStraight : TrackPiece {
     
     protected override void Setup() {
         Name = "Straight";
+    }
+
+    protected override void AddTrackImages() {
         AddTrackImage(0,   "Normal", "Straight1", -90);
         AddTrackImage(45,  "Normal", "Straight2", 0);
         AddTrackImage(90,  "Normal", "Straight1", 0);
@@ -14,6 +18,10 @@ public class TrackStraight : TrackPiece {
         AddTrackImage(225, "Normal", "Straight2", 0);
         AddTrackImage(270, "Normal", "Straight1", 0);
         AddTrackImage(315, "Normal", "Straight2", -90);
+    }
+
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal","Mainline");
     }
     
 }

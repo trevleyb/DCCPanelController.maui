@@ -6,6 +6,9 @@ namespace DCCPanelController.Tracks;
 public class TrackLeftTurnout : TrackPiece, ITrackTurnout {
     protected override void Setup() {
         Name = "Left Turnout";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   UnknownState, "TurnoutL1", 0);
         AddTrackImage(90,  UnknownState, "TurnoutL1", 90);
         AddTrackImage(180, UnknownState, "TurnoutL1", 180);
@@ -21,4 +24,10 @@ public class TrackLeftTurnout : TrackPiece, ITrackTurnout {
         AddTrackImage(180, "Diverging", "TurnoutL3", 180);
         AddTrackImage(270, "Diverging", "TurnoutL3", 270);
     }
+    protected override void AddTrackStyles() {
+        AddTrackStyle(UnknownState,"Mainline");
+        AddTrackStyle("Straight","Mainline-Straight");
+        AddTrackStyle("Diverging","Mainline-Diverging");
+    }
+
 }

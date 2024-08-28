@@ -11,8 +11,15 @@ public class SvgDefaultStyles {
         AddStyle("Mainline-Hidden", styles);
         AddStyle("Branchline-Hidden", styles);
         AddStyle("Occupied", styles);
+        
+        AddStyle("ActiveButton", styles);
+        AddStyle("InActiveButton", styles);
+        AddStyle("Mainline-Straight", styles);
+        AddStyle("Mainline-Diverging",styles);
     }
 
+    public static SvgStyle DefaultStyle  => GetStyle("Default") ?? new SvgStyle("Default");
+    
     public static void AddStyle(string styleName, Dictionary<string, SvgStyle> styles) {
         if (styles.ContainsKey(styleName)) return;
         styles.Add(styleName, new SvgStyle(styleName));
@@ -74,7 +81,13 @@ public class SvgDefaultStyles {
             return new SvgStyleBuilder(styleName)
                 .AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden())
                 .Build();
-        
+
+        case "button-unknown":
+            return new SvgStyleBuilder(styleName)
+                .AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(Colors.Yellow))
+                .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(Colors.Black))
+                .Build();
+
         case "button-active":
             return new SvgStyleBuilder(styleName)
                 .AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(Colors.Green))
@@ -86,8 +99,21 @@ public class SvgDefaultStyles {
                 .AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(Colors.Red))
                 .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(Colors.Red))
                 .Build();
-        }
 
+        case "mainline-straight":
+            return new SvgStyleBuilder(styleName)
+                .AddExistingStyle("mainline")
+                .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.Green).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible())
+                .Build();
+
+        case "mainline-diverging":
+            return new SvgStyleBuilder(styleName)
+                .AddExistingStyle("mainline")
+                .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.Green).Visible())
+                .AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible())
+                .Build();
+        }
         return null;
     } 
 }

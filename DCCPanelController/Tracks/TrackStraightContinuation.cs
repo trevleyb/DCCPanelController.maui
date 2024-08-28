@@ -5,6 +5,9 @@ namespace DCCPanelController.Tracks;
 public class TrackStraightContinuation : TrackPiece {
     protected override void Setup() {
         Name = "Straight Continued...";
+    }
+    
+    protected override void AddTrackImages() {
         AddTrackImage(0,   "Arrow", "ContinuationSA1", 0);
         AddTrackImage(45,  "Arrow", "ContinuationSA2", 90);
         AddTrackImage(90,  "Arrow", "ContinuationSA1", 90);
@@ -24,4 +27,9 @@ public class TrackStraightContinuation : TrackPiece {
         AddTrackImage(315, "Lines", "ContinuationSL2", 0);
 
     }
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Arrow","Mainline");
+        AddTrackStyle("Lines","Mainline");
+    }
+
 }
