@@ -1,8 +1,9 @@
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackCrossing : TrackPiece {
+public class TrackCrossing : TrackPiece, ITrackSymbol {
     
     protected override void Setup() {
         Name="Crossing";

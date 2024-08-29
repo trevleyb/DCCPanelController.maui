@@ -33,7 +33,7 @@ public static class SvgImages {
         Add("Label",            "********","Track_Label");
         Add("Compass",          "********","Track_Compass");
         Add("Unknown",          "********","Track_Unknown");
-        Add("Sample",           "********","Sample");
+        Add("Points",           "********","Track_Points");
         
         Add("Straight1",        "**S***S*","Track_Straight");
         Add("Straight2",        "*S***S**","Track_Angle");
@@ -67,7 +67,7 @@ public static class SvgImages {
         Add("TurnoutR2",        "**XD**S*","Track_Turnout_Right_Diverging");
         Add("TurnoutR3",        "**SX**S*","Track_Turnout_Right_Straight");
         
-        Add("Threeway1",        "*SSS**S*","Track_Threeway");
+        Add("Threeway1",        "*DSD**S*","Track_Threeway");
         Add("Threeway2",        "*DXX**S*","Track_Threeway_Left");
         Add("Threeway3",        "*XXD**S*","Track_Threeway_Right");
         Add("Threeway4",        "*XSX**S*","Track_Threeway_Straight");
@@ -82,6 +82,7 @@ public static class SvgImages {
             }
         } catch (Exception ex) {
             Console.WriteLine($"Could not find {reference} in the resources.");
+            throw new ApplicationException("Invalid Track Image reference. Track name wrong or not included in project.", ex);
         }
     } 
 }

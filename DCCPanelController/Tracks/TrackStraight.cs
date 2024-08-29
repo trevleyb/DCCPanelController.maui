@@ -1,9 +1,10 @@
 using System.Text;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackStraight : TrackPiece {
+public class TrackStraight : TrackPiece, ITrackSymbol {
     
     protected override void Setup() {
         Name = "Straight";

@@ -83,9 +83,9 @@ public partial class SvgImage : ObservableObject {
                 "circle" => elementName.ToLowerInvariant() switch {
                     "border" => SetStrokeType(element, attributeName, attributeValue),
                     "button" => SetFillType(element, attributeName, attributeValue),
-                    _ => false
+                    _        => SetFillType(element, attributeName, attributeValue),
                 },
-                _ => false,
+                _ => SetFillType(element, attributeName, attributeValue),
             };
         }
     }

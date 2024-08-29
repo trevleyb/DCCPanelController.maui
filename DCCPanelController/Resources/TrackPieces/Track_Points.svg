@@ -1,0 +1,14 @@
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Track_Points">
+            <circle id="PointN" fill="#BDBDBD" cx="24" cy="8" r="2"></circle>
+            <circle id="PointNE" fill="#BDBDBD" cx="40" cy="8" r="2"></circle>
+            <circle id="PointNW" fill="#BDBDBD" cx="8" cy="8" r="2"></circle>
+            <circle id="PointS" fill="#BDBDBD" cx="24" cy="40" r="2"></circle>
+            <circle id="PointSE" fill="#BDBDBD" cx="40" cy="40" r="2"></circle>
+            <circle id="PointSW" fill="#BDBDBD" cx="8" cy="40" r="2"></circle>
+            <circle id="PointE" fill="#BDBDBD" cx="40" cy="24" r="2"></circle>
+            <circle id="PointW" fill="#BDBDBD" cx="8" cy="24" r="2"></circle>
+        </g>
+    </g>
+</svg>

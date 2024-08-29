@@ -1,9 +1,12 @@
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackLeftTurnout : TrackPiece, ITrackTurnout {
+public class TrackLeftTurnout : TrackPiece, ITrackTurnout, ITrackSymbol {
+    private IAudioPlayer? _clickSoundPlayer;
+    
     protected override void Setup() {
         Name = "Left Turnout";
     }
@@ -28,6 +31,14 @@ public class TrackLeftTurnout : TrackPiece, ITrackTurnout {
         AddTrackStyle(UnknownState,"Mainline");
         AddTrackStyle("Straight","Mainline-Straight");
         AddTrackStyle("Diverging","Mainline-Diverging");
+    }
+
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
     }
 
 }

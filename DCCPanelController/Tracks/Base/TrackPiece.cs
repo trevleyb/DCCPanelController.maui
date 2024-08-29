@@ -44,7 +44,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     protected readonly TrackState State = new TrackState();
     protected Dictionary<string, SvgStyle> TrackStyles = [];
     
-    public SvgCompass Connections => ActiveImage?.ImageSource?.Connections ?? new SvgCompass("********");
+    public TrackConnectionsEnum[] Connections => ActiveImage?.ImageSource?.Connections.ConnectionPointsRotated(ImageRotation) ??  new SvgCompass().ConnectionPointsRotated(ImageRotation);
 
     /// <summary>
     /// Indicates f this element can be rotated. 

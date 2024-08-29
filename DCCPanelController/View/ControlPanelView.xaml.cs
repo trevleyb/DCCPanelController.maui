@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Layouts;
 
@@ -90,42 +92,63 @@ namespace DCCPanelController.View {
         /// Add the tracks from the view model onto the Grid
         /// </summary>
         private void AddTrackPiecesToGrid() {
-            if (_viewModel is { Panel: { Tracks: { } tracks } }) {
+            if (_viewModel is { Panel: { Tracks: { } tracks } panel }) {
                 foreach (var track in tracks) {
-                    if (DynamicGrid.ColumnDefinitions.Count >= _viewModel.Cols && DynamicGrid.RowDefinitions.Count >= _viewModel.Rows) {
-                        var image = new Image {
-                            Scale = 1.5,
-                            ZIndex = 5,
-                            Rotation = 0,
-                            VerticalOptions = LayoutOptions.Center,
-                            HorizontalOptions = LayoutOptions.Center,
-                            BackgroundColor = Colors.Transparent
-                        };
+                    if (DynamicGrid.ColumnDefinitions.Count >= _viewModel.Cols 
+                        && DynamicGrid.RowDefinitions.Count >= _viewModel.Rows
+                        && track.X < _viewModel.Cols
+                        && track.Y < _viewModel.Rows) {
 
-                        // Setup bindings to the size and source of the Track Image. Image can change on events
-                        // -------------------------------------------------------------------------------------------
-                        image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
-                        image.SetBinding(Image.RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
-                        image.SetBinding(WidthRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
-                        image.SetBinding(HeightRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
-
+                        var image = AddImageToLayout(track);
+                        
                         // Setup trigger control to trap if we click on or select the track item
                         // -------------------------------------------------------------------------------------------
                         // Create TapGestureRecognizer
                         var tapGesture = new TapGestureRecognizer();
                         tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
                         image.GestureRecognizers.Add(tapGesture);
-                        
-                        // Add the Track Image to the appropriate grid position
-                        // ------------------------------------------------------
-                        DynamicGrid.SetRow(image, track.Y);
-                        DynamicGrid.SetColumn(image, track.X);
-                        DynamicGrid.Children.Add(image);
+                    }
+
+                    // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
+                    // -------------------------------------------------------------------------------------
+                    if (_viewModel.ShowTrackErrors) {
+                        var pointImage = new TrackPoints { X = track.X, Y = track.Y  };
+                        var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
+                        pointImage.SetPoints(validPoints);
+                        var image = AddImageToLayout(pointImage);
+                        image.InputTransparent = true;
                     }
                 }
             }
         }
-        
+
+        private Image AddImageToLayout(ITrackPiece track) {
+            var image = new Image {
+                Scale = 1.5,
+                ZIndex = 5,
+                Rotation = 0,
+                InputTransparent = false,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                BackgroundColor = Colors.Transparent
+            };
+
+            // Setup bindings to the size and source of the Track Image. Image can change on events
+            // -------------------------------------------------------------------------------------------
+            image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
+            image.SetBinding(Image.RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
+            image.SetBinding(WidthRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
+            image.SetBinding(HeightRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
+            
+            // Add the Track Image to the appropriate grid position
+            // ------------------------------------------------------
+            DynamicGrid.SetRow(image, track.Y);
+            DynamicGrid.SetColumn(image, track.X);
+            DynamicGrid.Children.Add(image);
+            
+            return image;
+        }
+
         private void OnTrackPieceTapped(ITrackPiece track) {
             var viewModel = BindingContext as ControlPanelViewModel;
             viewModel?.HandleTrackPieceTapped(track);

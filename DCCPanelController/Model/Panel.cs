@@ -2,7 +2,10 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Helpers;
+using DCCPanelController.Tracks.ImageManager;
 
 namespace DCCPanelController.Model;
 
@@ -40,6 +43,10 @@ public partial class Panel : ObservableValidator, ICloneable {
         }
     }
 
+    bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) {
+        return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece,Cols,Rows);
+    }
+    
     /// <summary>
     /// Create a deep copy of the Panel object.
     /// </summary>

@@ -1,3 +1,5 @@
+using Intents;
+
 namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgCompass {
@@ -18,6 +20,23 @@ public class SvgCompass {
                 _   => TrackConnectionsEnum.None
             };
         }
+    }
+
+    public SvgCompass() {
+        ConnectionsArray = NoConnections();
+    }
+
+    public static TrackConnectionsEnum[] NoConnections() {
+        return [
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None,
+            TrackConnectionsEnum.None
+        ];
     }
     
     private TrackConnectionsEnum[] ConnectionsArray { get; } = new TrackConnectionsEnum[8];

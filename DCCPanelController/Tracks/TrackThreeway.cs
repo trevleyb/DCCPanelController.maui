@@ -1,9 +1,13 @@
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackThreeway : TrackPiece, ITrackThreeway {
+public class TrackThreeway : TrackPiece, ITrackThreeway, ITrackSymbol {
+
+    private IAudioPlayer? _clickSoundPlayer;
+    
     protected override void Setup() {
         Name = "Threeway";
     }
@@ -36,4 +40,13 @@ public class TrackThreeway : TrackPiece, ITrackThreeway {
         AddTrackStyle("Diverging-Left", "Mainline-Diverging");
         AddTrackStyle("Diverging-Right", "Mainline-Diverging");
     }
+    
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
+    }
+
 }

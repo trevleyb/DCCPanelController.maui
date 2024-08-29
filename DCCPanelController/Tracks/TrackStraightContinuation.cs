@@ -1,8 +1,9 @@
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackStraightContinuation : TrackPiece {
+public class TrackStraightContinuation : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Straight Continued...";
     }

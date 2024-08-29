@@ -17,6 +17,7 @@ public partial class ControlPanelViewModel : BaseViewModel {
 
     [ObservableProperty] private bool _designMode = true;
     [ObservableProperty] private bool _showGrid = true;
+    [ObservableProperty] private bool _showTrackErrors = true;
     
     [ObservableProperty] private Panel? _panel;
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
@@ -38,16 +39,19 @@ public partial class ControlPanelViewModel : BaseViewModel {
     public void HandleTrackPieceTapped(ITrackPiece track) {
         if (track is ITrackInteractive) {
             switch (track) {
-            case ITrackButton:
+            case ITrackButton button:
                 Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
+                button.Clicked();
                 track.NextState();
                 break;
-            case ITrackThreeway:
+            case ITrackThreeway threeway:
                 Console.WriteLine($"You just tapped on {track.Name} - its a threeway so we will cycle states. ");
+                threeway.Clicked();
                 track.NextState();
                 break;
-            case ITrackTurnout:
+            case ITrackTurnout turnout:
                 Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
+                turnout.Clicked();
                 track.NextState();
                 break;
             }

@@ -15,14 +15,14 @@ public class TrackCompass : TrackPiece {
     }
     
     public void SetCompassPoints(ITrackPiece track) {
-        SetCompassColor("CompassN", track.Connections.ConnectionPointsRotated(track.ImageRotation)[0]);
-        SetCompassColor("CompassNE", track.Connections.ConnectionPointsRotated(track.ImageRotation)[1]);
-        SetCompassColor("CompassE", track.Connections.ConnectionPointsRotated(track.ImageRotation)[2]);
-        SetCompassColor("CompassSE", track.Connections.ConnectionPointsRotated(track.ImageRotation)[3]);
-        SetCompassColor("CompassS", track.Connections.ConnectionPointsRotated(track.ImageRotation)[4]);
-        SetCompassColor("CompassSW", track.Connections.ConnectionPointsRotated(track.ImageRotation)[5]);
-        SetCompassColor("CompassW", track.Connections.ConnectionPointsRotated(track.ImageRotation)[6]);
-        SetCompassColor("CompassNW", track.Connections.ConnectionPointsRotated(track.ImageRotation)[7]);
+        SetCompassColor("CompassN", track.Connections[0]);
+        SetCompassColor("CompassNE", track.Connections[1]);
+        SetCompassColor("CompassE", track.Connections[2]);
+        SetCompassColor("CompassSE", track.Connections[3]);
+        SetCompassColor("CompassS", track.Connections[4]);
+        SetCompassColor("CompassSW", track.Connections[5]);
+        SetCompassColor("CompassW", track.Connections[6]);
+        SetCompassColor("CompassNW", track.Connections[7]);
     }
 
     private void SetCompassColor(string compassId, TrackConnectionsEnum connection) {

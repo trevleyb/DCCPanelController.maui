@@ -21,5 +21,5 @@ public interface ITrackPiece {
     public void RotateRight();
     public void RotateAbsolute(int degrees);
 
-    public SvgCompass Connections { get; }
+    public  TrackConnectionsEnum[] Connections { get; }
 }

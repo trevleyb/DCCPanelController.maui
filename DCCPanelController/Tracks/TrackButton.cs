@@ -1,9 +1,13 @@
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackButton : TrackPiece, ITrackButton  {
+public class TrackButton : TrackPiece, ITrackButton, ITrackSymbol {
+
+    private IAudioPlayer? _clickSoundPlayer;
+    
     protected override void Setup() {
         Name = "Button";
         Layer = 2;
@@ -34,4 +38,11 @@ public class TrackButton : TrackPiece, ITrackButton  {
         AddTrackStyle("InActive","Button-InActive");
     }
 
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
+    }
 }

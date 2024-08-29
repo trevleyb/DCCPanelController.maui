@@ -73,6 +73,7 @@
         <PackageReference Include="CommunityToolkit.Common" Version="8.2.2" />
         <PackageReference Include="CommunityToolkit.Maui" Version="9.0.1" />
         <PackageReference Include="CommunityToolkit.Maui.Core" Version="9.0.1" />
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.0" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
         <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
@@ -81,6 +82,7 @@
         <PackageReference Include="MiniProfiler" Version="4.3.8" />
         <PackageReference Include="NUnit" Version="4.1.0" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
+        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
         <PackageReference Include="Svg.Skia" Version="2.0.0" />
         <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1" />
     </ItemGroup>
@@ -216,6 +218,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <EmbeddedResource Include="Resources\Raw\Button_Click_Mouse.m4a" />
       <EmbeddedResource Include="Resources\TrackPieces\Sample.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
@@ -296,6 +299,9 @@
       <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Terminator.svg" />
       <None Remove="Resources\TrackPieces\Track_Compass.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Compass.svg" />
+      <None Remove="Resources\TrackPieces\Track_Points.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Points.svg" />
+      <None Remove="Resources\Sounds\Button_Click_Mouse.m4a" />
     </ItemGroup>
 
     <ItemGroup>

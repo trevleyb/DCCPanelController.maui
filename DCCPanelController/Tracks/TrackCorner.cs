@@ -1,8 +1,9 @@
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackCorner : TrackPiece  {
+public class TrackCorner : TrackPiece, ITrackSymbol  {
     protected override void Setup() {
         Name = "Corner";
     }
