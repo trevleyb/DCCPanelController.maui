@@ -46,7 +46,7 @@
     </FlyoutItem>
 
     <FlyoutItem Title="Edit Panels" Icon="panels_green.png">
-        <ShellContent Title="Edit Panels" ContentTemplate="{DataTemplate view:PanelEditorPage}" Route="PanelEditor"></ShellContent>
+        <ShellContent Title="View Panels" ContentTemplate="{DataTemplate view:PanelsPage}" Route="PanelView"></ShellContent>
     </FlyoutItem>
         
     <FlyoutItem Title="Turnouts" Icon="turnouts_green.png">

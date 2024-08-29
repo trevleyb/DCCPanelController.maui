@@ -6,6 +6,7 @@ using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using Microsoft.Maui.Layouts;
 
 namespace DCCPanelController.ViewModel;
 
@@ -28,6 +29,9 @@ public partial class ControlPanelViewModel : BaseViewModel {
     
     public ControlPanelViewModel(Panel panel) {
         Panel = panel;
+        ShowGrid = false;
+        DesignMode = false;
+        ShowTrackErrors = false;
     }
     
     public void SetScreenSize(double width, double height) {

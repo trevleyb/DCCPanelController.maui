@@ -40,8 +40,8 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
         
-        services.AddTransient<PanelEditorPage>();
-        services.AddTransient<PanelEditorViewModel>();
+        // services.AddTransient<PanelEditorPage>();
+        // services.AddTransient<PanelEditorViewModel>();
 
 #if DEBUG
         builder.Logging.AddDebug();

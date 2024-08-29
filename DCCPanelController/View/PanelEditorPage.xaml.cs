@@ -7,7 +7,7 @@ using DCCPanelController.ViewModel;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
 using OnScreenSizeMarkup.Maui.Helpers;
-
+/*
 namespace DCCPanelController.View;
 
 public partial class PanelEditorPage : ContentPage {
@@ -332,7 +332,7 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
 }
-
+*/
 
     /*
     <BoxView Grid.Column="0" Grid.Row="0" BackgroundColor="#000000" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
@@ -352,4 +352,4 @@ public partial class PanelEditorPage : ContentPage {
     <BoxView Grid.Column="3" Grid.Row="2" BackgroundColor="#000080" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
     <BoxView Grid.Column="3" Grid.Row="3" BackgroundColor="#00FF00" WidthRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}" HeightRequest="{markups:OnScreenSize Medium=10, Large=10, ExtraLarge=25, Default=25}"/>
     */
-
+    

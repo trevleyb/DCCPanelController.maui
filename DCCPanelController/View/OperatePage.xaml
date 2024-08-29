@@ -33,7 +33,7 @@
                 </CarouselView.EmptyView>
                 
                 <CarouselView.ItemsSource>
-                    <Binding Path="Panels" />
+                    <Binding Path="PanelViewModels" />
                 </CarouselView.ItemsSource>
                 
                 <CarouselView.ItemTemplate>

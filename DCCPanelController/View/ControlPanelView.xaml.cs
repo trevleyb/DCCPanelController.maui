@@ -20,13 +20,13 @@ namespace DCCPanelController.View {
             if (_viewModel is not null) _viewModel.PropertyChanged -= OnPropertyChanged;
             _viewModel = BindingContext as ControlPanelViewModel;
             if (_viewModel is not null) _viewModel.PropertyChanged += OnPropertyChanged;
-            RebuildGrid();
+            //RebuildGrid();
         }
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
             case nameof(ControlPanelViewModel.ShowGrid):
-                RebuildGrid();
+                AddOutlineToGrid();
                 break;
             }
         }
@@ -43,15 +43,7 @@ namespace DCCPanelController.View {
             DynamicGrid.Children.Clear();
             DynamicGrid.RowDefinitions.Clear();
             DynamicGrid.ColumnDefinitions.Clear();
-
-            // Clear the AbsoluteLayout before adding a new grid and GraphicsView
-            if (ControlPanelLayout.Children.Count >= 1) {
-                var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().ToList();
-                foreach (var view in graphicsViewToRemove) {
-                    ControlPanelLayout.Children.Remove(view);
-                }
-            }
-
+            
             for (var i = 0; i < _viewModel.Rows; i++) {
                 DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
             }
@@ -60,7 +52,6 @@ namespace DCCPanelController.View {
                 DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
             }
 
-            AddOutlineToGrid();
             AddTrackPiecesToGrid();
 
             DynamicGrid.WidthRequest = _viewModel.ViewWidth;
@@ -71,6 +62,15 @@ namespace DCCPanelController.View {
         /// Draw the Grid Outline
         /// </summary>
         private void AddOutlineToGrid() {
+
+            // Clear the AbsoluteLayout before adding a new grid and GraphicsView
+            if (ControlPanelLayout.Children.Count >= 1) {
+                var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().ToList();
+                foreach (var view in graphicsViewToRemove) {
+                    ControlPanelLayout.Children.Remove(view);
+                }
+            }
+
             if (_viewModel?.ShowGrid ?? false) {
                 var gridLines = new GridLinesDrawable(_viewModel.Rows, _viewModel.Cols);
                 var graphicsView = new GraphicsView {

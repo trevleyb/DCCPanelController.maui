@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
+using AudioUnit;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
@@ -9,13 +10,21 @@ namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
     
+    public ObservableCollection<ControlPanelViewModel> PanelViewModels { get; set; } = [];
     public ObservableCollection<Panel> Panels { get; set; } = [];
     private readonly SettingsService _settingsService;
     private int _draggingIndex;
     
     public PanelsViewModel(SettingsService settingsService) {
         _settingsService = settingsService;
-        Panels = settingsService.Panels;
+
+        // This is temporary for testing
+        Panels = Services.SampleData.Panels.DemoData();
+        PanelViewModels = new ObservableCollection<ControlPanelViewModel>();
+        foreach (var panel in Panels) {
+            var vm = new ControlPanelViewModel(panel);
+            PanelViewModels.Add(vm);
+        }
     }
     
     public async void Save() => _settingsService?.Save();
@@ -32,24 +41,25 @@ public partial class PanelsViewModel : BaseViewModel {
         panel.Name = "Panel " + maxSort;
         panel.SortOrder = maxSort;
         Panels.Add(panel);
+        PanelViewModels.Add(new ControlPanelViewModel(panel));
     }
 
     [RelayCommand]
-    public async Task DeletePanelAsync(Panel panel) {
-        Panels.Remove(panel);
-        for (int index = 0; index < Panels.Count; index++) {
-            Panels[index].SortOrder = index+1;
-        }
-        Save();
+    public async Task DeletePanelAsync(ControlPanelViewModel panel) {
+        // Panels.Remove(panel);
+        // for (int index = 0; index < Panels.Count; index++) {
+            // Panels[index].SortOrder = index+1;
+        // }
+        // Save();
     }
 
     [RelayCommand]
     public async Task GoToDetailsAsync(Panel panel) {
-        if (Sender != null) {
-            var editorPage = new PanelEditorPage(panel);
-            editorPage.OnFinished += EditorPageOnOnFinished;
-            await Sender.Navigation.PushAsync(editorPage);
-        }
+        // if (Sender != null) {
+        //     var editorPage = new PanelEditorPage(panel);
+        //     editorPage.OnFinished += EditorPageOnOnFinished;
+        //     await Sender.Navigation.PushAsync(editorPage);
+        // }
     }
 
     private void EditorPageOnOnFinished(Panel panel) {

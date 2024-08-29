@@ -6,10 +6,8 @@
     x:Class="DCCPanelController.View.PanelsPage"
     x:DataType="viewModel:PanelsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters">
 
@@ -28,7 +26,7 @@
         <Grid x:Name="MainGrid"
               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
-            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding Panels}" SelectionMode="None">
+            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding PanelViewModels}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -61,7 +59,7 @@
                                 <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard">
                                     <Grid.HeightRequest>
                                         <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
-                                            <Binding Path="." />
+                                            <Binding Path="Panel" />
                                             <Binding Source="{x:Reference PanelCard}" Path="Width" />
                                         </MultiBinding>
                                     </Grid.HeightRequest>
@@ -80,7 +78,7 @@
                                         </Border.GestureRecognizers>
                                         <Grid Padding="0">
                                             <AbsoluteLayout>
-                                                <view:PanelViewer Panel="{Binding Mode=TwoWay}"
+                                                <view:ControlPanelView BindingContext="{Binding .}"
                                                                    HorizontalOptions="FillAndExpand"
                                                                    VerticalOptions="FillAndExpand"
                                                                    AbsoluteLayout.LayoutFlags="All"
@@ -107,8 +105,8 @@
                                                        VerticalTextAlignment="Center"
                                                        HorizontalTextAlignment="Center">
                                                     <MultiBinding StringFormat="{}{0}: {1}">
-                                                        <Binding Path="Id" />
-                                                        <Binding Path="Name" />
+                                                        <Binding Path="Panel.Id" FallbackValue="00"/>
+                                                        <Binding Path="Panel.Name" FallbackValue="Unknown Panel" />
                                                     </MultiBinding>
                                                 </Label>
                                             </AbsoluteLayout>
