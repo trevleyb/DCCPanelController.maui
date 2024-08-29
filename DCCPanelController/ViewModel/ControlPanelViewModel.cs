@@ -33,7 +33,15 @@ public partial class ControlPanelViewModel : BaseViewModel {
         DesignMode = false;
         ShowTrackErrors = false;
     }
-    
+
+    private const double Tolerance = 5f;
+    public bool HasScreenSizeChanged(double width, double height) {
+        var gridSize = (width > 0 && height > 0) ? (Math.Min(width / Cols, height / Rows) / 2) * 2 : 1;
+        var viewWidth = gridSize * Cols;
+        var viewHeight = gridSize * Rows;
+        return Math.Abs(viewWidth - ViewWidth) > Tolerance || Math.Abs(viewHeight - ViewHeight) > Tolerance;
+    }
+
     public void SetScreenSize(double width, double height) {
         GridSize = (width > 0 && height > 0) ? (Math.Min(width / Cols, height / Rows) / 2) * 2 : 1;
         ViewWidth = GridSize * Cols;
@@ -41,6 +49,15 @@ public partial class ControlPanelViewModel : BaseViewModel {
     }
     
     public void HandleTrackPieceTapped(ITrackPiece track) {
+        if (DesignMode) {
+            // todo: Replace this so we select items not just rotate them
+            track.RotateLeft();
+        } else {
+            HandleRunMode(track);
+        }
+    }
+
+    private void HandleRunMode(ITrackPiece track) {
         if (track is ITrackInteractive) {
             switch (track) {
             case ITrackButton button:
@@ -59,11 +76,6 @@ public partial class ControlPanelViewModel : BaseViewModel {
                 track.NextState();
                 break;
             }
-        } else {
-            Console.WriteLine($"You just tapped on {track.Name} but it is not interactive so we will rotate it.");
-            track.RotateLeft();
-        }
-        
-        
+        } 
     }
 }

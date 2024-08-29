@@ -33,12 +33,12 @@
                 </CarouselView.EmptyView>
                 
                 <CarouselView.ItemsSource>
-                    <Binding Path="PanelViewModels" />
+                    <Binding Path="Panels" />
                 </CarouselView.ItemsSource>
                 
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <view:ControlPanelView BindingContext="{Binding .}" 
+                        <view:ControlPanelView Panel="{Binding .}" 
                                                BackgroundColor="White"
                                                HorizontalOptions="Fill"
                                                VerticalOptions="Fill"/>

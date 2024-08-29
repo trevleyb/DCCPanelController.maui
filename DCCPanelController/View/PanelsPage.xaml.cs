@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DCCPanelController.Model;
 using DCCPanelController.ViewModel;
 using OnScreenSizeMarkup.Maui.Helpers;
 
@@ -7,13 +8,8 @@ namespace DCCPanelController.View;
 public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
 
     public PanelsPage() {
+        BindingContext = new PanelsViewModel();
         InitializeComponent();
-
-        // TODO: Fix this as ViewModel should not know about the view. This is BAD
-        if (BindingContext != null) {
-            ((PanelsViewModel)BindingContext).Sender = this;
-        }
-        this.SizeChanged += (_, __) => UpdateLayout();
     }
     
     void UpdateLayout() {
@@ -24,13 +20,5 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             _                            => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2),
         };
         PanelsCollectionViewLayout.Span = span;
-    }
-    
-    protected override void OnAppearing() {
-        base.OnAppearing();
-        //if (BindingContext is PanelsViewModel viewModel) {
-        //    viewModel.Save();
-        //    
-        //}
     }
 }

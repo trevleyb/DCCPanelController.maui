@@ -97,9 +97,6 @@
       <MauiXaml Update="View\InstructionsPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="View\PanelEditorPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
       <MauiXaml Update="Symbols\TrackView.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
@@ -133,10 +130,13 @@
       <MauiXaml Update="Components\Elements\Views\CircleTextElementView.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="View\PanelViewer.xaml">
+      <MauiXaml Update="View\ToDelete\PanelEditorPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
-      <MauiXaml Update="View\TrackPieceTestPage.xaml">
+      <MauiXaml Update="View\ToDelete\PanelViewer.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="View\ToDelete\TrackPieceTestPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
     </ItemGroup>
@@ -152,10 +152,6 @@
       </Compile>
       <Compile Update="View\InstructionsPage.xaml.cs">
         <DependentUpon>InstructionsPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\PanelEditorPage.xaml.cs">
-        <DependentUpon>PanelEditorBackup.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
       <Compile Update="Symbols\TrackView.xaml.cs">
@@ -202,11 +198,15 @@
         <DependentUpon>CircleTextElementView.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="View\PanelViewer.xaml.cs">
+      <Compile Update="View\ToDelete\PanelEditorPage.xaml.cs">
+        <DependentUpon>PanelEditorPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\ToDelete\PanelViewer.xaml.cs">
         <DependentUpon>PanelViewer.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
-      <Compile Update="View\TrackPieceTestPage.xaml.cs">
+      <Compile Update="View\ToDelete\TrackPieceTestPage.xaml.cs">
         <DependentUpon>TrackPieceTestPage.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>

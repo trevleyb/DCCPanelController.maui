@@ -1,9 +1,12 @@
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Layouts;
+using Svg;
 
 namespace DCCPanelController.View {
     public partial class ControlPanelView {
@@ -12,19 +15,37 @@ namespace DCCPanelController.View {
 
         public ControlPanelView() {
             InitializeComponent();
-            MainGrid.SizeChanged += OnGridSizeChanged;
             PropertyChanged += OnPropertyChanged;
+            MainGrid.SizeChanged += OnGridSizeChanged;
         }
 
-        protected override void OnBindingContextChanged() {
-            if (_viewModel is not null) _viewModel.PropertyChanged -= OnPropertyChanged;
-            _viewModel = BindingContext as ControlPanelViewModel;
-            if (_viewModel is not null) _viewModel.PropertyChanged += OnPropertyChanged;
-            //RebuildGrid();
+        public ControlPanelView(Panel panel) : this() {
+            Console.WriteLine("ControlPanelView::ctor => Panel:" + panel.Name);
+            Panel = panel;
         }
+
+        public static readonly BindableProperty PanelProperty =
+            BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null,
+            BindingMode.TwoWay, propertyChanged: OnPanelChanged);
+
+        public Panel Panel {
+            get => (Panel)GetValue(PanelProperty);
+            set => SetValue(PanelProperty, value);
+        }
+
+        private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
+            if (oldValue is Panel { } oldPanel && newValue is Panel { } newPanel) {
+                OnPanelChanged(oldPanel, newPanel);
+            }
+        }
+
+        private static void OnPanelChanged(Panel oldPanel, Panel newPanel) { }
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
+            case nameof(Panel): 
+                BindingContext = _viewModel ??= new ControlPanelViewModel(Panel);
+                break;
             case nameof(ControlPanelViewModel.ShowGrid):
                 AddOutlineToGrid();
                 break;
@@ -36,26 +57,27 @@ namespace DCCPanelController.View {
         }
 
         private void RebuildGrid() {
-            if (MainGrid.Width < 1 || MainGrid.Height < 1 || _viewModel is null) return;
-
+            if (_viewModel is null || MainGrid.Width < 1 || MainGrid.Height < 1) return;
+            if (!_viewModel?.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height) ?? true) return;
+                
             _viewModel.SetScreenSize(MainGrid.Width, MainGrid.Height);
-
-            DynamicGrid.Children.Clear();
-            DynamicGrid.RowDefinitions.Clear();
-            DynamicGrid.ColumnDefinitions.Clear();
-            
-            for (var i = 0; i < _viewModel.Rows; i++) {
-                DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-            }
-
-            for (var j = 0; j < _viewModel.Cols; j++) {
-                DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-            }
-
-            AddTrackPiecesToGrid();
-
             DynamicGrid.WidthRequest = _viewModel.ViewWidth;
             DynamicGrid.HeightRequest = _viewModel.ViewHeight;
+
+            DynamicGrid.Children.Clear();
+            if (DynamicGrid.RowDefinitions.Count != _viewModel.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel.Cols) {
+                DynamicGrid.RowDefinitions.Clear();
+                DynamicGrid.ColumnDefinitions.Clear();
+
+                for (var i = 0; i < _viewModel.Rows; i++) {
+                    DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+                }
+
+                for (var j = 0; j < _viewModel.Cols; j++) {
+                    DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                }
+            }
+            AddTrackPiecesToGrid();
         }
 
         /// <summary>
@@ -150,8 +172,7 @@ namespace DCCPanelController.View {
         }
 
         private void OnTrackPieceTapped(ITrackPiece track) {
-            var viewModel = BindingContext as ControlPanelViewModel;
-            viewModel?.HandleTrackPieceTapped(track);
+            _viewModel?.HandleTrackPieceTapped(track);
         }
     }
 

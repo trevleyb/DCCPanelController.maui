@@ -12,22 +12,18 @@ public partial class OperateViewModel : BaseViewModel {
 
     [ObservableProperty] private bool _showGrid;
     public ObservableCollection<Panel> Panels { get; } = [];
-    public ObservableCollection<ControlPanelViewModel> PanelViewModels { get; set; } = [];
-    public ControlPanelViewModel? SelectedPanel { get; set; }
+    public Panel? SelectedPanel { get; set; }
 
     public OperateViewModel() {
         Panels = Services.SampleData.Panels.DemoData();
-        foreach (var panel in Panels) {
-            PanelViewModels.Add(new ControlPanelViewModel(panel));
-        }
-        SelectedPanel = PanelViewModels[0];
+        SelectedPanel = Panels[0];
         this.PropertyChanged += OnPropertyChanged;
     }
     
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
         case nameof(ShowGrid):
-            if (SelectedPanel is not null) SelectedPanel.ShowGrid = ShowGrid;
+            //if (SelectedPanel is not null) SelectedPanel.ShowGrid = ShowGrid;
             break;
         }
     }

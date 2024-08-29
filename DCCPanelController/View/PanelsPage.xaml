@@ -26,7 +26,7 @@
         <Grid x:Name="MainGrid"
               BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
 
-            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding PanelViewModels}" SelectionMode="None">
+            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding Panels}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -41,10 +41,7 @@
                 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-
                         <SwipeView x:Name="PanelCardSwipeView">
-                            <!-- RightItems are revealed when we swipe from right-to-left -->
-                            <!-- Add more SwipeItems to create more actions -->
                             <SwipeView.RightItems>
                                 <SwipeItems>
                                     <SwipeItem IconImageSource="trash.png"
@@ -59,11 +56,10 @@
                                 <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard">
                                     <Grid.HeightRequest>
                                         <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
-                                            <Binding Path="Panel" />
+                                            <Binding Path="." />
                                             <Binding Source="{x:Reference PanelCard}" Path="Width" />
                                         </MultiBinding>
                                     </Grid.HeightRequest>
-                                
                                     <Border Style="{StaticResource CardView}">
                                         <Border.GestureRecognizers>
                                             <DragGestureRecognizer
@@ -77,12 +73,12 @@
                                                 CommandParameter="{Binding}" />
                                         </Border.GestureRecognizers>
                                         <Grid Padding="0">
-                                            <AbsoluteLayout>
-                                                <view:ControlPanelView BindingContext="{Binding .}"
-                                                                   HorizontalOptions="FillAndExpand"
-                                                                   VerticalOptions="FillAndExpand"
-                                                                   AbsoluteLayout.LayoutFlags="All"
-                                                                   AbsoluteLayout.LayoutBounds="0,0,1,1"/>
+                                            <AbsoluteLayout x:Name="PanelLayout" BindingContext="{Binding .}">
+                                                <view:ControlPanelView Panel="{Binding .}"
+                                                                  HorizontalOptions="FillAndExpand"
+                                                                  VerticalOptions="FillAndExpand"
+                                                                  AbsoluteLayout.LayoutFlags="All"
+                                                                  AbsoluteLayout.LayoutBounds="0,0,1,1"/>
                                                 <BoxView
                                                     BackgroundColor="{StaticResource Primary}"
                                                     HeightRequest="2"
@@ -105,8 +101,8 @@
                                                        VerticalTextAlignment="Center"
                                                        HorizontalTextAlignment="Center">
                                                     <MultiBinding StringFormat="{}{0}: {1}">
-                                                        <Binding Path="Panel.Id" FallbackValue="00"/>
-                                                        <Binding Path="Panel.Name" FallbackValue="Unknown Panel" />
+                                                        <Binding Path="Id" FallbackValue="00"/>
+                                                        <Binding Path="Name" FallbackValue="Unknown Panel" />
                                                     </MultiBinding>
                                                 </Label>
                                             </AbsoluteLayout>
