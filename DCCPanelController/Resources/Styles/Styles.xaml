@@ -200,6 +200,14 @@
         <Setter Property="FontSize" Value="14" />
     </Style>
 
+
+    <Style
+        BasedOn="{StaticResource BaseLabel}"
+        TargetType="Label" x:Key="PanelLabel">
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontAttributes" Value="Bold" />
+    </Style>
+    
     <Style
         BasedOn="{StaticResource BaseLabel}"
         TargetType="Label"

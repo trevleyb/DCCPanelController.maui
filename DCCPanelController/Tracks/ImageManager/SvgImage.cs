@@ -4,6 +4,7 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Tracks.StyleManager;
+using StackExchange.Profiling;
 
 namespace DCCPanelController.Tracks.ImageManager;
 
@@ -48,9 +49,11 @@ public partial class SvgImage : ObservableObject {
     public void ApplyStyle(string style) => ApplyStyle(SvgStyles.GetStyle(style));
     
     public void ApplyStyle(SvgStyle style) {
-        foreach (var element in style.Elements) {
-            foreach (var styleAttribute in element.Value.Attributes) {
-                ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
+        using (MiniProfiler.Current.Step("ApplyStyle")) {
+            foreach (var element in style.Elements) {
+                foreach (var styleAttribute in element.Value.Attributes) {
+                    ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
+                }
             }
         }
     }

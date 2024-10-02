@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Runtime.CompilerServices;
+using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
 using DCCPanelController.Services;
 using DCCPanelController.View;
@@ -47,7 +48,7 @@ public static class MauiProgram {
         builder.Logging.AddDebug();
 #endif
         var app = builder.Build();
-
+        
         //var xx1 = app.Services.GetRequiredService<RoutesPage>();
         //var xx2 = app.Services.GetRequiredService<RoutesService>();
         
@@ -88,4 +89,5 @@ public static class MauiProgram {
         Routing.RegisterRoute(routeName, typeof(TView));
         Console.WriteLine($"Registered Route: '{routeName}' to '{typeof(TView).Name}'");
     }
+    
 } 

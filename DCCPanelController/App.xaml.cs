@@ -22,7 +22,8 @@ public partial class App : Application
 		// }
 
 		//MainPage = App.ServiceProvider?.GetService<MainPageFlyOut>();
-		MainPage = new MainPageFlyOut();
+		MainPage = new MainPageTabbed();
 
 	}
+	
 }

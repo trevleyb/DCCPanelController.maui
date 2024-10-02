@@ -25,13 +25,11 @@
         <ToolbarItem Clicked="Instructions_OnClicked" IconImageSource="information.png" />
     </ContentPage.ToolbarItems>
 
-    <Grid RowDefinitions="220,160,*">
+    <Grid RowDefinitions="220,160,*" Padding="10" Margin="10">
         <!-- Server Address Area -->
-        <StackLayout Grid.Row="0">
+        <StackLayout Grid.Row="0" Padding="10" Margin="10">
             <BoxView
-                BackgroundColor="{StaticResource Primary}"
-                HeightRequest="2"
-                HorizontalOptions="FillAndExpand" />
+                BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="FillAndExpand" />
             <Grid>
                 <StackLayout x:Name="MainStackLayout">
                     <Label
@@ -132,14 +130,8 @@
             </Grid>
 
             <Button
-                HorizontalOptions="Center"
-                IsEnabled="{Binding IsConnectAvailable}"
-                Margin="10,0,0,20"
-                Padding="20"
-                Style="{StaticResource ButtonOutline}"
-                Text="{Binding ConnectLabel}"
-                Command="{Binding ConnectCommand}"
-                WidthRequest="150" />
+                HorizontalOptions="Center" IsEnabled="{Binding IsConnectAvailable}" Margin="10,0,0,20" Padding="20"
+                Style="{StaticResource ButtonOutline}" Text="{Binding ConnectLabel}" Command="{Binding ConnectCommand}" WidthRequest="150" />
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="2"

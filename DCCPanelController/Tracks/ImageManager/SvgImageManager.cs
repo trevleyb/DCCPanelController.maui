@@ -1,13 +1,16 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using SkiaSharp;
+using StackExchange.Profiling;
 using Svg.Skia;
 
 namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgImageManager {
 
+    private string _resourceName;
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
     private readonly XDocument _svgDocument;
@@ -46,18 +49,20 @@ public class SvgImageManager {
     /// </summary>
     /// <returns>A PNG Image of the SVG</returns>
     private ImageSource GetSvgAsImage() {
-        var svg = new SKSvg();
-        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
-        if (svg is null) throw new ApplicationException("Unable to load svg");
+        using (MiniProfiler.Current.Step($"SVGImage:{_resourceName} ")) {
+            var svg = new SKSvg();
+            svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
+            if (svg is null) throw new ApplicationException("Unable to load svg");
 
-        const int quality = 100;
-        var scaleX = DefaultWidth / svg.Picture?.CullRect.Width ?? DefaultWidth;
-        var scaleY = DefaultHeight / svg.Picture?.CullRect.Height ?? DefaultHeight;
+            const int quality = 100;
+            var scaleX = DefaultWidth / svg.Picture?.CullRect.Width ?? DefaultWidth;
+            var scaleY = DefaultHeight / svg.Picture?.CullRect.Height ?? DefaultHeight;
 
-        var stream = new MemoryStream();
-        svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
-        stream.Seek(0, SeekOrigin.Begin);
-        return ImageSource.FromStream(() => stream); 
+            var stream = new MemoryStream();
+            svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
+            stream.Seek(0, SeekOrigin.Begin);
+            return ImageSource.FromStream(() => stream);
+        } 
     }
 
     /// <summary>
@@ -72,18 +77,25 @@ public class SvgImageManager {
     }
 
     private XDocument LoadSvg(string resourceName) {
-        _imageSource = null;
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream(resourceName);
-        if (stream == null) throw new FileNotFoundException("Resource not found.", resourceName);
-        
-        using var reader = new StreamReader(stream);
-        var svgContent = reader.ReadToEnd();
-        try {
-            var xDocument = XDocument.Parse(svgContent);
-            return xDocument;
-        } catch (Exception ex) {
-            throw new FileLoadException("Failed to load the SVG image.", ex);
+        _resourceName = resourceName;
+        using (MiniProfiler.Current.Step($"Loading SVG Resource:{_resourceName}")) {
+            _imageSource = null;
+            var assembly = Assembly.GetExecutingAssembly();
+            using var stream = assembly.GetManifestResourceStream(_resourceName);
+            if (stream == null) {
+                Console.WriteLine($"Could not find the image resource: '{_resourceName}'");
+                throw new FileNotFoundException("Resource not found.", _resourceName);
+            }
+
+            using var reader = new StreamReader(stream);
+            var svgContent = reader.ReadToEnd();
+            try {
+                var xDocument = XDocument.Parse(svgContent);
+                return xDocument;
+            } catch (Exception ex) {
+                Console.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
+                throw new FileLoadException("Failed to load the SVG image.", ex);
+            }
         }
     }
     

@@ -11,7 +11,7 @@ using SymbolViewModel = DCCPanelController.Components.TrackComponents.SymbolView
 
 namespace DCCPanelController.ViewModel;
 
-public partial class PanelEditorViewModel : BaseViewModel {
+public partial class PanelEditorViewModelx : BaseViewModel {
 
     [ObservableProperty] private Panel _panel;
     [ObservableProperty] private List<string> _symbolSets = SymbolLoader.Symbols.SetNames;
@@ -50,7 +50,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     
     public GridHelper? GridHelper;
 
-    public PanelEditorViewModel(Panel panel) {
+    public PanelEditorViewModelx(Panel panel) {
         //SetSelectedSet(0);
         LastCoordinate = Coordinate.Unreferenced;
         IsPropertyPanelVisible = false;

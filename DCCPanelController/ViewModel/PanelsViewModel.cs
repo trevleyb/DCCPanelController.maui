@@ -5,12 +5,14 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCPanelController.View;
+using Microsoft.Extensions.Logging;
+using NUnit.Framework.Internal;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
     
-    public ObservableCollection<Panel> Panels { get; set; } = [];
+    public ObservableCollection<Panel> Panels { get; set; }
     private readonly SettingsService _settingsService;
     private int _draggingIndex;
     
@@ -34,21 +36,16 @@ public partial class PanelsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task DeletePanelAsync(ControlPanelViewModel panel) {
-        // Panels.Remove(panel);
-        // for (int index = 0; index < Panels.Count; index++) {
-            // Panels[index].SortOrder = index+1;
-        // }
-        // Save();
-    }
-
-    [RelayCommand]
-    public async Task GoToDetailsAsync(Panel panel) {
-        // if (Sender != null) {
-        //     var editorPage = new PanelEditorPage(panel);
-        //     editorPage.OnFinished += EditorPageOnOnFinished;
-        //     await Sender.Navigation.PushAsync(editorPage);
-        // }
+    public async Task DeletePanelAsync(Panel panel) {
+        try {
+            Panels.Remove(panel);
+            for (var index = 0; index < Panels.Count; index++) {
+                Panels[index].SortOrder = index + 1;
+            }
+            Save();
+        } catch {
+            Console.WriteLine($"Failed to delete panel {panel.Id}");
+        }
     }
 
     private void EditorPageOnOnFinished(Panel panel) {
@@ -60,25 +57,24 @@ public partial class PanelsViewModel : BaseViewModel {
 
     [RelayCommand]
     public async Task DragAsync(Panel panel) { 
-       // _draggingIndex = Panels.IndexOf(panel);
+        _draggingIndex = Panels.IndexOf(panel);
     }
 
     [RelayCommand]
     public async Task DropAsync(Panel panel) {
-        // int droppedIndex = Panels.IndexOf(panel);
-
+        var droppedIndex = Panels.IndexOf(panel);
         // Swap or rearrange items
-        // if (_draggingIndex >= 0 && droppedIndex >= 0) {
-            // var draggedItem = Panels[_draggingIndex];
-            // Panels.Remove(draggedItem);
-            // Panels.Insert(droppedIndex, draggedItem);
+        if (_draggingIndex >= 0 && droppedIndex >= 0) {
+            var draggedItem = Panels[_draggingIndex];
+            Panels.Remove(draggedItem);
+            Panels.Insert(droppedIndex, draggedItem);
 
             // ReApply the Sort Order so we order the list by this number
             // ------------------------------------------------------------
-            // for (int index = 0; index < Panels.Count; index++) {
-                // Panels[index].SortOrder = index+1;
-            // }
-        // }
+            for (var index = 0; index < Panels.Count; index++) {
+                Panels[index].SortOrder = index+1;
+            }
+        }
     } 
 
     [GeneratedRegex(@"[^0-9]")]

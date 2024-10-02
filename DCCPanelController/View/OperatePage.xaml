@@ -14,22 +14,23 @@
     
     <ContentPage.Content>
         <Grid ColumnDefinitions="*" RowDefinitions="*,Auto" Margin="10"> 
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               Grid.Column="0"
-                               Grid.Row="0"/>
-            <CarouselView x:Name="PanelCarousel"
-                          Grid.Column="0"
-                          Grid.Row="0"
-                          IndicatorView="IndicatorView"
-                          CurrentItem="{Binding SelectedPanel}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Grid.Column="0" Grid.Row="0"/>
+            <CarouselView x:Name="PanelCarousel" Grid.Column="0" Grid.Row="0" IndicatorView="IndicatorView" CurrentItem="{Binding SelectedPanel}">
 
                 <CarouselView.EmptyView>
-                    <Label Text="There are no Panels to display"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           VerticalTextAlignment="Center"/>
+                    <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
+                            <Label HorizontalOptions="Center" Text="Welcome to the DCC Panel Controller!" FontAttributes="Bold" />
+                            <Label HorizontalOptions="Center" Text="  " />
+                            <Label HorizontalOptions="Center" Text="This page will populate once you have created panels and turnout control. To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
+                            <Label HorizontalOptions="Center" Text="  " />
+                        </StackLayout>
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
+                            <Button Style="{StaticResource ButtonOutline}" Text="Instructions" Margin="0,10,0,10" Clicked="ButtonInstructions_OnClicked" />
+                            <Button Style="{StaticResource ButtonOutline}" Text="About" Margin="0,10,0,10" Clicked="ButtonAbout_OnClicked" />
+                            <Button Style="{StaticResource ButtonOutline}" Text="Track Pieces Test" Margin="0,10,0,10" Clicked="TrackTest_OnClicked" />
+                        </StackLayout>
+                    </StackLayout>
                 </CarouselView.EmptyView>
                 
                 <CarouselView.ItemsSource>
