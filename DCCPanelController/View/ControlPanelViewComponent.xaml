@@ -4,10 +4,14 @@
              x:DataType="viewModel:ControlPanelViewModel"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel">
 
-        <Grid x:Name="MainGrid" 
-              Padding="0" 
-              Margin="0"
-              HorizontalOptions="Fill" VerticalOptions="Fill">
+        <Grid x:Name="MainGrid" Padding="0" Margin="0" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Label>
+                 <MultiBinding StringFormat="{}DesignMode={0}: ShowGrid={1}">
+                    <Binding Path="DesignMode" FallbackValue="Unknown"/>
+                    <Binding Path="ShowGrid" FallbackValue="Unknown" />
+                 </MultiBinding>
+            </Label>
+            
             <AbsoluteLayout  
                 x:Name="ControlPanelLayout"
                 Padding="0" Margin="0"
@@ -17,7 +21,13 @@
                       Padding="0" Margin="0"
                       BackgroundColor="Transparent"
                       AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
-                      AbsoluteLayout.LayoutFlags="PositionProportional" />
+                      AbsoluteLayout.LayoutFlags="PositionProportional">
+                    <!-- 
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped" Buttons="Primary,Secondary"/>
+                    </Grid.GestureRecognizers>
+                    -->
+                </Grid>
             </AbsoluteLayout>
         </Grid>
 </ContentView>

@@ -4,16 +4,83 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              Title="{Binding Panel.Name}"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+             xmlns:view="clr-namespace:DCCPanelController.View"
              x:DataType="viewModel:PanelEditorViewModel"
              x:Class="DCCPanelController.View.PanelEditorPage">
+    
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="save.png" />
-        <ToolbarItem IconImageSource="trash.png" />
-        <ToolbarItem/>
-        <ToolbarItem IconImageSource="tuning.png" />
-        <ToolbarItem IconImageSource="transpose.png" />
+        <ToolbarItem x:Name="SaveButton" IconImageSource="save.png" Clicked="SavePanelAndExit" />
+        <ToolbarItem x:Name="DeleteButton" IconImageSource="trash.png" Clicked="DeletePanelAndExit"/>
+        <ToolbarItem x:Name="GridButton" IconImageSource="gridoff.png" Clicked="ToggleGrid"/>
+        <ToolbarItem IconImageSource="blank.png" IsEnabled="False"/>
+        <ToolbarItem x:Name="SelectButton" IconImageSource="select.png" Clicked="ToggleMultiSelect"/>
+        <ToolbarItem x:Name="PropertyButton" IconImageSource="tuning.png" Clicked="ShowPropertyPage"/>
+        <ToolbarItem x:Name="RotateButton" IconImageSource="transpose.png" Clicked="RotateCurrentItem" IsEnabled="False"/>
+        <ToolbarItem x:Name="ExpandCollapse" IconImageSource="right_panel_close_filled.png" Clicked="OnExpandCollapseButtonClicked"/>
     </ContentPage.ToolbarItems>
 
-    <ContentPage.Content>
-    </ContentPage.Content>
+    <Grid x:Name="MainGrid">
+        <!-- Define the columns: Left Pane, Separator, Right Pane -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="LeftColumn" Width="*" />
+            <ColumnDefinition Width="8" />
+            <ColumnDefinition x:Name="RightColumn" Width="200" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Left Pane -->
+        <ContentView x:Name="LeftPane" BackgroundColor="LightBlue" Grid.Column="0">
+                <view:ControlPanelView
+                    x:Name="PanelView"
+                    Panel="{Binding Panel}"
+                    DesignMode="True"
+                    ShowGrid="True"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"/>
+        </ContentView>
+
+        <!-- Separator / Resizer -->
+        <BoxView x:Name="Separator" Color="Gray" Grid.Column="1" WidthRequest="8" HorizontalOptions="Center">
+            <BoxView.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+            </BoxView.GestureRecognizers>
+        </BoxView>
+
+        <!-- Right Pane -->
+        <ContentView x:Name="RightPane" BackgroundColor="LightGreen" Grid.Column="2">
+            <Label Text="Right Pane" HorizontalOptions="Center" VerticalOptions="Center" />
+        </ContentView>
+    </Grid>
+    
 </ContentPage>
+
+    <!--
+    <ContentPage.Content>
+        <Grid x:Name="MainGrid" ColumnDefinitions="*,5,*" RowDefinitions="*">
+            <ContentView Padding="0" Grid.Column="0" x:Name="LeftPane">
+                <AbsoluteLayout x:Name="PanelLayout">
+                    <view:ControlPanelView
+                        x:Name="PanelView"
+                        Panel="{Binding Panel}"
+                        DesignMode="True"
+                        ShowGrid="True"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand"
+                        AbsoluteLayout.LayoutFlags="All"
+                        AbsoluteLayout.LayoutBounds="0,0,1,1"/>
+                 </AbsoluteLayout>
+            </ContentView>
+            
+            <BoxView x:Name="Separator" Grid.Column="1"
+                     Color="Gray" WidthRequest="5">
+                    <BoxView.GestureRecognizers>
+                        <PanGestureRecognizer PanUpdated="OnPanUpdated" />
+                    </BoxView.GestureRecognizers>
+            </BoxView>
+            
+            <ContentView x:Name="RightPane" Grid.Column="2"
+                         WidthRequest="0" BackgroundColor="LightBlue">
+            </ContentView>
+        </Grid>
+       
+    </ContentPage.Content>
+-->

@@ -72,6 +72,9 @@
                                         <Grid Padding="0">
                                             <AbsoluteLayout x:Name="PanelLayout" BindingContext="{Binding .}">
                                                 <view:ControlPanelView Panel="{Binding .}"
+                                                                       DesignMode="False"
+                                                                       ShowGrid="False"
+
                                                                   HorizontalOptions="FillAndExpand"
                                                                   VerticalOptions="FillAndExpand"
                                                                   AbsoluteLayout.LayoutFlags="All"
@@ -85,14 +88,14 @@
                                                 <BoxView Color="{StaticResource PrimaryDisabled}"
                                                          Background="{StaticResource PrimaryDisabled}"
                                                          Opacity=".95"
-                                                         AbsoluteLayout.LayoutBounds="0.5,1,1,45"
+                                                         AbsoluteLayout.LayoutBounds="0.5,1,1,50"
                                                          AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />
                                                 <Label Style="{StaticResource PanelLabel}"
                                                        TextColor="{StaticResource Primary}"
                                                        VerticalOptions="End"
                                                        HorizontalOptions="Center"
                                                        AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"
-                                                       AbsoluteLayout.LayoutBounds="0.5,1,1,45"
+                                                       AbsoluteLayout.LayoutBounds="0.5,1,1,50"
                                                        VerticalTextAlignment="Center"
                                                        HorizontalTextAlignment="Center">
                                                     <MultiBinding StringFormat="{}{0}: {1}">

@@ -39,7 +39,9 @@
                 
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
-                        <view:ControlPanelView Panel="{Binding .}" 
+                        <view:ControlPanelView Panel="{Binding .}"
+                                               DesignMode="False"
+                                               ShowGrid="False"
                                                BackgroundColor="White"
                                                HorizontalOptions="Fill"
                                                VerticalOptions="Fill"/>

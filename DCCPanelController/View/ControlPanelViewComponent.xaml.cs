@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.Net.Quic;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Events;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
@@ -10,11 +12,12 @@ using StackExchange.Profiling;
 using Svg;
 
 //
-// This is a COMPONENT which is used inside the operate and panels views
+// This is a COMPONENT that is used inside the operate and panels views
 //
 namespace DCCPanelController.View {
     public partial class ControlPanelView {
 
+        public event EventHandler<ITrackPiece> TrackPieceTapped; 
         private ControlPanelViewModel? _viewModel;
 
         public ControlPanelView() {
@@ -23,18 +26,25 @@ namespace DCCPanelController.View {
             MainGrid.SizeChanged += OnGridSizeChanged;
         }
 
-        public ControlPanelView(Panel panel) : this() {
-            Console.WriteLine("ControlPanelView::ctor => Panel:" + panel.Name);
-            Panel = panel;
-        }
-
-        public static readonly BindableProperty PanelProperty =
-            BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null,
-            BindingMode.TwoWay, propertyChanged: OnPanelChanged);
+        public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
 
         public Panel Panel {
             get => (Panel)GetValue(PanelProperty);
             set => SetValue(PanelProperty, value);
+        }
+
+        public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
+
+        public bool DesignMode {
+            get => (bool)GetValue(DesignModeProperty);
+            set => SetValue(DesignModeProperty, value);
+        }
+
+        public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
+
+        public bool ShowGrid {
+            get => (bool)GetValue(ShowGridProperty);
+            set => SetValue(ShowGridProperty, value);
         }
 
         private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
@@ -47,11 +57,19 @@ namespace DCCPanelController.View {
 
         private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
             switch (e.PropertyName) {
-            case nameof(Panel): 
+            case nameof(Panel):
                 BindingContext = _viewModel ??= new ControlPanelViewModel(Panel);
+                _viewModel.Panel = Panel;
+                _viewModel.DesignMode = DesignMode;
+                _viewModel.ShowGrid = ShowGrid;
+                _viewModel.TrackSelected += (sender, track) => TrackPieceTapped?.Invoke(this, track);
                 break;
-            case nameof(ControlPanelViewModel.ShowGrid):
-                AddOutlineToGrid();
+            case nameof(DesignMode) or nameof(ShowGrid):
+                if (_viewModel != null) {
+                    _viewModel.DesignMode = DesignMode;
+                    _viewModel.ShowGrid = ShowGrid;
+                }
+
                 break;
             }
         }
@@ -84,7 +102,36 @@ namespace DCCPanelController.View {
                     }
                 }
 
+                if (ShowGrid) AddOutlineToGrid();
                 AddTrackPiecesToGrid();
+            }
+        }
+
+        public void HighlightCell(int col, int row) {
+            if (_viewModel == null) return;
+            var border = new Border() {
+                BackgroundColor = Colors.Transparent,
+                Stroke = Colors.Red,
+                StrokeThickness = 4,
+                Opacity = 0.5,
+                ZIndex = 10,
+                InputTransparent = true
+            };
+
+            // Add the Track Image to the appropriate grid position
+            // ------------------------------------------------------
+            DynamicGrid.SetRow(border, row);
+            DynamicGrid.SetColumn(border, col);
+            DynamicGrid.Children.Add(border);
+        }
+
+        public void UnHighlightCell(int col, int row) {
+            if (_viewModel == null) return;
+            var children = DynamicGrid.Children.Where(x => x is Border && x.Parent is Grid).ToList();
+            foreach (var child in children) {
+                if (DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col) {
+                    DynamicGrid.Remove(child);
+                }
             }
         }
 
@@ -185,8 +232,46 @@ namespace DCCPanelController.View {
         private void OnTrackPieceTapped(ITrackPiece track) {
             _viewModel?.HandleTrackPieceTapped(track);
         }
-    }
 
+        //private void TapGestureRecognizer_OnTapped(object? sender, TappedEventArgs e) {
+        //    Console.WriteLine($"Check the buttons: Mask = {e.Buttons}");
+        //    if (sender is Grid grid) {
+        //        var position = e.GetPosition(grid);
+        //        var gridPosition = GetGridPosition(position);
+        //        Console.WriteLine($"Tapped at {position?.X}, {position?.Y} ==> {gridPosition?.Col},{gridPosition?.Row}");
+        //    }
+        //}
+
+        /// <summary>
+        /// Convert a position in the grid (absolute) to a Grid position within the col/row definitions
+        /// </summary>
+        /// <param name="point">A point object of where the item was tapped</param>
+        /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
+        private (int Row, int Col)? GetGridPosition(Point? point) {
+            if (point is { } tapPosition) {
+
+                var totalHeight = DynamicGrid.Height;
+                var totalWidth = DynamicGrid.Width;
+                var rowCount = DynamicGrid.RowDefinitions.Count;
+                var colCount = DynamicGrid.ColumnDefinitions.Count;
+
+                var cellHeight = totalHeight / rowCount;
+                var cellWidth = totalWidth / colCount;
+                if (cellHeight == 0 || cellWidth == 0) return (-1, -1);
+
+                // Calculate row and column indices
+                var row = (int)(tapPosition.Y / cellHeight);
+                var col = (int)(tapPosition.X / cellWidth);
+
+                // Ensure indices are within bounds
+                row = Math.Min(row, rowCount - 1);
+                col = Math.Min(col, colCount - 1);
+
+                return (row, col);
+            }
+            return (-1,-1);
+        }
+    }
 
     /// <summary>
     /// This is a helper class that draws the Grid Lines on the Page.

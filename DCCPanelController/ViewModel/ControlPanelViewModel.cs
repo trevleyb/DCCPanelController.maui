@@ -11,6 +11,8 @@ using Microsoft.Maui.Layouts;
 namespace DCCPanelController.ViewModel;
 
 public partial class ControlPanelViewModel : BaseViewModel {
+
+    public event EventHandler<ITrackPiece> TrackSelected; 
     
     [ObservableProperty] private double _viewWidth;
     [ObservableProperty] private double _viewHeight;
@@ -50,8 +52,7 @@ public partial class ControlPanelViewModel : BaseViewModel {
     
     public void HandleTrackPieceTapped(ITrackPiece track) {
         if (DesignMode) {
-            // todo: Replace this so we select items not just rotate them
-            track.RotateLeft();
+            TrackSelected?.Invoke(this, track);
         } else {
             HandleRunMode(track);
         }

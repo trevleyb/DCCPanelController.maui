@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using DCCPanelController.Components.DropZone;
 using DCCPanelController.Components.Elements.Views;
 using DCCPanelController.Model;
 using DCCPanelController.ViewModel;
