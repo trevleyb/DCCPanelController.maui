@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Net.Quic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Events;
+using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
@@ -78,9 +79,9 @@ namespace DCCPanelController.View {
             RebuildGrid();
         }
 
-        private void RebuildGrid() {
+        private void RebuildGrid(bool forceRefresh = false) {
             if (_viewModel is null || MainGrid.Width < 1 || MainGrid.Height < 1) return;
-            if (!_viewModel?.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height) ?? true) return;
+            if (!forceRefresh && !_viewModel.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height) ) return;
 
             using (MiniProfiler.Current.Step("Rebuild Grid")) {
 
@@ -175,24 +176,7 @@ namespace DCCPanelController.View {
                 if (_viewModel is { Panel: { Tracks: { } tracks } panel }) {
                     foreach (var track in tracks) {
                         if (DynamicGrid.ColumnDefinitions.Count >= _viewModel.Cols && DynamicGrid.RowDefinitions.Count >= _viewModel.Rows && track.X < _viewModel.Cols && track.Y < _viewModel.Rows) {
-
                             var image = AddImageToLayout(track);
-
-                            // Setup trigger control to trap if we click on or select the track item
-                            // -------------------------------------------------------------------------------------------
-                            // Create TapGestureRecognizer
-                            var tapGesture = new TapGestureRecognizer();
-                            tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
-                            image.GestureRecognizers.Add(tapGesture);
-                            
-                            // If we are in Design mode, then add support for 
-                            // dragging and dropping of the items on the page
-                            // ---------------------------------------------------------------------------------------
-                            if (DesignMode) {
-                                var dragGesture = new DragGestureRecognizer();
-                                dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
-                                image.GestureRecognizers.Add(dragGesture);
-                            }
                         }
 
                         // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
@@ -209,37 +193,15 @@ namespace DCCPanelController.View {
             }
         }
 
-        private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
-            Console.WriteLine(e.ToString());
-        }
-
-        private void DropTrackCompleted(object? sender, DropCompletedEventArgs e) {
-            Console.WriteLine(e.ToString());
-        }
-
-        /// <summary>
-        /// Support dropping a piece of track
-        /// </summary>
-        private void DropTrack(object? sender, DropEventArgs e) {
-            if (e.Data.Properties.TryGetValue("Track", out var track)) {
-                e.Data.Properties.TryGetValue("Source", out var source);
-                if (track is ITrackPiece trackPiece) {
-                    Console.WriteLine($"Dropped Track: {trackPiece.Name} from {source}");
-                }
-            }
-        }
-        
-        private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
-            Console.WriteLine($"Draging Track: {track.Name}");
-            args.Data.Properties.Add("Track", track);
-            args.Data.Properties.Add("Source", "Panel");
+        private void RemoveImageFromLayout(ITrackPiece track) {
+            var tracksInGrid = DynamicGrid.Children;
         }
 
         private Image AddImageToLayout(ITrackPiece track) {
             using (MiniProfiler.Current.Step("AddImageToGridLayout")) {
                 var image = new Image {
                     Scale = 1.5,
-                    ZIndex = 5,
+                    ZIndex = track.Layer,
                     Rotation = 0,
                     InputTransparent = false,
                     VerticalOptions = LayoutOptions.Center,
@@ -254,12 +216,27 @@ namespace DCCPanelController.View {
                 image.SetBinding(WidthRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
                 image.SetBinding(HeightRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
 
+                // Setup trigger control to trap if we click on or select the track item
+                // -------------------------------------------------------------------------------------------
+                // Create TapGestureRecognizer
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
+                image.GestureRecognizers.Add(tapGesture);
+                            
+                // If we are in Design mode, then add support for 
+                // dragging and dropping of the items on the page
+                // ---------------------------------------------------------------------------------------
+                if (DesignMode) {
+                    var dragGesture = new DragGestureRecognizer();
+                    dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
+                    image.GestureRecognizers.Add(dragGesture);
+                }
+                
                 // Add the Track Image to the appropriate grid position
                 // ------------------------------------------------------
                 DynamicGrid.SetRow(image, track.Y);
                 DynamicGrid.SetColumn(image, track.X);
                 DynamicGrid.Children.Add(image);
-
                 return image;
             }
         }
@@ -268,6 +245,67 @@ namespace DCCPanelController.View {
             _viewModel?.HandleTrackPieceTapped(track);
         }
 
+        private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
+            try {
+                e.Data.Properties.TryGetValue("Source", out var source);
+                e.Data.Properties.TryGetValue("Track", out var track);
+
+                var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
+                if (gridPosition is { IsSuccess: true, Value: var position } && track is ITrackPiece trackPiece) {
+
+                    // Make sure that the item we are placing is onto a point that is 
+                    // not already occupied unless the item being dropped is an overlay 
+                    // item that has a higher Z factor. 
+                    // -----------------------------------------------------------------
+                    if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
+                        switch (source) {
+                        case "Panel":
+                            trackPiece.X = position.Col;
+                            trackPiece.Y = position.Row;
+                            RebuildGrid(true);
+                            break;
+                        case "Symbol":
+                            var newPiece = Activator.CreateInstance(trackPiece.GetType()) as ITrackPiece;
+                            if (newPiece is not null) {
+                                newPiece.X = position.Col;
+                                newPiece.Y = position.Row;
+                                _viewModel?.Panel?.Tracks?.Add(newPiece);
+                                RebuildGrid(true);
+                            } else {
+                                Console.WriteLine($"Could not create a new Piece as a TrackPiece.");
+                            }
+                            break;
+                        default:
+                            Console.WriteLine($"Invalid source: '{source}'");
+                            break;
+                        }
+                    } else {
+                        Console.WriteLine("Grid location is already occupied.");
+                    }
+                } else {
+                    Console.WriteLine($"Could not determine grid: {gridPosition.Error}");
+                }
+            } catch (Exception ex) {
+                Console.WriteLine("Error dropping item: " + ex.Message);
+            }
+        }
+
+        private int GetHighestOccupiedLayer(int col, int row) {
+            Console.WriteLine($"GetHighestOccupiedLayer({col},{row})");
+            var tracksInGrid = _viewModel?.Panel?.Tracks.Where(x => x.X == col && x.Y == row);
+            Console.WriteLine($"GetHighestOccupiedLayer({col},{row}) returned {tracksInGrid?.Count() ?? 0}");
+            if (tracksInGrid == null || !tracksInGrid.Any()) return 0;
+            return tracksInGrid?.Max(track => track.Layer) ?? 0;
+        }
+        
+        private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
+            Console.WriteLine($"Dragging Track: {track.Name}");
+            args.Data.Properties.Add("Track", track);
+            args.Data.Properties.Add("Source", "Panel");
+        }
+
+        
+        
         //private void TapGestureRecognizer_OnTapped(object? sender, TappedEventArgs e) {
         //    Console.WriteLine($"Check the buttons: Mask = {e.Buttons}");
         //    if (sender is Grid grid) {
@@ -282,9 +320,8 @@ namespace DCCPanelController.View {
         /// </summary>
         /// <param name="point">A point object of where the item was tapped</param>
         /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
-        private (int Row, int Col)? GetGridPosition(Point? point) {
+        private Result<(int Col, int Row)> GetGridPosition(Point? point) {
             if (point is { } tapPosition) {
-
                 var totalHeight = DynamicGrid.Height;
                 var totalWidth = DynamicGrid.Width;
                 var rowCount = DynamicGrid.RowDefinitions.Count;
@@ -292,7 +329,9 @@ namespace DCCPanelController.View {
 
                 var cellHeight = totalHeight / rowCount;
                 var cellWidth = totalWidth / colCount;
-                if (cellHeight == 0 || cellWidth == 0) return (-1, -1);
+                if (cellHeight == 0 || cellWidth == 0) {
+                    return Result<(int Col, int Row)>.Failure("Cell Width or Height is zero.");
+                }
 
                 // Calculate row and column indices
                 var row = (int)(tapPosition.Y / cellHeight);
@@ -302,9 +341,9 @@ namespace DCCPanelController.View {
                 row = Math.Min(row, rowCount - 1);
                 col = Math.Min(col, colCount - 1);
 
-                return (row, col);
+                return Result<(int Col, int Row)>.Success((col, row));
             }
-            return (-1,-1);
+            return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,");
         }
     }
 

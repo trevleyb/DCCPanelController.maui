@@ -1,55 +1,33 @@
 namespace DCCPanelController.Helpers.Result;
 
-public class Result(bool success, string message = "", Exception? exception = null) : IResult {
-    // Constructors
-    // -----------------------------------------------------------------------
-    public Result() : this(true) { }
-    public Result(IResult result) : this(result.Success, result.Message, result.Exception) { }
+public class Result<T>
+{
+    public bool IsSuccess { get; }
+    public bool IsFailure => !IsSuccess;
+    public T Value { get; }
+    public string Error { get; }
 
-    // Data
-    // -----------------------------------------------------------------------
-    public bool Success { get; protected init; } = success;
+    protected Result(bool isSuccess, T value, string error)
+    {
+        if (isSuccess && value == null)
+            throw new ArgumentNullException(nameof(value), "Success result must have a value.");
 
-    public bool Failed => !Success;
+        if (isSuccess && !string.IsNullOrEmpty(error))
+            throw new ArgumentException("Success result cannot have an error message.", nameof(error));
 
-    public string     Message   { get; protected init; } = message;
-    public Exception? Exception { get; protected init; } = exception;
+        if (!isSuccess && string.IsNullOrEmpty(error))
+            throw new ArgumentException("Failure result must have an error message.", nameof(error));
 
-    // Helpers
-    // -----------------------------------------------------------------------
-    public static IResult Ok() {
-        return new Result();
+        IsSuccess = isSuccess;
+        Value = value;
+        Error = error;
     }
 
-    public static IResult Ok(IResult result) {
-        return new Result(true, result.Message, result.Exception);
+    public static Result<T> Success(T value) {
+        return new Result<T>(true, value, null);
     }
 
-    public static IResult Ok(string errorMessage) {
-        return new Result(true, errorMessage, null);
-    }
-
-    public static IResult Fail() {
-        return new Result(false);
-    }
-
-    public static IResult Fail(string message) {
-        return new Result(false, message);
-    }
-
-    public static IResult Fail(Exception ex) {
-        return new Result(false, ex.Message, ex);
-    }
-
-    public static IResult Fail(IResult result) {
-        return new Result(false, result.Message, result.Exception);
-    }
-
-    public static IResult Fail(string message, Exception ex) {
-        return new Result(false, message, ex);
-    }
-
-    public override string ToString() {
-        return $"({(Success ? "Success" : "Failed")}) {Message}";
+    public static Result<T> Failure(string error) {
+        return new Result<T>(false, default, error);
     }
 }
