@@ -7,8 +7,12 @@ public class TrackPoints : TrackPiece {
     
     protected override void Setup() {
         Name = "Track Points";
-        AddTrackImage(0, "Normal", "Points", 0);
+        SetTrackSymbol("Points");
         Layer = 2;
+    }
+
+    protected override void AddTrackImages() {
+        AddTrackImage(0, "Normal", "Points", 0);
     }
 
     protected override void AddTrackStyles() {

@@ -9,6 +9,7 @@ public class TrackLeftTurnout : TrackPiece, ITrackTurnout, ITrackSymbol {
     
     protected override void Setup() {
         Name = "Left Turnout";
+        SetTrackSymbol("TurnoutL1");
     }
     
     protected override void AddTrackImages() {

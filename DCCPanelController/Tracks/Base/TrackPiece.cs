@@ -38,12 +38,14 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     [ObservableProperty] private int _layer  = 1;           // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private bool _isOccupied = false;  // Is this element currently occupied?
     [ObservableProperty] private bool _isResizable = false; // Can this element be resized? Normally False
+    
+    public ImageSource? Image => ActiveImage?.ImageSource?.Image;
+    public ImageSource? SymbolImage => TrackImages.SymbolImage.ImageSource?.Image; 
 
-    public ImageSource?   Image => ActiveImage?.ImageSource?.Image;
-    protected TrackImage? ActiveImage = null;
-    protected readonly TrackImages TrackImages = new TrackImages();
-    protected readonly TrackState State = new TrackState();
-    protected Dictionary<string, SvgStyle> TrackStyles = [];
+    protected TrackImage? ActiveImage;
+    protected readonly TrackImages TrackImages = new();
+    protected readonly TrackState State = new();
+    protected Dictionary<string, SvgStyle> TrackStyles = new();
     
     public TrackConnectionsEnum[] Connections => ActiveImage?.ImageSource?.Connections.ConnectionPointsRotated(ImageRotation) ??  new SvgCompass().ConnectionPointsRotated(ImageRotation);
 
@@ -82,13 +84,9 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         SetActiveImage();
     }
 
-    protected virtual void Setup() {}
-
-    protected virtual void AddTrackImages() { }
-
-    protected virtual void AddTrackStyles() {
-        TrackStyles = new Dictionary<string, SvgStyle>();
-    }
+    protected abstract void Setup();
+    protected abstract void AddTrackImages();
+    protected abstract void AddTrackStyles(); 
 
     /// <summary>
     /// Used to initialise the instance of this class and setup the parameters for any derived instances
@@ -142,7 +140,8 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         State.AddState(trackState);
         TrackImages.Add(trackRotation, trackState, imageSource, imageRotation);
     }
-    
+
+    protected void SetTrackSymbol(string imageSource, int rotation = 0) => TrackImages.SetTrackSymbol(imageSource, rotation);
     protected void SetTrackStyle(string stateName, string styleName) => SetTrackStyle(stateName,SvgStyles.GetStyle(styleName));
     protected void SetTrackStyle(string stateName, SvgStyle style) {
         if (TrackStyles.ContainsKey(stateName)) {

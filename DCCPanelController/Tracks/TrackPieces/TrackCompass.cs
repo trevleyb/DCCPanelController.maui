@@ -1,13 +1,18 @@
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.ImageManager;
+using DCCPanelController.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackCompass : TrackPiece {
+public class TrackCompass : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Compass";
-        AddTrackImage(0,   "Normal", "Compass", 0);
+        SetTrackSymbol("Compass");
         Layer = 2;
+    }
+
+    protected override void AddTrackImages() {
+        AddTrackImage(0, "Normal", "Compass", 0);
     }
 
     protected override void AddTrackStyles() {

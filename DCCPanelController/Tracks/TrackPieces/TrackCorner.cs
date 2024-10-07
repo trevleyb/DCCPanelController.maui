@@ -4,8 +4,10 @@ using DCCPanelController.Tracks.Interfaces;
 namespace DCCPanelController.Tracks;
 
 public class TrackCorner : TrackPiece, ITrackSymbol  {
+   
     protected override void Setup() {
         Name = "Corner";
+        SetTrackSymbol("CornerR");
     }
     
     protected override void AddTrackImages() {

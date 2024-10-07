@@ -10,11 +10,11 @@ public class TrackButton : TrackPiece, ITrackButton, ITrackSymbol {
     
     protected override void Setup() {
         Name = "Button";
+        SetTrackSymbol("Button");
         Layer = 2;
     }
     
     protected override void AddTrackImages() {
-        base.AddTrackImages();
         AddTrackImage(0,UnknownState, "Button", 0);
         AddTrackImage(0,UnknownState, "Button", 0);
         AddTrackImage(0,UnknownState, "Button", 0);
@@ -32,7 +32,6 @@ public class TrackButton : TrackPiece, ITrackButton, ITrackSymbol {
     }
     
     protected override void AddTrackStyles() {
-        base.AddTrackStyles();
         AddTrackStyle(UnknownState,"Button-UnKnown");
         AddTrackStyle("Active","Button-Active");
         AddTrackStyle("InActive","Button-InActive");

@@ -6,6 +6,7 @@ namespace DCCPanelController.Tracks;
 public class TrackLabel : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Label";
+        SetTrackSymbol("Label");
     }
     
     protected override void AddTrackImages() {

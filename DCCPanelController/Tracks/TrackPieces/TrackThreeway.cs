@@ -10,6 +10,7 @@ public class TrackThreeway : TrackPiece, ITrackThreeway, ITrackSymbol {
     
     protected override void Setup() {
         Name = "Threeway";
+        SetTrackSymbol("Threeway1");
     }
     
     protected override void AddTrackImages() {

@@ -8,6 +8,7 @@ using DCCPanelController.Events;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
 using Color = System.Drawing.Color;
 
@@ -36,7 +37,23 @@ public partial class PanelEditorPage : ContentPage {
     
         LeftColumn.Width = new GridLength(1, GridUnitType.Star);        // Left pane takes up remaining space
         RightColumn.Width = new GridLength(200, GridUnitType.Absolute); // Initial width of right pane set to 200
+        AdjustColumnCount();
     }
+    
+    #region Support Drag and Drop of the Symbols from the Symbol Pane
+    private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
+        if (sender is Frame frame && frame.BindingContext is ITrackSymbol symbol) {
+            e.Data.Properties.Add("TrackSymbol", symbol);
+        }
+    }
+
+    private void OnSymbolDrop(object sender, DropEventArgs e) {
+        if (e.Data.Properties.ContainsKey("TrackSymbol")) {
+            var trackSymbol = e.Data.Properties["TrackSymbol"] as ITrackSymbol;
+            // Handle the drop event here
+        }
+    }
+    #endregion Drag and drop
 
     #region Handle Selecting and Actioning on a Track including multiple selections
     /// <summary>
@@ -134,6 +151,7 @@ public partial class PanelEditorPage : ContentPage {
             var newLeftWidth = Math.Max(0, MainGrid.Width - newRightWidth - Separator.WidthRequest);
             LeftColumn.Width = new GridLength(newLeftWidth, GridUnitType.Absolute);
             RightColumn.Width = new GridLength(newRightWidth, GridUnitType.Absolute);
+            AdjustColumnCount();
             break;
 
         case GestureStatus.Completed:
@@ -141,6 +159,7 @@ public partial class PanelEditorPage : ContentPage {
             _initialX = 0;
             _isDragging = false;
             Separator.Color = Colors.Gray;
+            AdjustColumnCount();
             break;
         }
     }
@@ -149,10 +168,10 @@ public partial class PanelEditorPage : ContentPage {
     private void OnSizeChanged(object? sender, EventArgs e) {
         if (!_isDragging) {
             var rightWidth = RightColumn.Width.Value; 
-            //var leftWidth = Math.Max(0, MainGrid.Width - rightWidth - (Separator.IsVisible ? Separator.WidthRequest : 0));
             var leftWidth = Math.Max(0, MainGrid.Width - rightWidth);
             LeftColumn.Width = new GridLength(leftWidth, GridUnitType.Absolute);
         }
+        AdjustColumnCount();
     }
     
     // Method to collapse or expand the right pane
@@ -172,6 +191,20 @@ public partial class PanelEditorPage : ContentPage {
     
     private void OnExpandCollapseButtonClicked(object sender, EventArgs e) {
         ToggleRightPane();
+    }
+    
+    private void AdjustColumnCount() {
+        if (ItemsLayout == null) return;
+
+        if (RightPane.Width <= 150) { // Single column if the width is less than 400
+            ItemsLayout.Span = 1;
+        }
+        else if (RightPane.Width <= 225) { // Two columns if the width is between 400 and 800
+            ItemsLayout.Span = 2;
+        }
+        else { // Three columns if the width is greater than 800
+            ItemsLayout.Span = 3;
+        }
     }
     #endregion
 

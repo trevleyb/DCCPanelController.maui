@@ -7,6 +7,7 @@ public class TrackCrossing : TrackPiece, ITrackSymbol {
     
     protected override void Setup() {
         Name="Crossing";
+        SetTrackSymbol("Cross1");
     }
     
     protected override void AddTrackImages() {

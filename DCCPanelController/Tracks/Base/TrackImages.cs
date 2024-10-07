@@ -1,9 +1,11 @@
 namespace DCCPanelController.Tracks.Base;
 
 public class TrackImages {
-    
-    public Dictionary<(CompassPoints points, string state), TrackImage> ImageRotations { get; set; } = new();
 
+    private TrackImage? _symbolImage; 
+    public Dictionary<(CompassPoints points, string state), TrackImage> ImageRotations { get; } = new();
+    public TrackImage SymbolImage => _symbolImage ?? new TrackImage("Track_Unknown", 0); 
+    
     /// <summary>
     /// Return the number of defined points. Sometimes we rotate only 4 points of the compass and sometimes 8,
     /// and it is dependent on the number of defined points. 
@@ -15,12 +17,20 @@ public class TrackImages {
         }
     }
 
-    public int RotateBy => 8 / NumberOfPoints; 
+    public int RotateBy => 8 / NumberOfPoints;
 
+    /// <summary>
+    /// Set the track image that will be used as a Symbol in the available
+    /// symbols list.  
+    /// </summary>
+    public void SetTrackSymbol(string imageSource, int rotation = 0) {
+        _symbolImage = new TrackImage(imageSource, rotation);
+    }
+    
     public void Add(int trackRotation, string trackState, string imageSource, int rotation) {
         try {
             var svgImage = new TrackImage(imageSource, rotation);
-            ImageRotations[(Compass.ConvertFromDegress(trackRotation), trackState)] = new TrackImage(imageSource, rotation);
+            ImageRotations[(Compass.ConvertFromDegress(trackRotation), trackState)] = svgImage;
         } catch {
             Console.WriteLine($"Failed to add track image: {imageSource} as it does not exist.");
         }

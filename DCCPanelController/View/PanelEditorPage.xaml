@@ -5,6 +5,7 @@
              Title="{Binding Panel.Name}"
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
              xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.Interfaces"
              x:DataType="viewModel:PanelEditorViewModel"
              x:Class="DCCPanelController.View.PanelEditorPage">
     
@@ -20,7 +21,6 @@
     </ContentPage.ToolbarItems>
 
     <Grid x:Name="MainGrid">
-        <!-- Define the columns: Left Pane, Separator, Right Pane -->
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftColumn" Width="*" />
             <ColumnDefinition Width="8" />
@@ -47,7 +47,33 @@
 
         <!-- Right Pane -->
         <ContentView x:Name="RightPane" BackgroundColor="LightGreen" Grid.Column="2">
-            <Label Text="Right Pane" HorizontalOptions="Center" VerticalOptions="Center" />
+            <CollectionView x:Name="TrackSymbolCollectionView"
+                            ItemsSource="{Binding TrackSymbols}"
+                            VerticalOptions="FillAndExpand"
+                            HorizontalOptions="FillAndExpand"
+                            SelectionMode="Single">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout x:Name="ItemsLayout"
+                                     Orientation="Vertical"
+                                     HorizontalItemSpacing="5"
+                                     VerticalItemSpacing="5"
+                                     Span="1"/>
+                </CollectionView.ItemsLayout>
+                
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="interfaces:ITrackSymbol">
+                        <Frame Padding="5" BorderColor="LightGray" HasShadow="false" Margin="5" WidthRequest="75" HeightRequest="90">
+                            <StackLayout>
+                                <Image Source="{Binding SymbolImage}" HorizontalOptions="Center" VerticalOptions="Center"  WidthRequest="50" HeightRequest="50"/>
+                                <Label Text="{Binding Name}" HorizontalTextAlignment="Center" VerticalTextAlignment="End" />
+                            </StackLayout>
+                            <Frame.GestureRecognizers>
+                                <DragGestureRecognizer DragStarting="OnSymbolDragStarting"/>
+                            </Frame.GestureRecognizers>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
         </ContentView>
     </Grid>
     
