@@ -42,17 +42,18 @@ public partial class PanelEditorPage : ContentPage {
     
     #region Support Drag and Drop of the Symbols from the Symbol Pane
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
-        if (sender is Frame frame && frame.BindingContext is ITrackSymbol symbol) {
-            e.Data.Properties.Add("TrackSymbol", symbol);
+        if (sender is DragGestureRecognizer drag && drag.BindingContext is ITrackSymbol symbol) {
+            e.Data.Properties.Add("Track", symbol);
+            e.Data.Properties.Add("Source", "Symbol");
         }
     }
 
-    private void OnSymbolDrop(object sender, DropEventArgs e) {
-        if (e.Data.Properties.ContainsKey("TrackSymbol")) {
-            var trackSymbol = e.Data.Properties["TrackSymbol"] as ITrackSymbol;
-            // Handle the drop event here
-        }
-    }
+    //private void OnSymbolDrop(object sender, DropEventArgs e) {
+    //    if (e.Data.Properties.ContainsKey("TrackSymbol")) {
+    //        var trackSymbol = e.Data.Properties["Track"] as ITrackSymbol;
+    //        // Handle the drop event here
+    //    }
+    //}
     #endregion Drag and drop
 
     #region Handle Selecting and Actioning on a Track including multiple selections

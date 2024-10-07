@@ -184,6 +184,15 @@ namespace DCCPanelController.View {
                             var tapGesture = new TapGestureRecognizer();
                             tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
                             image.GestureRecognizers.Add(tapGesture);
+                            
+                            // If we are in Design mode, then add support for 
+                            // dragging and dropping of the items on the page
+                            // ---------------------------------------------------------------------------------------
+                            if (DesignMode) {
+                                var dragGesture = new DragGestureRecognizer();
+                                dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
+                                image.GestureRecognizers.Add(dragGesture);
+                            }
                         }
 
                         // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
@@ -198,6 +207,32 @@ namespace DCCPanelController.View {
                     }
                 }
             }
+        }
+
+        private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
+            Console.WriteLine(e.ToString());
+        }
+
+        private void DropTrackCompleted(object? sender, DropCompletedEventArgs e) {
+            Console.WriteLine(e.ToString());
+        }
+
+        /// <summary>
+        /// Support dropping a piece of track
+        /// </summary>
+        private void DropTrack(object? sender, DropEventArgs e) {
+            if (e.Data.Properties.TryGetValue("Track", out var track)) {
+                e.Data.Properties.TryGetValue("Source", out var source);
+                if (track is ITrackPiece trackPiece) {
+                    Console.WriteLine($"Dropped Track: {trackPiece.Name} from {source}");
+                }
+            }
+        }
+        
+        private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
+            Console.WriteLine($"Draging Track: {track.Name}");
+            args.Data.Properties.Add("Track", track);
+            args.Data.Properties.Add("Source", "Panel");
         }
 
         private Image AddImageToLayout(ITrackPiece track) {
