@@ -118,6 +118,7 @@ public partial class PanelEditorPage : ContentPage {
 
     private void ToggleGrid(object? sender, EventArgs e) {
         PanelView.ShowGrid = !PanelView.ShowGrid;
+        PanelView.RebuildGrid(true);
     }
 
     private void ShowPropertyPage(object? sender, EventArgs e) {

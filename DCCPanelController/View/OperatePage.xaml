@@ -28,7 +28,6 @@
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
                             <Button Style="{StaticResource ButtonOutline}" Text="Instructions" Margin="0,10,0,10" Clicked="ButtonInstructions_OnClicked" />
                             <Button Style="{StaticResource ButtonOutline}" Text="About" Margin="0,10,0,10" Clicked="ButtonAbout_OnClicked" />
-                            <Button Style="{StaticResource ButtonOutline}" Text="Track Pieces Test" Margin="0,10,0,10" Clicked="TrackTest_OnClicked" />
                         </StackLayout>
                     </StackLayout>
                 </CarouselView.EmptyView>

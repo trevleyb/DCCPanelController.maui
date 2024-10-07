@@ -11,12 +11,13 @@
     
     <ContentPage.ToolbarItems>
         <ToolbarItem x:Name="SaveButton" IconImageSource="save.png" Clicked="SavePanelAndExit" />
-        <ToolbarItem x:Name="DeleteButton" IconImageSource="trash.png" Clicked="DeletePanelAndExit"/>
         <ToolbarItem x:Name="GridButton" IconImageSource="gridoff.png" Clicked="ToggleGrid"/>
         <ToolbarItem IconImageSource="blank.png" IsEnabled="False"/>
         <ToolbarItem x:Name="SelectButton" IconImageSource="select.png" Clicked="ToggleMultiSelect"/>
         <ToolbarItem x:Name="PropertyButton" IconImageSource="tuning.png" Clicked="ShowPropertyPage"/>
+        <ToolbarItem x:Name="DeleteButton" IconImageSource="trash.png" Clicked="DeletePanelAndExit"/>
         <ToolbarItem x:Name="RotateButton" IconImageSource="transpose.png" Clicked="RotateCurrentItem" IsEnabled="False"/>
+        <ToolbarItem IconImageSource="blank.png" IsEnabled="False"/>
         <ToolbarItem x:Name="ExpandCollapse" IconImageSource="right_panel_close_filled.png" Clicked="OnExpandCollapseButtonClicked"/>
     </ContentPage.ToolbarItems>
 

@@ -5,13 +5,6 @@
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel">
 
         <Grid x:Name="MainGrid" Padding="0" Margin="0" HorizontalOptions="Fill" VerticalOptions="Fill">
-            <Label>
-                 <MultiBinding StringFormat="{}DesignMode={0}: ShowGrid={1}">
-                    <Binding Path="DesignMode" FallbackValue="Unknown"/>
-                    <Binding Path="ShowGrid" FallbackValue="Unknown" />
-                 </MultiBinding>
-            </Label>
-            
             <AbsoluteLayout  
                 x:Name="ControlPanelLayout"
                 Padding="0" Margin="0"

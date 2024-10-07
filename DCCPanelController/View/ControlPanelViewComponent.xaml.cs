@@ -65,12 +65,12 @@ namespace DCCPanelController.View {
                 _viewModel.ShowGrid = ShowGrid;
                 _viewModel.TrackSelected += (sender, track) => TrackPieceTapped?.Invoke(this, track);
                 break;
+            
             case nameof(DesignMode) or nameof(ShowGrid):
                 if (_viewModel != null) {
                     _viewModel.DesignMode = DesignMode;
                     _viewModel.ShowGrid = ShowGrid;
                 }
-
                 break;
             }
         }
@@ -79,7 +79,7 @@ namespace DCCPanelController.View {
             RebuildGrid();
         }
 
-        private void RebuildGrid(bool forceRefresh = false) {
+        public void RebuildGrid(bool forceRefresh = false) {
             if (_viewModel is null || MainGrid.Width < 1 || MainGrid.Height < 1) return;
             if (!forceRefresh && !_viewModel.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height) ) return;
 
@@ -103,7 +103,7 @@ namespace DCCPanelController.View {
                     }
                 }
 
-                if (ShowGrid) AddOutlineToGrid();
+                AddOutlineToGrid();
                 AddTrackPiecesToGrid();
             }
         }
@@ -139,17 +139,21 @@ namespace DCCPanelController.View {
         /// <summary>
         /// Draw the Grid Outline
         /// </summary>
-        private void AddOutlineToGrid() {
 
+        private void RemoveOutlineFromGrid() {
+            if (ControlPanelLayout.Children.Count >= 1) {
+                var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().ToList();
+                foreach (var view in graphicsViewToRemove) {
+                    ControlPanelLayout.Children.Remove(view);
+                }
+            }
+        }
+
+        private void AddOutlineToGrid() {
             using (MiniProfiler.Current.Step("AddOutlineToGrid")) {
                 // Clear the AbsoluteLayout before adding a new grid and GraphicsView
-                if (ControlPanelLayout.Children.Count >= 1) {
-                    var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().ToList();
-                    foreach (var view in graphicsViewToRemove) {
-                        ControlPanelLayout.Children.Remove(view);
-                    }
-                }
-
+                RemoveOutlineFromGrid();
+                
                 if (_viewModel?.ShowGrid ?? false) {
                     var gridLines = new GridLinesDrawable(_viewModel.Rows, _viewModel.Cols);
                     var graphicsView = new GraphicsView {
