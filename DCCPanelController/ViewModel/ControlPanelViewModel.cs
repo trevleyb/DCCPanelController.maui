@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Events;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
@@ -12,7 +13,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class ControlPanelViewModel : BaseViewModel {
 
-    public event EventHandler<ITrackPiece> TrackSelected; 
+    public event EventHandler<TrackSelectedEvent> TrackSelected; 
     
     [ObservableProperty] private double _viewWidth;
     [ObservableProperty] private double _viewHeight;
@@ -50,33 +51,29 @@ public partial class ControlPanelViewModel : BaseViewModel {
         ViewHeight = GridSize * Rows;
     }
     
-    public void HandleTrackPieceTapped(ITrackPiece track) {
+    public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
         if (DesignMode) {
-            TrackSelected?.Invoke(this, track);
+            TrackSelected?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
         } else {
-            HandleRunMode(track);
-        }
-    }
-
-    private void HandleRunMode(ITrackPiece track) {
-        if (track is ITrackInteractive) {
-            switch (track) {
-            case ITrackButton button:
-                Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
-                button.Clicked();
-                track.NextState();
-                break;
-            case ITrackThreeway threeway:
-                Console.WriteLine($"You just tapped on {track.Name} - its a threeway so we will cycle states. ");
-                threeway.Clicked();
-                track.NextState();
-                break;
-            case ITrackTurnout turnout:
-                Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
-                turnout.Clicked();
-                track.NextState();
-                break;
+            if (track is ITrackInteractive) {
+                switch (track) {
+                case ITrackButton button:
+                    Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
+                    button.Clicked();
+                    track.NextState();
+                    break;
+                case ITrackThreeway threeway:
+                    Console.WriteLine($"You just tapped on {track.Name} - its a threeway so we will cycle states. ");
+                    threeway.Clicked();
+                    track.NextState();
+                    break;
+                case ITrackTurnout turnout:
+                    Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
+                    turnout.Clicked();
+                    track.NextState();
+                    break;
+                }
             }
-        } 
+        }
     }
 }

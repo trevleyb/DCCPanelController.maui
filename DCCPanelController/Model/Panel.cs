@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Helpers;
@@ -14,15 +15,23 @@ namespace DCCPanelController.Model;
 /// </summary>
 public partial class Panel : ObservableValidator, ICloneable {
     
-    [ObservableProperty] private string _id = "new";
-    [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] private int _sortOrder = 0;
+    [ObservableProperty]
+    [property: EditableProperty(Name="Panel Name", Description = "Display Name for this Panel")]
+    private string _name = string.Empty;
+    
+    [ObservableProperty] 
+    [property: EditableProperty(Name="Sort Order", Description  = "Order or this Panel", MaxValue = 99)]
+    private int _sortOrder = 0;
     
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
-    [ObservableProperty] private int _cols = 24;
+    [ObservableProperty] 
+    [property: EditableProperty(Name="Columns", MinValue = 8, MaxValue = 32)]
+    private int _cols = 24;
 
     [NotifyPropertyChangedFor(nameof(PanelRatio))]
-    [ObservableProperty] private int _rows = 18;
+    [ObservableProperty] 
+    [property: EditableProperty(Name="Rows", MinValue = 8, MaxValue = 32)]
+    private int _rows = 18;
     
     [ObservableProperty] private ObservableCollection<ITrackPiece> _tracks = [];
 

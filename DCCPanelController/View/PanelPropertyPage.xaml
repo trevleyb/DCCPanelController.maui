@@ -1,12 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-
+<!-- PanelPropertyPage.xaml -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DCCPanelController.View.PanelPropertyPage">
+             x:Class="DCCPanelController.View.PanelPropertyPage"
+             BackgroundColor="Transparent">
     <ContentPage.Content>
-        <StackLayout>
-            <Label>Panel property Page</Label>
-            <Button Clicked="ClosePropertyPage" Text="Close"/>
-        </StackLayout>
+        <Grid HorizontalOptions="Center" VerticalOptions="Center">
+            <Frame BackgroundColor="White"
+                   Padding="20"
+                   CornerRadius="10"
+                   HasShadow="True"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   WidthRequest="300">
+                <StackLayout>
+                    <Grid x:Name="PropertyContainer">
+                        <!-- Properties will be added dynamically -->
+                    </Grid>
+                    <Button Text="Close"
+                            Style = "{StaticResource ButtonOutline}"
+                            VerticalOptions="End" 
+                            HorizontalOptions="Center"
+                            Clicked="ClosePropertyPage"/>
+                </StackLayout>
+            </Frame>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

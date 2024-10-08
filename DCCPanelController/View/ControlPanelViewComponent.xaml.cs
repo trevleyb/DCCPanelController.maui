@@ -18,7 +18,7 @@ using Svg;
 namespace DCCPanelController.View {
     public partial class ControlPanelView {
 
-        public event EventHandler<ITrackPiece> TrackPieceTapped; 
+        public event EventHandler<TrackSelectedEvent> TrackPieceTapped; 
         private ControlPanelViewModel? _viewModel;
 
         public ControlPanelView() {
@@ -223,10 +223,16 @@ namespace DCCPanelController.View {
                 // Setup trigger control to trap if we click on or select the track item
                 // -------------------------------------------------------------------------------------------
                 // Create TapGestureRecognizer
-                var tapGesture = new TapGestureRecognizer();
-                tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
-                image.GestureRecognizers.Add(tapGesture);
-                            
+                var singleTapGesture = new TapGestureRecognizer();
+                singleTapGesture.Tapped += (s, e) => OnTrackPieceTapped(track,1);
+                singleTapGesture.NumberOfTapsRequired = 1;
+                image.GestureRecognizers.Add(singleTapGesture);
+                           
+                var doubleTapGesture = new TapGestureRecognizer();
+                doubleTapGesture.Tapped += (s, e) => OnTrackPieceTapped(track,2);
+                doubleTapGesture.NumberOfTapsRequired = 2;
+                image.GestureRecognizers.Add(doubleTapGesture);
+
                 // If we are in Design mode, then add support for 
                 // dragging and dropping of the items on the page
                 // ---------------------------------------------------------------------------------------
@@ -245,10 +251,11 @@ namespace DCCPanelController.View {
             }
         }
 
-        private void OnTrackPieceTapped(ITrackPiece track) {
-            _viewModel?.HandleTrackPieceTapped(track);
+        private void OnTrackPieceTapped(ITrackPiece track, int taps) {
+            Console.WriteLine($"Track Piece Tapped: {track.Name} and {taps}");
+            _viewModel?.HandleTrackPieceTapped(track,taps);
         }
-
+        
         private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
             try {
                 e.Data.Properties.TryGetValue("Source", out var source);

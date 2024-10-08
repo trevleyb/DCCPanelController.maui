@@ -15,7 +15,6 @@ public static class Panels {
     
     private static Panel CreateTestPanel(string name) {
         var panel = new Panel();
-        panel.Id = "01";
         panel.Name = name;
         panel.Cols = 18;
         panel.Rows = 12;

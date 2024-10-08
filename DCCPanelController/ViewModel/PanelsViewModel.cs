@@ -29,7 +29,6 @@ public partial class PanelsViewModel : BaseViewModel {
     public async Task AddNewPanelAsync() {
         var panel = new Panel();
         var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
-        panel.Id = "new" + maxSort;
         panel.Name = "Panel " + maxSort;
         panel.SortOrder = maxSort;
         Panels.Add(panel);
@@ -44,7 +43,7 @@ public partial class PanelsViewModel : BaseViewModel {
             }
             Save();
         } catch {
-            Console.WriteLine($"Failed to delete panel {panel.Id}");
+            Console.WriteLine($"Failed to delete panel {panel.Name}");
         }
     }
 

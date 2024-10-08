@@ -62,10 +62,21 @@ public partial class PanelEditorPage : ContentPage {
     /// underlying panel to highlight it. This is to support future MULTI-SELECT
     /// mode. 
     /// </summary>
-    private void OnTrackPieceTapped(object? sender, ITrackPiece e) {
-        if (_multiSelect)  HandleMultiSelect(e);
-        if (!_multiSelect) HandleSingleSelect(e);
-        RotateButton.IsEnabled = _selectedTracks.Count > 0;
+    private void OnTrackPieceTapped(object? sender, TrackSelectedEvent trackSelectedEvent) {
+        switch (trackSelectedEvent.Taps) {
+        case 1:
+            if (_multiSelect) HandleMultiSelect(trackSelectedEvent.Track);
+            if (!_multiSelect) HandleSingleSelect(trackSelectedEvent.Track);
+            break;
+        case 2:
+            foreach (var track in _selectedTracks) {
+                track.RotateLeft();
+            }
+            break;
+        case 3:
+            Navigation.PushModalAsync(new PanelPropertyPage(trackSelectedEvent.Track));
+            break;
+        }
     }
 
     private void HandleMultiSelect(ITrackPiece e) {
@@ -76,7 +87,7 @@ public partial class PanelEditorPage : ContentPage {
 
     private void HandleSingleSelect(ITrackPiece e) {
         foreach (var track in _selectedTracks) {
-            UnHighlightTrack(track);
+            UnHighlightAndRemoveTrack(track);
         }
         _selectedTracks.Clear();
         HighlightAndAddTrack(e);
@@ -85,21 +96,20 @@ public partial class PanelEditorPage : ContentPage {
     private void HighlightAndAddTrack(ITrackPiece track) {
         _selectedTracks.Add(track);
         PanelView.HighlightCell(track.X, track.Y);
+        PropertyButton.IsEnabled = _selectedTracks.Count() <= 1;
     }
 
     private void UnHighlightAndRemoveTracks() {
         foreach ( var track in _selectedTracks) UnHighlightAndRemoveTrack(track);
+        PropertyButton.IsEnabled = _selectedTracks.Count() <= 1;
     }
 
     private void UnHighlightAndRemoveTrack(ITrackPiece track) {
         PanelView.UnHighlightCell(track.X, track.Y);
         _selectedTracks.Remove(track);
+        PropertyButton.IsEnabled = _selectedTracks.Count() <= 1;
     }
 
-    private void UnHighlightTrack(ITrackPiece track) {
-        PanelView.UnHighlightCell(track.X, track.Y);
-    }
-    
     private void ToggleMultiSelect(object? sender, EventArgs e) {
         _multiSelect = !_multiSelect;
         if (_multiSelect == false) UnHighlightAndRemoveTracks();
@@ -123,13 +133,11 @@ public partial class PanelEditorPage : ContentPage {
 
     private void ShowPropertyPage(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
-        // those item(s). If not, then we do the main panel page properties. 
-        Navigation.PushModalAsync(new PanelPropertyPage(Panel));
-    }
-
-    private void RotateCurrentItem(object? sender, EventArgs e) {
-        foreach (var track in _selectedTracks) {
-            track.RotateLeft();
+        // those item(s). If not, then we do the main panel page properties.
+        if (_selectedTracks.Count == 1) {
+            Navigation.PushModalAsync(new PanelPropertyPage(_selectedTracks[0]));
+        } else {
+            Navigation.PushModalAsync(new PanelPropertyPage(Panel));
         }
     }
 

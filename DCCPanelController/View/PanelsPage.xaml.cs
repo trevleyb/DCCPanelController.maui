@@ -53,7 +53,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             //editorPage.OnFinished += EditorPageOnOnFinished;
             await this.Navigation.PushAsync(editorPage);
         } catch (Exception ex) {
-            Console.WriteLine($"Failed to goto the Panel details for {panel.Id} due to {ex.Message}");
+            Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
         }
     }
 }

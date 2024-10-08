@@ -7,7 +7,7 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
-    
+
     <NavigationPage IconImageSource="control_green.png" Title="Operate">
         <x:Arguments>
             <view:OperatePage />
@@ -33,4 +33,5 @@
             <view:SettingsPage />
         </x:Arguments>
     </NavigationPage>
+    
 </TabbedPage>
