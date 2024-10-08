@@ -13,14 +13,14 @@
         <ToolbarItem x:Name="SaveButton" IconImageSource="save.png" Clicked="SavePanelAndExit" />
         <ToolbarItem x:Name="GridButton" IconImageSource="gridoff.png" Clicked="ToggleGrid"/>
         <ToolbarItem IconImageSource="blank.png" IsEnabled="False"/>
-        <ToolbarItem x:Name="SelectButton" IconImageSource="select.png" Clicked="ToggleMultiSelect"/>
         <ToolbarItem x:Name="PropertyButton" IconImageSource="tuning.png" Clicked="ShowPropertyPage"/>
         <ToolbarItem x:Name="DeleteButton" IconImageSource="trash.png" Clicked="DeletePanelAndExit"/>
         <ToolbarItem IconImageSource="blank.png" IsEnabled="False"/>
         <ToolbarItem x:Name="ExpandCollapse" IconImageSource="right_panel_close_filled.png" Clicked="OnExpandCollapseButtonClicked"/>
     </ContentPage.ToolbarItems>
 
-    <Grid x:Name="MainGrid">
+    
+    <Grid x:Name="MainGrid" Margin="0" Padding="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftColumn" Width="*" />
             <ColumnDefinition Width="8" />
@@ -28,15 +28,21 @@
         </Grid.ColumnDefinitions>
 
         <!-- Left Pane -->
-        <ContentView x:Name="LeftPane" BackgroundColor="LightBlue" Grid.Column="0">
-                <view:ControlPanelView
-                    x:Name="PanelView"
-                    Panel="{Binding Panel}"
-                    DesignMode="True"
-                    ShowGrid="True"
-                    HorizontalOptions="FillAndExpand"
-                    VerticalOptions="FillAndExpand"/>
-        </ContentView>
+        <Grid RowDefinitions="*,auto">
+            <ContentView x:Name="LeftPane" BackgroundColor="LightBlue" Grid.Column="0" Grid.Row="0">
+                    <view:ControlPanelView
+                        x:Name="PanelView"
+                        Panel="{Binding Panel}"
+                        DesignMode="True"
+                        ShowGrid="True"
+                        HorizontalOptions="FillAndExpand"
+                        VerticalOptions="FillAndExpand"/>
+            </ContentView>
+            <VerticalStackLayout Margin="0" Padding="0" Grid.Row="1" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}"  >
+                <Label TextColor="{StaticResource White}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource MediumLabel}">Drag tracks from the Track Pallet and drop on the layout. Drag from the Panel to the Trash to delete a track.</Label>
+                <Label TextColor="{StaticResource White}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource MediumLabel}">Click or tap on a track to Rotate. Double-click or fast-tap for Properties</Label>
+            </VerticalStackLayout>
+        </Grid>
 
         <!-- Separator / Resizer -->
         <BoxView x:Name="Separator" Color="Gray" Grid.Column="1" WidthRequest="8" HorizontalOptions="Center">
@@ -47,66 +53,50 @@
 
         <!-- Right Pane -->
         <ContentView x:Name="RightPane" BackgroundColor="LightGreen" Grid.Column="2">
-            <CollectionView x:Name="TrackSymbolCollectionView"
-                            ItemsSource="{Binding TrackSymbols}"
-                            VerticalOptions="FillAndExpand"
-                            HorizontalOptions="FillAndExpand"
-                            SelectionMode="Single">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout x:Name="ItemsLayout"
-                                     Orientation="Vertical"
-                                     HorizontalItemSpacing="5"
-                                     VerticalItemSpacing="5"
-                                     Span="1"/>
-                </CollectionView.ItemsLayout>
+            <StackLayout>
+                <CollectionView x:Name="TrackSymbolCollectionView"
+                                ItemsSource="{Binding TrackSymbols}"
+                                VerticalOptions="FillAndExpand"
+                                HorizontalOptions="FillAndExpand"
+                                SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout x:Name="ItemsLayout"
+                                         Orientation="Vertical"
+                                         HorizontalItemSpacing="5"
+                                         VerticalItemSpacing="5"
+                                         Span="1"/>
+                    </CollectionView.ItemsLayout>
+                    
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="interfaces:ITrackSymbol">
+                            <Frame Padding="5" BorderColor="LightGray" HasShadow="false" Margin="5" WidthRequest="75" HeightRequest="90">
+                                <StackLayout>
+                                    <Image Source="{Binding SymbolImage}" HorizontalOptions="Center" VerticalOptions="Center"  WidthRequest="50" HeightRequest="50"/>
+                                    <Label Text="{Binding Name}" HorizontalTextAlignment="Center" VerticalTextAlignment="End" />
+                                </StackLayout>
+                                <Frame.GestureRecognizers>
+                                    <DragGestureRecognizer DragStarting="OnSymbolDragStarting"/>
+                                </Frame.GestureRecognizers>
+                            </Frame>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
                 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="interfaces:ITrackSymbol">
-                        <Frame Padding="5" BorderColor="LightGray" HasShadow="false" Margin="5" WidthRequest="75" HeightRequest="90">
-                            <StackLayout>
-                                <Image Source="{Binding SymbolImage}" HorizontalOptions="Center" VerticalOptions="Center"  WidthRequest="50" HeightRequest="50"/>
-                                <Label Text="{Binding Name}" HorizontalTextAlignment="Center" VerticalTextAlignment="End" />
-                            </StackLayout>
-                            <Frame.GestureRecognizers>
-                                <DragGestureRecognizer DragStarting="OnSymbolDragStarting"/>
-                            </Frame.GestureRecognizers>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                <Frame HorizontalOptions="Center"
+                       VerticalOptions="End"
+                       Margin="5,20,5,5"
+                       WidthRequest="100"
+                       HeightRequest="100"
+                       BorderColor="Transparent"
+                       BackgroundColor="Transparent"
+                       x:Name="DragTrashIcon">
+                    <Frame.GestureRecognizers>
+                        <DropGestureRecognizer Drop="DropTrackInTrash" DragOver="DropTrackInTrashHoverOver" DragLeave="DropTrackInTrashHoverLeave" />
+                    </Frame.GestureRecognizers>
+                    <Image Source="trash.png"/>
+                </Frame>
+            </StackLayout>
         </ContentView>
     </Grid>
     
 </ContentPage>
-
-    <!--
-    <ContentPage.Content>
-        <Grid x:Name="MainGrid" ColumnDefinitions="*,5,*" RowDefinitions="*">
-            <ContentView Padding="0" Grid.Column="0" x:Name="LeftPane">
-                <AbsoluteLayout x:Name="PanelLayout">
-                    <view:ControlPanelView
-                        x:Name="PanelView"
-                        Panel="{Binding Panel}"
-                        DesignMode="True"
-                        ShowGrid="True"
-                        HorizontalOptions="FillAndExpand"
-                        VerticalOptions="FillAndExpand"
-                        AbsoluteLayout.LayoutFlags="All"
-                        AbsoluteLayout.LayoutBounds="0,0,1,1"/>
-                 </AbsoluteLayout>
-            </ContentView>
-            
-            <BoxView x:Name="Separator" Grid.Column="1"
-                     Color="Gray" WidthRequest="5">
-                    <BoxView.GestureRecognizers>
-                        <PanGestureRecognizer PanUpdated="OnPanUpdated" />
-                    </BoxView.GestureRecognizers>
-            </BoxView>
-            
-            <ContentView x:Name="RightPane" Grid.Column="2"
-                         WidthRequest="0" BackgroundColor="LightBlue">
-            </ContentView>
-        </Grid>
-       
-    </ContentPage.Content>
--->

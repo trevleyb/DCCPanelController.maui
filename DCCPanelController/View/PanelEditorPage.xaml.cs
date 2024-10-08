@@ -19,8 +19,7 @@ public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 100; // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 300; // Maximum width constraint for the right pane
 
-    private bool _multiSelect = false;
-    private readonly List<ITrackPiece> _selectedTracks = [];
+    private ITrackPiece? _selectedTrack;
     private bool _isDragging = false;
     private double _initialX = 0;
     
@@ -65,57 +64,13 @@ public partial class PanelEditorPage : ContentPage {
     private void OnTrackPieceTapped(object? sender, TrackSelectedEvent trackSelectedEvent) {
         switch (trackSelectedEvent.Taps) {
         case 1:
-            if (_multiSelect) HandleMultiSelect(trackSelectedEvent.Track);
-            if (!_multiSelect) HandleSingleSelect(trackSelectedEvent.Track);
+            trackSelectedEvent.Track?.RotateLeft();
             break;
         case 2:
-            foreach (var track in _selectedTracks) {
-                track.RotateLeft();
-            }
-            break;
-        case 3:
             Navigation.PushModalAsync(new PanelPropertyPage(trackSelectedEvent.Track));
             break;
         }
     }
-
-    private void HandleMultiSelect(ITrackPiece e) {
-        var isTrackSelected = _selectedTracks.Contains(e);
-        if (isTrackSelected) UnHighlightAndRemoveTrack(e);
-        if (!isTrackSelected) HighlightAndAddTrack(e);
-    }
-
-    private void HandleSingleSelect(ITrackPiece e) {
-        foreach (var track in _selectedTracks) {
-            UnHighlightAndRemoveTrack(track);
-        }
-        _selectedTracks.Clear();
-        HighlightAndAddTrack(e);
-    }
-
-    private void HighlightAndAddTrack(ITrackPiece track) {
-        _selectedTracks.Add(track);
-        PanelView.HighlightCell(track.X, track.Y);
-        PropertyButton.IsEnabled = _selectedTracks.Count() <= 1;
-    }
-
-    private void UnHighlightAndRemoveTracks() {
-        foreach ( var track in _selectedTracks) UnHighlightAndRemoveTrack(track);
-        PropertyButton.IsEnabled = _selectedTracks.Count() <= 1;
-    }
-
-    private void UnHighlightAndRemoveTrack(ITrackPiece track) {
-        PanelView.UnHighlightCell(track.X, track.Y);
-        _selectedTracks.Remove(track);
-        PropertyButton.IsEnabled = _selectedTracks.Count() <= 1;
-    }
-
-    private void ToggleMultiSelect(object? sender, EventArgs e) {
-        _multiSelect = !_multiSelect;
-        if (_multiSelect == false) UnHighlightAndRemoveTracks();
-        SelectButton.IconImageSource = _multiSelect ? "select.png" : "deselect.png";
-    }
-
     #endregion
     
     private void SavePanelAndExit(object? sender, EventArgs e) {
@@ -134,11 +89,25 @@ public partial class PanelEditorPage : ContentPage {
     private void ShowPropertyPage(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
-        if (_selectedTracks.Count == 1) {
-            Navigation.PushModalAsync(new PanelPropertyPage(_selectedTracks[0]));
-        } else {
-            Navigation.PushModalAsync(new PanelPropertyPage(Panel));
-        }
+        Navigation.PushModalAsync(_selectedTrack is not null ? new PanelPropertyPage(_selectedTrack) : new PanelPropertyPage(Panel));
+    }
+
+    private void DropTrackInTrash(object? sender, DropEventArgs e) {
+        e.Data.Properties.TryGetValue("Source", out var source);
+        e.Data.Properties.TryGetValue("Track", out var track);
+        Console.WriteLine($"Deleting track {track}");
+        if (source is string && source.Equals("Panel") && track is ITrackPiece trackPiece) Panel.Tracks.Remove(trackPiece);
+        DragTrashIcon.BackgroundColor = Colors.Transparent;
+        PanelView.RebuildGrid(true);
+    }
+
+    private void DropTrackInTrashHoverOver(object? sender, DragEventArgs e) {
+        e.Data.Properties.TryGetValue("Source", out var source);
+        if (source is string && source.Equals("Panel")) DragTrashIcon.BackgroundColor = Colors.Red; 
+    }
+
+    private void DropTrackInTrashHoverLeave(object? sender, DragEventArgs e) {
+        DragTrashIcon.BackgroundColor = Colors.Transparent;
     }
 
     #region Code to manage the Left and Right Panels

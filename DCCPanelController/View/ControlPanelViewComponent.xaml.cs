@@ -11,6 +11,7 @@ using DCCPanelController.ViewModel;
 using Microsoft.Maui.Layouts;
 using StackExchange.Profiling;
 using Svg;
+using System.Timers;
 
 //
 // This is a COMPONENT that is used inside the operate and panels views
@@ -18,6 +19,9 @@ using Svg;
 namespace DCCPanelController.View {
     public partial class ControlPanelView {
 
+        private readonly System.Timers.Timer _tapTimer;
+        private ITrackPiece _selectedTrack;
+        private int _tapCount;
         public event EventHandler<TrackSelectedEvent> TrackPieceTapped; 
         private ControlPanelViewModel? _viewModel;
 
@@ -25,6 +29,13 @@ namespace DCCPanelController.View {
             InitializeComponent();
             PropertyChanged += OnPropertyChanged;
             MainGrid.SizeChanged += OnGridSizeChanged;
+
+            _tapTimer = new System.Timers.Timer {
+                Interval = 300,   // Adjust as needed (300ms works well for distinguishing between single and double taps)
+                AutoReset = false // Make sure it does not repeat automatically
+            };
+            _tapTimer.Elapsed += OnTapTimerElapsed;
+
         }
 
         public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
@@ -223,16 +234,11 @@ namespace DCCPanelController.View {
                 // Setup trigger control to trap if we click on or select the track item
                 // -------------------------------------------------------------------------------------------
                 // Create TapGestureRecognizer
-                var singleTapGesture = new TapGestureRecognizer();
-                singleTapGesture.Tapped += (s, e) => OnTrackPieceTapped(track,1);
-                singleTapGesture.NumberOfTapsRequired = 1;
-                image.GestureRecognizers.Add(singleTapGesture);
+                var tapGesture = new TapGestureRecognizer();
+                tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
+                tapGesture.NumberOfTapsRequired = 1;
+                image.GestureRecognizers.Add(tapGesture);
                            
-                var doubleTapGesture = new TapGestureRecognizer();
-                doubleTapGesture.Tapped += (s, e) => OnTrackPieceTapped(track,2);
-                doubleTapGesture.NumberOfTapsRequired = 2;
-                image.GestureRecognizers.Add(doubleTapGesture);
-
                 // If we are in Design mode, then add support for 
                 // dragging and dropping of the items on the page
                 // ---------------------------------------------------------------------------------------
@@ -251,11 +257,41 @@ namespace DCCPanelController.View {
             }
         }
 
-        private void OnTrackPieceTapped(ITrackPiece track, int taps) {
-            Console.WriteLine($"Track Piece Tapped: {track.Name} and {taps}");
-            _viewModel?.HandleTrackPieceTapped(track,taps);
+        private void OnTrackPieceTapped(ITrackPiece track) {
+            Console.WriteLine($"Track Piece Tapped: {track.Name} with tapCount={_tapCount}");
+            _selectedTrack = track;
+            _tapCount++;
+            _tapTimer.Stop();
+            _tapTimer.Start();
         }
         
+        private void OnTapped(object sender, EventArgs e) {
+            _tapCount++; // Increment the tap count whenever a tap is detected
+            Console.WriteLine($"Tapped Event with TapCount now = {_tapCount}");
+
+            if (_tapCount == 1)  {
+                // Start or reset the timer when the first tap is detected
+                _tapTimer.Stop(); // Stop in case it's already running
+                _tapTimer.Start();
+            }
+            else if (_tapCount == 2) {
+                Console.WriteLine("Double Tap Detected.");
+                // If a second tap is detected within the timer interval, consider it a double tap
+                _tapTimer.Stop(); // Stop the timer since we detected a double tap
+                _viewModel?.HandleTrackPieceTapped(_selectedTrack,2);
+                _tapCount = 0;    // Reset tap count
+            }
+        }
+        
+        private void OnTapTimerElapsed(object sender, ElapsedEventArgs e) {
+            // When the timer elapses, it's a single tap
+            if (_tapCount == 1) {
+                Console.WriteLine("Single Tap Detected.");
+                _viewModel?.HandleTrackPieceTapped(_selectedTrack,1);
+            }
+            _tapCount = 0; // Reset tap count after handling
+        }
+
         private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
             try {
                 e.Data.Properties.TryGetValue("Source", out var source);

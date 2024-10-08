@@ -92,7 +92,7 @@
                                                        HorizontalOptions="Center"
                                                        VerticalTextAlignment="Center"
                                                        HorizontalTextAlignment="Center">
-                                                    <MultiBinding StringFormat="{}{0}: {1}">
+                                                    <MultiBinding StringFormat="{}{0}">
                                                         <Binding Path="Name" FallbackValue="Unknown Panel" />
                                                     </MultiBinding>
                                                 </Label>
