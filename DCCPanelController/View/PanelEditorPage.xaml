@@ -19,40 +19,34 @@
         <ToolbarItem x:Name="ExpandCollapse" IconImageSource="right_panel_close_filled.png" Clicked="OnExpandCollapseButtonClicked"/>
     </ContentPage.ToolbarItems>
 
-    
     <Grid x:Name="MainGrid" Margin="0" Padding="0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition x:Name="LeftColumn" Width="*" />
             <ColumnDefinition Width="8" />
-            <ColumnDefinition x:Name="RightColumn" Width="200" />
+            <ColumnDefinition x:Name="RightColumn" Width="120" />
         </Grid.ColumnDefinitions>
 
         <!-- Left Pane -->
-        <Grid RowDefinitions="*,auto">
-            <ContentView x:Name="LeftPane" BackgroundColor="LightBlue" Grid.Column="0" Grid.Row="0">
-                    <view:ControlPanelView
-                        x:Name="PanelView"
-                        Panel="{Binding Panel}"
-                        DesignMode="True"
-                        ShowGrid="True"
-                        HorizontalOptions="FillAndExpand"
-                        VerticalOptions="FillAndExpand"/>
-            </ContentView>
-            <VerticalStackLayout Margin="0" Padding="0" Grid.Row="1" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}"  >
-                <Label TextColor="{StaticResource White}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource MediumLabel}">Drag tracks from the Track Pallet and drop on the layout. Drag from the Panel to the Trash to delete a track.</Label>
-                <Label TextColor="{StaticResource White}" VerticalOptions="Center" HorizontalOptions="Center" Style="{StaticResource MediumLabel}">Click or tap on a track to Rotate. Double-click or fast-tap for Properties</Label>
-            </VerticalStackLayout>
-        </Grid>
+        <ContentView x:Name="LeftPane" BackgroundColor="LightBlue" Grid.Column="0">
+                <view:ControlPanelView
+                    x:Name="PanelView"
+                    Panel="{Binding Panel}"
+                    DesignMode="True"
+                    ShowGrid="True"
+                    HorizontalOptions="FillAndExpand"
+                    VerticalOptions="FillAndExpand"/>
+        </ContentView>
 
         <!-- Separator / Resizer -->
-        <BoxView x:Name="Separator" Color="Gray" Grid.Column="1" WidthRequest="8" HorizontalOptions="Center">
+        <BoxView x:Name="Separator" WidthRequest="8" Color="Gray" Grid.Column="1" HorizontalOptions="Center">
             <BoxView.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnPanUpdated" />
             </BoxView.GestureRecognizers>
         </BoxView>
 
         <!-- Right Pane -->
-        <ContentView x:Name="RightPane" BackgroundColor="LightGreen" Grid.Column="2">
+        <ContentView
+            x:Name="RightPane" BackgroundColor="LightGreen" Grid.Column="2">
             <StackLayout>
                 <CollectionView x:Name="TrackSymbolCollectionView"
                                 ItemsSource="{Binding TrackSymbols}"
@@ -93,10 +87,10 @@
                     <Frame.GestureRecognizers>
                         <DropGestureRecognizer Drop="DropTrackInTrash" DragOver="DropTrackInTrashHoverOver" DragLeave="DropTrackInTrashHoverLeave" />
                     </Frame.GestureRecognizers>
-                    <Image Source="trash.png"/>
+                        <Image Margin="0" Source="trash.png" WidthRequest="60" HeightRequest="60"/>
                 </Frame>
             </StackLayout>
         </ContentView>
     </Grid>
-    
+
 </ContentPage>

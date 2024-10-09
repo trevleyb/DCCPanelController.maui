@@ -260,12 +260,6 @@ namespace DCCPanelController.View {
         private void OnTrackPieceTapped(ITrackPiece track) {
             Console.WriteLine($"Track Piece Tapped: {track.Name} with tapCount={_tapCount}");
             _selectedTrack = track;
-            _tapCount++;
-            _tapTimer.Stop();
-            _tapTimer.Start();
-        }
-        
-        private void OnTapped(object sender, EventArgs e) {
             _tapCount++; // Increment the tap count whenever a tap is detected
             Console.WriteLine($"Tapped Event with TapCount now = {_tapCount}");
 

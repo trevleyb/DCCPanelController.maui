@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.ViewModel;
 
@@ -10,9 +11,9 @@ namespace DCCPanelController.View;
 
 public partial class PanelPropertyPage : ContentPage {
     
-    public PanelPropertyPage(object obj) {
+    public PanelPropertyPage(string propertyName, object obj) {
         InitializeComponent();
-        BindingContext = new PropertyViewModel(PropertyContainer, obj);
+        BindingContext = new PropertyViewModel(propertyName, PropertyContainer, obj);
     }
     
     private void ClosePropertyPage(object? sender, EventArgs e) {

@@ -111,7 +111,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-
+    
     <Style TargetType="Frame" x:Key="IpAddress">
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>

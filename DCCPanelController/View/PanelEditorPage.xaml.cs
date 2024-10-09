@@ -16,8 +16,8 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorPage : ContentPage {
 
-    private const double MinRightPaneWidth = 100; // Minimum width constraint for the right pane
-    private const double MaxRightPaneWidth = 300; // Maximum width constraint for the right pane
+    private const double MinRightPaneWidth = 120; // Minimum width constraint for the right pane
+    private const double MaxRightPaneWidth = 360; // Maximum width constraint for the right pane
 
     private ITrackPiece? _selectedTrack;
     private bool _isDragging = false;
@@ -29,14 +29,16 @@ public partial class PanelEditorPage : ContentPage {
     public PanelEditorPage(Panel panel) {
         Panel = panel;
         ViewModel = new PanelEditorViewModel(panel);
-        BindingContext = ViewModel;
+        BindingContext = ViewModel;    
+
         InitializeComponent();
+        
+        //LeftColumn.Width = new GridLength(1, GridUnitType.Star);        // Left pane takes up remaining space
+        //RightColumn.Width = new GridLength(200, GridUnitType.Absolute); // Initial width of right pane set to 200
+        AdjustColumnCount();
+
         SizeChanged += OnSizeChanged;
         PanelView.TrackPieceTapped += OnTrackPieceTapped;
-    
-        LeftColumn.Width = new GridLength(1, GridUnitType.Star);        // Left pane takes up remaining space
-        RightColumn.Width = new GridLength(200, GridUnitType.Absolute); // Initial width of right pane set to 200
-        AdjustColumnCount();
     }
     
     #region Support Drag and Drop of the Symbols from the Symbol Pane
@@ -67,7 +69,7 @@ public partial class PanelEditorPage : ContentPage {
             trackSelectedEvent.Track?.RotateLeft();
             break;
         case 2:
-            Navigation.PushModalAsync(new PanelPropertyPage(trackSelectedEvent.Track));
+            Navigation.PushModalAsync(new PanelPropertyPage(trackSelectedEvent.Track.Name, trackSelectedEvent.Track));
             break;
         }
     }
@@ -89,7 +91,7 @@ public partial class PanelEditorPage : ContentPage {
     private void ShowPropertyPage(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
-        Navigation.PushModalAsync(_selectedTrack is not null ? new PanelPropertyPage(_selectedTrack) : new PanelPropertyPage(Panel));
+        Navigation.PushModalAsync(_selectedTrack is not null ? new PanelPropertyPage(_selectedTrack.Name, _selectedTrack) : new PanelPropertyPage($"Panel Properties", Panel));
     }
 
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
@@ -139,6 +141,7 @@ public partial class PanelEditorPage : ContentPage {
             _isDragging = false;
             Separator.Color = Colors.Gray;
             AdjustColumnCount();
+            Console.WriteLine($"Left = {LeftColumn.Width}, Right={RightColumn.Width}");
             break;
         }
     }
@@ -156,13 +159,15 @@ public partial class PanelEditorPage : ContentPage {
     // Method to collapse or expand the right pane
     public void ToggleRightPane() {
         if (RightColumn.Width.Value == 0) {
-            RightColumn.Width = new GridLength(200, GridUnitType.Absolute);
+            RightColumn.Width = new GridLength(120, GridUnitType.Absolute);
             Separator.IsVisible = true;
+            DragTrashIcon.IsVisible = true;
             ExpandCollapse.IconImageSource = "right_panel_close_filled.png";
         }
         else {
             RightColumn.Width = new GridLength(0, GridUnitType.Absolute);
             Separator.IsVisible = false;
+            DragTrashIcon.IsVisible = false;
             ExpandCollapse.IconImageSource = "right_panel_open_filled.png";
         }
         OnSizeChanged(null, EventArgs.Empty);

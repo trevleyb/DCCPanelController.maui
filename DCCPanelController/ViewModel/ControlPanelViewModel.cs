@@ -53,6 +53,7 @@ public partial class ControlPanelViewModel : BaseViewModel {
     
     public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
         if (DesignMode) {
+            Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
             TrackSelected?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
         } else {
             if (track is ITrackInteractive) {
