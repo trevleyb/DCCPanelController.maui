@@ -9,6 +9,7 @@ using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.View.PropertPages;
 using DCCPanelController.ViewModel;
 using Color = System.Drawing.Color;
 
@@ -48,13 +49,6 @@ public partial class PanelEditorPage : ContentPage {
             e.Data.Properties.Add("Source", "Symbol");
         }
     }
-
-    //private void OnSymbolDrop(object sender, DropEventArgs e) {
-    //    if (e.Data.Properties.ContainsKey("TrackSymbol")) {
-    //        var trackSymbol = e.Data.Properties["Track"] as ITrackSymbol;
-    //        // Handle the drop event here
-    //    }
-    //}
     #endregion Drag and drop
 
     #region Handle Selecting and Actioning on a Track including multiple selections
@@ -69,7 +63,8 @@ public partial class PanelEditorPage : ContentPage {
             trackSelectedEvent.Track?.RotateLeft();
             break;
         case 2:
-            Navigation.PushModalAsync(new PanelPropertyPage(trackSelectedEvent.Track.Name, trackSelectedEvent.Track));
+            Navigation.PushModalAsync(new PropertyPage(trackSelectedEvent.Track));
+            PanelView.RebuildGrid(true);
             break;
         }
     }
@@ -87,11 +82,17 @@ public partial class PanelEditorPage : ContentPage {
         PanelView.ShowGrid = !PanelView.ShowGrid;
         PanelView.RebuildGrid(true);
     }
+    
+    private void ToggleValidation(object? sender, EventArgs e) {
+        PanelView.ShowTrackErrors = !PanelView.ShowTrackErrors;
+        PanelView.RebuildGrid(true);
+    }
 
     private void ShowPropertyPage(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
-        Navigation.PushModalAsync(_selectedTrack is not null ? new PanelPropertyPage(_selectedTrack.Name, _selectedTrack) : new PanelPropertyPage($"Panel Properties", Panel));
+        Navigation.PushModalAsync(_selectedTrack is not null ? new PropertyPage(_selectedTrack) : new PropertyPage(Panel));
+        PanelView.RebuildGrid(true);
     }
 
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
@@ -191,5 +192,4 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
     #endregion
-
 }

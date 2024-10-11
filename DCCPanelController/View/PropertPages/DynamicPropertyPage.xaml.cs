@@ -9,9 +9,9 @@ using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class PanelPropertyPage : ContentPage {
+public partial class DynamicPropertyPage : ContentPage {
     
-    public PanelPropertyPage(string propertyName, object obj) {
+    public DynamicPropertyPage(string propertyName, object obj) {
         InitializeComponent();
         BindingContext = new PropertyViewModel(propertyName, PropertyContainer, obj);
     }

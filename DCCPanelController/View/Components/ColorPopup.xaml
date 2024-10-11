@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:colorPickerControl="clr-namespace:ColorPickerControl"
+               xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
+               x:Class="ColorPickerControl.ColorPopup" x:DataType="colorPickerControl:ColorPopup">
+    
+    <ScrollView 
+        WidthRequest="250"
+        HeightRequest="300">
+        
+        <Frame 
+               BackgroundColor="White"
+               BorderColor="Gray"
+               HasShadow="True"
+               CornerRadius="5"
+               VerticalOptions="Start"
+               HorizontalOptions="Center">
+           
+        <CollectionView
+            
+            ItemsSource="{Binding ColorOptions}"
+            SelectionMode="Single"
+            SelectionChanged="OnColorSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="helpers:ColorOption">
+                    <Grid Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="30" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <BoxView WidthRequest="20" HeightRequest="20" Color="{Binding Color}" Grid.Column="0" />
+                        <Label Text="{Binding Name}" Grid.Column="1" VerticalOptions="Center" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Frame>
+    </ScrollView>
+</toolkit:Popup>

@@ -5,6 +5,7 @@ using System.Xml.Linq;
 using SkiaSharp;
 using StackExchange.Profiling;
 using Svg.Skia;
+using SKSvg = Svg.Skia.SKSvg;
 
 namespace DCCPanelController.Tracks.ImageManager;
 

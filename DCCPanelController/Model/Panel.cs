@@ -33,6 +33,9 @@ public partial class Panel : ObservableValidator, ICloneable {
     [property: EditableProperty(Name="Rows", MinValue = 8, MaxValue = 32)]
     private int _rows = 18;
     
+    [ObservableProperty] 
+    private Color _backgroundColor = Colors.White;
+
     [ObservableProperty] private ObservableCollection<ITrackPiece> _tracks = [];
 
     [JsonIgnore]

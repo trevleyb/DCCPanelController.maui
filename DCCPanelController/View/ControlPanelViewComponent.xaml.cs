@@ -29,7 +29,8 @@ namespace DCCPanelController.View {
             InitializeComponent();
             PropertyChanged += OnPropertyChanged;
             MainGrid.SizeChanged += OnGridSizeChanged;
-
+        
+            
             _tapTimer = new System.Timers.Timer {
                 Interval = 300,   // Adjust as needed (300ms works well for distinguishing between single and double taps)
                 AutoReset = false // Make sure it does not repeat automatically
@@ -59,6 +60,13 @@ namespace DCCPanelController.View {
             set => SetValue(ShowGridProperty, value);
         }
 
+        public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
+
+        public bool ShowTrackErrors {
+            get => (bool)GetValue(ShowTrackErrorsProperty);
+            set => SetValue(ShowTrackErrorsProperty, value);
+        }
+
         private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
             if (oldValue is Panel { } oldPanel && newValue is Panel { } newPanel) {
                 OnPanelChanged(oldPanel, newPanel);
@@ -74,13 +82,15 @@ namespace DCCPanelController.View {
                 _viewModel.Panel = Panel;
                 _viewModel.DesignMode = DesignMode;
                 _viewModel.ShowGrid = ShowGrid;
+                _viewModel.ShowTrackErrors = ShowTrackErrors;
                 _viewModel.TrackSelected += (sender, track) => TrackPieceTapped?.Invoke(this, track);
                 break;
             
-            case nameof(DesignMode) or nameof(ShowGrid):
+            case nameof(DesignMode) or nameof(ShowGrid) or nameof(ShowTrackErrors):
                 if (_viewModel != null) {
                     _viewModel.DesignMode = DesignMode;
                     _viewModel.ShowGrid = ShowGrid;
+                    _viewModel.ShowTrackErrors = ShowTrackErrors;
                 }
                 break;
             }
@@ -99,7 +109,8 @@ namespace DCCPanelController.View {
                 _viewModel.SetScreenSize(MainGrid.Width, MainGrid.Height);
                 DynamicGrid.WidthRequest = _viewModel.ViewWidth;
                 DynamicGrid.HeightRequest = _viewModel.ViewHeight;
-
+                DynamicGrid.BackgroundColor = _viewModel?.Panel?.BackgroundColor ?? Colors.Transparent;
+                
                 DynamicGrid.Children.Clear();
                 if (DynamicGrid.RowDefinitions.Count != _viewModel.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel.Cols) {
                     DynamicGrid.RowDefinitions.Clear();
@@ -344,18 +355,7 @@ namespace DCCPanelController.View {
             args.Data.Properties.Add("Track", track);
             args.Data.Properties.Add("Source", "Panel");
         }
-
         
-        
-        //private void TapGestureRecognizer_OnTapped(object? sender, TappedEventArgs e) {
-        //    Console.WriteLine($"Check the buttons: Mask = {e.Buttons}");
-        //    if (sender is Grid grid) {
-        //        var position = e.GetPosition(grid);
-        //        var gridPosition = GetGridPosition(position);
-        //        Console.WriteLine($"Tapped at {position?.X}, {position?.Y} ==> {gridPosition?.Col},{gridPosition?.Row}");
-        //    }
-        //}
-
         /// <summary>
         /// Convert a position in the grid (absolute) to a Grid position within the col/row definitions
         /// </summary>

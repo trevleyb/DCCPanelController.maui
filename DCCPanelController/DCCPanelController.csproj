@@ -81,9 +81,15 @@
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
         <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.0-preview.7.24407.4" />
         <PackageReference Include="MiniProfiler" Version="4.3.8" />
+        <PackageReference Include="nor0x.Maui.ColorPicker" Version="2.0.3" />
         <PackageReference Include="NUnit" Version="4.1.0" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
+        <PackageReference Include="SkiaSharp" Version="2.88.8" />
+        <PackageReference Include="SkiaSharp.Svg" Version="1.60.0" />
+        <PackageReference Include="SkiaSharp.Views" Version="2.88.8" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="2.88.8" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="2.88.8" />
         <PackageReference Include="Svg.Skia" Version="2.0.0" />
         <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1" />
     </ItemGroup>
@@ -138,6 +144,15 @@
         <SubType>Designer</SubType>
       </MauiXaml>
       <MauiXaml Update="View\ToDelete\TrackPieceTestPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="View\PropertPages\DynamicPropertyPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="View\Components\ColorDropdown.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="View\Components\ColorPopup.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
     </ItemGroup>
@@ -209,6 +224,18 @@
       </Compile>
       <Compile Update="View\ToDelete\TrackPieceTestPage.xaml.cs">
         <DependentUpon>TrackPieceTestPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\PropertPages\DynamicPropertyPage.xaml.cs">
+        <DependentUpon>PanelPropertyPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\Components\ColorDropdown.xaml.cs">
+        <DependentUpon>ColorDropdown.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\Components\ColorPopup.xaml.cs">
+        <DependentUpon>ColorPopup.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

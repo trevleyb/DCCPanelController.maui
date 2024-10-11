@@ -1,6 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Logging;
 using CommunityToolkit.Maui;
+using SkiaSharp;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
@@ -14,8 +16,9 @@ public static class MauiProgram {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         })
-            .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMediaElement();
+        .UseSkiaSharp()
+        .UseMauiCommunityToolkit()
+        .UseMauiCommunityToolkitMediaElement();
 
         var services = builder.Services;
         
