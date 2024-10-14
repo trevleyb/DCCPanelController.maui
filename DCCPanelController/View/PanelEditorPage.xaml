@@ -1,103 +1,141 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             Title="{Binding Panel.Name}"
-             xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-             xmlns:view="clr-namespace:DCCPanelController.View"
-             xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.Interfaces"
-             x:DataType="viewModel:PanelEditorViewModel"
-             x:Class="DCCPanelController.View.PanelEditorPage">
-    
+<ContentPage
+    Title="{Binding Panel.Name}"
+    x:Class="DCCPanelController.View.PanelEditorPage"
+    x:DataType="viewModel:PanelEditorViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.Interfaces"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="SaveButton" IconImageSource="save.png" Clicked="SavePanelAndExit" />
-        <ToolbarItem x:Name="GridButton" IconImageSource="gridoff.png" Clicked="ToggleGrid"/>
-        <ToolbarItem x:Name="ValidateButton" IconImageSource="refresh_double.png" Clicked="ToggleValidation"/>
-        <ToolbarItem x:Name="PropertyButton" IconImageSource="tuning.png" Clicked="ShowPropertyPage"/>
-        <ToolbarItem x:Name="ExpandCollapse" IconImageSource="right_panel_close_filled.png" Clicked="OnExpandCollapseButtonClicked"/>
+        <ToolbarItem
+            Clicked="SavePanelAndExit"
+            IconImageSource="save.png"
+            Text="Save"
+            x:Name="SaveButton" />
+        <ToolbarItem
+            Clicked="ToggleGrid"
+            IconImageSource="gridoff.png"
+            Text="Show Grid"
+            x:Name="GridButton" />
+        <ToolbarItem
+            Clicked="ToggleValidation"
+            IconImageSource="refresh_double.png"
+            Text="Validate"
+            x:Name="ValidateButton" />
+        <ToolbarItem
+            Clicked="ShowPropertyPage"
+            IconImageSource="tuning.png"
+            Text="Properties"
+            x:Name="PropertyButton" />
+        <ToolbarItem
+            Clicked="OnExpandCollapseButtonClicked"
+            IconImageSource="right_panel_close_filled.png"
+            x:Name="ExpandCollapse" />
     </ContentPage.ToolbarItems>
 
-    <Grid x:Name="MainGrid" Margin="0" Padding="0">
+    <Grid
+        Margin="0"
+        Padding="0"
+        x:Name="MainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="LeftColumn" Width="*" />
+            <ColumnDefinition Width="*" x:Name="LeftColumn" />
             <ColumnDefinition Width="8" />
-            <ColumnDefinition x:Name="RightColumn" Width="120" />
+            <ColumnDefinition Width="120" x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
 
-        <!-- Left Pane -->
-        <ContentView x:Name="LeftPane" Grid.Column="0">
-                <view:ControlPanelView
-                    x:Name="PanelView"
-                    Panel="{Binding Panel}"
-                    DesignMode="True"
-                    ShowGrid="True"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill"/>
+        <!--  Left Pane  -->
+        <ContentView
+            Grid.Column="0"
+            Margin="10"
+            x:Name="LeftPane">
+            <view:ControlPanelView
+                DesignMode="True"
+                HorizontalOptions="Fill"
+                Panel="{Binding Panel}"
+                ShowGrid="True"
+                VerticalOptions="Fill"
+                x:Name="PanelView" />
         </ContentView>
 
-        <!-- Separator / Resizer -->
-        <BoxView x:Name="Separator" WidthRequest="8" Color="Gray" Grid.Column="1" HorizontalOptions="Center">
+        <!--  Separator / Resizer  -->
+        <BoxView
+            Color="Gray"
+            Grid.Column="1"
+            HorizontalOptions="Center"
+            IsVisible="False"
+            WidthRequest="8"
+            x:Name="Separator">
             <BoxView.GestureRecognizers>
                 <PanGestureRecognizer PanUpdated="OnPanUpdated" />
             </BoxView.GestureRecognizers>
         </BoxView>
 
-        <!-- Right Pane -->
+        <!--  Right Pane  -->
         <ContentView
-            x:Name="RightPane" 
-            BackgroundColor="{StaticResource Primary}" 
-            Grid.Column="2">
-            <StackLayout>
-                <CollectionView x:Name="TrackSymbolCollectionView"
-                                ItemsSource="{Binding TrackSymbols}"
-                                VerticalOptions="FillAndExpand"
-                                HorizontalOptions="Center"
-                                SelectionMode="Single">
+            BackgroundColor="{StaticResource Primary}"
+            Grid.Column="2"
+            x:Name="RightPane">
+            <StackLayout Padding="10">
+                <CollectionView
+                    HorizontalOptions="Center"
+                    ItemsSource="{Binding TrackSymbols}"
+                    Margin="10"
+                    SelectionMode="Single"
+                    VerticalOptions="FillAndExpand"
+                    x:Name="TrackSymbolCollectionView">
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout 
-                            x:Name="ItemsLayout"
-                            Orientation="Vertical"
+                        <GridItemsLayout
                             HorizontalItemSpacing="5"
-                            VerticalItemSpacing="5"
-                            Span="1"/>
+                            Orientation="Vertical"
+                            Span="1"
+                            VerticalItemSpacing="10"
+                            x:Name="ItemsLayout" />
                     </CollectionView.ItemsLayout>
-                    
+
                     <CollectionView.ItemTemplate>
-                        <DataTemplate 
-                            x:DataType="interfaces:ITrackSymbol">
-                            <Frame Padding="5" 
-                                   BackgroundColor="White"
-                                   HasShadow="false" 
-                                   Margin="5" 
-                                   WidthRequest="50"
-                                   HeightRequest="50"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center">
-                                    <Image Source="{Binding SymbolImage}" 
-                                           HorizontalOptions="Center"
-                                           VerticalOptions="Center"  
-                                           WidthRequest="50" 
-                                           HeightRequest="50"/>
+                        <DataTemplate x:DataType="interfaces:ITrackSymbol">
+                            <Frame
+                                BackgroundColor="White"
+                                BorderColor="Black"
+                                HasShadow="false"
+                                HorizontalOptions="Center"
+                                Margin="5"
+                                Padding="5"
+                                VerticalOptions="Center">
+                                <Image
+                                    HeightRequest="50"
+                                    Source="{Binding SymbolImage}"
+                                    WidthRequest="50" />
                                 <Frame.GestureRecognizers>
-                                    <DragGestureRecognizer DragStarting="OnSymbolDragStarting"/>
+                                    <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
                                 </Frame.GestureRecognizers>
                             </Frame>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-                
-                <Frame HorizontalOptions="Center"
-                       VerticalOptions="End"
-                       Margin="5,20,5,5"
-                       WidthRequest="100"
-                       HeightRequest="100"
-                       BorderColor="Transparent"
-                       BackgroundColor="Transparent"
-                       x:Name="DragTrashIcon">
+
+                <Frame
+                    BackgroundColor="White"
+                    BorderColor="Black"
+                    HorizontalOptions="Center"
+                    Margin="5"
+                    Padding="5"
+                    VerticalOptions="End"
+                    x:Name="DragTrashIcon">
                     <Frame.GestureRecognizers>
-                        <DropGestureRecognizer Drop="DropTrackInTrash" DragOver="DropTrackInTrashHoverOver" DragLeave="DropTrackInTrashHoverLeave" />
+                        <DropGestureRecognizer
+                            DragLeave="DropTrackInTrashHoverLeave"
+                            DragOver="DropTrackInTrashHoverOver"
+                            Drop="DropTrackInTrash" />
                     </Frame.GestureRecognizers>
-                        <Image Margin="0" Source="trash.png" WidthRequest="60" HeightRequest="60"/>
+                    <Image
+                        HeightRequest="50"
+                        Source="trash.png"
+                        WidthRequest="50" />
                 </Frame>
             </StackLayout>
         </ContentView>

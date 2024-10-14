@@ -15,12 +15,11 @@ public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private ObservableCollection<Panel> _panels;
     private readonly SettingsService _settingsService;
-    //public ObservableCollection<Panel> Panels { get; } = [];
 
     public OperateViewModel() {
         if (App.ServiceProvider is null) throw new ApplicationException("App is null");
         _settingsService = App.ServiceProvider.GetRequiredService<SettingsService>();
-        this.PropertyChanged += OnPropertyChanged;
+        PropertyChanged += OnPropertyChanged;
 
         Panels = _settingsService.Panels;
         if (Panels.Any()) {

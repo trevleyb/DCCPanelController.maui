@@ -1,12 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:model="clr-namespace:DCCPanelController.Model"
-             xmlns:colorPickerControl="clr-namespace:ColorPickerControl"
-             xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
-             x:DataType="model:Panel"
-             x:Class="DCCPanelController.View.PropertPages.PanelPropertyPage">
+<ContentView
+    x:Class="DCCPanelController.View.PropertPages.PanelPropertyPage"
+    x:DataType="model:Panel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:ColorPickerControl"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.Resources>
         <ResourceDictionary>
@@ -15,65 +16,130 @@
     </ContentView.Resources>
 
     <VerticalStackLayout>
-        <!-- Title Section -->
-        <Label Text="Panel Properties Editor"
-               FontAttributes="Bold"
-               FontSize="Large"
-               VerticalOptions="Center">
-        </Label>
-        <BoxView Margin="0,5,0,5" HeightRequest="2" BackgroundColor="{StaticResource Primary}"
-                 HorizontalOptions="FillAndExpand" />
+        <Label
+            FontAttributes="Bold"
+            FontSize="Large"
+            Margin="0,-15,0,0"
+            Text="Panel Properties Editor"
+            VerticalOptions="Center" />
+
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="2"
+            HorizontalOptions="Fill"
+            Margin="0,5,0,15" />
 
         <VerticalStackLayout>
-            <!-- Panel Name -->
+            <!--  Panel Name  -->
             <HorizontalStackLayout Margin="0,5,0,5">
-                <Label Text="Panel Name" WidthRequest="120" VerticalOptions="Center" />
-                <Entry Text="{Binding Name}" WidthRequest="250" Placeholder="Enter Panel Name"
-                       HorizontalOptions="FillAndExpand" />
+                <Label
+                    Text="Panel Name"
+                    VerticalOptions="Center"
+                    WidthRequest="120" />
+                <Entry
+                    HorizontalOptions="FillAndExpand"
+                    Placeholder="Enter Panel Name"
+                    Text="{Binding Name}"
+                    WidthRequest="250" />
             </HorizontalStackLayout>
 
-            <!-- Sort Order -->
+            <!--  Sort Order  -->
             <HorizontalStackLayout Margin="0,5,0,5">
-                <Label Text="Sort Order" WidthRequest="120" VerticalOptions="Center" />
-                <Stepper Minimum="1" Maximum="99" Value="{Binding SortOrder}" HorizontalOptions="FillAndExpand" />
-                <Label Margin="10,0,0,0" Text="{Binding SortOrder}" VerticalOptions="Center" />
+                <Label
+                    Text="Sort Order"
+                    VerticalOptions="Center"
+                    WidthRequest="120" />
+                <Entry
+                    Keyboard="Numeric"
+                    Margin="0,0,10,0"
+                    Text="{Binding SortOrder}"
+                    TextChanged="Order_OnTextChanged"
+                    VerticalOptions="Center"
+                    WidthRequest="50" />
+                <Stepper
+                    HorizontalOptions="FillAndExpand"
+                    Maximum="99"
+                    Minimum="1"
+                    Value="{Binding SortOrder}" />
             </HorizontalStackLayout>
 
             <HorizontalStackLayout>
 
                 <VerticalStackLayout>
-                    <!-- Panel Columns -->
+                    <!--  Panel Columns  -->
                     <HorizontalStackLayout Margin="0,5,0,5">
-                        <Label Text="Panel Columns" WidthRequest="120" VerticalOptions="Center" />
-                        <Stepper Minimum="12" Maximum="32" Increment="1" Value="{Binding Cols}"
-                                 HorizontalOptions="FillAndExpand" />
-                        <Label Margin="10,0,0,0" Text="{Binding Cols}" VerticalOptions="Center" />
+                        <Label
+                            Text="Columns"
+                            VerticalOptions="Center"
+                            WidthRequest="120" />
+                        <Entry
+                            Keyboard="Numeric"
+                            Margin="0,0,10,0"
+                            Text="{Binding Cols}"
+                            TextChanged="Cols_OnTextChanged"
+                            VerticalOptions="Center"
+                            WidthRequest="50" />
+                        <Stepper
+                            HorizontalOptions="FillAndExpand"
+                            Increment="1"
+                            Maximum="32"
+                            Minimum="12"
+                            Value="{Binding Cols}"
+                            x:Name="ColsStepper" />
                     </HorizontalStackLayout>
 
-                    <!-- Panel Rows -->
+                    <!--  Panel Rows  -->
                     <HorizontalStackLayout Margin="0,5,0,5">
-                        <Label Text="Panel Rows" WidthRequest="120" VerticalOptions="Center" />
-                        <Stepper Minimum="8" Maximum="32" Increment="1" Value="{Binding Rows}"
-                                 HorizontalOptions="FillAndExpand" />
-                        <Label Margin="10,0,0,0" Text="{Binding Rows}" VerticalOptions="Center" />
+                        <Label
+                            Text="Rows"
+                            VerticalOptions="Center"
+                            WidthRequest="120" />
+                        <Entry
+                            Keyboard="Numeric"
+                            Margin="0,0,10,0"
+                            Text="{Binding Rows}"
+                            TextChanged="Rows_OnTextChanged"
+                            VerticalOptions="Center"
+                            WidthRequest="50" />
+                        <Stepper
+                            HorizontalOptions="FillAndExpand"
+                            Increment="1"
+                            Maximum="32"
+                            Minimum="8"
+                            Value="{Binding Rows}"
+                            x:Name="RowsStepper" />
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
 
-                <HorizontalStackLayout Margin="30,5,0,5">
-                    <Label Text="{Binding PanelRatio}" WidthRequest="120" HorizontalOptions="Center"
-                           VerticalOptions="Center" />
-                </HorizontalStackLayout>
+                <VerticalStackLayout
+                    Margin="5,5,5,5"
+                    Padding="10"
+                    WidthRequest="80">
+                    <Label
+                        HorizontalOptions="Center"
+                        Style="{StaticResource SmallLabel}"
+                        Text="Panel Ratio"
+                        VerticalOptions="Center" />
+                    <Label
+                        HorizontalOptions="Center"
+                        IsEnabled="False"
+                        Margin="0,10,0,0"
+                        Style="{StaticResource LargeLabel}"
+                        Text="{Binding PanelRatio}"
+                        VerticalOptions="Center" />
+                </VerticalStackLayout>
 
             </HorizontalStackLayout>
 
-            <!-- Panel Background Color -->
+            <!--  Panel Background Color  -->
             <HorizontalStackLayout Margin="0,5,0,5">
-                <Label Text="Background" WidthRequest="120" VerticalOptions="Center" />
-                <VerticalStackLayout>
-                    <colorPickerControl:ColorDropdown
-                        VerticalOptions="Center"
-                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BackgroundColor, Mode=TwoWay}"/>
+                <Label
+                    Text="Background"
+                    VerticalOptions="Center"
+                    WidthRequest="120" />
+                <VerticalStackLayout WidthRequest="250">
+                    <colorPickerControl:ColorDropdown SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BackgroundColor, Mode=TwoWay}" VerticalOptions="Center" />
                 </VerticalStackLayout>
             </HorizontalStackLayout>
 

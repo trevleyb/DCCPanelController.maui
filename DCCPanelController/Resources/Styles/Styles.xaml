@@ -1,50 +1,64 @@
 ﻿<?xml version="1.0" encoding="UTF-8" ?>
 <?xaml-comp compile="true" ?>
-<ResourceDictionary xmlns="http://schemas.microsoft.com/dotnet/2021/maui" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-                    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui">
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Style TargetType="Label" x:Key="PanelInfoLabel">
-        <Setter Property="Margin" Value="5,5,5,5"/>
-        <Setter Property="Padding" Value="0,0,0,0"/>
-        <Setter Property="FontSize" Value="{maui:OnScreenSize Medium=18, Large=18, ExtraLarge=20, Default=14}"/> 
-        <Setter Property="TextColor" Value="{StaticResource Primary}"/>
-        <Setter Property="HorizontalOptions" Value="Center"/>
-        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="Margin" Value="5,5,5,5" />
+        <Setter Property="Padding" Value="0,0,0,0" />
+        <Setter Property="FontSize" Value="{maui:OnScreenSize Medium=18, Large=18, ExtraLarge=20, Default=14}" />
+        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
     <Style TargetType="Stepper" x:Key="PanelInfoStepper">
-        <Setter Property="Margin" Value="5,5,5,5"/>
-        <Setter Property="HorizontalOptions" Value="Center"/>
-        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="Margin" Value="5,5,5,5" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
     </Style>
-    
+
     <Style TargetType="Border" x:Key="CardView">
         <Setter Property="Stroke" Value="{StaticResource Primary}" />
         <Setter Property="StrokeThickness" Value="2" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource CardBackground}, Dark={StaticResource CardBackgroundDark}}" />
         <Setter Property="StrokeShape">
-            <RoundRectangle CornerRadius="10,10,10,10"/>
+            <RoundRectangle CornerRadius="10,10,10,10" />
         </Setter>
     </Style>
 
-    <Style TargetType="Border" x:Key="SelectedTrackView" BasedOn="{StaticResource CardView}"/>
-    <Style TargetType="Border" x:Key="UnSelectedTrackView" BasedOn="{StaticResource CardView}">
+    <Style
+        BasedOn="{StaticResource CardView}"
+        TargetType="Border"
+        x:Key="SelectedTrackView" />
+    <Style
+        BasedOn="{StaticResource CardView}"
+        TargetType="Border"
+        x:Key="UnSelectedTrackView">
         <Setter Property="Stroke" Value="{StaticResource White}" />
         <Setter Property="StrokeThickness" Value="0" />
         <Setter Property="StrokeShape">
-            <RoundRectangle CornerRadius="0,0,0,0"/>
+            <RoundRectangle CornerRadius="0,0,0,0" />
         </Setter>
     </Style>
 
-    <Style TargetType="Border" x:Key="DropZoneFree" BasedOn="{StaticResource CardView}"/>
-    <Style TargetType="Border" x:Key="DropZoneOccupied" BasedOn="{StaticResource CardView}">
+    <Style
+        BasedOn="{StaticResource CardView}"
+        TargetType="Border"
+        x:Key="DropZoneFree" />
+    <Style
+        BasedOn="{StaticResource CardView}"
+        TargetType="Border"
+        x:Key="DropZoneOccupied">
         <Setter Property="Stroke" Value="{StaticResource Red}" />
         <Setter Property="StrokeThickness" Value="5" />
         <Setter Property="StrokeShape">
-            <RoundRectangle CornerRadius="0,0,0,0"/>
+            <RoundRectangle CornerRadius="0,0,0,0" />
         </Setter>
     </Style>
-    
+
     <Style TargetType="Entry" x:Key="PanelEntry">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
@@ -64,7 +78,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
+
     <Style TargetType="Element" x:Key="BaseStyle">
         <Setter Property="Shell.BackgroundColor" Value="{StaticResource Primary}" />
         <Setter Property="Shell.ForegroundColor" Value="{OnPlatform WinUI={StaticResource Primary}, Default=White}" />
@@ -110,7 +124,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
+
     <Style TargetType="Frame" x:Key="IpAddress">
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -202,11 +216,12 @@
 
     <Style
         BasedOn="{StaticResource BaseLabel}"
-        TargetType="Label" x:Key="PanelLabel">
+        TargetType="Label"
+        x:Key="PanelLabel">
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontAttributes" Value="Bold" />
     </Style>
-    
+
     <Style
         BasedOn="{StaticResource BaseLabel}"
         TargetType="Label"
@@ -320,11 +335,10 @@
         </Setter>
     </Style>
 
-<!--
+    <!--
     <Setter Property="MinimumHeightRequest" Value="{maui:OnScreenSize Medium=18, Large=18, ExtraLarge=24, Default=24}" />
-    <Setter Property="MinimumWidthRequest" Value="{maui:OnScreenSize Medium=40, Large=40, ExtraLarge=40, Default=40}" />
--->
-    
+    <Setter Property="MinimumWidthRequest" Value="{maui:OnScreenSize Medium=40, Large=40, ExtraLarge=40, Default=40}" />-->
+
     <Style TargetType="Entry">
         <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Black}, Dark={StaticResource White}}" />
         <Setter Property="Background" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
@@ -344,7 +358,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
+
     <Style TargetType="Frame">
         <Setter Property="HasShadow" Value="False" />
         <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
@@ -625,21 +639,21 @@
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="NavigationPage">
-        <Setter Property="BarBackgroundColor"   Value="{StaticResource Primary}" />
-        <Setter Property="BarBackground"        Value="{StaticResource Primary}" />
-        <Setter Property="BarTextColor"         Value="{StaticResource White}" />
-        <Setter Property="IconColor"            Value="{StaticResource White}" />
-        <Setter Property="Background"           Value="{StaticResource TabSelected}" />
+        <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="BarBackground" Value="{StaticResource Primary}" />
+        <Setter Property="BarTextColor" Value="{StaticResource White}" />
+        <Setter Property="IconColor" Value="{StaticResource White}" />
+        <Setter Property="Background" Value="{StaticResource TabSelected}" />
     </Style>
 
     <Style ApplyToDerivedTypes="True" TargetType="TabbedPage">
-        <Setter Property="BarBackgroundColor"   Value="{StaticResource Primary}" />
-        <Setter Property="BarBackground"        Value="{StaticResource Primary}" />
-        <Setter Property="BarTextColor"         Value="{StaticResource White}"/>
-        <Setter Property="UnselectedTabColor"   Value="{StaticResource PrimaryDisabled}" />
-        <Setter Property="SelectedTabColor"     Value="{StaticResource White}" />
+        <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}" />
+        <Setter Property="BarBackground" Value="{StaticResource Primary}" />
+        <Setter Property="BarTextColor" Value="{StaticResource White}" />
+        <Setter Property="UnselectedTabColor" Value="{StaticResource PrimaryDisabled}" />
+        <Setter Property="SelectedTabColor" Value="{StaticResource White}" />
     </Style>
-    
+
     <Style TargetType="Button" x:Key="ButtonLabel">
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -647,9 +661,9 @@
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
                             <Setter Property="FontSize" Value="16" />
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="FontAttributes" Value="Bold"></Setter>
-                            <Setter Property="HorizontalOptions" Value="Start"/>
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="HorizontalOptions" Value="Start" />
                             <Setter Property="TextColor" Value="{StaticResource Primary}" />
                             <Setter Property="BorderWidth" Value="0" />
                             <Setter Property="Background" Value="{StaticResource White}" />
@@ -661,9 +675,9 @@
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
                             <Setter Property="FontSize" Value="16" />
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="FontAttributes" Value="Bold"></Setter>
-                            <Setter Property="HorizontalOptions" Value="Start"/>
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="FontAttributes" Value="Bold" />
+                            <Setter Property="HorizontalOptions" Value="Start" />
                             <Setter Property="TextColor" Value="{StaticResource PrimaryDisabled}" />
                             <Setter Property="BorderWidth" Value="0" />
                             <Setter Property="Background" Value="{StaticResource White}" />
@@ -676,6 +690,6 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-    
+
 
 </ResourceDictionary>

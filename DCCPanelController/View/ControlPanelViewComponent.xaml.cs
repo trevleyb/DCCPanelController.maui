@@ -29,7 +29,6 @@ namespace DCCPanelController.View {
             InitializeComponent();
             PropertyChanged += OnPropertyChanged;
             MainGrid.SizeChanged += OnGridSizeChanged;
-        
             
             _tapTimer = new System.Timers.Timer {
                 Interval = 300,   // Adjust as needed (300ms works well for distinguishing between single and double taps)
@@ -83,7 +82,7 @@ namespace DCCPanelController.View {
                 _viewModel.DesignMode = DesignMode;
                 _viewModel.ShowGrid = ShowGrid;
                 _viewModel.ShowTrackErrors = ShowTrackErrors;
-                _viewModel.TrackSelected += (sender, track) => TrackPieceTapped?.Invoke(this, track);
+                _viewModel.TrackTapped += (sender, track) => TrackPieceTapped?.Invoke(this, track);
                 break;
             
             case nameof(DesignMode) or nameof(ShowGrid) or nameof(ShowTrackErrors):

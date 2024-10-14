@@ -13,7 +13,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class ControlPanelViewModel : BaseViewModel {
 
-    public event EventHandler<TrackSelectedEvent> TrackSelected; 
+    public event EventHandler<TrackSelectedEvent> TrackTapped; 
     
     [ObservableProperty] private double _viewWidth;
     [ObservableProperty] private double _viewHeight;
@@ -54,7 +54,7 @@ public partial class ControlPanelViewModel : BaseViewModel {
     public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
         if (DesignMode) {
             Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
-            TrackSelected?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
+            TrackTapped?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
         } else {
             if (track is ITrackInteractive) {
                 switch (track) {

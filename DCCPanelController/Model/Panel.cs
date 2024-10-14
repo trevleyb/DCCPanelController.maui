@@ -65,7 +65,7 @@ public partial class Panel : ObservableValidator, ICloneable {
         var y = row / gcd;
         return $"{x:0.#}:{y:0.#}";
 
-        double Gcd(double a, double b) {
+        static double Gcd(double a, double b) {
             while (b != 0) {
                 var temp = b;
                 b = a % b;

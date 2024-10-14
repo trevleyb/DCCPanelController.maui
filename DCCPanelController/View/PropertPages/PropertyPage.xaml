@@ -1,28 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             BackgroundColor="Transparent"
-             x:Class="DCCPanelController.View.PropertPages.PropertyPage">
-    
+<ContentPage
+    BackgroundColor="Transparent"
+    x:Class="DCCPanelController.View.PropertPages.PropertyPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
     <ContentPage.Content>
         <Grid HorizontalOptions="Center" VerticalOptions="Center">
-            <Frame BackgroundColor="White"
-                   BorderColor="{StaticResource Primary}"
-                   Padding="20"
-                   CornerRadius="10"
-                   HasShadow="True"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center">
-                
+            <Frame
+                BackgroundColor="White"
+                BorderColor="{StaticResource Primary}"
+                CornerRadius="10"
+                HasShadow="False"
+                HorizontalOptions="Center"
+                Padding="20"
+                VerticalOptions="Center">
+
                 <StackLayout>
-                    <Grid x:Name="PropertyContainer" Padding="20"/>
-                    <Button Text="Close"
-                            Style="{StaticResource ButtonOutline}"
-                            VerticalOptions="End"
-                            HorizontalOptions="Center"
-                            WidthRequest="150"
-                            Clicked="ClosePropertyPage" />
+                    <Grid Padding="10" x:Name="PropertyContainer" />
+                    <Button
+                        Clicked="ClosePropertyPage"
+                        HorizontalOptions="Center"
+                        Margin="0,10,0,0"
+                        Style="{StaticResource ButtonOutline}"
+                        Text="Close"
+                        VerticalOptions="End"
+                        WidthRequest="150" />
                 </StackLayout>
             </Frame>
         </Grid>

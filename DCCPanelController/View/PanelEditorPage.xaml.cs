@@ -126,7 +126,7 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void DropTrackInTrashHoverLeave(object? sender, DragEventArgs e) {
-        DragTrashIcon.BackgroundColor = Colors.Transparent;
+        DragTrashIcon.BackgroundColor = Colors.White;
     }
 
     #region Code to manage the Left and Right Panels

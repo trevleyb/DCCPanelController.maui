@@ -33,6 +33,4 @@ public partial class PanelEditorViewModel : BaseViewModel {
             }
         }
     }
-
-    
 }
