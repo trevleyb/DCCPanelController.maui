@@ -10,7 +10,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsViewModel : BaseViewModel {
 
-    public ObservableCollection<Turnout> Turnouts { get; set; }
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     private ConnectionService? ConnectionService { get; }
     private bool _isAscending = false;
     private string _sortColumn = "";

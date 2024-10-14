@@ -6,12 +6,11 @@
              x:DataType="colorPickerControl:ColorDropdown">
 
     <ContentView.Content>
-        <VerticalStackLayout>
-            <!-- Button to show the currently selected color -->
             <Button Text="{Binding DisplayText}"
                     BackgroundColor="{Binding SelectedColor}"
-                    TextColor="{Binding TextContrastColor}"
+                    BorderColor="{Binding ContrastColor}"
+                    TextColor="{Binding ContrastColor}"
+                    CornerRadius="5"
                     Command="{Binding ShowDropdownCommand}" />
-        </VerticalStackLayout>
     </ContentView.Content>
 </ContentView>

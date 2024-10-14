@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Events;
 using DCCPanelController.Model;
+using DCCPanelController.Services;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
@@ -17,31 +19,46 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorPage : ContentPage {
 
-    private const double MinRightPaneWidth = 120; // Minimum width constraint for the right pane
-    private const double MaxRightPaneWidth = 360; // Maximum width constraint for the right pane
+    private const double MinRightPaneWidth = 75; // Minimum width constraint for the right pane
+    private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
 
-    private ITrackPiece? _selectedTrack;
     private bool _isDragging = false;
     private double _initialX = 0;
+    private EditState _editState = EditState.None;
     
-    private Panel Panel { get; set; }
+    private PanelsViewModel PanelsViewModel;
+    private Panel Panel { get; init; }
     private PanelEditorViewModel ViewModel { get; set; }
 
-    public PanelEditorPage(Panel panel) {
-        Panel = panel;
-        ViewModel = new PanelEditorViewModel(panel);
+    public PanelEditorPage(PanelsViewModel panelsViewModel) {
+        ArgumentNullException.ThrowIfNull(panelsViewModel, nameof(panelsViewModel));
+        ArgumentNullException.ThrowIfNull(panelsViewModel.SelectedPanel, nameof(panelsViewModel.SelectedPanel));
+        PanelsViewModel = panelsViewModel;
+        Panel = PanelsViewModel.SelectedPanel;
+        ViewModel = new PanelEditorViewModel(Panel);
         BindingContext = ViewModel;    
 
         InitializeComponent();
-        
-        //LeftColumn.Width = new GridLength(1, GridUnitType.Star);        // Left pane takes up remaining space
-        //RightColumn.Width = new GridLength(200, GridUnitType.Absolute); // Initial width of right pane set to 200
         AdjustColumnCount();
 
         SizeChanged += OnSizeChanged;
         PanelView.TrackPieceTapped += OnTrackPieceTapped;
     }
-    
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args) {
+        base.OnNavigatedTo(args);
+        PanelView.RebuildGrid(true);
+    }
+
+    protected override bool OnBackButtonPressed() {
+        if (_editState == EditState.Changed) {
+            var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
+            if (answer) PanelsViewModel.Save();
+            PanelsViewModel.Load();
+        }
+        return base.OnBackButtonPressed();
+    }
+
     #region Support Drag and Drop of the Symbols from the Symbol Pane
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         if (sender is DragGestureRecognizer drag && drag.BindingContext is ITrackSymbol symbol) {
@@ -60,22 +77,20 @@ public partial class PanelEditorPage : ContentPage {
     private void OnTrackPieceTapped(object? sender, TrackSelectedEvent trackSelectedEvent) {
         switch (trackSelectedEvent.Taps) {
         case 1:
+            _editState = EditState.Changed;
             trackSelectedEvent.Track?.RotateLeft();
             break;
         case 2:
+            _editState = EditState.Changed;
             Navigation.PushModalAsync(new PropertyPage(trackSelectedEvent.Track));
-            PanelView.RebuildGrid(true);
             break;
         }
     }
     #endregion
     
     private void SavePanelAndExit(object? sender, EventArgs e) {
-        Navigation.PopAsync();
-    }
-
-    private void DeletePanelAndExit(object? sender, EventArgs e) {
-        Navigation.PopAsync();
+        PanelsViewModel.Save();
+        _editState = EditState.Saved;
     }
 
     private void ToggleGrid(object? sender, EventArgs e) {
@@ -91,8 +106,8 @@ public partial class PanelEditorPage : ContentPage {
     private void ShowPropertyPage(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
-        Navigation.PushModalAsync(_selectedTrack is not null ? new PropertyPage(_selectedTrack) : new PropertyPage(Panel));
-        PanelView.RebuildGrid(true);
+        _editState = EditState.Changed;
+        Navigation.PushModalAsync(new PropertyPage(Panel));
     }
 
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
@@ -102,6 +117,7 @@ public partial class PanelEditorPage : ContentPage {
         if (source is string && source.Equals("Panel") && track is ITrackPiece trackPiece) Panel.Tracks.Remove(trackPiece);
         DragTrashIcon.BackgroundColor = Colors.Transparent;
         PanelView.RebuildGrid(true);
+        _editState = EditState.Changed;
     }
 
     private void DropTrackInTrashHoverOver(object? sender, DragEventArgs e) {
@@ -192,4 +208,10 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
     #endregion
+}
+
+public enum EditState {
+    None, 
+    Saved,
+    Changed
 }

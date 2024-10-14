@@ -9,7 +9,8 @@ namespace DCCPanelController.ViewModel;
 
 public partial class RoutesViewModel : BaseViewModel {
     
-    public ObservableCollection<Route>? Routes { get; set; } = [];
+    [ObservableProperty] private ObservableCollection<Route>? _routes;
+    
     private ConnectionService? ConnectionService { get; }
     private readonly RoutesService? _routesService;
     private bool _isAscending = false;

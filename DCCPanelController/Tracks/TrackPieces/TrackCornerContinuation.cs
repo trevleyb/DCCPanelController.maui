@@ -6,6 +6,7 @@ namespace DCCPanelController.Tracks;
 public class TrackCornerContinuation : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Corner Continued...";
+        DefaultState = "Arrow";
         SetTrackSymbol("ContinuationCA1");
     }
     

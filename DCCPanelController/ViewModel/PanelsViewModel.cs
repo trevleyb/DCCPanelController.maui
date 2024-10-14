@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using AudioUnit;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
@@ -11,15 +12,17 @@ using NUnit.Framework.Internal;
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
-    
-    public ObservableCollection<Panel> Panels { get; set; }
+
+    [ObservableProperty] private Panel? _selectedPanel = null;
+    [ObservableProperty] private ObservableCollection<Panel> _panels;
+
     private readonly SettingsService _settingsService;
     private int _draggingIndex;
     
     public PanelsViewModel() {
-        //_settingsService = settingsService;
-        // This is temporary for testing
-        Panels = Services.SampleData.Panels.DemoData();
+        if (App.ServiceProvider is null) throw new ApplicationException("App is null");
+        _settingsService = App.ServiceProvider.GetRequiredService<SettingsService>();
+        Panels = _settingsService.Panels;
     }
     
     public async void Save() => _settingsService?.Save();
@@ -47,11 +50,11 @@ public partial class PanelsViewModel : BaseViewModel {
         }
     }
 
-    private void EditorPageOnOnFinished(Panel panel) {
+    public void OnEditorPageFinished(Panel panel) {
         // What we need to do is force the Panel/Card that we are associated with
         // to refresh. It should be doing this as the Name/ID are refreshing, but not
         // the PanelViewer.
-        //Panels[Panels.IndexOf(panel)] = panel;
+        Panels[Panels.IndexOf(panel)] = panel;
     }
 
     [RelayCommand]

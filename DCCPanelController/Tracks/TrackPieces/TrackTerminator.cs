@@ -6,6 +6,7 @@ namespace DCCPanelController.Tracks;
 public class TrackTerminator :TrackPiece, ITrackSymbol  {
     protected override void Setup() {
         Name = "Terminator";
+        DefaultState = "Normal";
         SetTrackSymbol("Terminator1");
     }
     

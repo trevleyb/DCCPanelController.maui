@@ -5,6 +5,7 @@ namespace DCCPanelController.Tracks;
 public class Sample : TrackPiece {
     protected override void Setup() {
         Name = "Sample";
+        DefaultState = "Normal";
     }
 
     protected override void AddTrackImages() {

@@ -10,25 +10,26 @@ public class TrackButton : TrackPiece, ITrackButton, ITrackSymbol {
     
     protected override void Setup() {
         Name = "Button";
+        DefaultState = UnknownState;
         SetTrackSymbol("Button");
         Layer = 2;
     }
     
     protected override void AddTrackImages() {
-        AddTrackImage(0,UnknownState, "Button", 0);
-        AddTrackImage(0,UnknownState, "Button", 0);
-        AddTrackImage(0,UnknownState, "Button", 0);
-        AddTrackImage(0,UnknownState, "Button", 0);
+        AddTrackImage(0, UnknownState, "Button", 0);
+        AddTrackImage(0, UnknownState, "Button", 0);
+        AddTrackImage(0, UnknownState, "Button", 0);
+        AddTrackImage(0, UnknownState, "Button", 0);
         
-        AddTrackImage(0,"Active", "Button", 0);
-        AddTrackImage(0,"Active", "Button", 0);
-        AddTrackImage(0,"Active", "Button", 0);
-        AddTrackImage(0,"Active", "Button", 0);
+        AddTrackImage(0, "Active", "Button", 0);
+        AddTrackImage(0, "Active", "Button", 0);
+        AddTrackImage(0, "Active", "Button", 0);
+        AddTrackImage(0, "Active", "Button", 0);
 
-        AddTrackImage(0,"InActive", "Button", 0);
-        AddTrackImage(0,"InActive", "Button", 0);
-        AddTrackImage(0,"InActive", "Button", 0);
-        AddTrackImage(0,"InActive", "Button", 0);
+        AddTrackImage(0, "InActive", "Button", 0);
+        AddTrackImage(0, "InActive", "Button", 0);
+        AddTrackImage(0, "InActive", "Button", 0);
+        AddTrackImage(0, "InActive", "Button", 0);
     }
     
     protected override void AddTrackStyles() {

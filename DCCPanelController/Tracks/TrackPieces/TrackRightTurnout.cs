@@ -10,6 +10,7 @@ public class TrackRightTurnout : TrackPiece, ITrackTurnout, ITrackSymbol {
 
     protected override void Setup() {
         Name = "Right Turnout";
+        DefaultState = UnknownState;
         SetTrackSymbol("TurnoutR1");
     }
     

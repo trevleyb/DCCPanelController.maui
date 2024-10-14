@@ -7,6 +7,7 @@ namespace DCCPanelController.Tracks;
 public class TrackCompass : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Compass";
+        DefaultState = "Normal";
         SetTrackSymbol("Compass");
         Layer = 2;
     }

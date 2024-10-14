@@ -6,6 +6,7 @@ namespace DCCPanelController.Tracks;
 public class TrackText : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Text";
+        DefaultState = "Normal";
         Layer = 2;
         IsResizable = true;
         SetTrackSymbol("Label");

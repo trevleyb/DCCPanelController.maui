@@ -6,6 +6,7 @@ namespace DCCPanelController.Tracks;
 public class TrackStraightContinuation : TrackPiece, ITrackSymbol {
     protected override void Setup() {
         Name = "Straight Continued...";
+        DefaultState = "Normal";
         SetTrackSymbol("ContinuationSA1");
     }
     

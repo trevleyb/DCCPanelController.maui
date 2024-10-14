@@ -7,6 +7,7 @@ public class TrackImage : TrackPiece, ITrackSymbol {
 
     protected override void Setup() {
         Name = "Image";
+        DefaultState = "Normal";
         Layer = 0;
         SetTrackSymbol("Image");
     }

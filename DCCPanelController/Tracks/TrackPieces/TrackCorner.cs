@@ -7,6 +7,7 @@ public class TrackCorner : TrackPiece, ITrackSymbol  {
    
     protected override void Setup() {
         Name = "Corner";
+        DefaultState = "Normal";
         SetTrackSymbol("CornerR");
     }
     

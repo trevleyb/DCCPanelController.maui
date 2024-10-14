@@ -53,7 +53,6 @@ public class SettingsService {
     }
 
     public void Delete() => Delete(StorageFileame);
-
     public void Delete(string fileName) {
         var filePath = GetStorageFilePath(fileName);
         if (File.Exists(filePath)) {
@@ -65,11 +64,11 @@ public class SettingsService {
         Converters = { new PanelElementConverter() },
         WriteIndented = true 
     };
-    
-    protected string GetStorageFilePath(string filename) {
-        var documentsPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        var libraryPath = Path.Combine(documentsPath, "..", "Library");
-        return Path.Combine(libraryPath, filename);
+
+    private static string GetStorageFilePath(string filename) {
+        var storageFile = Path.Combine(FileSystem.AppDataDirectory, filename);
+        Console.WriteLine(storageFile);
+        return storageFile;
     }
 }
 

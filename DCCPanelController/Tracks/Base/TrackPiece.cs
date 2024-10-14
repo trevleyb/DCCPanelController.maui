@@ -29,6 +29,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     }
 
     [ObservableProperty] private string _name = "Track";
+    [ObservableProperty] private string _defaultState = "";
     [ObservableProperty] private int _imageRotation; 
     [ObservableProperty] private int _trackDirection;
     [ObservableProperty] private int _x;                    // What Grid Position (Horizontal) is this component?
@@ -40,7 +41,6 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     [ObservableProperty] private bool _isResizable = false; // Can this element be resized? Normally False
     
     public ImageSource? Image => ActiveImage?.ImageSource?.Image;
-    public ImageSource? SymbolImage => TrackImages.SymbolImage.ImageSource?.Image; 
 
     protected TrackImage? ActiveImage;
     protected readonly TrackImages TrackImages = new();
@@ -97,6 +97,19 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         AddTrackStyles();
         State.First();
         SetActiveImage();
+    }
+
+    public ImageSource? SymbolImage {
+        get {
+            if (TrackImages.SymbolImage is { ImageSource: not null } symbolImage) {
+                symbolImage.ImageSource.ApplyStyle(GetTrackStyle(DefaultState));
+                symbolImage.ImageSource.SetOccupied(false);
+                symbolImage.ImageSource.ForceImageRefresh();
+                return symbolImage.ImageSource.Image;
+            }
+
+            return TrackImages.SymbolImage.ImageSource?.Image;
+        }
     }
     
     /// <summary>
@@ -157,6 +170,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
     }
     
     protected SvgStyle GetTrackStyle(string stateName) {
-        return TrackStyles.TryGetValue(stateName.ToLowerInvariant(), out var value) ? value : SvgStyles.DefaultStyle;
+        var selectedState = stateName ?? DefaultState;
+        return TrackStyles.TryGetValue(selectedState.ToLowerInvariant(), out var value) ? value : SvgStyles.DefaultStyle;
     }
 }

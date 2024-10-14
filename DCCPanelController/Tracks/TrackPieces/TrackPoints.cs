@@ -7,6 +7,7 @@ public class TrackPoints : TrackPiece {
     
     protected override void Setup() {
         Name = "Track Points";
+        DefaultState = "Normal";
         SetTrackSymbol("Points");
         Layer = 2;
     }

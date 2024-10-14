@@ -14,7 +14,6 @@
         <ToolbarItem x:Name="GridButton" IconImageSource="gridoff.png" Clicked="ToggleGrid"/>
         <ToolbarItem x:Name="ValidateButton" IconImageSource="refresh_double.png" Clicked="ToggleValidation"/>
         <ToolbarItem x:Name="PropertyButton" IconImageSource="tuning.png" Clicked="ShowPropertyPage"/>
-        <ToolbarItem x:Name="DeleteButton" IconImageSource="trash.png" Clicked="DeletePanelAndExit"/>
         <ToolbarItem x:Name="ExpandCollapse" IconImageSource="right_panel_close_filled.png" Clicked="OnExpandCollapseButtonClicked"/>
     </ContentPage.ToolbarItems>
 
@@ -32,8 +31,8 @@
                     Panel="{Binding Panel}"
                     DesignMode="True"
                     ShowGrid="True"
-                    HorizontalOptions="FillAndExpand"
-                    VerticalOptions="FillAndExpand"/>
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"/>
         </ContentView>
 
         <!-- Separator / Resizer -->
@@ -45,28 +44,40 @@
 
         <!-- Right Pane -->
         <ContentView
-            x:Name="RightPane" BackgroundColor="LightGreen" Grid.Column="2">
+            x:Name="RightPane" 
+            BackgroundColor="{StaticResource Primary}" 
+            Grid.Column="2">
             <StackLayout>
                 <CollectionView x:Name="TrackSymbolCollectionView"
                                 ItemsSource="{Binding TrackSymbols}"
                                 VerticalOptions="FillAndExpand"
-                                HorizontalOptions="FillAndExpand"
+                                HorizontalOptions="Center"
                                 SelectionMode="Single">
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout x:Name="ItemsLayout"
-                                         Orientation="Vertical"
-                                         HorizontalItemSpacing="5"
-                                         VerticalItemSpacing="5"
-                                         Span="1"/>
+                        <GridItemsLayout 
+                            x:Name="ItemsLayout"
+                            Orientation="Vertical"
+                            HorizontalItemSpacing="5"
+                            VerticalItemSpacing="5"
+                            Span="1"/>
                     </CollectionView.ItemsLayout>
                     
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="interfaces:ITrackSymbol">
-                            <Frame Padding="5" BorderColor="LightGray" HasShadow="false" Margin="5" WidthRequest="75" HeightRequest="90">
-                                <StackLayout>
-                                    <Image Source="{Binding SymbolImage}" HorizontalOptions="Center" VerticalOptions="Center"  WidthRequest="50" HeightRequest="50"/>
-                                    <Label Text="{Binding Name}" HorizontalTextAlignment="Center" VerticalTextAlignment="End" />
-                                </StackLayout>
+                        <DataTemplate 
+                            x:DataType="interfaces:ITrackSymbol">
+                            <Frame Padding="5" 
+                                   BackgroundColor="White"
+                                   HasShadow="false" 
+                                   Margin="5" 
+                                   WidthRequest="50"
+                                   HeightRequest="50"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Center">
+                                    <Image Source="{Binding SymbolImage}" 
+                                           HorizontalOptions="Center"
+                                           VerticalOptions="Center"  
+                                           WidthRequest="50" 
+                                           HeightRequest="50"/>
                                 <Frame.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting"/>
                                 </Frame.GestureRecognizers>

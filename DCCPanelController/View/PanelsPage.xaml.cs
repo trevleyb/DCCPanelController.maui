@@ -8,24 +8,32 @@ namespace DCCPanelController.View;
 
 public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
 
+    private PanelsViewModel _viewModel;
     public PanelsPage() {
-        BindingContext = new PanelsViewModel();
+        _viewModel = new PanelsViewModel();
+        BindingContext = _viewModel;
         InitializeComponent();
     }
 
     protected override void OnAppearing() {
         base.OnAppearing();
+        if (_viewModel.SelectedPanel is not null) {
+            Console.WriteLine($"On Appearing Selected Panel: {_viewModel.SelectedPanel.Name}");
+            _viewModel.OnEditorPageFinished(_viewModel.SelectedPanel);
+        }
+        _viewModel.SelectedPanel = null;
+        
         MiniProfiler.Configure(MiniProfiler.DefaultOptions);
         MiniProfiler.StartNew("Panels Viewer");
         MiniProfiler.Current.Step("PanelsPage");
     }
 
     protected override void OnDisappearing() {
-        Console.WriteLine(MiniProfiler.Current?.RenderPlainText());
         MiniProfiler.Current?.Stop();
+        //Console.WriteLine(MiniProfiler.Current?.RenderPlainText());
         base.OnDisappearing();
     }
-
+    
     private void UpdateLayout() {
         var orientation = DeviceDisplay.MainDisplayInfo.Orientation;
         var span = orientation switch {
@@ -49,9 +57,10 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
     private async Task LaunchPanelEditor(Panel panel) {
         Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
         try {
-            var editorPage = new PanelEditorPage(panel);
-            //editorPage.OnFinished += EditorPageOnOnFinished;
-            await this.Navigation.PushAsync(editorPage);
+            _viewModel.SelectedPanel = panel;
+            Console.WriteLine($"Launch Editor Selected Panel: {_viewModel.SelectedPanel.Name}");
+            var editorPage = new PanelEditorPage(_viewModel );
+            await Navigation.PushAsync(editorPage);
         } catch (Exception ex) {
             Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
         }

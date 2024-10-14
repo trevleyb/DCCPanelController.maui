@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui.Core.Extensions;
+
 namespace DCCPanelController.Helpers;
 
 public class ColorOption {
@@ -11,12 +13,17 @@ public static class PredefinedColors {
 	private static readonly object padlock = new object();
 	private static List<ColorOption>? colorOptions = null;
 
+	public static string ColorName(this Color color) {
+		foreach (var knownColor in GetColors().Where(knownColor => color.ToHex().Equals(knownColor.Color.ToHex()))) {
+			return knownColor.Name;
+		}
+		return "Unknown Color";
+	}
+	
 	public static List<ColorOption> GetColors() {
 		if (colorOptions == null) {
 			lock (padlock) {
-				if (colorOptions == null) {
-					colorOptions = BuildColorOptions();
-				}
+				colorOptions ??= BuildColorOptions();
 			}
 		}
 		return colorOptions;
@@ -174,7 +181,19 @@ public static class PredefinedColors {
 			new ColorOption { Name = "Yellow", Color = Colors.Yellow, ContrastColor = Colors.Black },
 			new ColorOption { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black },
 		};
-		return colors.Where(color => color.Color.Green == 0 || color.Color.Red == 0 || color.Color.Blue == 0 || color.Color.Green == 255 || color.Color.Red == 255 || color.Color.Blue == 255).ToList();
+
+		var selectedColorOptions = new List<ColorOption>();
+		foreach (var color in colors) {
+			var alpha = color.Color.GetByteAlpha();
+			var green = color.Color.GetByteGreen();
+			var red = color.Color.GetByteRed();
+			var blue = color.Color.GetByteBlue();
+
+			if ((red == 0 || red == 128 | red == 255) && (green == 0 || green == 128 || green == 255) && (blue == 0 || blue == 128 || blue == 255)) {
+				selectedColorOptions.Add(color);
+			}
+		}
+		return selectedColorOptions;
 	}
 
 	private static bool IsColorDark(Color color) {

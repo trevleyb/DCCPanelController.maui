@@ -54,16 +54,24 @@
                                                BackgroundColor="Red" />
                                 </SwipeItems>
                             </SwipeView.RightItems>
-
+                            
+                            <SwipeView.HeightRequest>
+                                <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
+                                    <Binding Path="." />
+                                    <Binding Source="{x:Reference PanelCardSwipeView}" Path="Width" />
+                                </MultiBinding>
+                            </SwipeView.HeightRequest>
+                            
                             <SwipeView.Content>
-                                <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard">
+                                <Grid HorizontalOptions="Fill" Padding="10" Margin="0" x:Name="PanelCard">
+                                    <!--
                                     <Grid.HeightRequest>
                                         <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
                                             <Binding Path="." />
                                             <Binding Source="{x:Reference PanelCard}" Path="Width" />
                                         </MultiBinding>
                                     </Grid.HeightRequest>
-                                    
+                                    -->
                                     <Border Style="{StaticResource CardView}" Grid.Row="0" >
                                         <Border.GestureRecognizers>
                                             <DragGestureRecognizer
@@ -75,25 +83,31 @@
                                             <TapGestureRecognizer Tapped="GoToSelectedPanelEditor" />
                                         </Border.GestureRecognizers>
                                         <StackLayout>
-                                                <view:ControlPanelView Panel="{Binding .}"
-                                                                       DesignMode="False"
-                                                                       ShowGrid="False"
-                                                                  HorizontalOptions="FillAndExpand"
-                                                                  VerticalOptions="FillAndExpand"/>
+                                            <Label Style="{StaticResource PanelLabel}"
+                                                   TextColor="{StaticResource Primary}"
+                                                   VerticalOptions="End"
+                                                   HorizontalOptions="Center"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center">
+                                                <MultiBinding StringFormat="{}{0}">
+                                                    <Binding Path="Name" FallbackValue="Unknown Panel" />
+                                                </MultiBinding>
+                                                </Label>
+                                                <view:ControlPanelView 
+                                                    Panel="{Binding .}"
+                                                    DesignMode="False"
+                                                    ShowGrid="False"
+                                                    HorizontalOptions="FillAndExpand"
+                                                    VerticalOptions="FillAndExpand"/>
                                             
-                                                <BoxView
-                                                    BackgroundColor="{StaticResource Primary}"
-                                                    HeightRequest="2"/>
-
                                                 <Label Style="{StaticResource PanelLabel}"
                                                        TextColor="{StaticResource Primary}"
-                                                       FontSize="12"
                                                        VerticalOptions="End"
                                                        HorizontalOptions="Center"
                                                        VerticalTextAlignment="Center"
                                                        HorizontalTextAlignment="Center">
-                                                    <MultiBinding StringFormat="{}{0}">
-                                                        <Binding Path="Name" FallbackValue="Unknown Panel" />
+                                                    <MultiBinding StringFormat="{} {0} ">
+                                                        <Binding Path="Description" FallbackValue="Unknown Panel" />
                                                     </MultiBinding>
                                                 </Label>
                                         </StackLayout>

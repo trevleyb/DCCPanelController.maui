@@ -4,6 +4,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
+using DCCPanelController.Services;
 using DCCPanelController.Tracks;
 
 namespace DCCPanelController.ViewModel;
@@ -11,13 +12,20 @@ namespace DCCPanelController.ViewModel;
 public partial class OperateViewModel : BaseViewModel {
 
     [ObservableProperty] private bool _showGrid;
-    public ObservableCollection<Panel> Panels { get; } = [];
-    public Panel? SelectedPanel { get; set; }
+    [ObservableProperty] private Panel? _selectedPanel;
+    [ObservableProperty] private ObservableCollection<Panel> _panels;
+    private readonly SettingsService _settingsService;
+    //public ObservableCollection<Panel> Panels { get; } = [];
 
     public OperateViewModel() {
-        Panels = Services.SampleData.Panels.DemoData();
-        SelectedPanel = Panels[0];
+        if (App.ServiceProvider is null) throw new ApplicationException("App is null");
+        _settingsService = App.ServiceProvider.GetRequiredService<SettingsService>();
         this.PropertyChanged += OnPropertyChanged;
+
+        Panels = _settingsService.Panels;
+        if (Panels.Any()) {
+            SelectedPanel = Panels.FirstOrDefault();
+        } 
     }
     
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

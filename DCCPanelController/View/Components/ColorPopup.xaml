@@ -10,8 +10,7 @@
         WidthRequest="250"
         HeightRequest="300">
         
-        <Frame 
-               BackgroundColor="White"
+        <Frame BackgroundColor="White"
                BorderColor="Gray"
                HasShadow="True"
                CornerRadius="5"
@@ -19,7 +18,6 @@
                HorizontalOptions="Center">
            
         <CollectionView
-            
             ItemsSource="{Binding ColorOptions}"
             SelectionMode="Single"
             SelectionChanged="OnColorSelected">

@@ -8,6 +8,7 @@ public class TrackStraight : TrackPiece, ITrackSymbol {
     
     protected override void Setup() {
         Name = "Straight";
+        DefaultState = "Normal";
         SetTrackSymbol("Straight1");
     }
 
