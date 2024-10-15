@@ -1,5 +1,9 @@
 using System.ComponentModel;
+using CommunityToolkit.Maui.Storage;
+using DCCPanelController.Model;
+using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
+using StackExchange.Profiling.Internal;
 
 namespace DCCPanelController.View;
 
@@ -10,6 +14,8 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     
     public SettingsPage() {
         InitializeComponent();
+        _viewModel = App.ServiceProvider?.GetService<SettingsViewModel>();
+        BindingContext = _viewModel;
     }
 
     void OnLabelTapped(object sender, EventArgs args) {
@@ -45,6 +51,68 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private void Instructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new InstructionsPage());
     }
+
+    private async void Upload_OnClicked(object? sender, EventArgs e) {
+        try {
+            // Prompt the user to choose where to save the file
+            var fileName = await PromptUserForConfigFile();
+            if (!string.IsNullOrEmpty(fileName)) {
+                if (_viewModel is { SettingsService: not null } settings) {
+                    var loadedJson = await LoadJsonFromFile(fileName);                    
+                    var settingsLoaded  = settings.SettingsService.FromJsonString(loadedJson);
+                    if (settingsLoaded is not null) {
+                        settings.Settings = settingsLoaded;
+                        await DisplayAlert("Success", $"File Loaded.", "OK");    
+                    } else throw new Exception("File could not be loaded.");
+                }
+            }
+        }
+        catch (Exception ex) {
+            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+        }    
+    }
+
+    private async void Download_OnClicked(object? sender, EventArgs e) {
+        try {
+            // Prompt the user to choose where to save the file
+            var filePath = await PromptUserForSaveLocation();
+            if (!string.IsNullOrEmpty(filePath)) {
+                if (_viewModel is { Settings: not null } settings) {
+                    var saveFile = Path.Combine(filePath, "dccpanel.settings");
+                    await SaveJsonToFile(saveFile, settings?.SettingsService?.ToJsonString());
+                    await DisplayAlert("Success", $"File saved to {saveFile}.", "OK");
+                }
+            }
+        }
+        catch (Exception ex) {
+            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+        }    
+    }
+    
+    private async Task<string> PromptUserForConfigFile() {
+        var result = await FilePicker.PickAsync(new PickOptions() { PickerTitle = "Select the Config file to upload" });
+        Console.WriteLine("Uploading: "+result.FullPath);
+        return result.FullPath;
+    }
+    
+    private async Task<string> PromptUserForSaveLocation() {
+        var result = await FolderPicker.PickAsync(new CancellationToken());
+        result.EnsureSuccess();
+        return result.Folder.Path ?? string.Empty;
+    }
+
+    // Method to save the JSON file to the specified location
+    private async Task SaveJsonToFile(string filePath, string jsonData) {
+        using (var streamWriter = new StreamWriter(filePath, false)) {
+            await streamWriter.WriteAsync(jsonData);
+        }
+    }
+    // Method to save the JSON file to the specified location
+    private async Task<string> LoadJsonFromFile(string filePath) {
+        using StreamReader reader = new StreamReader(filePath);
+        return await reader.ReadToEndAsync();        
+    }
+    
 }
 
 public class EntryValidationBehavior : Behavior<Entry> {

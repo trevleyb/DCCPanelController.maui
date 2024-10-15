@@ -12,19 +12,19 @@ namespace DCCPanelController.ViewModel;
 
 public partial class SettingsViewModel : BaseViewModel {
 
-    public Settings Settings { get; }
-    private readonly SettingsService? _settingsService;
+    public readonly SettingsService? SettingsService;
     private readonly ConnectionService? _connectionService;
     
+    [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<string> _messages = [];
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
     
     public SettingsViewModel(SettingsService settingsService) {
-        _settingsService = settingsService;
+        SettingsService = settingsService;
         _connectionService = App.ServiceProvider?.GetRequiredService<ConnectionService>();
         if (_connectionService == null) IsDemoMode = true;
         if (_connectionService != null) _connectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
-        Settings = _settingsService.Settings;
+        Settings = SettingsService.Settings;
     }
     
     public bool IsConnected => (_connectionService is { IsConnected: true } ? true : false);
@@ -139,12 +139,12 @@ public partial class SettingsViewModel : BaseViewModel {
     
     [RelayCommand]
     public void SaveSettings() {
-        _settingsService?.Save();
+        SettingsService?.Save();
     }
 
     [RelayCommand]
     public void LoadSettings() {
-        _settingsService?.Load();
+        SettingsService?.Load();
     }
 
     [RelayCommand]

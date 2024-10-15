@@ -18,12 +18,12 @@
             x:Name="SaveButton" />
         <ToolbarItem
             Clicked="ToggleGrid"
-            IconImageSource="gridoff.png"
+            IconImageSource="grid.png"
             Text="Show Grid"
             x:Name="GridButton" />
         <ToolbarItem
             Clicked="ToggleValidation"
-            IconImageSource="refresh_double.png"
+            IconImageSource="validate.png"
             Text="Validate"
             x:Name="ValidateButton" />
         <ToolbarItem

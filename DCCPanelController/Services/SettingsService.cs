@@ -20,6 +20,14 @@ public class SettingsService {
     public ObservableCollection<Panel> Panels => _storage.Panels;
     public ObservableCollection<Turnout> Turnouts => _storage.Turnouts;
     public ObservableCollection<Route> Routes => _storage.Routes;
+
+    public string ToJsonString() {
+        return JsonSerializer.Serialize(_storage,options);
+    }
+
+    public Settings? FromJsonString(string jsonString) {
+        return JsonSerializer.Deserialize<Settings>(jsonString,options);
+    }
     
     public void Save() => Save(StorageFileame);
     public void Save(string fileName) {
@@ -60,7 +68,7 @@ public class SettingsService {
         }
     }
 
-    private readonly JsonSerializerOptions options = new JsonSerializerOptions {
+    private readonly JsonSerializerOptions? options = new JsonSerializerOptions {
         Converters = { new PanelElementConverter() },
         WriteIndented = true 
     };
