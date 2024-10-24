@@ -3,8 +3,6 @@ using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 using SkiaSharp;
-using StackExchange.Profiling;
-using Svg.Skia;
 using SKSvg = Svg.Skia.SKSvg;
 
 namespace DCCPanelController.Tracks.ImageManager;
@@ -44,27 +42,26 @@ public class SvgImageManager {
     /// Forces the system to refresh the image. We need to do this after we have changed any elements 
     /// </summary>
     public void ForceImageRefresh() => _imageSource = GetSvgAsImage();
-    
+
     /// <summary>
     /// Converts the SVG Image into a PNG. Up-scales it to the default size as part of the process. 
     /// </summary>
     /// <returns>A PNG Image of the SVG</returns>
     private ImageSource GetSvgAsImage() {
-        using (MiniProfiler.Current.Step($"SVGImage:{_resourceName} ")) {
-            var svg = new SKSvg();
-            svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
-            if (svg is null) throw new ApplicationException("Unable to load svg");
+        var svg = new SKSvg();
+        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
+        if (svg is null) throw new ApplicationException("Unable to load svg");
 
-            const int quality = 100;
-            var scaleX = DefaultWidth / svg.Picture?.CullRect.Width ?? DefaultWidth;
-            var scaleY = DefaultHeight / svg.Picture?.CullRect.Height ?? DefaultHeight;
+        const int quality = 100;
+        var scaleX = DefaultWidth / svg.Picture?.CullRect.Width ?? DefaultWidth;
+        var scaleY = DefaultHeight / svg.Picture?.CullRect.Height ?? DefaultHeight;
 
-            var stream = new MemoryStream();
-            svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
-            stream.Seek(0, SeekOrigin.Begin);
-            return ImageSource.FromStream(() => stream);
-        } 
+        var stream = new MemoryStream();
+        svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
+        stream.Seek(0, SeekOrigin.Begin);
+        return ImageSource.FromStream(() => stream);
     }
+
 
     /// <summary>
     /// Converts the XDocument SVG Image into a stream which can be consumed by
@@ -79,27 +76,26 @@ public class SvgImageManager {
 
     private XDocument LoadSvg(string resourceName) {
         _resourceName = resourceName;
-        using (MiniProfiler.Current.Step($"Loading SVG Resource:{_resourceName}")) {
-            _imageSource = null;
-            var assembly = Assembly.GetExecutingAssembly();
-            using var stream = assembly.GetManifestResourceStream(_resourceName);
-            if (stream == null) {
-                Console.WriteLine($"Could not find the image resource: '{_resourceName}'");
-                throw new FileNotFoundException("Resource not found.", _resourceName);
-            }
-
-            using var reader = new StreamReader(stream);
-            var svgContent = reader.ReadToEnd();
-            try {
-                var xDocument = XDocument.Parse(svgContent);
-                return xDocument;
-            } catch (Exception ex) {
-                Console.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
-                throw new FileLoadException("Failed to load the SVG image.", ex);
-            }
+        _imageSource = null;
+        var assembly = Assembly.GetExecutingAssembly();
+        using var stream = assembly.GetManifestResourceStream(_resourceName);
+        if (stream == null) {
+            Console.WriteLine($"Could not find the image resource: '{_resourceName}'");
+            throw new FileNotFoundException("Resource not found.", _resourceName);
         }
+
+        using var reader = new StreamReader(stream);
+        var svgContent = reader.ReadToEnd();
+        try {
+            var xDocument = XDocument.Parse(svgContent);
+            return xDocument;
+        } catch (Exception ex) {
+            Console.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
+            throw new FileLoadException("Failed to load the SVG image.", ex);
+        }
+
     }
-    
+
     /// <summary>
     /// Function that checks if the element is supported.  
     /// </summary>

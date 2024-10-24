@@ -1,5 +1,3 @@
-using Foundation;
-
 namespace DCCPanelController.Helpers.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]

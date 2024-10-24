@@ -9,8 +9,6 @@ using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.ViewModel;
 using Microsoft.Maui.Layouts;
-using StackExchange.Profiling;
-using Svg;
 using System.Timers;
 
 //
@@ -35,7 +33,6 @@ namespace DCCPanelController.View {
                 AutoReset = false // Make sure it does not repeat automatically
             };
             _tapTimer.Elapsed += OnTapTimerElapsed;
-
         }
 
         public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
@@ -101,32 +98,29 @@ namespace DCCPanelController.View {
 
         public void RebuildGrid(bool forceRefresh = false) {
             if (_viewModel is null || MainGrid.Width < 1 || MainGrid.Height < 1) return;
-            if (!forceRefresh && !_viewModel.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height) ) return;
+            if (!forceRefresh && !_viewModel.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
-            using (MiniProfiler.Current.Step("Rebuild Grid")) {
+            _viewModel.SetScreenSize(MainGrid.Width, MainGrid.Height);
+            DynamicGrid.WidthRequest = _viewModel.ViewWidth;
+            DynamicGrid.HeightRequest = _viewModel.ViewHeight;
+            DynamicGrid.BackgroundColor = _viewModel?.Panel?.BackgroundColor ?? Colors.Transparent;
 
-                _viewModel.SetScreenSize(MainGrid.Width, MainGrid.Height);
-                DynamicGrid.WidthRequest = _viewModel.ViewWidth;
-                DynamicGrid.HeightRequest = _viewModel.ViewHeight;
-                DynamicGrid.BackgroundColor = _viewModel?.Panel?.BackgroundColor ?? Colors.Transparent;
-                
-                DynamicGrid.Children.Clear();
-                if (DynamicGrid.RowDefinitions.Count != _viewModel.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel.Cols) {
-                    DynamicGrid.RowDefinitions.Clear();
-                    DynamicGrid.ColumnDefinitions.Clear();
+            DynamicGrid.Children.Clear();
+            if (DynamicGrid.RowDefinitions.Count != _viewModel.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel.Cols) {
+                DynamicGrid.RowDefinitions.Clear();
+                DynamicGrid.ColumnDefinitions.Clear();
 
-                    for (var i = 0; i < _viewModel.Rows; i++) {
-                        DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
-                    }
-
-                    for (var j = 0; j < _viewModel.Cols; j++) {
-                        DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-                    }
+                for (var i = 0; i < _viewModel.Rows; i++) {
+                    DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
                 }
 
-                AddOutlineToGrid();
-                AddTrackPiecesToGrid();
+                for (var j = 0; j < _viewModel.Cols; j++) {
+                    DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                }
             }
+
+            if (DesignMode) AddOutlineToGrid();
+            AddTrackPiecesToGrid();
         }
 
         public void HighlightCell(int col, int row) {
@@ -171,48 +165,45 @@ namespace DCCPanelController.View {
         }
 
         private void AddOutlineToGrid() {
-            using (MiniProfiler.Current.Step("AddOutlineToGrid")) {
-                // Clear the AbsoluteLayout before adding a new grid and GraphicsView
-                RemoveOutlineFromGrid();
-                
-                if (_viewModel?.ShowGrid ?? false) {
-                    var gridLines = new GridLinesDrawable(_viewModel.Rows, _viewModel.Cols);
-                    var graphicsView = new GraphicsView {
-                        InputTransparent = true,
-                        Drawable = gridLines,
-                        HorizontalOptions = LayoutOptions.Fill,
-                        VerticalOptions = LayoutOptions.Fill
-                    };
+            // Clear the AbsoluteLayout before adding a new grid and GraphicsView
+            RemoveOutlineFromGrid();
 
-                    // Add the GraphicsView directly to the AbsoluteLayout
-                    AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, _viewModel.ViewWidth, _viewModel.ViewHeight));
-                    AbsoluteLayout.SetLayoutFlags(graphicsView, AbsoluteLayoutFlags.PositionProportional);
-                    ControlPanelLayout.Children.Add(graphicsView);
-                    graphicsView.Invalidate();
-                }
+            if (_viewModel?.ShowGrid ?? false) {
+                var gridLines = new GridLinesDrawable(_viewModel.Rows, _viewModel.Cols);
+                var graphicsView = new GraphicsView {
+                    InputTransparent = true,
+                    Drawable = gridLines,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill
+                };
+
+                // Add the GraphicsView directly to the AbsoluteLayout
+                AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, _viewModel.ViewWidth, _viewModel.ViewHeight));
+                AbsoluteLayout.SetLayoutFlags(graphicsView, AbsoluteLayoutFlags.PositionProportional);
+                ControlPanelLayout.Children.Add(graphicsView);
+                graphicsView.Invalidate();
             }
         }
+
 
         /// <summary>
         /// Add the tracks from the view model onto the Grid
         /// </summary>
         private void AddTrackPiecesToGrid() {
-            using (MiniProfiler.Current.Step("AddTrackPiecesToGrid")) {
-                if (_viewModel is { Panel: { Tracks: { } tracks } panel }) {
-                    foreach (var track in tracks) {
-                        if (DynamicGrid.ColumnDefinitions.Count >= _viewModel.Cols && DynamicGrid.RowDefinitions.Count >= _viewModel.Rows && track.X < _viewModel.Cols && track.Y < _viewModel.Rows) {
-                            var image = AddImageToLayout(track);
-                        }
+            if (_viewModel is { Panel: { Tracks: { } tracks } panel }) {
+                foreach (var track in tracks) {
+                    if (DynamicGrid.ColumnDefinitions.Count >= _viewModel.Cols && DynamicGrid.RowDefinitions.Count >= _viewModel.Rows && track.X < _viewModel.Cols && track.Y < _viewModel.Rows) {
+                        var image = AddImageToLayout(track);
+                    }
 
-                        // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
-                        // -------------------------------------------------------------------------------------
-                        if (_viewModel.ShowTrackErrors) {
-                            var pointImage = new TrackPoints { X = track.X, Y = track.Y };
-                            var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
-                            pointImage.SetPoints(validPoints);
-                            var image = AddImageToLayout(pointImage);
-                            image.InputTransparent = true;
-                        }
+                    // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
+                    // -------------------------------------------------------------------------------------
+                    if (DesignMode && _viewModel.ShowTrackErrors) {
+                        var pointImage = new TrackPoints { X = track.X, Y = track.Y };
+                        var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
+                        pointImage.SetPoints(validPoints);
+                        var image = AddImageToLayout(pointImage);
+                        image.InputTransparent = true;
                     }
                 }
             }
@@ -223,49 +214,48 @@ namespace DCCPanelController.View {
         }
 
         private Image AddImageToLayout(ITrackPiece track) {
-            using (MiniProfiler.Current.Step("AddImageToGridLayout")) {
-                var image = new Image {
-                    Scale = 1.5,
-                    ZIndex = track.Layer,
-                    Rotation = 0,
-                    InputTransparent = false,
-                    VerticalOptions = LayoutOptions.Center,
-                    HorizontalOptions = LayoutOptions.Center,
-                    BackgroundColor = Colors.Transparent
-                };
+            var image = new Image {
+                Scale = 1.5,
+                ZIndex = track.Layer,
+                Rotation = 0,
+                InputTransparent = false,
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Center,
+                BackgroundColor = Colors.Transparent
+            };
 
-                // Setup bindings to the size and source of the Track Image. Image can change on events
-                // -------------------------------------------------------------------------------------------
-                image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
-                image.SetBinding(Image.RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
-                image.SetBinding(WidthRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
-                image.SetBinding(HeightRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
+            // Setup bindings to the size and source of the Track Image. Image can change on events
+            // -------------------------------------------------------------------------------------------
+            image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
+            image.SetBinding(Image.RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
+            image.SetBinding(WidthRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
+            image.SetBinding(HeightRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
 
-                // Setup trigger control to trap if we click on or select the track item
-                // -------------------------------------------------------------------------------------------
-                // Create TapGestureRecognizer
-                var tapGesture = new TapGestureRecognizer();
-                tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
-                tapGesture.NumberOfTapsRequired = 1;
-                image.GestureRecognizers.Add(tapGesture);
-                           
-                // If we are in Design mode, then add support for 
-                // dragging and dropping of the items on the page
-                // ---------------------------------------------------------------------------------------
-                if (DesignMode) {
-                    var dragGesture = new DragGestureRecognizer();
-                    dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
-                    image.GestureRecognizers.Add(dragGesture);
-                }
-                
-                // Add the Track Image to the appropriate grid position
-                // ------------------------------------------------------
-                DynamicGrid.SetRow(image, track.Y);
-                DynamicGrid.SetColumn(image, track.X);
-                DynamicGrid.Children.Add(image);
-                return image;
+            // Setup trigger control to trap if we click on or select the track item
+            // -------------------------------------------------------------------------------------------
+            // Create TapGestureRecognizer
+            var tapGesture = new TapGestureRecognizer();
+            tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
+            tapGesture.NumberOfTapsRequired = 1;
+            image.GestureRecognizers.Add(tapGesture);
+
+            // If we are in Design mode, then add support for 
+            // dragging and dropping of the items on the page
+            // ---------------------------------------------------------------------------------------
+            if (DesignMode) {
+                var dragGesture = new DragGestureRecognizer();
+                dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
+                image.GestureRecognizers.Add(dragGesture);
             }
+
+            // Add the Track Image to the appropriate grid position
+            // ------------------------------------------------------
+            DynamicGrid.SetRow(image, track.Y);
+            DynamicGrid.SetColumn(image, track.X);
+            DynamicGrid.Children.Add(image);
+            return image;
         }
+
 
         private void OnTrackPieceTapped(ITrackPiece track) {
             Console.WriteLine($"Track Piece Tapped: {track.Name} with tapCount={_tapCount}");

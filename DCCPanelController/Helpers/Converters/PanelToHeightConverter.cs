@@ -7,10 +7,10 @@ public class PanelToCardHeightConverter : IMultiValueConverter
 {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
 
-        if (values.Length == 2) {
-            if (values[0] is Panel panel && values[1] is double width && panel is { Cols: > 0, Rows: > 0 } && width > 0) {
-                var size = width / panel.Cols;      // Get the size of each grid. Grids are even
-                var height = size * panel.Rows;
+        if (values.Length == 3) {
+            if (values[0] is double width and > 0 && values[1] is int rows && values[2] is int cols) {
+                var size = width / cols;
+                var height = size * rows;
                 return height;
             }
         }

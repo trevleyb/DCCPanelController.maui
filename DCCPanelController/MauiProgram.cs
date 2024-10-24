@@ -1,9 +1,9 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.Extensions.Logging;
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController;
 
@@ -14,8 +14,9 @@ public static class MauiProgram {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         })
-        .UseMauiCommunityToolkit()
-        .UseMauiCommunityToolkitMediaElement();
+            .UseMauiCommunityToolkit()
+            .UseMauiCommunityToolkitMarkup()
+            .UseMauiCommunityToolkitMediaElement();
 
         var services = builder.Services;
         
@@ -44,19 +45,15 @@ public static class MauiProgram {
         // services.AddTransient<PanelEditorPage>();
         // services.AddTransient<PanelEditorViewModel>();
 
+        
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
         var app = builder.Build();
-        
-        //var xx1 = app.Services.GetRequiredService<RoutesPage>();
-        //var xx2 = app.Services.GetRequiredService<RoutesService>();
-        
-        // Assign the service provider to a static property
-        App.ServiceProvider = app.Services;
+        ServiceHelper.Initialize(app.Services);
         return app;
     }
-
+    
     /// <summary>
     /// Registers a transient view with its associated view model in the service collection.
     /// </summary>
@@ -90,4 +87,11 @@ public static class MauiProgram {
         Console.WriteLine($"Registered Route: '{routeName}' to '{typeof(TView).Name}'");
     }
     
-} 
+    public static class ServiceHelper {
+        public static IServiceProvider ServiceProvider { get; private set; }
+        public static void Initialize(IServiceProvider serviceProvider) {
+            ServiceProvider = serviceProvider;
+        }
+        public static T GetService<T>() => ServiceProvider.GetRequiredService<T>();
+    }
+}

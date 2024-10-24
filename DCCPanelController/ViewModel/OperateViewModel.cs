@@ -17,8 +17,7 @@ public partial class OperateViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
 
     public OperateViewModel() {
-        if (App.ServiceProvider is null) throw new ApplicationException("App is null");
-        _settingsService = App.ServiceProvider.GetRequiredService<SettingsService>();
+        _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         PropertyChanged += OnPropertyChanged;
 
         Panels = _settingsService.Panels;

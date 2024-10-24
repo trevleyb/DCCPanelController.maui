@@ -22,10 +22,10 @@ public partial class ConnectionService : ObservableObject {
     private bool _isConnected = false;
     
     public void Connect(WiServer wiServer) {
-        _turnoutsService =  App.ServiceProvider?.GetService<TurnoutsService>();
+        _turnoutsService =  MauiProgram.ServiceHelper.GetService<TurnoutsService>();
         ArgumentNullException.ThrowIfNull(_turnoutsService);
         
-        _routesService =  App.ServiceProvider?.GetService<RoutesService>();
+        _routesService =  MauiProgram.ServiceHelper.GetService<RoutesService>();
         ArgumentNullException.ThrowIfNull(_routesService);
 
         _turnouts = [];

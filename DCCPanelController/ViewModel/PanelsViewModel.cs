@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
-using AudioUnit;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
-using NUnit.Framework.Internal;
 
 namespace DCCPanelController.ViewModel;
 
@@ -20,8 +18,7 @@ public partial class PanelsViewModel : BaseViewModel {
     private int _draggingIndex;
     
     public PanelsViewModel() {
-        if (App.ServiceProvider is null) throw new ApplicationException("App is null");
-        _settingsService = App.ServiceProvider.GetRequiredService<SettingsService>();
+        _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         Panels = _settingsService.Panels;
     }
     

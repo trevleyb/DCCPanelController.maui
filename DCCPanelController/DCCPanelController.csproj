@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFrameworks>net8.0-ios;net8.0-maccatalyst</TargetFrameworks>
-        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net8.0-windows10.0.19041.0</TargetFrameworks>
+        <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
+        <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
-        <!-- <TargetFrameworks>$(TargetFrameworks);net8.0-tizen</TargetFrameworks> -->
+        <!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
 
         <!-- Note for MacCatalyst:
         The default runtime is maccatalyst-x64, except in Release config, in which case the default is maccatalyst-x64;maccatalyst-arm64.
@@ -21,17 +21,20 @@
         <Nullable>enable</Nullable>
 
         <!-- Display name -->
-        <ApplicationTitle>DCC Panel</ApplicationTitle>
+        <ApplicationTitle>DCCPanelController</ApplicationTitle>
 
         <!-- App Identifier -->
-        <ApplicationId>com.trevleyb.dccpanelcontroller</ApplicationId>
+        <ApplicationId>com.companyname.dccpanelcontroller</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>1</ApplicationDisplayVersion>
+        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
         <ApplicationVersion>1</ApplicationVersion>
 
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">11.0</SupportedOSPlatformVersion>
-        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">13.1</SupportedOSPlatformVersion>
+        <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
+        <WindowsPackageType>None</WindowsPackageType>
+
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+        <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">15.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
@@ -40,16 +43,7 @@
 
     <ItemGroup>
         <!-- App Icon -->
-        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
-        <EmbeddedResource Include="Resources\TrackPieces\Track_Image.svg" />
-
-        <!-- Splash Screen -->
-
-        <!-- Images -->
-        <MauiImage Remove="Resources\Images\.DS_Store" />
-        <MauiImage Include="Resources\Images\*" />
-        <MauiImage Include="Resources\Icons\*" />
-        <MauiImage Include="Resources\Symbols\*" />
+        <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
         
         <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24" />
@@ -62,220 +56,257 @@
         <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24" />
 
+
+
+        <!-- Splash Screen -->
+
+        <!-- Images -->
+        <MauiImage Include="Resources\Images\*"/>
+
         <!-- Custom Fonts -->
-        <MauiFont Include="Resources\Fonts\*" />
+        <MauiFont Include="Resources\Fonts\*"/>
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+        <None Remove="Resources\AppIcon\appiconfg.svg" />
+        <MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
+        <None Remove="Resources\Icons\add.svg" />
+        <MauiImage Include="Resources\Icons\add.svg" />
+        <None Remove="Resources\Icons\add_filled.svg" />
+        <MauiImage Include="Resources\Icons\add_filled.svg" />
+        <None Remove="Resources\Icons\blank.svg" />
+        <MauiImage Include="Resources\Icons\blank.svg" />
+        <None Remove="Resources\Icons\checkmark_filled.svg" />
+        <MauiImage Include="Resources\Icons\checkmark_filled.svg" />
+        <None Remove="Resources\Icons\checkmark_outline.svg" />
+        <MauiImage Include="Resources\Icons\checkmark_outline.svg" />
+        <None Remove="Resources\Icons\chevron_down.svg" />
+        <MauiImage Include="Resources\Icons\chevron_down.svg" />
+        <None Remove="Resources\Icons\chevron_left.svg" />
+        <MauiImage Include="Resources\Icons\chevron_left.svg" />
+        <None Remove="Resources\Icons\chevron_right.svg" />
+        <MauiImage Include="Resources\Icons\chevron_right.svg" />
+        <None Remove="Resources\Icons\chevron_up.svg" />
+        <MauiImage Include="Resources\Icons\chevron_up.svg" />
+        <None Remove="Resources\Icons\circle_dash.svg" />
+        <MauiImage Include="Resources\Icons\circle_dash.svg" />
+        <None Remove="Resources\Icons\circle_outline.svg" />
+        <MauiImage Include="Resources\Icons\circle_outline.svg" />
+        <None Remove="Resources\Icons\circle_solid.svg" />
+        <MauiImage Include="Resources\Icons\circle_solid.svg" />
+        <None Remove="Resources\Icons\close_filled.svg" />
+        <MauiImage Include="Resources\Icons\close_filled.svg" />
+        <None Remove="Resources\Icons\close_outline.svg" />
+        <MauiImage Include="Resources\Icons\close_outline.svg" />
+        <None Remove="Resources\Icons\deselect.svg" />
+        <MauiImage Include="Resources\Icons\deselect.svg" />
+        <None Remove="Resources\Icons\download.svg" />
+        <MauiImage Include="Resources\Icons\download.svg" />
+        <None Remove="Resources\Icons\edit.svg" />
+        <MauiImage Include="Resources\Icons\edit.svg" />
+        <None Remove="Resources\Icons\edit_off.svg" />
+        <MauiImage Include="Resources\Icons\edit_off.svg" />
+        <None Remove="Resources\Icons\grid.svg" />
+        <MauiImage Include="Resources\Icons\grid.svg" />
+        <None Remove="Resources\Icons\gridoff.svg" />
+        <MauiImage Include="Resources\Icons\gridoff.svg" />
+        <None Remove="Resources\Icons\gridon.svg" />
+        <MauiImage Include="Resources\Icons\gridon.svg" />
+        <None Remove="Resources\Icons\help.svg" />
+        <MauiImage Include="Resources\Icons\help.svg" />
+        <None Remove="Resources\Icons\help_filled.svg" />
+        <MauiImage Include="Resources\Icons\help_filled.svg" />
+        <None Remove="Resources\Icons\information.svg" />
+        <MauiImage Include="Resources\Icons\information.svg" />
+        <None Remove="Resources\Icons\information_filled.svg" />
+        <MauiImage Include="Resources\Icons\information_filled.svg" />
+        <None Remove="Resources\Icons\misuse.svg" />
+        <MauiImage Include="Resources\Icons\misuse.svg" />
+        <None Remove="Resources\Icons\misuse_outline.svg" />
+        <MauiImage Include="Resources\Icons\misuse_outline.svg" />
+        <None Remove="Resources\Icons\open_panel_bottom.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_bottom.svg" />
+        <None Remove="Resources\Icons\open_panel_filled_bottom.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_filled_bottom.svg" />
+        <None Remove="Resources\Icons\open_panel_filled_left.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_filled_left.svg" />
+        <None Remove="Resources\Icons\open_panel_filled_right.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_filled_right.svg" />
+        <None Remove="Resources\Icons\open_panel_filled_top.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_filled_top.svg" />
+        <None Remove="Resources\Icons\open_panel_left.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_left.svg" />
+        <None Remove="Resources\Icons\open_panel_right.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_right.svg" />
+        <None Remove="Resources\Icons\open_panel_top.svg" />
+        <MauiImage Include="Resources\Icons\open_panel_top.svg" />
+        <None Remove="Resources\Icons\refresh_circle.svg" />
+        <MauiImage Include="Resources\Icons\refresh_circle.svg" />
+        <None Remove="Resources\Icons\refresh_circle_solid.svg" />
+        <MauiImage Include="Resources\Icons\refresh_circle_solid.svg" />
+        <None Remove="Resources\Icons\refresh_double.svg" />
+        <MauiImage Include="Resources\Icons\refresh_double.svg" />
+        <None Remove="Resources\Icons\reset.svg" />
+        <MauiImage Include="Resources\Icons\reset.svg" />
+        <None Remove="Resources\Icons\restart.svg" />
+        <MauiImage Include="Resources\Icons\restart.svg" />
+        <None Remove="Resources\Icons\right_panel_close.svg" />
+        <MauiImage Include="Resources\Icons\right_panel_close.svg" />
+        <None Remove="Resources\Icons\right_panel_close_filled.svg" />
+        <MauiImage Include="Resources\Icons\right_panel_close_filled.svg" />
+        <None Remove="Resources\Icons\right_panel_open.svg" />
+        <MauiImage Include="Resources\Icons\right_panel_open.svg" />
+        <None Remove="Resources\Icons\right_panel_open_filled.svg" />
+        <MauiImage Include="Resources\Icons\right_panel_open_filled.svg" />
+        <None Remove="Resources\Icons\rotate.svg" />
+        <MauiImage Include="Resources\Icons\rotate.svg" />
+        <None Remove="Resources\Icons\rotate180d.svg" />
+        <MauiImage Include="Resources\Icons\rotate180d.svg" />
+        <None Remove="Resources\Icons\rotate360d.svg" />
+        <MauiImage Include="Resources\Icons\rotate360d.svg" />
+        <None Remove="Resources\Icons\rotate_clockwise.svg" />
+        <MauiImage Include="Resources\Icons\rotate_clockwise.svg" />
+        <None Remove="Resources\Icons\rotate_clockwise_alt.svg" />
+        <MauiImage Include="Resources\Icons\rotate_clockwise_alt.svg" />
+        <None Remove="Resources\Icons\rotate_clockwise_alt_filled.svg" />
+        <MauiImage Include="Resources\Icons\rotate_clockwise_alt_filled.svg" />
+        <None Remove="Resources\Icons\rotate_clockwise_filled.svg" />
+        <MauiImage Include="Resources\Icons\rotate_clockwise_filled.svg" />
+        <None Remove="Resources\Icons\rotate_counterclockwise.svg" />
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise.svg" />
+        <None Remove="Resources\Icons\rotate_counterclockwise_alt.svg" />
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise_alt.svg" />
+        <None Remove="Resources\Icons\rotate_counterclockwise_alt_filled.svg" />
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise_alt_filled.svg" />
+        <None Remove="Resources\Icons\rotate_counterclockwise_filled.svg" />
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise_filled.svg" />
+        <None Remove="Resources\Icons\save.svg" />
+        <MauiImage Include="Resources\Icons\save.svg" />
+        <None Remove="Resources\Icons\select.svg" />
+        <MauiImage Include="Resources\Icons\select.svg" />
+        <None Remove="Resources\Icons\settings_adjust.svg" />
+        <MauiImage Include="Resources\Icons\settings_adjust.svg" />
+        <None Remove="Resources\Icons\shape_except.svg" />
+        <MauiImage Include="Resources\Icons\shape_except.svg" />
+        <None Remove="Resources\Icons\shape_exclude.svg" />
+        <MauiImage Include="Resources\Icons\shape_exclude.svg" />
+        <None Remove="Resources\Icons\shape_intersect.svg" />
+        <MauiImage Include="Resources\Icons\shape_intersect.svg" />
+        <None Remove="Resources\Icons\side_panel_close.svg" />
+        <MauiImage Include="Resources\Icons\side_panel_close.svg" />
+        <None Remove="Resources\Icons\side_panel_close_filled.svg" />
+        <MauiImage Include="Resources\Icons\side_panel_close_filled.svg" />
+        <None Remove="Resources\Icons\side_panel_open.svg" />
+        <MauiImage Include="Resources\Icons\side_panel_open.svg" />
+        <None Remove="Resources\Icons\side_panel_open_filled.svg" />
+        <MauiImage Include="Resources\Icons\side_panel_open_filled.svg" />
+        <None Remove="Resources\Icons\subtract.svg" />
+        <MauiImage Include="Resources\Icons\subtract.svg" />
+        <None Remove="Resources\Icons\subtract_filled.svg" />
+        <MauiImage Include="Resources\Icons\subtract_filled.svg" />
+        <None Remove="Resources\Icons\transpose.svg" />
+        <MauiImage Include="Resources\Icons\transpose.svg" />
+        <None Remove="Resources\Icons\trash.svg" />
+        <MauiImage Include="Resources\Icons\trash.svg" />
+        <None Remove="Resources\Icons\triangle_down_outline.svg" />
+        <MauiImage Include="Resources\Icons\triangle_down_outline.svg" />
+        <None Remove="Resources\Icons\triangle_down_solid.svg" />
+        <MauiImage Include="Resources\Icons\triangle_down_solid.svg" />
+        <None Remove="Resources\Icons\triangle_left_outline.svg" />
+        <MauiImage Include="Resources\Icons\triangle_left_outline.svg" />
+        <None Remove="Resources\Icons\triangle_left_solid.svg" />
+        <MauiImage Include="Resources\Icons\triangle_left_solid.svg" />
+        <None Remove="Resources\Icons\triangle_outline.svg" />
+        <MauiImage Include="Resources\Icons\triangle_outline.svg" />
+        <None Remove="Resources\Icons\triangle_right_outline.svg" />
+        <MauiImage Include="Resources\Icons\triangle_right_outline.svg" />
+        <None Remove="Resources\Icons\triangle_right_solid.svg" />
+        <MauiImage Include="Resources\Icons\triangle_right_solid.svg" />
+        <None Remove="Resources\Icons\triangle_solid.svg" />
+        <MauiImage Include="Resources\Icons\triangle_solid.svg" />
+        <None Remove="Resources\Icons\tuning.svg" />
+        <MauiImage Include="Resources\Icons\tuning.svg" />
+        <None Remove="Resources\Icons\upload.svg" />
+        <MauiImage Include="Resources\Icons\upload.svg" />
+        <None Remove="Resources\Icons\validate.svg" />
+        <MauiImage Include="Resources\Icons\validate.svg" />
+        <None Remove="Resources\Icons\zoom_fit.svg" />
+        <MauiImage Include="Resources\Icons\zoom_fit.svg" />
+        <None Remove="Resources\Icons\zoom_in.svg" />
+        <MauiImage Include="Resources\Icons\zoom_in.svg" />
+        <None Remove="Resources\Icons\zoom_in_area.svg" />
+        <MauiImage Include="Resources\Icons\zoom_in_area.svg" />
+        <None Remove="Resources\Icons\zoom_out.svg" />
+        <MauiImage Include="Resources\Icons\zoom_out.svg" />
+        <None Remove="Resources\Icons\zoom_out_area.svg" />
+        <MauiImage Include="Resources\Icons\zoom_out_area.svg" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Common" Version="8.2.2" />
-        <PackageReference Include="CommunityToolkit.Maui" Version="9.0.1" />
-        <PackageReference Include="CommunityToolkit.Maui.Core" Version="9.0.1" />
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.0" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
-        <PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
-        <PackageReference Include="Microsoft.Maui.Essentials" Version="9.0.0-preview.7.24407.4" />
-        <PackageReference Include="MiniProfiler" Version="4.3.8" />
-        <PackageReference Include="NUnit" Version="4.1.0" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.2.0" />
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0-rc.2.24473.5" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
-        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.0" />
-        <PackageReference Include="Svg.Skia" Version="2.0.0" />
+        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />
+        <PackageReference Include="Svg.Skia" Version="2.0.0.1" />
         <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1" />
     </ItemGroup>
 
     <ItemGroup>
-      <MauiXaml Update="View\MainPageTabbed.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\RoutesPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\InstructionsPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Symbols\TrackView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Tracks\Views\TrackView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Tracks\TrackViews\StraightTrackView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Tracks\Views\TextView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Tracks\Views\ImageView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\DropZone\DropZone.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Symbols\SymbolView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Elements\Views\TurnoutElementView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Elements\Views\RouteElementView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Elements\Views\ButtonElementView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="Components\Elements\Views\CircleTextElementView.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\ToDelete\PanelEditorPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\ToDelete\PanelViewer.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\ToDelete\TrackPieceTestPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\PropertPages\DynamicPropertyPage.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\Components\ColorDropdown.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
-      <MauiXaml Update="View\Components\ColorPopup.xaml">
-        <SubType>Designer</SubType>
-      </MauiXaml>
+      <None Remove="Resources\Splash\splash.svg" />
+      <MauiSplashScreen Include="Resources\Splash\splash.svg" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="View\MainPageTabbed.xaml.cs">
-        <DependentUpon>MainPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\RoutesPage.xaml.cs">
-        <DependentUpon>RoutesPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\InstructionsPage.xaml.cs">
-        <DependentUpon>InstructionsPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Symbols\TrackView.xaml.cs">
-        <DependentUpon>TrackView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Tracks\Views\TrackView.xaml.cs">
-        <DependentUpon>TrackView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Tracks\TrackViews\StraightTrackView.xaml.cs">
-        <DependentUpon>TrackView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Tracks\Views\TextView.xaml.cs">
-        <DependentUpon>TextView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Tracks\Views\ImageView.xaml.cs">
-        <DependentUpon>ImageView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\DropZone\DropZone.xaml.cs">
-        <DependentUpon>DropZone.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Symbols\SymbolView.xaml.cs">
-        <DependentUpon>SymbolView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Elements\Views\TurnoutElementView.xaml.cs">
-        <DependentUpon>TurnoutElementView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Elements\Views\RouteElementView.xaml.cs">
-        <DependentUpon>RouteElementView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Elements\Views\ButtonElementView.xaml.cs">
-        <DependentUpon>ButtonElementView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="Components\Elements\Views\CircleTextElementView.xaml.cs">
-        <DependentUpon>CircleTextElementView.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\ToDelete\PanelEditorPage.xaml.cs">
-        <DependentUpon>PanelEditorPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\ToDelete\PanelViewer.xaml.cs">
-        <DependentUpon>PanelViewer.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\ToDelete\TrackPieceTestPage.xaml.cs">
-        <DependentUpon>TrackPieceTestPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\PropertPages\DynamicPropertyPage.xaml.cs">
-        <DependentUpon>PanelPropertyPage.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\Components\ColorDropdown.xaml.cs">
-        <DependentUpon>ColorDropdown.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-      <Compile Update="View\Components\ColorPopup.xaml.cs">
-        <DependentUpon>ColorPopup.xaml</DependentUpon>
-        <SubType>Code</SubType>
-      </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Resources\Raw\symbols.json" />
-      <Resource Include="Resources\Raw\symbols.json" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <EmbeddedResource Include="Resources\Raw\Button_Click_Mouse.m4a" />
+      <None Remove="Resources\TrackPieces\Sample.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Sample.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
       <None Remove="Resources\TrackPieces\Track_Angle.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Button.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Button_Short.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Terminator_Long.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Terminator_Short.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Terminator_Short_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Continuation_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Cross.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Cross.svg" />
+      <None Remove="Resources\TrackPieces\Track_Angle_Terminator.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator.svg" />
+      <None Remove="Resources\TrackPieces\Track_Button.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Button.svg" />
+      <None Remove="Resources\TrackPieces\Track_Button_Corner.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg" />
+      <None Remove="Resources\TrackPieces\Track_Compass.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Compass.svg" />
       <None Remove="Resources\TrackPieces\Track_Corner_Left.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Left_Button.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Left_Button_Long.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Left_Button_Short.svg" />
       <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
       <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
       <None Remove="Resources\TrackPieces\Track_Corner_Right.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Right_Button.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Right_Button_Long.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Right_Button_Short.svg" />
       <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
       <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Crossing_Angle.svg" />
-      <None Remove="Resources\TrackPieces\Track_Crossing_Straight.svg" />
+      <None Remove="Resources\TrackPieces\Track_Image.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Image.svg" />
+      <None Remove="Resources\TrackPieces\Track_Label.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Label.svg" />
+      <None Remove="Resources\TrackPieces\Track_Points.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Points.svg" />
       <None Remove="Resources\TrackPieces\Track_Straight.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Straight.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Button.svg" />
-      <None Remove="Resources\TrackPieces\Track_Terminator.svg" />
+      <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
+      <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
+      <None Remove="Resources\TrackPieces\Track_Straight_Cross.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Cross.svg" />
+      <None Remove="Resources\TrackPieces\Track_Straight_Terminator.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Terminator.svg" />
       <None Remove="Resources\TrackPieces\Track_Threeway.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway.svg" />
       <None Remove="Resources\TrackPieces\Track_Threeway_Left.svg" />
@@ -288,50 +319,16 @@
       <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left.svg" />
       <None Remove="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Left_Label.svg" />
       <None Remove="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
       <None Remove="Resources\TrackPieces\Track_Turnout_Right.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right.svg" />
       <None Remove="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Right_Label.svg" />
       <None Remove="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
       <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Cross.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Cross.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Terminator.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator.svg" />
-      <None Remove="Resources\TrackPieces\Track_Button.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Button.svg" />
-      <None Remove="Resources\TrackPieces\Track_Label.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Label.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Cross.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Cross.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Terminator.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Terminator.svg" />
-      <None Remove="Resources\TrackPieces\Track_Compass.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Compass.svg" />
-      <None Remove="Resources\TrackPieces\Track_Points.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Points.svg" />
-      <None Remove="Resources\Sounds\Button_Click_Mouse.m4a" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Resources\Reference\" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <None Remove="Resources\Splash\dccsplash.svg" />
-      <MauiSplashScreen Include="Resources\Splash\dccsplash.svg" />
+      <None Remove="Resources\TrackPieces\Track_Unknown.svg" />
+      <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
     </ItemGroup>
 
 </Project>

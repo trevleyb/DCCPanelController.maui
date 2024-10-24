@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
     IconImageSource="panels_green.png"
@@ -6,27 +6,30 @@
     x:Class="DCCPanelController.View.PanelsPage"
     x:DataType="viewModel:PanelsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters">
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:PanelToCardHeightConverter x:Key="PanelToCardHeightConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-    
+
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddNewPanelCommand}" IconImageSource="add.png" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
 
-        <Grid x:Name="MainGrid"
-              BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" x:Name="MainGrid">
 
-            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding Panels}" SelectionMode="None">
+            <CollectionView
+                ItemsSource="{Binding Panels}"
+                SelectionMode="None"
+                x:DataType="viewModel:PanelsViewModel"
+                x:Name="PanelsCollectionView">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -36,86 +39,93 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemsLayout>
-                    <GridItemsLayout x:Name="PanelsCollectionViewLayout" Orientation="Vertical" Span="2" />
+                    <GridItemsLayout
+                        Orientation="Vertical"
+                        Span="2"
+                        x:Name="PanelsCollectionViewLayout" />
                 </CollectionView.ItemsLayout>
-                
+
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <SwipeView x:Name="PanelCardSwipeView">
-                            <SwipeView.RightItems>
-                                <SwipeItems>
-                                    <SwipeItem IconImageSource="edit.png" Text="Edit"
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=EditPanelCommand}"
-                                               CommandParameter="{Binding}"
-                                               BackgroundColor="Green" />
-                                    <SwipeItem IconImageSource="trash.png" Text="Delete"
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DeletePanelCommand}"
-                                               CommandParameter="{Binding}"
-                                               BackgroundColor="Red" />
-                                </SwipeItems>
-                            </SwipeView.RightItems>
-                            
+                        <SwipeView HeightRequest="250" x:Name="PanelCardSwipeView">
+                            <!--
                             <SwipeView.HeightRequest>
                                 <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
-                                    <Binding Path="." />
-                                    <Binding Source="{x:Reference PanelCardSwipeView}" Path="Width" />
+                                    <Binding Path="Width" Source="{Reference PanelCardSwipeView}" />
+                                    <Binding Path="Rows" />
+                                    <Binding Path="Cols" />
                                 </MultiBinding>
                             </SwipeView.HeightRequest>
-                            
+                            -->
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <SwipeItem
+                                        BackgroundColor="Green"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=EditPanelCommand}"
+                                        CommandParameter="{Binding}"
+                                        IconImageSource="edit.png"
+                                        Text="Edit" />
+                                    <SwipeItem
+                                        BackgroundColor="Red"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DeletePanelCommand}"
+                                        CommandParameter="{Binding}"
+                                        IconImageSource="trash.png"
+                                        Text="Delete" />
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+
                             <SwipeView.Content>
-                                <Grid HorizontalOptions="Fill" Padding="10" Margin="0" x:Name="PanelCard">
-                                    <!--
-                                    <Grid.HeightRequest>
-                                        <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
-                                            <Binding Path="." />
-                                            <Binding Source="{x:Reference PanelCard}" Path="Width" />
-                                        </MultiBinding>
-                                    </Grid.HeightRequest>
-                                    -->
-                                    <Border Style="{StaticResource CardView}" Grid.Row="0" >
+                                <Grid
+                                    HorizontalOptions="Fill"
+                                    Margin="0"
+                                    Padding="10"
+                                    x:Name="PanelCard">
+                                    <Border Grid.Row="0" Style="{StaticResource CardView}">
                                         <Border.GestureRecognizers>
-                                            <DragGestureRecognizer
-                                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}"
-                                                DragStartingCommandParameter="{Binding}" />
-                                            <DropGestureRecognizer
-                                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}"
-                                                DropCommandParameter="{Binding}" />
+                                            <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}" DragStartingCommandParameter="{Binding}" />
+                                            <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}" DropCommandParameter="{Binding}" />
                                             <TapGestureRecognizer Tapped="GoToSelectedPanelEditor" />
                                         </Border.GestureRecognizers>
+
                                         <StackLayout>
-                                            <Label Style="{StaticResource PanelLabel}"
-                                                   TextColor="{StaticResource Primary}"
-                                                   VerticalOptions="End"
-                                                   HorizontalOptions="Center"
-                                                   VerticalTextAlignment="Center"
-                                                   HorizontalTextAlignment="Center">
+                                            <Label
+                                                HorizontalOptions="Center"
+                                                HorizontalTextAlignment="Center"
+                                                Style="{StaticResource PanelLabel}"
+                                                TextColor="{StaticResource Primary}"
+                                                VerticalOptions="End"
+                                                VerticalTextAlignment="Center">
                                                 <MultiBinding StringFormat="{}{0}">
-                                                    <Binding Path="Name" FallbackValue="Unknown Panel" />
+                                                    <Binding FallbackValue="Unknown Panel" Path="Name" />
                                                 </MultiBinding>
-                                                </Label>
-                                                <view:ControlPanelView 
-                                                    Panel="{Binding .}"
-                                                    DesignMode="False"
-                                                    ShowGrid="False"
-                                                    HorizontalOptions="FillAndExpand"
-                                                    VerticalOptions="FillAndExpand"/>
-                                            
-                                                <Label Style="{StaticResource PanelLabel}"
-                                                       TextColor="{StaticResource Primary}"
-                                                       VerticalOptions="End"
-                                                       HorizontalOptions="Center"
-                                                       VerticalTextAlignment="Center"
-                                                       HorizontalTextAlignment="Center">
-                                                    <MultiBinding StringFormat="{} {0} ">
-                                                        <Binding Path="Description" FallbackValue="Unknown Panel" />
-                                                    </MultiBinding>
-                                                </Label>
+                                            </Label>
+
+                                            <view:ControlPanelView
+                                                DesignMode="False"
+                                                Height="200"
+                                                HorizontalOptions="FillAndExpand"
+                                                Panel="{Binding .}"
+                                                ShowGrid="False"
+                                                VerticalOptions="FillAndExpand"
+                                                x:Name="ControlPanelView" />
+
+                                            <Label
+                                                HorizontalOptions="Center"
+                                                HorizontalTextAlignment="Center"
+                                                Style="{StaticResource PanelLabel}"
+                                                TextColor="{StaticResource Primary}"
+                                                VerticalOptions="End"
+                                                VerticalTextAlignment="Center">
+                                                <MultiBinding StringFormat="{} {0} ">
+                                                    <Binding FallbackValue="Unknown Panel" Path="Description" />
+                                                </MultiBinding>
+                                            </Label>
                                         </StackLayout>
                                     </Border>
                                 </Grid>
                             </SwipeView.Content>
                         </SwipeView>
-                            
+
                         <!--     <SwipeView.Content> -->
                         <!--         <Grid HorizontalOptions="Fill" Padding="10" x:Name="PanelCard"> -->
                         <!--             <Grid.HeightRequest> -->
@@ -126,43 +136,43 @@
                         <!--             </Grid.HeightRequest> -->
                         <!--             <Border Style="{StaticResource CardView}" > -->
                         <!--                 <Border.GestureRecognizers> -->
-                        <!--                     <DragGestureRecognizer -->
-                        <!--                         DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}" -->
-                        <!--                         DragStartingCommandParameter="{Binding}" /> -->
-                        <!--                     <DropGestureRecognizer -->
-                        <!--                         DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}" -->
-                        <!--                         DropCommandParameter="{Binding}" /> -->
+                        <!--  <DragGestureRecognizer  -->
+                        <!--  DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}"  -->
+                        <!--  DragStartingCommandParameter="{Binding}" />  -->
+                        <!--  <DropGestureRecognizer  -->
+                        <!--  DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}"  -->
+                        <!--  DropCommandParameter="{Binding}" />  -->
                         <!--                     <TapGestureRecognizer Tapped="GoToSelectedPanelEditor" /> -->
                         <!--                 </Border.GestureRecognizers> -->
                         <!--                 <Grid Padding="0"> -->
                         <!--                     <AbsoluteLayout x:Name="PanelLayout" BindingContext="{Binding .}"> -->
-                        <!--                         <view:ControlPanelView Panel="{Binding .}" -->
-                        <!--                                                DesignMode="False" -->
-                        <!--                                                ShowGrid="False" -->
-                        <!-- -->
-                        <!--                                           HorizontalOptions="FillAndExpand" -->
-                        <!--                                           VerticalOptions="FillAndExpand" -->
-                        <!--                                           AbsoluteLayout.LayoutFlags="All" -->
-                        <!--                                           AbsoluteLayout.LayoutBounds="0,0,1,1"/> -->
-                        <!--                         <BoxView -->
-                        <!--                             BackgroundColor="{StaticResource Primary}" -->
-                        <!--                             HeightRequest="2" -->
-                        <!--                             AbsoluteLayout.LayoutBounds="1,1,1,91" -->
-                        <!--                             AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" /> -->
-                        <!-- -->
-                        <!--                         <BoxView Color="{StaticResource PrimaryDisabled}" -->
-                        <!--                                  Background="{StaticResource PrimaryDisabled}" -->
-                        <!--                                  Opacity=".95" -->
-                        <!--                                  AbsoluteLayout.LayoutBounds="0.5,1,1,50" -->
-                        <!--                                  AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" /> -->
-                        <!--                         <Label Style="{StaticResource PanelLabel}" -->
-                        <!--                                TextColor="{StaticResource Primary}" -->
-                        <!--                                VerticalOptions="End" -->
-                        <!--                                HorizontalOptions="Center" -->
-                        <!--                                AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" -->
-                        <!--                                AbsoluteLayout.LayoutBounds="0.5,1,1,50" -->
-                        <!--                                VerticalTextAlignment="Center" -->
-                        <!--                                HorizontalTextAlignment="Center"> -->
+                        <!--  <view:ControlPanelView Panel="{Binding .}"  -->
+                        <!--  DesignMode="False"  -->
+                        <!--  ShowGrid="False"  -->
+                        <!--    -->
+                        <!--  HorizontalOptions="FillAndExpand"  -->
+                        <!--  VerticalOptions="FillAndExpand"  -->
+                        <!--  AbsoluteLayout.LayoutFlags="All"  -->
+                        <!--  AbsoluteLayout.LayoutBounds="0,0,1,1"/>  -->
+                        <!--  <BoxView  -->
+                        <!--  BackgroundColor="{StaticResource Primary}"  -->
+                        <!--  HeightRequest="2"  -->
+                        <!--  AbsoluteLayout.LayoutBounds="1,1,1,91"  -->
+                        <!--  AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />  -->
+                        <!--    -->
+                        <!--  <BoxView Color="{StaticResource PrimaryDisabled}"  -->
+                        <!--  Background="{StaticResource PrimaryDisabled}"  -->
+                        <!--  Opacity=".95"  -->
+                        <!--  AbsoluteLayout.LayoutBounds="0.5,1,1,50"  -->
+                        <!--  AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional" />  -->
+                        <!--  <Label Style="{StaticResource PanelLabel}"  -->
+                        <!--  TextColor="{StaticResource Primary}"  -->
+                        <!--  VerticalOptions="End"  -->
+                        <!--  HorizontalOptions="Center"  -->
+                        <!--  AbsoluteLayout.LayoutFlags="PositionProportional,WidthProportional"  -->
+                        <!--  AbsoluteLayout.LayoutBounds="0.5,1,1,50"  -->
+                        <!--  VerticalTextAlignment="Center"  -->
+                        <!--  HorizontalTextAlignment="Center">  -->
                         <!--                             <MultiBinding StringFormat="{}{0}: {1}"> -->
                         <!--                                 <Binding Path="Id" FallbackValue="00"/> -->
                         <!--                                 <Binding Path="Name" FallbackValue="Unknown Panel" /> -->

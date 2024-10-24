@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers.Attributes;
 using Microsoft.Maui.Controls;
-using NUnit.Framework;
 
 namespace DCCPanelController.ViewModel;
 

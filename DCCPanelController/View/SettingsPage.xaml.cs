@@ -3,7 +3,6 @@ using CommunityToolkit.Maui.Storage;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
-using StackExchange.Profiling.Internal;
 
 namespace DCCPanelController.View;
 
@@ -14,7 +13,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     
     public SettingsPage() {
         InitializeComponent();
-        _viewModel = App.ServiceProvider?.GetService<SettingsViewModel>();
+        _viewModel = MauiProgram.ServiceHelper.GetService<SettingsViewModel>();
         BindingContext = _viewModel;
     }
 

@@ -1,8 +1,8 @@
 using CommunityToolkit.Maui.Views;
 using System.Windows.Input;
+using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController;
 using DCCPanelController.Helpers;
-using UIKit;
 
 namespace ColorPickerControl {
     public partial class ColorDropdown : ContentView {
@@ -38,7 +38,7 @@ namespace ColorPickerControl {
         }
 
         public string DisplayText => SelectedColor?.ColorName() ??  DefaultPlaceholderText;
-        public Color  ContrastColor => GetContrastingColor(SelectedColor);
+        public Color ContrastColor => SelectedColor.ToInverseColor();
 
         public static bool IsColorDark(Color color) {
             // Using relative luminance to determine if the color is dark or light

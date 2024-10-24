@@ -15,30 +15,18 @@
 	</array>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
+		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortrait</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>fetch</string>
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>We need access to your photo library to allow you to select photos.</string>
-	<key>NSCameraUsageDescription</key>
-	<string>We need access to your camera to allow you to take photos.</string>
-	<key>UILaunchStoryboardName</key>
-	<string>MauiSplash</string>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>en-US</string>
-	
 </dict>
 </plist>

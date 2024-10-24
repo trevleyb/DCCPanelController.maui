@@ -21,7 +21,7 @@ public partial class SettingsViewModel : BaseViewModel {
     
     public SettingsViewModel(SettingsService settingsService) {
         SettingsService = settingsService;
-        _connectionService = App.ServiceProvider?.GetRequiredService<ConnectionService>();
+        _connectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
         if (_connectionService == null) IsDemoMode = true;
         if (_connectionService != null) _connectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
         Settings = SettingsService.Settings;

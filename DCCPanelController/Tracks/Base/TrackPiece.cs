@@ -2,7 +2,6 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using StackExchange.Profiling;
 
 namespace DCCPanelController.Tracks.Base;
 
@@ -111,41 +110,40 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             return TrackImages.SymbolImage.ImageSource?.Image;
         }
     }
-    
+
     /// <summary>
     /// Set up the Active Image. For example, as a straight image, if it is in position 0, then it is straight.
     /// If we rotate +45, then it is the Angle image at rotation 180
     /// </summary>
     /// <exception cref="NullReferenceException"></exception>
     protected void SetActiveImage() {
-        using (MiniProfiler.Current.Step("Setting the Active Image")) {
-            IsBusy = true;
-            IsRefreshing = true;
-            try {
-                // Get the image that should be displayed on the screen based on the direction or rotation that we
-                // have and the current state. However, the rotation of the image itself might be different so we 
-                // set Rotation to the value defined against the active image. 
-                // -----------------------------------------------------------------------------------------------
-                ActiveImage = TrackImages.Get(TrackDirection, State);
-                if (ActiveImage is { ImageSource: not null } activeImage) {
-                    activeImage.ImageSource.ApplyStyle(GetTrackStyle(State.State));
-                    activeImage.ImageSource.SetOccupied(IsOccupied);
-                    activeImage.ImageSource.ForceImageRefresh();
-                    ImageRotation = ActiveImage?.Rotation ?? 0;
-                }
-
-                OnPropertyChanged(nameof(Image));
-                OnPropertyChanged(nameof(ImageRotation));
-            } catch (Exception ex) {
-                Console.WriteLine($"Should not be here: {ex.Message}");
-                ImageRotation = 0;
+        IsBusy = true;
+        IsRefreshing = true;
+        try {
+            // Get the image that should be displayed on the screen based on the direction or rotation that we
+            // have and the current state. However, the rotation of the image itself might be different so we 
+            // set Rotation to the value defined against the active image. 
+            // -----------------------------------------------------------------------------------------------
+            ActiveImage = TrackImages.Get(TrackDirection, State);
+            if (ActiveImage is { ImageSource: not null } activeImage) {
+                activeImage.ImageSource.ApplyStyle(GetTrackStyle(State.State));
+                activeImage.ImageSource.SetOccupied(IsOccupied);
+                activeImage.ImageSource.ForceImageRefresh();
+                ImageRotation = ActiveImage?.Rotation ?? 0;
             }
 
-            IsRefreshing = false;
-            IsBusy = false;
+            OnPropertyChanged(nameof(Image));
+            OnPropertyChanged(nameof(ImageRotation));
+        } catch (Exception ex) {
+            Console.WriteLine($"Should not be here: {ex.Message}");
+            ImageRotation = 0;
         }
+
+        IsRefreshing = false;
+        IsBusy = false;
     }
-    
+
+
     /// <summary>
     /// Helper to add a Track Image to the collection of available images that could be displayed. 
     /// </summary>

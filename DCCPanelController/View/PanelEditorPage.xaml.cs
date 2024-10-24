@@ -51,11 +51,11 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     protected override bool OnBackButtonPressed() {
-        if (_editState == EditState.Changed) {
-            var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-            if (answer) PanelsViewModel.Save();
-            PanelsViewModel.Load();
-        }
+        //if (_editState == EditState.Changed) {
+        //    var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
+        //    if (answer) PanelsViewModel.Save();
+        //    PanelsViewModel.Load();
+        //}
         return base.OnBackButtonPressed();
     }
 

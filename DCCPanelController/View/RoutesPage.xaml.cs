@@ -8,7 +8,7 @@ public partial class RoutesPage : ContentPage {
 
     public RoutesPage() {
         InitializeComponent();
-        BindingContext = App.ServiceProvider?.GetService<RoutesViewModel>();
+        BindingContext = MauiProgram.ServiceHelper.GetService<RoutesViewModel>();
 
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();

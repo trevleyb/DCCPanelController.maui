@@ -1,5 +1,3 @@
-using Intents;
-
 namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgCompass {

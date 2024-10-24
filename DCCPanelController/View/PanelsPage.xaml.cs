@@ -2,7 +2,6 @@ using System.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.ViewModel;
 using OnScreenSizeMarkup.Maui.Helpers;
-using StackExchange.Profiling;
 
 namespace DCCPanelController.View;
 
@@ -22,15 +21,9 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             _viewModel.OnEditorPageFinished(_viewModel.SelectedPanel);
         }
         _viewModel.SelectedPanel = null;
-        
-        MiniProfiler.Configure(MiniProfiler.DefaultOptions);
-        MiniProfiler.StartNew("Panels Viewer");
-        MiniProfiler.Current.Step("PanelsPage");
     }
 
     protected override void OnDisappearing() {
-        MiniProfiler.Current?.Stop();
-        //Console.WriteLine(MiniProfiler.Current?.RenderPlainText());
         base.OnDisappearing();
     }
     
