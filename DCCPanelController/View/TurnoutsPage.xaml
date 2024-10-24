@@ -58,7 +58,7 @@
                             <StackLayout Padding="0">
                                 <Grid ColumnDefinitions="75,*,32,80" Padding="5">
                                     <Grid.GestureRecognizers>
-                                        <TapGestureRecognizer Command="{Binding  Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=ToggleTurnoutStateCommand}" CommandParameter="{Binding .}" />
                                     </Grid.GestureRecognizers>
                                     <Label
                                         Grid.Column="0"

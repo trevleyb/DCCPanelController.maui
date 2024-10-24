@@ -13,8 +13,8 @@ public partial class OperateViewModel : BaseViewModel {
 
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private Panel? _selectedPanel;
-    [ObservableProperty] private ObservableCollection<Panel> _panels;
     private readonly SettingsService _settingsService;
+    public ObservableCollection<Panel> Panels  { get; set; }
 
     public OperateViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();

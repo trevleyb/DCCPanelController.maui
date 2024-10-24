@@ -19,9 +19,11 @@ namespace ColorPickerControl {
         // Asynchronously show the popup and update the selected color
         private async void ShowDropdown() {
             var popup = new ColorPopup();
-            var result = await App.Current.MainPage.ShowPopupAsync(popup);
-            if (result is ColorOption selectedColor) {
-                SelectedColor = selectedColor.Color;
+            if (App.Current?.MainPage != null) {
+                var result = await  Application.Current?.MainPage?.ShowPopupAsync(popup);
+                if (result is ColorOption selectedColor) {
+                    SelectedColor = selectedColor.Color;
+                }
             }
         }
 

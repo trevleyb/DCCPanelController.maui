@@ -5,9 +5,9 @@ public class Result<T>
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
     public T Value { get; }
-    public string Error { get; }
+    public string? Error { get; }
 
-    protected Result(bool isSuccess, T value, string error)
+    protected Result(bool isSuccess, T value, string? error)
     {
         if (isSuccess && value == null)
             throw new ArgumentNullException(nameof(value), "Success result must have a value.");
@@ -27,7 +27,7 @@ public class Result<T>
         return new Result<T>(true, value, null);
     }
 
-    public static Result<T> Failure(string error) {
+    public static Result<T> Failure(string? error) {
         return new Result<T>(false, default, error);
     }
 }

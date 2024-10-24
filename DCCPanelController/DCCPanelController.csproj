@@ -20,6 +20,9 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
+        <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+        <MauiStrictXamlCompilation>false</MauiStrictXamlCompilation>
+        
         <!-- Display name -->
         <ApplicationTitle>DCCPanelController</ApplicationTitle>
 
@@ -55,8 +58,6 @@
         <MauiImage Update="Resources\Images\route_active.svg" Resize="True" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24" />
         <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24" />
-
-
 
         <!-- Splash Screen -->
 

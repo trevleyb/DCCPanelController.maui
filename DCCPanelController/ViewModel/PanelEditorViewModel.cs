@@ -8,7 +8,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
 
-    [ObservableProperty] private ObservableCollection<ITrackSymbol> _trackSymbols = [];
+    public ObservableCollection<ITrackSymbol> TrackSymbols  { get; set; } = [];
     [ObservableProperty] private Panel _panel;
 
     public PanelEditorViewModel(Panel panel) {

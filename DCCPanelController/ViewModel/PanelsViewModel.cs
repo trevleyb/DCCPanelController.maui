@@ -11,8 +11,8 @@ namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
 
-    [ObservableProperty] private Panel? _selectedPanel = null;
-    [ObservableProperty] private ObservableCollection<Panel> _panels;
+    [ObservableProperty] private Panel? _selectedPanel = null; 
+    public ObservableCollection<Panel> Panels { get; set; }
 
     private readonly SettingsService _settingsService;
     private int _draggingIndex;

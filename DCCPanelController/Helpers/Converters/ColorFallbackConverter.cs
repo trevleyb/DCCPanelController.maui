@@ -9,7 +9,7 @@ public class ColorFallbackConverter : IValueConverter {
         return color ?? fallbackValue;
     }
 
-    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
         throw new NotImplementedException();
     }
 }

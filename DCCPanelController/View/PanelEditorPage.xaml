@@ -98,10 +98,8 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="interfaces:ITrackSymbol">
-                            <Frame
+                            <Border
                                 BackgroundColor="White"
-                                BorderColor="Black"
-                                HasShadow="false"
                                 HorizontalOptions="Center"
                                 Margin="5"
                                 Padding="5"
@@ -110,33 +108,32 @@
                                     HeightRequest="50"
                                     Source="{Binding SymbolImage}"
                                     WidthRequest="50" />
-                                <Frame.GestureRecognizers>
+                                <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
-                                </Frame.GestureRecognizers>
-                            </Frame>
+                                </Border.GestureRecognizers>
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <Frame
+                <Border
                     BackgroundColor="White"
-                    BorderColor="Black"
                     HorizontalOptions="Center"
                     Margin="5"
                     Padding="5"
                     VerticalOptions="End"
                     x:Name="DragTrashIcon">
-                    <Frame.GestureRecognizers>
+                    <Border.GestureRecognizers>
                         <DropGestureRecognizer
                             DragLeave="DropTrackInTrashHoverLeave"
                             DragOver="DropTrackInTrashHoverOver"
                             Drop="DropTrackInTrash" />
-                    </Frame.GestureRecognizers>
+                    </Border.GestureRecognizers>
                     <Image
                         HeightRequest="50"
                         Source="trash.png"
                         WidthRequest="50" />
-                </Frame>
+                </Border>
             </StackLayout>
         </ContentView>
     </Grid>

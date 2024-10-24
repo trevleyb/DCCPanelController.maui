@@ -120,7 +120,7 @@ public class SvgImageManager {
     /// This will search through the document and find all elements where the id= the name of the element to find.
     /// As an example, give the following XML for a Button:
     /// <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="24" cy="24" r="7"></circle>
-    /// Then a search for 'Border' will match on this ID, and the <circle> element will be returned. 
+    /// Then a search for 'Border' will match on this ID, and the 'circle' element will be returned. 
     /// </summary>
     public List<XElement> FindElements(SvgElementEnum svgElement) => FindElements(SvgElement.ToString(svgElement));
     public List<XElement> FindElements(string elementName) {

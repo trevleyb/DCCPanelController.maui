@@ -96,9 +96,11 @@
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AWhere_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2024_002E2_003Fresharper_002Dhost_003FSourcesCache_003Fecdfa86eabbda4d23a0b68297d68e84c1adddb9ca2fda577ba181437343730_003FWhere_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AXamlLoader_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2024_002E2_003Fresharper_002Dhost_003FSourcesCache_003F44b6ccabcbb29e8169661f6e9f498be14242d8ac5c7e5f4fa9919bcd0c4042_003FXamlLoader_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
 	<s:String x:Key="/Default/CodeInspection/ExcludedFiles/FilesAndFoldersToSkip2/=7020124F_002D9FFC_002D4AC3_002D8F3D_002DAAB8E0240759_002Ff_003AXamlNode_002Ecs_002Fl_003A_002E_002E_003F_002E_002E_003FLibrary_003FApplication_0020Support_003FJetBrains_003FRider2024_002E2_003Fresharper_002Dhost_003FSourcesCache_003Fb7205f1f683ae589123d71382847bcb1b2b304f1a254c5f9912bed42e327c49_003FXamlNode_002Ecs/@EntryIndexedValue">ForceIncluded</s:String>
+	
 	<s:String x:Key="/Default/Environment/Hierarchy/Build/BuildTool/CustomBuildToolPath/@EntryValue">/usr/local/share/dotnet/sdk/8.0.402/MSBuild.dll</s:String>
 	<s:Int64 x:Key="/Default/Environment/Hierarchy/Build/BuildTool/MsbuildVersion/@EntryValue">1114112</s:Int64>
 	<s:Boolean x:Key="/Default/Environment/Hierarchy/Build/SolBuilderDuo/RunBuildOnSolutionLoaded/@EntryValue">False</s:Boolean>
+	<s:String x:Key="/Default/Environment/Hierarchy/Build/SolutionBuilderNext/OutputVerbosityLevel/@EntryValue">Quiet</s:String>
 	
 	
 	<s:String x:Key="/Default/Monitoring/StartMode/@EntryValue">OnDebug</s:String>
