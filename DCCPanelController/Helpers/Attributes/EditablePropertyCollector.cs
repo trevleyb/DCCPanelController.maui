@@ -16,10 +16,10 @@ public class EditablePropertyCollector {
             if (attribute != null) {
                 editableProperties.Add(new EditablePropertyDetails() {
                     Attribute = attribute,
-                    PropertyInfo = property,
-                    PropertyOwner = obj,
-                    PropertyType = property.PropertyType,
-                    ReadOrder = i
+                    Info = property,
+                    Owner = obj,
+                    Type = property.PropertyType,
+                    Order = i
                 });
             }
         }
@@ -28,7 +28,7 @@ public class EditablePropertyCollector {
         return editableProperties
             .OrderBy(p => p.Attribute.Group)
             .ThenBy(p => p.Attribute.Order)
-            .ThenBy(p => p.ReadOrder)
+            .ThenBy(p => p.Order)
             .ToList();        
     }
 }

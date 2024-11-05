@@ -40,7 +40,7 @@ public partial class PropertyViewModel : BaseViewModel {
 
                 // Property Name
                 var nameLabel = new Label {
-                    Text = prop.PropertyInfo.Name,
+                    Text = prop.Info.Name,
                     Style = ApplyStyle("MediumLabel"),
                     HorizontalOptions = LayoutOptions.Start,
                     VerticalOptions = LayoutOptions.Center,
@@ -120,17 +120,17 @@ public partial class PropertyViewModel : BaseViewModel {
     private static Microsoft.Maui.Controls.View? CreateInputField(EditablePropertyDetails prop) {
         Microsoft.Maui.Controls.View inputField = null;
 
-        if (prop.PropertyType == typeof(string)) {
+        if (prop.Type == typeof(string)) {
             inputField = new Entry {
-                Text = prop.PropertyInfo.GetValue(prop.PropertyOwner)?.ToString() ?? string.Empty,
+                Text = prop.Info.GetValue(prop.Owner)?.ToString() ?? string.Empty,
                 HorizontalOptions = LayoutOptions.Start,
                 Style = ApplyStyle("Entry"),
                 ClearButtonVisibility = ClearButtonVisibility.Never,
             };
         }
-        else if (prop.PropertyType == typeof(int)) {
+        else if (prop.Type == typeof(int)) {
             inputField = new Entry {
-                Text = prop.PropertyInfo.GetValue(prop.PropertyOwner)?.ToString() ?? "0",
+                Text = prop.Info.GetValue(prop.Owner)?.ToString() ?? "0",
                 Keyboard = Keyboard.Numeric,
                 HorizontalOptions = LayoutOptions.Start,
                 ClearButtonVisibility = ClearButtonVisibility.Never,
@@ -144,11 +144,11 @@ public partial class PropertyViewModel : BaseViewModel {
             entry.TextChanged += (sender, args) => {
                 var value = args.NewTextValue;
 
-                if (prop.PropertyType == typeof(int) && int.TryParse(value, out int intValue)) {
-                    prop.PropertyInfo.SetValue(prop.PropertyOwner, intValue);
+                if (prop.Type == typeof(int) && int.TryParse(value, out int intValue)) {
+                    prop.Info.SetValue(prop.Owner, intValue);
                 }
-                else if (prop.PropertyType == typeof(string)) {
-                    prop.PropertyInfo.SetValue(prop.PropertyOwner, value);
+                else if (prop.Type == typeof(string)) {
+                    prop.Info.SetValue(prop.Owner, value);
                 }
             };
         }

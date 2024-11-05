@@ -41,7 +41,7 @@ public partial class Panel : ObservableValidator, ICloneable {
     public string PanelRatio => CalculateRatio(Cols, Rows);
     
     bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) {
-        return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece,Cols,Rows);
+        return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
     }
     
     /// <summary>
