@@ -3,19 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model;
+using DCCPanelController.ViewModel;
 
-namespace DCCPanelController.View.PropertPages;
+namespace DCCPanelController.View;
 
 public partial class PropertyPage : ContentPage {
-    public PropertyPage(object model) {
-        var result = PropertyPageFactory.CreatePropertyPage(model);
-        if (result.IsSuccess) {
-            InitializeComponent();
-            PropertyContainer.Children.Clear();
-            PropertyContainer.Children.Add(result.Value);
-        } else {
-            Navigation.PopModalAsync();
-        }
+    public PropertyPage(string propertyName, object obj) {
+        InitializeComponent();
+        BindingContext = new PropertyPageViewModel(propertyName, TableViewContainer, obj);
     }
 
     private void ClosePropertyPage(object? sender, EventArgs e) {

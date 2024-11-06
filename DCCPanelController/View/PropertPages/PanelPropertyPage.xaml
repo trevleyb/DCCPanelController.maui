@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ContentView
+<ContentPage
     x:Class="DCCPanelController.View.PropertPages.PanelPropertyPage"
     x:DataType="model:Panel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -9,10 +9,10 @@
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <ContentView.Resources>
+    <ContentPage.Resources>
         <ResourceDictionary>
         </ResourceDictionary>
-    </ContentView.Resources>
+    </ContentPage.Resources>
 
     <VerticalStackLayout>
         <Label
@@ -147,4 +147,4 @@
         </VerticalStackLayout>
     </VerticalStackLayout>
 
-</ContentView>
+</ContentPage>

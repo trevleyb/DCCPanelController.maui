@@ -106,7 +106,7 @@ public partial class PanelEditorPage : ContentPage {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
         _editState = EditState.Changed;
-        Navigation.PushModalAsync(new PropertyPage(Panel));
+        Navigation.PushModalAsync(new PanelPropertyPage(Panel));
     }
 
     private void DropTrackInTrash(object? sender, DropEventArgs e) {

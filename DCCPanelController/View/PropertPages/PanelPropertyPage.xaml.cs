@@ -8,7 +8,7 @@ using DCCPanelController.Model;
 
 namespace DCCPanelController.View.PropertPages;
 
-public partial class PanelPropertyPage : ContentView {
+public partial class PanelPropertyPage : ContentPage {
     public PanelPropertyPage(Panel panel) {
         InitializeComponent();
         BindingContext = panel;
