@@ -1,9 +1,11 @@
-
-<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Unknown">
-            <rect id="Rectangle" stroke-opacity="0.2509804" stroke="#979797" x="8.5" y="8.5" width="31" height="31"></rect>
-            <text id="?" stroke="#000000" font-family="Inter-Regular, Inter" font-size="36" font-weight="normal" fill="#FC4850">
+            <rect id="Rectangle" stroke-opacity="0.2509804" stroke="#979797" x="8.5" y="8.5" width="31"
+                  height="31"></rect>
+            <text id="?" stroke="#000000" font-family="Inter-Regular, Inter" font-size="36" font-weight="normal"
+                  fill="#FC4850">
                 <tspan x="14.8721591" y="44">?</tspan>
             </text>
         </g>

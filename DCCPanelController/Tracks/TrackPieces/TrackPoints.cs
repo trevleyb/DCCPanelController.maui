@@ -4,7 +4,6 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Tracks;
 
 public class TrackPoints : TrackPiece {
-    
     protected override void Setup() {
         Name = "Track Points";
         DefaultState = "Normal";
@@ -17,7 +16,7 @@ public class TrackPoints : TrackPiece {
     }
 
     protected override void AddTrackStyles() {
-        AddTrackStyle("Normal","Mainline");
+        AddTrackStyle("Normal", "Mainline");
     }
 
     public void SetPoints(bool[] points) {
@@ -40,6 +39,7 @@ public class TrackPoints : TrackPiece {
             svgImage.ApplyElementStyle(elementID, "Color", Colors.Red.ToRgbaHex());
             svgImage.ApplyElementStyle(elementID, "Opacity", "50");
         }
+
         return isValid;
     }
 
@@ -52,8 +52,7 @@ public class TrackPoints : TrackPiece {
             4 => "PointS",
             5 => "PointSW",
             6 => "PointW",
-            7 => "PointNW",
+            7 => "PointNW"
         };
-
     }
 }

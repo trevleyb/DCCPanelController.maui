@@ -14,36 +14,25 @@ namespace DCCPanelController.Model;
 /// Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableValidator, ICloneable {
-    
-    [ObservableProperty]
-    private string _name = string.Empty;
-    
-    [ObservableProperty]
-    private string _description = string.Empty;
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _description = string.Empty;
+    [ObservableProperty] private int _sortOrder = 0;
+    [ObservableProperty] private Color _backgroundColor = Colors.White;
 
-    [ObservableProperty] 
-    private int _sortOrder = 0;
-    
-    [NotifyPropertyChangedFor(nameof(PanelRatio))]
-    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty]
     private int _cols = 24;
 
-    [NotifyPropertyChangedFor(nameof(PanelRatio))]
-    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty]
     private int _rows = 18;
-    
-    [ObservableProperty] 
-    private Color _backgroundColor = Colors.White;
 
     [ObservableProperty] private ObservableCollection<ITrackPiece> _tracks = [];
 
-    [JsonIgnore]
-    public string PanelRatio => CalculateRatio(Cols, Rows);
-    
-    bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) {
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
+
+    private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) {
         return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
     }
-    
+
     /// <summary>
     /// Create a deep copy of the Panel object.
     /// </summary>
@@ -56,9 +45,8 @@ public partial class Panel : ObservableValidator, ICloneable {
         }
     }
 
-    [JsonIgnore]
-    public Panel? Copy => Clone() as Panel;
-    
+    [JsonIgnore] public Panel? Copy => Clone() as Panel;
+
     private static string CalculateRatio(int col, int row) {
         var gcd = Gcd(col, row);
         var x = col / gcd;
@@ -71,10 +59,11 @@ public partial class Panel : ObservableValidator, ICloneable {
                 b = a % b;
                 a = temp;
             }
+
             return a;
         }
     }
 }
 
 [JsonSerializable(typeof(List<Panel>))]
-internal sealed partial class PanelStateContext : JsonSerializerContext{ }
+internal sealed partial class PanelStateContext : JsonSerializerContext { }

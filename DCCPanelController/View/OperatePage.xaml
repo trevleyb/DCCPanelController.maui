@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     Title="{Binding SelectedPanel.Name}"
@@ -44,8 +44,10 @@
                                 HorizontalOptions="Center"
                                 Text="Welcome to the DCC Model Layout Panel Controller" />
                             <Label HorizontalOptions="Center" Text="  " />
-                            <Label HorizontalOptions="Center" Text="This page will populate once you have created panels and turnout control. " />
-                            <Label HorizontalOptions="Center" Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
+                            <Label HorizontalOptions="Center"
+                                   Text="This page will populate once you have created panels and turnout control. " />
+                            <Label HorizontalOptions="Center"
+                                   Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
                             <Label HorizontalOptions="Center" Text="  " />
                         </StackLayout>
                         <StackLayout

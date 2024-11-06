@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     IconImageSource="panels_green.png"
@@ -13,7 +13,6 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:PanelToCardHeightConverter x:Key="PanelToCardHeightConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -23,7 +22,9 @@
 
     <ContentPage.Content>
 
-        <Grid BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" x:Name="MainGrid">
+        <Grid
+            BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
+            x:Name="MainGrid">
 
             <CollectionView
                 ItemsSource="{Binding Panels}"
@@ -82,8 +83,12 @@
                                     x:Name="PanelCard">
                                     <Border Grid.Row="0" Style="{StaticResource CardView}">
                                         <Border.GestureRecognizers>
-                                            <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}" DragStartingCommandParameter="{Binding}" />
-                                            <DropGestureRecognizer DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}" DropCommandParameter="{Binding}" />
+                                            <DragGestureRecognizer
+                                                DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DragCommand}"
+                                                DragStartingCommandParameter="{Binding}" />
+                                            <DropGestureRecognizer
+                                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}}, Path=DropCommand}"
+                                                DropCommandParameter="{Binding}" />
                                             <TapGestureRecognizer Tapped="GoToSelectedPanelEditor" />
                                         </Border.GestureRecognizers>
 

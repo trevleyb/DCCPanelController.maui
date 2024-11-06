@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="0 0 90 90" width="90" height="90">
-  <defs/>
-  <g id="Cell_1x1" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none">
-    <title>Cell 1x1</title>
-    <g id="Cell_1x1_Single_Cell">
-      <title>Single Cell</title>
-      <g id="Group_77">
-        <title>image</title>
-        <g id="Graphic_80">
-          <path d="M 71.25 20.475 L 71.25 68.775 C 71.25 69.727775 70.46658 70.5 69.5 70.5 L 20.5 70.5 C 19.533504 70.5 18.75 69.727775 18.75 68.775 L 18.75 20.475 C 18.75 19.522311 19.533504 18.75 20.5 18.75 L 69.5 18.75 C 70.46658 18.75 71.25 19.522311 71.25 20.475 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xl="http://www.w3.org/1999/xlink"
+     xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1" viewBox="0 0 90 90" width="90" height="90">
+    <defs/>
+    <g id="Cell_1x1" fill-opacity="1" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill="none">
+        <title>Cell 1x1</title>
+        <g id="Cell_1x1_Single_Cell">
+            <title>Single Cell</title>
+            <g id="Group_77">
+                <title>image</title>
+                <g id="Graphic_80">
+                    <path d="M 71.25 20.475 L 71.25 68.775 C 71.25 69.727775 70.46658 70.5 69.5 70.5 L 20.5 70.5 C 19.533504 70.5 18.75 69.727775 18.75 68.775 L 18.75 20.475 C 18.75 19.522311 19.533504 18.75 20.5 18.75 L 69.5 18.75 C 70.46658 18.75 71.25 19.522311 71.25 20.475 Z"
+                          stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+                </g>
+                <g id="Graphic_79">
+                    <path d="M 18.75 56.125 L 39.166667 47.5 L 71.25 61.875" stroke="black" stroke-linecap="round"
+                          stroke-linejoin="round" stroke-width="5"/>
+                </g>
+                <g id="Graphic_78">
+                    <path d="M 56.66667 38.875 C 53.444917 38.875 50.833333 36.30064 50.833333 33.125 C 50.833333 29.94936 53.444917 27.375 56.66667 27.375 C 59.88842 27.375 62.5 29.94936 62.5 33.125 C 62.5 36.30064 59.88842 38.875 56.66667 38.875 Z"
+                          stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+                </g>
+            </g>
         </g>
-        <g id="Graphic_79">
-          <path d="M 18.75 56.125 L 39.166667 47.5 L 71.25 61.875" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
-        </g>
-        <g id="Graphic_78">
-          <path d="M 56.66667 38.875 C 53.444917 38.875 50.833333 36.30064 50.833333 33.125 C 50.833333 29.94936 53.444917 27.375 56.66667 27.375 C 59.88842 27.375 62.5 29.94936 62.5 33.125 C 62.5 36.30064 59.88842 38.875 56.66667 38.875 Z" stroke="black" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
-        </g>
-      </g>
     </g>
-  </g>
 </svg>

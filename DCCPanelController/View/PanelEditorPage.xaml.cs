@@ -18,14 +18,13 @@ using Color = System.Drawing.Color;
 namespace DCCPanelController.View;
 
 public partial class PanelEditorPage : ContentPage {
-
-    private const double MinRightPaneWidth = 75; // Minimum width constraint for the right pane
+    private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
 
     private bool _isDragging = false;
     private double _initialX = 0;
     private EditState _editState = EditState.None;
-    
+
     private PanelsViewModel PanelsViewModel;
     private Panel Panel { get; init; }
     private PanelEditorViewModel ViewModel { get; set; }
@@ -36,7 +35,7 @@ public partial class PanelEditorPage : ContentPage {
         PanelsViewModel = panelsViewModel;
         Panel = PanelsViewModel.SelectedPanel;
         ViewModel = new PanelEditorViewModel(Panel);
-        BindingContext = ViewModel;    
+        BindingContext = ViewModel;
 
         InitializeComponent();
         AdjustColumnCount();
@@ -87,7 +86,7 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
     #endregion
-    
+
     private void SavePanelAndExit(object? sender, EventArgs e) {
         PanelsViewModel.Save();
         _editState = EditState.Saved;
@@ -97,7 +96,7 @@ public partial class PanelEditorPage : ContentPage {
         PanelView.ShowGrid = !PanelView.ShowGrid;
         PanelView.RebuildGrid(true);
     }
-    
+
     private void ToggleValidation(object? sender, EventArgs e) {
         PanelView.ShowTrackErrors = !PanelView.ShowTrackErrors;
         PanelView.RebuildGrid(true);
@@ -122,7 +121,7 @@ public partial class PanelEditorPage : ContentPage {
 
     private void DropTrackInTrashHoverOver(object? sender, DragEventArgs e) {
         e.Data.Properties.TryGetValue("Source", out var source);
-        if (source is string && source.Equals("Panel")) DragTrashIcon.BackgroundColor = Colors.Red; 
+        if (source is string && source.Equals("Panel")) DragTrashIcon.BackgroundColor = Colors.Red;
     }
 
     private void DropTrackInTrashHoverLeave(object? sender, DragEventArgs e) {
@@ -162,17 +161,18 @@ public partial class PanelEditorPage : ContentPage {
             break;
         }
     }
-    
+
     // Event handler for the SizeChanged event
     private void OnSizeChanged(object? sender, EventArgs e) {
         if (!_isDragging) {
-            var rightWidth = RightColumn.Width.Value; 
+            var rightWidth = RightColumn.Width.Value;
             var leftWidth = Math.Max(0, MainGrid.Width - rightWidth);
             LeftColumn.Width = new GridLength(leftWidth, GridUnitType.Absolute);
         }
+
         AdjustColumnCount();
     }
-    
+
     // Method to collapse or expand the right pane
     public void ToggleRightPane() {
         if (RightColumn.Width.Value == 0) {
@@ -180,30 +180,28 @@ public partial class PanelEditorPage : ContentPage {
             Separator.IsVisible = true;
             DragTrashIcon.IsVisible = true;
             ExpandCollapse.IconImageSource = "right_panel_close_filled.png";
-        }
-        else {
+        } else {
             RightColumn.Width = new GridLength(0, GridUnitType.Absolute);
             Separator.IsVisible = false;
             DragTrashIcon.IsVisible = false;
             ExpandCollapse.IconImageSource = "right_panel_open_filled.png";
         }
+
         OnSizeChanged(null, EventArgs.Empty);
     }
-    
+
     private void OnExpandCollapseButtonClicked(object sender, EventArgs e) {
         ToggleRightPane();
     }
-    
+
     private void AdjustColumnCount() {
         if (ItemsLayout == null) return;
 
         if (RightPane.Width <= 150) { // Single column if the width is less than 400
             ItemsLayout.Span = 1;
-        }
-        else if (RightPane.Width <= 225) { // Two columns if the width is between 400 and 800
+        } else if (RightPane.Width <= 225) { // Two columns if the width is between 400 and 800
             ItemsLayout.Span = 2;
-        }
-        else { // Three columns if the width is greater than 800
+        } else { // Three columns if the width is greater than 800
             ItemsLayout.Span = 3;
         }
     }
@@ -211,7 +209,7 @@ public partial class PanelEditorPage : ContentPage {
 }
 
 public enum EditState {
-    None, 
+    None,
     Saved,
     Changed
 }

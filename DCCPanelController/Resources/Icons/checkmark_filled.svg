@@ -1,1 +1,11 @@
-<svg id="Checkmark-Filled--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24" width="24"><desc>Checkmark Filled Streamline Icon: https://streamlinehq.com</desc><defs></defs><path d="M11.5 1.4375a10.0625 10.0625 0 1 0 10.0625 10.0625A10.0625 10.0625 0 0 0 11.5 1.4375Zm-1.4375 14.080887500000001 -3.59375 -3.59375L7.61199375 10.78125 10.0625 13.231612499999999 15.3884375 7.90625l1.146909375 1.139865625Z" stroke-width="1"></path><path id="inner-path" d="m10.0625 15.51853125 -3.59375 -3.59375L7.61228125 10.78125 10.0625 13.23146875 15.3884375 7.90625l1.14640625 1.13921875L10.0625 15.51853125z" fill="none" stroke-width="1"></path><path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path></svg>
+<svg id="Checkmark-Filled--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24"
+     height="24" width="24">
+    <desc>Checkmark Filled Streamline Icon: https://streamlinehq.com</desc>
+    <defs></defs>
+    <path d="M11.5 1.4375a10.0625 10.0625 0 1 0 10.0625 10.0625A10.0625 10.0625 0 0 0 11.5 1.4375Zm-1.4375 14.080887500000001 -3.59375 -3.59375L7.61199375 10.78125 10.0625 13.231612499999999 15.3884375 7.90625l1.146909375 1.139865625Z"
+          stroke-width="1"></path>
+    <path id="inner-path"
+          d="m10.0625 15.51853125 -3.59375 -3.59375L7.61228125 10.78125 10.0625 13.23146875 15.3884375 7.90625l1.14640625 1.13921875L10.0625 15.51853125z"
+          fill="none" stroke-width="1"></path>
+    <path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path>
+</svg>

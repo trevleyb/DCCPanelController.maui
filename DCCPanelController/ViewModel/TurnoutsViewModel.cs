@@ -4,17 +4,17 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
+
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
 
 namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsViewModel : BaseViewModel {
-
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     private ConnectionService? ConnectionService { get; }
     private bool _isAscending = false;
     private string _sortColumn = "";
-    
+
     public TurnoutsViewModel(TurnoutsService? turnoutStateService, ConnectionService? connectionService) {
         ConnectionService = connectionService;
         Turnouts = turnoutStateService?.Turnouts ?? [];
@@ -22,11 +22,11 @@ public partial class TurnoutsViewModel : BaseViewModel {
         SetLabels();
     }
 
-    [ObservableProperty] private bool   _canToggleTurnoutState;
-    [ObservableProperty] private string _columnLabelID       = "ID";
-    [ObservableProperty] private string _columnLabelName     = "Turnout Name";
-    [ObservableProperty] private string _columnLabelState    = "State";
-    
+    [ObservableProperty] private bool _canToggleTurnoutState;
+    [ObservableProperty] private string _columnLabelID = "ID";
+    [ObservableProperty] private string _columnLabelName = "Turnout Name";
+    [ObservableProperty] private string _columnLabelState = "State";
+
     [RelayCommand(CanExecute = nameof(CanToggleTurnoutState))]
     public async Task SortByColumn(string columnName) {
         List<Turnout> sortedTurnout;
@@ -35,33 +35,32 @@ public partial class TurnoutsViewModel : BaseViewModel {
                 "name"  => Turnouts.OrderBy(x => x.Name).ToList(),
                 "id"    => Turnouts.OrderBy(x => x.Id).ToList(),
                 "state" => Turnouts.OrderBy(x => x.State).ToList(),
-                _       => Turnouts.ToList(),
+                _       => Turnouts.ToList()
             };
         } else {
             sortedTurnout = columnName.ToLower() switch {
                 "name"  => Turnouts.OrderByDescending(x => x.Name).ToList(),
                 "id"    => Turnouts.OrderByDescending(x => x.Id).ToList(),
                 "state" => Turnouts.OrderByDescending(x => x.State).ToList(),
-                _       => Turnouts.ToList(),
+                _       => Turnouts.ToList()
             };
         }
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
-        OnPropertyChanged(nameof(Turnouts));   
+        OnPropertyChanged(nameof(Turnouts));
         SetLabels();
     }
-    
+
     private void SetLabels() {
         ColumnLabelID = "ID" + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = "Turnout Name" + (_sortColumn.Equals("Name") ? _isAscending.GetSortDirection() : "");
         ColumnLabelState = "State" + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
-    
+
     [RelayCommand]
     public async Task ToggleTurnoutState(Turnout? turnout) {
-        
         if (turnout == null) return;
         turnout.State = turnout.State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,

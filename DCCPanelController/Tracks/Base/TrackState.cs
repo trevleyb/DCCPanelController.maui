@@ -1,7 +1,6 @@
 namespace DCCPanelController.Tracks.Base;
 
 public class TrackState {
-
     public string _state = TrackPiece.UnknownState;
     public List<string> States = [];
 
@@ -37,6 +36,7 @@ public class TrackState {
         if (nextState.Equals(TrackPiece.UnknownState) && States.Count > 1) {
             nextState = GetNextStateFrom(nextState, direction);
         }
+
         return nextState;
     }
 
@@ -46,17 +46,17 @@ public class TrackState {
 
     private string GetNextStateFrom(string currentState, int direction) {
         var currentIndex = States.FindIndex(item => item == currentState);
-    
+
         if (currentIndex == -1) return TrackPiece.UnknownState;
 
         var nextIndex = (currentIndex + direction + States.Count) % States.Count;
         return States[nextIndex];
     }
-    
+
     public void First() {
         _state = States.Count > 0 ? States[0] : TrackPiece.UnknownState;
     }
-    
+
     /// <summary>
     /// Set the State but ensure it is one of the valid states 
     /// </summary>

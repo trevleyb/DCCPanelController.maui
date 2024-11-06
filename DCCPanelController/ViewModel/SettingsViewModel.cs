@@ -11,14 +11,13 @@ using DCCWithrottleClient.Client.Messages;
 namespace DCCPanelController.ViewModel;
 
 public partial class SettingsViewModel : BaseViewModel {
-
     public readonly SettingsService? SettingsService;
     private readonly ConnectionService? _connectionService;
-    
+
     [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<string> _messages = [];
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
-    
+
     public SettingsViewModel(SettingsService settingsService) {
         SettingsService = settingsService;
         _connectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
@@ -26,9 +25,9 @@ public partial class SettingsViewModel : BaseViewModel {
         if (_connectionService != null) _connectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
         Settings = SettingsService.Settings;
     }
-    
-    public bool IsConnected => (_connectionService is { IsConnected: true } ? true : false);
-    public string ConnectLabel => (_connectionService is { IsConnected: true } ? "Disconnect" : "Connect");
+
+    public bool IsConnected => _connectionService is { IsConnected   : true } ? true : false;
+    public string ConnectLabel => _connectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool IsLiveMode => !IsDemoMode || !IsConnected;
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 
@@ -36,15 +35,14 @@ public partial class SettingsViewModel : BaseViewModel {
     // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
-            case nameof(IsConnected):
-                OnPropertyChanged(nameof(IsConnectAvailable));
-                OnPropertyChanged(nameof(IsConnected));
-                OnPropertyChanged(nameof(ConnectLabel));
-                break;
+        case nameof(IsConnected):
+            OnPropertyChanged(nameof(IsConnectAvailable));
+            OnPropertyChanged(nameof(IsConnected));
+            OnPropertyChanged(nameof(ConnectLabel));
+            break;
         }
     }
 
-    
     [RelayCommand]
     public async Task ConnectAsync() {
         if (!IsDemoMode) {
@@ -67,26 +65,27 @@ public partial class SettingsViewModel : BaseViewModel {
             } catch {
                 IsBusy = false;
                 AddMessage("Unable to Connect.");
-            } 
+            }
         }
+
         IsBusy = false;
     }
 
     private void ServiceOnMessageProcessed(IClientMsg obj) {
         WiThrottleMessageReceieved(obj);
     }
-    
+
     public void AddMessage(string message) {
         if (!string.IsNullOrEmpty(message)) {
             Messages.Add(message);
             if (Messages.Count > 100) Messages.RemoveAt(0);
         }
     }
-    
+
     public void WiThrottleMessageReceieved(IClientMsg obj) {
         AddMessage(obj.ActionTaken);
     }
-    
+
     public string IpAddress {
         get => Settings?.WiServer?.IpAddress ?? "";
         set {
@@ -108,7 +107,7 @@ public partial class SettingsViewModel : BaseViewModel {
             OnPropertyChanged(nameof(IsConnectAvailable));
         }
     }
-    
+
     public int Port {
         get => Settings?.WiServer?.Port ?? 12090;
         set {
@@ -116,27 +115,27 @@ public partial class SettingsViewModel : BaseViewModel {
             OnPropertyChanged();
         }
     }
-    
+
     public string IpAddress1 {
         get => GetIpAddressParts(1);
         set => SetIpAddressParts(1, value);
-    } 
-    
+    }
+
     public string IpAddress2 {
         get => GetIpAddressParts(2);
         set => SetIpAddressParts(2, value);
-    } 
+    }
 
     public string IpAddress3 {
         get => GetIpAddressParts(3);
         set => SetIpAddressParts(3, value);
-    } 
+    }
 
     public string IpAddress4 {
         get => GetIpAddressParts(4);
         set => SetIpAddressParts(4, value);
-    } 
-    
+    }
+
     [RelayCommand]
     public void SaveSettings() {
         SettingsService?.Save();
@@ -154,23 +153,22 @@ public partial class SettingsViewModel : BaseViewModel {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
             ObservableCollection<WiServer> newList = [];
-            var servers = DCCWithrottleClient.ServiceHelper.ServiceFinder.FindServices("withrottle",3000);
+            var servers = DCCWithrottleClient.ServiceHelper.ServiceFinder.FindServices("withrottle", 3000);
             foreach (var server in servers) {
                 newList.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
             }
+
             WiServers = newList;
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
             await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
-        }
-        finally {
+        } finally {
             IsBusy = false;
             IsRefreshing = false;
             OnPropertyChanged(nameof(IsConnectAvailable));
         }
     }
- 
+
     [RelayCommand]
     public void SelectWiServer(WiServer? server) {
         if (server == null) return;
@@ -189,6 +187,7 @@ public partial class SettingsViewModel : BaseViewModel {
             if (part == 0) part = 1;
             return parts.Length >= part ? parts[part - 1] : "0";
         }
+
         return "0";
     }
 
@@ -212,9 +211,11 @@ public partial class SettingsViewModel : BaseViewModel {
                     OnPropertyChanged(propertyName);
                     OnPropertyChanged(nameof(IpAddress));
                 }
+
                 return Settings?.WiServer?.IpAddress ?? "0.0.0.0";
             }
         }
+
         return "0";
     }
 }

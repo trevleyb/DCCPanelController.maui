@@ -5,7 +5,6 @@ using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 namespace DCCPanelController.View;
 
 public partial class RoutesPage : ContentPage {
-
     public RoutesPage() {
         InitializeComponent();
         BindingContext = MauiProgram.ServiceHelper.GetService<RoutesViewModel>();

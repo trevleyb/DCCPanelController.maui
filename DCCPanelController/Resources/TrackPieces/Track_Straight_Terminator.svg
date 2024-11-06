@@ -1,12 +1,13 @@
-
-<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Straight_Terminator">
             <polygon id="Border" fill="#000000" points="7 18 24 18 24 20 7 20"></polygon>
             <polygon id="Border" fill="#000000" points="7 28 24 28 24 30 7 30"></polygon>
             <polygon id="Terminator" fill="#000000" points="33 12 33 36 25 36 25 12"></polygon>
             <polygon id="Track" fill="#BDBDBD" points="7 20 24 20 24 28 7 28"></polygon>
-            <line x1="11" y1="24.049463" x2="23.827393" y2="23.949463" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="11" y1="24.049463" x2="23.827393" y2="23.949463" id="Dashline" stroke="#686868" stroke-width="4"
+                  stroke-linecap="square" stroke-dasharray="2,6"></line>
             <polygon id="Occupied" fill="#FF0000" points="24 16 24 18 7 18 7 16"></polygon>
             <polygon id="Occupied" fill="#FF0000" points="24 30 24 32 7 32 7 30"></polygon>
         </g>

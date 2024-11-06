@@ -17,9 +17,8 @@ public partial class PropertyPage : ContentPage {
             Navigation.PopModalAsync();
         }
     }
-    
+
     private void ClosePropertyPage(object? sender, EventArgs e) {
         Navigation.PopModalAsync();
     }
-
 }

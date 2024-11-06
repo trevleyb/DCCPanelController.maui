@@ -5,7 +5,6 @@ using DCCPanelController.ViewModel;
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
-    
     public OperatePage() {
         BindingContext = new OperateViewModel();
         InitializeComponent();
@@ -19,11 +18,11 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             OnPropertyChanged(nameof(viewModel.SelectedPanel));
         }
     }
-    
+
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
-    
+
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new InstructionsPage());
     }

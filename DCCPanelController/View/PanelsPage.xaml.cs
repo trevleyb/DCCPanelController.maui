@@ -6,8 +6,8 @@ using OnScreenSizeMarkup.Maui.Helpers;
 namespace DCCPanelController.View;
 
 public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
-
     private PanelsViewModel _viewModel;
+
     public PanelsPage() {
         _viewModel = new PanelsViewModel();
         BindingContext = _viewModel;
@@ -20,20 +20,22 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             Console.WriteLine($"On Appearing Selected Panel: {_viewModel.SelectedPanel.Name}");
             _viewModel.OnEditorPageFinished(_viewModel.SelectedPanel);
         }
+
         _viewModel.SelectedPanel = null;
     }
 
     protected override void OnDisappearing() {
         base.OnDisappearing();
     }
-    
+
     private void UpdateLayout() {
         var orientation = DeviceDisplay.MainDisplayInfo.Orientation;
         var span = orientation switch {
             DisplayOrientation.Portrait  => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2),
             DisplayOrientation.Landscape => OnScreenSizeHelpers.Instance.GetScreenSizeValue(2, 2, 2, 2, 2, 3),
-            _                            => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2),
+            _                            => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2)
         };
+
         PanelsCollectionViewLayout.Span = span;
     }
 
@@ -52,7 +54,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
         try {
             _viewModel.SelectedPanel = panel;
             Console.WriteLine($"Launch Editor Selected Panel: {_viewModel.SelectedPanel.Name}");
-            var editorPage = new PanelEditorPage(_viewModel );
+            var editorPage = new PanelEditorPage(_viewModel);
             await Navigation.PushAsync(editorPage);
         } catch (Exception ex) {
             Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");

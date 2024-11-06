@@ -5,5 +5,5 @@
              xmlns:elements="clr-namespace:DCCPanelController.Model.Elements"
              x:DataType="elements:TrackPanelElement"
              x:Class="DCCPanelController.View.PropertPages.TrackPropertyPage">
-    
+
 </ContentView>

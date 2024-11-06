@@ -3,7 +3,6 @@ using System.Reflection;
 namespace DCCPanelController.Helpers.Attributes;
 
 public class EditablePropertyCollector {
-
     public static List<EditablePropertyDetails> GetEditableProperties(object obj) {
         ArgumentNullException.ThrowIfNull(obj);
         var editableProperties = new List<EditablePropertyDetails>();
@@ -25,10 +24,6 @@ public class EditablePropertyCollector {
         }
 
         // Sort by Group, SortOrder, then by ReadOrder
-        return editableProperties
-            .OrderBy(p => p.Attribute.Group)
-            .ThenBy(p => p.Attribute.Order)
-            .ThenBy(p => p.Order)
-            .ToList();        
+        return editableProperties.OrderBy(p => p.Attribute.Group).ThenBy(p => p.Attribute.Order).ThenBy(p => p.Order).ToList();
     }
 }

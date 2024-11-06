@@ -5,7 +5,6 @@ using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 namespace DCCPanelController.View;
 
 public partial class TurnoutsPage : ContentPage {
-
     public TurnoutsPage() {
         InitializeComponent();
         BindingContext = MauiProgram.ServiceHelper.GetService<TurnoutsViewModel>();

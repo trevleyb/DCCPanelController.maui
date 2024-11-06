@@ -6,13 +6,10 @@ namespace DCCPanelController.Model.Elements.Base;
 
 [DebuggerDisplay("Type={SymbolType} at {Coordinate}")]
 public abstract partial class PanelElement : ObservableObject {
-
     [ObservableProperty] private string _symbolType = "set:unknown";
-    [ObservableProperty] private Coordinate _coordinate = new Coordinate();
+    [ObservableProperty] private Coordinate _coordinate = new();
     [ObservableProperty] private int _rotation = 0;
-    
-    [ObservableProperty]
-    [property: EditableProperty(Name = "Default Color")]
-    private Color  _color = Colors.Black;
-}
 
+    [ObservableProperty] [property: EditableProperty(Name = "Default Color")]
+    private Color _color = Colors.Black;
+}

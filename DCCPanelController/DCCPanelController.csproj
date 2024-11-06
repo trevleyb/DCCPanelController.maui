@@ -22,7 +22,7 @@
 
         <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
         <MauiStrictXamlCompilation>false</MauiStrictXamlCompilation>
-        
+
         <!-- Display name -->
         <ApplicationTitle>DCCPanelController</ApplicationTitle>
 
@@ -47,17 +47,17 @@
     <ItemGroup>
         <!-- App Icon -->
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4"/>
-        
-        <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\panels_green.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\turnouts_green.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\turnout_closed.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\turnout_thrown.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\turnout_unknown.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\route_active.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24" />
-        <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24" />
+
+        <MauiImage Update="Resources\Images\settings_green.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\control_green.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\panels_green.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\turnouts_green.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\turnout_closed.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\turnout_thrown.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\turnout_unknown.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\route_active.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\route_inactive.svg" Resize="True" BaseSize="24,24"/>
+        <MauiImage Update="Resources\Images\route_unknown.svg" Resize="True" BaseSize="24,24"/>
 
         <!-- Splash Screen -->
 
@@ -69,267 +69,267 @@
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
-        <None Remove="Resources\AppIcon\appiconfg.svg" />
-        <MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
-        <None Remove="Resources\Icons\add.svg" />
-        <MauiImage Include="Resources\Icons\add.svg" />
-        <None Remove="Resources\Icons\add_filled.svg" />
-        <MauiImage Include="Resources\Icons\add_filled.svg" />
-        <None Remove="Resources\Icons\blank.svg" />
-        <MauiImage Include="Resources\Icons\blank.svg" />
-        <None Remove="Resources\Icons\checkmark_filled.svg" />
-        <MauiImage Include="Resources\Icons\checkmark_filled.svg" />
-        <None Remove="Resources\Icons\checkmark_outline.svg" />
-        <MauiImage Include="Resources\Icons\checkmark_outline.svg" />
-        <None Remove="Resources\Icons\chevron_down.svg" />
-        <MauiImage Include="Resources\Icons\chevron_down.svg" />
-        <None Remove="Resources\Icons\chevron_left.svg" />
-        <MauiImage Include="Resources\Icons\chevron_left.svg" />
-        <None Remove="Resources\Icons\chevron_right.svg" />
-        <MauiImage Include="Resources\Icons\chevron_right.svg" />
-        <None Remove="Resources\Icons\chevron_up.svg" />
-        <MauiImage Include="Resources\Icons\chevron_up.svg" />
-        <None Remove="Resources\Icons\circle_dash.svg" />
-        <MauiImage Include="Resources\Icons\circle_dash.svg" />
-        <None Remove="Resources\Icons\circle_outline.svg" />
-        <MauiImage Include="Resources\Icons\circle_outline.svg" />
-        <None Remove="Resources\Icons\circle_solid.svg" />
-        <MauiImage Include="Resources\Icons\circle_solid.svg" />
-        <None Remove="Resources\Icons\close_filled.svg" />
-        <MauiImage Include="Resources\Icons\close_filled.svg" />
-        <None Remove="Resources\Icons\close_outline.svg" />
-        <MauiImage Include="Resources\Icons\close_outline.svg" />
-        <None Remove="Resources\Icons\deselect.svg" />
-        <MauiImage Include="Resources\Icons\deselect.svg" />
-        <None Remove="Resources\Icons\download.svg" />
-        <MauiImage Include="Resources\Icons\download.svg" />
-        <None Remove="Resources\Icons\edit.svg" />
-        <MauiImage Include="Resources\Icons\edit.svg" />
-        <None Remove="Resources\Icons\edit_off.svg" />
-        <MauiImage Include="Resources\Icons\edit_off.svg" />
-        <None Remove="Resources\Icons\grid.svg" />
-        <MauiImage Include="Resources\Icons\grid.svg" />
-        <None Remove="Resources\Icons\gridoff.svg" />
-        <MauiImage Include="Resources\Icons\gridoff.svg" />
-        <None Remove="Resources\Icons\gridon.svg" />
-        <MauiImage Include="Resources\Icons\gridon.svg" />
-        <None Remove="Resources\Icons\help.svg" />
-        <MauiImage Include="Resources\Icons\help.svg" />
-        <None Remove="Resources\Icons\help_filled.svg" />
-        <MauiImage Include="Resources\Icons\help_filled.svg" />
-        <None Remove="Resources\Icons\information.svg" />
-        <MauiImage Include="Resources\Icons\information.svg" />
-        <None Remove="Resources\Icons\information_filled.svg" />
-        <MauiImage Include="Resources\Icons\information_filled.svg" />
-        <None Remove="Resources\Icons\misuse.svg" />
-        <MauiImage Include="Resources\Icons\misuse.svg" />
-        <None Remove="Resources\Icons\misuse_outline.svg" />
-        <MauiImage Include="Resources\Icons\misuse_outline.svg" />
-        <None Remove="Resources\Icons\open_panel_bottom.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_bottom.svg" />
-        <None Remove="Resources\Icons\open_panel_filled_bottom.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_filled_bottom.svg" />
-        <None Remove="Resources\Icons\open_panel_filled_left.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_filled_left.svg" />
-        <None Remove="Resources\Icons\open_panel_filled_right.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_filled_right.svg" />
-        <None Remove="Resources\Icons\open_panel_filled_top.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_filled_top.svg" />
-        <None Remove="Resources\Icons\open_panel_left.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_left.svg" />
-        <None Remove="Resources\Icons\open_panel_right.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_right.svg" />
-        <None Remove="Resources\Icons\open_panel_top.svg" />
-        <MauiImage Include="Resources\Icons\open_panel_top.svg" />
-        <None Remove="Resources\Icons\refresh_circle.svg" />
-        <MauiImage Include="Resources\Icons\refresh_circle.svg" />
-        <None Remove="Resources\Icons\refresh_circle_solid.svg" />
-        <MauiImage Include="Resources\Icons\refresh_circle_solid.svg" />
-        <None Remove="Resources\Icons\refresh_double.svg" />
-        <MauiImage Include="Resources\Icons\refresh_double.svg" />
-        <None Remove="Resources\Icons\reset.svg" />
-        <MauiImage Include="Resources\Icons\reset.svg" />
-        <None Remove="Resources\Icons\restart.svg" />
-        <MauiImage Include="Resources\Icons\restart.svg" />
-        <None Remove="Resources\Icons\right_panel_close.svg" />
-        <MauiImage Include="Resources\Icons\right_panel_close.svg" />
-        <None Remove="Resources\Icons\right_panel_close_filled.svg" />
-        <MauiImage Include="Resources\Icons\right_panel_close_filled.svg" />
-        <None Remove="Resources\Icons\right_panel_open.svg" />
-        <MauiImage Include="Resources\Icons\right_panel_open.svg" />
-        <None Remove="Resources\Icons\right_panel_open_filled.svg" />
-        <MauiImage Include="Resources\Icons\right_panel_open_filled.svg" />
-        <None Remove="Resources\Icons\rotate.svg" />
-        <MauiImage Include="Resources\Icons\rotate.svg" />
-        <None Remove="Resources\Icons\rotate180d.svg" />
-        <MauiImage Include="Resources\Icons\rotate180d.svg" />
-        <None Remove="Resources\Icons\rotate360d.svg" />
-        <MauiImage Include="Resources\Icons\rotate360d.svg" />
-        <None Remove="Resources\Icons\rotate_clockwise.svg" />
-        <MauiImage Include="Resources\Icons\rotate_clockwise.svg" />
-        <None Remove="Resources\Icons\rotate_clockwise_alt.svg" />
-        <MauiImage Include="Resources\Icons\rotate_clockwise_alt.svg" />
-        <None Remove="Resources\Icons\rotate_clockwise_alt_filled.svg" />
-        <MauiImage Include="Resources\Icons\rotate_clockwise_alt_filled.svg" />
-        <None Remove="Resources\Icons\rotate_clockwise_filled.svg" />
-        <MauiImage Include="Resources\Icons\rotate_clockwise_filled.svg" />
-        <None Remove="Resources\Icons\rotate_counterclockwise.svg" />
-        <MauiImage Include="Resources\Icons\rotate_counterclockwise.svg" />
-        <None Remove="Resources\Icons\rotate_counterclockwise_alt.svg" />
-        <MauiImage Include="Resources\Icons\rotate_counterclockwise_alt.svg" />
-        <None Remove="Resources\Icons\rotate_counterclockwise_alt_filled.svg" />
-        <MauiImage Include="Resources\Icons\rotate_counterclockwise_alt_filled.svg" />
-        <None Remove="Resources\Icons\rotate_counterclockwise_filled.svg" />
-        <MauiImage Include="Resources\Icons\rotate_counterclockwise_filled.svg" />
-        <None Remove="Resources\Icons\save.svg" />
-        <MauiImage Include="Resources\Icons\save.svg" />
-        <None Remove="Resources\Icons\select.svg" />
-        <MauiImage Include="Resources\Icons\select.svg" />
-        <None Remove="Resources\Icons\settings_adjust.svg" />
-        <MauiImage Include="Resources\Icons\settings_adjust.svg" />
-        <None Remove="Resources\Icons\shape_except.svg" />
-        <MauiImage Include="Resources\Icons\shape_except.svg" />
-        <None Remove="Resources\Icons\shape_exclude.svg" />
-        <MauiImage Include="Resources\Icons\shape_exclude.svg" />
-        <None Remove="Resources\Icons\shape_intersect.svg" />
-        <MauiImage Include="Resources\Icons\shape_intersect.svg" />
-        <None Remove="Resources\Icons\side_panel_close.svg" />
-        <MauiImage Include="Resources\Icons\side_panel_close.svg" />
-        <None Remove="Resources\Icons\side_panel_close_filled.svg" />
-        <MauiImage Include="Resources\Icons\side_panel_close_filled.svg" />
-        <None Remove="Resources\Icons\side_panel_open.svg" />
-        <MauiImage Include="Resources\Icons\side_panel_open.svg" />
-        <None Remove="Resources\Icons\side_panel_open_filled.svg" />
-        <MauiImage Include="Resources\Icons\side_panel_open_filled.svg" />
-        <None Remove="Resources\Icons\subtract.svg" />
-        <MauiImage Include="Resources\Icons\subtract.svg" />
-        <None Remove="Resources\Icons\subtract_filled.svg" />
-        <MauiImage Include="Resources\Icons\subtract_filled.svg" />
-        <None Remove="Resources\Icons\transpose.svg" />
-        <MauiImage Include="Resources\Icons\transpose.svg" />
-        <None Remove="Resources\Icons\trash.svg" />
-        <MauiImage Include="Resources\Icons\trash.svg" />
-        <None Remove="Resources\Icons\triangle_down_outline.svg" />
-        <MauiImage Include="Resources\Icons\triangle_down_outline.svg" />
-        <None Remove="Resources\Icons\triangle_down_solid.svg" />
-        <MauiImage Include="Resources\Icons\triangle_down_solid.svg" />
-        <None Remove="Resources\Icons\triangle_left_outline.svg" />
-        <MauiImage Include="Resources\Icons\triangle_left_outline.svg" />
-        <None Remove="Resources\Icons\triangle_left_solid.svg" />
-        <MauiImage Include="Resources\Icons\triangle_left_solid.svg" />
-        <None Remove="Resources\Icons\triangle_outline.svg" />
-        <MauiImage Include="Resources\Icons\triangle_outline.svg" />
-        <None Remove="Resources\Icons\triangle_right_outline.svg" />
-        <MauiImage Include="Resources\Icons\triangle_right_outline.svg" />
-        <None Remove="Resources\Icons\triangle_right_solid.svg" />
-        <MauiImage Include="Resources\Icons\triangle_right_solid.svg" />
-        <None Remove="Resources\Icons\triangle_solid.svg" />
-        <MauiImage Include="Resources\Icons\triangle_solid.svg" />
-        <None Remove="Resources\Icons\tuning.svg" />
-        <MauiImage Include="Resources\Icons\tuning.svg" />
-        <None Remove="Resources\Icons\upload.svg" />
-        <MauiImage Include="Resources\Icons\upload.svg" />
-        <None Remove="Resources\Icons\validate.svg" />
-        <MauiImage Include="Resources\Icons\validate.svg" />
-        <None Remove="Resources\Icons\zoom_fit.svg" />
-        <MauiImage Include="Resources\Icons\zoom_fit.svg" />
-        <None Remove="Resources\Icons\zoom_in.svg" />
-        <MauiImage Include="Resources\Icons\zoom_in.svg" />
-        <None Remove="Resources\Icons\zoom_in_area.svg" />
-        <MauiImage Include="Resources\Icons\zoom_in_area.svg" />
-        <None Remove="Resources\Icons\zoom_out.svg" />
-        <MauiImage Include="Resources\Icons\zoom_out.svg" />
-        <None Remove="Resources\Icons\zoom_out_area.svg" />
-        <MauiImage Include="Resources\Icons\zoom_out_area.svg" />
+        <None Remove="Resources\AppIcon\appiconfg.svg"/>
+        <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
+        <None Remove="Resources\Icons\add.svg"/>
+        <MauiImage Include="Resources\Icons\add.svg"/>
+        <None Remove="Resources\Icons\add_filled.svg"/>
+        <MauiImage Include="Resources\Icons\add_filled.svg"/>
+        <None Remove="Resources\Icons\blank.svg"/>
+        <MauiImage Include="Resources\Icons\blank.svg"/>
+        <None Remove="Resources\Icons\checkmark_filled.svg"/>
+        <MauiImage Include="Resources\Icons\checkmark_filled.svg"/>
+        <None Remove="Resources\Icons\checkmark_outline.svg"/>
+        <MauiImage Include="Resources\Icons\checkmark_outline.svg"/>
+        <None Remove="Resources\Icons\chevron_down.svg"/>
+        <MauiImage Include="Resources\Icons\chevron_down.svg"/>
+        <None Remove="Resources\Icons\chevron_left.svg"/>
+        <MauiImage Include="Resources\Icons\chevron_left.svg"/>
+        <None Remove="Resources\Icons\chevron_right.svg"/>
+        <MauiImage Include="Resources\Icons\chevron_right.svg"/>
+        <None Remove="Resources\Icons\chevron_up.svg"/>
+        <MauiImage Include="Resources\Icons\chevron_up.svg"/>
+        <None Remove="Resources\Icons\circle_dash.svg"/>
+        <MauiImage Include="Resources\Icons\circle_dash.svg"/>
+        <None Remove="Resources\Icons\circle_outline.svg"/>
+        <MauiImage Include="Resources\Icons\circle_outline.svg"/>
+        <None Remove="Resources\Icons\circle_solid.svg"/>
+        <MauiImage Include="Resources\Icons\circle_solid.svg"/>
+        <None Remove="Resources\Icons\close_filled.svg"/>
+        <MauiImage Include="Resources\Icons\close_filled.svg"/>
+        <None Remove="Resources\Icons\close_outline.svg"/>
+        <MauiImage Include="Resources\Icons\close_outline.svg"/>
+        <None Remove="Resources\Icons\deselect.svg"/>
+        <MauiImage Include="Resources\Icons\deselect.svg"/>
+        <None Remove="Resources\Icons\download.svg"/>
+        <MauiImage Include="Resources\Icons\download.svg"/>
+        <None Remove="Resources\Icons\edit.svg"/>
+        <MauiImage Include="Resources\Icons\edit.svg"/>
+        <None Remove="Resources\Icons\edit_off.svg"/>
+        <MauiImage Include="Resources\Icons\edit_off.svg"/>
+        <None Remove="Resources\Icons\grid.svg"/>
+        <MauiImage Include="Resources\Icons\grid.svg"/>
+        <None Remove="Resources\Icons\gridoff.svg"/>
+        <MauiImage Include="Resources\Icons\gridoff.svg"/>
+        <None Remove="Resources\Icons\gridon.svg"/>
+        <MauiImage Include="Resources\Icons\gridon.svg"/>
+        <None Remove="Resources\Icons\help.svg"/>
+        <MauiImage Include="Resources\Icons\help.svg"/>
+        <None Remove="Resources\Icons\help_filled.svg"/>
+        <MauiImage Include="Resources\Icons\help_filled.svg"/>
+        <None Remove="Resources\Icons\information.svg"/>
+        <MauiImage Include="Resources\Icons\information.svg"/>
+        <None Remove="Resources\Icons\information_filled.svg"/>
+        <MauiImage Include="Resources\Icons\information_filled.svg"/>
+        <None Remove="Resources\Icons\misuse.svg"/>
+        <MauiImage Include="Resources\Icons\misuse.svg"/>
+        <None Remove="Resources\Icons\misuse_outline.svg"/>
+        <MauiImage Include="Resources\Icons\misuse_outline.svg"/>
+        <None Remove="Resources\Icons\open_panel_bottom.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_bottom.svg"/>
+        <None Remove="Resources\Icons\open_panel_filled_bottom.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_filled_bottom.svg"/>
+        <None Remove="Resources\Icons\open_panel_filled_left.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_filled_left.svg"/>
+        <None Remove="Resources\Icons\open_panel_filled_right.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_filled_right.svg"/>
+        <None Remove="Resources\Icons\open_panel_filled_top.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_filled_top.svg"/>
+        <None Remove="Resources\Icons\open_panel_left.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_left.svg"/>
+        <None Remove="Resources\Icons\open_panel_right.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_right.svg"/>
+        <None Remove="Resources\Icons\open_panel_top.svg"/>
+        <MauiImage Include="Resources\Icons\open_panel_top.svg"/>
+        <None Remove="Resources\Icons\refresh_circle.svg"/>
+        <MauiImage Include="Resources\Icons\refresh_circle.svg"/>
+        <None Remove="Resources\Icons\refresh_circle_solid.svg"/>
+        <MauiImage Include="Resources\Icons\refresh_circle_solid.svg"/>
+        <None Remove="Resources\Icons\refresh_double.svg"/>
+        <MauiImage Include="Resources\Icons\refresh_double.svg"/>
+        <None Remove="Resources\Icons\reset.svg"/>
+        <MauiImage Include="Resources\Icons\reset.svg"/>
+        <None Remove="Resources\Icons\restart.svg"/>
+        <MauiImage Include="Resources\Icons\restart.svg"/>
+        <None Remove="Resources\Icons\right_panel_close.svg"/>
+        <MauiImage Include="Resources\Icons\right_panel_close.svg"/>
+        <None Remove="Resources\Icons\right_panel_close_filled.svg"/>
+        <MauiImage Include="Resources\Icons\right_panel_close_filled.svg"/>
+        <None Remove="Resources\Icons\right_panel_open.svg"/>
+        <MauiImage Include="Resources\Icons\right_panel_open.svg"/>
+        <None Remove="Resources\Icons\right_panel_open_filled.svg"/>
+        <MauiImage Include="Resources\Icons\right_panel_open_filled.svg"/>
+        <None Remove="Resources\Icons\rotate.svg"/>
+        <MauiImage Include="Resources\Icons\rotate.svg"/>
+        <None Remove="Resources\Icons\rotate180d.svg"/>
+        <MauiImage Include="Resources\Icons\rotate180d.svg"/>
+        <None Remove="Resources\Icons\rotate360d.svg"/>
+        <MauiImage Include="Resources\Icons\rotate360d.svg"/>
+        <None Remove="Resources\Icons\rotate_clockwise.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_clockwise.svg"/>
+        <None Remove="Resources\Icons\rotate_clockwise_alt.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_clockwise_alt.svg"/>
+        <None Remove="Resources\Icons\rotate_clockwise_alt_filled.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_clockwise_alt_filled.svg"/>
+        <None Remove="Resources\Icons\rotate_clockwise_filled.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_clockwise_filled.svg"/>
+        <None Remove="Resources\Icons\rotate_counterclockwise.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise.svg"/>
+        <None Remove="Resources\Icons\rotate_counterclockwise_alt.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise_alt.svg"/>
+        <None Remove="Resources\Icons\rotate_counterclockwise_alt_filled.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise_alt_filled.svg"/>
+        <None Remove="Resources\Icons\rotate_counterclockwise_filled.svg"/>
+        <MauiImage Include="Resources\Icons\rotate_counterclockwise_filled.svg"/>
+        <None Remove="Resources\Icons\save.svg"/>
+        <MauiImage Include="Resources\Icons\save.svg"/>
+        <None Remove="Resources\Icons\select.svg"/>
+        <MauiImage Include="Resources\Icons\select.svg"/>
+        <None Remove="Resources\Icons\settings_adjust.svg"/>
+        <MauiImage Include="Resources\Icons\settings_adjust.svg"/>
+        <None Remove="Resources\Icons\shape_except.svg"/>
+        <MauiImage Include="Resources\Icons\shape_except.svg"/>
+        <None Remove="Resources\Icons\shape_exclude.svg"/>
+        <MauiImage Include="Resources\Icons\shape_exclude.svg"/>
+        <None Remove="Resources\Icons\shape_intersect.svg"/>
+        <MauiImage Include="Resources\Icons\shape_intersect.svg"/>
+        <None Remove="Resources\Icons\side_panel_close.svg"/>
+        <MauiImage Include="Resources\Icons\side_panel_close.svg"/>
+        <None Remove="Resources\Icons\side_panel_close_filled.svg"/>
+        <MauiImage Include="Resources\Icons\side_panel_close_filled.svg"/>
+        <None Remove="Resources\Icons\side_panel_open.svg"/>
+        <MauiImage Include="Resources\Icons\side_panel_open.svg"/>
+        <None Remove="Resources\Icons\side_panel_open_filled.svg"/>
+        <MauiImage Include="Resources\Icons\side_panel_open_filled.svg"/>
+        <None Remove="Resources\Icons\subtract.svg"/>
+        <MauiImage Include="Resources\Icons\subtract.svg"/>
+        <None Remove="Resources\Icons\subtract_filled.svg"/>
+        <MauiImage Include="Resources\Icons\subtract_filled.svg"/>
+        <None Remove="Resources\Icons\transpose.svg"/>
+        <MauiImage Include="Resources\Icons\transpose.svg"/>
+        <None Remove="Resources\Icons\trash.svg"/>
+        <MauiImage Include="Resources\Icons\trash.svg"/>
+        <None Remove="Resources\Icons\triangle_down_outline.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_down_outline.svg"/>
+        <None Remove="Resources\Icons\triangle_down_solid.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_down_solid.svg"/>
+        <None Remove="Resources\Icons\triangle_left_outline.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_left_outline.svg"/>
+        <None Remove="Resources\Icons\triangle_left_solid.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_left_solid.svg"/>
+        <None Remove="Resources\Icons\triangle_outline.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_outline.svg"/>
+        <None Remove="Resources\Icons\triangle_right_outline.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_right_outline.svg"/>
+        <None Remove="Resources\Icons\triangle_right_solid.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_right_solid.svg"/>
+        <None Remove="Resources\Icons\triangle_solid.svg"/>
+        <MauiImage Include="Resources\Icons\triangle_solid.svg"/>
+        <None Remove="Resources\Icons\tuning.svg"/>
+        <MauiImage Include="Resources\Icons\tuning.svg"/>
+        <None Remove="Resources\Icons\upload.svg"/>
+        <MauiImage Include="Resources\Icons\upload.svg"/>
+        <None Remove="Resources\Icons\validate.svg"/>
+        <MauiImage Include="Resources\Icons\validate.svg"/>
+        <None Remove="Resources\Icons\zoom_fit.svg"/>
+        <MauiImage Include="Resources\Icons\zoom_fit.svg"/>
+        <None Remove="Resources\Icons\zoom_in.svg"/>
+        <MauiImage Include="Resources\Icons\zoom_in.svg"/>
+        <None Remove="Resources\Icons\zoom_in_area.svg"/>
+        <MauiImage Include="Resources\Icons\zoom_in_area.svg"/>
+        <None Remove="Resources\Icons\zoom_out.svg"/>
+        <MauiImage Include="Resources\Icons\zoom_out.svg"/>
+        <None Remove="Resources\Icons\zoom_out_area.svg"/>
+        <MauiImage Include="Resources\Icons\zoom_out_area.svg"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.2.0" />
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="9.1.0"/>
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="4.2.0"/>
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2"/>
         <PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0-rc.2.24473.5" />
-        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
-        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />
-        <PackageReference Include="Svg.Skia" Version="2.0.0.1" />
-        <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0-rc.2.24473.5"/>
+        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
+        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1"/>
+        <PackageReference Include="Svg.Skia" Version="2.0.0.1"/>
+        <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\Splash\splash.svg" />
-      <MauiSplashScreen Include="Resources\Splash\splash.svg" />
+        <None Remove="Resources\Splash\splash.svg"/>
+        <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Resources\TrackPieces\Sample.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Sample.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Cross.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Cross.svg" />
-      <None Remove="Resources\TrackPieces\Track_Angle_Terminator.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator.svg" />
-      <None Remove="Resources\TrackPieces\Track_Button.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Button.svg" />
-      <None Remove="Resources\TrackPieces\Track_Button_Corner.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg" />
-      <None Remove="Resources\TrackPieces\Track_Compass.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Compass.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Left.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Right.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Image.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Image.svg" />
-      <None Remove="Resources\TrackPieces\Track_Label.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Label.svg" />
-      <None Remove="Resources\TrackPieces\Track_Points.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Points.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Cross.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Cross.svg" />
-      <None Remove="Resources\TrackPieces\Track_Straight_Terminator.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Terminator.svg" />
-      <None Remove="Resources\TrackPieces\Track_Threeway.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway.svg" />
-      <None Remove="Resources\TrackPieces\Track_Threeway_Left.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Left.svg" />
-      <None Remove="Resources\TrackPieces\Track_Threeway_Right.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Right.svg" />
-      <None Remove="Resources\TrackPieces\Track_Threeway_Straight.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Straight.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Left.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Right.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
-      <None Remove="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
-      <None Remove="Resources\TrackPieces\Track_Unknown.svg" />
-      <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
+        <None Remove="Resources\TrackPieces\Sample.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Sample.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Angle.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Angle_Cross.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Cross.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Angle_Terminator.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Button.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Button.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Button_Corner.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Compass.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Compass.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Corner_Left.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Corner_Right.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Image.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Image.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Label.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Label.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Points.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Points.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Straight.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Straight.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Straight_Cross.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Cross.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Straight_Terminator.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Terminator.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Threeway.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Threeway_Left.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Left.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Threeway_Right.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Right.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Threeway_Straight.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Straight.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Turnout_Left.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Turnout_Left_Straight.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Straight.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Turnout_Right.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Turnout_Right_Straight.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Unknown.svg"/>
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg"/>
     </ItemGroup>
 
 </Project>

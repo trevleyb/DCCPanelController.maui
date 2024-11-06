@@ -27,6 +27,7 @@ public static class ObjectCloner {
                 for (var i = 0; i < sourceArray.Length; i++) {
                     copiedArray.SetValue(CloneObject(sourceArray.GetValue(i)), i);
                 }
+
                 return copiedArray;
             }
         }
@@ -38,17 +39,19 @@ public static class ObjectCloner {
             foreach (var item in sourceList) {
                 copiedList.Add(CloneObject(item));
             }
+
             return copiedList;
         }
 
         // Handle other reference types
         var copy = Activator.CreateInstance(type);
-        foreach (PropertyInfo property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
+        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
             if (property.CanWrite) {
                 var propertyValue = property.GetValue(source);
                 property.SetValue(copy, CloneObject(propertyValue));
             }
         }
+
         return copy;
     }
 }

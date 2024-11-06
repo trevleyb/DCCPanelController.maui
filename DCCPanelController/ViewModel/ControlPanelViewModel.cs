@@ -12,9 +12,8 @@ using Microsoft.Maui.Layouts;
 namespace DCCPanelController.ViewModel;
 
 public partial class ControlPanelViewModel : BaseViewModel {
+    public event EventHandler<TrackSelectedEvent> TrackTapped;
 
-    public event EventHandler<TrackSelectedEvent> TrackTapped; 
-    
     [ObservableProperty] private double _viewWidth;
     [ObservableProperty] private double _viewHeight;
     [ObservableProperty] private double _gridSize;
@@ -22,14 +21,14 @@ public partial class ControlPanelViewModel : BaseViewModel {
     [ObservableProperty] private bool _designMode = true;
     [ObservableProperty] private bool _showGrid = true;
     [ObservableProperty] private bool _showTrackErrors = true;
-    
+
     [ObservableProperty] private Panel? _panel;
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
 
     public string Name => Panel?.Name ?? "Unknown Panel";
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
-    
+
     public ControlPanelViewModel(Panel panel) {
         Panel = panel;
         ShowGrid = false;
@@ -38,19 +37,20 @@ public partial class ControlPanelViewModel : BaseViewModel {
     }
 
     private const double Tolerance = 5f;
+
     public bool HasScreenSizeChanged(double width, double height) {
-        var gridSize = (width > 0 && height > 0) ? (Math.Min(width / Cols, height / Rows) / 2) * 2 : 1;
+        var gridSize = width > 0 && height > 0 ? Math.Min(width / Cols, height / Rows) / 2 * 2 : 1;
         var viewWidth = gridSize * Cols;
         var viewHeight = gridSize * Rows;
         return Math.Abs(viewWidth - ViewWidth) > Tolerance || Math.Abs(viewHeight - ViewHeight) > Tolerance;
     }
 
     public void SetScreenSize(double width, double height) {
-        GridSize = (width > 0 && height > 0) ? (Math.Min(width / Cols, height / Rows) / 2) * 2 : 1;
+        GridSize = width > 0 && height > 0 ? Math.Min(width / Cols, height / Rows) / 2 * 2 : 1;
         ViewWidth = GridSize * Cols;
         ViewHeight = GridSize * Rows;
     }
-    
+
     public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
         if (DesignMode) {
             Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");

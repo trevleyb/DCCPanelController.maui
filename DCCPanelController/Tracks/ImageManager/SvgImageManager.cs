@@ -8,7 +8,6 @@ using SKSvg = Svg.Skia.SKSvg;
 namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgImageManager {
-
     private string _resourceName;
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
@@ -36,12 +35,14 @@ public class SvgImageManager {
     /// change to any of the elements. The change functions will set _imageSource to null which will
     /// cause a call to the image function to re-calculate/re-draw the image itself. 
     /// </summary>
-    public ImageSource? Image => GetSvgAsImage(); 
+    public ImageSource? Image => GetSvgAsImage();
 
     /// <summary>
     /// Forces the system to refresh the image. We need to do this after we have changed any elements 
     /// </summary>
-    public void ForceImageRefresh() => _imageSource = GetSvgAsImage();
+    public void ForceImageRefresh() {
+        _imageSource = GetSvgAsImage();
+    }
 
     /// <summary>
     /// Converts the SVG Image into a PNG. Up-scales it to the default size as part of the process. 
@@ -61,7 +62,6 @@ public class SvgImageManager {
         stream.Seek(0, SeekOrigin.Begin);
         return ImageSource.FromStream(() => stream);
     }
-
 
     /// <summary>
     /// Converts the XDocument SVG Image into a stream which can be consumed by
@@ -93,19 +93,20 @@ public class SvgImageManager {
             Console.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
             throw new FileLoadException("Failed to load the SVG image.", ex);
         }
-
     }
 
     /// <summary>
     /// Function that checks if the element is supported.  
     /// </summary>
-    public bool IsSupported(SvgElementEnum svgElement) => IsSupported(SvgElement.ToString(svgElement));
-    public bool IsSupported(string name) => SupportedElements.Contains(name, StringComparer.OrdinalIgnoreCase);
-    public List<string> SupportedElements => _svgDocument.Descendants()
-        .SelectMany(element => element.Attributes()
-                        .Where(attribute => attribute.Name.LocalName == "id")
-                        .Select(attribute => attribute.Value))
-        .Distinct().ToList();
+    public bool IsSupported(SvgElementEnum svgElement) {
+        return IsSupported(SvgElement.ToString(svgElement));
+    }
+
+    public bool IsSupported(string name) {
+        return SupportedElements.Contains(name, StringComparer.OrdinalIgnoreCase);
+    }
+
+    public List<string> SupportedElements => _svgDocument.Descendants().SelectMany(element => element.Attributes().Where(attribute => attribute.Name.LocalName == "id").Select(attribute => attribute.Value)).Distinct().ToList();
 
     /// <summary>
     /// Forces a set of any attributes defined in the element to the value. Does not add the attribute if it does not exist
@@ -115,14 +116,17 @@ public class SvgImageManager {
             SetAttributeValue(element, attributeName, attributeValue, false);
         }
     }
-    
+
     /// <summary>
     /// This will search through the document and find all elements where the id= the name of the element to find.
     /// As an example, give the following XML for a Button:
     /// <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="24" cy="24" r="7"></circle>
     /// Then a search for 'Border' will match on this ID, and the 'circle' element will be returned. 
     /// </summary>
-    public List<XElement> FindElements(SvgElementEnum svgElement) => FindElements(SvgElement.ToString(svgElement));
+    public List<XElement> FindElements(SvgElementEnum svgElement) {
+        return FindElements(SvgElement.ToString(svgElement));
+    }
+
     public List<XElement> FindElements(string elementName) {
         var elements = new List<XElement>();
         foreach (var element in _svgDocument.Descendants()) {
@@ -132,12 +136,18 @@ public class SvgImageManager {
                 }
             }
         }
-        return elements;        
+
+        return elements;
     }
 
-    public string ElementType(XElement element) => element.Name.LocalName.ToLowerInvariant();
-    public bool IsElementOfType(XElement element, string type) => element.Name.LocalName.Equals(type, StringComparison.OrdinalIgnoreCase); 
-    
+    public string ElementType(XElement element) {
+        return element.Name.LocalName.ToLowerInvariant();
+    }
+
+    public bool IsElementOfType(XElement element, string type) {
+        return element.Name.LocalName.Equals(type, StringComparison.OrdinalIgnoreCase);
+    }
+
     /// <summary>
     /// Given an element, set the attribute property to the value provided 
     /// </summary>

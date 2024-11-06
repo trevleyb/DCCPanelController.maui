@@ -15,18 +15,15 @@ public partial class TurnoutPoint : ObservableObject {
     /// This is controlled by data that comes in via the Withrottle Interface
     /// </summary>
     public TurnoutPoint() { }
-    
-    [JsonPropertyName("Id")]
-    [ObservableProperty] 
+
+    [JsonPropertyName("Id")] [ObservableProperty]
     private string? _id;
-    
+
     [ObservableProperty] private string? _name;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
     [ObservableProperty] private int _sortOrder = 0;
-
 }
 
 [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
 [JsonSerializable(typeof(List<TurnoutPoint>))]
-internal sealed partial class TurnoutPointContext : JsonSerializerContext {
-}
+internal sealed partial class TurnoutPointContext : JsonSerializerContext { }

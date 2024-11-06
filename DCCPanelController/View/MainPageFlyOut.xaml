@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
+
 <Shell
     x:Class="DCCPanelController.View.MainPageFlyOut"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -6,22 +7,23 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     Title="Main Page">
 
-    
+
     <Shell.ItemTemplate>
         <DataTemplate>
-            <Grid ColumnDefinitions="0.2*,0.8*" Margin="10,5,10,5" Padding="0" >
-                <Image Source="{Binding FlyoutIcon}" Margin="5" HeightRequest="30" WidthRequest="30"  />
-                <Label Grid.Column="1" Text="{Binding Title}" TextColor="{StaticResource White}" FontAttributes="Italic" VerticalTextAlignment="Center" />
+            <Grid ColumnDefinitions="0.2*,0.8*" Margin="10,5,10,5" Padding="0">
+                <Image Source="{Binding FlyoutIcon}" Margin="5" HeightRequest="30" WidthRequest="30" />
+                <Label Grid.Column="1" Text="{Binding Title}" TextColor="{StaticResource White}"
+                       FontAttributes="Italic" VerticalTextAlignment="Center" />
             </Grid>
         </DataTemplate>
     </Shell.ItemTemplate>
-    
+
     <!-- Flyout Background -->
     <Shell.FlyoutBackground>
         <LinearGradientBrush>
             <GradientStop Color="{StaticResource Primary}" Offset="0.0" />
             <GradientStop Color="{StaticResource Primary}" Offset="1.0" />
-        </LinearGradientBrush>    
+        </LinearGradientBrush>
     </Shell.FlyoutBackground>
 
     <!-- Flyout Header -->
@@ -33,35 +35,36 @@
 
     <Shell.FlyoutFooter>
         <StackLayout Padding="10" BackgroundColor="{StaticResource Gray200}">
-            <Label Text="(c) Copyright 2024 Trevor Leybourne" FontSize="10" TextColor="White" HorizontalOptions="Center" />
+            <Label Text="(c) Copyright 2024 Trevor Leybourne" FontSize="10" TextColor="White"
+                   HorizontalOptions="Center" />
         </StackLayout>
     </Shell.FlyoutFooter>
-    
+
     <FlyoutItem Title="Welcome">
-        <ShellContent Title="Welcome" ContentTemplate="{DataTemplate view:Welcome}" Route="Welcome"></ShellContent>
+        <ShellContent Title="Welcome" ContentTemplate="{DataTemplate view:Welcome}" Route="Welcome" />
     </FlyoutItem>
 
     <FlyoutItem Title="Operate" FlyoutIcon="control_green.png">
-        <ShellContent Title="Operate" ContentTemplate="{DataTemplate view:OperatePage}" Route="Operate"></ShellContent>
+        <ShellContent Title="Operate" ContentTemplate="{DataTemplate view:OperatePage}" Route="Operate" />
     </FlyoutItem>
 
     <FlyoutItem Title="Edit Panels" Icon="panels_green.png">
-        <ShellContent Title="View Panels" ContentTemplate="{DataTemplate view:PanelsPage}" Route="PanelView"></ShellContent>
+        <ShellContent Title="View Panels" ContentTemplate="{DataTemplate view:PanelsPage}" Route="PanelView" />
     </FlyoutItem>
-        
+
     <FlyoutItem Title="Turnouts" Icon="turnouts_green.png">
-        <ShellContent Title="Turnouts" ContentTemplate="{DataTemplate view:TurnoutsPage}" Route="Turnouts"></ShellContent>
+        <ShellContent Title="Turnouts" ContentTemplate="{DataTemplate view:TurnoutsPage}" Route="Turnouts" />
     </FlyoutItem>
 
     <FlyoutItem Title="Routes" Icon="turnouts_green.png">
-        <ShellContent Title="Routes" ContentTemplate="{DataTemplate view:RoutesPage}" Route="Routes"></ShellContent>
+        <ShellContent Title="Routes" ContentTemplate="{DataTemplate view:RoutesPage}" Route="Routes" />
     </FlyoutItem>
 
     <FlyoutItem Title="Locomotives" Icon="control_green.png">
-        <ShellContent Title="Locomotives" ContentTemplate="{DataTemplate view:Welcome}" Route="Locomotives"></ShellContent>
+        <ShellContent Title="Locomotives" ContentTemplate="{DataTemplate view:Welcome}" Route="Locomotives" />
     </FlyoutItem>
-    
+
     <FlyoutItem Title="Settings" Icon="settings_green.png">
-        <ShellContent Title="Settings" ContentTemplate="{DataTemplate view:SettingsPage}" Route="Settings"></ShellContent>
+        <ShellContent Title="Settings" ContentTemplate="{DataTemplate view:SettingsPage}" Route="Settings" />
     </FlyoutItem>
 </Shell>

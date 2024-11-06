@@ -1,7 +1,6 @@
 namespace DCCPanelController.Tracks;
 
 public static class Compass {
-    
     // Step forward in the Compass
     public static CompassPoints Next(this CompassPoints compassPoints, int count = 1) {
         var values = (CompassPoints[])Enum.GetValues(compassPoints.GetType());
@@ -13,13 +12,18 @@ public static class Compass {
     // Step backwards in the compass
     public static CompassPoints Prev(this CompassPoints compassPoints, int count = 1) {
         var values = (CompassPoints[])Enum.GetValues(compassPoints.GetType());
-        var index = Array.IndexOf(values, compassPoints) -count;
+        var index = Array.IndexOf(values, compassPoints) - count;
         if (index < 0) index = values.Length + index;
         return values[index];
     }
 
-    public static CompassPoints ToCompass(int rotation) => ConvertFromDegress(rotation);
-    public static int ToRotation(this CompassPoints compassPoint) => Degrees(compassPoint);
+    public static CompassPoints ToCompass(int rotation) {
+        return ConvertFromDegress(rotation);
+    }
+
+    public static int ToRotation(this CompassPoints compassPoint) {
+        return Degrees(compassPoint);
+    }
 
     public static int Degrees(CompassPoints compassPoint) {
         return compassPoint switch {
@@ -34,7 +38,7 @@ public static class Compass {
             _                       => 0
         };
     }
-    
+
     // Convert a degress to a compass point
     public static CompassPoints ConvertFromDegress(int degrees) {
         return degrees switch {
@@ -46,20 +50,18 @@ public static class Compass {
             >= 225 and < 270 => CompassPoints.SouthWest,
             >= 270 and < 315 => CompassPoints.West,
             >= 315 and < 360 => CompassPoints.NorthWest,
-            _                => CompassPoints.North,
+            _                => CompassPoints.North
         };
     }
 }
 
 public enum CompassPoints {
-    North       = 0,
-    NorthEast   = 1,
-    East        = 2,
-    SouthEast   = 3,
-    South       = 4,
-    SouthWest   = 5,
-    West        = 6,
-    NorthWest   = 7
+    North = 0,
+    NorthEast = 1,
+    East = 2,
+    SouthEast = 3,
+    South = 4,
+    SouthWest = 5,
+    West = 6,
+    NorthWest = 7
 }
-
-

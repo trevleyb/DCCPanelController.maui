@@ -3,60 +3,357 @@
     {
       "Name": "Branchline",
       "Symbols": [
-        {"ID" :"ST-H", "Name": "Straight Track - Horizontal", "Height": 1, "Width": 1, "Image": "branchline_horizontal.png", "ViewModel": "Track" },
-        {"ID" :"ST-V", "Name": "Straight Track - Vertical"  , "Height": 1, "Width": 1, "Image": "branchline_vertical.png", "ViewModel": "Track" },
-        {"ID" :"CONT", "Name": "Panel Continuation", "Height": 1, "Width": 1, "Image": "branchline_continuation.png", "ViewModel": "Track" },
-        {"ID" :"CORNER", "Name": "Passing Corner Track", "Height": 1, "Width": 1, "Image": "branchline_corners.png", "ViewModel": "Track" },
-        {"ID" :"CROSSING", "Name": "Crossing Track ", "Height": 1, "Width": 1, "Image": "branchline_crossing.png", "ViewModel": "Track" },
-        {"ID" :"LEFT", "Name": "Left Angle Track", "Height": 1, "Width": 1, "Image": "branchline_left_angle.png", "ViewModel": "Track" },
-        {"ID" :"RIGHT", "Name": "Right Angle Track", "Height": 1, "Width": 1, "Image": "branchline_right_angle.png", "ViewModel": "Track" },
-        {"ID" :"TERMINATE", "Name": "Track Terminator", "Height": 1, "Width": 1, "Image": "branchline_terminator.png", "ViewModel": "Track" },
-        {"ID" :"LEFT-TURN", "Name": "Left Turnout", "Height": 1, "Width": 1, "Image": "branchline_turnout_left.png", "ViewModel": "Turnout", "Closed" : "branchline_turnout_left_closed.png", "Thrown" : "branchline_turnout_left_thrown.png" },
-        {"ID" :"LEFT-TURN-M", "Name": "Left Turnout to Mainline", "Height": 1, "Width": 1, "Image": "branchline_turnout_left_to_main.png", "ViewModel": "Turnout", "Closed" : "branchline_turnout_left_to_main_closed.png", "Thrown" : "branchline_turnout_left_to_main_thrown.png"  },
-        {"ID" :"RIGHT-TURN", "Name": "Right Turnout", "Height": 1, "Width": 1, "Image": "branchline_turnout_right.png", "ViewModel": "Turnout", "Closed" : "branchline_turnout_right_closed.png", "Thrown" : "branchline_turnout_right_thrown.png"  },
-        {"ID" :"RIGHT-TURN-M", "Name": "Right Turnout to Mainline", "Height": 1, "Width": 1, "Image": "branchline_turnout_right_to_main.png", "ViewModel": "Turnout", "Closed" : "branchline_turnout_right_to_main_closed.png", "Thrown" : "branchline_turnout_right_to_main_thrown.png"  },
-        {"ID" :"WYE", "Name": "WYE", "Height": 1, "Width": 1, "Image": "branchline_wye.png", "ViewModel": "Track" },
-        {"ID" :"3WAY", "Name": "3-Way", "Height": 1, "Width": 1, "Image": "branchline_3way.png", "ViewModel": "Track" },
-        {"ID" :"TRANSITION", "Name": "Branchline to Mainline", "Height": 1, "Width": 1, "Image": "mainline_to_branch.png", "ViewModel": "Track" }
+        {
+          "ID": "ST-H",
+          "Name": "Straight Track - Horizontal",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_horizontal.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "ST-V",
+          "Name": "Straight Track - Vertical",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_vertical.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "CONT",
+          "Name": "Panel Continuation",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_continuation.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "CORNER",
+          "Name": "Passing Corner Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_corners.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "CROSSING",
+          "Name": "Crossing Track ",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_crossing.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "LEFT",
+          "Name": "Left Angle Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_left_angle.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "RIGHT",
+          "Name": "Right Angle Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_right_angle.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "TERMINATE",
+          "Name": "Track Terminator",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_terminator.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "LEFT-TURN",
+          "Name": "Left Turnout",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_turnout_left.png",
+          "ViewModel": "Turnout",
+          "Closed": "branchline_turnout_left_closed.png",
+          "Thrown": "branchline_turnout_left_thrown.png"
+        },
+        {
+          "ID": "LEFT-TURN-M",
+          "Name": "Left Turnout to Mainline",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_turnout_left_to_main.png",
+          "ViewModel": "Turnout",
+          "Closed": "branchline_turnout_left_to_main_closed.png",
+          "Thrown": "branchline_turnout_left_to_main_thrown.png"
+        },
+        {
+          "ID": "RIGHT-TURN",
+          "Name": "Right Turnout",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_turnout_right.png",
+          "ViewModel": "Turnout",
+          "Closed": "branchline_turnout_right_closed.png",
+          "Thrown": "branchline_turnout_right_thrown.png"
+        },
+        {
+          "ID": "RIGHT-TURN-M",
+          "Name": "Right Turnout to Mainline",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_turnout_right_to_main.png",
+          "ViewModel": "Turnout",
+          "Closed": "branchline_turnout_right_to_main_closed.png",
+          "Thrown": "branchline_turnout_right_to_main_thrown.png"
+        },
+        {
+          "ID": "WYE",
+          "Name": "WYE",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_wye.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "3WAY",
+          "Name": "3-Way",
+          "Height": 1,
+          "Width": 1,
+          "Image": "branchline_3way.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "TRANSITION",
+          "Name": "Branchline to Mainline",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_to_branch.png",
+          "ViewModel": "Track"
+        }
       ]
     },
     {
       "Name": "Mainline",
       "Symbols": [
-        {"ID" :"ST-H", "Name": "Straight Track - Horizontal", "Height": 1, "Width": 1, "Image": "mainline_horizontal.png", "ViewModel": "Track" },
-        {"ID" :"ST-V", "Name": "Straight Track - Vertical", "Height": 1, "Width": 1, "Image": "mainline_vertical.png", "ViewModel": "Track" },
-        {"ID" :"CONT", "Name": "Panel Continuation", "Height": 1, "Width": 1, "Image": "mainline_continuation.png", "ViewModel": "Track" },
-        {"ID" :"CORNER", "Name": "Passing Corner Track", "Height": 1, "Width": 1, "Image": "mainline_corners.png", "ViewModel": "Track" },
-        {"ID" :"CROSSING", "Name": "Crossing Track", "Height": 1, "Width": 1, "Image": "mainline_crossing.png", "ViewModel": "Track" },
-        {"ID" :"LEFT", "Name": "Left Angle Track", "Height": 1, "Width": 1, "Image": "mainline_left_angle.png", "ViewModel": "Track" },
-        {"ID" :"RIGHT", "Name": "Right Angle Track", "Height": 1, "Width": 1, "Image": "mainline_right_angle.png", "ViewModel": "Track" },
-        {"ID" :"TERMINATE", "Name": "Track Terminator", "Height": 1, "Width": 1, "Image": "mainline_terminator.png", "ViewModel": "Track" },
-        {"ID" :"LEFT-TURN", "Name": "Left Turnout", "Height": 1, "Width": 1, "Image": "mainline_turnout_left.png", "ViewModel": "Turnout", "Closed" : "mainline_turnout_left_closed.png", "Thrown" : "mainline_turnout_left_thrown.png"  },
-        {"ID" :"LEFT-TURN-B", "Name": "Left Turnout to Branchline", "Height": 1, "Width": 1, "Image": "mainline_turnout_left_to_branch.png", "ViewModel": "Turnout", "Closed" : "mainline_turnout_left_to_branch_closed.png", "Thrown" : "mainline_turnout_left_to_branch_thrown.png"  },
-        {"ID" :"RIGHT-TURN", "Name": "Right Turnout", "Height": 1, "Width": 1, "Image": "mainline_turnout_right.png", "ViewModel": "Turnout", "Closed" : "mainline_turnout_right_closed.png", "Thrown" : "mainline_turnout_right_thrown.png"  },
-        {"ID" :"RIGHT-TURN-B", "Name": "Right Turnout to Branchline", "Height": 1, "Width": 1, "Image": "mainline_turnout_right_to_branch.png", "ViewModel": "Turnout", "Closed" : "mainline_turnout_right_to_branch_closed.png", "Thrown" : "mainline_turnout_right_to_branch_thrown.png"   },
-        {"ID" :"WYE", "Name": "Wye", "Height": 1, "Width": 1, "Image": "mainline_wye.png", "ViewModel": "Track" },
-        {"ID" :"3WAY", "Name": "3Way", "Height": 1, "Width": 1, "Image": "mainline_3way.png", "ViewModel": "Track" },
-        {"ID" :"TRANSITION", "Name": "Mainline to Branchline", "Height": 1, "Width": 1, "Image": "mainline_to_branch.png", "ViewModel": "Track" }
+        {
+          "ID": "ST-H",
+          "Name": "Straight Track - Horizontal",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_horizontal.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "ST-V",
+          "Name": "Straight Track - Vertical",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_vertical.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "CONT",
+          "Name": "Panel Continuation",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_continuation.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "CORNER",
+          "Name": "Passing Corner Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_corners.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "CROSSING",
+          "Name": "Crossing Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_crossing.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "LEFT",
+          "Name": "Left Angle Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_left_angle.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "RIGHT",
+          "Name": "Right Angle Track",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_right_angle.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "TERMINATE",
+          "Name": "Track Terminator",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_terminator.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "LEFT-TURN",
+          "Name": "Left Turnout",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_turnout_left.png",
+          "ViewModel": "Turnout",
+          "Closed": "mainline_turnout_left_closed.png",
+          "Thrown": "mainline_turnout_left_thrown.png"
+        },
+        {
+          "ID": "LEFT-TURN-B",
+          "Name": "Left Turnout to Branchline",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_turnout_left_to_branch.png",
+          "ViewModel": "Turnout",
+          "Closed": "mainline_turnout_left_to_branch_closed.png",
+          "Thrown": "mainline_turnout_left_to_branch_thrown.png"
+        },
+        {
+          "ID": "RIGHT-TURN",
+          "Name": "Right Turnout",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_turnout_right.png",
+          "ViewModel": "Turnout",
+          "Closed": "mainline_turnout_right_closed.png",
+          "Thrown": "mainline_turnout_right_thrown.png"
+        },
+        {
+          "ID": "RIGHT-TURN-B",
+          "Name": "Right Turnout to Branchline",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_turnout_right_to_branch.png",
+          "ViewModel": "Turnout",
+          "Closed": "mainline_turnout_right_to_branch_closed.png",
+          "Thrown": "mainline_turnout_right_to_branch_thrown.png"
+        },
+        {
+          "ID": "WYE",
+          "Name": "Wye",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_wye.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "3WAY",
+          "Name": "3Way",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_3way.png",
+          "ViewModel": "Track"
+        },
+        {
+          "ID": "TRANSITION",
+          "Name": "Mainline to Branchline",
+          "Height": 1,
+          "Width": 1,
+          "Image": "mainline_to_branch.png",
+          "ViewModel": "Track"
+        }
       ]
     },
     {
       "Name": "Buttons",
       "Symbols": [
-        {"ID" :"BUTTONS", "Name": "Button (Small)", "Height": 1, "Width": 1, "Image": "button_small.png", "ViewModel": "Button" , "ZIndex" : 10 },
-        {"ID" :"BUTTONM", "Name": "Button (Medium)", "Height": 1, "Width": 1, "Image": "button_medium.png", "ViewModel": "Button" , "ZIndex" : 10},
-        {"ID" :"BUTTONL", "Name": "Button (Large)", "Height": 1, "Width": 1, "Image": "button_large.png", "ViewModel": "Button" , "ZIndex" : 10},
-        {"ID" :"BUTTONXL", "Name": "Button (X-Large)", "Height": 1, "Width": 1, "Image": "button_xlarge.png", "ViewModel": "Button" , "ZIndex" : 10},
-        {"ID" :"ROUTE", "Name": "Route", "Height": 1, "Width": 1, "Image": "route.png", "ViewModel": "Route" }
+        {
+          "ID": "BUTTONS",
+          "Name": "Button (Small)",
+          "Height": 1,
+          "Width": 1,
+          "Image": "button_small.png",
+          "ViewModel": "Button",
+          "ZIndex": 10
+        },
+        {
+          "ID": "BUTTONM",
+          "Name": "Button (Medium)",
+          "Height": 1,
+          "Width": 1,
+          "Image": "button_medium.png",
+          "ViewModel": "Button",
+          "ZIndex": 10
+        },
+        {
+          "ID": "BUTTONL",
+          "Name": "Button (Large)",
+          "Height": 1,
+          "Width": 1,
+          "Image": "button_large.png",
+          "ViewModel": "Button",
+          "ZIndex": 10
+        },
+        {
+          "ID": "BUTTONXL",
+          "Name": "Button (X-Large)",
+          "Height": 1,
+          "Width": 1,
+          "Image": "button_xlarge.png",
+          "ViewModel": "Button",
+          "ZIndex": 10
+        },
+        {
+          "ID": "ROUTE",
+          "Name": "Route",
+          "Height": 1,
+          "Width": 1,
+          "Image": "route.png",
+          "ViewModel": "Route"
+        }
       ]
     },
     {
       "Name": "Other",
       "Symbols": [
-        {"ID" :"TEXT",  "Name": "Text Block", "Height": 1, "Width": 1, "Image": "text.png", "ViewModel": "Text", "ZIndex" : 10},
-        {"ID" :"CIRCLE1",  "Name": "Text Circle", "Height": 1, "Width": 1, "Image": "circle_single.png", "ViewModel": "CircleText" , "ZIndex" : 10},
-        {"ID" :"CIRCLE2",  "Name": "Text Circle", "Height": 1, "Width": 1, "Image": "circle_filled.png", "ViewModel": "CircleText" , "ZIndex" : 10},
-        {"ID" :"IMAGE", "Name": "Image", "Height": 1, "Width": 1, "Image": "image.png", "ViewModel": "Image" , "ZIndex" : -1}
+        {
+          "ID": "TEXT",
+          "Name": "Text Block",
+          "Height": 1,
+          "Width": 1,
+          "Image": "text.png",
+          "ViewModel": "Text",
+          "ZIndex": 10
+        },
+        {
+          "ID": "CIRCLE1",
+          "Name": "Text Circle",
+          "Height": 1,
+          "Width": 1,
+          "Image": "circle_single.png",
+          "ViewModel": "CircleText",
+          "ZIndex": 10
+        },
+        {
+          "ID": "CIRCLE2",
+          "Name": "Text Circle",
+          "Height": 1,
+          "Width": 1,
+          "Image": "circle_filled.png",
+          "ViewModel": "CircleText",
+          "ZIndex": 10
+        },
+        {
+          "ID": "IMAGE",
+          "Name": "Image",
+          "Height": 1,
+          "Width": 1,
+          "Image": "image.png",
+          "ViewModel": "Image",
+          "ZIndex": -1
+        }
       ]
     }
   ]

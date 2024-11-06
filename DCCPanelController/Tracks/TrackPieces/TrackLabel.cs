@@ -9,13 +9,13 @@ public class TrackLabel : TrackPiece, ITrackSymbol {
         DefaultState = "Normal";
         SetTrackSymbol("Label");
     }
-    
+
     protected override void AddTrackImages() {
-        AddTrackImage(0,   "Normal", "Label", 0);
+        AddTrackImage(0, "Normal", "Label", 0);
         Layer = 2;
     }
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal","Mainline");
-    }
 
+    protected override void AddTrackStyles() {
+        AddTrackStyle("Normal", "Mainline");
+    }
 }

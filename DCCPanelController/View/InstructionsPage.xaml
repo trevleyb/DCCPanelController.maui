@@ -9,6 +9,6 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
-        <Label Text="Instructions"/>
+        <Label Text="Instructions" />
     </ContentPage.Content>
 </ContentPage>

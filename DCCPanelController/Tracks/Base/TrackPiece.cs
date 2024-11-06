@@ -5,10 +5,9 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks.Base;
 
-public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
-
+public abstract partial class TrackPiece : BaseViewModel, ITrackPiece {
     public const string UnknownState = "Unknown";
-    
+
     protected TrackPiece() {
         IsOccupied = false;
         Initialise();
@@ -29,30 +28,30 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
 
     [ObservableProperty] private string _name = "Track";
     [ObservableProperty] private string _defaultState = "";
-    [ObservableProperty] private int _imageRotation; 
+    [ObservableProperty] private int _imageRotation;
     [ObservableProperty] private int _trackDirection;
     [ObservableProperty] private int _x;                    // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                    // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _width  = 1;           // How Width is it (normally 1, Text might be 2)
+    [ObservableProperty] private int _width = 1;            // How Width is it (normally 1, Text might be 2)
     [ObservableProperty] private int _height = 1;           // How High is it (Normally 1, Text might be 2)
-    [ObservableProperty] private int _layer  = 1;           // What layer is this on? Only 1 element per layer.
+    [ObservableProperty] private int _layer = 1;            // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private bool _isOccupied = false;  // Is this element currently occupied?
     [ObservableProperty] private bool _isResizable = false; // Can this element be resized? Normally False
-    
+
     public ImageSource? Image => ActiveImage?.ImageSource?.Image;
 
     protected TrackImage? ActiveImage;
     protected readonly TrackImages TrackImages = new();
     protected readonly TrackState State = new();
     protected readonly Dictionary<string, SvgStyle> TrackStyles = new();
-    
-    public TrackConnectionsEnum[] Connections => ActiveImage?.ImageSource?.Connections.ConnectionPointsRotated(ImageRotation) ??  new SvgCompass().ConnectionPointsRotated(ImageRotation);
+
+    public TrackConnectionsEnum[] Connections => ActiveImage?.ImageSource?.Connections.ConnectionPointsRotated(ImageRotation) ?? new SvgCompass().ConnectionPointsRotated(ImageRotation);
 
     /// <summary>
     /// Indicates f this element can be rotated. 
     /// </summary>
     public bool CanRotate => TrackImages.RotateBy > 1;
-    
+
     public void RotateLeft() {
         TrackDirection = Compass.ToCompass(TrackDirection).Prev(TrackImages.RotateBy).ToRotation();
         SetActiveImage();
@@ -62,7 +61,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         TrackDirection = Compass.ToCompass(TrackDirection).Next(TrackImages.RotateBy).ToRotation();
         SetActiveImage();
     }
-    
+
     public void RotateAbsolute(CompassPoints direction) {
         TrackDirection = direction.ToRotation();
         SetActiveImage();
@@ -72,7 +71,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         TrackDirection = rotation;
         SetActiveImage();
     }
-    
+
     public void NextState() {
         State.Next();
         SetActiveImage();
@@ -85,7 +84,7 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
 
     protected abstract void Setup();
     protected abstract void AddTrackImages();
-    protected abstract void AddTrackStyles(); 
+    protected abstract void AddTrackStyles();
 
     /// <summary>
     /// Used to initialise the instance of this class and setup the parameters for any derived instances
@@ -143,7 +142,6 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         IsBusy = false;
     }
 
-
     /// <summary>
     /// Helper to add a Track Image to the collection of available images that could be displayed. 
     /// </summary>
@@ -152,8 +150,14 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
         TrackImages.Add(trackRotation, trackState, imageSource, imageRotation);
     }
 
-    protected void SetTrackSymbol(string imageSource, int rotation = 0) => TrackImages.SetTrackSymbol(imageSource, rotation);
-    protected void SetTrackStyle(string stateName, string styleName) => SetTrackStyle(stateName,SvgStyles.GetStyle(styleName));
+    protected void SetTrackSymbol(string imageSource, int rotation = 0) {
+        TrackImages.SetTrackSymbol(imageSource, rotation);
+    }
+
+    protected void SetTrackStyle(string stateName, string styleName) {
+        SetTrackStyle(stateName, SvgStyles.GetStyle(styleName));
+    }
+
     protected void SetTrackStyle(string stateName, SvgStyle style) {
         if (TrackStyles.ContainsKey(stateName)) {
             TrackStyles[stateName.ToLowerInvariant()] = style;
@@ -161,12 +165,15 @@ public abstract partial class TrackPiece  : BaseViewModel, ITrackPiece {
             AddTrackStyle(stateName.ToLowerInvariant(), style);
         }
     }
-    
-    protected void AddTrackStyle(string stateName, string styleName) => AddTrackStyle(stateName,SvgStyles.GetStyle(styleName.ToLowerInvariant()));
+
+    protected void AddTrackStyle(string stateName, string styleName) {
+        AddTrackStyle(stateName, SvgStyles.GetStyle(styleName.ToLowerInvariant()));
+    }
+
     protected void AddTrackStyle(string stateName, SvgStyle style) {
         TrackStyles.TryAdd(stateName.ToLowerInvariant(), style);
     }
-    
+
     protected SvgStyle GetTrackStyle(string stateName) {
         var selectedState = stateName ?? DefaultState;
         return TrackStyles.TryGetValue(selectedState.ToLowerInvariant(), out var value) ? value : SvgStyles.DefaultStyle;

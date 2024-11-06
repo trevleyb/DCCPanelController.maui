@@ -3,10 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace DCCPanelController.Model;
 
 public partial class Settings : ObservableObject {
-
     [ObservableProperty] private bool _useConnection;
     [ObservableProperty] private WiServer _wiServer;
-    
+
     public Settings() {
         var thisIp = DCCWithrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
         _wiServer = new WiServer("WiThrottle", thisIp, 12090);

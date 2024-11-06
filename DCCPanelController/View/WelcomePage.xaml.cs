@@ -1,4 +1,3 @@
-
 namespace DCCPanelController.View;
 
 public partial class Welcome : ContentPage {
@@ -9,6 +8,7 @@ public partial class Welcome : ContentPage {
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
+
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new InstructionsPage());
     }

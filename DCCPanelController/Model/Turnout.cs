@@ -15,25 +15,21 @@ public partial class Turnout : ObservableObject {
     /// This is controlled by data that comes in via the Withrottle Interface
     /// </summary>
     public Turnout() { }
-    
-    [JsonPropertyName("Id")]
-    [ObservableProperty] 
+
+    [JsonPropertyName("Id")] [ObservableProperty]
     private string? _id;
-    
+
     [ObservableProperty] private string? _name;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
-
 }
 
 [JsonSourceGenerationOptions(UseStringEnumConverter = true)]
 [JsonSerializable(typeof(List<Turnout>))]
-internal sealed partial class TurnoutContext : JsonSerializerContext {
-}
+internal sealed partial class TurnoutContext : JsonSerializerContext { }
 
 [JsonConverter(typeof(JsonStringEnumConverter<TurnoutStateEnum>))]
 public enum TurnoutStateEnum {
-    Closed, 
-    Thrown, 
+    Closed,
+    Thrown,
     Unknown
-} 
-
+}

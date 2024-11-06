@@ -8,47 +8,45 @@ using DCCWithrottleClient.Client.Messages;
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
-    
-    private Turnouts _turnouts = new();     // Turnouts Managed by the Client 
-    private Routes _routes = new();         // Routes Managed by the Client
+    private Turnouts _turnouts = new(); // Turnouts Managed by the Client 
+    private Routes _routes = new();     // Routes Managed by the Client
     private Client? _client;
     private TurnoutsService? _turnoutsService;
     private RoutesService? _routesService;
-    
+
     // Add an event that will be raised when a new message is processed
     public event Action<IClientMsg>? MessageProcessed;
 
-    [ObservableProperty]
-    private bool _isConnected = false;
-    
+    [ObservableProperty] private bool _isConnected = false;
+
     public void Connect(WiServer wiServer) {
-        _turnoutsService =  MauiProgram.ServiceHelper.GetService<TurnoutsService>();
+        _turnoutsService = MauiProgram.ServiceHelper.GetService<TurnoutsService>();
         ArgumentNullException.ThrowIfNull(_turnoutsService);
-        
-        _routesService =  MauiProgram.ServiceHelper.GetService<RoutesService>();
+
+        _routesService = MauiProgram.ServiceHelper.GetService<RoutesService>();
         ArgumentNullException.ThrowIfNull(_routesService);
 
         _turnouts = [];
-        _routes   = [];
-        
+        _routes = [];
+
         _client = new Client(wiServer.IpAddress, wiServer.Port, _turnouts, _routes);
-        _client.MessageProcessed     += ClientOnMessageProcessed;
-        _client.ConnectionError      += ClientOnConnectionError;
-        _client.DataReceived         += ClientOnDataReceived;
-        _turnouts.CollectionChanged  += TurnoutsOnCollectionChanged;
+        _client.MessageProcessed += ClientOnMessageProcessed;
+        _client.ConnectionError += ClientOnConnectionError;
+        _client.DataReceived += ClientOnDataReceived;
+        _turnouts.CollectionChanged += TurnoutsOnCollectionChanged;
         _turnouts.EntityChangedEvent += TurnoutsOnEntityChangedEvent;
-        _routes.CollectionChanged    += RoutesOnCollectionChanged;
-        _routes.EntityChangedEvent   += RoutesOnEntityChangedEvent;
+        _routes.CollectionChanged += RoutesOnCollectionChanged;
+        _routes.EntityChangedEvent += RoutesOnEntityChangedEvent;
         var didConnect = _client.Connect();
         if (didConnect.Failed) throw new Exception("Unable to connect to the WiThrottle Client Defined.");
         IsConnected = true;
     }
-    
+
     public void Disconnect() {
-        _turnouts.CollectionChanged  -= TurnoutsOnCollectionChanged;
+        _turnouts.CollectionChanged -= TurnoutsOnCollectionChanged;
         _turnouts.EntityChangedEvent -= TurnoutsOnEntityChangedEvent;
-        _routes.CollectionChanged    -= RoutesOnCollectionChanged;
-        _routes.EntityChangedEvent   -= RoutesOnEntityChangedEvent;
+        _routes.CollectionChanged -= RoutesOnCollectionChanged;
+        _routes.EntityChangedEvent -= RoutesOnEntityChangedEvent;
         if (_client != null) {
             _client.MessageProcessed -= ClientOnMessageProcessed;
             _client.ConnectionError -= ClientOnConnectionError;
@@ -64,9 +62,9 @@ public partial class ConnectionService : ObservableObject {
     }
 
     private void ClientOnConnectionError(string obj) {
-        Console.WriteLine("Connection Error: "+obj.ToString());
+        Console.WriteLine("Connection Error: " + obj.ToString());
     }
-    
+
     private void ClientOnMessageProcessed(IClientMsg obj) {
         MessageProcessed?.Invoke(obj);
     }
@@ -84,14 +82,13 @@ public partial class ConnectionService : ObservableObject {
         var message = $"PRA{(state == Model.RouteStateEnum.Active ? "2" : "4")}{id}";
         _client?.SendMessage(message);
     }
-    
+
     /// <summary>
     /// This is called whenever we change a Turnout (add or update). Use this to then change the
     /// Panel Turnouts List. Update the list s that we do not override any existing items
     /// and add new ones if they do not exist. 
     /// </summary>
     private void TurnoutsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-
         if (e.NewItems != null) {
             foreach (var item in e.NewItems) {
                 if (item is DCCWithrottleClient.Client.Entities.Turnout { } turnout) {
@@ -125,17 +122,17 @@ public partial class ConnectionService : ObservableObject {
                     _                                                           => Model.TurnoutStateEnum.Unknown
                 }
             });
-        } else { 
+        } else {
             found.Id = obj.Name;
             found.Name = obj.UserName;
             found.State = obj.StateEnum switch {
                 DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                 DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                _                                                           => Model.TurnoutStateEnum.Unknown,
+                _                                                           => Model.TurnoutStateEnum.Unknown
             };
         }
     }
-    
+
     /// <summary>
     /// This is called whenever we change a Route (add or update). Use this to then change the
     /// Panel Routes List. Update the list so that we do not override any existing items

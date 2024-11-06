@@ -7,11 +7,10 @@
 
     <ContentView.Resources>
         <ResourceDictionary>
-            <converters:PanelToCardHeightConverter x:Key="PanelToCardHeightConverter" />
         </ResourceDictionary>
     </ContentView.Resources>
 
-    
+
     <Grid x:Name="MainGrid" HorizontalOptions="Fill" VerticalOptions="Fill">
         <AbsoluteLayout
             x:Name="ControlPanelLayout"
@@ -23,7 +22,7 @@
                   AbsoluteLayout.LayoutFlags="PositionProportional">
 
                 <Grid.GestureRecognizers>
-                    <DropGestureRecognizer Drop="DropGestureRecognizer_OnDrop"></DropGestureRecognizer>
+                    <DropGestureRecognizer Drop="DropGestureRecognizer_OnDrop" />
                 </Grid.GestureRecognizers>
 
             </Grid>

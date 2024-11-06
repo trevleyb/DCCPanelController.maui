@@ -1,11 +1,10 @@
 namespace DCCPanelController.Tracks.Base;
 
 public class TrackImages {
-
-    private TrackImage? _symbolImage; 
+    private TrackImage? _symbolImage;
     public Dictionary<(CompassPoints points, string state), TrackImage> ImageRotations { get; } = new();
-    public TrackImage SymbolImage => _symbolImage ?? new TrackImage("Track_Unknown", 0); 
-    
+    public TrackImage SymbolImage => _symbolImage ?? new TrackImage("Track_Unknown", 0);
+
     /// <summary>
     /// Return the number of defined points. Sometimes we rotate only 4 points of the compass and sometimes 8,
     /// and it is dependent on the number of defined points. 
@@ -26,7 +25,7 @@ public class TrackImages {
     public void SetTrackSymbol(string imageSource, int rotation = 0) {
         _symbolImage = new TrackImage(imageSource, rotation);
     }
-    
+
     public void Add(int trackRotation, string trackState, string imageSource, int rotation) {
         try {
             var svgImage = new TrackImage(imageSource, rotation);
@@ -36,9 +35,18 @@ public class TrackImages {
         }
     }
 
-    public TrackImage Get(int trackRotation, TrackState trackState) => Get(Compass.ConvertFromDegress(trackRotation), trackState.State);
-    public TrackImage Get(CompassPoints compassPoint, TrackState trackState) => Get(compassPoint, trackState.State); 
-    public TrackImage Get(int trackRotation, string trackState) => Get(Compass.ConvertFromDegress(trackRotation), trackState);
+    public TrackImage Get(int trackRotation, TrackState trackState) {
+        return Get(Compass.ConvertFromDegress(trackRotation), trackState.State);
+    }
+
+    public TrackImage Get(CompassPoints compassPoint, TrackState trackState) {
+        return Get(compassPoint, trackState.State);
+    }
+
+    public TrackImage Get(int trackRotation, string trackState) {
+        return Get(Compass.ConvertFromDegress(trackRotation), trackState);
+    }
+
     public TrackImage Get(CompassPoints compassPoint, string trackState) {
         var attempts = 0;
         while (attempts < 8) {
@@ -46,7 +54,7 @@ public class TrackImages {
             compassPoint.Next(1);
             attempts++;
         }
+
         throw new Exception("Could not find track image");
     }
 }
-

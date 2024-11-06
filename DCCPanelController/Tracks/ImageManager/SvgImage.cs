@@ -9,7 +9,6 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 [DebuggerDisplay("{Id} [{Rotation}]")]
 public partial class SvgImage : ObservableObject {
-
     [ObservableProperty] private string _id;
     [ObservableProperty] private int _rotation;
     [ObservableProperty] private bool _isOccupied;
@@ -17,7 +16,10 @@ public partial class SvgImage : ObservableObject {
     [ObservableProperty] private SvgCompass _connections;
 
     public ImageSource? Image => ImageManager.Image;
-    public void ForceImageRefresh() => ImageManager.ForceImageRefresh();
+
+    public void ForceImageRefresh() {
+        ImageManager.ForceImageRefresh();
+    }
 
     public SvgImage(string id, string imageName, int rotation, SvgCompass connections) {
         Id = id;
@@ -31,10 +33,11 @@ public partial class SvgImage : ObservableObject {
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is nameof(IsOccupied)) {
             ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
-        } 
+        }
     }
 
     public bool SupportsLabel => ImageManager.IsSupported(SvgElementEnum.Text);
+
     public void SetLabel(string label) {
         if (string.IsNullOrEmpty(label)) return;
         if (SupportsLabel) ImageManager.SetAllAttributeValues(SvgElementEnum.Text, "text", label);
@@ -44,8 +47,10 @@ public partial class SvgImage : ObservableObject {
         IsOccupied = isOccupied;
         ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
     }
-    
-    public void ApplyStyle(string style) => ApplyStyle(SvgStyles.GetStyle(style));
+
+    public void ApplyStyle(string style) {
+        ApplyStyle(SvgStyles.GetStyle(style));
+    }
 
     public void ApplyStyle(SvgStyle style) {
         foreach (var element in style.Elements) {
@@ -62,15 +67,18 @@ public partial class SvgImage : ObservableObject {
     // <text>       - fill, fill-opacity
     // <line>       - stroke, stroke-opacity, dash-array
     // <circle>     - Border= stroke, stroke-opacity, Button=fill, fill-opacity 
-    
+
     // Supported Attributes for Styles
     // ---------------------------------------------------------------------------
     // Color        - sets the color of the element
     // Opacity      - sets the opacity of the element
     // Dashed       - sets if the line is dashed or not dashed (valid on a line only)
     // Visible      - sets if the element should be visible or not 
-    
-    public void ApplyElementStyle(SvgElementEnum elementEnum, string attributeName, string value) => ApplyElementStyle(SvgElement.ToString(elementEnum), attributeName, value);
+
+    public void ApplyElementStyle(SvgElementEnum elementEnum, string attributeName, string value) {
+        ApplyElementStyle(SvgElement.ToString(elementEnum), attributeName, value);
+    }
+
     public void ApplyElementStyle(string elementName, string attributeName, string attributeValue) {
         // Get back all the elements that have an ID = the element name provided (such as "border")
         // -----------------------------------------------------------------------------------------
@@ -83,13 +91,13 @@ public partial class SvgImage : ObservableObject {
                 "circle" => elementName.ToLowerInvariant() switch {
                     "border" => SetStrokeType(element, attributeName, attributeValue),
                     "button" => SetFillType(element, attributeName, attributeValue),
-                    _        => SetFillType(element, attributeName, attributeValue),
+                    _        => SetFillType(element, attributeName, attributeValue)
                 },
-                _ => SetFillType(element, attributeName, attributeValue),
+                _ => SetFillType(element, attributeName, attributeValue)
             };
         }
     }
-    
+
     private bool SetFillType(XElement element, string attributeName, string attributeValue) {
         switch (attributeName.ToLowerInvariant()) {
         case "color":
@@ -104,6 +112,7 @@ public partial class SvgImage : ObservableObject {
         default:
             return false;
         }
+
         return true;
     }
 
@@ -124,6 +133,7 @@ public partial class SvgImage : ObservableObject {
         default:
             return false;
         }
+
         return true;
     }
 }

@@ -3,7 +3,8 @@ using DCCPanelController.Tracks.ImageManager;
 
 namespace DCCPanelController.Tracks.StyleManager;
 
-[Serializable, DebuggerDisplay("{Name}")]
+[Serializable]
+[DebuggerDisplay("{Name}")]
 public class SvgStyle {
     public string Name { get; internal set; }
     public Dictionary<string, SvgStyleElement> Elements { get; private set; } = [];
@@ -12,7 +13,9 @@ public class SvgStyle {
         Name = name;
     }
 
-    public static SvgStyleBuilder Builder(string name) => new SvgStyleBuilder(name);
+    public static SvgStyleBuilder Builder(string name) {
+        return new SvgStyleBuilder(name);
+    }
 
     public void AddElement(SvgStyleElement element) {
         if (Elements.ContainsKey(element.Name)) {
@@ -35,16 +38,19 @@ public class SvgStyle {
     }
 }
 
-[Serializable, DebuggerDisplay("{Name}")]
+[Serializable]
+[DebuggerDisplay("{Name}")]
 public class SvgStyleElement {
     public string Name { get; internal set; }
-    public Dictionary<string, string> Attributes { get; private set; } = new Dictionary<string, string>();
+    public Dictionary<string, string> Attributes { get; private set; } = new();
 
     internal SvgStyleElement(string name) {
         Name = name;
     }
 
-    public static SvgElementBuilder Builder(string name) => new SvgElementBuilder(name);
+    public static SvgElementBuilder Builder(string name) {
+        return new SvgElementBuilder(name);
+    }
 
     public void AddOrUpdateAttribute(string key, string value) {
         Attributes[key] = value;
@@ -76,7 +82,9 @@ public class SvgStyleBuilder(string name) {
         return this;
     }
 
-    public SvgStyle Build() => _style;
+    public SvgStyle Build() {
+        return _style;
+    }
 }
 
 public class SvgElementBuilder(string name) {
@@ -97,18 +105,24 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
-    public SvgElementBuilder WithOpacity(int opacity) => WithOpacity(opacity.ToString());
+    public SvgElementBuilder WithOpacity(int opacity) {
+        return WithOpacity(opacity.ToString());
+    }
+
     public SvgElementBuilder WithOpacity(string opacity) {
         _element.AddOrUpdateAttribute("Opacity", opacity);
         return this;
     }
-    
-    public SvgElementBuilder WithColor(Color color) => WithColor(color.ToArgbHex());
+
+    public SvgElementBuilder WithColor(Color color) {
+        return WithColor(color.ToArgbHex());
+    }
+
     public SvgElementBuilder WithColor(string color) {
         _element.AddOrUpdateAttribute("Color", color);
         return this;
     }
-    
+
     public SvgElementBuilder Dashed(bool isDashed = true) {
         _element.AddOrUpdateAttribute("Dashed", isDashed.ToString());
         return this;
@@ -124,11 +138,16 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
-    public SvgElementBuilder Hidden() => Visible(false); 
+    public SvgElementBuilder Hidden() {
+        return Visible(false);
+    }
+
     public SvgElementBuilder Visible(bool isVisible = true) {
         _element.AddOrUpdateAttribute("Visible", isVisible.ToString());
         return this;
     }
 
-    public SvgStyleElement Build() => _element;
+    public SvgStyleElement Build() {
+        return _element;
+    }
 }

@@ -17,9 +17,9 @@ public class TrackCompass : TrackPiece, ITrackSymbol {
     }
 
     protected override void AddTrackStyles() {
-        AddTrackStyle("Normal","Mainline");
+        AddTrackStyle("Normal", "Mainline");
     }
-    
+
     public void SetCompassPoints(ITrackPiece track) {
         SetCompassColor("CompassN", track.Connections[0]);
         SetCompassColor("CompassNE", track.Connections[1]);
@@ -34,7 +34,7 @@ public class TrackCompass : TrackPiece, ITrackSymbol {
     private void SetCompassColor(string compassId, TrackConnectionsEnum connection) {
         if (ActiveImage == null) return;
         var svgImage = ActiveImage.Value.ImageSource;
-        
+
         switch (connection) {
         case TrackConnectionsEnum.Terminator:
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Yellow.ToRgbaHex());

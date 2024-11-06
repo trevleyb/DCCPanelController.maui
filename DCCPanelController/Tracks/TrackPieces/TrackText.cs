@@ -17,7 +17,6 @@ public class TrackText : TrackPiece, ITrackSymbol {
     }
 
     protected override void AddTrackStyles() {
-        AddTrackStyle("Normal","Mainline");
+        AddTrackStyle("Normal", "Mainline");
     }
-
 }

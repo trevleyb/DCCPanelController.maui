@@ -4,7 +4,6 @@ using DCCPanelController.Model;
 namespace DCCPanelController.Services;
 
 public class TurnoutsService {
-    
     public ObservableCollection<Turnout> Turnouts = [];
 
     public TurnoutsService(SettingsService settingsService) {
@@ -28,13 +27,14 @@ public class TurnoutsService {
             Console.WriteLine("Failed to delete turnout: " + ex.Message);
         }
     }
-    
+
     public async Task<Turnout?> GetTurnoutByIdAsync(string id) {
         try {
             return await Task.Run(() => Turnouts.FirstOrDefault(t => t.Id != null && t.Id.Equals(id, StringComparison.OrdinalIgnoreCase)));
         } catch (Exception ex) {
             Console.WriteLine("Failed to find turnout: " + ex.Message);
         }
+
         return null;
     }
 }

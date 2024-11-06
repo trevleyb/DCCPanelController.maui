@@ -5,36 +5,36 @@
              xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
              x:DataType="viewModel:PropertyViewModel"
              BackgroundColor="Transparent">
-    
-    <ContentPage.Content>
-            <Grid HorizontalOptions="Center" VerticalOptions="Center">
-                
-                <Frame BackgroundColor="White"
-                       BorderColor="{StaticResource Primary}"
-                       Padding="20"
-                       CornerRadius="10"
-                       HasShadow="True"
-                       HorizontalOptions="Center"
-                       VerticalOptions="Center"
-                       WidthRequest="500">
-                
-                    <StackLayout>
-                        <Label Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" />
-                        <BoxView
-                            Margin="5"
-                            BackgroundColor="{StaticResource Primary}"
-                            WidthRequest="2"
-                            HorizontalOptions="FillAndExpand" />
 
-                        <Grid x:Name="PropertyContainer" Padding="20"/>
-                        <Button Text="Close"
-                                Style="{StaticResource ButtonOutline}"
-                                VerticalOptions="End"
-                                HorizontalOptions="Center"
-                                WidthRequest="150"
-                                Clicked="ClosePropertyPage" />
-                    </StackLayout>
-                </Frame>
-            </Grid>
+    <ContentPage.Content>
+        <Grid HorizontalOptions="Center" VerticalOptions="Center">
+
+            <Frame BackgroundColor="White"
+                   BorderColor="{StaticResource Primary}"
+                   Padding="20"
+                   CornerRadius="10"
+                   HasShadow="True"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   WidthRequest="500">
+
+                <StackLayout>
+                    <Label Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" />
+                    <BoxView
+                        Margin="5"
+                        BackgroundColor="{StaticResource Primary}"
+                        WidthRequest="2"
+                        HorizontalOptions="FillAndExpand" />
+
+                    <Grid x:Name="PropertyContainer" Padding="20" />
+                    <Button Text="Close"
+                            Style="{StaticResource ButtonOutline}"
+                            VerticalOptions="End"
+                            HorizontalOptions="Center"
+                            WidthRequest="150"
+                            Clicked="ClosePropertyPage" />
+                </StackLayout>
+            </Frame>
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

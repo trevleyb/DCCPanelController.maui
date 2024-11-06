@@ -4,7 +4,6 @@ using DCCPanelController.Model;
 namespace DCCPanelController.Services;
 
 public class RoutesService {
-     
     // Think about where we manage changes to the state?
     public event EventHandler? RouteStateDataChanged;
 
@@ -31,13 +30,14 @@ public class RoutesService {
             Console.WriteLine("Failed to delete turnout: " + ex.Message);
         }
     }
-    
+
     public async Task<Route?> GetRouteByIdAsync(string id) {
         try {
             return Routes.FirstOrDefault(t => t.Id != null && t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
         } catch (Exception ex) {
             Console.WriteLine("Failed to find route: " + ex.Message);
         }
+
         return null;
     }
 

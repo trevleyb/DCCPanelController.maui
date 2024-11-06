@@ -1,1 +1,10 @@
-<svg id="Zoom-In--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24" width="24"><desc>Zoom In Streamline Icon: https://streamlinehq.com</desc><defs></defs><path d="m12.9375 8.625 -2.875 0 0 -2.875 -1.4375 0 0 2.875 -2.875 0 0 1.4375 2.875 0 0 2.875 1.4375 0 0 -2.875 2.875 0 0 -1.4375z" stroke-width="1"></path><path d="M15.415678125000001 14.375A7.80275 7.80275 0 0 0 17.25 9.34375a7.90625 7.90625 0 1 0 -7.90625 7.90625 7.80275 7.80275 0 0 0 5.03125 -1.8343218749999999L19.827365625 20.84375 20.84375 19.827365625ZM9.34375 15.8125a6.46875 6.46875 0 1 1 6.46875 -6.46875 6.4759375 6.4759375 0 0 1 -6.46875 6.46875Z" stroke-width="1"></path><path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path></svg>
+<svg id="Zoom-In--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24"
+     width="24">
+    <desc>Zoom In Streamline Icon: https://streamlinehq.com</desc>
+    <defs></defs>
+    <path d="m12.9375 8.625 -2.875 0 0 -2.875 -1.4375 0 0 2.875 -2.875 0 0 1.4375 2.875 0 0 2.875 1.4375 0 0 -2.875 2.875 0 0 -1.4375z"
+          stroke-width="1"></path>
+    <path d="M15.415678125000001 14.375A7.80275 7.80275 0 0 0 17.25 9.34375a7.90625 7.90625 0 1 0 -7.90625 7.90625 7.80275 7.80275 0 0 0 5.03125 -1.8343218749999999L19.827365625 20.84375 20.84375 19.827365625ZM9.34375 15.8125a6.46875 6.46875 0 1 1 6.46875 -6.46875 6.4759375 6.4759375 0 0 1 -6.46875 6.46875Z"
+          stroke-width="1"></path>
+    <path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path>
+</svg>

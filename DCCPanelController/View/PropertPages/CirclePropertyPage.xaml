@@ -5,5 +5,5 @@
              xmlns:elements="clr-namespace:DCCPanelController.Model.Elements"
              x:DataType="elements:CircleTextPanelElement"
              x:Class="DCCPanelController.View.PropertPages.CirclePropertyPage">
-    
+
 </ContentView>

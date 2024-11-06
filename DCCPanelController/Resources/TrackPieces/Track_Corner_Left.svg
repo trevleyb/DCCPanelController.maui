@@ -1,18 +1,34 @@
-
-<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Corner_Left">
-            <polygon id="Track" fill="#BDBDBD" transform="translate(16.5, 23.9999) rotate(180) translate(-16.5, -23.9999)" points="26 19.999878 26 27.9998761 7 27.9997769 7.99999901 19.999878"></polygon>
-            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 14) rotate(180) translate(-35.5, -14)" points="23.0000019 28.0000001 23 22.9999829 45.999999 -6.2942505e-05 48 7.99994538 28.0000025 28.0000001"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(15, 19) rotate(180) translate(-15, -19)" points="6.9999027 17.999924 22.9998947 18.0001224 22.9999997 20.0001224 6.9999027 20.0001224"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(16.5, 28.9999) rotate(180) translate(-16.5, -28.9999)" points="7 27.9999 26 27.9999992 26 29.9999992 7 29.9999"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(36.5, 17.5) scale(-1, 1) rotate(90) translate(-36.5, -17.5)" points="24.000011 29.0000116 47.0000145 5.9999886 49.000011 6.99998859 27.0000125 29.0000116"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)" points="22.000303 19.9999084 42.0003227 -8.9645386e-05 43.000122 2.00871075 25.0003008 19.9999084 23.9478128 19.9999084"></polygon>
+            <polygon id="Track" fill="#BDBDBD"
+                     transform="translate(16.5, 23.9999) rotate(180) translate(-16.5, -23.9999)"
+                     points="26 19.999878 26 27.9998761 7 27.9997769 7.99999901 19.999878"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 14) rotate(180) translate(-35.5, -14)"
+                     points="23.0000019 28.0000001 23 22.9999829 45.999999 -6.2942505e-05 48 7.99994538 28.0000025 28.0000001"></polygon>
+            <polygon id="Border" fill="#000000" transform="translate(15, 19) rotate(180) translate(-15, -19)"
+                     points="6.9999027 17.999924 22.9998947 18.0001224 22.9999997 20.0001224 6.9999027 20.0001224"></polygon>
+            <polygon id="Border" fill="#000000"
+                     transform="translate(16.5, 28.9999) rotate(180) translate(-16.5, -28.9999)"
+                     points="7 27.9999 26 27.9999992 26 29.9999992 7 29.9999"></polygon>
+            <polygon id="Border" fill="#000000"
+                     transform="translate(36.5, 17.5) scale(-1, 1) rotate(90) translate(-36.5, -17.5)"
+                     points="24.000011 29.0000116 47.0000145 5.9999886 49.000011 6.99998859 27.0000125 29.0000116"></polygon>
+            <polygon id="Border" fill="#000000"
+                     transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)"
+                     points="22.000303 19.9999084 42.0003227 -8.9645386e-05 43.000122 2.00871075 25.0003008 19.9999084 23.9478128 19.9999084"></polygon>
             <polygon id="Occupied" fill="#FF0000" points="22 16 22 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(29.5083, 8.9999) rotate(-45) translate(-29.5083, -8.9999)" points="41.2711627 8.03493515 43.2909749 10.054747 17.8351832 10.0546933 15.725602 7.945112"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(37.566, 20) scale(-1, 1) rotate(45) translate(-37.566, -20)" points="52.8154866 18.892612 53.429234 21.1073628 23.9007935 21.0906174 21.7028251 18.8926488"></polygon>
-            <line x1="11" y1="24" x2="23.9999997" y2="24" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <line x1="43.9999997" y1="4.00000001" x2="26" y2="22" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <polygon id="Occupied" fill="#FF0000"
+                     transform="translate(29.5083, 8.9999) rotate(-45) translate(-29.5083, -8.9999)"
+                     points="41.2711627 8.03493515 43.2909749 10.054747 17.8351832 10.0546933 15.725602 7.945112"></polygon>
+            <polygon id="Occupied" fill="#FF0000"
+                     transform="translate(37.566, 20) scale(-1, 1) rotate(45) translate(-37.566, -20)"
+                     points="52.8154866 18.892612 53.429234 21.1073628 23.9007935 21.0906174 21.7028251 18.8926488"></polygon>
+            <line x1="11" y1="24" x2="23.9999997" y2="24" id="Dashline" stroke="#686868" stroke-width="4"
+                  stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <line x1="43.9999997" y1="4.00000001" x2="26" y2="22" id="Dashline" stroke="#686868" stroke-width="4"
+                  stroke-linecap="square" stroke-dasharray="2,6"></line>
             <polygon id="Occupied" fill="#FF0000" points="26.0000002 30 27.13208 32 7 32 7 30"></polygon>
         </g>
     </g>

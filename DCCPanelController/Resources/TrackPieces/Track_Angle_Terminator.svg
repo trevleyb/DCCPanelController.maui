@@ -1,14 +1,26 @@
-
-<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
     <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Track_Angle_Terminator">
-            <polygon id="Track" fill="#BDBDBD" transform="translate(12, 36) rotate(180) translate(-12, -36)" points="0 43.0000008 0 43.0000008 19.0000234 24 24 24 24 29.0000006 4.99762032 48"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(9.4865, 33.5057) rotate(180) translate(-9.4865, -33.5057)" points="18.9730855 24.011368 18.9730855 27.0113725 2.98450626 43 7.6293945e-06 42.9844512"></polygon>
-            <polygon id="Border" fill="#000000" transform="translate(14.5067, 38.4963) scale(-1, 1) rotate(90) translate(-14.5067, -38.4963)" points="5.0029774 48.0029728 5.00965909 47.9962883 24.0103554 28.989668 24.0103554 31.9896786 7.9374324 48.003"></polygon>
-            <polygon id="Terminator" fill="#000000" transform="translate(22.3137, 25.6569) rotate(-45) translate(-22.3137, -25.6569)" points="26.31371 13.656855 26.31371 37.656855 18.31371 37.656855 18.31371 13.656855"></polygon>
-            <line x1="4.00000002" y1="44.0000002" x2="18.9999996" y2="29" id="Dashline" stroke="#686868" stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(6.8801, 31.8217) rotate(-45) translate(-6.8801, -31.8217)" points="18.3165795 30.821735 18.3801184 32.821735 -4.61594994 32.7641569 -4.6198816 30.821735"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(16.4673, 40.8356) rotate(-45) translate(-16.4673, -40.8356)" points="27.520501 39.747086 27.4458452 41.924147 7.30587882 41.8062652 5.41398846 39.9143748"></polygon>
+            <polygon id="Track" fill="#BDBDBD" transform="translate(12, 36) rotate(180) translate(-12, -36)"
+                     points="0 43.0000008 0 43.0000008 19.0000234 24 24 24 24 29.0000006 4.99762032 48"></polygon>
+            <polygon id="Border" fill="#000000"
+                     transform="translate(9.4865, 33.5057) rotate(180) translate(-9.4865, -33.5057)"
+                     points="18.9730855 24.011368 18.9730855 27.0113725 2.98450626 43 7.6293945e-06 42.9844512"></polygon>
+            <polygon id="Border" fill="#000000"
+                     transform="translate(14.5067, 38.4963) scale(-1, 1) rotate(90) translate(-14.5067, -38.4963)"
+                     points="5.0029774 48.0029728 5.00965909 47.9962883 24.0103554 28.989668 24.0103554 31.9896786 7.9374324 48.003"></polygon>
+            <polygon id="Terminator" fill="#000000"
+                     transform="translate(22.3137, 25.6569) rotate(-45) translate(-22.3137, -25.6569)"
+                     points="26.31371 13.656855 26.31371 37.656855 18.31371 37.656855 18.31371 13.656855"></polygon>
+            <line x1="4.00000002" y1="44.0000002" x2="18.9999996" y2="29" id="Dashline" stroke="#686868"
+                  stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
+            <polygon id="Occupied" fill="#FF0000"
+                     transform="translate(6.8801, 31.8217) rotate(-45) translate(-6.8801, -31.8217)"
+                     points="18.3165795 30.821735 18.3801184 32.821735 -4.61594994 32.7641569 -4.6198816 30.821735"></polygon>
+            <polygon id="Occupied" fill="#FF0000"
+                     transform="translate(16.4673, 40.8356) rotate(-45) translate(-16.4673, -40.8356)"
+                     points="27.520501 39.747086 27.4458452 41.924147 7.30587882 41.8062652 5.41398846 39.9143748"></polygon>
         </g>
     </g>
 </svg>

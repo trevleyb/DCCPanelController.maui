@@ -2,7 +2,7 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgCompass {
     public const int CompassPoints = 8;
-    
+
     /// <summary>
     /// Track what connections this particular component supports based on a Rotation of '0'
     /// </summary>
@@ -36,18 +36,18 @@ public class SvgCompass {
             TrackConnectionsEnum.None
         ];
     }
-    
-    private TrackConnectionsEnum[] ConnectionsArray { get; } = new TrackConnectionsEnum[8];
-    public TrackConnectionsEnum[]  ConnectionPointsRotated(int rotation = 0) {
 
+    private TrackConnectionsEnum[] ConnectionsArray { get; } = new TrackConnectionsEnum[8];
+
+    public TrackConnectionsEnum[] ConnectionPointsRotated(int rotation = 0) {
         // Fix the rotation. If it is < 0 then inverse it (-90 = +270) and then work out what index 
         // the position would be. So a rotation of -90 is +270 which would be position 6. 
         // N(0)=0, NE(45)=1, E(90)=2, SE(135)=3, S(180)=4, SW(225)=5, W(270)=6, NW(315)=7, N(360)=0
         // ----------------------------------------------------------------------------------------
-        if (rotation < 0) rotation = 360 + rotation; 
+        if (rotation < 0) rotation = 360 + rotation;
         var rotationIndex = (int)(rotation / (360 / CompassPoints));
         if (rotationIndex >= CompassPoints) rotationIndex = 0;
-        
+
         // Recalculate by rotating the Compass in he correct direction, and return the connection points 
         // for this image.
         // ----------------------------------------------------------------------------------------------
@@ -56,6 +56,7 @@ public class SvgCompass {
             var newIndex = (i + rotationIndex) % CompassPoints;
             result[newIndex] = ConnectionsArray[i];
         }
+
         return result;
     }
 
@@ -66,10 +67,10 @@ public class SvgCompass {
 }
 
 public enum TrackConnectionsEnum {
-    None        = 'N',
-    Terminator  = 'T', 
-    Straight    = 'S',
-    Closed      = 'X',
-    Diverging   = 'D',
-    Connector   = 'C'
+    None = 'N',
+    Terminator = 'T',
+    Straight = 'S',
+    Closed = 'X',
+    Diverging = 'D',
+    Connector = 'C'
 }

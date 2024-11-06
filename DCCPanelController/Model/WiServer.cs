@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace DCCPanelController.Model;
 
 public partial class WiServer(string? name = null, string? ipAddress = null, int? port = 12090) : ObservableObject {
-    
     [ObservableProperty] private string _name = name ?? "WiThrottle";
     [ObservableProperty] private string _ipAddress = ipAddress ?? DCCWithrottleClient.ServiceHelper.ServiceHelper.GetLocalIPAddress();
     [ObservableProperty] private int _port = port ?? 12090;
@@ -13,4 +12,4 @@ public partial class WiServer(string? name = null, string? ipAddress = null, int
 }
 
 [JsonSerializable(typeof(WiServer))]
-internal sealed partial class WiServerStateContext : JsonSerializerContext{ }
+internal sealed partial class WiServerStateContext : JsonSerializerContext { }

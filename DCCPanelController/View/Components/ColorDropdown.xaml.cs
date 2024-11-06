@@ -4,52 +4,52 @@ using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController;
 using DCCPanelController.Helpers;
 
-namespace ColorPickerControl {
-    public partial class ColorDropdown : ContentView {
+namespace ColorPickerControl;
 
-        private const string DefaultPlaceholderText = "Click here to select a color";
-        public ICommand ShowDropdownCommand { get; set; }
+public partial class ColorDropdown : ContentView {
+    private const string DefaultPlaceholderText = "Click here to select a color";
+    public ICommand ShowDropdownCommand { get; set; }
 
-        public ColorDropdown() {
-            InitializeComponent();
-            ShowDropdownCommand = new Command(ShowDropdown);
-            BindingContext = this;
-        }
-        
-        // Asynchronously show the popup and update the selected color
-        private async void ShowDropdown() {
-            var popup = new ColorPopup();
-            if (App.Current?.MainPage != null) {
-                var result = await  Application.Current?.MainPage?.ShowPopupAsync(popup);
-                if (result is ColorOption selectedColor) {
-                    SelectedColor = selectedColor.Color;
-                }
+    public ColorDropdown() {
+        InitializeComponent();
+        ShowDropdownCommand = new Command(ShowDropdown);
+        BindingContext = this;
+    }
+
+    // Asynchronously show the popup and update the selected color
+    private async void ShowDropdown() {
+        var popup = new ColorPopup();
+        if (App.Current?.MainPage != null) {
+            var result = await Application.Current?.MainPage?.ShowPopupAsync(popup);
+            if (result is ColorOption selectedColor) {
+                SelectedColor = selectedColor.Color;
             }
         }
+    }
 
-        // Property for the currently selected color
-        public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White);
-        public Color SelectedColor {
-            get => (Color)GetValue(SelectedColorProperty);
-            set {
-                SetValue(SelectedColorProperty, value);
-                OnPropertyChanged(nameof(SelectedColorProperty));   // Update DisplayText when the color changes
-                OnPropertyChanged(nameof(DisplayText));             // Update DisplayText when the color changes
-                OnPropertyChanged(nameof(ContrastColor));           // Update DisplayText when the color changes
-            }
+    // Property for the currently selected color
+    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White);
+
+    public Color SelectedColor {
+        get => (Color)GetValue(SelectedColorProperty);
+        set {
+            SetValue(SelectedColorProperty, value);
+            OnPropertyChanged(nameof(SelectedColorProperty)); // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(DisplayText));           // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(ContrastColor));         // Update DisplayText when the color changes
         }
+    }
 
-        public string DisplayText => SelectedColor?.ColorName() ??  DefaultPlaceholderText;
-        public Color ContrastColor => SelectedColor.ToInverseColor();
+    public string DisplayText => SelectedColor?.ColorName() ?? DefaultPlaceholderText;
+    public Color ContrastColor => SelectedColor.ToInverseColor();
 
-        public static bool IsColorDark(Color color) {
-            // Using relative luminance to determine if the color is dark or light
-            double brightness = ((color.Red * 255 * 299) + (color.Green * 255 * 587) + (color.Blue * 255 * 114)) / 1000;
-            return brightness < 128;
-        }
+    public static bool IsColorDark(Color color) {
+        // Using relative luminance to determine if the color is dark or light
+        double brightness = (color.Red * 255 * 299 + color.Green * 255 * 587 + color.Blue * 255 * 114) / 1000;
+        return brightness < 128;
+    }
 
-        public static Color GetContrastingColor(Color color) {
-            return IsColorDark(color) ? Colors.White : Colors.Black;
-        }
+    public static Color GetContrastingColor(Color color) {
+        return IsColorDark(color) ? Colors.White : Colors.Black;
     }
 }

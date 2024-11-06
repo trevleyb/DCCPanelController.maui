@@ -1,1 +1,13 @@
-<svg id="Help--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24" width="24"><desc>Help Streamline Icon: https://streamlinehq.com</desc><defs></defs><title>help</title><path d="M11.5 1.4375a10.0625 10.0625 0 1 0 10.0625 10.0625A10.0625 10.0625 0 0 0 11.5 1.4375Zm0 18.6875a8.625 8.625 0 1 1 8.625 -8.625 8.625 8.625 0 0 1 -8.625 8.625Z" stroke-width="1"></path><path d="M10.421875 16.890625a1.078125 1.078125 0 1 0 2.15625 0 1.078125 1.078125 0 1 0 -2.15625 0" stroke-width="1"></path><path d="M12.21875 5.75h-1.078125a3.2271875000000003 3.2271875000000003 0 0 0 -3.234375 3.234375v0.359375h1.4375v-0.359375a1.796875 1.796875 0 0 1 1.796875 -1.796875H12.21875a1.796875 1.796875 0 0 1 0 3.59375h-1.4375v3.234375h1.4375V12.21875a3.234375 3.234375 0 0 0 0 -6.46875Z" stroke-width="1"></path><path d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path></svg>
+<svg id="Help--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24"
+     width="24">
+    <desc>Help Streamline Icon: https://streamlinehq.com</desc>
+    <defs></defs>
+    <title>help</title>
+    <path d="M11.5 1.4375a10.0625 10.0625 0 1 0 10.0625 10.0625A10.0625 10.0625 0 0 0 11.5 1.4375Zm0 18.6875a8.625 8.625 0 1 1 8.625 -8.625 8.625 8.625 0 0 1 -8.625 8.625Z"
+          stroke-width="1"></path>
+    <path d="M10.421875 16.890625a1.078125 1.078125 0 1 0 2.15625 0 1.078125 1.078125 0 1 0 -2.15625 0"
+          stroke-width="1"></path>
+    <path d="M12.21875 5.75h-1.078125a3.2271875000000003 3.2271875000000003 0 0 0 -3.234375 3.234375v0.359375h1.4375v-0.359375a1.796875 1.796875 0 0 1 1.796875 -1.796875H12.21875a1.796875 1.796875 0 0 1 0 3.59375h-1.4375v3.234375h1.4375V12.21875a3.234375 3.234375 0 0 0 0 -6.46875Z"
+          stroke-width="1"></path>
+    <path d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path>
+</svg>

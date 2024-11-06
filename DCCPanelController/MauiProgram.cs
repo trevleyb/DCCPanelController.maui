@@ -13,24 +13,21 @@ public static class MauiProgram {
         builder.UseMauiApp<App>().ConfigureFonts(fonts => {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-        })
-            .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMarkup()
-            .UseMauiCommunityToolkitMediaElement();
+        }).UseMauiCommunityToolkit().UseMauiCommunityToolkitMarkup().UseMauiCommunityToolkitMediaElement();
 
         var services = builder.Services;
-        
+
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<SettingsService>();
         services.AddSingleton<ConnectionService>();
         services.AddSingleton<RoutesService>();
         services.AddSingleton<TurnoutsService>();
-        
+
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageFlyOut>();
-        
+
         // Add dependant views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<SettingsPage, SettingsViewModel>();
@@ -38,14 +35,13 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
         services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
-        
+
         services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
-        
+
         // services.AddTransient<PanelEditorPage>();
         // services.AddTransient<PanelEditorViewModel>();
 
-        
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
@@ -53,7 +49,7 @@ public static class MauiProgram {
         ServiceHelper.Initialize(app.Services);
         return app;
     }
-    
+
     /// <summary>
     /// Registers a transient view with its associated view model in the service collection.
     /// </summary>
@@ -86,12 +82,16 @@ public static class MauiProgram {
         Routing.RegisterRoute(routeName, typeof(TView));
         Console.WriteLine($"Registered Route: '{routeName}' to '{typeof(TView).Name}'");
     }
-    
+
     public static class ServiceHelper {
         public static IServiceProvider ServiceProvider { get; private set; }
+
         public static void Initialize(IServiceProvider serviceProvider) {
             ServiceProvider = serviceProvider;
         }
-        public static T GetService<T>() => ServiceProvider.GetRequiredService<T>();
+
+        public static T GetService<T>() {
+            return ServiceProvider.GetRequiredService<T>();
+        }
     }
 }

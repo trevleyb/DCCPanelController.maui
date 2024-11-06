@@ -7,29 +7,31 @@ using Environment = System.Environment;
 namespace DCCPanelController.Services;
 
 public class SettingsService {
-
     private const string StorageFileame = "DCCPanelController.json";
     private readonly Storage _storage;
-    
+
     public SettingsService() {
         _storage = Load(StorageFileame);
         _storage.ReOrderPanels();
     }
-    
+
     public Settings Settings => _storage.Settings;
     public ObservableCollection<Panel> Panels => _storage.Panels;
     public ObservableCollection<Turnout> Turnouts => _storage.Turnouts;
     public ObservableCollection<Route> Routes => _storage.Routes;
 
     public string ToJsonString() {
-        return JsonSerializer.Serialize(_storage,options);
+        return JsonSerializer.Serialize(_storage, options);
     }
 
     public Settings? FromJsonString(string jsonString) {
-        return JsonSerializer.Deserialize<Settings>(jsonString,options);
+        return JsonSerializer.Deserialize<Settings>(jsonString, options);
     }
-    
-    public void Save() => Save(StorageFileame);
+
+    public void Save() {
+        Save(StorageFileame);
+    }
+
     public void Save(string fileName) {
         var jsonString = JsonSerializer.Serialize(_storage, options);
         try {
@@ -39,28 +41,35 @@ public class SettingsService {
         }
     }
 
-    public Storage Load() => Load(StorageFileame);
+    public Storage Load() {
+        return Load(StorageFileame);
+    }
+
     public Storage Load(string fileName) {
         var filePath = GetStorageFilePath(fileName);
         try {
             if (File.Exists(filePath)) {
                 try {
                     var jsonString = File.ReadAllText(filePath);
-                    var result = JsonSerializer.Deserialize<Storage>(jsonString,options);
+                    var result = JsonSerializer.Deserialize<Storage>(jsonString, options);
                     return result ?? new Storage();
                 } catch (Exception ex) {
                     Console.WriteLine("Could not deserialize settings. New set created: " + ex.Message);
                     return new Storage();
                 }
-            } 
+            }
+
             return new Storage();
         } catch (Exception ex) {
             Console.WriteLine("Could not access settings. New set created: " + ex.Message);
             return new Storage();
-        } 
+        }
     }
 
-    public void Delete() => Delete(StorageFileame);
+    public void Delete() {
+        Delete(StorageFileame);
+    }
+
     public void Delete(string fileName) {
         var filePath = GetStorageFilePath(fileName);
         if (File.Exists(filePath)) {
@@ -68,9 +77,9 @@ public class SettingsService {
         }
     }
 
-    private readonly JsonSerializerOptions? options = new JsonSerializerOptions {
+    private readonly JsonSerializerOptions? options = new() {
         Converters = { new PanelElementConverter() },
-        WriteIndented = true 
+        WriteIndented = true
     };
 
     private static string GetStorageFilePath(string filename) {
@@ -79,4 +88,3 @@ public class SettingsService {
         return storageFile;
     }
 }
-

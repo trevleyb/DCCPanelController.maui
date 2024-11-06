@@ -5,5 +5,5 @@
              xmlns:elements="clr-namespace:DCCPanelController.Model.Elements"
              x:DataType="elements:ImagePanelElement"
              x:Class="DCCPanelController.View.PropertPages.ImagePropertyPage">
-    
+
 </ContentView>

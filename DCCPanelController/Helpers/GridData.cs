@@ -15,11 +15,11 @@ public class GridData(bool ok, int? xOffset, int? yOffset, int? xCenter, int? yC
     public bool IsOk { get; init; } = ok;
     public string ErrorMessage { get; init; } = string.Empty;
 
-    public GridData(int? xOffset, int? yOffset, int? xCenter, int? yCenter, int? xMargin, int? yMargin, int? boxSize) 
-        : this(true, xOffset, yOffset, xCenter, yCenter, xMargin, yMargin, boxSize) { }
+    public GridData(int? xOffset, int? yOffset, int? xCenter, int? yCenter, int? xMargin, int? yMargin, int? boxSize) : this(true, xOffset, yOffset, xCenter, yCenter, xMargin, yMargin, boxSize) { }
 
     // Helper if the data is invalid. Up to the caller to check the result
     // -------------------------------------------------------------------
-    public static GridData Error(string? error = "") =>
-        new GridData(false, null, null, null, null, null, null, null) { ErrorMessage = error ?? "" };
+    public static GridData Error(string? error = "") {
+        return new GridData(false, null, null, null, null, null, null, null) { ErrorMessage = error ?? "" };
+    }
 }

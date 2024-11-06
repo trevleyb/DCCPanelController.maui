@@ -1,1 +1,10 @@
-<svg id="Select-02--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24" width="24"><desc>Select 02 Streamline Icon: https://streamlinehq.com</desc><defs></defs><path d="M8.625 4.3125 5.75 4.3125l0 -2.875 -1.4375 0 0 2.875 -2.875 0 0 1.4375 2.875 0 0 2.875 1.4375 0 0 -2.875 2.875 0 0 -1.4375z" stroke-width="1"></path><path d="M21.5625 7.1875V2.875h-4.3125v1.4375h-5.75v1.4375h5.75v1.4375h1.4375v10.0625h-1.4375v1.4375H7.1875v-1.4375H5.75v-5.75H4.3125v5.75H2.875v4.3125h4.3125v-1.4375h10.0625v1.4375h4.3125v-4.3125h-1.4375V7.1875ZM5.75 20.125H4.3125v-1.4375h1.4375Zm14.375 0h-1.4375v-1.4375h1.4375ZM18.6875 4.3125h1.4375v1.4375h-1.4375Z" stroke-width="1"></path><path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path></svg>
+<svg id="Select-02--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24"
+     width="24">
+    <desc>Select 02 Streamline Icon: https://streamlinehq.com</desc>
+    <defs></defs>
+    <path d="M8.625 4.3125 5.75 4.3125l0 -2.875 -1.4375 0 0 2.875 -2.875 0 0 1.4375 2.875 0 0 2.875 1.4375 0 0 -2.875 2.875 0 0 -1.4375z"
+          stroke-width="1"></path>
+    <path d="M21.5625 7.1875V2.875h-4.3125v1.4375h-5.75v1.4375h5.75v1.4375h1.4375v10.0625h-1.4375v1.4375H7.1875v-1.4375H5.75v-5.75H4.3125v5.75H2.875v4.3125h4.3125v-1.4375h10.0625v1.4375h4.3125v-4.3125h-1.4375V7.1875ZM5.75 20.125H4.3125v-1.4375h1.4375Zm14.375 0h-1.4375v-1.4375h1.4375ZM18.6875 4.3125h1.4375v1.4375h-1.4375Z"
+          stroke-width="1"></path>
+    <path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path>
+</svg>
