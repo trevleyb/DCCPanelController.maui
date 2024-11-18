@@ -49,7 +49,7 @@ public static class MauiProgram {
         ServiceHelper.Initialize(app.Services);
         return app;
     }
-
+    
     /// <summary>
     /// Registers a transient view with its associated view model in the service collection.
     /// </summary>
