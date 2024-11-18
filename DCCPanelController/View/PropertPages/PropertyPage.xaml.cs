@@ -5,14 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
+using DCCPanelController.Tracks.Base;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
 public partial class PropertyPage : ContentPage {
-    public PropertyPage(string propertyName, object obj) {
+    public PropertyPage(ITrackPiece trackPiece) {
         InitializeComponent();
-        BindingContext = new PropertyPageViewModel(propertyName, TableViewContainer, obj);
+        var propertyName = trackPiece.GetType().Name ?? "Unknonwn";
+        BindingContext = new PropertyPageViewModel(propertyName, trackPiece, TableViewContainer);
     }
 
     private void ClosePropertyPage(object? sender, EventArgs e) {

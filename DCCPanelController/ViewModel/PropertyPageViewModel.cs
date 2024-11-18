@@ -1,17 +1,18 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Attributes;
+using DCCPanelController.Tracks.Base;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;
 
-    public PropertyPageViewModel(string propertyName, TableView tableView, object obj) {
+    public PropertyPageViewModel(string propertyName, Object obj, TableView tableView) {
         PropertyName = propertyName;
-        BuildProperties(tableView, obj);
+        BuildProperties(obj, tableView);
     }
 
-    private static void BuildProperties(TableView tableView, object obj) {
+    private static void BuildProperties(Object obj, TableView tableView) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         foreach (var group in propertiesByGroup) {
             var tableSection = CreateSection(group.Key);

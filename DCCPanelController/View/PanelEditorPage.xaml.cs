@@ -81,7 +81,9 @@ public partial class PanelEditorPage : ContentPage {
             break;
         case 2:
             _editState = EditState.Changed;
-            Navigation.PushModalAsync(new PropertyPage(trackSelectedEvent.Track));
+            if (trackSelectedEvent.Track is { } trackPiece) {
+                Navigation.PushModalAsync(new PropertyPage(trackPiece));
+            }
             break;
         }
     }

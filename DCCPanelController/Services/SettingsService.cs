@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using DCCPanelController.Model;
-using DCCPanelController.Model.Elements.Base;
-using Environment = System.Environment;
 
 namespace DCCPanelController.Services;
 
@@ -78,7 +76,6 @@ public class SettingsService {
     }
 
     private readonly JsonSerializerOptions? options = new() {
-        Converters = { new PanelElementConverter() },
         WriteIndented = true
     };
 
