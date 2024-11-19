@@ -7,7 +7,7 @@ public class FallbackValueConverter : IValueConverter {
         var fallbackValue = parameter as string;
         var text = value as string;
 
-        return string.IsNullOrEmpty(text) ? fallbackValue : text;
+        return (string.IsNullOrEmpty(text) ? fallbackValue : text) ?? string.Empty;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {

@@ -39,9 +39,9 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
         PanelsCollectionViewLayout.Span = span;
     }
 
-    private void GoToSelectedPanelEditor(object? sender, TappedEventArgs e) {
+    private async void GoToSelectedPanelEditor(object? sender, TappedEventArgs e) {
         if (sender is BindableObject { BindingContext: Panel panel }) {
-            LaunchPanelEditor(panel);
+            await LaunchPanelEditor(panel);
         }
     }
 

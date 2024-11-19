@@ -8,27 +8,27 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <NavigationPage IconImageSource="control_green.png" Title="Operate">
+    <NavigationPage IconImageSource="zoom_fit.png" Title="Operate">
         <x:Arguments>
             <view:OperatePage />
         </x:Arguments>
     </NavigationPage>
-    <NavigationPage IconImageSource="panels_green.png" Title="Panels">
+    <NavigationPage IconImageSource="upload.png" Title="Panels">
         <x:Arguments>
             <view:PanelsPage />
         </x:Arguments>
     </NavigationPage>
-    <NavigationPage IconImageSource="turnouts_green.png" Title="Turnouts">
+    <NavigationPage IconImageSource="zoom_out.png" Title="Turnouts">
         <x:Arguments>
             <view:TurnoutsPage />
         </x:Arguments>
     </NavigationPage>
-    <NavigationPage IconImageSource="turnouts_green.png" Title="Routes">
+    <NavigationPage IconImageSource="zoom_in.png" Title="Routes">
         <x:Arguments>
             <view:RoutesPage />
         </x:Arguments>
     </NavigationPage>
-    <NavigationPage IconImageSource="settings_green.png" Title="Settings">
+    <NavigationPage IconImageSource="settings_adjust.png" Title="Settings">
         <x:Arguments>
             <view:SettingsPage />
         </x:Arguments>

@@ -18,9 +18,9 @@ namespace DCCPanelController.View;
 
 public partial class ControlPanelView {
     private readonly System.Timers.Timer _tapTimer;
-    private ITrackPiece _selectedTrack;
+    private ITrackPiece? _selectedTrack;
     private int _tapCount;
-    public event EventHandler<TrackSelectedEvent> TrackPieceTapped;
+    public event EventHandler<TrackSelectedEvent>? TrackPieceTapped;
     private ControlPanelViewModel? _viewModel;
 
     public ControlPanelView() {
@@ -80,7 +80,7 @@ public partial class ControlPanelView {
             _viewModel.DesignMode = DesignMode;
             _viewModel.ShowGrid = ShowGrid;
             _viewModel.ShowTrackErrors = ShowTrackErrors;
-            _viewModel.TrackTapped += (sender, track) => TrackPieceTapped?.Invoke(this, track);
+            _viewModel.TrackTapped += (_, track) => TrackPieceTapped?.Invoke(this, track);
             break;
 
         case nameof(DesignMode) or nameof(ShowGrid) or nameof(ShowTrackErrors):
@@ -108,7 +108,7 @@ public partial class ControlPanelView {
         DynamicGrid.BackgroundColor = _viewModel?.Panel?.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
-        if (DynamicGrid.RowDefinitions.Count != _viewModel.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel.Cols) {
+        if (DynamicGrid.RowDefinitions.Count != _viewModel!.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel!.Cols) {
             DynamicGrid.RowDefinitions.Clear();
             DynamicGrid.ColumnDefinitions.Clear();
 
@@ -276,7 +276,7 @@ public partial class ControlPanelView {
         }
     }
 
-    private void OnTapTimerElapsed(object sender, ElapsedEventArgs e) {
+    private void OnTapTimerElapsed(object? sender, ElapsedEventArgs e) {
         // When the timer elapses, it's a single tap
         if (_tapCount == 1) {
             Console.WriteLine("Single Tap Detected.");
@@ -374,7 +374,7 @@ public partial class ControlPanelView {
             return Result<(int Col, int Row)>.Success((col, row));
         }
 
-        return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,");
+        return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,") ?? throw new InvalidOperationException();
     }
 }
 

@@ -88,8 +88,8 @@ public static class SvgImages {
 
 [DebuggerDisplay("{Id}")]
 public class TrackImageFile(string id, string svgFilename, string directions) {
-    public string Id { get; set; } = id;
-    public string SvgFilename { get; set; } = svgFilename;
+    public string Id { get; init; } = id;
+    public string SvgFilename { get; } = svgFilename;
     public SvgCompass Connections { get; } = new(directions);
-    public SvgImage Create => new(id, SvgFilename, 0, Connections);
+    public SvgImage Create => new(Id, SvgFilename, 0, Connections);
 }

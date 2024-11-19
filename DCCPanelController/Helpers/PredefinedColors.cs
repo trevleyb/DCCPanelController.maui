@@ -3,9 +3,9 @@ using CommunityToolkit.Maui.Core.Extensions;
 namespace DCCPanelController.Helpers;
 
 public class ColorOption {
-    public string Name { get; set; }
-    public Color Color { get; set; }
-    public Color ContrastColor { get; set; }
+    public required string Name { get; set; }
+    public required Color Color { get; set; }
+    public required Color ContrastColor { get; set; }
 }
 
 public static class PredefinedColors {

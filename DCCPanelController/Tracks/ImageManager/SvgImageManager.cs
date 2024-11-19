@@ -8,7 +8,7 @@ using SKSvg = Svg.Skia.SKSvg;
 namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgImageManager {
-    private string _resourceName;
+    private string? _resourceName;
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
     private readonly XDocument _svgDocument;

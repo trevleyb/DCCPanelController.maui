@@ -19,8 +19,8 @@ public partial class ColorDropdown : ContentView {
     // Asynchronously show the popup and update the selected color
     private async void ShowDropdown() {
         var popup = new ColorPopup();
-        if (App.Current?.MainPage != null) {
-            var result = await Application.Current?.MainPage?.ShowPopupAsync(popup);
+        if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
+            var result = await mainpage.ShowPopupAsync(popup);
             if (result is ColorOption selectedColor) {
                 SelectedColor = selectedColor.Color;
             }

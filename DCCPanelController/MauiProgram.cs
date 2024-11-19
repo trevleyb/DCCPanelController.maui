@@ -9,11 +9,20 @@ namespace DCCPanelController;
 
 public static class MauiProgram {
     public static MauiApp CreateMauiApp() {
+
         var builder = MauiApp.CreateBuilder();
-        builder.UseMauiApp<App>().ConfigureFonts(fonts => {
-            fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-            fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-        }).UseMauiCommunityToolkit().UseMauiCommunityToolkitMarkup().UseMauiCommunityToolkitMediaElement();
+        builder.UseMauiApp<App>()
+            .ConfigureFonts(fonts => {
+                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+            })
+            .UseMauiCommunityToolkit()
+            .UseMauiCommunityToolkitMarkup()
+            .UseMauiCommunityToolkitMediaElement();
+
+#if DEBUG
+        builder.Logging.AddDebug();
+#endif
 
         var services = builder.Services;
 
@@ -42,9 +51,6 @@ public static class MauiProgram {
         // services.AddTransient<PanelEditorPage>();
         // services.AddTransient<PanelEditorViewModel>();
 
-#if DEBUG
-        builder.Logging.AddDebug();
-#endif
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         return app;
@@ -84,13 +90,14 @@ public static class MauiProgram {
     }
 
     public static class ServiceHelper {
-        public static IServiceProvider ServiceProvider { get; private set; }
+        private static IServiceProvider? ServiceProvider { get; set; }
 
         public static void Initialize(IServiceProvider serviceProvider) {
             ServiceProvider = serviceProvider;
         }
 
-        public static T GetService<T>() {
+        public static T GetService<T>() where T : notnull {
+            ArgumentNullException.ThrowIfNull(ServiceProvider);
             return ServiceProvider.GetRequiredService<T>();
         }
     }

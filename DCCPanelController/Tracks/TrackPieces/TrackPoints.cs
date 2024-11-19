@@ -52,7 +52,8 @@ public class TrackPoints : TrackPiece {
             4 => "PointS",
             5 => "PointSW",
             6 => "PointW",
-            7 => "PointNW"
+            7 => "PointNW",
+            _ => "PointN"
         };
     }
 }

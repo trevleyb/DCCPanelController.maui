@@ -12,7 +12,7 @@ using Microsoft.Maui.Layouts;
 namespace DCCPanelController.ViewModel;
 
 public partial class ControlPanelViewModel : BaseViewModel {
-    public event EventHandler<TrackSelectedEvent> TrackTapped;
+    public event EventHandler<TrackSelectedEvent>? TrackTapped;
 
     [ObservableProperty] private double _viewWidth;
     [ObservableProperty] private double _viewHeight;

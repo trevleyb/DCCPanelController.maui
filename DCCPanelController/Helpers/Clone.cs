@@ -6,7 +6,7 @@ namespace DCCPanelController.Helpers;
 public static class ObjectCloner {
     public static T? Clone<T>(T source) {
         ArgumentNullException.ThrowIfNull(source);
-        return (T)CloneObject(source) ?? default(T);
+        return (T)CloneObject(source)! ?? default(T);
     }
 
     private static object? CloneObject(object? source) {

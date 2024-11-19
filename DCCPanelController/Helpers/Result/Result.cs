@@ -3,19 +3,16 @@ namespace DCCPanelController.Helpers.Result;
 public class Result<T> {
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
-    public T Value { get; }
+    public T? Value { get; }
     public string? Error { get; }
 
-    protected Result(bool isSuccess, T value, string? error) {
-        if (isSuccess && value == null) {
+    protected Result(bool isSuccess, T? value, string? error) {
+        switch (isSuccess) {
+        case true when value == null:
             throw new ArgumentNullException(nameof(value), "Success result must have a value.");
-        }
-
-        if (isSuccess && !string.IsNullOrEmpty(error)) {
+        case true when !string.IsNullOrEmpty(error):
             throw new ArgumentException("Success result cannot have an error message.", nameof(error));
-        }
-
-        if (!isSuccess && string.IsNullOrEmpty(error)) {
+        case false when string.IsNullOrEmpty(error):
             throw new ArgumentException("Failure result must have an error message.", nameof(error));
         }
 
@@ -28,7 +25,7 @@ public class Result<T> {
         return new Result<T>(true, value, null);
     }
 
-    public static Result<T> Failure(string? error) {
-        return new Result<T>(false, default, error);
+    public static Result<T>? Failure(string? error) {
+        return new Result<T>(false, default(T) , error);
     }
 }
