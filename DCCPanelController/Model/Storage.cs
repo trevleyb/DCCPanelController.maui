@@ -13,6 +13,13 @@ public class Storage {
     public ObservableCollection<Panel> Panels { get; set; } = new();
 
     public void ReOrderPanels() {
+
+        if (Panels.Count <= 1) {
+            foreach (var panel in Services.SampleData.Panels.DemoData()) {
+                Panels.Add(panel);
+            }
+        }
+        
         for (var index = 0; index < Panels.Count; index++) {
             Panels[index].SortOrder = index + 1;
         }

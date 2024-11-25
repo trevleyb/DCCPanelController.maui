@@ -35,7 +35,7 @@ public static class MauiProgram {
 
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
-        services.AddSingleton<MainPageFlyOut>();
+        services.AddSingleton<MainPageTabbed>();
 
         // Add dependant views with associated view models
         // --------------------------------------------------------------------------

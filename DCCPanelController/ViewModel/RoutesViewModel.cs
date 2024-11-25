@@ -11,7 +11,7 @@ public partial class RoutesViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<Route>? _routes;
 
     private ConnectionService? ConnectionService { get; }
-    private readonly RoutesService? _routesService;
+    //private readonly RoutesService? _routesService;
     private bool _isAscending = false;
     private string _sortColumn = "";
 

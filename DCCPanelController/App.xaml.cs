@@ -1,10 +1,21 @@
 ﻿using DCCPanelController.View;
+using Microsoft.Maui.Controls.Xaml.Diagnostics;
 
 namespace DCCPanelController;
 
 public partial class App : Application {
     public App() {
         InitializeComponent();
+        Microsoft.Maui.Controls.Xaml.Diagnostics.BindingDiagnostics.BindingFailed += BindingDiagnosticsOnBindingFailed;
+    }
+
+    private void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
+        Console.WriteLine("Binding Failed: " + 
+                          (e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI") + " | " +
+                          (e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum") + " | " +
+                          (e?.Binding?.ToString() ?? "?Binding") + " | " + 
+                          (e?.Message ?? "?Message") + " | " + 
+                          (e?.Binding?.GetType().Name ?? "?BindingType"));    
     }
 
     /// <summary>
