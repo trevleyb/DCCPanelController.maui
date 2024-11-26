@@ -21,19 +21,17 @@ public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
 
-    private bool _isDragging = false;
-    private double _initialX = 0;
     private EditState _editState = EditState.None;
 
-    private PanelsViewModel PanelsViewModel;
+    private readonly PanelsViewModel _panelsViewModel;
     private Panel Panel { get; init; }
     private PanelEditorViewModel ViewModel { get; set; }
 
     public PanelEditorPage(PanelsViewModel panelsViewModel) {
         ArgumentNullException.ThrowIfNull(panelsViewModel, nameof(panelsViewModel));
         ArgumentNullException.ThrowIfNull(panelsViewModel.SelectedPanel, nameof(panelsViewModel.SelectedPanel));
-        PanelsViewModel = panelsViewModel;
-        Panel = PanelsViewModel.SelectedPanel;
+        _panelsViewModel = panelsViewModel;
+        Panel = _panelsViewModel.SelectedPanel;
         ViewModel = new PanelEditorViewModel(Panel);
         BindingContext = ViewModel;
 
@@ -90,7 +88,7 @@ public partial class PanelEditorPage : ContentPage {
     #endregion
 
     private void SavePanelAndExit(object? sender, EventArgs e) {
-        PanelsViewModel.Save();
+        _panelsViewModel.Save();
         _editState = EditState.Saved;
     }
 

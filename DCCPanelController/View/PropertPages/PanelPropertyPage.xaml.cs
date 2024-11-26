@@ -46,4 +46,8 @@ public partial class PanelPropertyPage : ContentPage {
             }
         }
     }
+    
+    private void ClosePropertyPage(object? sender, EventArgs e) {
+        Navigation.PopModalAsync();
+    }
 }

@@ -10,27 +10,36 @@
         <Grid HorizontalOptions="Center" VerticalOptions="Center">
 
             <Border BackgroundColor="White"
-                   Padding="20"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center"
-                   WidthRequest="500">
+                    Padding="20"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="500">
 
-                <StackLayout>
-                    <Label Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" />
+                <VerticalStackLayout>
+                    <Label
+                        FontAttributes="Bold"
+                        FontSize="Large"
+                        Margin="0,-15,0,0"
+                        Text="{Binding PropertyName}"
+                        VerticalOptions="Center" />
+
                     <BoxView
-                        Margin="5"
                         BackgroundColor="{StaticResource Primary}"
-                        WidthRequest="2"
-                        HorizontalOptions="FillAndExpand" />
+                        HeightRequest="2"
+                        HorizontalOptions="Fill"
+                        Margin="0,5,0,15" />
 
-                    <TableView x:Name="TableViewContainer" Intent="Settings" />
-                    <Button Text="Close"
-                            Style="{StaticResource ButtonOutline}"
-                            VerticalOptions="End"
-                            HorizontalOptions="Center"
-                            WidthRequest="150"
-                            Clicked="ClosePropertyPage" />
-                </StackLayout>
+                    <StackLayout Padding="10" Margin="10">
+                        <TableView x:Name="TableViewContainer" Intent="Settings" />
+                        <Button Margin="10,0,0,0"
+                                Text="Close"
+                                Style="{StaticResource ButtonOutline}"
+                                VerticalOptions="End"
+                                HorizontalOptions="Center"
+                                WidthRequest="150"
+                                Clicked="ClosePropertyPage" />
+                    </StackLayout>
+                </VerticalStackLayout>
             </Border>
         </Grid>
     </ContentPage.Content>

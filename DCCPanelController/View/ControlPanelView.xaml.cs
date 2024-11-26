@@ -22,7 +22,6 @@ public partial class ControlPanelView {
     private ITrackPiece? _selectedTrack;
     private int _tapCount;
     
-    public event EventHandler<TrackSelectedEvent>? TrackTapped;
     public event EventHandler<TrackSelectedEvent>? TrackPieceTapped;
    
     public ControlPanelView() {
@@ -411,7 +410,7 @@ public partial class ControlPanelView {
     public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
         if (DesignMode) {
             Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
-            TrackTapped?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
+            TrackPieceTapped?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
         } else {
             if (track is ITrackInteractive) {
                 switch (track) {
