@@ -1,15 +1,13 @@
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DCCPanelController.View.ControlPanelView"
-             x:DataType="viewModel:ControlPanelViewModel"
-             xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-             xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters">
+             x:DataType="view:ControlPanelView"
+             xmlns:view="clr-namespace:DCCPanelController.View">
 
     <ContentView.Resources>
         <ResourceDictionary>
         </ResourceDictionary>
     </ContentView.Resources>
-
 
     <Grid x:Name="MainGrid" HorizontalOptions="Fill" VerticalOptions="Fill">
         <AbsoluteLayout
@@ -18,13 +16,10 @@
             VerticalOptions="Fill">
             <Grid x:Name="DynamicGrid"
                   BackgroundColor="Transparent"
+                  HorizontalOptions="Center"
+                  VerticalOptions="Center"
                   AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
                   AbsoluteLayout.LayoutFlags="PositionProportional">
-
-                <Grid.GestureRecognizers>
-                    <DropGestureRecognizer Drop="DropGestureRecognizer_OnDrop" />
-                </Grid.GestureRecognizers>
-
             </Grid>
         </AbsoluteLayout>
     </Grid>

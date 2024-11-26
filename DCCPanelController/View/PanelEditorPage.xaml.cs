@@ -38,9 +38,6 @@ public partial class PanelEditorPage : ContentPage {
         BindingContext = ViewModel;
 
         InitializeComponent();
-        AdjustColumnCount();
-
-        SizeChanged += OnSizeChanged;
         PanelView.TrackPieceTapped += OnTrackPieceTapped;
     }
 
@@ -50,17 +47,20 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     protected override bool OnBackButtonPressed() {
-        //if (_editState == EditState.Changed) {
-        //    var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-        //    if (answer) PanelsViewModel.Save();
-        //    PanelsViewModel.Load();
-        //}
+        if (_editState == EditState.Changed) {
+            Console.WriteLine("Panel was changed.");
+
+            //    var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
+            //    if (answer) PanelsViewModel.Save();
+            //    PanelsViewModel.Load();
+        }
         return base.OnBackButtonPressed();
     }
 
     #region Support Drag and Drop of the Symbols from the Symbol Pane
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
-        if (sender is DragGestureRecognizer drag && drag.BindingContext is ITrackSymbol symbol) {
+        Console.WriteLine("OnSymbolDragStarting");
+        if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
             e.Data.Properties.Add("Track", symbol);
             e.Data.Properties.Add("Source", "Symbol");
         }
@@ -112,6 +112,7 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
+        Console.WriteLine("Drop Track In Trash");
         e.Data.Properties.TryGetValue("Source", out var source);
         e.Data.Properties.TryGetValue("Track", out var track);
         Console.WriteLine($"Deleting track {track}");
@@ -122,92 +123,15 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void DropTrackInTrashHoverOver(object? sender, DragEventArgs e) {
+        Console.WriteLine("Drop Track In Trash Hover Over");
         e.Data.Properties.TryGetValue("Source", out var source);
         if (source is string && source.Equals("Panel")) DragTrashIcon.BackgroundColor = Colors.Red;
     }
 
     private void DropTrackInTrashHoverLeave(object? sender, DragEventArgs e) {
+        Console.WriteLine("Drop Track In Trash Hover Leave");
         DragTrashIcon.BackgroundColor = Colors.White;
     }
-
-    #region Code to manage the Left and Right Panels
-    private void OnPanUpdated(object sender, PanUpdatedEventArgs e) {
-        switch (e.StatusType) {
-        case GestureStatus.Started:
-            _initialX = e.TotalX;
-            _isDragging = true;
-            LeftColumn.Width = new GridLength(LeftPane.Width, GridUnitType.Absolute);
-            RightColumn.Width = new GridLength(RightPane.Width, GridUnitType.Absolute);
-            Separator.Color = Colors.Gold;
-            break;
-
-        case GestureStatus.Running:
-            var deltaX = e.TotalX - _initialX;
-            _initialX = e.TotalX;
-
-            // Adjust the widths of the left and right columns
-            var newRightWidth = Math.Clamp(RightColumn.Width.Value - deltaX, MinRightPaneWidth, MaxRightPaneWidth);
-            var newLeftWidth = Math.Max(0, MainGrid.Width - newRightWidth - Separator.WidthRequest);
-            LeftColumn.Width = new GridLength(newLeftWidth, GridUnitType.Absolute);
-            RightColumn.Width = new GridLength(newRightWidth, GridUnitType.Absolute);
-            AdjustColumnCount();
-            break;
-
-        case GestureStatus.Completed:
-        case GestureStatus.Canceled:
-            _initialX = 0;
-            _isDragging = false;
-            Separator.Color = Colors.Gray;
-            AdjustColumnCount();
-            Console.WriteLine($"Left = {LeftColumn.Width}, Right={RightColumn.Width}");
-            break;
-        }
-    }
-
-    // Event handler for the SizeChanged event
-    private void OnSizeChanged(object? sender, EventArgs e) {
-        if (!_isDragging) {
-            var rightWidth = RightColumn.Width.Value;
-            var leftWidth = Math.Max(0, MainGrid.Width - rightWidth);
-            LeftColumn.Width = new GridLength(leftWidth, GridUnitType.Absolute);
-        }
-
-        AdjustColumnCount();
-    }
-
-    // Method to collapse or expand the right pane
-    public void ToggleRightPane() {
-        if (RightColumn.Width.Value == 0) {
-            RightColumn.Width = new GridLength(120, GridUnitType.Absolute);
-            Separator.IsVisible = true;
-            DragTrashIcon.IsVisible = true;
-            ExpandCollapse.IconImageSource = "right_panel_close_filled.png";
-        } else {
-            RightColumn.Width = new GridLength(0, GridUnitType.Absolute);
-            Separator.IsVisible = false;
-            DragTrashIcon.IsVisible = false;
-            ExpandCollapse.IconImageSource = "right_panel_open_filled.png";
-        }
-
-        OnSizeChanged(null, EventArgs.Empty);
-    }
-
-    private void OnExpandCollapseButtonClicked(object sender, EventArgs e) {
-        ToggleRightPane();
-    }
-
-    private void AdjustColumnCount() {
-        if (ItemsLayout == null) return;
-
-        if (RightPane.Width <= 150) { // Single column if the width is less than 400
-            ItemsLayout.Span = 1;
-        } else if (RightPane.Width <= 225) { // Two columns if the width is between 400 and 800
-            ItemsLayout.Span = 2;
-        } else { // Three columns if the width is greater than 800
-            ItemsLayout.Span = 3;
-        }
-    }
-    #endregion
 }
 
 public enum EditState {

@@ -8,7 +8,8 @@
     xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.Interfaces"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:model="clr-namespace:DCCPanelController.Model">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -31,10 +32,6 @@
             IconImageSource="tuning.png"
             Text="Properties"
             x:Name="PropertyButton" />
-        <ToolbarItem
-            Clicked="OnExpandCollapseButtonClicked"
-            IconImageSource="right_panel_close_filled.png"
-            x:Name="ExpandCollapse" />
     </ContentPage.ToolbarItems>
 
     <Grid
@@ -43,7 +40,6 @@
         x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" x:Name="LeftColumn" />
-            <ColumnDefinition Width="8" />
             <ColumnDefinition Width="120" x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
 
@@ -54,30 +50,17 @@
             x:Name="LeftPane">
             <view:ControlPanelView
                 DesignMode="True"
-                HorizontalOptions="Fill"
-                Panel="{Binding Panel}"
                 ShowGrid="True"
+                HorizontalOptions="Fill"
                 VerticalOptions="Fill"
+                Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"
                 x:Name="PanelView" />
         </ContentView>
-
-        <!--  Separator / Resizer  -->
-        <BoxView
-            Color="Gray"
-            Grid.Column="1"
-            HorizontalOptions="Center"
-            IsVisible="False"
-            WidthRequest="8"
-            x:Name="Separator">
-            <BoxView.GestureRecognizers>
-                <PanGestureRecognizer PanUpdated="OnPanUpdated" />
-            </BoxView.GestureRecognizers>
-        </BoxView>
 
         <!--  Right Pane  -->
         <ContentView
             BackgroundColor="{StaticResource Primary}"
-            Grid.Column="2"
+            Grid.Column="1"
             x:Name="RightPane">
             <StackLayout Padding="10">
                 <CollectionView

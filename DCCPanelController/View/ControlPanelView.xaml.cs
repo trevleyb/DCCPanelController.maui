@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Net.Quic;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Events;
 using DCCPanelController.Helpers.Result;
@@ -7,23 +6,27 @@ using DCCPanelController.Model;
 using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Helpers;
-using DCCPanelController.ViewModel;
 using Microsoft.Maui.Layouts;
 using System.Timers;
+using DCCPanelController.Tracks.Interfaces;
 
 //
 // This is a COMPONENT that is used inside the operate and panels views
 //
 namespace DCCPanelController.View;
 
+[ObservableObject]
 public partial class ControlPanelView {
+
     private readonly System.Timers.Timer _tapTimer;
     private ITrackPiece? _selectedTrack;
     private int _tapCount;
+    
+    public event EventHandler<TrackSelectedEvent>? TrackTapped;
     public event EventHandler<TrackSelectedEvent>? TrackPieceTapped;
-    private ControlPanelViewModel? _viewModel;
-
+   
     public ControlPanelView() {
+        BindingContext = this;
         InitializeComponent();
         PropertyChanged += OnPropertyChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
@@ -36,62 +39,69 @@ public partial class ControlPanelView {
         _tapTimer.Elapsed += OnTapTimerElapsed;
     }
 
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
-
-    public Panel Panel {
+    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null, BindingMode.OneTime, propertyChanged: OnPanelChanged);
+    public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
     }
-
-    public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
-
+    
+    public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
     public bool DesignMode {
         get => (bool)GetValue(DesignModeProperty);
         set => SetValue(DesignModeProperty, value);
     }
-
-    public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
-
+    
+    public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public bool ShowGrid {
         get => (bool)GetValue(ShowGridProperty);
         set => SetValue(ShowGridProperty, value);
     }
-
-    public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelViewModel), null, BindingMode.TwoWay, propertyChanged: OnPanelChanged);
-
+    
+    public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
     public bool ShowTrackErrors {
         get => (bool)GetValue(ShowTrackErrorsProperty);
         set => SetValue(ShowTrackErrorsProperty, value);
     }
 
-    private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (oldValue is Panel { } oldPanel && newValue is Panel { } newPanel) {
-            OnPanelChanged(oldPanel, newPanel);
+    private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldValue, object newValue) {
+        var control = (ControlPanelView)bindable;
+        Console.WriteLine(bindable.GetType().Name + $" OnShowTrackErrorsChanged to {control.ShowTrackErrors}");
+        control.RebuildGrid();
+    }
+
+    private static void OnShowGridChanged(BindableObject bindable, object oldValue, object newValue) {
+        var control = (ControlPanelView)bindable;
+        Console.WriteLine(bindable.GetType().Name + $" OnShowGridChanged to {control.ShowGrid}");
+        control.AddOutlineToGrid();
+    }
+
+    private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
+        var control = (ControlPanelView)bindable;
+        Console.WriteLine(bindable.GetType().Name + $" OnDesignModeChanged to {control.DesignMode}");
+        if (control.DesignMode) {
+            var dropRecogniser = new DropGestureRecognizer();
+            dropRecogniser.Drop += control.DropTrackOnPanel;
+            control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
+        } else {
+            control.DynamicGrid.GestureRecognizers.Clear();
         }
     }
 
-    private static void OnPanelChanged(Panel oldPanel, Panel newPanel) { }
+    private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
+        var control = (ControlPanelView)bindable;
+        Console.WriteLine(bindable.GetType().Name + $" OnPanelChanged to {control.Panel?.Name}");
+    }
 
+    [ObservableProperty] private double _viewWidth;
+    [ObservableProperty] private double _viewHeight;
+    [ObservableProperty] private double _gridSize;
+    [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
+
+    public int Rows => Panel?.Rows ?? 1;
+    public int Cols => Panel?.Cols ?? 1;
+    
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        switch (e.PropertyName) {
-        case nameof(Panel):
-            BindingContext = _viewModel ??= new ControlPanelViewModel(Panel);
-            _viewModel.Panel = Panel;
-            _viewModel.DesignMode = DesignMode;
-            _viewModel.ShowGrid = ShowGrid;
-            _viewModel.ShowTrackErrors = ShowTrackErrors;
-            _viewModel.TrackTapped += (_, track) => TrackPieceTapped?.Invoke(this, track);
-            break;
-
-        case nameof(DesignMode) or nameof(ShowGrid) or nameof(ShowTrackErrors):
-            if (_viewModel != null) {
-                _viewModel.DesignMode = DesignMode;
-                _viewModel.ShowGrid = ShowGrid;
-                _viewModel.ShowTrackErrors = ShowTrackErrors;
-            }
-
-            break;
-        }
+        //Console.WriteLine($"PropertyChanged: {e.PropertyName}");
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -99,24 +109,25 @@ public partial class ControlPanelView {
     }
 
     public void RebuildGrid(bool forceRefresh = false) {
-        if (_viewModel is null || MainGrid.Width < 1 || MainGrid.Height < 1) return;
-        if (!forceRefresh && !_viewModel.HasScreenSizeChanged(MainGrid.Width, MainGrid.Height)) return;
+        if (Panel is null) return;
+        if (MainGrid.Width < 1 || MainGrid.Height < 1) return;
+        if (!forceRefresh && !HasScreenSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
-        _viewModel.SetScreenSize(MainGrid.Width, MainGrid.Height);
-        DynamicGrid.WidthRequest = _viewModel.ViewWidth;
-        DynamicGrid.HeightRequest = _viewModel.ViewHeight;
-        DynamicGrid.BackgroundColor = _viewModel?.Panel?.BackgroundColor ?? Colors.Transparent;
+        SetScreenSize(MainGrid.Width, MainGrid.Height);
+        DynamicGrid.WidthRequest = ViewWidth;
+        DynamicGrid.HeightRequest = ViewHeight;
+        DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
-        if (DynamicGrid.RowDefinitions.Count != _viewModel!.Rows || DynamicGrid.ColumnDefinitions.Count != _viewModel!.Cols) {
+        if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
             DynamicGrid.RowDefinitions.Clear();
             DynamicGrid.ColumnDefinitions.Clear();
 
-            for (var i = 0; i < _viewModel.Rows; i++) {
+            for (var i = 0; i < Rows; i++) {
                 DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
             }
 
-            for (var j = 0; j < _viewModel.Cols; j++) {
+            for (var j = 0; j < Cols; j++) {
                 DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
             }
         }
@@ -126,7 +137,7 @@ public partial class ControlPanelView {
     }
 
     public void HighlightCell(int col, int row) {
-        if (_viewModel == null) return;
+        Console.WriteLine($"HighlightCell({col},{row})");
         var border = new Border() {
             BackgroundColor = Colors.Transparent,
             Stroke = Colors.Red,
@@ -144,7 +155,7 @@ public partial class ControlPanelView {
     }
 
     public void UnHighlightCell(int col, int row) {
-        if (_viewModel == null) return;
+        Console.WriteLine($"UnHighlightCell({col},{row})");
         var children = DynamicGrid.Children.Where(x => x is Border && x.Parent is Grid).ToList();
         foreach (var child in children) {
             if (DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col) {
@@ -166,11 +177,9 @@ public partial class ControlPanelView {
     }
 
     private void AddOutlineToGrid() {
-        // Clear the AbsoluteLayout before adding a new grid and GraphicsView
         RemoveOutlineFromGrid();
-
-        if (_viewModel?.ShowGrid ?? false) {
-            var gridLines = new GridLinesDrawable(_viewModel.Rows, _viewModel.Cols);
+        if (ShowGrid) {
+            var gridLines = new GridLinesDrawable(Rows,Cols);
             var graphicsView = new GraphicsView {
                 InputTransparent = true,
                 Drawable = gridLines,
@@ -179,7 +188,7 @@ public partial class ControlPanelView {
             };
 
             // Add the GraphicsView directly to the AbsoluteLayout
-            AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, _viewModel.ViewWidth, _viewModel.ViewHeight));
+            AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, ViewWidth, ViewHeight));
             AbsoluteLayout.SetLayoutFlags(graphicsView, AbsoluteLayoutFlags.PositionProportional);
             ControlPanelLayout.Children.Add(graphicsView);
             graphicsView.Invalidate();
@@ -190,15 +199,16 @@ public partial class ControlPanelView {
     /// Add the tracks from the view model onto the Grid
     /// </summary>
     private void AddTrackPiecesToGrid() {
-        if (_viewModel is { Panel: { Tracks: { } tracks } panel }) {
+        Console.WriteLine($"AddTrackPiecesToGrid()");
+        if (Panel is { Tracks: { } tracks } panel ) {
             foreach (var track in tracks) {
-                if (DynamicGrid.ColumnDefinitions.Count >= _viewModel.Cols && DynamicGrid.RowDefinitions.Count >= _viewModel.Rows && track.X < _viewModel.Cols && track.Y < _viewModel.Rows) {
+                if (DynamicGrid.ColumnDefinitions.Count >= Cols && DynamicGrid.RowDefinitions.Count >= Rows && track.X < Cols && track.Y < Rows) {
                     var image = AddImageToLayout(track);
                 }
 
                 // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
                 // -------------------------------------------------------------------------------------
-                if (DesignMode && _viewModel.ShowTrackErrors) {
+                if (DesignMode && ShowTrackErrors) {
                     var pointImage = new TrackPoints { X = track.X, Y = track.Y };
                     var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
                     pointImage.SetPoints(validPoints);
@@ -228,8 +238,8 @@ public partial class ControlPanelView {
         // -------------------------------------------------------------------------------------------
         image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
         image.SetBinding(RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
-        image.SetBinding(WidthRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
-        image.SetBinding(HeightRequestProperty, new Binding(nameof(_viewModel.GridSize)) { Source = _viewModel });
+        image.SetBinding(WidthRequestProperty, new Binding(nameof(GridSize)) { Source = this});
+        image.SetBinding(HeightRequestProperty, new Binding(nameof(GridSize)) { Source = this });
 
         // Setup trigger control to trap if we click on or select the track item
         // -------------------------------------------------------------------------------------------
@@ -271,28 +281,38 @@ public partial class ControlPanelView {
 
             // If a second tap is detected within the timer interval, consider it a double tap
             _tapTimer.Stop(); // Stop the timer since we detected a double tap
-            _viewModel?.HandleTrackPieceTapped(_selectedTrack, 2);
+            HandleTrackPieceTapped(_selectedTrack, 2);
             _tapCount = 0; // Reset tap count
         }
     }
 
     private void OnTapTimerElapsed(object? sender, ElapsedEventArgs e) {
         // When the timer elapses, it's a single tap
-        if (_tapCount == 1) {
+        if (_tapCount == 1 && _selectedTrack is not null) {
             Console.WriteLine("Single Tap Detected.");
-            _viewModel?.HandleTrackPieceTapped(_selectedTrack, 1);
+            HandleTrackPieceTapped(_selectedTrack, 1);
         }
-
         _tapCount = 0; // Reset tap count after handling
     }
 
-    private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
-        try {
-            e.Data.Properties.TryGetValue("Source", out var source);
-            e.Data.Properties.TryGetValue("Track", out var track);
+    private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
+        Console.WriteLine($"Dragging Track: {track.Name}");
+        args.Data.Properties.Add("Track", track);
+        args.Data.Properties.Add("Source", "Panel");
+    }
 
-            var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-            if (gridPosition is { IsSuccess: true, Value: var position } && track is ITrackPiece trackPiece) {
+    private void DropTrackOnPanel(object? sender, DropEventArgs e) {
+        Console.WriteLine("Drop Gesture Recognizer OnDrop");
+        try {
+            var source = e?.Data?.Properties["Source"] as string ?? null;
+            var track  = e?.Data?.Properties["Track"] as ITrackPiece ?? null;
+            if (source is null || track is null) {
+                Console.WriteLine("Could not determine the source of the item being dropped.");
+                return;
+            }
+
+            var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
+            if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
@@ -309,7 +329,7 @@ public partial class ControlPanelView {
                         if (newPiece is not null) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
-                            _viewModel?.Panel?.Tracks?.Add(newPiece);
+                            Panel?.Tracks?.Add(newPiece);
                             RebuildGrid(true);
                         } else {
                             Console.WriteLine($"Could not create a new Piece as a TrackPiece.");
@@ -333,18 +353,12 @@ public partial class ControlPanelView {
 
     private int GetHighestOccupiedLayer(int col, int row) {
         Console.WriteLine($"GetHighestOccupiedLayer({col},{row})");
-        var tracksInGrid = _viewModel?.Panel?.Tracks.Where(x => x.X == col && x.Y == row);
+        var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row) ?? [];
         Console.WriteLine($"GetHighestOccupiedLayer({col},{row}) returned {tracksInGrid?.Count() ?? 0}");
         if (tracksInGrid == null || !tracksInGrid.Any()) return 0;
         return tracksInGrid?.Max(track => track.Layer) ?? 0;
     }
-
-    private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
-        Console.WriteLine($"Dragging Track: {track.Name}");
-        args.Data.Properties.Add("Track", track);
-        args.Data.Properties.Add("Source", "Panel");
-    }
-
+    
     /// <summary>
     /// Convert a position in the grid (absolute) to a Grid position within the col/row definitions
     /// </summary>
@@ -375,6 +389,50 @@ public partial class ControlPanelView {
         }
 
         return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,") ?? throw new InvalidOperationException();
+    }
+    
+    private const double Tolerance = 5f;
+
+    public bool HasScreenSizeChanged(double width, double height) {
+        return Math.Abs(width - ViewWidth) > Tolerance || Math.Abs(height - ViewHeight) > Tolerance; 
+        
+        //var gridSize = width > 0 && height > 0 ? Math.Min(width / Cols, height / Rows) / 2 * 2 : 1;
+        //var viewWidth = gridSize * Cols;
+        //var viewHeight = gridSize * Rows;
+        //return Math.Abs(viewWidth - ViewWidth) > Tolerance || Math.Abs(viewHeight - ViewHeight) > Tolerance;
+    }
+
+    public void SetScreenSize(double width, double height) {
+        GridSize = width > 0 && height > 0 ? Math.Min(width / Cols, height / Rows) / 2 * 2 : 1;
+        ViewWidth = GridSize * Cols;
+        ViewHeight = GridSize * Rows;
+    }
+
+    public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
+        if (DesignMode) {
+            Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
+            TrackTapped?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
+        } else {
+            if (track is ITrackInteractive) {
+                switch (track) {
+                case ITrackButton button:
+                    Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
+                    button.Clicked();
+                    track.NextState();
+                    break;
+                case ITrackThreeway threeway:
+                    Console.WriteLine($"You just tapped on {track.Name} - its a threeway so we will cycle states. ");
+                    threeway.Clicked();
+                    track.NextState();
+                    break;
+                case ITrackTurnout turnout:
+                    Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
+                    turnout.Clicked();
+                    track.NextState();
+                    break;
+                }
+            }
+        }
     }
 }
 
