@@ -262,7 +262,6 @@
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1"/>
         <PackageReference Include="Svg.Skia" Version="2.0.0.2" />
-        <PackageReference Include="trevleyb.DCCWiThrottleClient" Version="1.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -339,6 +338,10 @@
         <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg"/>
         <None Remove="Resources\TrackPieces\Track_Unknown.svg"/>
         <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DCCWithrottleClient\DCCWithrottleClient.csproj" />
     </ItemGroup>
 
 </Project>
