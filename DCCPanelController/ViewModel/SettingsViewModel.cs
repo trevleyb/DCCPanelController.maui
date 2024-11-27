@@ -151,7 +151,7 @@ public partial class SettingsViewModel : BaseViewModel {
             OnPropertyChanged(nameof(IsConnectAvailable));
             WiServers.Clear();
             
-            var servers = ServiceFinder.FindServices("withrottle");
+            var servers = await ServiceFinder.FindServices("withrottle");
             if (servers is { Count: > 0 } ) {
                 foreach (var server in servers) {
                     WiServers.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));

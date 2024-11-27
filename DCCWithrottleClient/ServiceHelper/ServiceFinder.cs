@@ -14,7 +14,7 @@ public static class ServiceFinder {
     /// <param name="serviceName">The name, or part name, to search for</param>
     /// <param name="timeout">How long should finding this take</param>
     /// <returns>A collection of Names and IPAddresses that match the service name</returns>
-    public static List<ServiceInfo> FindServices(string serviceName, int timeout = 2000) {
+    public static async Task<List<ServiceInfo>> FindServices(string serviceName, int timeout = 2000) {
         List<ServiceInfo> foundServices = [];
         var  sd = new ServiceDiscovery();
 
