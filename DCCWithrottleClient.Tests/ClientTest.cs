@@ -20,7 +20,7 @@ public class ClientTest {
     }
 
     public async Task<ClientInfo?> GetDefaultWiServer() {
-        Trace.WriteLine("testing Connection to WiThrottle Server");
+        Console.WriteLine("testing Connection to WiThrottle Server");
         var server = await ServiceFinder.FindServices("withrottle");
         if (server.Count == 0 || server[0]?.ClientInfo != null) return null;
         return server[0]?.ClientInfo;
@@ -28,32 +28,32 @@ public class ClientTest {
     
     [Test]
     public async Task RunConnectionTest() {
-        Trace.WriteLine("testing Connection to WiThrottle Server");
+        Console.WriteLine("testing Connection to WiThrottle Server");
         if (await GetDefaultWiServer() is { } clientInfo) {
             var client = new DCCWithrottleClient.Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
             for (var i = 0; i < 10; i++) {
-                Trace.WriteLine($"Waiting... {i}");
+                Console.WriteLine($"Waiting... {i}");
                 Thread.Sleep(1000);
             }
             client.Disconnect();
         }
         Thread.Sleep(1000);
-        Trace.WriteLine("Completed.");
+        Console.WriteLine("Completed.");
     }
 
     [Test]
     public async Task SendCommandTests() {
-        Trace.WriteLine("testing Connection to WiThrottle Server");
+        Console.WriteLine("testing Connection to WiThrottle Server");
         if (await GetDefaultWiServer() is { } clientInfo) {
             var client = new DCCWithrottleClient.Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
             // Sleep for 5 seconds to let all messages get processed.
-            Trace.WriteLine("Waiting for 5 seconds...");
+            Console.WriteLine("Waiting for 5 seconds...");
             Thread.Sleep(5000);
             
             client.SendMessage(new TurnoutCommand("NT127", TurnoutStateEnum.Closed));
@@ -64,62 +64,62 @@ public class ClientTest {
             client.SendMessage(new RouteCommand("ROUTE2"));
             client.SendMessage(new RouteCommand("ROUTE3"));
 
-            Trace.WriteLine("Waiting for 5 seconds...");
+            Console.WriteLine("Waiting for 5 seconds...");
             Thread.Sleep(5000);
             client.Disconnect();
         }
         Thread.Sleep(1000);
-        Trace.WriteLine("Completed.");
+        Console.WriteLine("Completed.");
     }
 
     [Test]
     public async Task TestFastClock() {
-        Trace.WriteLine("testing Connection to WiThrottle Server");
+        Console.WriteLine("testing Connection to WiThrottle Server");
         if (await GetDefaultWiServer() is { } clientInfo) {
             var client = new DCCWithrottleClient.Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
             // Sleep for 5 seconds to let all messages get processed.
-            Trace.WriteLine("Waiting for 5 seconds...");
+            Console.WriteLine("Waiting for 5 seconds...");
             Thread.Sleep(5000);
 
             client.SendMessage(new FastClockCommand(DateTime.Now, 4));
     
             // Sleep for 30 seconds so we get the FastClock Messages
-            Trace.WriteLine("Waiting for 30 seconds...");
+            Console.WriteLine("Waiting for 30 seconds...");
             Thread.Sleep(30000);
             client.Disconnect();
         }
         Thread.Sleep(1000);
-        Trace.WriteLine("Completed.");
+        Console.WriteLine("Completed.");
     }
 
     
     private void ClientOnConnectionEvent(IClientEvent clientevent) {
         switch (clientevent) {
         case MessageEvent message:
-            Trace.WriteLine($"MESSAGE: {message.Type} => {message.Value}");
+            Console.WriteLine($"MESSAGE: {message.Type} => {message.Value}");
             break;
         case RosterEvent roster:
-            Trace.WriteLine($"ROSTER: Message");
+            Console.WriteLine($"ROSTER: Message");
             break;
         case RouteEvent route:
-            Trace.WriteLine($"ROUTE:{route.SystemName} : {route.UserName} => {route.State}");
+            Console.WriteLine($"ROUTE:{route.SystemName} : {route.UserName} => {route.State}");
             break;
         case TurnoutEvent turnout:
-            Trace.WriteLine($"TURNOUT: {turnout.SystemName} : {turnout.UserName} => {turnout.State}");
+            Console.WriteLine($"TURNOUT: {turnout.SystemName} : {turnout.UserName} => {turnout.State}");
             break;
         case FastClockEvent clock:
-            Trace.WriteLine($"CLOCK: {clock.Time.ToString(CultureInfo.InvariantCulture)}");
+            Console.WriteLine($"CLOCK: {clock.Time.ToString(CultureInfo.InvariantCulture)}");
             break;
         default:
-            Trace.WriteLine($"UNKNOWN: {clientevent.ToString()}");
+            Console.WriteLine($"UNKNOWN: {clientevent.ToString()}");
             break;
         }
 }
 
     private void ClientOnConnectionError(string obj) {
-        Trace.WriteLine("ERROR: " + obj.ToString());
+        Console.WriteLine("ERROR: " + obj.ToString());
     }
 }
