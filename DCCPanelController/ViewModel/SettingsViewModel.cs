@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCWithrottleClient.Client.Messages;
+using DCCWithrottleClient.ServiceHelper;
 
 namespace DCCPanelController.ViewModel;
 
@@ -15,7 +16,7 @@ public partial class SettingsViewModel : BaseViewModel {
     private readonly ConnectionService? _connectionService;
 
     [ObservableProperty] private Settings _settings;
-    [ObservableProperty] private ObservableCollection<string> _messages = [];
+    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
 
     public SettingsViewModel(SettingsService settingsService) {
@@ -76,7 +77,7 @@ public partial class SettingsViewModel : BaseViewModel {
 
     public void AddMessage(string message) {
         if (!string.IsNullOrEmpty(message)) {
-            Messages.Add(message);
+            Messages.Add(new SettingsMessage(message));
             if (Messages.Count > 100) Messages.RemoveAt(0);
         }
     }
@@ -148,13 +149,16 @@ public partial class SettingsViewModel : BaseViewModel {
         try {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
-            ObservableCollection<WiServer> newList = [];
-            var servers = DCCWithrottleClient.ServiceHelper.ServiceFinder.FindServices("withrottle", 3000);
-            foreach (var server in servers) {
-                newList.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
+            WiServers.Clear();
+            
+            var servers = ServiceFinder.FindServices("withrottle");
+            if (servers is { Count: > 0 } ) {
+                foreach (var server in servers) {
+                    WiServers.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
+                }
             }
-            WiServers = newList;
-            AddMessage($"Found {newList.Count} WiThrottle Servers");
+            
+            AddMessage($"Found {WiServers.Count} WiThrottle Servers");
         } catch (Exception ex) {
             AddMessage("Unable to search for WiThrottle Servers.");
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
@@ -215,4 +219,9 @@ public partial class SettingsViewModel : BaseViewModel {
 
         return "0";
     }
+}
+
+public partial class SettingsMessage (string message): ObservableObject {
+    [ObservableProperty] private DateTime _timeStamp = DateTime.Now;
+    [ObservableProperty] private string _message = message;   
 }

@@ -13,6 +13,12 @@ namespace DCCWithrottleClient.Tests;
 public class ClientTest {
 
     [Test]
+    public void FindServers() {
+        var servers = ServiceFinder.FindServices("withrottle");
+        Assert.That(servers.Count, Is.GreaterThanOrEqualTo(1));
+    }
+
+    [Test]
     public void RunConnectionTest() {
         Trace.WriteLine("testing Connection to WiThrottle Server");
         var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();

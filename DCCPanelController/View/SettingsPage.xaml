@@ -29,6 +29,7 @@
         <ToolbarItem Clicked="Download_OnClicked" IconImageSource="download.png" />
     </ContentPage.ToolbarItems>
 
+    <StackLayout>
     <Grid
         Margin="10"
         Padding="10"
@@ -220,20 +221,20 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
-            <Label>Start of Messages</Label>
-            <CollectionView x:DataType="viewmodel:SettingsViewModel" 
+            <CollectionView x:Name="MessagesList"
                             ItemsSource="{Binding Messages}"
                             ItemsUpdatingScrollMode="KeepLastItemInView">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="system:String">
-                        <HorizontalStackLayout>
-                        <Label Text="Message: "/>
-                        <Label Style="{StaticResource MediumLabel}" Text="{Binding .}" />
-                        </HorizontalStackLayout>
+                    <DataTemplate x:DataType="viewmodel:SettingsMessage">
+                        <Grid ColumnDefinitions="auto,*">
+                            <Label Margin="10,2,2,2" Grid.Column="0" Style="{StaticResource MediumLabel}" Text="{Binding TimeStamp}" />
+                            <Label Margin="10,2,2,2" Grid.Column="1" Style="{StaticResource MediumLabel}" Text="{Binding Message}" />
+                        </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Label>End of Messages</Label>
         </StackLayout>
     </Grid>
+        <Button Text="Clear List"></Button>
+    </StackLayout>
 </ContentPage>
