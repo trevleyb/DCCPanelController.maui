@@ -20,7 +20,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
 
-        <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
+        <MauiEnableXamlCBindingWithSourceCompilation>false</MauiEnableXamlCBindingWithSourceCompilation>
         <MauiStrictXamlCompilation>false</MauiStrictXamlCompilation>
 
         <!-- Display name -->

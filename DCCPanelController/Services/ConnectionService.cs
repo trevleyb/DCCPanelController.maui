@@ -96,12 +96,14 @@ public partial class ConnectionService : ObservableObject {
             });
         } else {
             found.Id = turnout.SystemName;
-            found.Name = turnout.UserName;
             found.State = turnout.StateEnum switch {
                 TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                 TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
                 _ => Model.TurnoutStateEnum.Unknown
             };
+            if (!string.IsNullOrWhiteSpace(turnout.UserName)) {
+                found.Name = turnout.UserName;
+            }
         }
     }
 
@@ -119,12 +121,14 @@ public partial class ConnectionService : ObservableObject {
             });
         } else {
             found.Id = route.SystemName;
-            found.Name = route.UserName;
             found.State = route.StateEnum switch {
                 DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
                 DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
                 _                                                           => Model.RouteStateEnum.Unknown
             };
+            if (!string.IsNullOrWhiteSpace(route.UserName)) {
+                found.Name = route.UserName;
+            }
         }
     }
 }

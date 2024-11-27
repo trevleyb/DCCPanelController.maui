@@ -10,10 +10,16 @@ using DCCPanelController.Services;
 namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsViewModel : BaseViewModel {
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+
     private ConnectionService? ConnectionService { get; }
     private bool _isAscending = false;
     private string _sortColumn = "";
+
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private bool _canToggleTurnoutState;
+    [ObservableProperty] private string _columnLabelID = "ID";
+    [ObservableProperty] private string _columnLabelName = "Turnout SystemName";
+    [ObservableProperty] private string _columnLabelState = "State";
 
     public TurnoutsViewModel(TurnoutsService? turnoutStateService, ConnectionService? connectionService) {
         ConnectionService = connectionService;
@@ -21,11 +27,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
         CanToggleTurnoutState = ConnectionService is not null && ConnectionService.IsConnected;
         SetLabels();
     }
-
-    [ObservableProperty] private bool _canToggleTurnoutState;
-    [ObservableProperty] private string _columnLabelID = "ID";
-    [ObservableProperty] private string _columnLabelName = "Turnout SystemName";
-    [ObservableProperty] private string _columnLabelState = "State";
 
     [RelayCommand(CanExecute = nameof(CanToggleTurnoutState))]
     public async Task SortByColumn(string columnName) {
@@ -67,7 +68,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
             _                       => TurnoutStateEnum.Closed
         };
-
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
     }
 }

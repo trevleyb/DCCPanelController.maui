@@ -16,11 +16,11 @@ public partial class Turnout : ObservableObject {
     /// </summary>
     public Turnout() { }
 
-    [JsonPropertyName("Id")] [ObservableProperty]
-    private string? _id;
-
+    [JsonPropertyName("Id")] 
+    [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
-    [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private TurnoutStateEnum _state   = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
 }
 
 [JsonSourceGenerationOptions(UseStringEnumConverter = true)]

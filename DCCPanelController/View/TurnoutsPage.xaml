@@ -56,12 +56,7 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Turnout">
                         <StackLayout Padding="0">
-                            <Grid ColumnDefinitions="75,*,32,80" Padding="5">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=ToggleTurnoutStateCommand}"
-                                        CommandParameter="{Binding .}" />
-                                </Grid.GestureRecognizers>
+                            <Grid ColumnDefinitions="75,*,100">
                                 <Label
                                     Grid.Column="0"
                                     HorizontalOptions="Start"
@@ -75,8 +70,15 @@
                                     Style="{StaticResource MediumLabel}"
                                     Text="{Binding Name}"
                                     VerticalOptions="Center" />
-                                <Image
-                                    Grid.Column="2"
+                                <HorizontalStackLayout Grid.Column="2">
+                                    
+                                    <HorizontalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer 
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=ToggleTurnoutStateCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </HorizontalStackLayout.GestureRecognizers>
+
+                                    <Image
                                     HeightRequest="32"
                                     HorizontalOptions="End"
                                     VerticalOptions="Center"
@@ -103,7 +105,6 @@
                                     </Image.Triggers>
                                 </Image>
                                 <Label
-                                    Grid.Column="3"
                                     HorizontalOptions="Fill"
                                     Style="{StaticResource MediumLabel}"
                                     Text="{Binding State}"
@@ -129,6 +130,7 @@
                                         </DataTrigger>
                                     </Label.Triggers>
                                 </Label>
+                                    </HorizontalStackLayout>
                             </Grid>
                             <BoxView
                                 BackgroundColor="{StaticResource Primary}"
