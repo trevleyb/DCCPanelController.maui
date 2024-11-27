@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Security.Cryptography;
+using DCCWithrottleClient.Client;
 using DCCWithrottleClient.Client.Commands;
 using DCCWithrottleClient.Client.Entities;
 using DCCWithrottleClient.Client.Events;
@@ -13,20 +14,23 @@ namespace DCCWithrottleClient.Tests;
 public class ClientTest {
 
     [Test]
-    public void FindServers() {
-        var servers = ServiceFinder.FindServices("withrottle");
+    public async Task FindServers() {
+        var servers = await ServiceFinder.FindServices("withrottle");
         Assert.That(servers.Count, Is.GreaterThanOrEqualTo(1));
     }
 
-    [Test]
-    public void RunConnectionTest() {
+    public async Task<ClientInfo?> GetDefaultWiServer() {
         Trace.WriteLine("testing Connection to WiThrottle Server");
-        var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();
-        if (server?.ClientInfo == null) {
-            Trace.WriteLine("No server found");
-        } else {
-            Trace.WriteLine($"Server: {server?.ClientInfo.ToString()}");
-            var client = new DCCWithrottleClient.Client.Client(server!.ClientInfo);
+        var server = await ServiceFinder.FindServices("withrottle");
+        if (server.Count == 0 || server[0]?.ClientInfo != null) return null;
+        return server[0]?.ClientInfo;
+    }
+    
+    [Test]
+    public async Task RunConnectionTest() {
+        Trace.WriteLine("testing Connection to WiThrottle Server");
+        if (await GetDefaultWiServer() is { } clientInfo) {
+            var client = new DCCWithrottleClient.Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
@@ -34,7 +38,6 @@ public class ClientTest {
                 Trace.WriteLine($"Waiting... {i}");
                 Thread.Sleep(1000);
             }
-
             client.Disconnect();
         }
         Thread.Sleep(1000);
@@ -42,14 +45,10 @@ public class ClientTest {
     }
 
     [Test]
-    public void SendCommandTests() {
-        Trace.WriteLine("testing Sending Commands to WiThrottle Server");
-        var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();
-        if (server?.ClientInfo == null) {
-            Trace.WriteLine("No server found");
-        } else {
-            Trace.WriteLine($"Server: {server?.ClientInfo.ToString()}");
-            var client = new DCCWithrottleClient.Client.Client(server!.ClientInfo);
+    public async Task SendCommandTests() {
+        Trace.WriteLine("testing Connection to WiThrottle Server");
+        if (await GetDefaultWiServer() is { } clientInfo) {
+            var client = new DCCWithrottleClient.Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
@@ -74,14 +73,10 @@ public class ClientTest {
     }
 
     [Test]
-    public void TestFastClock() {
+    public async Task TestFastClock() {
         Trace.WriteLine("testing Connection to WiThrottle Server");
-        var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();
-        if (server?.ClientInfo == null) {
-            Trace.WriteLine("No server found");
-        } else {
-            Trace.WriteLine($"Server: {server?.ClientInfo.ToString()}");
-            var client = new DCCWithrottleClient.Client.Client(server!.ClientInfo);
+        if (await GetDefaultWiServer() is { } clientInfo) {
+            var client = new DCCWithrottleClient.Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
