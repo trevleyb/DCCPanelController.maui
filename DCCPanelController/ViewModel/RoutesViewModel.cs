@@ -8,12 +8,16 @@ using DCCPanelController.Services;
 namespace DCCPanelController.ViewModel;
 
 public partial class RoutesViewModel : BaseViewModel {
-    [ObservableProperty] private ObservableCollection<Route>? _routes;
+
+    private const string LabelID = "ID";
+    private const string LabelName = "Route";
+    private const string LabelState = "State";
 
     private ConnectionService? ConnectionService { get; }
-    //private readonly RoutesService? _routesService;
     private bool _isAscending = false;
     private string _sortColumn = "";
+
+    [ObservableProperty] private ObservableCollection<Route>? _routes;
 
     public RoutesViewModel(RoutesService? routesService, ConnectionService? connectionService) {
         ConnectionService = connectionService;
@@ -23,13 +27,13 @@ public partial class RoutesViewModel : BaseViewModel {
     }
 
     [ObservableProperty] private bool _canToggleRoutesState;
-    [ObservableProperty] private string _columnLabelID = "ID";
-    [ObservableProperty] private string _columnLabelName = "Route SystemName";
-    [ObservableProperty] private string _columnLabelState = "State";
+    [ObservableProperty] private string _columnLabelID = LabelID;
+    [ObservableProperty] private string _columnLabelName = LabelName;
+    [ObservableProperty] private string _columnLabelState = LabelState;
 
     [RelayCommand]
     public async Task SortByColumn(string columnName) {
-        List<Route> sortedRoutes;
+        List<Route> sortedRoutes = [];
         if (Routes != null) {
             if (!_isAscending) {
                 sortedRoutes = columnName.ToLower() switch {
@@ -46,7 +50,6 @@ public partial class RoutesViewModel : BaseViewModel {
                     _       => Routes.ToList()
                 };
             }
-
             Routes = new ObservableCollection<Route>(sortedRoutes);
         }
 
@@ -57,9 +60,9 @@ public partial class RoutesViewModel : BaseViewModel {
     }
 
     private void SetLabels() {
-        ColumnLabelID = "ID" + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = "Route SystemName" + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = "State" + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]

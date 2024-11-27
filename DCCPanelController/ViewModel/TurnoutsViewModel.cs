@@ -4,31 +4,35 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
-
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+using DCCPanelController.Services.NavigationService;
+using DCCPanelController.View;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsViewModel : BaseViewModel {
 
-    private ConnectionService? ConnectionService { get; }
+    private const string LabelID = "ID";
+    private const string LabelName = "Turnout";
+    private const string LabelState = "State";
+    
+    private INavigationService NavigationService { get; }
+    private ConnectionService ConnectionService { get; }
     private bool _isAscending = false;
     private string _sortColumn = "";
 
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-    [ObservableProperty] private bool _canToggleTurnoutState;
-    [ObservableProperty] private string _columnLabelID = "ID";
-    [ObservableProperty] private string _columnLabelName = "Turnout SystemName";
-    [ObservableProperty] private string _columnLabelState = "State";
+    [ObservableProperty] private string _columnLabelID = LabelID;
+    [ObservableProperty] private string _columnLabelName = LabelName;
+    [ObservableProperty] private string _columnLabelState = LabelState;
 
-    public TurnoutsViewModel(TurnoutsService? turnoutStateService, ConnectionService? connectionService) {
+    public TurnoutsViewModel(TurnoutsService? turnoutStateService, ConnectionService connectionService, INavigationService navigationService) {
         ConnectionService = connectionService;
+        NavigationService = navigationService;
         Turnouts = turnoutStateService?.Turnouts ?? [];
-        CanToggleTurnoutState = ConnectionService is not null && ConnectionService.IsConnected;
         SetLabels();
     }
 
-    [RelayCommand(CanExecute = nameof(CanToggleTurnoutState))]
+    [RelayCommand]
     public async Task SortByColumn(string columnName) {
         List<Turnout> sortedTurnout;
         if (!_isAscending) {
@@ -55,11 +59,29 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     private void SetLabels() {
-        ColumnLabelID = "ID" + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = "Turnout SystemName" + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = "State" + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
+    [RelayCommand]
+    public async Task EditTurnoutAsync(Turnout turnout) {
+        await NavigationService.NavigateToEditTurnoutAsync(turnout);
+    }
+
+    [RelayCommand]
+    public async Task AddTurnoutAsync() {
+        var turnout = new Turnout {
+            Id = "NT0000",
+            Name = "Example Turnout",
+            State = TurnoutStateEnum.Closed
+        };
+        if (await NavigationService.NavigateToEditTurnoutAsync(turnout) is { } result) {
+            Turnouts.Add(result);
+        }
+    }
+
+    
     [RelayCommand]
     public async Task ToggleTurnoutState(Turnout? turnout) {
         if (turnout == null) return;

@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Services;
+using DCCPanelController.Services.NavigationService;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
 using Microsoft.Extensions.Logging;
@@ -25,7 +26,9 @@ public static class MauiProgram {
 #endif
 
         var services = builder.Services;
-
+        
+        services.AddTransient<INavigationService, NavigationService>();
+        
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<SettingsService>();
