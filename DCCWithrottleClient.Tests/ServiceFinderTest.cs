@@ -5,7 +5,7 @@ public class ServiceFinderTest {
     [Test]
     public void ClientInfoTest() {
         var si = new ServiceInfo(@"DCCRailway\032WiThrottle\032Service._withrottle._tcp.local", "10.0.0.1", 1234);
-        Assert.That(si.Name, Is.EqualTo("DCCRailway WiThrottle Service"));
+        Assert.That(si.SystemName, Is.EqualTo("DCCRailway WiThrottle Service"));
     }
 
     [Test]
@@ -13,15 +13,15 @@ public class ServiceFinderTest {
         var server   = StartServer();
         var services = ServiceFinder.FindServices("withrottle");
         Assert.That(services.Count, Is.GreaterThanOrEqualTo(1));
-        Assert.That(services[0].Name, Is.EqualTo("DCCRailway WiThrottle Service"));
+        Assert.That(services[0].SystemName, Is.EqualTo("DCCRailway WiThrottle Service"));
         StopServer(server);
     }
 
     public static Server.Server StartServer() {
         var logger   = LoggerHelper.DebugLogger;
         var settings = new RailwaySettings(logger).CreateSampleData("./", "Sample");
-        settings.Controller.Name         = "Virtual";
-        settings.Controller.Adapter.Name = "Virtual";
+        settings.Controller.SystemName         = "Virtual";
+        settings.Controller.Adapter.SystemName = "Virtual";
         var stateManager = new StateManager.StateManager();
         var cmdStation   = new ControllerManager(logger, settings.Controller);
         var wii          = new Server.Server(logger, settings);

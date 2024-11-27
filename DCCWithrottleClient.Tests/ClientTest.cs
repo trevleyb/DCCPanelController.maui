@@ -1,5 +1,11 @@
 using System.Diagnostics;
+using System.Globalization;
+using System.Security.Cryptography;
+using DCCWithrottleClient.Client.Commands;
+using DCCWithrottleClient.Client.Entities;
+using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.ServiceHelper;
+using Makaretu.Dns;
 
 namespace DCCWithrottleClient.Tests;
 
@@ -7,6 +13,112 @@ namespace DCCWithrottleClient.Tests;
 public class ClientTest {
 
     [Test]
-    public void RunClientTest() { }
+    public void RunConnectionTest() {
+        Trace.WriteLine("testing Connection to WiThrottle Server");
+        var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();
+        if (server?.ClientInfo == null) {
+            Trace.WriteLine("No server found");
+        } else {
+            Trace.WriteLine($"Server: {server?.ClientInfo.ToString()}");
+            var client = new DCCWithrottleClient.Client.Client(server!.ClientInfo);
+            client.ConnectionError += ClientOnConnectionError;
+            client.ConnectionEvent += ClientOnConnectionEvent;
+            client.Connect();
+            for (var i = 0; i < 10; i++) {
+                Trace.WriteLine($"Waiting... {i}");
+                Thread.Sleep(1000);
+            }
 
+            client.Disconnect();
+        }
+        Thread.Sleep(1000);
+        Trace.WriteLine("Completed.");
+    }
+
+    [Test]
+    public void SendCommandTests() {
+        Trace.WriteLine("testing Sending Commands to WiThrottle Server");
+        var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();
+        if (server?.ClientInfo == null) {
+            Trace.WriteLine("No server found");
+        } else {
+            Trace.WriteLine($"Server: {server?.ClientInfo.ToString()}");
+            var client = new DCCWithrottleClient.Client.Client(server!.ClientInfo);
+            client.ConnectionError += ClientOnConnectionError;
+            client.ConnectionEvent += ClientOnConnectionEvent;
+            client.Connect();
+            // Sleep for 5 seconds to let all messages get processed.
+            Trace.WriteLine("Waiting for 5 seconds...");
+            Thread.Sleep(5000);
+            
+            client.SendMessage(new TurnoutCommand("NT127", TurnoutStateEnum.Closed));
+            client.SendMessage(new TurnoutCommand("NT126", TurnoutStateEnum.Thrown));
+            client.SendMessage(new TurnoutCommand("NT137", TurnoutStateEnum.Toggle));
+
+            client.SendMessage(new RouteCommand("ROUTE1"));
+            client.SendMessage(new RouteCommand("ROUTE2"));
+            client.SendMessage(new RouteCommand("ROUTE3"));
+
+            Trace.WriteLine("Waiting for 5 seconds...");
+            Thread.Sleep(5000);
+            client.Disconnect();
+        }
+        Thread.Sleep(1000);
+        Trace.WriteLine("Completed.");
+    }
+
+    [Test]
+    public void TestFastClock() {
+        Trace.WriteLine("testing Connection to WiThrottle Server");
+        var server = ServiceFinder.FindServices("withrottle").FirstOrDefault();
+        if (server?.ClientInfo == null) {
+            Trace.WriteLine("No server found");
+        } else {
+            Trace.WriteLine($"Server: {server?.ClientInfo.ToString()}");
+            var client = new DCCWithrottleClient.Client.Client(server!.ClientInfo);
+            client.ConnectionError += ClientOnConnectionError;
+            client.ConnectionEvent += ClientOnConnectionEvent;
+            client.Connect();
+            // Sleep for 5 seconds to let all messages get processed.
+            Trace.WriteLine("Waiting for 5 seconds...");
+            Thread.Sleep(5000);
+
+            client.SendMessage(new FastClockCommand(DateTime.Now, 4));
+    
+            // Sleep for 30 seconds so we get the FastClock Messages
+            Trace.WriteLine("Waiting for 30 seconds...");
+            Thread.Sleep(30000);
+            client.Disconnect();
+        }
+        Thread.Sleep(1000);
+        Trace.WriteLine("Completed.");
+    }
+
+    
+    private void ClientOnConnectionEvent(IClientEvent clientevent) {
+        switch (clientevent) {
+        case MessageEvent message:
+            Trace.WriteLine($"MESSAGE: {message.Type} => {message.Value}");
+            break;
+        case RosterEvent roster:
+            Trace.WriteLine($"ROSTER: Message");
+            break;
+        case RouteEvent route:
+            Trace.WriteLine($"ROUTE:{route.SystemName} : {route.UserName} => {route.State}");
+            break;
+        case TurnoutEvent turnout:
+            Trace.WriteLine($"TURNOUT: {turnout.SystemName} : {turnout.UserName} => {turnout.State}");
+            break;
+        case FastClockEvent clock:
+            Trace.WriteLine($"CLOCK: {clock.Time.ToString(CultureInfo.InvariantCulture)}");
+            break;
+        default:
+            Trace.WriteLine($"UNKNOWN: {clientevent.ToString()}");
+            break;
+        }
+}
+
+    private void ClientOnConnectionError(string obj) {
+        Trace.WriteLine("ERROR: " + obj.ToString());
+    }
 }

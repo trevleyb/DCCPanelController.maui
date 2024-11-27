@@ -1,26 +1,28 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
+using DCCWithrottleClient.Client.Commands;
 using DCCWithrottleClient.Client.Entities;
+using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.Client.Messages;
 using DCCWithrottleClient.Helpers;
 using Timer = System.Timers.Timer;
 
 namespace DCCWithrottleClient.Client;
 
-public class Client(ClientInfo clientInfo, Turnouts? turnouts, Routes? routes) {
+public class Client(ClientInfo clientInfo) {
     private TcpClient?     _client;
     private Timer?         _heartbeatTimer;
     private bool           _running;
     private NetworkStream? _stream;
 
-    public Client(string address, int    port,    Turnouts? turnouts, Routes? routes) : this(new ClientInfo(address, port), turnouts, routes) { }
-    public Client(string name,    string address, int       port, Turnouts? turnouts, Routes? routes) : this(new ClientInfo(name, address, port), turnouts, routes) { }
+    public Client(string address, int    port) : this(new ClientInfo(address, port)) { }
+    public Client(string name,    string address, int       port) : this(new ClientInfo(name, address, port)) { }
 
     public bool                      Echo { get; set; } = true;
-    public event Action<IClientMsg>? MessageProcessed;
-    public event Action<string>?     DataReceived;
-    public event Action<string>?     ConnectionError;
+    
+    public event Action<IClientEvent>? ConnectionEvent;
+    public event Action<string>?       ConnectionError;
 
     /// <summary>
     /// Connect to the WiThrottle Service via the given Address/Port
@@ -76,27 +78,25 @@ public class Client(ClientInfo clientInfo, Turnouts? turnouts, Routes? routes) {
                 // that we have an issue so that we can try to re-establish the connection
                 ConnectionError?.Invoke(ex.Message);
             }
-            //Thread.Sleep(100);
+            Thread.Sleep(100);
         }
     }
 
     private void ProcessMessage(string message) {
-        var clientMsg = new MessageProcessor(turnouts, routes).Interpret(message);
+        var clientMsg = MessageProcessor.Interpret(message);
+        
         switch (clientMsg) {
         case MsgQuit quit:
             _running = false;
-            MessageProcessed?.Invoke(quit);
             break;
         case MsgHeartbeat heartbeat:
             StopHeartbeatTimer();
             StartHeartbeatTimer(heartbeat.HeartbeatSeconds);
             break;
-        case MsgPanel panel:
-            MessageProcessed?.Invoke(panel);
-            break;
         default:
-            MessageProcessed?.Invoke(clientMsg);
-            DataReceived?.Invoke(message);
+            foreach (var clientEvent in clientMsg.FoundEvents) {
+                OnClientEventOccurred(clientEvent);
+            }
             break;
         }
     }
@@ -117,21 +117,21 @@ public class Client(ClientInfo clientInfo, Turnouts? turnouts, Routes? routes) {
     }
 
     public void Disconnect() {
-        SendMessage("Q");
+        SendShutdownMessages();
         Stop();
     }
     
-    /// <summary>
-    /// Send a message to the Client
-    /// </summary>
-    /// <param name="message">The message, as a string, to send.</param>
+    public void SendMessage(IClientCmd command) {
+        SendMessage(command.Command);
+    }
+    
     public void SendMessage(string message) {
         message = message.WithTerminator();
+        if (Echo) OnClientEventOccurred(new MessageEvent("Command", message));
         try {
             if (_stream is { CanWrite: true }) {
                 var data = Encoding.UTF8.GetBytes(message);
                 _stream.Write(data, 0, data.Length);
-                if (Echo) DataReceived?.Invoke(message);
             }
         } catch (Exception ex) {
             // Just ignore any exceptions for now, but this should raise events to say 
@@ -144,7 +144,6 @@ public class Client(ClientInfo clientInfo, Turnouts? turnouts, Routes? routes) {
     /// Shutdown the connection to the WiThrottle Service and clean up. 
     /// </summary>
     public void Stop() {
-        if (_running) SendShutdownMessages();
         _running = false;
         if (_stream is { } stream) stream.Close();
         if (_client is { } client) client.Close();
@@ -166,5 +165,9 @@ public class Client(ClientInfo clientInfo, Turnouts? turnouts, Routes? routes) {
             _heartbeatTimer.Elapsed -= HeartbeatTimerOnElapsed;
             _heartbeatTimer.Stop();
         }
+    }
+
+    protected void OnClientEventOccurred(IClientEvent clientEvent) {
+        ConnectionEvent?.Invoke(clientEvent);
     }
 }

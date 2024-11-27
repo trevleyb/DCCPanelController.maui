@@ -102,7 +102,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
 
 // [RelayCommand]
 // public async Task DropAsync(Panel panel) {
-//     Console.WriteLine($"Dropped {panel.Name}");
+//     Console.WriteLine($"Dropped {panel.SystemName}");
 //     var droppedIndex = Panels.IndexOf(panel);
 //
 //     // Swap or rearrange items

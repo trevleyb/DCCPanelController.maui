@@ -46,19 +46,18 @@ public partial class SettingsViewModel : BaseViewModel {
     [RelayCommand]
     public async Task ConnectAsync() {
         if (!IsDemoMode) {
+            Messages.Clear();
+            AddMessage("Attempting to connect/disconnect to WiService");
             try {
                 IsBusy = true;
                 if (_connectionService is not null) {
                     if (IsConnected) {
-                        Messages.Clear();
-                        AddMessage("Disconnecting from WiThrottle Service");
                         _connectionService.Disconnect();
-                        _connectionService.MessageProcessed -= ServiceOnMessageProcessed;
+                        _connectionService.MessageRecieved -= ServiceOnMessageRecieved;
                         AddMessage("Disconnected.");
                     } else {
-                        AddMessage("Connecting to WiThrottle Service...");
                         _connectionService.Connect(Settings.WiServer);
-                        _connectionService.MessageProcessed += ServiceOnMessageProcessed;
+                        _connectionService.MessageRecieved += ServiceOnMessageRecieved;
                         AddMessage("Connected.");
                     }
                 }
@@ -71,8 +70,8 @@ public partial class SettingsViewModel : BaseViewModel {
         IsBusy = false;
     }
 
-    private void ServiceOnMessageProcessed(IClientMsg obj) {
-        WiThrottleMessageReceieved(obj);
+    private void ServiceOnMessageRecieved(string message) {
+        AddMessage(message);
     }
 
     public void AddMessage(string message) {
@@ -80,10 +79,6 @@ public partial class SettingsViewModel : BaseViewModel {
             Messages.Add(message);
             if (Messages.Count > 100) Messages.RemoveAt(0);
         }
-    }
-
-    public void WiThrottleMessageReceieved(IClientMsg obj) {
-        AddMessage(obj.ActionTaken);
     }
 
     public string IpAddress {
@@ -149,6 +144,7 @@ public partial class SettingsViewModel : BaseViewModel {
     [RelayCommand]
     public async Task RefreshWiServersAsync() {
         if (IsBusy) return;
+        AddMessage("Attempting to scan for WiThrottle Servers");
         try {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
@@ -157,9 +153,10 @@ public partial class SettingsViewModel : BaseViewModel {
             foreach (var server in servers) {
                 newList.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
             }
-
             WiServers = newList;
+            AddMessage($"Found {newList.Count} WiThrottle Servers");
         } catch (Exception ex) {
+            AddMessage("Unable to search for WiThrottle Servers.");
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
             await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
         } finally {

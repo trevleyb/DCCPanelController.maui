@@ -1,12 +1,9 @@
+using DCCWithrottleClient.Client.Events;
+
 namespace DCCWithrottleClient.Client.Messages;
 
-public class MsgIgnore() : IClientMsg {
-    public void Process(string commandStr) { }
-
+public class MsgIgnore(string commandStr) : ClientMsg, IClientMsg {
     public override string ToString() {
-        return "MSG:Ignore";
+        return $"MSG:Ignore => {commandStr}";
     }
-    
-    public  string ActionTaken { get; private set; } = string.Empty;
-
 }

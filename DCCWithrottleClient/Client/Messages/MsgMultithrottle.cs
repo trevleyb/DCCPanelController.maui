@@ -1,7 +1,11 @@
 namespace DCCWithrottleClient.Client.Messages;
 
-public class MsgMultiThrottle() : IClientMsg {
-    public void   Process(string commandStr) { }
-    public string ActionTaken                { get; private set; } = string.Empty;
-
+public class MsgMultiThrottle :ClientMsg, IClientMsg {
+    private readonly string _commandStr;
+    public MsgMultiThrottle(string commandStr) {
+        _commandStr = commandStr;
+    }
+    public override string ToString() {
+        return $"MSG:Multithrottle => {_commandStr}";
+    }
 }

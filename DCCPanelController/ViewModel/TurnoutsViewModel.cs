@@ -24,7 +24,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [ObservableProperty] private bool _canToggleTurnoutState;
     [ObservableProperty] private string _columnLabelID = "ID";
-    [ObservableProperty] private string _columnLabelName = "Turnout Name";
+    [ObservableProperty] private string _columnLabelName = "Turnout SystemName";
     [ObservableProperty] private string _columnLabelState = "State";
 
     [RelayCommand(CanExecute = nameof(CanToggleTurnoutState))]
@@ -55,7 +55,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     private void SetLabels() {
         ColumnLabelID = "ID" + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = "Turnout Name" + (_sortColumn.Equals("Name") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = "Turnout SystemName" + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
         ColumnLabelState = "State" + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 

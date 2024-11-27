@@ -24,7 +24,7 @@ public partial class RoutesViewModel : BaseViewModel {
 
     [ObservableProperty] private bool _canToggleRoutesState;
     [ObservableProperty] private string _columnLabelID = "ID";
-    [ObservableProperty] private string _columnLabelName = "Route Name";
+    [ObservableProperty] private string _columnLabelName = "Route SystemName";
     [ObservableProperty] private string _columnLabelState = "State";
 
     [RelayCommand]
@@ -58,7 +58,7 @@ public partial class RoutesViewModel : BaseViewModel {
 
     private void SetLabels() {
         ColumnLabelID = "ID" + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = "Route Name" + (_sortColumn.Equals("Name") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = "Route SystemName" + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
         ColumnLabelState = "State" + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 

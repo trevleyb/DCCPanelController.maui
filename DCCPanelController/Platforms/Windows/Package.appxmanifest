@@ -6,20 +6,20 @@
         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
         IgnorableNamespaces="uap rescap">
 
-    <Identity Name="maui-package-name-placeholder" Publisher="CN=User Name" Version="0.0.0.0"/>
+    <Identity SystemName="maui-package-name-placeholder" Publisher="CN=User SystemName" Version="0.0.0.0"/>
 
     <mp:PhoneIdentity PhoneProductId="FF2C8775-44A3-4C1C-AF26-42D364A39A5A"
                       PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
     <Properties>
         <DisplayName>$placeholder$</DisplayName>
-        <PublisherDisplayName>User Name</PublisherDisplayName>
+        <PublisherDisplayName>User SystemName</PublisherDisplayName>
         <Logo>$placeholder$.png</Logo>
     </Properties>
 
     <Dependencies>
-        <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0"/>
-        <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0"/>
+        <TargetDeviceFamily SystemName="Windows.Universal" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0"/>
+        <TargetDeviceFamily SystemName="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.19041.0"/>
     </Dependencies>
 
     <Resources>
@@ -42,7 +42,7 @@
     </Applications>
 
     <Capabilities>
-        <rescap:Capability Name="runFullTrust"/>
+        <rescap:Capability SystemName="runFullTrust"/>
     </Capabilities>
 
 </Package>

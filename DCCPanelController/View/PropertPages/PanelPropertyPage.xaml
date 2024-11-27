@@ -39,12 +39,12 @@
                     <!--  Panel Name  -->
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label
-                            Text="Panel Name"
+                            Text="Panel SystemName"
                             VerticalOptions="Center"
                             WidthRequest="120" />
                         <Entry
                             HorizontalOptions="FillAndExpand"
-                            Placeholder="Enter Panel Name"
+                            Placeholder="Enter Panel SystemName"
                             Text="{Binding Name}"
                             WidthRequest="250" />
                     </HorizontalStackLayout>

@@ -2,180 +2,125 @@ using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCWithrottleClient.Client;
+using DCCWithrottleClient.Client.Commands;
 using DCCWithrottleClient.Client.Entities;
+using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.Client.Messages;
+using TurnoutStateEnum = DCCWithrottleClient.Client.Entities.TurnoutStateEnum;
 
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
-    private Turnouts _turnouts = new(); // Turnouts Managed by the Client 
-    private Routes _routes = new();     // Routes Managed by the Client
     private Client? _client;
     private TurnoutsService? _turnoutsService;
     private RoutesService? _routesService;
 
-    // Add an event that will be raised when a new message is processed
-    public event Action<IClientMsg>? MessageProcessed;
-
     [ObservableProperty] private bool _isConnected = false;
 
+    public event Action<string>? MessageRecieved;
+    
     public void Connect(WiServer wiServer) {
-        _turnoutsService = MauiProgram.ServiceHelper.GetService<TurnoutsService>();
-        ArgumentNullException.ThrowIfNull(_turnoutsService);
 
+        // Get the Route and Turnout Services so we can Update the list of Turnouts and Routes 
+        // as we get data back from the WiServer. 
+        // ------------------------------------------------------------------------------------
+        _turnoutsService = MauiProgram.ServiceHelper.GetService<TurnoutsService>();
         _routesService = MauiProgram.ServiceHelper.GetService<RoutesService>();
+        ArgumentNullException.ThrowIfNull(_turnoutsService);
         ArgumentNullException.ThrowIfNull(_routesService);
 
-        _turnouts = [];
-        _routes = [];
-
-        _client = new Client(wiServer.IpAddress, wiServer.Port, _turnouts, _routes);
-        _client.MessageProcessed += ClientOnMessageProcessed;
+        _client = new Client(wiServer.IpAddress, wiServer.Port);
+        _client.ConnectionEvent += ClientOnConnectionEvent;
         _client.ConnectionError += ClientOnConnectionError;
-        _client.DataReceived += ClientOnDataReceived;
-        _turnouts.CollectionChanged += TurnoutsOnCollectionChanged;
-        _turnouts.EntityChangedEvent += TurnoutsOnEntityChangedEvent;
-        _routes.CollectionChanged += RoutesOnCollectionChanged;
-        _routes.EntityChangedEvent += RoutesOnEntityChangedEvent;
-        var didConnect = _client.Connect();
-        if (didConnect.Failed) throw new Exception("Unable to connect to the WiThrottle Client Defined.");
+        if (!_client.Connect().Success) throw new Exception("Unable to connect to the WiThrottle Client Defined.");
         IsConnected = true;
     }
 
     public void Disconnect() {
-        _turnouts.CollectionChanged -= TurnoutsOnCollectionChanged;
-        _turnouts.EntityChangedEvent -= TurnoutsOnEntityChangedEvent;
-        _routes.CollectionChanged -= RoutesOnCollectionChanged;
-        _routes.EntityChangedEvent -= RoutesOnEntityChangedEvent;
         if (_client != null) {
-            _client.MessageProcessed -= ClientOnMessageProcessed;
+            _client.ConnectionEvent -= ClientOnConnectionEvent;
             _client.ConnectionError -= ClientOnConnectionError;
-            _client.DataReceived -= ClientOnDataReceived;
             _client.Disconnect();
         }
-
         IsConnected = false;
-    }
-
-    private void ClientOnDataReceived(string obj) {
-        Console.WriteLine(obj.ToString());
     }
 
     private void ClientOnConnectionError(string obj) {
         Console.WriteLine("Connection Error: " + obj.ToString());
     }
 
-    private void ClientOnMessageProcessed(IClientMsg obj) {
-        MessageProcessed?.Invoke(obj);
+    public void SendTurnoutStateChangeCommand(string id, Model.TurnoutStateEnum state) {
+        _client?.SendMessage(new TurnoutCommand(id, state == Model.TurnoutStateEnum.Closed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown));
     }
 
-    public void SendTurnoutStateChangeCommand(string id, Model.TurnoutStateEnum state) {
-        // This should be finished and managed as message objects - TODO
-        //PTATLT304
-        var message = $"PTA{(state == Model.TurnoutStateEnum.Closed ? "C" : "T")}{id}";
-        _client?.SendMessage(message);
+    public void SendTurnoutStateToggleCommand(string id) {
+        _client?.SendMessage(new TurnoutCommand(id, TurnoutStateEnum.Toggle));
     }
 
     public void SendRouteStateChangeCommand(string id, Model.RouteStateEnum state) {
-        // This should be finished and managed as message objects - TODO
-        //PTATLT304
-        var message = $"PRA{(state == Model.RouteStateEnum.Active ? "2" : "4")}{id}";
-        _client?.SendMessage(message);
+        _client?.SendMessage(new RouteCommand(id));
     }
 
-    /// <summary>
-    /// This is called whenever we change a Turnout (add or update). Use this to then change the
-    /// Panel Turnouts List. Update the list s that we do not override any existing items
-    /// and add new ones if they do not exist. 
-    /// </summary>
-    private void TurnoutsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        if (e.NewItems != null) {
-            foreach (var item in e.NewItems) {
-                if (item is DCCWithrottleClient.Client.Entities.Turnout { } turnout) {
-                    switch (e.Action) {
-                    case NotifyCollectionChangedAction.Add:
-                        TurnoutsOnEntityChangedEvent(turnout);
-                        break;
-                    case NotifyCollectionChangedAction.Remove:
-                        _turnoutsService?.DeleteTurnoutAsync(turnout.Name);
-                        break;
-                    case NotifyCollectionChangedAction.Replace:
-                        TurnoutsOnEntityChangedEvent(turnout);
-                        break;
-                    case NotifyCollectionChangedAction.Reset:
-                        break;
-                    }
-                }
-            }
+    private void ClientOnConnectionEvent(IClientEvent clientEvent) {
+        MessageRecieved?.Invoke(clientEvent?.ToString() ?? "Unknown Message");
+        
+        switch (clientEvent) {
+        case MessageEvent message:
+            break;
+        case RosterEvent roster:
+            break;
+        case RouteEvent route:
+            UpdateRoute(route);
+            break;
+        case TurnoutEvent turnout:
+            UpdateTurnout(turnout);
+            break;
+        case FastClockEvent clock:
+            break;
+        default:
+            break;
         }
     }
 
-    private void TurnoutsOnEntityChangedEvent(DCCWithrottleClient.Client.Entities.Turnout obj) {
-        var found = _turnoutsService?.GetTurnoutByIdAsync(obj.Name).Result;
+    private void UpdateTurnout(TurnoutEvent turnout) {
+        var found = _turnoutsService?.GetTurnoutByIdAsync(turnout.SystemName).Result;
         if (found == null) {
             _turnoutsService?.AddTurnoutAsync(new Model.Turnout() {
-                Id = obj.Name,
-                Name = obj.UserName,
-                State = obj.StateEnum switch {
-                    DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
-                    DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                    _                                                           => Model.TurnoutStateEnum.Unknown
+                Id = turnout.SystemName,
+                Name = turnout.UserName,
+                State = turnout.StateEnum switch {
+                    TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
+                    TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
+                    _ => Model.TurnoutStateEnum.Unknown
                 }
             });
         } else {
-            found.Id = obj.Name;
-            found.Name = obj.UserName;
-            found.State = obj.StateEnum switch {
-                DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
-                DCCWithrottleClient.Client.Entities.TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                _                                                           => Model.TurnoutStateEnum.Unknown
+            found.Id = turnout.SystemName;
+            found.Name = turnout.UserName;
+            found.State = turnout.StateEnum switch {
+                TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
+                TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
+                _ => Model.TurnoutStateEnum.Unknown
             };
         }
     }
 
-    /// <summary>
-    /// This is called whenever we change a Route (add or update). Use this to then change the
-    /// Panel Routes List. Update the list so that we do not override any existing items
-    /// and add new ones if they do not exist. 
-    /// </summary>
-    private void RoutesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        if (e.NewItems != null) {
-            foreach (var item in e.NewItems) {
-                if (item is DCCWithrottleClient.Client.Entities.Route { } route) {
-                    switch (e.Action) {
-                    case NotifyCollectionChangedAction.Add:
-                        RoutesOnEntityChangedEvent(route);
-                        break;
-                    case NotifyCollectionChangedAction.Remove:
-                        _routesService?.DeleteRouteAsync(route.Name);
-                        break;
-                    case NotifyCollectionChangedAction.Replace:
-                        RoutesOnEntityChangedEvent(route);
-                        break;
-                    case NotifyCollectionChangedAction.Reset:
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    private void RoutesOnEntityChangedEvent(DCCWithrottleClient.Client.Entities.Route obj) {
-        var found = _routesService?.GetRouteByIdAsync(obj.Name).Result;
+    private void UpdateRoute(RouteEvent route) {
+        var found = _routesService?.GetRouteByIdAsync(route.SystemName).Result;
         if (found == null) {
             _routesService?.AddRouteAsync(new Model.Route() {
-                Id = obj.Name,
-                Name = obj.UserName,
-                State = obj.StateEnum switch {
+                Id = route.SystemName,
+                Name = route.UserName,
+                State = route.StateEnum switch {
                     DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
                     DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
                     _                                                           => Model.RouteStateEnum.Unknown
                 }
             });
         } else {
-            found.Id = obj.Name;
-            found.Name = obj.UserName;
-            found.State = obj.StateEnum switch {
+            found.Id = route.SystemName;
+            found.Name = route.UserName;
+            found.State = route.StateEnum switch {
                 DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
                 DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
                 _                                                           => Model.RouteStateEnum.Unknown

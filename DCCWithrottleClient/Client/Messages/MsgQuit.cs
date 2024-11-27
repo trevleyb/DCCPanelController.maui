@@ -1,12 +1,7 @@
 namespace DCCWithrottleClient.Client.Messages;
 
-public class MsgQuit() : IClientMsg {
-    public void Process(string commandStr) { }
-
+public class MsgQuit(string commandStr) : ClientMsg, IClientMsg {
     public override string ToString() {
-        return "MSG:Quit";
+        return $"MSG:Quit => {commandStr}";
     }
-    
-    public  string ActionTaken { get; private set; } = string.Empty;
-
 }

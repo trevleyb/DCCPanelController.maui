@@ -37,8 +37,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void OnEntryFocused(object sender, FocusEventArgs e) {
-        var entry = sender as Entry;
-        if (entry != null) {
+        if (sender is Entry entry) {
             entry.CursorPosition = 0;
             entry.SelectionLength = entry.Text?.Length ?? 0;
         }

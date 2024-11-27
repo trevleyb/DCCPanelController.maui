@@ -32,7 +32,7 @@
                 Grid.Column="1"
                 Style="{StaticResource ButtonLabel}"
                 Text="{Binding ColumnLabelName}"
-                Command="{Binding SortByColumnCommand}" CommandParameter="Name" />
+                Command="{Binding SortByColumnCommand}" CommandParameter="SystemName" />
             <Button
                 Grid.Column="3"
                 Style="{StaticResource ButtonLabel}"

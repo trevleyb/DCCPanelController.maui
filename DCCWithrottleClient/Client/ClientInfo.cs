@@ -10,4 +10,8 @@ public class ClientInfo(string? name, string address, int port) {
 
     public string GetNameMessage     => $"N{Name}";
     public string GetHardwareMessage => $"HU{Id.ToString()}";
+
+    public override string ToString() {
+        return $"SystemName: {Name}, Address: {Address}, Port: {Port}";
+    }
 }

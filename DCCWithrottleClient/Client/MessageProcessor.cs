@@ -3,39 +3,33 @@ using DCCWithrottleClient.Client.Messages;
 
 namespace DCCWithrottleClient.Client;
 
-public class MessageProcessor(Turnouts? turnouts, Routes? routes) {
+public static class MessageProcessor {
     /// <summary>
     ///     Simply, given an input string, this will return a Command Object that
     ///     needs to be managed and processed based on the commandStr provided.
     /// </summary>
-    public IClientMsg Interpret(string commandStr) {
+    public static IClientMsg Interpret(string commandStr) {
         // When we get here, there will only ever be a single message as
         // we filter out in the server when we read each line.
         // ------------------------------------------------------------------
         if (!string.IsNullOrEmpty(commandStr) && commandStr.Length >= 1) {
-            var clientMsg = DetermineClientMsgType();
-            clientMsg.Process(commandStr);
-            return clientMsg;
-        }
+            if (string.IsNullOrEmpty(commandStr)) return new MsgIgnore(commandStr);
 
-        IClientMsg DetermineClientMsgType() {
-            if (string.IsNullOrEmpty(commandStr)) return new MsgIgnore();
             var commandChar = (int)commandStr[0];
             var commandType = Enum.IsDefined(typeof(CommandTypeEnum), commandChar) ? (CommandTypeEnum)commandChar : CommandTypeEnum.Ignore;
 
             return commandType switch {
-                CommandTypeEnum.Name          => new MsgName(),
-                CommandTypeEnum.Hardware      => new MsgHardware(),
-                CommandTypeEnum.MultiThrottle => new MsgMultiThrottle(),
-                CommandTypeEnum.Panel         => new MsgPanel(turnouts, routes),
-                CommandTypeEnum.Roster        => new MsgRoster(),
-                CommandTypeEnum.Heartbeat     => new MsgHeartbeat(),
-                CommandTypeEnum.Quit          => new MsgQuit(),
-                _                             => new MsgIgnore()
+                CommandTypeEnum.Name          => new MsgName(commandStr),
+                CommandTypeEnum.Hardware      => new MsgHardware(commandStr),
+                CommandTypeEnum.MultiThrottle => new MsgMultiThrottle(commandStr),
+                CommandTypeEnum.Panel         => new MsgPanel(commandStr),
+                CommandTypeEnum.Roster        => new MsgRoster(commandStr),
+                CommandTypeEnum.Heartbeat     => new MsgHeartbeat(commandStr),
+                CommandTypeEnum.Quit          => new MsgQuit(commandStr),
+                _                             => new MsgIgnore(commandStr)
             };
         }
-
-        return new MsgIgnore();
+        return new MsgIgnore(commandStr);
     }
 }
 

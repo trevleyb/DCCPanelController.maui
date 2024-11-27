@@ -2,7 +2,7 @@ namespace DCCPanelController.Helpers.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditablePropertyAttribute : Attribute {
-    public required string Name { get; set; } // Name to show on the Properties Page
+    public required string Name { get; set; } // SystemName to show on the Properties Page
     public int Order { get; set; } = 0;       // What is the Sort order. If 0, then by order in the class
 
     public string Description { get; set; } = string.Empty; // Description to show under/next to the Property

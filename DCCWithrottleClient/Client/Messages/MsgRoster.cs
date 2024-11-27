@@ -1,11 +1,12 @@
 namespace DCCWithrottleClient.Client.Messages;
 
-public class MsgRoster() : IClientMsg {
-    public void Process(string commandStr) { }
+public class MsgRoster :ClientMsg, IClientMsg {
 
-    public  string ActionTaken { get; private set; } = string.Empty;
-
+    private readonly string _commandStr;
+    public MsgRoster(string commandStr) {
+        _commandStr = commandStr;
+    }
     public override string ToString() {
-        return "MSG:Roster";
+        return $"MSG:Roster => {_commandStr}";
     }
 }

@@ -1,24 +1,24 @@
+using DCCWithrottleClient.Client.Events;
+
 namespace DCCWithrottleClient.Client.Messages;
 
-public class MsgHardware() : IClientMsg {
-    // When we get a HardwareID, we need to see if we already have one in our current list of
-    // connections. This is because there might have been a temporary disconnect and now a
-    // reconnect of the throttle. So we want to re-use the data that we prefiously had.
-    // ---------------------------------------------------------------------------------------
-
-    public void Process(string commandStr) {
+public class MsgHardware : ClientMsg, IClientMsg {
+    
+    private readonly string _commandStr;
+    public MsgHardware(string commandStr) {
+        _commandStr = commandStr;
         if (commandStr.Length > 2) {
-            switch (commandStr[1]) {
-            case 'U':
-                var hardwareID = commandStr[2..];
-                break;
-            }
+            _ = commandStr[1] switch {
+                'U' => Add(new MessageEvent("UUID", commandStr[2..])),
+                'M' => Add(new MessageEvent("Blocking Message", commandStr[2..])),
+                'm' => Add(new MessageEvent("Minor Message", commandStr[2..])),
+                'T' => Add(new MessageEvent("Hardware Manufacturer", commandStr[2..])),
+                't' => Add(new MessageEvent("Hardware SubType", commandStr[2..])),
+                _   => null
+            };
         }
     }
-
-    public  string ActionTaken { get; private set; } = string.Empty;
-
     public override string ToString() {
-        return "MSG:Hardware";
+        return $"MSG:Hardware => {_commandStr}";
     }
 }

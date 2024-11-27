@@ -1,6 +1,8 @@
-﻿namespace DCCWithrottleClient.Client.Messages;
+﻿using DCCWithrottleClient.Client.Events;
+
+namespace DCCWithrottleClient.Client.Messages;
 
 public interface IClientMsg {
-    void        Process(string commandStr);
-    string ActionTaken { get; }
+    List<IClientEvent> FoundEvents { get; }
+    bool HasEvents { get; }
 }

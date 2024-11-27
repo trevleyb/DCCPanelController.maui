@@ -8,7 +8,7 @@ namespace DCCPanelController.Model;
 /// Represents a Turnout with its current state.
 /// This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
-[DebuggerDisplay("Id: {Id}, Name: {Name}, State: {State}")]
+[DebuggerDisplay("Id: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Turnout : ObservableObject {
     /// <summary>
     /// Represents a Turnout with its current state.

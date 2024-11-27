@@ -12,7 +12,9 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:generic="clr-namespace:System.Collections.Generic;assembly=System.Collections">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -32,40 +34,20 @@
         Padding="10"
         RowDefinitions="220,160,*">
         <!--  Server Address Area  -->
-        <StackLayout
-            Grid.Row="0"
-            Margin="10"
-            Padding="10">
-            <BoxView
-                BackgroundColor="{StaticResource Primary}"
-                HeightRequest="2"
-                HorizontalOptions="FillAndExpand" />
+        <StackLayout Grid.Row="0" Margin="10" Padding="10">
+            <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="FillAndExpand" />
             <Grid>
                 <StackLayout x:Name="MainStackLayout">
-                    <Label
-                        Margin="10,10,0,0"
-                        Style="{StaticResource MediumLabel}"
-                        TextColor="{StaticResource Primary}">
-                        WiThrottle Server Address:
-                    </Label>
-
+                    <Label Margin="10,10,0,0" Style="{StaticResource MediumLabel}" TextColor="{StaticResource Primary}" Text="WiThrottle Server Address:"/>
                     <HorizontalStackLayout HorizontalOptions="Center" Margin="-15">
                         <Frame Style="{StaticResource IpAddress}">
-                            <Entry
-                                Focused="OnEntryFocused"
-                                IsEnabled="{Binding IsLiveMode}"
-                                Text="{Binding IpAddress1}">
+                            <Entry Focused="OnEntryFocused" IsEnabled="{Binding IsLiveMode}" Text="{Binding IpAddress1}">
                                 <Entry.Behaviors>
                                     <view:EntryValidationBehavior />
                                 </Entry.Behaviors>
                             </Entry>
                         </Frame>
-                        <Label
-                            FontSize="48"
-                            Margin="2,2,2,30"
-                            Text="."
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
+                        <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}" VerticalOptions="Center" />
                         <Frame Style="{StaticResource IpAddress}">
                             <Entry
                                 Focused="OnEntryFocused"
@@ -76,12 +58,7 @@
                                 </Entry.Behaviors>
                             </Entry>
                         </Frame>
-                        <Label
-                            FontSize="48"
-                            Margin="2,2,2,30"
-                            Text="."
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
+                        <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}" VerticalOptions="Center" />
                         <Frame Style="{StaticResource IpAddress}">
                             <Entry
                                 Focused="OnEntryFocused"
@@ -91,14 +68,8 @@
                                     <view:EntryValidationBehavior />
                                 </Entry.Behaviors>
                             </Entry>
-
                         </Frame>
-                        <Label
-                            FontSize="48"
-                            Margin="2,2,2,30"
-                            Text="."
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
+                        <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}" VerticalOptions="Center" />
                         <Frame Style="{StaticResource IpAddress}">
                             <Entry
                                 Focused="OnEntryFocused"
@@ -108,15 +79,8 @@
                                     <view:EntryValidationBehavior />
                                 </Entry.Behaviors>
                             </Entry>
-
                         </Frame>
-                        <Label
-                            FontSize="48"
-                            HorizontalOptions="Center"
-                            Margin="2,2,2,10"
-                            Text=":"
-                            TextColor="{StaticResource Primary}"
-                            VerticalOptions="Center" />
+                        <Label FontSize="48" HorizontalOptions="Center" Margin="2,2,2,10" Text=":" TextColor="{StaticResource Primary}" VerticalOptions="Center" />
                         <Frame Style="{StaticResource IpPort}" WidthRequest="75">
                             <Entry
                                 Focused="OnEntryFocused"
@@ -130,11 +94,7 @@
                             IsChecked="{Binding IsDemoMode}"
                             IsEnabled="{Binding IsConnected, Converter={StaticResource InvertedBoolConverter}}"
                             x:Name="DemoModeCheckBox" />
-                        <Label
-                            Grid.Column="1"
-                            Style="{StaticResource SmallLabel}"
-                            Text="Demo Mode (no Server connection)"
-                            VerticalOptions="Center" />
+                        <Label Grid.Column="1" Style="{StaticResource SmallLabel}" Text="Demo Mode (no Server connection)" VerticalOptions="Center" />
                     </Grid>
                 </StackLayout>
             </Grid>
@@ -148,10 +108,12 @@
                 Style="{StaticResource ButtonOutline}"
                 Text="{Binding ConnectLabel}"
                 WidthRequest="150" />
+            
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="2"
                 HorizontalOptions="FillAndExpand" />
+            
         </StackLayout>
 
         <!--  WiThrottle Servers List  -->
@@ -183,6 +145,7 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
+            
             <RefreshView Command="{Binding RefreshWiServersCommand}" IsRefreshing="{Binding IsRefreshing}">
                 <Grid>
                     <ActivityIndicator
@@ -243,7 +206,7 @@
         </StackLayout>
 
         <!--  WiThrottle Messages List  -->
-        <StackLayout Grid.Row="2" VerticalOptions="FillAndExpand">
+        <StackLayout Grid.Row="2" VerticalOptions="Fill">
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="2"
@@ -257,16 +220,20 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
-            <CollectionView
-                IsVisible="{Binding IsLiveMode}"
-                ItemsSource="{Binding Messages}"
-                ItemsUpdatingScrollMode="KeepLastItemInView">
+            <Label>Start of Messages</Label>
+            <CollectionView x:DataType="viewmodel:SettingsViewModel" 
+                            ItemsSource="{Binding Messages}"
+                            ItemsUpdatingScrollMode="KeepLastItemInView">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="system:String">
+                        <HorizontalStackLayout>
+                        <Label Text="Message: "/>
                         <Label Style="{StaticResource MediumLabel}" Text="{Binding .}" />
+                        </HorizontalStackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            <Label>End of Messages</Label>
         </StackLayout>
     </Grid>
 </ContentPage>

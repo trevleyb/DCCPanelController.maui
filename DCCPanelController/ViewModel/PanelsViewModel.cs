@@ -14,7 +14,6 @@ public partial class PanelsViewModel : BaseViewModel {
     public ObservableCollection<Panel> Panels { get; set; }
 
     private readonly SettingsService _settingsService;
-    private int _draggingIndex;
 
     public PanelsViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
@@ -57,7 +56,7 @@ public partial class PanelsViewModel : BaseViewModel {
 
     public void OnEditorPageFinished(Panel panel) {
         // What we need to do is force the Panel/Card that we are associated with
-        // to refresh. It should be doing this as the Name/ID are refreshing, but not
+        // to refresh. It should be doing this as the SystemName/ID are refreshing, but not
         // the PanelViewer.
         Panels[Panels.IndexOf(panel)] = panel;
     }
