@@ -1,35 +1,45 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<toolkit:Popup 
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui" 
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+<?xml version="1.0" encoding="utf-8"?>
+
+<toolkit:Popup
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
     x:Class="DCCPanelController.View.TurnoutsEditView"
-    Size="350,400">
-  
-    <StackLayout  BackgroundColor="White" Margin="10" Padding="20">
-        <Label Text="Edit Turnout" FontSize="20" HorizontalOptions="Center" />
-        <Entry x:Name="SystemNameEntry" Placeholder="System Name" />
-        <Entry x:Name="UserNameEntry" Placeholder="User Name" />
-    
-        <StackLayout Orientation="Horizontal" Spacing="10">
-            <Label Text="Current State:" VerticalOptions="Center" />
-            <Label x:Name="CurrentStateLabel" VerticalOptions="Center" />
+    x:DataType="viewModel:TurnoutsEditViewModel"
+    Size="400,400">
+
+    <StackLayout BackgroundColor="White" Margin="10">
+        <StackLayout Margin="10">
+            <Label Text="Edit Turnout" FontSize="20" HorizontalOptions="Center" />
+            <HorizontalStackLayout>
+                <Label Text="System Name:"/>
+                <Entry Text="{Binding SystemName }"  />    
+            </HorizontalStackLayout>
+            <HorizontalStackLayout>
+                <Label Text="User Name:"/>
+                <Entry Text="{Binding UserName}" />
+            </HorizontalStackLayout>
+            
         </StackLayout>
-    
-        <StackLayout Orientation="Horizontal" Spacing="10">
-            <Label Text="Default State:" VerticalOptions="Center" />
-            <Picker x:Name="DefaultStatePicker" VerticalOptions="Center">
-                <Picker.ItemsSource>
-                    <x:Array Type="{x:Type model:TurnoutStateEnum}">
-                        <model:TurnoutStateEnum>Closed</model:TurnoutStateEnum>
-                        <model:TurnoutStateEnum>Thrown</model:TurnoutStateEnum>
-                        <model:TurnoutStateEnum>Unknown</model:TurnoutStateEnum>
-                    </x:Array>
-                </Picker.ItemsSource>
-            </Picker>
+        
+        <HorizontalStackLayout VerticalOptions="Center" Margin="10">
+            <Label Text="Current State:"/>
+            <components:TurnoutStateControl State="{Binding CurrentState}" CanToggleState="False" IsEnabled="False"/>             
+        </HorizontalStackLayout>
+
+        <HorizontalStackLayout VerticalOptions="Center" Margin="10">
+            <Label Text="Default State:"/>
+            <components:TurnoutStateControl State="{Binding DefaultState}" CanToggleState="True" />             
+        </HorizontalStackLayout>
+
+        <StackLayout Margin="10">
+            <Label HorizontalOptions="Center" VerticalOptions="Center"
+                   Text="Turnouts are created/updated if defined on the server." />
         </StackLayout>
-    
+
         <StackLayout Margin="0,20,0,0" Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
             <Button Text="Save" Command="{Binding SaveCommand}" />
             <Button Text="Cancel" Command="{Binding CancelCommand}" />

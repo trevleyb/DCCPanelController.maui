@@ -70,15 +70,21 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
+    public async Task DeleteTurnoutAsync(Turnout turnout) {
+        Turnouts.Remove(turnout);
+    }
+
+    [RelayCommand]
     public async Task AddTurnoutAsync() {
         var turnout = new Turnout {
             Id = "NT0000",
             Name = "Example Turnout",
             State = TurnoutStateEnum.Closed
         };
-        if (await NavigationService.NavigateToEditTurnoutAsync(turnout) is { } result) {
-            Turnouts.Add(result);
-        }
+
+        var result = await NavigationService.NavigateToEditTurnoutAsync(turnout);
+        if (result is not null) Turnouts.Add(result);
+        Console.WriteLine("Added turnout");
     }
 
     
