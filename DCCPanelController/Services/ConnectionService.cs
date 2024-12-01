@@ -88,6 +88,7 @@ public partial class ConnectionService : ObservableObject {
             _turnoutsService?.AddTurnoutAsync(new Model.Turnout() {
                 Id = turnout.SystemName,
                 Name = turnout.UserName,
+                IsEditable = false,
                 State = turnout.StateEnum switch {
                     TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                     TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
@@ -96,6 +97,7 @@ public partial class ConnectionService : ObservableObject {
             });
         } else {
             found.Id = turnout.SystemName;
+            found.IsEditable = false;
             found.State = turnout.StateEnum switch {
                 TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                 TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,

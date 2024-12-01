@@ -27,32 +27,27 @@ public static class MauiProgram {
 
         var services = builder.Services;
         
+        // Register the Main Entry Page that we will use 
+        // --------------------------------------------------------------------------
+        services.AddSingleton<MainPageTabbed>();
         services.AddTransient<INavigationService, NavigationService>();
-        
+
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<SettingsService>();
         services.AddSingleton<ConnectionService>();
-        services.AddSingleton<RoutesService>();
-        services.AddSingleton<TurnoutsService>();
-
-        // Register the Main Entry Page that we will use 
-        // --------------------------------------------------------------------------
-        services.AddSingleton<MainPageTabbed>();
+        services.AddTransient<RoutesService>();
+        services.AddTransient<TurnoutsService>();
 
         // Add dependant views with associated view models
         // --------------------------------------------------------------------------
-        services.AddSingletonViewAndModel<SettingsPage, SettingsViewModel>();
-        services.AddSingletonViewAndModel<PanelsPage, PanelsViewModel>();
-        services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
         services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
-
+        services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
+        services.AddSingletonViewAndModel<PanelsPage, PanelsViewModel>();
         services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
-
-        // services.AddTransient<PanelEditorPage>();
-        // services.AddTransient<PanelEditorViewModel>();
+        services.AddSingletonViewAndModel<SettingsPage, SettingsViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);

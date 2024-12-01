@@ -7,7 +7,6 @@ namespace DCCPanelController.ViewModel;
 public partial class TurnoutsEditViewModel : BaseViewModel {
 
     public event EventHandler? CloseRequested;
-    private readonly Turnout _turnout;
     
     public TurnoutsEditViewModel(Turnout turnout) {
         _turnout = turnout;
@@ -15,12 +14,16 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         UserName = turnout.Name ?? "Unknown Turnout";
         CurrentState = _turnout.State;
         DefaultState = _turnout.Default;
+        IsEditable = _turnout.IsEditable;
     }
 
+    [ObservableProperty] private Turnout _turnout;
     [ObservableProperty] private string _systemName;
     [ObservableProperty] private string _userName;
+    [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private TurnoutStateEnum _defaultState;
     [ObservableProperty] private TurnoutStateEnum _currentState;
+    
     
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {

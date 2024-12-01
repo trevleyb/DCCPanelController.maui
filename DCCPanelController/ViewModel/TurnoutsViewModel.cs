@@ -14,26 +14,36 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelID = "ID";
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
-    
-    private INavigationService NavigationService { get; }
-    private ConnectionService ConnectionService { get; }
+
     private bool _isAscending = false;
     private string _sortColumn = "";
+    
+    private INavigationService NavigationService { get; init; }
+    private ConnectionService ConnectionService { get; init; }
+    private TurnoutsService TurnoutService { get; init; }
 
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
 
-    public TurnoutsViewModel(TurnoutsService? turnoutStateService, ConnectionService connectionService, INavigationService navigationService) {
+    public TurnoutsViewModel(TurnoutsService turnoutService, ConnectionService connectionService, INavigationService navigationService) {
+        TurnoutService    = turnoutService;
         ConnectionService = connectionService;
         NavigationService = navigationService;
-        Turnouts = turnoutStateService?.Turnouts ?? [];
+        
+        Turnouts = TurnoutService?.Turnouts ?? [];
         SetLabels();
+    }
+    
+    private void SetLabels() {
+        ColumnLabelID    = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName  = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand]
-    public async Task SortByColumn(string columnName) {
+    public async Task SortByColumnAsync(string columnName) {
         List<Turnout> sortedTurnout;
         if (!_isAscending) {
             sortedTurnout = columnName.ToLower() switch {
@@ -53,43 +63,40 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;
+        
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
         OnPropertyChanged(nameof(Turnouts));
         SetLabels();
     }
 
-    private void SetLabels() {
-        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
-    }
-
     [RelayCommand]
     public async Task EditTurnoutAsync(Turnout turnout) {
         await NavigationService.NavigateToEditTurnoutAsync(turnout);
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     public async Task DeleteTurnoutAsync(Turnout turnout) {
         Turnouts.Remove(turnout);
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     public async Task AddTurnoutAsync() {
-        var turnout = new Turnout {
+        var turnout = new Turnout { 
             Id = "NT0000",
             Name = "Example Turnout",
-            State = TurnoutStateEnum.Closed
+            State = TurnoutStateEnum.Closed,
+            IsEditable = true
         };
 
         var result = await NavigationService.NavigateToEditTurnoutAsync(turnout);
         if (result is not null) Turnouts.Add(result);
-        Console.WriteLine("Added turnout");
+        OnPropertyChanged(nameof(Turnouts));
     }
-
     
     [RelayCommand]
-    public async Task ToggleTurnoutState(Turnout? turnout) {
+    public async Task ToggleTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         turnout.State = turnout.State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
@@ -97,5 +104,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
             _                       => TurnoutStateEnum.Closed
         };
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
+        OnPropertyChanged(nameof(Turnouts));
     }
 }

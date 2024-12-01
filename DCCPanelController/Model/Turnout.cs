@@ -21,6 +21,7 @@ public partial class Turnout : ObservableObject {
     [ObservableProperty] private string? _name;
     [ObservableProperty] private TurnoutStateEnum _state   = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private bool _isEditable = false;
 }
 
 [JsonSourceGenerationOptions(UseStringEnumConverter = true)]

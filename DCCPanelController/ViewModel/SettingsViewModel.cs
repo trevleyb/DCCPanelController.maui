@@ -18,6 +18,10 @@ public partial class SettingsViewModel : BaseViewModel {
     [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))] 
+    private bool _showMessages;
+
+    public bool ShowWiServers => !ShowMessages;
 
     public SettingsViewModel(SettingsService settingsService) {
         SettingsService = settingsService;
@@ -142,6 +146,11 @@ public partial class SettingsViewModel : BaseViewModel {
         SettingsService?.Load();
     }
 
+    [RelayCommand]
+    public async Task ClearMessagesAsync() {
+        Messages.Clear();
+    }
+    
     [RelayCommand]
     public async Task RefreshWiServersAsync() {
         if (IsBusy) return;

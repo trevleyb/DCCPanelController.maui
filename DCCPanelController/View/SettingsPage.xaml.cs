@@ -51,6 +51,13 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         Navigation.PushAsync(new InstructionsPage());
     }
 
+    private void ShowMessages_OnClicked(object? sender, EventArgs e) {
+        if (_viewModel is not null) {
+            _viewModel.ShowMessages = !_viewModel.ShowMessages;
+            ShowMessagesButton.IconImageSource = _viewModel.ShowMessages ? "open_panel_bottom.png" : "open_panel_filled_bottom.png";
+        }
+    }
+
     private async void Upload_OnClicked(object? sender, EventArgs e) {
         try {
             // Prompt the user to choose where to save the file

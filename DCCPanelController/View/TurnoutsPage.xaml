@@ -63,7 +63,7 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="model:Turnout">
+                    <DataTemplate>
                         <SwipeView>
                             <SwipeView.RightItems>
                                 <SwipeItems>
@@ -100,9 +100,9 @@
                             </SwipeView.RightItems>
 
                             <SwipeView.Content>
-                                <StackLayout>
+                                <StackLayout x:DataType="model:Turnout">
                                     <Grid ColumnDefinitions="*,100">
-                                        <HorizontalStackLayout Grid.Column="0" HorizontalOptions="Start">
+                                        <HorizontalStackLayout Grid.Column="0" HorizontalOptions="Start" IsEnabled="{Binding IsEditable}">
                                             <HorizontalStackLayout.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=EditTurnoutCommand}"
@@ -123,14 +123,16 @@
                                                 VerticalOptions="Center" />
                                         </HorizontalStackLayout>
 
-                                        <components:TurnoutStateControl Grid.Column="1" Margin="0,0,10,0" State="{Binding State}" CanToggleState="true">
-                                            <!--
+                                        <components:TurnoutStateControl 
+                                            Grid.Column="1" Margin="0,0,10,0"
+                                            Turnout="{Binding}"
+                                            State="{Binding State}" 
+                                            CanToggleState="true">
                                             <components:TurnoutStateControl.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=ToggleTurnoutStateCommand}"
                                                     CommandParameter="{Binding}" />
                                             </components:TurnoutStateControl.GestureRecognizers>
-                                            -->
                                         </components:TurnoutStateControl>
                                         
                                     </Grid>
