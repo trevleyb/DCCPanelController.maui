@@ -10,40 +10,14 @@ namespace DCCPanelController.View.Components  {
 
         public TurnoutStateControl() {
             InitializeComponent();
-            // Use SetBinding instead of directly setting BindingContext
-            //SetBinding(BindingContextProperty, new Binding(".", BindingMode.TwoWay) {Source = this});
         }
 
-        //public event PropertyChangedEventHandler PropertyChanged;
-
-        //protected new virtual void OnPropertyChanged([CallerMemberName] string propertyName = null) {
-        //    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        //}
+        public static readonly BindableProperty TurnoutProperty = BindableProperty.Create(nameof(Turnout), typeof(Turnout), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
+        public static readonly BindableProperty StateProperty   = BindableProperty.Create(nameof(State), typeof(TurnoutStateEnum), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
+        public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(TurnoutStateControl), true);
+        public static readonly BindableProperty StateChangedCommandProperty = BindableProperty.Create( nameof(StateChangedCommand), typeof(ICommand), typeof(TurnoutStateControl));
         
-        public static readonly BindableProperty TurnoutProperty =
-            BindableProperty.Create(nameof(Turnout), typeof(Turnout), 
-                                    typeof(TurnoutStateControl), null, 
-                                    BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
-        
-        public static readonly BindableProperty StateProperty =
-            BindableProperty.Create(nameof(State), typeof(TurnoutStateEnum), 
-                                    typeof(TurnoutStateControl), null, 
-                                    BindingMode.TwoWay, propertyChanged: OnStateChanged);
-
-        public static readonly BindableProperty CanToggleStateProperty =
-            BindableProperty.Create(nameof(CanToggleState), typeof(bool), 
-                                    typeof(TurnoutStateControl), true);
-
-        public static readonly BindableProperty ToggleTurnoutStateCommandProperty =
-            BindableProperty.Create(nameof(ToggleTurnoutStateCommand), typeof(ICommand), 
-                                    typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: ToggleTurnoutStateCommandChanged);
-
-        private static void ToggleTurnoutStateCommandChanged(BindableObject bindable, object oldvalue, object newvalue) {
-            Console.WriteLine("ToggleTurnoutStateChanged");
-        }
-
         private static void OnStateChanged(BindableObject bindable, object oldValue, object newValue) { }
-
         private static void OnTurnoutChanged(BindableObject bindable, object oldValue, object newValue) { }
         
         public Turnout Turnout {
@@ -60,10 +34,10 @@ namespace DCCPanelController.View.Components  {
             get => (bool)GetValue(CanToggleStateProperty);
             init => SetValue(CanToggleStateProperty, value);
         }
-        
-        public ICommand ToggleTurnoutStateCommand {
-            get => (ICommand)GetValue(ToggleTurnoutStateCommandProperty);
-            init => SetValue(ToggleTurnoutStateCommandProperty, value);
+
+        public ICommand StateChangedCommand {
+            get => (ICommand)GetValue(StateChangedCommandProperty);
+            set => SetValue(StateChangedCommandProperty, value);
         }
         
         [RelayCommand]
@@ -74,11 +48,9 @@ namespace DCCPanelController.View.Components  {
                     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
                     _                       => TurnoutStateEnum.Closed
                 };
+                if (StateChangedCommand.CanExecute(Turnout)) StateChangedCommand?.Execute(Turnout);
             }
             OnPropertyChanged(nameof(Turnout));
-            if (ToggleTurnoutStateCommand.CanExecute(null)) {
-                ToggleTurnoutStateCommand.Execute(null);
-            }
         }
     }
 }

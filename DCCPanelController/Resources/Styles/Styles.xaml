@@ -6,6 +6,8 @@
     xmlns:maui="clr-namespace:OnScreenSizeMarkup.Maui;assembly=OnScreenSizeMarkup.Maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <RoundRectangleGeometry x:Key="ApplicationRoundRectangle" CornerRadius="10" />
+    
     <Style TargetType="Label" x:Key="PanelInfoLabel">
         <Setter Property="Margin" Value="5,5,5,5" />
         <Setter Property="Padding" Value="0,0,0,0" />

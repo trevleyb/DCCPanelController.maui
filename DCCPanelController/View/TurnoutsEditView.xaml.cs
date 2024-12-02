@@ -4,14 +4,26 @@ using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class TurnoutsEditView : Popup {
+public partial class TurnoutsEditView : ContentPage {
     
-    private TurnoutsEditViewModel? _viewModel;
-    
+    public TurnoutsEditViewModel? ViewModel;
+
     public TurnoutsEditView(Turnout turnout) {
         InitializeComponent();
-        _viewModel = new TurnoutsEditViewModel(turnout);
-        _viewModel.CloseRequested += (sender, args) => Close(sender);
-        BindingContext = _viewModel;
+        ViewModel = new TurnoutsEditViewModel(turnout);
+        //ViewModel.CloseRequested += async (sender, e) => {
+        //    if (e is null) {
+        //        // Close the page without saving
+        //        if (DeviceInfo.Idiom == DeviceIdiom.Phone) {
+        //            await Navigation.PopAsync();
+        //        } else {
+        //            // Close the popup
+        //            //await this.clDismiss(null);
+        //        }
+        //    } else {
+        //        // Handle saving logic, if necessary
+        //    }
+        //};
+        BindingContext = ViewModel;
     }
 }

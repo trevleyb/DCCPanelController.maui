@@ -1,0 +1,53 @@
+<!-- PanelPropertyPage.xaml -->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DCCPanelController.View.DynamicPropertyPage"
+             xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+             x:DataType="viewModel:DynamicPropertyPageViewModel"
+             BackgroundColor="Transparent">
+
+    <ContentPage.Content>
+        <Grid HorizontalOptions="Center" VerticalOptions="Center">
+
+            <!--
+            <Frame BackgroundColor="White"
+                   BorderColor="{StaticResource Primary}"
+                   Padding="20"
+                   CornerRadius="10"
+                   HasShadow="True"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   WidthRequest="500">
+                   StrokeShape="{StaticResource ApplicationRoundRectangle}"
+                   -->
+            
+            <Border Stroke="{StaticResource Primary}"
+                    StrokeThickness="2"
+                    Background="White"
+                    Padding="20"
+                     
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    WidthRequest="500">
+
+                <StackLayout>
+                    <Label Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" />
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="2"
+                        HorizontalOptions="Fill"
+                        Margin="0,5,0,15" />
+
+                    <TableView x:Name="PropertyContainer"/>
+
+                    <Button Text="Close"
+                            Style="{StaticResource ButtonOutline}"
+                            VerticalOptions="End"
+                            HorizontalOptions="Center"
+                            WidthRequest="150"
+                            Clicked="ClosePropertyPage" />
+                </StackLayout>
+            </Border>
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>

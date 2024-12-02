@@ -10,11 +10,10 @@ using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class PropertyPage : ContentPage {
-    public PropertyPage(ITrackPiece trackPiece) {
+public partial class DynamicPropertyPage : ContentPage {
+    public DynamicPropertyPage(ITrackPiece obj, string? propertyName = null) {
         InitializeComponent();
-        var propertyName = trackPiece.GetType().Name ?? "Unknonwn";
-        BindingContext = new PropertyPageViewModel(propertyName, trackPiece, TableViewContainer);
+        BindingContext = new DynamicPropertyPageViewModel(obj, propertyName, PropertyContainer);
     }
 
     private void ClosePropertyPage(object? sender, EventArgs e) {

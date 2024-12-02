@@ -1,58 +1,67 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsEditViewModel : BaseViewModel {
 
+    public event Action<Turnout?>? OnSaveCompleted;
     public event EventHandler? CloseRequested;
-    
+    private ConnectionService ConnectionService { get; init; }
+
     public TurnoutsEditViewModel(Turnout turnout) {
-        _turnout = turnout;
-        SystemName = turnout.Id ?? "ID0000";
-        UserName = turnout.Name ?? "Unknown Turnout";
-        CurrentState = _turnout.State;
-        DefaultState = _turnout.Default;
-        IsEditable = _turnout.IsEditable;
+        Turnout = turnout;
+        SystemName = Turnout.Id ?? "NT001";
+        UserName = Turnout.Name ?? "New Turnout";
+        CurrentState = Turnout.State;
+        DefaultState = Turnout.Default;
+        IsEditable = Turnout.IsEditable;
+        ConnectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
     }
 
-    [ObservableProperty] private Turnout _turnout;
+    [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _systemName;
     [ObservableProperty] private string _userName;
     [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private TurnoutStateEnum _defaultState;
     [ObservableProperty] private TurnoutStateEnum _currentState;
     
-    
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
-        CurrentState = CurrentState switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed
-        };
+        if (Turnout == null) return;
+        if (!string.IsNullOrEmpty(Turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(Turnout.Id, CurrentState);
+        OnPropertyChanged(nameof(CurrentState));
+        OnPropertyChanged(nameof(Turnout));
     }
 
     [RelayCommand]
     private async Task ToggleTurnoutDefaultStateAsync() {
-        DefaultState = DefaultState switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed
-        };
+        // DefaultState = DefaultState switch {
+        //     TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+        //     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+        //     _                       => TurnoutStateEnum.Closed
+        // };
+        OnPropertyChanged(nameof(DefaultState));
+        OnPropertyChanged(nameof(Turnout));
     }
 
     [RelayCommand]
     private async Task SaveAsync() {
-        _turnout.Id = SystemName;
-        _turnout.Name = UserName;
-        _turnout.Default = DefaultState;
-        CloseRequested?.Invoke(_turnout, EventArgs.Empty);
+        if (Turnout is not null) {
+            Turnout.Id = SystemName;
+            Turnout.Name = UserName;
+            Turnout.Default = DefaultState;
+            OnSaveCompleted?.Invoke(Turnout);
+            CloseRequested?.Invoke(Turnout, EventArgs.Empty);
+        }
+        CloseRequested?.Invoke(null, EventArgs.Empty);
     }
 
     [RelayCommand]
     private async Task CancelAsync() {
+        OnSaveCompleted?.Invoke(null);
         CloseRequested?.Invoke(null, EventArgs.Empty);
     }
    

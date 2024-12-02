@@ -32,7 +32,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
         ConnectionService = connectionService;
         NavigationService = navigationService;
         
-        Turnouts = TurnoutService?.Turnouts ?? [];
+        Turnouts = TurnoutService.Turnouts ?? [];
         SetLabels();
     }
     
@@ -43,7 +43,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task SortByColumnAsync(string columnName) {
+    private async Task SortByColumnAsync(string columnName) {
         List<Turnout> sortedTurnout;
         if (!_isAscending) {
             sortedTurnout = columnName.ToLower() switch {
@@ -70,23 +70,24 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task EditTurnoutAsync(Turnout turnout) {
+    private async Task EditTurnoutAsync(Turnout? turnout) {
         await NavigationService.NavigateToEditTurnoutAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
-    public async Task DeleteTurnoutAsync(Turnout turnout) {
+    private async Task DeleteTurnoutAsync(Turnout turnout) {
         Turnouts.Remove(turnout);
         OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
-    public async Task AddTurnoutAsync() {
+    private async Task AddTurnoutAsync() {
         var turnout = new Turnout { 
-            Id = "NT0000",
-            Name = "Example Turnout",
+            Id = TurnoutAnalyzer.GetUniqueID(Turnouts.ToList()),
+            Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
+            Default = TurnoutStateEnum.Closed,
             IsEditable = true
         };
 
@@ -94,9 +95,16 @@ public partial class TurnoutsViewModel : BaseViewModel {
         if (result is not null) Turnouts.Add(result);
         OnPropertyChanged(nameof(Turnouts));
     }
-    
+
     [RelayCommand]
-    public async Task ToggleTurnoutStateAsync(Turnout? turnout) {
+    private async Task SendTurnoutStateAsync(Turnout? turnout) {
+        if (turnout == null) return;
+        if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
+        OnPropertyChanged(nameof(Turnouts));
+    }
+
+    [RelayCommand]
+    private async Task ToggleTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         turnout.State = turnout.State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
@@ -106,4 +114,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
         OnPropertyChanged(nameof(Turnouts));
     }
+    
+    
+    
 }

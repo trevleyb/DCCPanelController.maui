@@ -4,15 +4,16 @@ using DCCPanelController.Tracks.Base;
 
 namespace DCCPanelController.ViewModel;
 
-public partial class PropertyPageViewModel : BaseViewModel {
+public partial class DynamicPropertyPageViewModel : BaseViewModel {
+
     [ObservableProperty] private string _propertyName;
 
-    public PropertyPageViewModel(string propertyName, Object obj, TableView tableView) {
-        PropertyName = propertyName;
-        BuildProperties(obj, tableView);
+    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, TableView tableView) {
+        PropertyName = propertyName ?? $"{trackPiece.Name} Properties";
+        BuildProperties(tableView, trackPiece);
     }
 
-    private static void BuildProperties(Object obj, TableView tableView) {
+    private static void BuildProperties(TableView tableView, object obj) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         foreach (var group in propertiesByGroup) {
             var tableSection = CreateSection(group.Key);

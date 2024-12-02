@@ -17,7 +17,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Makaretu.Dns.Multicast.New" Version="0.33.0" />
-      <PackageReference Include="Makaretu.Dns.New" Version="3.0.1" />
+      <PackageReference Include="Makaretu.Dns.Multicast.New" Version="0.38.0" />
+      <PackageReference Include="Makaretu.Dns.New" Version="3.1.2" />
     </ItemGroup>
 </Project>

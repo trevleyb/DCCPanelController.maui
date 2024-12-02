@@ -59,6 +59,7 @@
                             <Grid ColumnDefinitions="75,*,32, 80" Padding="5">
                                 <Grid.GestureRecognizers>
                                     <TapGestureRecognizer
+                                        x:DataType="{x:Type viewmodel:RoutesViewModel}"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
                                         CommandParameter="{Binding .}" />
                                 </Grid.GestureRecognizers>

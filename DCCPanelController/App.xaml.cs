@@ -6,7 +6,7 @@ namespace DCCPanelController;
 public partial class App : Application {
     public App() {
         InitializeComponent();
-        Microsoft.Maui.Controls.Xaml.Diagnostics.BindingDiagnostics.BindingFailed += BindingDiagnosticsOnBindingFailed;
+        BindingDiagnostics.BindingFailed += BindingDiagnosticsOnBindingFailed;
     }
 
     private void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
