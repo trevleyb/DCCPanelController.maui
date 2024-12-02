@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.View.Components;
 
 namespace DCCPanelController.ViewModel;
 
@@ -30,37 +31,60 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
 
     private static Cell? CreateCell(EditablePropertyDetails property) {
-        switch (property.Type) {
+        switch (property.Attribute) {
         
         // Deal with String-based data entry fields
         // ---------------------------------------------------------------------------------------
-        case { } t when t == typeof(string):
-            return new EntryCell {
-                Text = property.Info.GetValue(property.Owner)?.ToString() ?? string.Empty,
-                Placeholder = property.Attribute.Name ?? string.Empty,
-                Label = property.Attribute.Description,
+        case EditableStrPropertyAttribute strAttr:
+            var entryCell = new EntryCell {
+                Placeholder = strAttr.Description, 
+                Label = strAttr.Name,
                 Keyboard = Keyboard.Text,
                 BindingContext = property.Owner
             };
+            entryCell.SetBinding(EntryCell.TextProperty, new Binding(nameof(property.Info.Name)) { Source = property.Owner, Mode = BindingMode.TwoWay });
+            return entryCell;
         
         // Deal with Integer-based Data Entry fields
         // ---------------------------------------------------------------------------------------
-        case { } t when t == typeof(int):
-            return new EntryCell {
-                Text = property.Info.GetValue(property.Owner)?.ToString() ?? string.Empty,
-                Placeholder = property.Attribute.Name ?? "0",
-                Label = property.Attribute.Description,
+        case EditableIntPropertyAttribute intAttr:
+            var numCell = new EntryCell {
+                Placeholder = intAttr.Name ?? "0",
+                Label = intAttr.Description,
                 Keyboard = Keyboard.Numeric,
-                BindingContext = property.Owner
+                BindingContext = property.Owner,
             };
+            numCell.SetBinding(EntryCell.TextProperty, new Binding(nameof(property.Info.Name)) { Source = property.Owner, Mode = BindingMode.TwoWay });
+            return numCell;
         
         // Deal with Switches (on/off)
         // ---------------------------------------------------------------------------------------
-        case { } t when t == typeof(bool):
-            return new SwitchCell(){
-                Text = property.Attribute.Description ?? string.Empty,
+        case EditableBoolPropertyAttribute boolAttr:
+            var switchCell = new SwitchCell(){
+                Text = boolAttr.Name ?? string.Empty,
                 BindingContext = property.Owner
             };
+            switchCell.SetBinding(SwitchCell.OnProperty, new Binding(nameof(property.Info.Name)) { Source = property.Owner, Mode = BindingMode.TwoWay });
+            return switchCell;
+
+        // Deal with Switches (on/off)
+        // ---------------------------------------------------------------------------------------
+        case EditableTurnoutPropertyAttribute turnoutAttr:
+            var turnoutActionsView = new TrackTurnoutActionsView {
+                BindingContext = property.Owner
+            };
+            //turnoutActionsView.SetBinding(TrackTurnoutActionsView.ActionsProperty, new Binding(nameof(property.Info.Name)) { Source = property.Owner, Mode = BindingMode.TwoWay });
+
+            var viewCell = new ViewCell { View = turnoutActionsView };
+            return viewCell;
+            //var switchCell = new SwitchCell(){
+            //    Text = boolAttr.Name ?? string.Empty,
+            //    BindingContext = property.Owner
+            //};
+            //switchCell.SetBinding(SwitchCell.OnProperty, new Binding(nameof(property.Info.Name)) { Source = property.Owner, Mode = BindingMode.TwoWay });
+            //return switchCell;
+            return null;
+
         default:
             return null;
         }    
