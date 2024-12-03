@@ -1,23 +1,22 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackCompass : TrackPiece, ITrackSymbol {
+public partial class TrackCompass : TrackPieceBase, ITrackSymbol, ITrackPiece {
+
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "A Compass")]
+    private string _name = "Compass";
+    
     protected override void Setup() {
-        Name = "Compass";
-        DefaultState = "Normal";
-        SetTrackSymbol("Compass");
         Layer = 2;
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Compass", 0);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        SetTrackSymbol("Compass");
+        AddImageSourceAndRotation(TrackStyleImage.Unknown, "Compass", (0, 0), (90 ,0), (180 ,0), (270, 0));
     }
 
     public void SetCompassPoints(ITrackPiece track) {

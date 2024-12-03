@@ -1,21 +1,19 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackLabel : TrackPiece, ITrackSymbol {
+public partial class TrackLabel : TrackPieceBase, ITrackSymbol, ITrackPiece {
+    
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Text Label")]
+    private string _name = "Label";
+
     protected override void Setup() {
-        Name = "Label";
-        DefaultState = "Normal";
         SetTrackSymbol("Label");
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Label", 0);
-        Layer = 2;
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Label", (0, 0), (90 ,0), (180 ,0), (270, 0));
     }
 }

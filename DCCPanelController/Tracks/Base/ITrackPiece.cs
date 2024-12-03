@@ -4,6 +4,7 @@ namespace DCCPanelController.Tracks.Base;
 
 public interface ITrackPiece {
     public string Name { get; set; }
+    
     public bool IsOccupied { get; set; }
     public int ImageRotation { get; set; }
     public int TrackDirection { get; set; }

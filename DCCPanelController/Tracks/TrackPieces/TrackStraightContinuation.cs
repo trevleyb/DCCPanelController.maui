@@ -1,37 +1,26 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackStraightContinuation : TrackPiece, ITrackSymbol {
+public partial class TrackStraightContinuation : TrackPieceBase, ITrackSymbol, ITrackPiece {
+
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Stright that continues on another page")]
+    private string _name = "Stright (Continuation)";
+
+    [ObservableProperty] 
+    [property: EditableTrackImageTypePropertyAttribute(Name = "Name (ID)", Description = "Right Hand Turnout", TrackTypes = new [] { TrackStyleImage.Arrow , TrackStyleImage.Lines})]
+    private TrackStyleImage _subType = TrackStyleImage.Arrow;
+    
     protected override void Setup() {
-        Name = "Straight Continued...";
-        DefaultState = "Normal";
         SetTrackSymbol("ContinuationSA1");
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Arrow", "ContinuationSA1", 0);
-        AddTrackImage(45, "Arrow", "ContinuationSA2", 90);
-        AddTrackImage(90, "Arrow", "ContinuationSA1", 90);
-        AddTrackImage(135, "Arrow", "ContinuationSA2", 180);
-        AddTrackImage(180, "Arrow", "ContinuationSA1", 180);
-        AddTrackImage(225, "Arrow", "ContinuationSA2", 270);
-        AddTrackImage(270, "Arrow", "ContinuationSA1", 270);
-        AddTrackImage(315, "Arrow", "ContinuationSA2", 0);
-
-        AddTrackImage(0, "Lines", "ContinuationSL1", 0);
-        AddTrackImage(45, "Lines", "ContinuationSL2", 90);
-        AddTrackImage(90, "Lines", "ContinuationSL1", 90);
-        AddTrackImage(135, "Lines", "ContinuationSL2", 180);
-        AddTrackImage(180, "Lines", "ContinuationSL1", 180);
-        AddTrackImage(225, "Lines", "ContinuationSL2", 270);
-        AddTrackImage(270, "Lines", "ContinuationSL1", 270);
-        AddTrackImage(315, "Lines", "ContinuationSL2", 0);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Arrow", "Mainline");
-        AddTrackStyle("Lines", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Arrow, "ContinuationSA1", (0, 0), (90 ,90), (180 ,180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Arrow, "ContinuationSA2", (45, 90), (135 ,180), (225 ,270), (315, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Lines, "ContinuationSL1", (0, 0), (90 ,90), (180 ,180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Lines, "ContinuationSL2", (45, 90), (135 ,180), (225 ,270), (315, 0));
     }
 }

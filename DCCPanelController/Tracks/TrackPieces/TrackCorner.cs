@@ -1,27 +1,19 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackCorner : TrackPiece, ITrackSymbol {
+public partial class TrackCorner : TrackPieceBase, ITrackSymbol, ITrackPiece {
+
+    [ObservableProperty] [property: EditableStrProperty(Name = "Name (ID)", Description = "Corner Piece")]
+    private string _name = "Corner";
+
     protected override void Setup() {
-        Name = "Corner";
-        DefaultState = "Normal";
         SetTrackSymbol("CornerR");
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "CornerR", 0);
-        AddTrackImage(45, "Normal", "CornerL", 270);
-        AddTrackImage(90, "Normal", "CornerR", 90);
-        AddTrackImage(135, "Normal", "CornerL", 0);
-        AddTrackImage(180, "Normal", "CornerR", 180);
-        AddTrackImage(225, "Normal", "CornerL", 90);
-        AddTrackImage(270, "Normal", "CornerR", 270);
-        AddTrackImage(315, "Normal", "CornerL", 180);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Default, "CornerR", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Default, "CornerL", (45, 270), (135, 0), (225, 90), (315, 180));
     }
 }

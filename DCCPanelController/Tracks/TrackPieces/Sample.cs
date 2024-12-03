@@ -1,21 +1,17 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class Sample : TrackPiece {
+public partial class Sample : TrackPieceBase, ITrackPiece {
+    
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "A Sample Track Piece")]
+    private string _name = "Sample";
+    
     protected override void Setup() {
-        Name = "Sample";
-        DefaultState = "Normal";
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Sample", 0);
-        AddTrackImage(0, "Normal", "Sample", 90);
-        AddTrackImage(0, "Normal", "Sample", 180);
-        AddTrackImage(0, "Normal", "Sample", 270);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Default,   "Sample");
     }
 }

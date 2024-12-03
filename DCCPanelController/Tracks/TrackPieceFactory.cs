@@ -17,7 +17,7 @@ public static class TrackPieceFactory {
         List<ITrackPiece> pieceList = [];
         foreach (var trackPiece in pieces) {
             try {
-                var track = (TrackPiece)Activator.CreateInstance(trackPiece)!;
+                var track = (ITrackPiece)Activator.CreateInstance(trackPiece)!;
                 pieceList.Add(track);
             } catch (Exception ex) {
                 Console.WriteLine($"Could not create instance of Track {trackPiece.ToString() ?? "xxx"} due to {ex.Message}");

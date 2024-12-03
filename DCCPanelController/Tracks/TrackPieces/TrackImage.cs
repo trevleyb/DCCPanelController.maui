@@ -1,22 +1,20 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackImage : TrackPiece, ITrackSymbol {
+public partial class TrackImage : TrackPieceBase, ITrackSymbol, ITrackPiece {
+    
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Image")]
+    private string _name = "Image";
+
     protected override void Setup() {
-        Name = "Image";
-        DefaultState = "Normal";
         Layer = 0;
         SetTrackSymbol("Image");
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Image", 0);
-        Layer = 2;
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Default, "Image", (0, 0), (90 ,0), (180 ,0), (270, 0));
     }
 }

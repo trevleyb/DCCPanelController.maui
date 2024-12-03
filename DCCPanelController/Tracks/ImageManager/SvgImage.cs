@@ -9,13 +9,14 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 [DebuggerDisplay("{Id} [{Rotation}]")]
 public partial class SvgImage : ObservableObject {
+
     [ObservableProperty] private string _id;
     [ObservableProperty] private int _rotation;
     [ObservableProperty] private bool _isOccupied;
     [ObservableProperty] private SvgImageManager _imageManager;
     [ObservableProperty] private SvgCompass _connections;
 
-    public ImageSource? Image => ImageManager.Image;
+    public ImageSource Image => ImageManager.Image;
 
     public void ForceImageRefresh() {
         ImageManager.ForceImageRefresh();
@@ -32,7 +33,7 @@ public partial class SvgImage : ObservableObject {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is nameof(IsOccupied)) {
-            ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
+            // FIX: ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
         }
     }
 
@@ -45,12 +46,12 @@ public partial class SvgImage : ObservableObject {
 
     public void SetOccupied(bool isOccupied) {
         IsOccupied = isOccupied;
-        ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
+        // FIX: ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
     }
 
-    public void ApplyStyle(string style) {
-        ApplyStyle(SvgStyles.GetStyle(style));
-    }
+    //public void ApplyStyle(TrackStyleType styleType, TrackStyleImage styleImage) {
+    //    ApplyStyle(SvgStyles.GetStyle(styleType,styleImage));
+    //}
 
     public void ApplyStyle(SvgStyle style) {
         foreach (var element in style.Elements) {

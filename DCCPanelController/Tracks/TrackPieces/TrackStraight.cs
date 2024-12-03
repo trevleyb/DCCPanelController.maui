@@ -1,28 +1,21 @@
 using System.Text;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackStraight : TrackPiece, ITrackSymbol {
+public partial class TrackStraight : TrackPieceBase, ITrackSymbol, ITrackPiece {
+
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Straight Track")]
+    private string _name = "Straight";
+
     protected override void Setup() {
-        Name = "Straight";
-        DefaultState = "Normal";
         SetTrackSymbol("Straight1");
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Straight1", -90);
-        AddTrackImage(45, "Normal", "Straight2", 0);
-        AddTrackImage(90, "Normal", "Straight1", 0);
-        AddTrackImage(135, "Normal", "Straight2", 90);
-        AddTrackImage(180, "Normal", "Straight1", 90);
-        AddTrackImage(225, "Normal", "Straight2", 0);
-        AddTrackImage(270, "Normal", "Straight1", 0);
-        AddTrackImage(315, "Normal", "Straight2", -90);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Straight1", (0, -90), (90 ,0), (180 ,90), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "TurnoutR2", (45, 0), (135 ,90), (225 ,0), (315, -90));
     }
 }

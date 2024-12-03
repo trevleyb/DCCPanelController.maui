@@ -6,15 +6,9 @@ namespace DCCPanelController.Tracks.StyleManager;
 [Serializable]
 [DebuggerDisplay("{Name}")]
 public class SvgStyle {
-    public string Name { get; internal set; }
     public Dictionary<string, SvgStyleElement> Elements { get; private set; } = [];
-
-    internal SvgStyle(string name) {
-        Name = name;
-    }
-
-    public static SvgStyleBuilder Builder(string name) {
-        return new SvgStyleBuilder(name);
+    public static SvgStyleBuilder Builder() {
+        return new SvgStyleBuilder();
     }
 
     public void AddElement(SvgStyleElement element) {
@@ -31,10 +25,6 @@ public class SvgStyle {
         foreach (var element in style.Elements.Values) {
             AddElement(element);
         }
-    }
-
-    public override string ToString() {
-        return $"Style: {Name}, Elements: [{string.Join(", ", Elements.Keys)}]";
     }
 }
 
@@ -61,8 +51,8 @@ public class SvgStyleElement {
     }
 }
 
-public class SvgStyleBuilder(string name) {
-    private readonly SvgStyle _style = new(name);
+public class SvgStyleBuilder() {
+    private readonly SvgStyle _style = new();
 
     public SvgStyleBuilder AddElement(Action<SvgElementBuilder> buildElement) {
         var builder = new SvgElementBuilder(string.Empty);
@@ -74,11 +64,6 @@ public class SvgStyleBuilder(string name) {
 
     public SvgStyleBuilder AddExistingStyle(SvgStyle existingStyle) {
         _style.MergeStyle(existingStyle);
-        return this;
-    }
-
-    public SvgStyleBuilder AddExistingStyle(string existingStyleName) {
-        _style.MergeStyle(SvgStyles.GetStyle(existingStyleName));
         return this;
     }
 

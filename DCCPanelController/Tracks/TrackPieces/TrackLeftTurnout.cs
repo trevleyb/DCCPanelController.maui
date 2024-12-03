@@ -1,41 +1,26 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackLeftTurnout : TrackPiece, ITrackTurnout, ITrackSymbol {
+public partial class TrackLeftTurnout : TrackTurnoutBase, ITrackTurnout, ITrackSymbol, ITrackPiece {
     private IAudioPlayer? _clickSoundPlayer;
 
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Left hand Turnout")]
+    private string _name = "Left Turnout";
+
     protected override void Setup() {
-        Name = "Left Turnout";
-        DefaultState = UnknownState;
         SetTrackSymbol("TurnoutL1");
+        AddImageSourceAndRotation(TrackStyleImage.Unknown,   "TurnoutL1", (0, 0), (90 ,90), (180 ,180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Straight,  "TurnoutL2", (0 ,0), (90 ,90), (180 ,180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Diverging, "TurnoutL3", (0, 0), (90, 90), (180, 180), (270, 270));
     }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, UnknownState, "TurnoutL1", 0);
-        AddTrackImage(90, UnknownState, "TurnoutL1", 90);
-        AddTrackImage(180, UnknownState, "TurnoutL1", 180);
-        AddTrackImage(270, UnknownState, "TurnoutL1", 270);
-
-        AddTrackImage(0, "Straight", "TurnoutL2", 0);
-        AddTrackImage(90, "Straight", "TurnoutL2", 90);
-        AddTrackImage(180, "Straight", "TurnoutL2", 180);
-        AddTrackImage(270, "Straight", "TurnoutL2", 270);
-
-        AddTrackImage(0, "Diverging", "TurnoutL3", 0);
-        AddTrackImage(90, "Diverging", "TurnoutL3", 90);
-        AddTrackImage(180, "Diverging", "TurnoutL3", 180);
-        AddTrackImage(270, "Diverging", "TurnoutL3", 270);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle(UnknownState, "Mainline");
-        AddTrackStyle("Straight", "Mainline-Straight");
-        AddTrackStyle("Diverging", "Mainline-Diverging");
-    }
-
+    
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;

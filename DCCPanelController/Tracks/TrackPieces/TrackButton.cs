@@ -1,40 +1,33 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackButton : TrackPiece, ITrackButton, ITrackSymbol {
+public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, ITrackSymbol {
     private IAudioPlayer? _clickSoundPlayer;
 
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Button Piece")]
+    private string _name = "Button";
+
+    [ObservableProperty]
+    [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
+    private bool _isEnabled = true;
+   
+    [ObservableProperty]
+    [property: EditableBoolProperty(Name = "State", Description = "Current State of the Button")]
+    private bool _state = false;
+
     protected override void Setup() {
-        Name = "Button";
-        DefaultState = UnknownState;
-        SetTrackSymbol("Button");
         Layer = 2;
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, UnknownState, "Button", 0);
-        AddTrackImage(0, UnknownState, "Button", 0);
-        AddTrackImage(0, UnknownState, "Button", 0);
-        AddTrackImage(0, UnknownState, "Button", 0);
-
-        AddTrackImage(0, "Active", "Button", 0);
-        AddTrackImage(0, "Active", "Button", 0);
-        AddTrackImage(0, "Active", "Button", 0);
-        AddTrackImage(0, "Active", "Button", 0);
-
-        AddTrackImage(0, "InActive", "Button", 0);
-        AddTrackImage(0, "InActive", "Button", 0);
-        AddTrackImage(0, "InActive", "Button", 0);
-        AddTrackImage(0, "InActive", "Button", 0);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle(UnknownState, "Button-UnKnown");
-        AddTrackStyle("Active", "Button-Active");
-        AddTrackStyle("InActive", "Button-InActive");
+        SetTrackSymbol("Button");
+        AddImageSourceAndRotation(TrackStyleImage.Unknown,  "Button");
+        AddImageSourceAndRotation(TrackStyleImage.Active,   "Button");
+        AddImageSourceAndRotation(TrackStyleImage.InActive, "Button");
     }
 
     public void Clicked() {
@@ -42,7 +35,6 @@ public class TrackButton : TrackPiece, ITrackButton, ITrackSymbol {
             var audioManager = AudioManager.Current;
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
         }
-
         _clickSoundPlayer?.Play();
     }
 }

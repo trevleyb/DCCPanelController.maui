@@ -1,27 +1,20 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackCrossing : TrackPiece, ITrackSymbol {
+public partial class TrackCrossing : TrackPieceBase, ITrackSymbol, ITrackPiece {
+
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "90 degree crossing")]
+    private string _name = "Crossing";
+
     protected override void Setup() {
-        Name = "Crossing";
-        DefaultState = "Normal";
         SetTrackSymbol("Cross1");
-    }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Cross1", -90);
-        AddTrackImage(45, "Normal", "Cross2", 0);
-        AddTrackImage(90, "Normal", "Cross1", 0);
-        AddTrackImage(135, "Normal", "Cross2", 90);
-        AddTrackImage(180, "Normal", "Cross1", 90);
-        AddTrackImage(225, "Normal", "Cross2", 0);
-        AddTrackImage(270, "Normal", "Cross1", 0);
-        AddTrackImage(315, "Normal", "Cross2", -90);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Cross1", (0, -90), (90 ,0), (180 ,90), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Cross2", (45, 0), (135 ,90), (225 ,0), (315, -90));
     }
 }

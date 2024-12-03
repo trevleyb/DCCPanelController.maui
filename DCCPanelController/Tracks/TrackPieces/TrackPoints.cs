@@ -1,24 +1,23 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.ImageManager;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks;
 
-public class TrackPoints : TrackPiece {
+public partial class TrackPoints : TrackPieceBase, ITrackPiece {
+
+    [ObservableProperty]
+    [property: EditableStrProperty(Name = "Name (ID)", Description = "Track Points")]
+    private string _name = "Points";
+    
     protected override void Setup() {
-        Name = "Track Points";
-        DefaultState = "Normal";
-        SetTrackSymbol("Points");
         Layer = 2;
+        SetTrackSymbol("Points");
+        AddImageSourceAndRotation(TrackStyleImage.Normal,  "Points", (0, 0), (90 ,90), (180 ,180), (270, 270));
     }
-
-    protected override void AddTrackImages() {
-        AddTrackImage(0, "Normal", "Points", 0);
-    }
-
-    protected override void AddTrackStyles() {
-        AddTrackStyle("Normal", "Mainline");
-    }
-
+    
     public void SetPoints(bool[] points) {
         if (ActiveImage == null || points.Length != 8) {
             ActiveImage = null;
