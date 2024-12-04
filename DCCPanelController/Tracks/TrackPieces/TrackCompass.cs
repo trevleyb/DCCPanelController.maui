@@ -16,7 +16,7 @@ public partial class TrackCompass : TrackPieceBase, ITrackSymbol, ITrackPiece {
     protected override void Setup() {
         Layer = 2;
         SetTrackSymbol("Compass");
-        AddImageSourceAndRotation(TrackStyleImage.Unknown, "Compass", (0, 0), (90 ,0), (180 ,0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Compass", (0, 0), (90 ,0), (180 ,0), (270, 0));
     }
 
     public void SetCompassPoints(ITrackPiece track) {
@@ -32,7 +32,7 @@ public partial class TrackCompass : TrackPieceBase, ITrackSymbol, ITrackPiece {
 
     private void SetCompassColor(string compassId, TrackConnectionsEnum connection) {
         if (ActiveImage == null) return;
-        var svgImage = ActiveImage.Value.ImageSource;
+        var svgImage = ActiveImage;
 
         switch (connection) {
         case TrackConnectionsEnum.Terminator:

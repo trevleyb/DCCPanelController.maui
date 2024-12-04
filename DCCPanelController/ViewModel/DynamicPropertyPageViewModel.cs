@@ -83,7 +83,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             //};
             //switchCell.SetBinding(SwitchCell.OnProperty, new Binding(nameof(property.Info.Name)) { Source = property.Owner, Mode = BindingMode.TwoWay });
             //return switchCell;
-            return null;
+            //return null;
 
         default:
             return null;

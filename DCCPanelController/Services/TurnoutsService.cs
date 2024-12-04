@@ -3,12 +3,8 @@ using DCCPanelController.Model;
 
 namespace DCCPanelController.Services;
 
-public class TurnoutsService {
-    public ObservableCollection<Turnout> Turnouts = [];
-
-    public TurnoutsService(SettingsService settingsService) {
-        Turnouts = settingsService.Turnouts;
-    }
+public class TurnoutsService(SettingsService settingsService) {
+    public readonly ObservableCollection<Turnout> Turnouts = settingsService.Turnouts;
 
     public void AddTurnoutAsync(Turnout turnout) {
         try {
@@ -18,14 +14,23 @@ public class TurnoutsService {
         }
     }
 
-    public async Task DeleteTurnoutAsync(string Id) {
+    public async Task DeleteTurnoutAsync(string id) {
         try {
-            if (await GetTurnoutByIdAsync(Id) is { } found) {
+            if (await GetTurnoutByIdAsync(id) is { } found) {
                 Turnouts.Remove(found);
             }
         } catch (Exception ex) {
             Console.WriteLine("Failed to delete turnout: " + ex.Message);
         }
+    }
+
+    public Turnout? GetTurnoutById(string id) {
+        try {
+            return Turnouts.FirstOrDefault(t => t.Id != null && t.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+        } catch (Exception ex) {
+            Console.WriteLine("Failed to find turnout: " + ex.Message);
+        }
+        return null;
     }
 
     public async Task<Turnout?> GetTurnoutByIdAsync(string id) {
@@ -34,7 +39,6 @@ public class TurnoutsService {
         } catch (Exception ex) {
             Console.WriteLine("Failed to find turnout: " + ex.Message);
         }
-
         return null;
     }
 }

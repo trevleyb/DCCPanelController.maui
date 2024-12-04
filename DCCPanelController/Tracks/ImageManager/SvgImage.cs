@@ -7,58 +7,43 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks.ImageManager;
 
-[DebuggerDisplay("{Id} [{Rotation}]")]
+[DebuggerDisplay("{Id}")]
 public partial class SvgImage : ObservableObject {
 
     [ObservableProperty] private string _id;
-    [ObservableProperty] private int _rotation;
-    [ObservableProperty] private bool _isOccupied;
+    [ObservableProperty] private string _filename;
     [ObservableProperty] private SvgImageManager _imageManager;
     [ObservableProperty] private SvgCompass _connections;
+    public ImageSource? Image => ImageManager.Image;
 
-    public ImageSource Image => ImageManager.Image;
+    public SvgImage(string id, string imageName, string connections) : this(id, imageName, new SvgCompass(connections)) { }
+    public SvgImage(string id, string imageName, SvgCompass connections) {
+        Id = id;
+        Filename = imageName;
+        Connections = connections;
+        ImageManager = new SvgImageManager(imageName);
+        PropertyChanged += OnPropertyChanged;
+    }
 
     public void ForceImageRefresh() {
         ImageManager.ForceImageRefresh();
     }
 
-    public SvgImage(string id, string imageName, int rotation, SvgCompass connections) {
-        Id = id;
-        Rotation = rotation;
-        Connections = connections;
-        ImageManager = new SvgImageManager(imageName);
-        IsOccupied = false;
-        PropertyChanged += OnPropertyChanged;
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName is nameof(IsOccupied)) {
-            // FIX: ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
-        }
-    }
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     public bool SupportsLabel => ImageManager.IsSupported(SvgElementEnum.Text);
-
     public void SetLabel(string label) {
         if (string.IsNullOrEmpty(label)) return;
         if (SupportsLabel) ImageManager.SetAllAttributeValues(SvgElementEnum.Text, "text", label);
     }
 
-    public void SetOccupied(bool isOccupied) {
-        IsOccupied = isOccupied;
-        // FIX: ApplyStyle(IsOccupied ? "track-occupied" : "track-free");
-    }
-
-    //public void ApplyStyle(TrackStyleType styleType, TrackStyleImage styleImage) {
-    //    ApplyStyle(SvgStyles.GetStyle(styleType,styleImage));
-    //}
-
-    public void ApplyStyle(SvgStyle style) {
+    public SvgImage ApplyStyle(SvgStyle style) {
         foreach (var element in style.Elements) {
             foreach (var styleAttribute in element.Value.Attributes) {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
             }
         }
+        return this;
     }
 
     // Element Types Supported Include

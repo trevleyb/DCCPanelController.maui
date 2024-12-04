@@ -16,7 +16,7 @@ public class StyleTrackImages {
     /// <param name="trackType">The type that this track is</param>
     /// <param name="trackRotation">What the current expected rotation is</param>
     /// <returns></returns>
-    public (string imageSource, int rotation) GetTrackImageSourceAndRotation(TrackStyleImage trackType, int trackRotation) {
+    public (string ImageSource, int Rotation) GetTrackImageSourceAndRotation(TrackStyleImage trackType, int trackRotation) {
         // Maximum number of attempts to find the correct image by incrementing the rotation
         const int maxAttempts = 8; // This allows for searching up to a full 360 degrees
         const int rotationIncrement = 45;
@@ -83,7 +83,7 @@ public class StyleTrackImages {
         };
 
         if (nextIndex < 0 || nextIndex >= _states.Count) {
-            return TrackStyleImage.Unknown;
+            return TrackStyleImage.Normal;
         }
 
         return _states[nextIndex];

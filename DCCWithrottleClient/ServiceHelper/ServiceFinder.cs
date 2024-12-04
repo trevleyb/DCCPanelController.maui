@@ -43,10 +43,12 @@ public static class ServiceFinder {
             }
         };
 
-        sd.Mdns.Start();
-        sd.QueryAllServices();
-        Thread.Sleep(timeout);
-        sd.Mdns.Stop();
+        await Task.Run(() => {
+            sd.Mdns.Start();
+            sd.QueryAllServices();
+            Thread.Sleep(timeout);
+            sd.Mdns.Stop();
+        });
         return foundServices;
     }
 

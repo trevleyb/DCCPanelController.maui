@@ -75,7 +75,7 @@ public partial class PanelEditorPage : ContentPage {
         switch (trackSelectedEvent.Taps) {
         case 1:
             _editState = EditState.Changed;
-            trackSelectedEvent.Track?.RotateLeft();
+            trackSelectedEvent.Track?.RotateRight();
             break;
         case 2:
             _editState = EditState.Changed;
@@ -84,6 +84,8 @@ public partial class PanelEditorPage : ContentPage {
             }
             break;
         }
+        // We need to tell it to only redraw the item not the whole view
+        //PanelView.RebuildGrid(true);
     }
     #endregion
 

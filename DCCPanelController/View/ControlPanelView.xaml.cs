@@ -100,7 +100,7 @@ public partial class ControlPanelView {
     public int Cols => Panel?.Cols ?? 1;
     
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        //Console.WriteLine($"PropertyChanged: {e.PropertyName}");
+        Console.WriteLine($"PropertyChanged: {sender?.ToString()} - {e.PropertyName}");
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -236,10 +236,10 @@ public partial class ControlPanelView {
         // Setup bindings to the size and source of the Track Image. Image can change on events
         // -------------------------------------------------------------------------------------------
         image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
-        image.SetBinding(RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
+        image.SetBinding(RotationProperty, new Binding(nameof(track.TrackRotation)) { Source = track });
         image.SetBinding(WidthRequestProperty, new Binding(nameof(GridSize)) { Source = this});
         image.SetBinding(HeightRequestProperty, new Binding(nameof(GridSize)) { Source = this });
-
+        
         // Setup trigger control to trap if we click on or select the track item
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
@@ -262,6 +262,7 @@ public partial class ControlPanelView {
         DynamicGrid.SetRow(image, track.Y);
         DynamicGrid.SetColumn(image, track.X);
         DynamicGrid.Children.Add(image);
+        track.PropertyChanged += OnPropertyChanged;
         return image;
     }
 
@@ -321,6 +322,8 @@ public partial class ControlPanelView {
                     case "Panel":
                         trackPiece.X = position.Col;
                         trackPiece.Y = position.Row;
+                        
+                        // TODO: Can we optimise this and not redraw the whole grid?
                         RebuildGrid(true);
                         break;
                     case "Symbol":
@@ -329,6 +332,8 @@ public partial class ControlPanelView {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
                             Panel?.Tracks?.Add(newPiece);
+
+                            // TODO: Can we optimise this and not redraw the whole grid?
                             RebuildGrid(true);
                         } else {
                             Console.WriteLine($"Could not create a new Piece as a TrackPiece.");
@@ -417,17 +422,10 @@ public partial class ControlPanelView {
                 case ITrackButton button:
                     Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
                     button.Clicked();
-                    track.NextState();
-                    break;
-                case ITrackThreeway threeway:
-                    Console.WriteLine($"You just tapped on {track.Name} - its a threeway so we will cycle states. ");
-                    threeway.Clicked();
-                    track.NextState();
                     break;
                 case ITrackTurnout turnout:
                     Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
                     turnout.Clicked();
-                    track.NextState();
                     break;
                 }
             }

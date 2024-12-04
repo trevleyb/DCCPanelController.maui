@@ -8,11 +8,6 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <NavigationPage Title="Turnouts">
-        <x:Arguments>
-            <view:TurnoutsPage />
-        </x:Arguments>
-    </NavigationPage>
     <NavigationPage Title="Panels">
         <x:Arguments>
             <view:PanelsPage />
@@ -21,6 +16,11 @@
     <NavigationPage Title="Operate">
         <x:Arguments>
             <view:OperatePage />
+        </x:Arguments>
+    </NavigationPage>
+    <NavigationPage Title="Turnouts">
+        <x:Arguments>
+            <view:TurnoutsPage />
         </x:Arguments>
     </NavigationPage>
     <NavigationPage Title="Routes">

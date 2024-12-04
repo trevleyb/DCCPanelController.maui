@@ -18,14 +18,10 @@ public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, I
     [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
     private bool _isEnabled = true;
    
-    [ObservableProperty]
-    [property: EditableBoolProperty(Name = "State", Description = "Current State of the Button")]
-    private bool _state = false;
-
     protected override void Setup() {
         Layer = 2;
         SetTrackSymbol("Button");
-        AddImageSourceAndRotation(TrackStyleImage.Unknown,  "Button");
+        AddImageSourceAndRotation(TrackStyleImage.Normal,  "Button");
         AddImageSourceAndRotation(TrackStyleImage.Active,   "Button");
         AddImageSourceAndRotation(TrackStyleImage.InActive, "Button");
     }

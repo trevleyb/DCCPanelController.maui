@@ -12,6 +12,6 @@ public partial class Sample : TrackPieceBase, ITrackPiece {
     private string _name = "Sample";
     
     protected override void Setup() {
-        AddImageSourceAndRotation(TrackStyleImage.Default,   "Sample");
+        AddImageSourceAndRotation(TrackStyleImage.Normal,   "Sample");
     }
 }

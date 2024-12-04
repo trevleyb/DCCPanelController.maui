@@ -16,7 +16,7 @@ public partial class TrackRightTurnout : TrackTurnoutBase, ITrackTurnout, ITrack
     
     protected override void Setup() {
         SetTrackSymbol("TurnoutR1");
-        AddImageSourceAndRotation(TrackStyleImage.Unknown,   "TurnoutR1", (0, 0), (90 ,90), (180 ,180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Normal,   "TurnoutR1", (0, 0), (90 ,90), (180 ,180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Straight,  "TurnoutR2", (0 ,0), (90 ,90), (180 ,180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Diverging, "TurnoutR3", (0, 0), (90, 90), (180, 180), (270, 270));
     }

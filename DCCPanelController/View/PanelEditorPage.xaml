@@ -89,7 +89,7 @@
                                 VerticalOptions="Center">
                                 <Image
                                     HeightRequest="50"
-                                    Source="{Binding SymbolImage}"
+                                    Source="{Binding Symbol}"
                                     WidthRequest="50" />
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />

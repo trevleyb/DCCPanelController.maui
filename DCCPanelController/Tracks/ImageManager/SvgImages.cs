@@ -8,18 +8,20 @@ namespace DCCPanelController.Tracks.ImageManager;
 public static class SvgImages {
 
     private static readonly Lock LockObject = new();
-    private static readonly Dictionary<string, SvgImageFile> AvailableImages = [];
-    public static Dictionary<string, SvgImageFile> TrackImages => AvailableImages.Count != 0 ? AvailableImages : BuildTrackList();
+    private static readonly Dictionary<string, SvgImage> AvailableImages = [];
+    // ReSharper disable InconsistentlySynchronizedField
+    private static Dictionary<string, SvgImage> TrackImages => AvailableImages.Count != 0 ? AvailableImages : BuildTrackList();
 
-    public static SvgImageFile GetImage(string id) {
-        return TrackImages.TryGetValue(id, out var trackImage) ? trackImage : new SvgImageFile("Unknown", "********", "Track_Unknown");
+    public static SvgImage Default() => Create("Unknown", "********", "Track_Unknown");
+    public static SvgImage GetImage(string id) {
+        return TrackImages.TryGetValue(id, out var trackImage) ? trackImage : Default();
     }
     
     /// <summary>
     /// Add all the types of images that we currently support. Each image has a readable name and also a string
     /// that represents the in and out paths that the track can support. 
     /// </summary>
-    private static Dictionary<string, SvgImageFile> BuildTrackList() {
+    private static Dictionary<string, SvgImage> BuildTrackList() {
         lock (LockObject) {
             AvailableImages.Clear();
             
@@ -72,15 +74,14 @@ public static class SvgImages {
         }
     }
 
-    private static void Add(string id, string directions, string reference) {
-        var image = Create(id, directions, reference);
-        if (image is not null) AvailableImages.TryAdd(id, image);
+    private static void Add(string id, string directions, string resourceName) {
+        var image = Create(id, directions, resourceName);
+        AvailableImages.TryAdd(id, image);
     }
 
-    private static SvgImageFile? Create(string id, string directions, string reference) {
-        var fullPath = SvgImageFinder.GetFullPathOfResource(reference);
-        if (!string.IsNullOrEmpty(fullPath)) return new SvgImageFile(id, fullPath, directions);
-        Console.WriteLine($"Could not find {reference} in the resources.");
-        throw new ApplicationException($"Invalid Track Image reference: {reference}. Track name wrong or not included in project.");
+    private static SvgImage Create(string id, string directions, string resourceName) {
+        var fullPath = SvgImageFinder.GetFullPathOfResource(resourceName);
+        if (!string.IsNullOrEmpty(fullPath)) return new SvgImage(id, fullPath, directions);
+        throw new ApplicationException($"Invalid Track Image resourceName: {resourceName}. Track name wrong or not included in project.");
     }
 }

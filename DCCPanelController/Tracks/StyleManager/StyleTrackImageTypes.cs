@@ -6,8 +6,6 @@ namespace DCCPanelController.Tracks.StyleManager;
 // ----------------------------------------------------------------------------
 public enum TrackStyleImage {
     Normal,
-    Default,
-    Unknown,
     Straight,
     Diverging,
     Active,

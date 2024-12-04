@@ -19,12 +19,7 @@ public partial class TrackPoints : TrackPieceBase, ITrackPiece {
     }
     
     public void SetPoints(bool[] points) {
-        if (ActiveImage == null || points.Length != 8) {
-            ActiveImage = null;
-            return;
-        }
-
-        var svgImage = ActiveImage.Value.ImageSource;
+        var svgImage = ActiveImage;
         for (var point = 0; point < 8; point++) {
             SetPointColor(svgImage, PointLabel(point), points[point]);
         }
