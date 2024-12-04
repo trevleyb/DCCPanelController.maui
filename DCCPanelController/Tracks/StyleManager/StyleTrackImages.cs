@@ -1,12 +1,16 @@
 namespace DCCPanelController.Tracks.StyleManager;
 
 public class StyleTrackImages {
-    private readonly List<StyleTrackImage> _images = [];
     private readonly List<TrackStyleImage> _states = [];
-
+    private List<StyleImageRotation> _images = [];
     private int _currentState;
-    public IReadOnlyList<StyleTrackImage> Images => _images.AsReadOnly();
 
+    public (string imageSource, int rotation) GetTrackImageSourceAndRotation(int trackRotation) {
+        if (_states.Count <= 0) return ("Unknown", 0);
+        var trackType = _states[_currentState];
+        return GetTrackImageSourceAndRotation(trackType, trackRotation);
+    }
+    
     /// <summary>
     ///     Given the type of Track we need (Unknown, Straight, Diverging, etc.) and the current rotation of the track piece,
     ///     ie: how are we expecting it to look, then return the image along with how it actually should be rotated.
@@ -14,43 +18,37 @@ public class StyleTrackImages {
     /// <param name="trackType">The type that this track is</param>
     /// <param name="trackRotation">What the current expected rotation is</param>
     /// <returns></returns>
-    public (string ImageSource, int Rotation) GetTrackImageSourceAndRotation(TrackStyleImage trackType, int trackRotation) {
+    public (string ImageSource, int ImageRotation) GetTrackImageSourceAndRotation(TrackStyleImage trackType, int trackRotation) {
         // Maximum number of attempts to find the correct image by incrementing the rotation
         const int maxAttempts = 8; // This allows for searching up to a full 360 degrees
         const int rotationIncrement = 45;
 
         for (var attempt = 0; attempt < maxAttempts; attempt++) {
             var currentRotation = (trackRotation + attempt * rotationIncrement) % 360;
-            var image = _images.FirstOrDefault(i => i.Image == trackType && i.Rotations.Any(r => r.TrackRotation == currentRotation));
-            if (image != null) {
-                var selectedRotation = image.Rotations.FirstOrDefault(r => r.TrackRotation == currentRotation);
-                return (image.ImageSource, selectedRotation?.ImageRotation ?? 0);
-            }
+            var image = _images.FirstOrDefault(i => i.Image == trackType && i.TrackRotation == currentRotation);
+            if (image is not null) return (image.ImageSource, image.ImageRotation);
         }
-
-        // Default if no match is found
         return ("Unknown", 0);
     }
 
-    public (string imageSource, int rotation) GetTrackImageSourceAndRotation(int trackRotation) {
-        if (_states.Count <= 0) return ("Unknown", 0);
-        var trackType = _states[_currentState];
-        return GetTrackImageSourceAndRotation(trackType, trackRotation);
+    private void AddStyleTrackImage(StyleTrackImage styleTrackImage) {
+        AddToStateList(styleTrackImage.Image);
+        foreach (var trackRotation in styleTrackImage.Rotations) {
+            var entry = new StyleImageRotation(styleTrackImage.Image, trackRotation.TrackRotation, trackRotation.ImageRotation, styleTrackImage.ImageSource);
+            _images.Add(entry);
+        }
     }
-
+    
     public void AddImageSourceAndRotation(TrackStyleImage trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {
-        AddToStateList(trackType);
         var builder = StyleTrackImage.Create(trackType, imageSource);
-        if (rotations.Length == 0) builder.AddDefaultRotations();
-        if (rotations.Length > 0) builder.AddRotations(rotations);
-        _images.Add(builder.Build());
+        if (rotations.Length <= 0) builder.AddDefaultRotations(); else builder.AddRotations(rotations);
+        AddStyleTrackImage(builder.Build());
     }
 
     public void AddImageSourceAndRotation(TrackStyleImage trackType, string imageSource, List<StyleTrackImage.Rotation> rotations) {
-        AddToStateList(trackType);
         var builder = StyleTrackImage.Create(trackType, imageSource);
         builder.AddRotations(rotations);
-        _images.Add(builder.Build());
+        AddStyleTrackImage(builder.Build());
     }
 
     private void AddToStateList(TrackStyleImage trackType) {
@@ -104,4 +102,11 @@ public class StyleTrackImages {
 
         return _states[nextIndex];
     }
+}
+
+internal class StyleImageRotation(TrackStyleImage image, int trackRotation, int imageRotation, string imageSource) {
+    public readonly TrackStyleImage Image = image;
+    public readonly int TrackRotation = trackRotation;
+    public readonly int ImageRotation = imageRotation;
+    public readonly string ImageSource = imageSource;
 }

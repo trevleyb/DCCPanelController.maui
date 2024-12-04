@@ -11,21 +11,20 @@ namespace DCCPanelController.Tracks.TrackPieces.Base;
 public abstract partial class TrackTurnoutBase : TrackBase {
     private readonly TurnoutsService? _turnoutsService;
 
-    [ObservableProperty] [property: EditableTurnoutProperty(Name = "Actions", Description = "ID of the item to do an action against", Group = "Actions")]
-    private List<TrackTurnoutAction> _actions = [];
-
-    [ObservableProperty] [property: EditableStrProperty(Name = "ID", Description = "Turnout ID")]
+    [ObservableProperty] [property: EditableStringProperty(Name = "ID", Description = "Turnout ID")]
     private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
     private bool _isHidden;
 
-    [ObservableProperty] private bool _isOccupied;
-
-    [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
-
     [ObservableProperty] [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleType.Mainline, TrackStyleType.Branchline })]
     private TrackStyleType _trackType = TrackStyleType.Mainline;
+
+    [ObservableProperty] [property: EditableTurnoutProperty(Name = "Actions", Group="Actions",  Description = "ID of the item to do an action against")]
+    private List<TrackTurnoutAction> _actions = [];
+
+    [ObservableProperty] private bool _isOccupied;
+    [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
 
     private Turnout? _turnout;
 
@@ -41,9 +40,9 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackImage, TrackDirection);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            TrackRotation = trackInfo.Rotation;
+            ImageRotation = trackInfo.ImageRotation;
 
-            Console.WriteLine($"Track: {TrackImage}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.Rotation}");
+            Console.WriteLine($"Track: {TrackImage}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
 
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type

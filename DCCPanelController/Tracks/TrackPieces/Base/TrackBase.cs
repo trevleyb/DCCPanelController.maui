@@ -11,11 +11,12 @@ public abstract partial class TrackBase : ObservableObject {
     [ObservableProperty] private int _height = 1; // How High is it (Normally 1, Text might be 2)
     [ObservableProperty] private int _layer = 1;  // What layer is this on? Only 1 element per layer.
 
-    [ObservableProperty] private int _trackDirection; // What is the expected direction of the Track Piece
-    [ObservableProperty] private int _trackRotation;  // What value does the track peice get rotated by
-    [ObservableProperty] private int _width = 1;      // How Width is it (normally 1, Text might be 2)
-    [ObservableProperty] private int _x;              // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _y;              // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private string _name = "Track Piece";  // Name of this particular track piece or object
+    [ObservableProperty] private int _trackDirection;           // What is the expected direction of the Track Piece
+    [ObservableProperty] private int _imageRotation;            // What value does the track piece get rotated by
+    [ObservableProperty] private int _width = 1;                // How Width is it (normally 1, Text might be 2)
+    [ObservableProperty] private int _x;                        // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _y;                        // What Grid Position (Vertical) is this component?
 
     protected TrackBase() {
         Initialise();
@@ -28,7 +29,7 @@ public abstract partial class TrackBase : ObservableObject {
 
     public ImageSource Image => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
     public ImageSource Symbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
-    public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(TrackRotation);
+    public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
     protected abstract void Setup();
 
     /// <summary>

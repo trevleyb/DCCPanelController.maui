@@ -13,9 +13,6 @@ public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, I
     [ObservableProperty] [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
     private bool _isEnabled = true;
 
-    [ObservableProperty] [property: EditableStrProperty(Name = "Name (ID)", Description = "Button Piece")]
-    private string _name = "Button";
-
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;
@@ -27,6 +24,7 @@ public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, I
 
     protected override void Setup() {
         Layer = 2;
+        Name= "Button";
         SetTrackSymbol("Button");
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Button");
         AddImageSourceAndRotation(TrackStyleImage.Active, "Button");

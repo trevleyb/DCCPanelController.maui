@@ -8,11 +8,9 @@ using DCCPanelController.Tracks.TrackPieces.Interfaces;
 namespace DCCPanelController.Tracks.TrackPieces;
 
 public partial class TrackCompass : TrackPieceBase, ITrackSymbol, ITrackPiece {
-    [ObservableProperty] [property: EditableStrProperty(Name = "Name (ID)", Description = "A Compass")]
-    private string _name = "Compass";
-
     protected override void Setup() {
         Layer = 2;
+        Name = "Compass";
         SetTrackSymbol("Compass");
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
     }

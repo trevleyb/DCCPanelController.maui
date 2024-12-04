@@ -38,7 +38,7 @@
                         HorizontalOptions="Fill"
                         Margin="0,5,0,15" />
 
-                    <TableView x:Name="PropertyContainer" />
+                    <TableView x:Name="PropertyContainer" HasUnevenRows="True" />
 
                     <Button Text="Close"
                             Style="{StaticResource ButtonOutline}"

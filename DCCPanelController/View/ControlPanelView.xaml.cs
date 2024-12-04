@@ -241,7 +241,7 @@ public partial class ControlPanelView {
         // Setup bindings to the size and source of the Track Image. Image can change on events
         // -------------------------------------------------------------------------------------------
         image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
-        image.SetBinding(RotationProperty, new Binding(nameof(track.TrackRotation)) { Source = track });
+        image.SetBinding(RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
         image.SetBinding(WidthRequestProperty, new Binding(nameof(GridSize)) { Source = this });
         image.SetBinding(HeightRequestProperty, new Binding(nameof(GridSize)) { Source = this });
 

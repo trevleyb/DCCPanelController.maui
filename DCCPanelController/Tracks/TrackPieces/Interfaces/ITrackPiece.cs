@@ -4,9 +4,9 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 public interface ITrackPiece {
-    string Name { get; set; }
+    string Name { get; }
 
-    int TrackRotation { get; set; }
+    int ImageRotation { get; set; }
     int TrackDirection { get; set; }
     int X { get; set; }
     int Y { get; set; }

@@ -20,9 +20,9 @@ public abstract partial class TrackPieceBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackDirection);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            TrackRotation = trackInfo.Rotation;
+            ImageRotation = trackInfo.ImageRotation;
 
-            Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.Rotation}");
+            Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
 
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
