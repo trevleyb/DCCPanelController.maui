@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Entities;
+namespace DCCWithrottleClient.Client;
 
 public enum TurnoutStateEnum {
     Unknown = '1',

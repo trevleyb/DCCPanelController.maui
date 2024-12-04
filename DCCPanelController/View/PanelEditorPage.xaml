@@ -5,11 +5,11 @@
     x:Class="DCCPanelController.View.PanelEditorPage"
     x:DataType="viewModel:PanelEditorViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.Interfaces"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:model="clr-namespace:DCCPanelController.Model">
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.TrackPieces.Interfaces">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem

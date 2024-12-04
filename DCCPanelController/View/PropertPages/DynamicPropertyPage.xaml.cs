@@ -1,14 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Model;
-using DCCPanelController.Tracks.Base;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using DCCPanelController.ViewModel;
 
-namespace DCCPanelController.View;
+namespace DCCPanelController.View.PropertPages;
 
 public partial class DynamicPropertyPage : ContentPage {
     public DynamicPropertyPage(ITrackPiece obj, string? propertyName = null) {

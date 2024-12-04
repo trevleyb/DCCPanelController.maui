@@ -4,11 +4,11 @@ using DCCPanelController.Events;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
-using DCCPanelController.Tracks.Base;
 using DCCPanelController.Tracks.Helpers;
 using Microsoft.Maui.Layouts;
 using System.Timers;
-using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.TrackPieces;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 //
 // This is a COMPONENT that is used inside the operate and panels views

@@ -3,9 +3,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 
-namespace DCCPanelController.Tracks.Base;
+namespace DCCPanelController.Tracks.TrackPieces.Base;
 
-public abstract partial class TrackBase : BaseViewModel {
+public abstract partial class TrackBase : ObservableObject {
 
     // Collection of images and rotations associated with this track piece
     protected readonly StyleTrackImages StyleTrackImages = new();

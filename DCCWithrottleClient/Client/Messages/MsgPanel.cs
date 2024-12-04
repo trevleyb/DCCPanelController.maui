@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using DCCWithrottleClient.Client.Entities;
 using DCCWithrottleClient.Client.Events;
 
 namespace DCCWithrottleClient.Client.Messages;

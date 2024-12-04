@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Security.Cryptography;
 using DCCWithrottleClient.Client;
 using DCCWithrottleClient.Client.Commands;
-using DCCWithrottleClient.Client.Entities;
 using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.ServiceHelper;
 using Makaretu.Dns;

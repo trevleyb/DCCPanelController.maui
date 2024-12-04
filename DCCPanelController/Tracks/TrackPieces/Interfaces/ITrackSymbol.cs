@@ -1,4 +1,4 @@
-namespace DCCPanelController.Tracks.Interfaces;
+namespace DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 public interface ITrackSymbol {
     string Name { get; }

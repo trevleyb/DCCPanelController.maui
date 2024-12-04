@@ -1,11 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.Attributes;
-using DCCPanelController.Tracks.Base;
-using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.Tracks.TrackPieces.Base;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using Plugin.Maui.Audio;
 
-namespace DCCPanelController.Tracks;
+namespace DCCPanelController.Tracks.TrackPieces;
 
 public partial class TrackLeftTurnout : TrackTurnoutBase, ITrackTurnout, ITrackSymbol, ITrackPiece {
     private IAudioPlayer? _clickSoundPlayer;

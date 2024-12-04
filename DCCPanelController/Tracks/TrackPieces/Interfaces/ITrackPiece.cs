@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
 
-namespace DCCPanelController.Tracks.Base;
+namespace DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 public interface ITrackPiece {
     
@@ -21,7 +21,6 @@ public interface ITrackPiece {
     void RotateRight();
     
     ImageSource? Image { get; }
-    ImageSource? Symbol { get; }
 
     TrackConnectionsEnum[] Connections { get; }
 }

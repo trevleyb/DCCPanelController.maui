@@ -1,3 +1,5 @@
+using DCCPanelController.Tracks.TrackPieces;
+
 namespace DCCPanelController.Tracks.ImageManager;
 
 public class SvgCompass {

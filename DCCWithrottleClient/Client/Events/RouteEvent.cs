@@ -1,5 +1,3 @@
-using DCCWithrottleClient.Client.Entities;
-
 namespace DCCWithrottleClient.Client.Events;
 
 public class RouteEvent(string systemName, string userName, RouteStateEnum stateEnum) : EventArgs, IClientEvent {

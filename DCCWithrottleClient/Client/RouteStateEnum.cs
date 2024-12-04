@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Entities;
+namespace DCCWithrottleClient.Client;
 
 public enum RouteStateEnum {
     Unknown = '1',

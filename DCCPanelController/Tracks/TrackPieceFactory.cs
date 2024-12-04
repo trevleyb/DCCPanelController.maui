@@ -1,7 +1,5 @@
 using System.Reflection;
-using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Tracks.Base;
-using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 namespace DCCPanelController.Tracks;
 

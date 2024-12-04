@@ -1,9 +1,7 @@
-using CommunityToolkit.Maui.Views;
-using DCCPanelController;
 using DCCPanelController.Model;
-using DCCPanelController.Services.NavigationService;
 using DCCPanelController.View;
-using DCCPanelController.ViewModel;
+
+namespace DCCPanelController.Services.NavigationService;
 
 public class NavigationService(IServiceProvider serviceProvider) :  INavigationService {
     private readonly IServiceProvider _serviceProvider = serviceProvider;

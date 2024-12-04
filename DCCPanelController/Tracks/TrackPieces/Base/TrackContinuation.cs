@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.Attributes;
+using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 
-namespace DCCPanelController.Tracks.Base;
+namespace DCCPanelController.Tracks.TrackPieces.Base;
 
 public abstract partial class TrackContinuationBase : TrackBase {
 

@@ -1,3 +1,3 @@
-namespace DCCPanelController.Helpers.Attributes;
+namespace DCCPanelController.Helpers.EditableProperties;
 
 public class EditableStrPropertyAttribute : EditableProperty { }

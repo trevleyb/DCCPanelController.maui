@@ -1,10 +1,9 @@
-using CommunityToolkit.Maui.Views;
 using System.Windows.Input;
 using CommunityToolkit.Maui.Core.Extensions;
-using DCCPanelController;
+using CommunityToolkit.Maui.Views;
 using DCCPanelController.Helpers;
 
-namespace ColorPickerControl;
+namespace DCCPanelController.View.Components;
 
 public partial class ColorDropdown : ContentView {
     private const string DefaultPlaceholderText = "Click here to select a color";

@@ -1,4 +1,3 @@
-using DCCWithrottleClient.Client.Entities;
 using DCCWithrottleClient.Client.Messages;
 
 namespace DCCWithrottleClient.Client;

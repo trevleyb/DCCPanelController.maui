@@ -1,5 +1,3 @@
-using DCCWithrottleClient.Client.Entities;
-
 namespace DCCWithrottleClient.Client.Events;
 
 public class TurnoutEvent(string systemName, string userName, TurnoutStateEnum stateEnum) : EventArgs, IClientEvent {

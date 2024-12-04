@@ -1,4 +1,4 @@
-namespace DCCPanelController.Helpers.Attributes;
+namespace DCCPanelController.Helpers.EditableProperties;
 
 public class EditableIntPropertyAttribute : EditableProperty {
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)

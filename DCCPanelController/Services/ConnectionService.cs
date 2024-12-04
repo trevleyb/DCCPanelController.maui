@@ -3,10 +3,10 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCWithrottleClient.Client;
 using DCCWithrottleClient.Client.Commands;
-using DCCWithrottleClient.Client.Entities;
 using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.Client.Messages;
-using TurnoutStateEnum = DCCWithrottleClient.Client.Entities.TurnoutStateEnum;
+using RouteStateEnum = DCCWithrottleClient.Client.RouteStateEnum;
+using TurnoutStateEnum = DCCWithrottleClient.Client.TurnoutStateEnum;
 
 namespace DCCPanelController.Services;
 
@@ -116,16 +116,16 @@ public partial class ConnectionService : ObservableObject {
                 Id = route.SystemName,
                 Name = route.UserName,
                 State = route.StateEnum switch {
-                    DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
-                    DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
+                    RouteStateEnum.Active   => Model.RouteStateEnum.Active,
+                    RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
                     _                                                           => Model.RouteStateEnum.Unknown
                 }
             });
         } else {
             found.Id = route.SystemName;
             found.State = route.StateEnum switch {
-                DCCWithrottleClient.Client.Entities.RouteStateEnum.Active   => Model.RouteStateEnum.Active,
-                DCCWithrottleClient.Client.Entities.RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
+                RouteStateEnum.Active   => Model.RouteStateEnum.Active,
+                RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
                 _                                                           => Model.RouteStateEnum.Unknown
             };
             if (!string.IsNullOrWhiteSpace(route.UserName)) {

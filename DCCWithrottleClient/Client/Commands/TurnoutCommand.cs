@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Security.Cryptography;
-using DCCWithrottleClient.Client.Entities;
 
 namespace DCCWithrottleClient.Client.Commands;
 

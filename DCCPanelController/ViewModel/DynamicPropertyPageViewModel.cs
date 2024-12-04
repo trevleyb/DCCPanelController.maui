@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Attributes;
-using DCCPanelController.Tracks.Base;
+using DCCPanelController.Helpers.EditableProperties;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using DCCPanelController.View.Components;
 
 namespace DCCPanelController.ViewModel;

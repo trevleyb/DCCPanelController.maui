@@ -1,4 +1,4 @@
-namespace DCCPanelController.Helpers.Attributes;
+namespace DCCPanelController.Helpers.EditableProperties;
 
 [AttributeUsage(AttributeTargets.Property)]
 public abstract class EditableProperty : Attribute {

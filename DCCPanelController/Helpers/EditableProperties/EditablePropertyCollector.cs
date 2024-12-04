@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace DCCPanelController.Helpers.Attributes;
+namespace DCCPanelController.Helpers.EditableProperties;
 
 public class EditablePropertyCollector {
     public static Dictionary<string, List<EditablePropertyDetails>> GetEditableProperties(object obj) {

@@ -1,10 +1,11 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.Attributes;
-using DCCPanelController.Tracks.Base;
+using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.Tracks.TrackPieces.Base;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
-namespace DCCPanelController.Tracks;
+namespace DCCPanelController.Tracks.TrackPieces;
 
 public partial class TrackPoints : TrackPieceBase, ITrackPiece {
 

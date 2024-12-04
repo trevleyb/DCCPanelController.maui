@@ -1,12 +1,8 @@
-using CommunityToolkit.Maui.Views;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Reflection;
+using CommunityToolkit.Maui.Views;
 using DCCPanelController.Helpers;
 
-namespace ColorPickerControl;
+namespace DCCPanelController.View.Components;
 
 public partial class ColorPopup : Popup {
     public ObservableCollection<ColorOption> ColorOptions { get; private set; }

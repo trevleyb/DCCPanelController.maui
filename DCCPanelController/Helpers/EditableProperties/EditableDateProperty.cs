@@ -1,4 +1,4 @@
-namespace DCCPanelController.Helpers.Attributes;
+namespace DCCPanelController.Helpers.EditableProperties;
 
 public class EditableDateProperty : EditableProperty {
     public DateOnly MinValue { get; set; } = DateOnly.MinValue;  // used for Int (Minimum Value)

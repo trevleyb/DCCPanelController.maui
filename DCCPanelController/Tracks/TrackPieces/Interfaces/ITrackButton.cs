@@ -1,6 +1,4 @@
-using DCCPanelController.Tracks.StyleManager;
-
-namespace DCCPanelController.Tracks.Interfaces;
+namespace DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 /// <summary>
 /// Interface to indicate that the TrackPiece supports a toggle button

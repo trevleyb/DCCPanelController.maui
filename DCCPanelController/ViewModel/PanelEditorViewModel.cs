@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks;
-using DCCPanelController.Tracks.Interfaces;
+using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 namespace DCCPanelController.ViewModel;
 

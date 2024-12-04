@@ -2,7 +2,6 @@ using System.Net.Sockets;
 using System.Text;
 using System.Timers;
 using DCCWithrottleClient.Client.Commands;
-using DCCWithrottleClient.Client.Entities;
 using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.Client.Messages;
 using DCCWithrottleClient.Helpers;
