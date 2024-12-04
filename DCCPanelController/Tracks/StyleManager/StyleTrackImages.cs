@@ -1,17 +1,15 @@
 namespace DCCPanelController.Tracks.StyleManager;
 
-using System.Collections.Generic;
-
 public class StyleTrackImages {
-
-    private int _currentState;
     private readonly List<StyleTrackImage> _images = [];
     private readonly List<TrackStyleImage> _states = [];
+
+    private int _currentState;
     public IReadOnlyList<StyleTrackImage> Images => _images.AsReadOnly();
 
     /// <summary>
-    /// Given the type of Track we need (Unknown, Straight, Diverging, etc.) and the current rotation of the track piece,
-    /// ie: how are we expecting it to look, then return the image along with how it actually should be rotated. 
+    ///     Given the type of Track we need (Unknown, Straight, Diverging, etc.) and the current rotation of the track piece,
+    ///     ie: how are we expecting it to look, then return the image along with how it actually should be rotated.
     /// </summary>
     /// <param name="trackType">The type that this track is</param>
     /// <param name="trackRotation">What the current expected rotation is</param>
@@ -22,13 +20,14 @@ public class StyleTrackImages {
         const int rotationIncrement = 45;
 
         for (var attempt = 0; attempt < maxAttempts; attempt++) {
-            var currentRotation = (trackRotation + (attempt * rotationIncrement)) % 360;
+            var currentRotation = (trackRotation + attempt * rotationIncrement) % 360;
             var image = _images.FirstOrDefault(i => i.Image == trackType && i.Rotations.Any(r => r.TrackRotation == currentRotation));
             if (image != null) {
                 var selectedRotation = image.Rotations.FirstOrDefault(r => r.TrackRotation == currentRotation);
                 return (image.ImageSource, selectedRotation?.ImageRotation ?? 0);
             }
         }
+
         // Default if no match is found
         return ("Unknown", 0);
     }
@@ -53,17 +52,34 @@ public class StyleTrackImages {
         builder.AddRotations(rotations);
         _images.Add(builder.Build());
     }
-    
+
     private void AddToStateList(TrackStyleImage trackType) {
         if (!_states.Contains(trackType)) _states.Add(trackType);
     }
 
-    private TrackStyleImage First() { return GetNextState(0, 0); }
-    private TrackStyleImage Last() { return GetNextState(0, -1); }
-    private TrackStyleImage Next() { return GetNextState(_currentState,  1); }
-    private TrackStyleImage Prev() { return GetNextState(_currentState, -1); }
-    private TrackStyleImage Next(TrackStyleImage trackType) { return GetNextState(trackType,  1); }
-    private TrackStyleImage Prev(TrackStyleImage trackType) { return GetNextState(trackType, -1); }
+    private TrackStyleImage First() {
+        return GetNextState(0, 0);
+    }
+
+    private TrackStyleImage Last() {
+        return GetNextState(0, -1);
+    }
+
+    private TrackStyleImage Next() {
+        return GetNextState(_currentState, 1);
+    }
+
+    private TrackStyleImage Prev() {
+        return GetNextState(_currentState, -1);
+    }
+
+    private TrackStyleImage Next(TrackStyleImage trackType) {
+        return GetNextState(trackType, 1);
+    }
+
+    private TrackStyleImage Prev(TrackStyleImage trackType) {
+        return GetNextState(trackType, -1);
+    }
 
     private TrackStyleImage GetNextState(TrackStyleImage current, int step) {
         _currentState = _states.IndexOf(current);

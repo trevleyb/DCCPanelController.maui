@@ -55,8 +55,8 @@ public static class Terminators {
     }
 
     public static List<string> GetMessagesAndLeaveIncomplete(StringBuilder sb) {
-        var blocks       = new List<string>();
-        var remaining    = sb.ToString();
+        var blocks = new List<string>();
+        var remaining = sb.ToString();
         var currentBlock = "";
 
         for (var i = 0; i < remaining.Length; i++) {

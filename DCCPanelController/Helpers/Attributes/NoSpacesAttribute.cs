@@ -3,8 +3,6 @@ using System.ComponentModel.DataAnnotations;
 namespace DCCPanelController.Helpers.Attributes;
 
 public sealed class NoSpacesAttribute : ValidationAttribute {
-    public NoSpacesAttribute() { }
-
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext) {
         if (value is not null) {
             var str = value as string;

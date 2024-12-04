@@ -2,10 +2,10 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 public static class SvgElement {
     /// <summary>
-    ///  Simple Map to convert Enum to String and visa-versa. Could just use the enum conversion but
-    ///  might want flexibility as the text words are the element names (id='name') inside the SVG Image. 
+    ///     Simple Map to convert Enum to String and visa-versa. Could just use the enum conversion but
+    ///     might want flexibility as the text words are the element names (id='name') inside the SVG Image.
     /// </summary>
-    private static Dictionary<SvgElementEnum, string> ElementMap = new() {
+    private static readonly Dictionary<SvgElementEnum, string> ElementMap = new() {
         { SvgElementEnum.Track, "Track" },
         { SvgElementEnum.TrackDiverging, "TrackDiverging" },
         { SvgElementEnum.Dashline, "Dashline" },
@@ -30,7 +30,7 @@ public static class SvgElement {
 }
 
 /// <summary>
-/// These are the actual elements in the SVG Files. 
+///     These are the actual elements in the SVG Files.
 /// </summary>
 public enum SvgElementEnum {
     Track,          // The main part of the Track

@@ -1,20 +1,19 @@
 namespace DCCPanelController.Tracks.StyleManager;
 
-using System;
-using System.Collections.Generic;
-
 public class StyleTrackImage {
-    public string ImageSource { get; private set; }
-    public TrackStyleImage Image { get; private set; }
-    public List<Rotation> Rotations { get; private set; }
-
     private StyleTrackImage(Builder builder) {
         ImageSource = builder.ImageSource;
         Image = builder.Image;
         Rotations = builder.Rotations;
     }
 
-    public static Builder Create(TrackStyleImage trackType, string imageSource) => new Builder(trackType, imageSource);
+    public string ImageSource { get; private set; }
+    public TrackStyleImage Image { get; private set; }
+    public List<Rotation> Rotations { get; private set; }
+
+    public static Builder Create(TrackStyleImage trackType, string imageSource) {
+        return new Builder(trackType, imageSource);
+    }
 
     public class Rotation {
         public int TrackRotation { get; set; }
@@ -35,6 +34,7 @@ public class StyleTrackImage {
             foreach (var rotation in rotations) {
                 AddRotation(rotation.TrackRotation, rotation.ImageRotation);
             }
+
             return this;
         }
 
@@ -42,11 +42,12 @@ public class StyleTrackImage {
             foreach (var rotation in rotations) {
                 AddRotation(rotation.TrackRotation, rotation.ImageRotation);
             }
+
             return this;
         }
-        
+
         public Builder AddDefaultRotations() {
-            return AddRotations((0,0),(90,0),(180,0),(270,0));
+            return AddRotations((0, 0), (90, 0), (180, 0), (270, 0));
         }
 
         public StyleTrackImage Build() {

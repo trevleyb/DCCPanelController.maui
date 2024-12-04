@@ -4,17 +4,17 @@ using DCCPanelController.Model;
 namespace DCCPanelController.Helpers;
 
 public static class TurnoutAnalyzer {
+    public static string GetUniqueID(List<Turnout> turnouts) {
+        return AnalyzeTurnouts(turnouts).NewUniqueId;
+    }
 
-    public static string GetUniqueID(List<Turnout> turnouts) => AnalyzeTurnouts(turnouts).NewUniqueId;
-    
-    public static (string MostCommonPrefix, string NewUniqueId) AnalyzeTurnouts(List<Turnout> turnouts)
-    {
+    public static (string MostCommonPrefix, string NewUniqueId) AnalyzeTurnouts(List<Turnout> turnouts) {
         var prefixCount = new Dictionary<string, int>();
         var prefixNumbers = new Dictionary<string, List<int>>();
 
         foreach (var turnout in turnouts) {
             var id = turnout.Id ?? "NT";
-            
+
             // Extract prefix and number
             var (prefix, number) = ExtractPrefixAndNumber(id);
 
@@ -22,19 +22,17 @@ public static class TurnoutAnalyzer {
             if (prefixCount.TryGetValue(prefix, out var value)) {
                 prefixCount[prefix] = ++value;
                 prefixNumbers[prefix].Add(number);
-            }
-            else {
+            } else {
                 prefixCount[prefix] = 1;
                 prefixNumbers[prefix] = [number];
             }
         }
 
         // Finding the most common prefix
-        string mostCommonPrefix = prefixCount.OrderByDescending(kvp => kvp.Value)
-            .FirstOrDefault().Key ?? string.Empty;
+        var mostCommonPrefix = prefixCount.OrderByDescending(kvp => kvp.Value).FirstOrDefault().Key ?? string.Empty;
 
         // Determine next number in sequence
-        int nextNumber = 1;
+        var nextNumber = 1;
         if (prefixNumbers.TryGetValue(mostCommonPrefix, out var found) && found.Count > 0) {
             nextNumber = found.Max() + 1;
         }
@@ -46,13 +44,13 @@ public static class TurnoutAnalyzer {
 
     private static (string, int) ExtractPrefixAndNumber(string id) {
         // Match prefix and number using Regex
-        var match = Regex.Match(id,@"^([^\d]+)(\d+)$");
+        var match = Regex.Match(id, @"^([^\d]+)(\d+)$");
         if (match.Success) {
             var prefix = match.Groups[1].Value;
             var number = int.Parse(match.Groups[2].Value);
             return (prefix, number);
         }
+
         return (id, 0); // Return the whole as prefix if there's no number part
     }
-
 }

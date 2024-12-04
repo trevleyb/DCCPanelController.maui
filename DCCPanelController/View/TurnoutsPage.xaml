@@ -71,10 +71,10 @@
 
                                     <!-- Edit SwipeItem -->
                                     <SwipeItemView BackgroundColor="LightGreen"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, 
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, 
                                             x:DataType=viewmodel:TurnoutsViewModel,
-                                            Path=EditTurnoutCommand}"       
-                                            CommandParameter="{Binding}">
+                                            Path=EditTurnoutCommand}"
+                                                   CommandParameter="{Binding}">
                                         <StackLayout Orientation="Horizontal" Padding="10">
                                             <Image Source="edit.png" WidthRequest="24" HeightRequest="24" />
                                             <Label Text="Edit" VerticalOptions="Center" Padding="10,0,0,0" />
@@ -84,14 +84,16 @@
                                     <!-- Delete SwipeItem -->
                                     <SwipeItemView BackgroundColor="LightCoral">
                                         <SwipeItemView.Command>
-                                            <Binding Source="{RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}" Path="DeleteTurnoutCommand" x:DataType="viewmodel:TurnoutsViewModel" />
+                                            <Binding
+                                                Source="{RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}"
+                                                Path="DeleteTurnoutCommand" x:DataType="viewmodel:TurnoutsViewModel" />
                                         </SwipeItemView.Command>
                                         <SwipeItemView.CommandParameter>
                                             <Binding />
                                         </SwipeItemView.CommandParameter>
                                         <StackLayout Orientation="Horizontal" Padding="10">
                                             <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
-                                            <Label Text="Delete"  VerticalOptions="Center" Padding="10,0,0,0" />
+                                            <Label Text="Delete" VerticalOptions="Center" Padding="10,0,0,0" />
                                         </StackLayout>
                                     </SwipeItemView>
 
@@ -123,14 +125,14 @@
                                                 VerticalOptions="Center" />
                                         </HorizontalStackLayout>
 
-                                        <components:TurnoutStateControl 
+                                        <components:TurnoutStateControl
                                             Grid.Column="1" Margin="0,0,10,0"
                                             Turnout="{Binding}"
                                             State="{Binding State}"
                                             StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, 
                                                     Path=SendTurnoutStateCommand, x:DataType=viewmodel:TurnoutsViewModel}"
-                                            CanToggleState="true"/>
-                                        
+                                            CanToggleState="true" />
+
                                     </Grid>
                                     <BoxView
                                         BackgroundColor="{StaticResource Primary}"

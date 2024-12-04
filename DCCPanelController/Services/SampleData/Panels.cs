@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using DCCPanelController.Model;
-using DCCPanelController.Tracks;
 
 namespace DCCPanelController.Services.SampleData;
 
@@ -19,7 +18,7 @@ public static class Panels {
         panel.Cols = 18;
         panel.Rows = 12;
         panel.Tracks = [];
-        
+
         // panel.Tracks.Add(new TrackStraight() { X = 1, Y = 1, ImageRotation = 0 });
         // panel.Tracks.Add(new TrackStraight() { X = 2, Y = 2, ImageRotation = 90 });
         //

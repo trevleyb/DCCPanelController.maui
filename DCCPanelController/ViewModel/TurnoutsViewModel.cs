@@ -5,40 +5,38 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCPanelController.Services.NavigationService;
-using DCCPanelController.View;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsViewModel : BaseViewModel {
-
     private const string LabelID = "ID";
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
-
-    private bool _isAscending = false;
-    private string _sortColumn = "";
-    
-    private INavigationService NavigationService { get; init; }
-    private ConnectionService ConnectionService { get; init; }
-    private TurnoutsService TurnoutService { get; init; }
-
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
 
+    private bool _isAscending;
+    private string _sortColumn = "";
+
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+
     public TurnoutsViewModel(TurnoutsService turnoutService, ConnectionService connectionService, INavigationService navigationService) {
-        TurnoutService    = turnoutService;
+        TurnoutService = turnoutService;
         ConnectionService = connectionService;
         NavigationService = navigationService;
-        
+
         Turnouts = TurnoutService.Turnouts ?? [];
         SetLabels();
     }
-    
+
+    private INavigationService NavigationService { get; }
+    private ConnectionService ConnectionService { get; }
+    private TurnoutsService TurnoutService { get; }
+
     private void SetLabels() {
-        ColumnLabelID    = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName  = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
         ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
@@ -63,7 +61,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;
-        
+
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
         OnPropertyChanged(nameof(Turnouts));
         SetLabels();
@@ -83,7 +81,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task AddTurnoutAsync() {
-        var turnout = new Turnout { 
+        var turnout = new Turnout {
             Id = TurnoutAnalyzer.GetUniqueID(Turnouts.ToList()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
@@ -111,10 +109,8 @@ public partial class TurnoutsViewModel : BaseViewModel {
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
             _                       => TurnoutStateEnum.Closed
         };
+
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
         OnPropertyChanged(nameof(Turnouts));
     }
-    
-    
-    
 }

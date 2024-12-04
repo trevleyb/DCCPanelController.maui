@@ -3,7 +3,7 @@ using System.Reflection;
 namespace DCCPanelController.Helpers.EditableProperties;
 
 /// <summary>
-/// Holds information about the editable properties in a provided object
+///     Holds information about the editable properties in a provided object
 /// </summary>
 public record EditablePropertyDetails {
     public required EditableProperty Attribute { get; init; }

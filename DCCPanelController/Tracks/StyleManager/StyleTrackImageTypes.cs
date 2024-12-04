@@ -21,7 +21,7 @@ public enum TrackStyleImage {
 public enum TrackStyleType {
     Button,
     Mainline,
-    Branchline,
+    Branchline
 }
 
 // Attributes are additional rules we can apply to a track peice to set additional
@@ -30,5 +30,5 @@ public enum TrackStyleType {
 public enum TrackStyleAttribute {
     Hidden,
     Normal,
-    Occupied,
+    Occupied
 }

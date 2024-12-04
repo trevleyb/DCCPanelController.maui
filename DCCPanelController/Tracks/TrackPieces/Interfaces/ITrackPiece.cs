@@ -4,11 +4,8 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 public interface ITrackPiece {
-    
-    event PropertyChangedEventHandler? PropertyChanged;
-    
     string Name { get; set; }
-    
+
     int TrackRotation { get; set; }
     int TrackDirection { get; set; }
     int X { get; set; }
@@ -17,10 +14,12 @@ public interface ITrackPiece {
     int Height { get; set; }
     int Layer { get; }
 
-    void RotateLeft();
-    void RotateRight();
-    
     ImageSource? Image { get; }
 
     TrackConnectionsEnum[] Connections { get; }
+
+    event PropertyChangedEventHandler? PropertyChanged;
+
+    void RotateLeft();
+    void RotateRight();
 }

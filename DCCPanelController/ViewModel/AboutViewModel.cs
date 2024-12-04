@@ -1,3 +1,3 @@
 namespace DCCPanelController.ViewModel;
 
-public partial class AboutViewModel : BaseViewModel { }
+public class AboutViewModel : BaseViewModel { }

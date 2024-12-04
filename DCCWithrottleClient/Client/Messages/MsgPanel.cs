@@ -3,15 +3,14 @@ using DCCWithrottleClient.Client.Events;
 
 namespace DCCWithrottleClient.Client.Messages;
 
-public class MsgPanel :ClientMsg, IClientMsg {
-    
+public class MsgPanel : ClientMsg, IClientMsg {
     private readonly string _commandStr;
+
     public MsgPanel(string commandStr) {
         _commandStr = commandStr;
-        
-        var command = commandStr[0..3];
-        switch (command) {
 
+        var command = commandStr[..3];
+        switch (command) {
         // Panel Turnout List 
         // eg: PTL]\[LT304}|{Yard Entry}|{2]\[LT305}|{A/D Track}|{4
         // ----------------------------------------------------------------------------------------
@@ -25,16 +24,18 @@ public class MsgPanel :ClientMsg, IClientMsg {
                 }
             } catch (Exception ex) {
                 Trace.WriteLine($"Error parsing turnout list: {ex.Message}");
-            } 
+            }
+
             break;
         case "PTA":
             try {
                 var thrownOrClosed = commandStr[3];
-                var turnoutName    = commandStr[4..];
-                Add(new TurnoutEvent(turnoutName,thrownOrClosed));
+                var turnoutName = commandStr[4..];
+                Add(new TurnoutEvent(turnoutName, thrownOrClosed));
             } catch (Exception ex) {
                 Trace.WriteLine($"Error parsing turnout action: {ex.Message}");
-            } 
+            }
+
             break;
 
         // PanelRoutes List 
@@ -44,46 +45,49 @@ public class MsgPanel :ClientMsg, IClientMsg {
                 var entries = commandStr.Split("]\\[");
                 foreach (var entry in entries) {
                     if (string.IsNullOrEmpty(entry)) continue;
-                    var parts      = entry.Split("}|{");
+                    var parts = entry.Split("}|{");
                     if (parts.Length == 3) Add(new RouteEvent(parts[0], parts[1], parts[2]));
                 }
             } catch (Exception ex) {
                 Trace.WriteLine($"Error parsing routes list: {ex.Message}");
-            } 
+            }
+
             break;
         case "PRA":
             try {
                 var activeOrInactive = commandStr[3];
-                var routeName        = commandStr[4..];
-                Add(new RouteEvent(routeName,activeOrInactive));
+                var routeName = commandStr[4..];
+                Add(new RouteEvent(routeName, activeOrInactive));
             } catch (Exception ex) {
                 Trace.WriteLine($"Error parsing route action: {ex.Message}");
-            } 
+            }
+
             break;
         case "PFT":
             var fastClock = GetFastClock(commandStr[3..]);
             Add(new FastClockEvent(fastClock));
             break;
         }
-        
     }
+
     public override string ToString() {
         return $"MSG:Panel => {_commandStr}";
     }
 
     /// <summary>
-    /// Convert the string data from the command into the current fast clock Date & time
+    ///     Convert the string data from the command into the current fast clock Date & time
     /// </summary>
     /// <param name="commandStr"></param>
     /// <returns></returns>
     private DateTime GetFastClock(string commandStr) {
-        int fastClockNum = 0;
+        var fastClockNum = 0;
         try {
             var fastClockStr = commandStr[3..][..commandStr[3..].IndexOf("<;>", StringComparison.Ordinal)];
             if (!int.TryParse(fastClockStr, out fastClockNum)) fastClockNum = 0;
         } catch {
             fastClockNum = 0;
         }
+
         return new DateTime(1970, 1, 1, 0, 0, 0, 0).AddSeconds(fastClockNum);
     }
 }

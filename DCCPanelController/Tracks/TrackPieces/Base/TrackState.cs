@@ -66,3 +66,4 @@
 //         set => _state = States.Contains(value) ? value : _trackStyleSubType.Unknown;
 //     }
 // }
+

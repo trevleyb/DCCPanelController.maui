@@ -8,17 +8,15 @@ using DCCPanelController.Tracks.TrackPieces.Interfaces;
 namespace DCCPanelController.Tracks.TrackPieces;
 
 public partial class TrackPoints : TrackPieceBase, ITrackPiece {
-
-    [ObservableProperty]
-    [property: EditableStrProperty(Name = "Name (ID)", Description = "Track Points")]
+    [ObservableProperty] [property: EditableStrProperty(Name = "Name (ID)", Description = "Track Points")]
     private string _name = "Points";
-    
+
     protected override void Setup() {
         Layer = 2;
         SetTrackSymbol("Points");
-        AddImageSourceAndRotation(TrackStyleImage.Normal,  "Points", (0, 0), (90 ,90), (180 ,180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
     }
-    
+
     public void SetPoints(bool[] points) {
         var svgImage = ActiveImage;
         for (var point = 0; point < 8; point++) {

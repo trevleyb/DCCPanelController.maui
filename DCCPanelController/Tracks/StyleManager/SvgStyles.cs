@@ -1,21 +1,19 @@
-using System.Text.Json;
 using DCCPanelController.Tracks.ImageManager;
 
 namespace DCCPanelController.Tracks.StyleManager;
 
 public static class SvgStyles {
-
     private static readonly SvgStyle MainlineDefault = new SvgStyleBuilder().AddElement(e => e.WithName(SvgElementEnum.Border).WithColor(Colors.Black).Visible()).AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.ForestGreen).Visible()).AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.ForestGreen).Visible()).AddElement(e => e.WithName(SvgElementEnum.Terminator).WithColor(Colors.Black).Visible()).AddElement(e => e.WithName(SvgElementEnum.Continuation).WithColor(Colors.Black).Visible()).AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden()).AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden()).Build();
     private static readonly SvgStyle BranchlineDefault = new SvgStyleBuilder().AddElement(e => e.WithName(SvgElementEnum.Border).Hidden()).AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.DarkGray).Visible()).AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible()).AddElement(e => e.WithName(SvgElementEnum.Terminator).WithColor(Colors.DarkGray).Visible()).AddElement(e => e.WithName(SvgElementEnum.Continuation).WithColor(Colors.DarkGray).Visible()).AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden()).AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden()).Build();
     private static readonly SvgStyle ButtonDefault = new SvgStyleBuilder().AddElement(e => e.WithName(SvgElementEnum.Border).Visible().WithColor(Colors.Gray)).AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(Colors.Black)).Build();
 
     public static SvgStyle GetStyle(TrackStyleType styleType, TrackStyleImage styleImage, TrackStyleAttribute attribute) {
-        return ApplyStyleAttributes(GetStyle(styleType, styleImage), attribute);    
+        return ApplyStyleAttributes(GetStyle(styleType, styleImage), attribute);
     }
 
     /// <summary>
-    /// Apply an additional attribute to a Style such as marking it
-    /// hidden, or Occupied. 
+    ///     Apply an additional attribute to a Style such as marking it
+    ///     hidden, or Occupied.
     /// </summary>
     /// <param name="style">The style to add elements to</param>
     /// <param name="attribute">The attribute to apply</param>
@@ -30,13 +28,12 @@ public static class SvgStyles {
     }
 
     /// <summary>
-    /// Get a Style based on the Track Type and the Image Type
+    ///     Get a Style based on the Track Type and the Image Type
     /// </summary>
     /// <param name="styleType">Mainline, Branchline or Button</param>
     /// <param name="styleImage">Normal, Straight, Diverging</param>
     /// <returns></returns>
     public static SvgStyle GetStyle(TrackStyleType styleType, TrackStyleImage styleImage) {
-
         // Unknown, Normal and Default all return the Default Style
         // --------------------------------------------------------
         switch (styleType) {
@@ -44,28 +41,25 @@ public static class SvgStyles {
             return styleImage switch {
                 TrackStyleImage.Straight  => new SvgStyleBuilder().AddExistingStyle(MainlineDefault).AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.ForestGreen).Visible()).AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible()).Build(),
                 TrackStyleImage.Diverging => new SvgStyleBuilder().AddExistingStyle(MainlineDefault).AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.ForestGreen).Visible()).AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible()).Build(),
-                _                         => MainlineDefault,
+                _                         => MainlineDefault
             };
         case TrackStyleType.Branchline:
             return styleImage switch {
                 TrackStyleImage.Straight  => new SvgStyleBuilder().AddExistingStyle(BranchlineDefault).AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.ForestGreen).Visible()).AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible()).Build(),
                 TrackStyleImage.Diverging => new SvgStyleBuilder().AddExistingStyle(BranchlineDefault).AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(Colors.ForestGreen).Visible()).AddElement(e => e.WithName(SvgElementEnum.TrackDiverging).WithColor(Colors.DarkGray).Visible()).Build(),
-                _                         => BranchlineDefault,
+                _                         => BranchlineDefault
             };
         case TrackStyleType.Button:
             return styleImage switch {
                 TrackStyleImage.Active   => new SvgStyleBuilder().AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(Colors.Lime)).AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(Colors.Black)).Build(),
                 TrackStyleImage.InActive => new SvgStyleBuilder().AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(Colors.Red)).AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(Colors.Black)).Build(),
-                _                        => ButtonDefault,
+                _                        => ButtonDefault
             };
         }
 
         return MainlineDefault;
     }
 }
-
-
-
 
 //     public static SvgStyle? GetStyle(string styleName) {
 //         switch (styleName) {

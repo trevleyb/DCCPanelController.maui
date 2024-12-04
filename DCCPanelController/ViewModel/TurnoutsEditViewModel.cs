@@ -6,10 +6,13 @@ using DCCPanelController.Services;
 namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsEditViewModel : BaseViewModel {
+    [ObservableProperty] private TurnoutStateEnum _currentState;
+    [ObservableProperty] private TurnoutStateEnum _defaultState;
+    [ObservableProperty] private bool _isEditable;
+    [ObservableProperty] private string _systemName;
 
-    public event Action<Turnout?>? OnSaveCompleted;
-    public event EventHandler? CloseRequested;
-    private ConnectionService ConnectionService { get; init; }
+    [ObservableProperty] private Turnout? _turnout;
+    [ObservableProperty] private string _userName;
 
     public TurnoutsEditViewModel(Turnout turnout) {
         Turnout = turnout;
@@ -21,13 +24,11 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         ConnectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
     }
 
-    [ObservableProperty] private Turnout? _turnout;
-    [ObservableProperty] private string _systemName;
-    [ObservableProperty] private string _userName;
-    [ObservableProperty] private bool _isEditable;
-    [ObservableProperty] private TurnoutStateEnum _defaultState;
-    [ObservableProperty] private TurnoutStateEnum _currentState;
-    
+    private ConnectionService ConnectionService { get; }
+
+    public event Action<Turnout?>? OnSaveCompleted;
+    public event EventHandler? CloseRequested;
+
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
         if (Turnout == null) return;
@@ -56,6 +57,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
             OnSaveCompleted?.Invoke(Turnout);
             CloseRequested?.Invoke(Turnout, EventArgs.Empty);
         }
+
         CloseRequested?.Invoke(null, EventArgs.Empty);
     }
 
@@ -64,5 +66,4 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         OnSaveCompleted?.Invoke(null);
         CloseRequested?.Invoke(null, EventArgs.Empty);
     }
-   
 }

@@ -6,17 +6,14 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Tracks.TrackPieces.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
+    [ObservableProperty] [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
+    private bool _isHidden;
 
-    [ObservableProperty] 
-    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new [] { TrackStyleType.Mainline , TrackStyleType.Branchline})]
+    [ObservableProperty] private bool _isOccupied;
+
+    [ObservableProperty] [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleType.Mainline, TrackStyleType.Branchline })]
     private TrackStyleType _trackType = TrackStyleType.Mainline;
 
-    [ObservableProperty] 
-    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
-    private bool _isHidden = false;
-
-    [ObservableProperty] private bool _isOccupied = false;
-    
     protected override SvgImage ActiveImage {
         get {
             // Find the appropriate image reference for the details we have
@@ -24,9 +21,9 @@ public abstract partial class TrackPieceBase : TrackBase {
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackDirection);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
             TrackRotation = trackInfo.Rotation;
-            
+
             Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.Rotation}");
-            
+
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
             // --------------------------------------------------------------------------------------------------

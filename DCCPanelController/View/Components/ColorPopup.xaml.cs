@@ -5,14 +5,14 @@ using DCCPanelController.Helpers;
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPopup : Popup {
-    public ObservableCollection<ColorOption> ColorOptions { get; private set; }
-
     public ColorPopup() {
         InitializeComponent();
         var colors = PredefinedColors.GetColors();
         ColorOptions = new ObservableCollection<ColorOption>(colors);
         BindingContext = this;
     }
+
+    public ObservableCollection<ColorOption> ColorOptions { get; private set; }
 
     private void OnColorSelected(object sender, SelectionChangedEventArgs e) {
         var selected = (e.CurrentSelection.Count > 0 ? e.CurrentSelection[0] : null) as ColorOption;

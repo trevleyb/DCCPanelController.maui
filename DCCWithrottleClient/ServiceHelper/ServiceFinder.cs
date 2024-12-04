@@ -7,16 +7,16 @@ namespace DCCWithrottleClient.ServiceHelper;
 
 public static class ServiceFinder {
     /// <summary>
-    /// Uses MDNS to try and find services with the given name (such as WiThrottle) and then finds the
-    /// appropriate IPAddress for that service. It will return a collection of found services so that
-    /// one can be selected to connect to. 
+    ///     Uses MDNS to try and find services with the given name (such as WiThrottle) and then finds the
+    ///     appropriate IPAddress for that service. It will return a collection of found services so that
+    ///     one can be selected to connect to.
     /// </summary>
     /// <param name="serviceName">The name, or part name, to search for</param>
     /// <param name="timeout">How long should finding this take</param>
     /// <returns>A collection of Names and IPAddresses that match the service name</returns>
     public static async Task<List<ServiceInfo>> FindServices(string serviceName, int timeout = 2000) {
         List<ServiceInfo> foundServices = [];
-        var  sd = new ServiceDiscovery();
+        var sd = new ServiceDiscovery();
 
         sd.ServiceDiscovered += (s, domainName) => {
             if (CheckDomainNameComponents(domainName, serviceName)) {
@@ -26,7 +26,7 @@ public static class ServiceFinder {
 
         sd.ServiceInstanceDiscovered += (s, e) => {
             if (CheckDomainNameComponents(e.ServiceInstanceName, serviceName)) {
-                var query = new Makaretu.Dns.Message();
+                var query = new Message();
                 query.Questions.Add(new Question { Name = e.ServiceInstanceName, Type = DnsType.SRV });
                 sd.Mdns.SendQuery(query);
             }
@@ -49,6 +49,7 @@ public static class ServiceFinder {
             Thread.Sleep(timeout);
             sd.Mdns.Stop();
         });
+
         return foundServices;
     }
 

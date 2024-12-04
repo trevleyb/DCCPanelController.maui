@@ -28,17 +28,18 @@ public static class MessageProcessor {
                 _                             => new MsgIgnore(commandStr)
             };
         }
+
         return new MsgIgnore(commandStr);
     }
 }
 
 public enum CommandTypeEnum {
-    Name          = 'N',
-    Hardware      = 'H',
+    Name = 'N',
+    Hardware = 'H',
     MultiThrottle = 'M',
-    Panel         = 'P',
-    Roster        = 'R',
-    Heartbeat     = '*',
-    Quit          = 'Q',
-    Ignore        = 'X'
+    Panel = 'P',
+    Roster = 'R',
+    Heartbeat = '*',
+    Quit = 'Q',
+    Ignore = 'X'
 }

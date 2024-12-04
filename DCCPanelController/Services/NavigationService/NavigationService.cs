@@ -3,21 +3,17 @@ using DCCPanelController.View;
 
 namespace DCCPanelController.Services.NavigationService;
 
-public class NavigationService(IServiceProvider serviceProvider) :  INavigationService {
+public class NavigationService(IServiceProvider serviceProvider) : INavigationService {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    private bool IsSmallDevice() {
-        return DeviceInfo.DeviceType == DeviceType.Physical && DeviceInfo.Idiom == DeviceIdiom.Phone;
-    }    
-
     public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
-
         if (turnout is null) return null;
-        
+
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+
         //var popup = new TurnoutsEditView(turnout);
-        
+
         var editPage = new TurnoutsEditView(turnout);
         var tcs = new TaskCompletionSource<Turnout?>();
         if (editPage.ViewModel != null) {
@@ -26,7 +22,12 @@ public class NavigationService(IServiceProvider serviceProvider) :  INavigationS
                 mainPage.Navigation.PopModalAsync();
             };
         }
-        await mainPage.Navigation.PushModalAsync(editPage); 
+
+        await mainPage.Navigation.PushModalAsync(editPage);
         return await tcs.Task;
+    }
+
+    private bool IsSmallDevice() {
+        return DeviceInfo.DeviceType == DeviceType.Physical && DeviceInfo.Idiom == DeviceIdiom.Phone;
     }
 }

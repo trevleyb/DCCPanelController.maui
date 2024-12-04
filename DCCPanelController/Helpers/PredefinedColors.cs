@@ -10,7 +10,7 @@ public class ColorOption {
 
 public static class PredefinedColors {
     private static readonly object padlock = new();
-    private static List<ColorOption>? colorOptions = null;
+    private static List<ColorOption>? colorOptions;
 
     public static string ColorName(this Color color) {
         foreach (var knownColor in GetColors().Where(knownColor => color.ToHex().Equals(knownColor.Color.ToHex()))) {
@@ -31,7 +31,7 @@ public static class PredefinedColors {
     }
 
     private static List<ColorOption> BuildColorOptions() {
-        var colors = new List<ColorOption>() {
+        var colors = new List<ColorOption> {
             new() { Name = "AliceBlue", Color = Colors.AliceBlue, ContrastColor = Colors.Black },
             new() { Name = "AntiqueWhite", Color = Colors.AntiqueWhite, ContrastColor = Colors.Black },
             new() { Name = "Aqua", Color = Colors.Aqua, ContrastColor = Colors.Black },

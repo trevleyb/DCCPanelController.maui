@@ -10,23 +10,18 @@ namespace DCCPanelController;
 
 public static class MauiProgram {
     public static MauiApp CreateMauiApp() {
-
         var builder = MauiApp.CreateBuilder();
-        builder.UseMauiApp<App>()
-            .ConfigureFonts(fonts => {
-                fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-            })
-            .UseMauiCommunityToolkit()
-            .UseMauiCommunityToolkitMarkup()
-            .UseMauiCommunityToolkitMediaElement();
+        builder.UseMauiApp<App>().ConfigureFonts(fonts => {
+            fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+            fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+        }).UseMauiCommunityToolkit().UseMauiCommunityToolkitMarkup().UseMauiCommunityToolkitMediaElement();
 
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
 
         var services = builder.Services;
-        
+
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageTabbed>();
@@ -53,9 +48,9 @@ public static class MauiProgram {
         ServiceHelper.Initialize(app.Services);
         return app;
     }
-    
+
     /// <summary>
-    /// Registers a transient view with its associated view model in the service collection.
+    ///     Registers a transient view with its associated view model in the service collection.
     /// </summary>
     /// <typeparam name="TView">The type of the view to be registered.</typeparam>
     /// <typeparam name="TViewModel">The type of the view model associated with the view.</typeparam>
@@ -66,7 +61,7 @@ public static class MauiProgram {
     }
 
     /// <summary>
-    /// Registers a singleton view with its associated view model in the service collection.
+    ///     Registers a singleton view with its associated view model in the service collection.
     /// </summary>
     /// <typeparam name="TView">The type of the view to be registered.</typeparam>
     /// <typeparam name="TViewModel">The type of the view model associated with the view.</typeparam>
@@ -77,7 +72,7 @@ public static class MauiProgram {
     }
 
     /// <summary>
-    /// Registers a view route in the Maui routing system based on the specified view type.
+    ///     Registers a view route in the Maui routing system based on the specified view type.
     /// </summary>
     /// <typeparam name="TView">The type of the view to register the route for.</typeparam>
     private static void RegisterViewRoute<TView>() {

@@ -1,19 +1,15 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
-using DCCPanelController.Tracks;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class OperateViewModel : BaseViewModel {
-    [ObservableProperty] private bool _showGrid;
-    [ObservableProperty] private Panel? _selectedPanel;
     private readonly SettingsService _settingsService;
-    public ObservableCollection<Panel> Panels { get; set; }
+    [ObservableProperty] private Panel? _selectedPanel;
+    [ObservableProperty] private bool _showGrid;
 
     public OperateViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
@@ -24,6 +20,8 @@ public partial class OperateViewModel : BaseViewModel {
             SelectedPanel = Panels.FirstOrDefault();
         }
     }
+
+    public ObservableCollection<Panel> Panels { get; set; }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {

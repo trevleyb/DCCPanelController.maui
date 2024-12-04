@@ -12,3 +12,4 @@
 //     public int MinValue { get; set; }  // used for Int (Minimum Value)
 //     public int MaxValue { get; set; }  // used for Int (Maximum Value)
 // }
+

@@ -8,16 +8,18 @@ using DCCPanelController.Services;
 namespace DCCPanelController.ViewModel;
 
 public partial class RoutesViewModel : BaseViewModel {
-
     private const string LabelID = "ID";
     private const string LabelName = "Route";
     private const string LabelState = "State";
 
-    private ConnectionService? ConnectionService { get; }
-    private bool _isAscending = false;
-    private string _sortColumn = "";
+    [ObservableProperty] private bool _canToggleRoutesState;
+    [ObservableProperty] private string _columnLabelID = LabelID;
+    [ObservableProperty] private string _columnLabelName = LabelName;
+    [ObservableProperty] private string _columnLabelState = LabelState;
+    private bool _isAscending;
 
     [ObservableProperty] private ObservableCollection<Route>? _routes;
+    private string _sortColumn = "";
 
     public RoutesViewModel(RoutesService? routesService, ConnectionService? connectionService) {
         ConnectionService = connectionService;
@@ -26,10 +28,7 @@ public partial class RoutesViewModel : BaseViewModel {
         SetLabels();
     }
 
-    [ObservableProperty] private bool _canToggleRoutesState;
-    [ObservableProperty] private string _columnLabelID = LabelID;
-    [ObservableProperty] private string _columnLabelName = LabelName;
-    [ObservableProperty] private string _columnLabelState = LabelState;
+    private ConnectionService? ConnectionService { get; }
 
     [RelayCommand]
     public async Task SortByColumn(string columnName) {
@@ -50,6 +49,7 @@ public partial class RoutesViewModel : BaseViewModel {
                     _       => Routes.ToList()
                 };
             }
+
             Routes = new ObservableCollection<Route>(sortedRoutes);
         }
 

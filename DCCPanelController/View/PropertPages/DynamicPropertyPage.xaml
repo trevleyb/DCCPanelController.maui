@@ -20,12 +20,12 @@
                    WidthRequest="500">
                    StrokeShape="{StaticResource ApplicationRoundRectangle}"
                    -->
-            
+
             <Border Stroke="{StaticResource Primary}"
                     StrokeThickness="2"
                     Background="White"
                     Padding="20"
-                     
+
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     WidthRequest="500">
@@ -38,7 +38,7 @@
                         HorizontalOptions="Fill"
                         Margin="0,5,0,15" />
 
-                    <TableView x:Name="PropertyContainer"/>
+                    <TableView x:Name="PropertyContainer" />
 
                     <Button Text="Close"
                             Style="{StaticResource ButtonOutline}"

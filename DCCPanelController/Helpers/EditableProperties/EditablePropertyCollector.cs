@@ -12,7 +12,7 @@ public class EditablePropertyCollector {
             var property = properties[i];
             var attribute = property.GetCustomAttribute<EditableProperty>();
             if (attribute != null) {
-                editableProperties.Add(new EditablePropertyDetails() {
+                editableProperties.Add(new EditablePropertyDetails {
                     Attribute = attribute,
                     Info = property,
                     Owner = obj,
@@ -30,8 +30,10 @@ public class EditablePropertyCollector {
                 value = [];
                 sorted.Add(editableProperty.Attribute.Group, value);
             }
+
             value.Add(editableProperty);
         }
+
         return sorted;
     }
 }

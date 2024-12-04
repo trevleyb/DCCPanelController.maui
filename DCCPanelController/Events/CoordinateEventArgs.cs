@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DCCPanelController.Events;
 
 public class CoordinatesEventArgs(int x, int y) : EventArgs {

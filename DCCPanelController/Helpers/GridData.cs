@@ -5,6 +5,7 @@ namespace DCCPanelController.Helpers;
 // These take into account any margins within the confines of the view. 
 // --------------------------------------------------------------------------------------------------
 public class GridData(bool ok, int? xOffset, int? yOffset, int? xCenter, int? yCenter, int? xMargin, int? yMargin, int? boxSize) {
+    public GridData(int? xOffset, int? yOffset, int? xCenter, int? yCenter, int? xMargin, int? yMargin, int? boxSize) : this(true, xOffset, yOffset, xCenter, yCenter, xMargin, yMargin, boxSize) { }
     public int XOffset { get; init; } = xOffset ?? -1;
     public int YOffset { get; init; } = yOffset ?? -1;
     public int XCenter { get; init; } = xCenter ?? -1;
@@ -14,8 +15,6 @@ public class GridData(bool ok, int? xOffset, int? yOffset, int? xCenter, int? yC
     public int BoxSize { get; init; } = boxSize ?? -1;
     public bool IsOk { get; init; } = ok;
     public string ErrorMessage { get; init; } = string.Empty;
-
-    public GridData(int? xOffset, int? yOffset, int? xCenter, int? yCenter, int? xMargin, int? yMargin, int? boxSize) : this(true, xOffset, yOffset, xCenter, yCenter, xMargin, yMargin, boxSize) { }
 
     // Helper if the data is invalid. Up to the caller to check the result
     // -------------------------------------------------------------------

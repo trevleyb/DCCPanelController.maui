@@ -4,21 +4,19 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
-using DCCPanelController.View;
-using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
-    [ObservableProperty] private Panel? _selectedPanel = null;
-    public ObservableCollection<Panel> Panels { get; set; }
-
     private readonly SettingsService _settingsService;
+    [ObservableProperty] private Panel? _selectedPanel;
 
     public PanelsViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         Panels = _settingsService.Panels;
     }
+
+    public ObservableCollection<Panel> Panels { get; set; }
 
     public async void Save() {
         _settingsService?.Save();

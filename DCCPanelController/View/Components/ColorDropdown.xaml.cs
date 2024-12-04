@@ -7,7 +7,9 @@ namespace DCCPanelController.View.Components;
 
 public partial class ColorDropdown : ContentView {
     private const string DefaultPlaceholderText = "Click here to select a color";
-    public ICommand ShowDropdownCommand { get; set; }
+
+    // Property for the currently selected color
+    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White);
 
     public ColorDropdown() {
         InitializeComponent();
@@ -15,19 +17,7 @@ public partial class ColorDropdown : ContentView {
         BindingContext = this;
     }
 
-    // Asynchronously show the popup and update the selected color
-    private async void ShowDropdown() {
-        var popup = new ColorPopup();
-        if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
-            var result = await mainpage.ShowPopupAsync(popup);
-            if (result is ColorOption selectedColor) {
-                SelectedColor = selectedColor.Color;
-            }
-        }
-    }
-
-    // Property for the currently selected color
-    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White);
+    public ICommand ShowDropdownCommand { get; set; }
 
     public Color SelectedColor {
         get => (Color)GetValue(SelectedColorProperty);
@@ -41,6 +31,17 @@ public partial class ColorDropdown : ContentView {
 
     public string DisplayText => SelectedColor?.ColorName() ?? DefaultPlaceholderText;
     public Color ContrastColor => SelectedColor.ToInverseColor();
+
+    // Asynchronously show the popup and update the selected color
+    private async void ShowDropdown() {
+        var popup = new ColorPopup();
+        if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
+            var result = await mainpage.ShowPopupAsync(popup);
+            if (result is ColorOption selectedColor) {
+                SelectedColor = selectedColor.Color;
+            }
+        }
+    }
 
     public static bool IsColorDark(Color color) {
         // Using relative luminance to determine if the color is dark or light

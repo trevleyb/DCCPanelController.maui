@@ -1,10 +1,8 @@
-using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCWithrottleClient.Client;
 using DCCWithrottleClient.Client.Commands;
 using DCCWithrottleClient.Client.Events;
-using DCCWithrottleClient.Client.Messages;
 using RouteStateEnum = DCCWithrottleClient.Client.RouteStateEnum;
 using TurnoutStateEnum = DCCWithrottleClient.Client.TurnoutStateEnum;
 
@@ -12,15 +10,14 @@ namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
     private Client? _client;
-    private TurnoutsService? _turnoutsService;
-    private RoutesService? _routesService;
 
-    [ObservableProperty] private bool _isConnected = false;
+    [ObservableProperty] private bool _isConnected;
+    private RoutesService? _routesService;
+    private TurnoutsService? _turnoutsService;
 
     public event Action<string>? MessageRecieved;
-    
-    public void Connect(WiServer wiServer) {
 
+    public void Connect(WiServer wiServer) {
         // Get the Route and Turnout Services so we can Update the list of Turnouts and Routes 
         // as we get data back from the WiServer. 
         // ------------------------------------------------------------------------------------
@@ -42,11 +39,12 @@ public partial class ConnectionService : ObservableObject {
             _client.ConnectionError -= ClientOnConnectionError;
             _client.Disconnect();
         }
+
         IsConnected = false;
     }
 
     private void ClientOnConnectionError(string obj) {
-        Console.WriteLine("Connection Error: " + obj.ToString());
+        Console.WriteLine("Connection Error: " + obj);
     }
 
     public void SendTurnoutStateChangeCommand(string id, Model.TurnoutStateEnum state) {
@@ -63,7 +61,7 @@ public partial class ConnectionService : ObservableObject {
 
     private void ClientOnConnectionEvent(IClientEvent clientEvent) {
         MessageRecieved?.Invoke(clientEvent?.ToString() ?? "Unknown Message");
-        
+
         switch (clientEvent) {
         case MessageEvent message:
             break;
@@ -77,22 +75,20 @@ public partial class ConnectionService : ObservableObject {
             break;
         case FastClockEvent clock:
             break;
-        default:
-            break;
         }
     }
 
     private void UpdateTurnout(TurnoutEvent turnout) {
         var found = _turnoutsService?.GetTurnoutByIdAsync(turnout.SystemName).Result;
         if (found == null) {
-            _turnoutsService?.AddTurnoutAsync(new Model.Turnout() {
+            _turnoutsService?.AddTurnoutAsync(new Turnout {
                 Id = turnout.SystemName,
                 Name = turnout.UserName,
                 IsEditable = false,
                 State = turnout.StateEnum switch {
                     TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                     TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                    _ => Model.TurnoutStateEnum.Unknown
+                    _                       => Model.TurnoutStateEnum.Unknown
                 }
             });
         } else {
@@ -101,8 +97,9 @@ public partial class ConnectionService : ObservableObject {
             found.State = turnout.StateEnum switch {
                 TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                 TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
-                _ => Model.TurnoutStateEnum.Unknown
+                _                       => Model.TurnoutStateEnum.Unknown
             };
+
             if (!string.IsNullOrWhiteSpace(turnout.UserName)) {
                 found.Name = turnout.UserName;
             }
@@ -112,13 +109,13 @@ public partial class ConnectionService : ObservableObject {
     private void UpdateRoute(RouteEvent route) {
         var found = _routesService?.GetRouteByIdAsync(route.SystemName).Result;
         if (found == null) {
-            _routesService?.AddRouteAsync(new Model.Route() {
+            _routesService?.AddRouteAsync(new Route {
                 Id = route.SystemName,
                 Name = route.UserName,
                 State = route.StateEnum switch {
                     RouteStateEnum.Active   => Model.RouteStateEnum.Active,
                     RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
-                    _                                                           => Model.RouteStateEnum.Unknown
+                    _                       => Model.RouteStateEnum.Unknown
                 }
             });
         } else {
@@ -126,8 +123,9 @@ public partial class ConnectionService : ObservableObject {
             found.State = route.StateEnum switch {
                 RouteStateEnum.Active   => Model.RouteStateEnum.Active,
                 RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,
-                _                                                           => Model.RouteStateEnum.Unknown
+                _                       => Model.RouteStateEnum.Unknown
             };
+
             if (!string.IsNullOrWhiteSpace(route.UserName)) {
                 found.Name = route.UserName;
             }

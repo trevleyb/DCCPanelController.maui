@@ -8,6 +8,10 @@ public class SettingsService {
     private const string StorageFileame = "DCCPanelController.json";
     private readonly Storage _storage;
 
+    private readonly JsonSerializerOptions? options = new() {
+        WriteIndented = true
+    };
+
     public SettingsService() {
         _storage = Load(StorageFileame);
         _storage.ReOrderPanels();
@@ -74,10 +78,6 @@ public class SettingsService {
             File.Delete(filePath);
         }
     }
-
-    private readonly JsonSerializerOptions? options = new() {
-        WriteIndented = true
-    };
 
     private static string GetStorageFilePath(string filename) {
         var storageFile = Path.Combine(FileSystem.AppDataDirectory, filename);

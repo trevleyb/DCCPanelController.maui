@@ -3,8 +3,8 @@ using DCCWithrottleClient.Client.Events;
 namespace DCCWithrottleClient.Client.Messages;
 
 public class MsgHardware : ClientMsg, IClientMsg {
-    
     private readonly string _commandStr;
+
     public MsgHardware(string commandStr) {
         _commandStr = commandStr;
         if (commandStr.Length > 2) {
@@ -18,6 +18,7 @@ public class MsgHardware : ClientMsg, IClientMsg {
             };
         }
     }
+
     public override string ToString() {
         return $"MSG:Hardware => {_commandStr}";
     }

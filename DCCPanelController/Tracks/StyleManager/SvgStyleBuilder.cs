@@ -7,6 +7,7 @@ namespace DCCPanelController.Tracks.StyleManager;
 [DebuggerDisplay("{Name}")]
 public class SvgStyle {
     public Dictionary<string, SvgStyleElement> Elements { get; private set; } = [];
+
     public static SvgStyleBuilder Builder() {
         return new SvgStyleBuilder();
     }
@@ -31,12 +32,12 @@ public class SvgStyle {
 [Serializable]
 [DebuggerDisplay("{Name}")]
 public class SvgStyleElement {
-    public string Name { get; internal set; }
-    public Dictionary<string, string> Attributes { get; private set; } = new();
-
     internal SvgStyleElement(string name) {
         Name = name;
     }
+
+    public string Name { get; internal set; }
+    public Dictionary<string, string> Attributes { get; private set; } = new();
 
     public static SvgElementBuilder Builder(string name) {
         return new SvgElementBuilder(name);
@@ -51,7 +52,7 @@ public class SvgStyleElement {
     }
 }
 
-public class SvgStyleBuilder() {
+public class SvgStyleBuilder {
     private readonly SvgStyle _style = new();
 
     public SvgStyleBuilder AddElement(Action<SvgElementBuilder> buildElement) {

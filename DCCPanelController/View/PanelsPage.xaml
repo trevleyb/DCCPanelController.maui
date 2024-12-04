@@ -5,15 +5,13 @@
     x:Class="DCCPanelController.View.PanelsPage"
     x:DataType="viewModel:PanelsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:model="clr-namespace:DCCPanelController.Model">
 
     <ContentPage.Resources>
-        <ResourceDictionary>
-        </ResourceDictionary>
+        <ResourceDictionary />
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
@@ -26,7 +24,7 @@
             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
             x:Name="MainGrid">
 
-            <CollectionView x:Name="PanelsCollectionView" 
+            <CollectionView x:Name="PanelsCollectionView"
                             ItemsSource="{Binding Panels}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
@@ -51,8 +49,8 @@
                                     x:Name="PanelCard">
                                     <Border Grid.Row="0" Style="{StaticResource CardView}">
                                         <Border.GestureRecognizers>
-                                            <DragGestureRecognizer DragStarting="Panel_OnDragStarting"/>
-                                            <DropGestureRecognizer Drop="Panel_OnDrop" /> 
+                                            <DragGestureRecognizer DragStarting="Panel_OnDragStarting" />
+                                            <DropGestureRecognizer Drop="Panel_OnDrop" />
                                             <TapGestureRecognizer Tapped="GoToSelectedPanelEditor" />
                                         </Border.GestureRecognizers>
 
@@ -70,13 +68,13 @@
                                             </Label>
 
                                             <view:ControlPanelView
-                                                x:Name="ControlPanelView" 
+                                                x:Name="ControlPanelView"
                                                 HeightRequest="200"
                                                 HorizontalOptions="Fill"
                                                 VerticalOptions="Fill"
                                                 Panel="{Binding ., Source={RelativeSource AncestorType={x:Type model:Panel}}}"
                                                 DesignMode="false"
-                                                ShowGrid="false"/>
+                                                ShowGrid="false" />
 
                                             <Label
                                                 HorizontalOptions="Center"

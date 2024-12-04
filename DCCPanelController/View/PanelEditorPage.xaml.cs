@@ -1,18 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Events;
 using DCCPanelController.Model;
-using DCCPanelController.Services;
-using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using DCCPanelController.View.PropertPages;
 using DCCPanelController.ViewModel;
-using Color = System.Drawing.Color;
 
 namespace DCCPanelController.View;
 
@@ -20,11 +10,9 @@ public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
 
-    private EditState _editState = EditState.None;
-
     private readonly PanelsViewModel _panelsViewModel;
-    private Panel Panel { get; init; }
-    private PanelEditorViewModel ViewModel { get; set; }
+
+    private EditState _editState = EditState.None;
 
     public PanelEditorPage(PanelsViewModel panelsViewModel) {
         ArgumentNullException.ThrowIfNull(panelsViewModel, nameof(panelsViewModel));
@@ -37,6 +25,9 @@ public partial class PanelEditorPage : ContentPage {
         InitializeComponent();
         PanelView.TrackPieceTapped += OnTrackPieceTapped;
     }
+
+    private Panel Panel { get; }
+    private PanelEditorViewModel ViewModel { get; }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args) {
         base.OnNavigatedTo(args);
@@ -51,6 +42,7 @@ public partial class PanelEditorPage : ContentPage {
             //    if (answer) PanelsViewModel.Save();
             //    PanelsViewModel.Load();
         }
+
         return base.OnBackButtonPressed();
     }
 
@@ -66,9 +58,9 @@ public partial class PanelEditorPage : ContentPage {
 
     #region Handle Selecting and Actioning on a Track including multiple selections
     /// <summary>
-    /// When a TrackPiece is selected, track it and keep it and tell the
-    /// underlying panel to highlight it. This is to support future MULTI-SELECT
-    /// mode. 
+    ///     When a TrackPiece is selected, track it and keep it and tell the
+    ///     underlying panel to highlight it. This is to support future MULTI-SELECT
+    ///     mode.
     /// </summary>
     private void OnTrackPieceTapped(object? sender, TrackSelectedEvent trackSelectedEvent) {
         switch (trackSelectedEvent.Taps) {
@@ -81,8 +73,10 @@ public partial class PanelEditorPage : ContentPage {
             if (trackSelectedEvent.Track is { } trackPiece) {
                 Navigation.PushModalAsync(new DynamicPropertyPage(trackPiece));
             }
+
             break;
         }
+
         // We need to tell it to only redraw the item not the whole view
         //PanelView.RebuildGrid(true);
     }

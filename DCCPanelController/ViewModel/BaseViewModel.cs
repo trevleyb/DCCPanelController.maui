@@ -4,7 +4,7 @@ namespace DCCPanelController.ViewModel;
 
 public partial class BaseViewModel : ObservableValidator {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(IsNotBusy))]
-    private bool _isBusy = false;
+    private bool _isBusy;
 
     [ObservableProperty] private bool _isRefreshing;
 

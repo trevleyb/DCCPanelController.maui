@@ -1,14 +1,12 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Storage;
-using DCCPanelController.Model;
-using DCCPanelController.Services;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
+    private readonly SettingsViewModel? _viewModel;
     private Grid? _lastGridSelected;
-    private SettingsViewModel? _viewModel;
 
     public SettingsPage() {
         InitializeComponent();
@@ -68,7 +66,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                     var settingsLoaded = settings.SettingsService.FromJsonString(loadedJson);
                     if (settingsLoaded is not null) {
                         settings.Settings = settingsLoaded;
-                        await DisplayAlert("Success", $"File Loaded.", "OK");
+                        await DisplayAlert("Success", "File Loaded.", "OK");
                     } else {
                         throw new Exception("File could not be loaded.");
                     }
@@ -98,11 +96,12 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private async Task<string> PromptUserForConfigFile() {
-        var result = await FilePicker.PickAsync(new PickOptions() { PickerTitle = "Select the Config file to upload" });
+        var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
         if (result is not null) {
             Console.WriteLine("Uploading: " + result.FullPath);
             return result.FullPath;
         }
+
         return string.Empty;
     }
 

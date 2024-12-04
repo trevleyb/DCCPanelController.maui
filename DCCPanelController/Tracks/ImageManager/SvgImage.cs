@@ -9,14 +9,14 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 [DebuggerDisplay("{Id}")]
 public partial class SvgImage : ObservableObject {
+    [ObservableProperty] private SvgCompass _connections;
+    [ObservableProperty] private string _filename;
 
     [ObservableProperty] private string _id;
-    [ObservableProperty] private string _filename;
     [ObservableProperty] private SvgImageManager _imageManager;
-    [ObservableProperty] private SvgCompass _connections;
-    public ImageSource? Image => ImageManager.Image;
 
     public SvgImage(string id, string imageName, string connections) : this(id, imageName, new SvgCompass(connections)) { }
+
     public SvgImage(string id, string imageName, SvgCompass connections) {
         Id = id;
         Filename = imageName;
@@ -25,13 +25,16 @@ public partial class SvgImage : ObservableObject {
         PropertyChanged += OnPropertyChanged;
     }
 
+    public ImageSource? Image => ImageManager.Image;
+
+    public bool SupportsLabel => ImageManager.IsSupported(SvgElementEnum.Text);
+
     public void ForceImageRefresh() {
         ImageManager.ForceImageRefresh();
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    public bool SupportsLabel => ImageManager.IsSupported(SvgElementEnum.Text);
     public void SetLabel(string label) {
         if (string.IsNullOrEmpty(label)) return;
         if (SupportsLabel) ImageManager.SetAllAttributeValues(SvgElementEnum.Text, "text", label);
@@ -43,6 +46,7 @@ public partial class SvgImage : ObservableObject {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
             }
         }
+
         return this;
     }
 

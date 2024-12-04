@@ -1,7 +1,6 @@
 namespace DCCWithrottleClient.Client.Messages;
 
 public class MsgHeartbeat : ClientMsg, IClientMsg {
-    public int HeartbeatSeconds { get; private set; }
     private readonly string _commandStr;
 
     public MsgHeartbeat(string commandStr) {
@@ -13,7 +12,9 @@ public class MsgHeartbeat : ClientMsg, IClientMsg {
             }
         }
     }
-    
+
+    public int HeartbeatSeconds { get; private set; }
+
     public override string ToString() {
         return $"MSG:Heartbeat => {_commandStr}";
     }

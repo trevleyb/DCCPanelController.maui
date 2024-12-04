@@ -1,6 +1,6 @@
 namespace DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 /// <summary>
-/// Interface to indicate that the TrackPiece supports touch or click - it is an interactive TrackPiece
+///     Interface to indicate that the TrackPiece supports touch or click - it is an interactive TrackPiece
 /// </summary>
 public interface ITrackInteractive { }

@@ -5,14 +5,12 @@
     x:DataType="model:Panel"
     BackgroundColor="Transparent"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:DCCPanelController.View.Components">
 
     <ContentPage.Resources>
-        <ResourceDictionary>
-        </ResourceDictionary>
+        <ResourceDictionary />
     </ContentPage.Resources>
 
     <ContentPage.Content>
@@ -153,8 +151,8 @@
 
                 </VerticalStackLayout>
 
-                <Button Margin="10,0,0,0" 
-                    Text="Close"
+                <Button Margin="10,0,0,0"
+                        Text="Close"
                         Style="{StaticResource ButtonOutline}"
                         VerticalOptions="End"
                         HorizontalOptions="Center"

@@ -7,7 +7,6 @@ using DCCPanelController.Tracks.TrackPieces.Interfaces;
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
-    public ObservableCollection<ITrackSymbol> TrackSymbols { get; set; } = [];
     [ObservableProperty] private Panel _panel;
 
     public PanelEditorViewModel(Panel panel) {
@@ -18,6 +17,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
             }
         }
     }
+
+    public ObservableCollection<ITrackSymbol> TrackSymbols { get; set; } = [];
 
     public bool TracksOutsideBounds => Panel.Tracks.Any(track => track.X < 0 || track.X >= Panel.Cols || track.Y < 0 || track.Y >= Panel.Rows);
 

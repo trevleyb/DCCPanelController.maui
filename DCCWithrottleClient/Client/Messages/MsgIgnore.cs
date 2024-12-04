@@ -1,5 +1,3 @@
-using DCCWithrottleClient.Client.Events;
-
 namespace DCCWithrottleClient.Client.Messages;
 
 public class MsgIgnore(string commandStr) : ClientMsg, IClientMsg {

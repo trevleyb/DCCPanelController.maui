@@ -1,13 +1,12 @@
 using System.ComponentModel;
 using DCCPanelController.Model;
-using DCCPanelController.Services.SampleData;
 using DCCPanelController.ViewModel;
 using OnScreenSizeMarkup.Maui.Helpers;
 
 namespace DCCPanelController.View;
 
 public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
-    private PanelsViewModel _viewModel;
+    private readonly PanelsViewModel _viewModel;
 
     public PanelsPage() {
         _viewModel = new PanelsViewModel();
@@ -21,6 +20,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             Console.WriteLine($"On Appearing Selected Panel: {_viewModel.SelectedPanel.Name}");
             _viewModel.OnEditorPageFinished(_viewModel.SelectedPanel);
         }
+
         _viewModel.SelectedPanel = null;
     }
 
@@ -35,20 +35,22 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             DisplayOrientation.Landscape => OnScreenSizeHelpers.Instance.GetScreenSizeValue(2, 2, 2, 2, 2, 3),
             _                            => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2)
         };
+
         PanelsCollectionViewLayout.Span = span;
     }
 
     private async void GoToSelectedPanelEditor(object? sender, TappedEventArgs e) {
         IsBusy = true;
-        Console.WriteLine($"GoToSelectedPanelEditor");
+        Console.WriteLine("GoToSelectedPanelEditor");
         if (sender is BindableObject { BindingContext: Panel panel }) {
             await LaunchPanelEditor(panel);
         }
+
         IsBusy = false;
     }
 
     /// <summary>
-    /// Launch the Panel Editor passing through the selected panel to be edited. 
+    ///     Launch the Panel Editor passing through the selected panel to be edited.
     /// </summary>
     /// <param name="panel">The current seleced Panel</param>
     private async Task LaunchPanelEditor(Panel panel) {
@@ -62,6 +64,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
         } catch (Exception ex) {
             Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
         }
+
         IsBusy = false;
     }
 
@@ -95,7 +98,6 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             for (var panelIndex = 0; panelIndex < _viewModel.Panels.Count; panelIndex++) {
                 _viewModel.Panels[panelIndex].SortOrder = panelIndex + 1;
             }
-
         }
     }
 }

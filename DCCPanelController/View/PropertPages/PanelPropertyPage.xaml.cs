@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DCCPanelController.Model;
 
 namespace DCCPanelController.View.PropertPages;
@@ -46,7 +41,7 @@ public partial class PanelPropertyPage : ContentPage {
             }
         }
     }
-    
+
     private void ClosePropertyPage(object? sender, EventArgs e) {
         Navigation.PopModalAsync();
     }

@@ -4,14 +4,14 @@ using DCCPanelController.Model;
 namespace DCCPanelController.Services;
 
 public class RoutesService {
-    // Think about where we manage changes to the state?
-    public event EventHandler? RouteStateDataChanged;
-
     public ObservableCollection<Route> Routes = [];
 
     public RoutesService(SettingsService settingsService) {
         Routes = settingsService.Routes;
     }
+
+    // Think about where we manage changes to the state?
+    public event EventHandler? RouteStateDataChanged;
 
     public async Task AddRouteAsync(Route route) {
         try {

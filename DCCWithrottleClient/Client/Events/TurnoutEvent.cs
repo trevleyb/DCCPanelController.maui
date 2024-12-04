@@ -1,9 +1,10 @@
 namespace DCCWithrottleClient.Client.Events;
 
 public class TurnoutEvent(string systemName, string userName, TurnoutStateEnum stateEnum) : EventArgs, IClientEvent {
-      public TurnoutEvent(string systemName, char state) : this(systemName, "", state.ToString()) { }
-      public TurnoutEvent(string systemName, string state) : this(systemName, "", state) { }
-      public TurnoutEvent(string systemName, string userName, string state) : this(systemName, userName, state switch {
+    public TurnoutEvent(string systemName, char state) : this(systemName, "", state.ToString()) { }
+    public TurnoutEvent(string systemName, string state) : this(systemName, "", state) { }
+
+    public TurnoutEvent(string systemName, string userName, string state) : this(systemName, userName, state switch {
         "1"        => TurnoutStateEnum.Unknown,
         "2" or "C" => TurnoutStateEnum.Closed,
         "4" or "T" => TurnoutStateEnum.Thrown,
@@ -22,6 +23,7 @@ public class TurnoutEvent(string systemName, string userName, TurnoutStateEnum s
             _                        => "Unknown"
         };
 
-    public override string ToString() => $"TURNOUT: {SystemName}:{UserName} => {State}";
-
+    public override string ToString() {
+        return $"TURNOUT: {SystemName}:{UserName} => {State}";
+    }
 }

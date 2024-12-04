@@ -2,39 +2,30 @@ using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
-using DCCPanelController.Helpers.Attributes;
-using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.Helpers;
-using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 namespace DCCPanelController.Model;
 
 /// <summary>
-/// Represents a Panel or Schematic that we can display on the app to control
+///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableValidator, ICloneable {
-    [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] private string _description = string.Empty;
-    [ObservableProperty] private int _sortOrder = 0;
-    [ObservableProperty] private Color _backgroundColor = Colors.White;
-
-    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty]
-    private int _cols = 24;
-
-    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty]
-    private int _rows = 18;
-
     [ObservableProperty] private ObservableCollection<ITrackPiece> _tracks = [];
 
-    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
+    [ObservableProperty] private Color _backgroundColor = Colors.White;
+    [ObservableProperty] private string _description = string.Empty;
+    [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private int _sortOrder;
 
-    private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) {
-        return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
-    }
+    [NotifyPropertyChangedFor(nameof(Panel.PanelRatio))] [ObservableProperty] private int _cols = 24;
+    [NotifyPropertyChangedFor(nameof(Panel.PanelRatio))] [ObservableProperty] private int _rows = 18;
+
+    [JsonIgnore] public string PanelRatio => Panel.CalculateRatio(Cols, Rows);
+    [JsonIgnore] public Panel? Copy => Clone() as Panel;
 
     /// <summary>
-    /// Create a deep copy of the Panel object.
+    ///     Create a deep copy of the Panel object.
     /// </summary>
     /// <returns>A new instance of the Panel object with the same property values as the original.</returns>
     public object Clone() {
@@ -45,7 +36,7 @@ public partial class Panel : ObservableValidator, ICloneable {
         }
     }
 
-    [JsonIgnore] public Panel? Copy => Clone() as Panel;
+    private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) => TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
 
     private static string CalculateRatio(int col, int row) {
         var gcd = Gcd(col, row);

@@ -7,7 +7,6 @@ using DCCPanelController.Tracks.TrackPieces.Interfaces;
 namespace DCCPanelController.Tracks.TrackPieces;
 
 public partial class TrackCorner : TrackPieceBase, ITrackSymbol, ITrackPiece {
-
     [ObservableProperty] [property: EditableStrProperty(Name = "Name (ID)", Description = "Corner Piece")]
     private string _name = "Corner";
 

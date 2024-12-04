@@ -1,21 +1,13 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TrackTurnoutAction = DCCPanelController.Tracks.TrackPieces.Base.TrackTurnoutAction;
 
 namespace DCCPanelController.View.Components;
 
-public partial class TrackTurnoutActionsView : ContentView
-{
-    public ObservableCollection<TrackTurnoutAction> Actions { get; set; }
-
+public partial class TrackTurnoutActionsView : ContentView {
     public TrackTurnoutActionsView() {
         InitializeComponent();
         Actions = new ObservableCollection<TrackTurnoutAction>();
-        
+
         // Sample for UI Commands
         var addActionCommand = new Command(() => Actions.Add(new TrackTurnoutAction()));
         var removeActionCommand = new Command<TrackTurnoutAction>(action => Actions.Remove(action));
@@ -23,18 +15,16 @@ public partial class TrackTurnoutActionsView : ContentView
         // Assume Your Layout Here for Actions
         var stackLayout = new StackLayout();
 
-        foreach (var action in Actions)
-        {
-            var entry = new Entry
-            {
+        foreach (var action in Actions) {
+            var entry = new Entry {
                 Placeholder = "Enter ID",
-                Text = action.Id, // Two-way binding preferred
+                Text = action.Id // Two-way binding preferred
                 // Connect this to a picker or set proper options based on Turnouts
             };
+
             entry.SetBinding(Entry.TextProperty, nameof(action.Id), BindingMode.TwoWay);
 
-            var deleteButton = new Button
-            {
+            var deleteButton = new Button {
                 Text = "Remove",
                 Command = removeActionCommand,
                 CommandParameter = action
@@ -44,8 +34,7 @@ public partial class TrackTurnoutActionsView : ContentView
             stackLayout.Children.Add(deleteButton);
         }
 
-        var addButton = new Button
-        {
+        var addButton = new Button {
             Text = "Add Action",
             Command = addActionCommand
         };
@@ -54,4 +43,6 @@ public partial class TrackTurnoutActionsView : ContentView
 
         Content = new ScrollView { Content = stackLayout };
     }
+
+    public ObservableCollection<TrackTurnoutAction> Actions { get; set; }
 }

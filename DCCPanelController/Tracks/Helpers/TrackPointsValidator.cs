@@ -1,11 +1,10 @@
-using System.Collections;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 namespace DCCPanelController.Tracks.Helpers;
 
 public static class TrackPointsValidator {
-    private static readonly (int dX, int dY)[] Directions = new (int, int)[] {
+    private static readonly (int dX, int dY)[] Directions = new[] {
         (0, -1), // North
         (1, -1), // North-East
         (1, 0),  // East

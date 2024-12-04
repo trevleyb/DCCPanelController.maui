@@ -70,7 +70,7 @@
                         </StackLayout>
                     </StackLayout>
                 </CarouselView.EmptyView>
-                
+
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
                         <view:ControlPanelView
@@ -93,7 +93,6 @@
 
     </ContentPage.Content>
 </ContentPage>
-
 
 
 <!-- Panel="{Binding Path=.}" -->

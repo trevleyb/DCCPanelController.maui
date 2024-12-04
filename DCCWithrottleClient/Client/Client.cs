@@ -10,29 +10,29 @@ using Timer = System.Timers.Timer;
 namespace DCCWithrottleClient.Client;
 
 public class Client(ClientInfo clientInfo) {
-    private TcpClient?     _client;
-    private Timer?         _heartbeatTimer;
-    private bool           _running;
+    private TcpClient? _client;
+    private Timer? _heartbeatTimer;
+    private bool _running;
     private NetworkStream? _stream;
 
-    public Client(string address, int    port) : this(new ClientInfo(address, port)) { }
-    public Client(string name,    string address, int       port) : this(new ClientInfo(name, address, port)) { }
+    public Client(string address, int port) : this(new ClientInfo(address, port)) { }
+    public Client(string name, string address, int port) : this(new ClientInfo(name, address, port)) { }
 
-    public bool                      Echo { get; set; } = true;
-    
+    public bool Echo { get; set; } = true;
+
     public event Action<IClientEvent>? ConnectionEvent;
-    public event Action<string>?       ConnectionError;
+    public event Action<string>? ConnectionError;
 
     /// <summary>
-    /// Connect to the WiThrottle Service via the given Address/Port
+    ///     Connect to the WiThrottle Service via the given Address/Port
     /// </summary>
     /// <returns>A Result.OK if it connected or a Result.Fail if it could not. </returns>
     public IResult Connect() {
         try {
             if (_running) Stop();
 
-            _client  = new TcpClient(clientInfo.Address, clientInfo.Port);
-            _stream  = _client.GetStream();
+            _client = new TcpClient(clientInfo.Address, clientInfo.Port);
+            _stream = _client.GetStream();
             _running = true;
 
             var listenThread = new Thread(Listen);
@@ -44,11 +44,11 @@ public class Client(ClientInfo clientInfo) {
     }
 
     /// <summary>
-    /// Listen for incomming messages and event them via the DataReceived event to the caller. 
+    ///     Listen for incomming messages and event them via the DataReceived event to the caller.
     /// </summary>
     private void Listen() {
         StringBuilder buffer = new();
-        var           bytes  = new byte[256];
+        var bytes = new byte[256];
         SendWakeUpMessages();
 
         while (_running) {
@@ -77,13 +77,14 @@ public class Client(ClientInfo clientInfo) {
                 // that we have an issue so that we can try to re-establish the connection
                 ConnectionError?.Invoke(ex.Message);
             }
+
             Thread.Sleep(100);
         }
     }
 
     private void ProcessMessage(string message) {
         var clientMsg = MessageProcessor.Interpret(message);
-        
+
         switch (clientMsg) {
         case MsgQuit quit:
             _running = false;
@@ -96,6 +97,7 @@ public class Client(ClientInfo clientInfo) {
             foreach (var clientEvent in clientMsg.FoundEvents) {
                 OnClientEventOccurred(clientEvent);
             }
+
             break;
         }
     }
@@ -119,11 +121,11 @@ public class Client(ClientInfo clientInfo) {
         SendShutdownMessages();
         Stop();
     }
-    
+
     public void SendMessage(IClientCmd command) {
         SendMessage(command.Command);
     }
-    
+
     public void SendMessage(string message) {
         message = message.WithTerminator();
         if (Echo) OnClientEventOccurred(new MessageEvent("Command", message));
@@ -140,7 +142,7 @@ public class Client(ClientInfo clientInfo) {
     }
 
     /// <summary>
-    /// Shutdown the connection to the WiThrottle Service and clean up. 
+    ///     Shutdown the connection to the WiThrottle Service and clean up.
     /// </summary>
     public void Stop() {
         _running = false;
@@ -149,9 +151,9 @@ public class Client(ClientInfo clientInfo) {
     }
 
     private void StartHeartbeatTimer(int secs) {
-        _heartbeatTimer           =  new Timer(secs * 1000);
-        _heartbeatTimer.Elapsed   += HeartbeatTimerOnElapsed;
-        _heartbeatTimer.AutoReset =  true;
+        _heartbeatTimer = new Timer(secs * 1000);
+        _heartbeatTimer.Elapsed += HeartbeatTimerOnElapsed;
+        _heartbeatTimer.AutoReset = true;
         _heartbeatTimer.Start();
     }
 
@@ -160,7 +162,7 @@ public class Client(ClientInfo clientInfo) {
     }
 
     private void StopHeartbeatTimer() {
-        if (_heartbeatTimer is { }) {
+        if (_heartbeatTimer is not null) {
             _heartbeatTimer.Elapsed -= HeartbeatTimerOnElapsed;
             _heartbeatTimer.Stop();
         }

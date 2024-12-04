@@ -30,6 +30,7 @@ public class TurnoutsService(SettingsService settingsService) {
         } catch (Exception ex) {
             Console.WriteLine("Failed to find turnout: " + ex.Message);
         }
+
         return null;
     }
 
@@ -39,6 +40,7 @@ public class TurnoutsService(SettingsService settingsService) {
         } catch (Exception ex) {
             Console.WriteLine("Failed to find turnout: " + ex.Message);
         }
+
         return null;
     }
 }

@@ -1,5 +1,3 @@
 namespace DCCWithrottleClient.Client;
 
-public class CommandProcessor {
-    
-}
+public class CommandProcessor { }

@@ -12,7 +12,7 @@ public class Result(bool success, string message = "", Exception? exception = nu
 
     public bool Failed => !Success;
 
-    public string     Message   { get; protected init; } = message;
+    public string Message { get; protected init; } = message;
     public Exception? Exception { get; protected init; } = exception;
 
     // Helpers
@@ -26,7 +26,7 @@ public class Result(bool success, string message = "", Exception? exception = nu
     }
 
     public static IResult Ok(string errorMessage) {
-        return new Result(true, errorMessage, null);
+        return new Result(true, errorMessage);
     }
 
     public static IResult Fail() {

@@ -1,17 +1,14 @@
 using System.Diagnostics;
 using System.Globalization;
-using System.Security.Cryptography;
 using DCCWithrottleClient.Client;
 using DCCWithrottleClient.Client.Commands;
 using DCCWithrottleClient.Client.Events;
 using DCCWithrottleClient.ServiceHelper;
-using Makaretu.Dns;
 
 namespace DCCWithrottleClient.Tests;
 
 [TestFixture]
 public class ClientTest {
-
     [Test]
     public async Task FindServers() {
         var servers = await ServiceFinder.FindServices("withrottle");
@@ -24,12 +21,12 @@ public class ClientTest {
         if (server.Count == 0 || server[0]?.ClientInfo != null) return null;
         return server[0]?.ClientInfo;
     }
-    
+
     [Test]
     public async Task RunConnectionTest() {
         Debug.WriteLine("testing Connection to WiThrottle Server");
         if (await GetDefaultWiServer() is { } clientInfo) {
-            var client = new DCCWithrottleClient.Client.Client(clientInfo);
+            var client = new Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
@@ -37,8 +34,10 @@ public class ClientTest {
                 Debug.WriteLine($"Waiting... {i}");
                 Thread.Sleep(1000);
             }
+
             client.Disconnect();
         }
+
         Thread.Sleep(1000);
         Debug.WriteLine("Completed.");
     }
@@ -47,14 +46,15 @@ public class ClientTest {
     public async Task SendCommandTests() {
         Debug.WriteLine("testing Connection to WiThrottle Server");
         if (await GetDefaultWiServer() is { } clientInfo) {
-            var client = new DCCWithrottleClient.Client.Client(clientInfo);
+            var client = new Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
+
             // Sleep for 5 seconds to let all messages get processed.
             Debug.WriteLine("Waiting for 5 seconds...");
             Thread.Sleep(5000);
-            
+
             client.SendMessage(new TurnoutCommand("NT127", TurnoutStateEnum.Closed));
             client.SendMessage(new TurnoutCommand("NT126", TurnoutStateEnum.Thrown));
             client.SendMessage(new TurnoutCommand("NT137", TurnoutStateEnum.Toggle));
@@ -67,6 +67,7 @@ public class ClientTest {
             Thread.Sleep(5000);
             client.Disconnect();
         }
+
         Thread.Sleep(1000);
         Debug.WriteLine("Completed.");
     }
@@ -75,33 +76,34 @@ public class ClientTest {
     public async Task TestFastClock() {
         Debug.WriteLine("testing Connection to WiThrottle Server");
         if (await GetDefaultWiServer() is { } clientInfo) {
-            var client = new DCCWithrottleClient.Client.Client(clientInfo);
+            var client = new Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
+
             // Sleep for 5 seconds to let all messages get processed.
             Debug.WriteLine("Waiting for 5 seconds...");
             Thread.Sleep(5000);
 
             client.SendMessage(new FastClockCommand(DateTime.Now, 4));
-    
+
             // Sleep for 30 seconds so we get the FastClock Messages
             Debug.WriteLine("Waiting for 30 seconds...");
             Thread.Sleep(30000);
             client.Disconnect();
         }
+
         Thread.Sleep(1000);
         Debug.WriteLine("Completed.");
     }
 
-    
     private void ClientOnConnectionEvent(IClientEvent clientevent) {
         switch (clientevent) {
         case MessageEvent message:
             Debug.WriteLine($"MESSAGE: {message.Type} => {message.Value}");
             break;
         case RosterEvent roster:
-            Debug.WriteLine($"ROSTER: Message");
+            Debug.WriteLine("ROSTER: Message");
             break;
         case RouteEvent route:
             Debug.WriteLine($"ROUTE:{route.SystemName} : {route.UserName} => {route.State}");
@@ -116,9 +118,9 @@ public class ClientTest {
             Debug.WriteLine($"UNKNOWN: {clientevent.ToString()}");
             break;
         }
-}
+    }
 
     private void ClientOnConnectionError(string obj) {
-        Debug.WriteLine("ERROR: " + obj.ToString());
+        Debug.WriteLine("ERROR: " + obj);
     }
 }

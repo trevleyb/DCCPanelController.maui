@@ -1,30 +1,29 @@
-using System.Diagnostics;
-
 namespace DCCPanelController.Tracks.ImageManager;
 
 /// <summary>
-/// Track Images is a helper class that provides information about each image that is contained in the resource file
+///     Track Images is a helper class that provides information about each image that is contained in the resource file
 /// </summary>
 public static class SvgImages {
-
     private static readonly Lock LockObject = new();
-    private static readonly Dictionary<string, SvgImage> AvailableImages = [];
-    // ReSharper disable InconsistentlySynchronizedField
+    private static readonly Dictionary<string, SvgImage> AvailableImages = []; // ReSharper disable InconsistentlySynchronizedField
     private static Dictionary<string, SvgImage> TrackImages => AvailableImages.Count != 0 ? AvailableImages : BuildTrackList();
 
-    public static SvgImage Default() => Create("Unknown", "********", "Track_Unknown");
+    public static SvgImage Default() {
+        return Create("Unknown", "********", "Track_Unknown");
+    }
+
     public static SvgImage GetImage(string id) {
         return TrackImages.TryGetValue(id, out var trackImage) ? trackImage : Default();
     }
-    
+
     /// <summary>
-    /// Add all the types of images that we currently support. Each image has a readable name and also a string
-    /// that represents the in and out paths that the track can support. 
+    ///     Add all the types of images that we currently support. Each image has a readable name and also a string
+    ///     that represents the in and out paths that the track can support.
     /// </summary>
     private static Dictionary<string, SvgImage> BuildTrackList() {
         lock (LockObject) {
             AvailableImages.Clear();
-            
+
             Add("Unknown", "********", "Track_Unknown");
 
             Add("Button", "********", "Track_Button");

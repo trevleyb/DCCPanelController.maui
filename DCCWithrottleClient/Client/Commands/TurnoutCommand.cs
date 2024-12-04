@@ -1,13 +1,9 @@
-using System.Diagnostics;
-using System.Security.Cryptography;
-
 namespace DCCWithrottleClient.Client.Commands;
 
-public class TurnoutCommand (string systemName, TurnoutStateEnum state) : IClientCmd {
+public class TurnoutCommand(string systemName, TurnoutStateEnum state) : IClientCmd {
     public string SystemName { get; set; } = systemName;
     public TurnoutStateEnum State { get; set; } = state;
 
-    public string Command => $"PTA{CmdState}{SystemName}";
     private char CmdState =>
         State switch {
             TurnoutStateEnum.Thrown => 'T',
@@ -15,4 +11,5 @@ public class TurnoutCommand (string systemName, TurnoutStateEnum state) : IClien
             _                       => '2'
         };
 
+    public string Command => $"PTA{CmdState}{SystemName}";
 }
