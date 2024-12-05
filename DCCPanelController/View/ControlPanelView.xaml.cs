@@ -33,6 +33,8 @@ public partial class ControlPanelView {
     private readonly Timer _tapTimer;
     private ITrackPiece? _selectedTrack;
     private int _tapCount;
+   
+    public EditModeEum EditMode = EditModeEum.Move;
     
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
     [ObservableProperty] private double _gridSize;
@@ -111,6 +113,7 @@ public partial class ControlPanelView {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
+        if (e.PropertyName is nameof(Image)) RebuildGrid();
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -308,32 +311,19 @@ public partial class ControlPanelView {
 
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
         Console.WriteLine($"Dragging Track: {track.Name}");
-        var isShiftPressed = false;
-
-#if MACCATALYST
-        //foreach (var modifier in UIKit.UIApplication.SharedApplication.KeyCommands){
-        //    if (modifier == UIKeyModifierFlags.Shift) {
-        //        isShiftPressed = true;
-        //        break;
-        //    }
-        //}
-#endif
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
-        args.Data.Properties.Add("Copy", isShiftPressed);
+        args.Data.Properties.Add("Copy", EditMode == EditModeEum.Copy ? true: false);
     }
 
     private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
-        var source = e?.Data?.Properties["Source"] as string ?? null;
-        var track = e?.Data?.Properties["Track"] as ITrackPiece ?? null;
-        var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
+        var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
+        var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
 
-        if (e != null) {
-            e.AcceptedOperation = DataPackageOperation.None;
-            if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
-                if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
-                    e.AcceptedOperation = DataPackageOperation.Copy;
-                }
+        e.AcceptedOperation = DataPackageOperation.None;
+        if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
+            if (track.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
+                e.AcceptedOperation = DataPackageOperation.Copy;
             }
         }
     }
@@ -341,15 +331,15 @@ public partial class ControlPanelView {
     private void DropTrackOnPanel(object? sender, DropEventArgs e) {
         Console.WriteLine("Drop Gesture Recognizer OnDrop");
         try {
-            if ((!e?.Data?.Properties.ContainsKey("Source") ?? false) || 
-                (!e?.Data?.Properties.ContainsKey("Track") ?? false)) {
+            if (!e.Data.Properties.ContainsKey("Source") ||
+                !e.Data.Properties.ContainsKey("Track")) {
                 Console.WriteLine("Could not determine the source of the item being dropped.");
                 return;
             }
             
-            var source = e?.Data?.Properties["Source"] as string ?? null;
-            var track = e?.Data?.Properties["Track"] as ITrackPiece ?? null;
-            var isCopyOperation = (e?.Data?.Properties.ContainsKey("Copy") ?? false) && (bool)(e?.Data?.Properties["Copy"] ?? false);
+            var source = e.Data.Properties["Source"] as string ?? null;
+            var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
+            var isCopyOperation = e.Data.Properties.ContainsKey("Copy") && (bool)e.Data.Properties["Copy"];
             var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
             
             if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
@@ -403,11 +393,9 @@ public partial class ControlPanelView {
     }
 
     private int GetHighestOccupiedLayer(int col, int row) {
-        Console.WriteLine($"GetHighestOccupiedLayer({col},{row})");
-        var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row) ?? [];
-        Console.WriteLine($"GetHighestOccupiedLayer({col},{row}) returned {tracksInGrid?.Count() ?? 0}");
-        if (tracksInGrid == null || !tracksInGrid.Any()) return 0;
-        return tracksInGrid?.Max(track => track.Layer) ?? 0;
+        var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row).ToList() ?? new List<ITrackPiece>();
+        if (tracksInGrid is {Count: > 0} ) return tracksInGrid.Max(track => (int?)track.Layer) ?? 0;
+        return 0;
     }
 
     /// <summary>

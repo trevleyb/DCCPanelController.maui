@@ -9,9 +9,8 @@ namespace DCCPanelController.View;
 public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
-
     private readonly PanelsViewModel _panelsViewModel;
-
+    private EditModeEum _editMode = EditModeEum.Move;
     private EditState _editState = EditState.None;
 
     public PanelEditorPage(PanelsViewModel panelsViewModel) {
@@ -33,6 +32,21 @@ public partial class PanelEditorPage : ContentPage {
     //    base.OnNavigatedTo(args);
     //    PanelView.RebuildGrid(true);
     //}
+
+    private void ChangeEditMode(object? sender, EventArgs e) {
+        _editMode = _editMode switch {
+            EditModeEum.Move => EditModeEum.Copy,
+            EditModeEum.Copy => EditModeEum.Move,
+            _                => EditModeEum.Move,
+        };
+        PanelView.EditMode = _editMode;
+
+        EditModeToolItem.IconImageSource = _editMode switch {
+            EditModeEum.Move => "shape_intersect.png",
+            EditModeEum.Copy => "shape_except.png",
+            _                => "shape_intersect.png",
+        };
+    }
 
     protected override bool OnBackButtonPressed() {
         if (_editState == EditState.Changed) {
@@ -132,3 +146,5 @@ public enum EditState {
     Saved,
     Changed
 }
+
+public enum EditModeEum { Move, Copy }

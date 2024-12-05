@@ -12,6 +12,13 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
+            ToolTipProperties.Text="Change Edit Mode"
+            Clicked="ChangeEditMode"
+            IconImageSource="shape_intersect.png"
+            Text="Edit"
+            x:Name="EditModeToolItem"/>
+
+        <ToolbarItem
             ToolTipProperties.Text="Save this Panel"
             Clicked="SavePanelAndExit"
             IconImageSource="save.png"

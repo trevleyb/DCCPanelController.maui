@@ -125,6 +125,20 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
+    public SvgElementBuilder WithTextSize(string textSize) {
+        _element.AddOrUpdateAttribute("Font-Size", textSize.ToString());
+        return this;
+    }
+
+    public SvgElementBuilder WithTextWeight(FontWeight weight) {
+        _element.AddOrUpdateAttribute("Font-Weight", weight.ToString());
+        return this;
+    }
+
+    public SvgElementBuilder WithTextColor(string color) {
+        _element.AddOrUpdateAttribute("Font-Color", color);
+        return this;
+    }
     
     public SvgElementBuilder Dashed(bool isDashed = true) {
         _element.AddOrUpdateAttribute("Dashed", isDashed.ToString());

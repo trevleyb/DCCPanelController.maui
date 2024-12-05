@@ -32,3 +32,8 @@ public enum TrackStyleAttribute {
     Normal,
     Occupied
 }
+
+public enum TextFontWeight {
+    Normal,
+    Bold,
+}

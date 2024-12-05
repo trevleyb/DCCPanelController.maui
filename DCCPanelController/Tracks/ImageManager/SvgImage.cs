@@ -115,6 +115,15 @@ public partial class SvgImage : ObservableObject {
         case "text":
             ImageManager.SetElementValue(element, attributeValue);
             break;
+        case "font-size":
+            ImageManager.SetAttributeValue(element, "font-size", attributeValue);
+            break;
+        case "font-weight":
+            ImageManager.SetAttributeValue(element, "font-weight", attributeValue);
+            break;
+        case "font-color":
+            ImageManager.SetAttributeValue(element, "fill", attributeValue);
+            break;
         default:
             return false;
         }
