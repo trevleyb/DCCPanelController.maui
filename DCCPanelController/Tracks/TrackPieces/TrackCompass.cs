@@ -58,4 +58,10 @@ public partial class TrackCompass : TrackPieceBase, ITrackSymbol, ITrackPiece {
             break;
         }
     }
+    
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

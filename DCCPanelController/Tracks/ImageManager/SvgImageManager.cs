@@ -162,6 +162,12 @@ public class SvgImageManager {
         }
     }
 
+    public void SetElementValue(XElement element, string attributeValue) {
+        ArgumentNullException.ThrowIfNull(element);
+        element.SetValue(attributeValue);
+    }
+
+    
     /// <summary>
     ///     Get the value of an attribute given an element
     /// </summary>

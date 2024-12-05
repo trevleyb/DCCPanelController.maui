@@ -26,5 +26,9 @@ public partial class TrackLeftTurnout : TrackTurnoutBase, ITrackTurnout, ITrackS
 
         _clickSoundPlayer?.Play();
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
 
 }

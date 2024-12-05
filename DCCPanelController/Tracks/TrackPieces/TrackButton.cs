@@ -30,4 +30,10 @@ public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, I
         AddImageSourceAndRotation(TrackStyleImage.Active, "Button");
         AddImageSourceAndRotation(TrackStyleImage.InActive, "Button");
     }
+    
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

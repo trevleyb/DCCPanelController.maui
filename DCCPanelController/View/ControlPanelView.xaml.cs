@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Timers;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Events;
 using DCCPanelController.Helpers.Result;
@@ -10,6 +11,11 @@ using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using Microsoft.Maui.Layouts;
 using Timer = System.Timers.Timer;
 
+#if MACCATALYST
+using UIKit;
+using AppKit;
+#endif
+
 //
 // This is a COMPONENT that is used inside the operate and panels views
 //
@@ -17,23 +23,20 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView {
+
     private const double Tolerance = 5f;
-
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null, BindingMode.OneTime, propertyChanged: OnPanelChanged);
-
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
-
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
-
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
 
     private readonly Timer _tapTimer;
-    [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
-    [ObservableProperty] private double _gridSize;
     private ITrackPiece? _selectedTrack;
     private int _tapCount;
+    
+    [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
+    [ObservableProperty] private double _gridSize;
     [ObservableProperty] private double _viewHeight;
-
     [ObservableProperty] private double _viewWidth;
 
     public ControlPanelView() {
@@ -93,7 +96,9 @@ public partial class ControlPanelView {
         if (control.DesignMode) {
             var dropRecogniser = new DropGestureRecognizer();
             dropRecogniser.Drop += control.DropTrackOnPanel;
+            dropRecogniser.DragOver += control.DragOverTrackOnPanel;
             control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
+           
         } else {
             control.DynamicGrid.GestureRecognizers.Clear();
         }
@@ -206,18 +211,18 @@ public partial class ControlPanelView {
         Console.WriteLine("AddTrackPiecesToGrid()");
         if (Panel is { Tracks: { } tracks } panel) {
             foreach (var track in tracks) {
-                if (DynamicGrid.ColumnDefinitions.Count >= Cols && DynamicGrid.RowDefinitions.Count >= Rows && track.X < Cols && track.Y < Rows) {
-                    var image = AddImageToLayout(track);
-                }
 
-                // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
-                // -------------------------------------------------------------------------------------
-                if (DesignMode && ShowTrackErrors) {
-                    var pointImage = new TrackPoints { X = track.X, Y = track.Y };
-                    var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
-                    pointImage.SetPoints(validPoints);
-                    var image = AddImageToLayout(pointImage);
-                    image.InputTransparent = true;
+                if (DynamicGrid.ColumnDefinitions.Count >= Cols && DynamicGrid.RowDefinitions.Count >= Rows && track.X < Cols && track.Y < Rows) {
+                    AddImageToLayout(track);
+
+                    // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
+                    // -------------------------------------------------------------------------------------
+                    if (DesignMode && ShowTrackErrors) {
+                        var pointImage = new TrackPoints { X = track.X, Y = track.Y };
+                        var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
+                        pointImage.SetPoints(validPoints);
+                        AddImageToLayout(pointImage, true);
+                    }
                 }
             }
         }
@@ -227,12 +232,12 @@ public partial class ControlPanelView {
         var tracksInGrid = DynamicGrid.Children;
     }
 
-    private Image AddImageToLayout(ITrackPiece track) {
+    private Image AddImageToLayout(ITrackPiece track, bool transparentInput = false) {
         var image = new Image {
             Scale = 1.5,
             ZIndex = track.Layer,
             Rotation = 0,
-            InputTransparent = false,
+            InputTransparent = transparentInput,
             VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Center,
             BackgroundColor = Colors.Transparent
@@ -303,21 +308,50 @@ public partial class ControlPanelView {
 
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
         Console.WriteLine($"Dragging Track: {track.Name}");
+        var isShiftPressed = false;
+
+#if MACCATALYST
+        //foreach (var modifier in UIKit.UIApplication.SharedApplication.KeyCommands){
+        //    if (modifier == UIKeyModifierFlags.Shift) {
+        //        isShiftPressed = true;
+        //        break;
+        //    }
+        //}
+#endif
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
+        args.Data.Properties.Add("Copy", isShiftPressed);
+    }
+
+    private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
+        var source = e?.Data?.Properties["Source"] as string ?? null;
+        var track = e?.Data?.Properties["Track"] as ITrackPiece ?? null;
+        var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
+
+        if (e != null) {
+            e.AcceptedOperation = DataPackageOperation.None;
+            if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
+                if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
+                    e.AcceptedOperation = DataPackageOperation.Copy;
+                }
+            }
+        }
     }
 
     private void DropTrackOnPanel(object? sender, DropEventArgs e) {
         Console.WriteLine("Drop Gesture Recognizer OnDrop");
         try {
-            var source = e?.Data?.Properties["Source"] as string ?? null;
-            var track = e?.Data?.Properties["Track"] as ITrackPiece ?? null;
-            if (source is null || track is null) {
+            if ((!e?.Data?.Properties.ContainsKey("Source") ?? false) || 
+                (!e?.Data?.Properties.ContainsKey("Track") ?? false)) {
                 Console.WriteLine("Could not determine the source of the item being dropped.");
                 return;
             }
-
+            
+            var source = e?.Data?.Properties["Source"] as string ?? null;
+            var track = e?.Data?.Properties["Track"] as ITrackPiece ?? null;
+            var isCopyOperation = (e?.Data?.Properties.ContainsKey("Copy") ?? false) && (bool)(e?.Data?.Properties["Copy"] ?? false);
             var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
+            
             if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
@@ -326,15 +360,22 @@ public partial class ControlPanelView {
                 if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
                     switch (source) {
                     case "Panel":
-                        trackPiece.X = position.Col;
-                        trackPiece.Y = position.Row;
+                        if (isCopyOperation) {
+                            var newTrack = track.Clone(); 
+                            trackPiece.X = position.Col;
+                            trackPiece.Y = position.Row;
+                            Panel?.Tracks?.Add(newTrack);
+                            AddImageToLayout(track);            
+                        } else {
+                            trackPiece.X = position.Col;
+                            trackPiece.Y = position.Row;
+                        }
 
                         // TODO: Can we optimise this and not redraw the whole grid?
                         RebuildGrid(true);
                         break;
                     case "Symbol":
-                        var newPiece = Activator.CreateInstance(trackPiece.GetType()) as ITrackPiece;
-                        if (newPiece is not null) {
+                        if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
                             Panel?.Tracks?.Add(newPiece);

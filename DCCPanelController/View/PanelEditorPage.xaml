@@ -12,22 +12,26 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
+            ToolTipProperties.Text="Save this Panel"
             Clicked="SavePanelAndExit"
             IconImageSource="save.png"
             Text="Save"
-            x:Name="SaveButton" />
+            x:Name="SaveButton"/>
         <ToolbarItem
             Clicked="ToggleGrid"
+            ToolTipProperties.Text="Toggle the Grid On|Off"
             IconImageSource="grid.png"
             Text="Show Grid"
             x:Name="GridButton" />
         <ToolbarItem
             Clicked="ToggleValidation"
+            ToolTipProperties.Text="Show Validation on connections."
             IconImageSource="validate.png"
             Text="Validate"
             x:Name="ValidateButton" />
         <ToolbarItem
             Clicked="ShowPropertyPage"
+            ToolTipProperties.Text="Panel Properties"
             IconImageSource="tuning.png"
             Text="Properties"
             x:Name="PropertyButton" />
@@ -39,7 +43,7 @@
         x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" x:Name="LeftColumn" />
-            <ColumnDefinition Width="120" x:Name="RightColumn" />
+            <ColumnDefinition Width="80" x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
 
         <!--  Left Pane  -->
@@ -61,11 +65,11 @@
             BackgroundColor="{StaticResource Primary}"
             Grid.Column="1"
             x:Name="RightPane">
-            <StackLayout Padding="10">
+            <StackLayout Padding="5">
                 <CollectionView
                     HorizontalOptions="Center"
                     ItemsSource="{Binding TrackSymbols}"
-                    Margin="10"
+                    Margin="5"
                     SelectionMode="Single"
                     VerticalOptions="FillAndExpand"
                     x:Name="TrackSymbolCollectionView">
@@ -74,22 +78,23 @@
                             HorizontalItemSpacing="5"
                             Orientation="Vertical"
                             Span="1"
-                            VerticalItemSpacing="10"
+                            VerticalItemSpacing="5"
                             x:Name="ItemsLayout" />
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="interfaces:ITrackSymbol">
                             <Border
-                                BackgroundColor="White"
+                                Stroke="#95000000"
+                                StrokeThickness="2"
+                                StrokeShape="RoundRectangle 10,10,10,10"
+                                BackgroundColor="Snow" 
                                 HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                                ToolTipProperties.Text="{Binding Name}"
                                 Margin="5"
-                                Padding="5"
-                                VerticalOptions="Center">
-                                <Image
-                                    HeightRequest="50"
-                                    Source="{Binding Symbol}"
-                                    WidthRequest="50" />
+                                Padding="0">
+                                <Image WidthRequest="48" HeightRequest="48" Source="{Binding Symbol}"/>
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
                                 </Border.GestureRecognizers>

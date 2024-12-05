@@ -5,14 +5,14 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks.TrackPieces.Base;
 
-public abstract partial class TrackBase : ObservableObject {
+public abstract partial class TrackBase : ObservableObject, ICloneable {
     // Collection of images and rotations associated with this track piece
     protected readonly StyleTrackImages StyleTrackImages = new();
     [ObservableProperty] private int _height = 1; // How High is it (Normally 1, Text might be 2)
     [ObservableProperty] private int _layer = 1;  // What layer is this on? Only 1 element per layer.
 
     [ObservableProperty] private string _name = "Track Piece";  // Name of this particular track piece or object
-    [ObservableProperty] private int _trackDirection;           // What is the expected direction of the Track Piece
+    [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece
     [ObservableProperty] private int _imageRotation;            // What value does the track piece get rotated by
     [ObservableProperty] private int _width = 1;                // How Width is it (normally 1, Text might be 2)
     [ObservableProperty] private int _x;                        // What Grid Position (Horizontal) is this component?
@@ -45,12 +45,12 @@ public abstract partial class TrackBase : ObservableObject {
     private static void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     public void RotateLeft() {
-        TrackDirection = Compass.ToCompass(TrackDirection).Prev().ToRotation();
+        TrackRotation = Compass.ToCompass(TrackRotation).Prev().ToRotation();
         OnPropertyChanged(nameof(Image));
     }
 
     public void RotateRight() {
-        TrackDirection = Compass.ToCompass(TrackDirection).Next().ToRotation();
+        TrackRotation = Compass.ToCompass(TrackRotation).Next().ToRotation();
         OnPropertyChanged(nameof(Image));
     }
 
@@ -64,5 +64,9 @@ public abstract partial class TrackBase : ObservableObject {
 
     protected void AddImageSourceAndRotation(TrackStyleImage trackType, string imageSource, List<StyleTrackImage.Rotation> rotations) {
         StyleTrackImages.AddImageSourceAndRotation(trackType, imageSource, rotations);
+    }
+
+    public virtual object Clone() {
+        return this.MemberwiseClone();
     }
 }

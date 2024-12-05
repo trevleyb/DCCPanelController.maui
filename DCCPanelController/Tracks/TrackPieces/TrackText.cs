@@ -20,4 +20,9 @@ public partial class TrackText : TrackBase, ITrackSymbol, ITrackPiece {
         SetTrackSymbol("Label");
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Label");
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

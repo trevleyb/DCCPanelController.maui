@@ -126,7 +126,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
     
     public static ViewCell CreateRadioGroupForEnums<T>(IEnumerable<T> enumCollection, object source, string fieldName) where T : struct, Enum {
-        var radioGroup = new StackLayout { Orientation = StackOrientation.Horizontal, VerticalOptions = LayoutOptions.Center };
+        var radioGroup = new StackLayout { Margin=new Thickness(5,0,0,0), Orientation = StackOrientation.Horizontal, VerticalOptions = LayoutOptions.Center };
         foreach (var value in enumCollection) {
             var radioButton = new RadioButton {
                 Content = value.ToString(),

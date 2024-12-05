@@ -13,4 +13,9 @@ public partial class TrackCorner : TrackPieceBase, ITrackSymbol, ITrackPiece {
         AddImageSourceAndRotation(TrackStyleImage.Normal, "CornerR", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "CornerL", (45, 270), (135, 0), (225, 90), (315, 180));
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

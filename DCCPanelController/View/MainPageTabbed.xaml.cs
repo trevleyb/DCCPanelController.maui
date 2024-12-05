@@ -1,6 +1,6 @@
 ﻿namespace DCCPanelController.View;
 
-public partial class MainPageTabbed : TabbedPage {
+public partial class MainPageTabbed : Shell {
     public MainPageTabbed() {
         InitializeComponent();
     }

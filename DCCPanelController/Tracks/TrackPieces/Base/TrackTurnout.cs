@@ -38,11 +38,12 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         get {
             // Find the appropriate image reference for the details we have
             // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackImage, TrackDirection);
+            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackImage, TrackRotation);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
             ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
 
-            Console.WriteLine($"Track: {TrackImage}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
+            Console.WriteLine($"Track: {TrackImage}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
 
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
@@ -85,6 +86,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
             OnPropertyChanged(nameof(Image));
         }
+    }
+    
+    public override object Clone() {
+        var clone = (TrackTurnoutBase)MemberwiseClone();
+        return clone;
     }
 }
 

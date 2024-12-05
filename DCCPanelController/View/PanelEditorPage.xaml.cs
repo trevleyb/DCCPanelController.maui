@@ -29,10 +29,10 @@ public partial class PanelEditorPage : ContentPage {
     private Panel Panel { get; }
     private PanelEditorViewModel ViewModel { get; }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args) {
-        base.OnNavigatedTo(args);
-        PanelView.RebuildGrid(true);
-    }
+    //protected override void OnNavigatedTo(NavigatedToEventArgs args) {
+    //    base.OnNavigatedTo(args);
+    //    PanelView.RebuildGrid(true);
+    //}
 
     protected override bool OnBackButtonPressed() {
         if (_editState == EditState.Changed) {

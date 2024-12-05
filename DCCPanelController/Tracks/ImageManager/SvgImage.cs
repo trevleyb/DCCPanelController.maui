@@ -63,7 +63,8 @@ public partial class SvgImage : ObservableObject {
     // Color        - sets the color of the element
     // Opacity      - sets the opacity of the element
     // Dashed       - sets if the line is dashed or not dashed (valid on a line only)
-    // Visible      - sets if the element should be visible or not 
+    // Visible      - sets if the element should be visible or not
+    // Text         - sets the TEXT of the item if it has a Text Element
 
     public void ApplyElementStyle(SvgElementEnum elementEnum, string attributeName, string value) {
         ApplyElementStyle(SvgElement.ToString(elementEnum), attributeName, value);
@@ -76,7 +77,10 @@ public partial class SvgImage : ObservableObject {
             _ = ImageManager.ElementType(element) switch {
                 "rect"    => SetFillType(element, attributeName, attributeValue),
                 "polygon" => SetFillType(element, attributeName, attributeValue),
-                "text"    => SetFillType(element, attributeName, attributeValue),
+                "text"    => elementName.ToLowerInvariant() switch {
+                    "text" => SetTextData(element, attributeName, attributeValue),
+                    _      => SetFillType(element, attributeName, attributeValue),
+                    },
                 "line"    => SetStrokeType(element, attributeName, attributeValue),
                 "circle" => elementName.ToLowerInvariant() switch {
                     "border" => SetStrokeType(element, attributeName, attributeValue),
@@ -106,6 +110,17 @@ public partial class SvgImage : ObservableObject {
         return true;
     }
 
+    private bool SetTextData(XElement element, string attributeName, string attributeValue) {
+        switch (attributeName.ToLowerInvariant()) {
+        case "text":
+            ImageManager.SetElementValue(element, attributeValue);
+            break;
+        default:
+            return false;
+        }
+        return true;
+    }
+    
     private bool SetStrokeType(XElement element, string attributeName, string attributeValue) {
         switch (attributeName.ToLowerInvariant()) {
         case "color":

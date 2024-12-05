@@ -18,11 +18,12 @@ public abstract partial class TrackPieceBase : TrackBase {
         get {
             // Find the appropriate image reference for the details we have
             // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackDirection);
+            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackRotation);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
             ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
 
-            Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackDirection} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
+            Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
 
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
@@ -44,4 +45,10 @@ public abstract partial class TrackPieceBase : TrackBase {
             return imageInfo.ApplyStyle(style);
         }
     }
+
+    public override object Clone() {
+        var clone = (TrackPieceBase)MemberwiseClone();
+        return clone;
+    }
+
 }

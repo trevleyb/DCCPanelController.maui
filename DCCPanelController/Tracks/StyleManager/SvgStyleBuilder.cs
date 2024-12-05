@@ -4,7 +4,6 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Tracks.StyleManager;
 
 [Serializable]
-[DebuggerDisplay("{Name}")]
 public class SvgStyle {
     public Dictionary<string, SvgStyleElement> Elements { get; private set; } = [];
 
@@ -13,12 +12,10 @@ public class SvgStyle {
     }
 
     public void AddElement(SvgStyleElement element) {
-        if (Elements.ContainsKey(element.Name)) {
+        if (!Elements.TryAdd(element.Name, element)) {
             foreach (var attr in element.Attributes) {
                 Elements[element.Name].AddOrUpdateAttribute(attr.Key, attr.Value);
             }
-        } else {
-            Elements[element.Name] = element;
         }
     }
 
@@ -60,6 +57,11 @@ public class SvgStyleBuilder {
         buildElement(builder);
         var element = builder.Build();
         _style.AddElement(element);
+        return this;
+    }
+
+    public SvgStyleBuilder AddExistingStyle(SvgStyleBuilder existingStyle) {
+        _style.MergeStyle(existingStyle.Build());
         return this;
     }
 
@@ -109,6 +111,21 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
+    public SvgElementBuilder Color(Color color) {
+        return WithColor(color.ToArgbHex());
+    }
+
+    public SvgElementBuilder Color(string color) {
+        _element.AddOrUpdateAttribute("Color", color);
+        return this;
+    }
+
+    public SvgElementBuilder Text(string text) {
+        _element.AddOrUpdateAttribute("Text", text);
+        return this;
+    }
+
+    
     public SvgElementBuilder Dashed(bool isDashed = true) {
         _element.AddOrUpdateAttribute("Dashed", isDashed.ToString());
         return this;

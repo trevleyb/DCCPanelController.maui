@@ -47,4 +47,9 @@ public partial class TrackPoints : TrackPieceBase, ITrackPiece {
             _ => "PointN"
         };
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

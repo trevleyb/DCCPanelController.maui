@@ -13,4 +13,9 @@ public partial class TrackImage : TrackPieceBase, ITrackSymbol, ITrackPiece {
         SetTrackSymbol("Image");
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

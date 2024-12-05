@@ -15,4 +15,9 @@ public partial class TrackStraightContinuation : TrackContinuationBase, ITrackSy
         AddImageSourceAndRotation(TrackStyleImage.Lines, "ContinuationSL1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Lines, "ContinuationSL2", (45, 0), (135, 90), (225, 180), (315, 270));
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

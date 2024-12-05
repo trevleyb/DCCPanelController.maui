@@ -13,4 +13,9 @@ public partial class TrackStraight : TrackPieceBase, ITrackSymbol, ITrackPiece {
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Straight1", (0, -90), (90, 0), (180, 90), (270, 0));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Straight2", (45, 0), (135, 90), (225, 0), (315, -90));
     }
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }

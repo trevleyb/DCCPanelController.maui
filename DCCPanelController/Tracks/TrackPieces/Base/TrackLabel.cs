@@ -1,33 +1,25 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Tracks.TrackPieces.Base;
 
-public abstract partial class TrackButtonBase : TrackBase {
-    [ObservableProperty] private bool? _buttonState;
-    [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
-
-    protected TrackButtonBase() {
-        PropertyChanged += OnPropertyChanged;
-    }
+public abstract partial class TrackLabelBase : TrackBase {
+    [ObservableProperty] [property: EditableStringProperty(Name = "Circle Label", Description = "Label to display in the Circle")]
+    private string _circlelabel = string.Empty;
 
     protected override SvgImage ActiveImage {
         get {
             // Find the appropriate image reference for the details we have
             // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackImage, TrackRotation);
+            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackRotation);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
             ImageRotation = trackInfo.ImageRotation;
             TrackRotation = trackInfo.TrackRotation;
-
-            Console.WriteLine($"Track: {TrackImage}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
-
-            // Apply the various styles that need to be applied based on the 
-            // details that we have within the context of this track type
-            // --------------------------------------------------------------------------------------------------
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackImage);
+            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal);
+            style = SvgStyles.AddTextToStyle(style, Circlelabel);
             return imageInfo.ApplyStyle(style);
         }
     }
@@ -43,17 +35,8 @@ public abstract partial class TrackButtonBase : TrackBase {
         }
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        // Add code to determine if the state of the button has changed
-        TrackImage = ButtonState switch {
-            true  => TrackStyleImage.Active,
-            false => TrackStyleImage.InActive,
-            _     => TrackStyleImage.Normal
-        };
-    }
-
     public override object Clone() {
-        var clone = (TrackButtonBase)MemberwiseClone();
+        var clone = (TrackLabelBase)MemberwiseClone();
         return clone;
     }
 }

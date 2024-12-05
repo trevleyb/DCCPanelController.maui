@@ -13,4 +13,10 @@ public partial class Sample : TrackPieceBase, ITrackPiece {
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Sample");
     }
+
+    public override ITrackPiece Clone() {
+        var clone = (ITrackPiece)MemberwiseClone();
+        return clone;
+    }
+
 }
