@@ -257,21 +257,23 @@ public partial class ControlPanelView {
         return image;
     }
 
-    public void MarkTrackSelected(ITrackPiece track) {
-        HighlightCell(track.X, track.Y);
-        track.IsSelected = true;
-    }
-
-    public void MarkTrackUnSelected(ITrackPiece track) {
-        UnHighlightCell(track.X,track.Y);
-        track.IsSelected = false;
-    }
-    
     private void OnTrackPieceTapped(ITrackPiece track) {
         if (DesignMode) {
             if (track.IsSelected) MarkTrackUnSelected(track);
             else MarkTrackSelected(track);
         }
+    }
+
+    public void MarkTrackSelected(ITrackPiece track) {
+        HighlightCell(track.X, track.Y);
+        track.IsSelected = true;
+        OnPropertyChanged(nameof(HasSelectedTracks));
+    }
+
+    public void MarkTrackUnSelected(ITrackPiece track) {
+        UnHighlightCell(track.X,track.Y);
+        track.IsSelected = false;
+        OnPropertyChanged(nameof(HasSelectedTracks));
     }
 
     private void ClearSelectedTracks() {
@@ -281,6 +283,7 @@ public partial class ControlPanelView {
                 selectedTrack.IsSelected = false;
             }
         }
+        OnPropertyChanged(nameof(HasSelectedTracks));
     }
 
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {

@@ -1,8 +1,10 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using Compass = DCCPanelController.Helpers.Compass;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
@@ -14,12 +16,12 @@ public abstract partial class TrackBase : ObservableObject, ICloneable {
     [ObservableProperty] private int _height = 1;              // How High is it (Normally 1, Text might be 2)
     [ObservableProperty] private int _layer = 1;               // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece
-    [ObservableProperty] private int _imageRotation;            // What value does the track piece get rotated by
     [ObservableProperty] private int _width = 1;                // How Width is it (normally 1, Text might be 2)
     [ObservableProperty] private int _x;                        // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                        // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private bool _isSelected;
-
+    
+    [JsonIgnore] [ObservableProperty] private int _imageRotation;
+    [JsonIgnore] [ObservableProperty] private bool _isSelected;
     [JsonIgnore] protected abstract SvgImage ActiveImage { get; }
     [JsonIgnore] protected abstract SvgImage SymbolImage { get; }
     [JsonIgnore] public ImageSource Image => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
@@ -32,6 +34,11 @@ public abstract partial class TrackBase : ObservableObject, ICloneable {
         PropertyChanged += OnPropertyChanged;
     }
 
+    public virtual string TrackObjectType {
+        get => GetType().Name;
+        set => _ = value;
+    }
+    
     /// <summary>
     ///     Used to initialise the instance of this class and set up the parameters for any derived instances
     /// </summary>

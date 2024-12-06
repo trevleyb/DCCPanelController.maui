@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -8,9 +9,11 @@ namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
     [ObservableProperty] private Panel _panel;
+    [ObservableProperty] private bool _hasSelectedTracks;
 
     public PanelEditorViewModel(Panel panel) {
         _panel = panel;
+        Panel.PropertyChanged += OnPropertyChanged;
         foreach (var symbol in TrackPieceFactory.TrackPieces) {
             if (symbol is ITrackSymbol trackSymbol) {
                 TrackSymbols.Add(trackSymbol);
@@ -18,7 +21,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
-    public bool HasSelectedTracks => Panel.HasSelectedTracks;
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        Console.WriteLine($"PanelEditorView: PropertyChanged: {sender} - {e.PropertyName}");
+        if (e.PropertyName is nameof(Panel.HasSelectedTracks)) {
+            HasSelectedTracks = Panel.HasSelectedTracks;
+            OnPropertyChanged(nameof(HasSelectedTracks));
+        }        
+    }
+
     public ObservableCollection<ITrackSymbol> TrackSymbols { get; set; } = [];
     public bool TracksOutsideBounds => Panel.Tracks.Any(track => track.X < 0 || track.X >= Panel.Cols || track.Y < 0 || track.Y >= Panel.Rows);
     public void Validate() {

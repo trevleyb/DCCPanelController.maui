@@ -24,6 +24,3 @@ public class Storage {
         }
     }
 }
-
-//[JsonSerializable(typeof(Storage))]
-//internal sealed partial class StorageContext : JsonSerializerContext { }

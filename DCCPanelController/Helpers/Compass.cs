@@ -1,4 +1,4 @@
-namespace DCCPanelController.Model.Tracks;
+namespace DCCPanelController.Helpers;
 
 public static class Compass {
     // Step forward in the Compass

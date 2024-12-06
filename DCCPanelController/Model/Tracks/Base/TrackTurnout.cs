@@ -9,7 +9,7 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
-    private readonly TurnoutsService? _turnoutsService;
+    private TurnoutsService? _turnoutsService;
 
     [ObservableProperty] 
     [property: EditableStringProperty(Name = "ID", Description = "Turnout ID")]
@@ -33,11 +33,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     private Turnout? _turnout;
 
     protected TrackTurnoutBase() {
-        _turnoutsService = MauiProgram.ServiceHelper.GetService<TurnoutsService>();
-        if (_turnoutsService is null) throw new Exception("TurnoutsService is null");
         PropertyChanged += OnPropertyChanged;
     }
 
+    protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
+    
     [JsonIgnore]
     protected override SvgImage ActiveImage {
         get {
@@ -74,7 +74,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is nameof(Id) && _turnoutsService is not null) {
-            _turnout = _turnoutsService.GetTurnoutById(Id);
+            _turnout = TurnoutsService.GetTurnoutById(Id);
             if (_turnout is not null) {
                 _turnout.PropertyChanged += TurnoutOnPropertyChanged;
             }
@@ -102,8 +102,6 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
 public partial class TrackTurnoutAction : ObservableObject {
     [ObservableProperty] private TurnoutStateEnum _closedState = TurnoutStateEnum.Unknown; // State to set the item to when Thrown
-
     [ObservableProperty] private string? _id; // ID of the item to do an action against
-
     [ObservableProperty] private TurnoutStateEnum _thrownState = TurnoutStateEnum.Unknown; // State to set the item to when Closed
 }

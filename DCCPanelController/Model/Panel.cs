@@ -16,10 +16,10 @@ namespace DCCPanelController.Model;
 public partial class Panel : ObservableValidator, ICloneable {
     [ObservableProperty] private ObservableCollection<ITrackPiece> _tracks = [];
 
-    [ObservableProperty] private Color _backgroundColor = Colors.White;
-    [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private string _name = string.Empty;
+    [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
+    [ObservableProperty] private Color _backgroundColor = Colors.White;
 
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _cols = 24;
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _rows = 18;
