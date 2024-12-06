@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Model;
@@ -10,14 +10,12 @@ namespace DCCPanelController.Model;
 /// </summary>
 [DebuggerDisplay("Id: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Turnout : ObservableObject {
-    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
 
-    [JsonPropertyName("Id")] [ObservableProperty]
-    private string? _id;
-
+    [ObservableProperty] private string? _id;
     [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private string? _name;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
 
     /// <summary>
     ///     Represents a Turnout with its current state.
@@ -26,11 +24,7 @@ public partial class Turnout : ObservableObject {
     public Turnout() { }
 }
 
-[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
-[JsonSerializable(typeof(List<Turnout>))]
-internal sealed partial class TurnoutContext : JsonSerializerContext { }
-
-[JsonConverter(typeof(JsonStringEnumConverter<TurnoutStateEnum>))]
+//[JsonConverter(typeof(JsonStringEnumConverter<TurnoutStateEnum>))]
 public enum TurnoutStateEnum {
     Closed,
     Thrown,

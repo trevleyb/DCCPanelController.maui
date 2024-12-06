@@ -13,7 +13,8 @@ public interface ITrackPiece {
     int Width { get; set; }
     int Height { get; set; }
     int Layer { get; }
-
+    bool IsSelected { get; set; }
+    
     ImageSource? Image { get; }
 
     ITrackPiece Clone();

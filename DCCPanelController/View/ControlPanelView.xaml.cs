@@ -1,20 +1,11 @@
 using System.ComponentModel;
-using System.Timers;
-using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Events;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.Tracks.TrackPieces;
 using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using Microsoft.Maui.Layouts;
-using Timer = System.Timers.Timer;
-
-#if MACCATALYST
-using UIKit;
-using AppKit;
-#endif
 
 //
 // This is a COMPONENT that is used inside the operate and panels views
@@ -30,12 +21,9 @@ public partial class ControlPanelView {
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
 
-    private readonly Timer _tapTimer;
-    private ITrackPiece? _selectedTrack;
-    private int _tapCount;
-   
     public EditModeEum EditMode = EditModeEum.Move;
-    
+    public event EventHandler<ITrackPiece>? TrackPieceTapped;
+   
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
     [ObservableProperty] private double _gridSize;
     [ObservableProperty] private double _viewHeight;
@@ -46,13 +34,6 @@ public partial class ControlPanelView {
         InitializeComponent();
         PropertyChanged += OnPropertyChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
-
-        _tapTimer = new Timer {
-            Interval = 300,   // Adjust as needed (300ms works well for distinguishing between single and double taps)
-            AutoReset = false // Make sure it does not repeat automatically
-        };
-
-        _tapTimer.Elapsed += OnTapTimerElapsed;
     }
 
     public Panel? Panel {
@@ -78,8 +59,6 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    public event EventHandler<TrackSelectedEvent>? TrackPieceTapped;
-
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
         Console.WriteLine(bindable.GetType().Name + $" OnShowTrackErrorsChanged to {control.ShowTrackErrors}");
@@ -100,7 +79,6 @@ public partial class ControlPanelView {
             dropRecogniser.Drop += control.DropTrackOnPanel;
             dropRecogniser.DragOver += control.DragOverTrackOnPanel;
             control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
-           
         } else {
             control.DynamicGrid.GestureRecognizers.Clear();
         }
@@ -113,7 +91,7 @@ public partial class ControlPanelView {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
-        if (e.PropertyName is nameof(Image)) RebuildGrid();
+        //if (e.PropertyName is nameof(Image)) RebuildGrid();
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -149,7 +127,6 @@ public partial class ControlPanelView {
     }
 
     public void HighlightCell(int col, int row) {
-        Console.WriteLine($"HighlightCell({col},{row})");
         var border = new Border {
             BackgroundColor = Colors.Transparent,
             Stroke = Colors.Red,
@@ -167,7 +144,6 @@ public partial class ControlPanelView {
     }
 
     public void UnHighlightCell(int col, int row) {
-        Console.WriteLine($"UnHighlightCell({col},{row})");
         var children = DynamicGrid.Children.Where(x => x is Border && x.Parent is Grid).ToList();
         foreach (var child in children) {
             if (DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col) {
@@ -226,6 +202,7 @@ public partial class ControlPanelView {
                         pointImage.SetPoints(validPoints);
                         AddImageToLayout(pointImage, true);
                     }
+                    if (track.IsSelected) MarkTrackSelected(track);
                 }
             }
         }
@@ -279,34 +256,30 @@ public partial class ControlPanelView {
         return image;
     }
 
+    public void MarkTrackSelected(ITrackPiece track) {
+        HighlightCell(track.X, track.Y);
+        track.IsSelected = true;
+    }
+
+    public void MarkTrackUnSelected(ITrackPiece track) {
+        UnHighlightCell(track.X,track.Y);
+        track.IsSelected = false;
+    }
+    
     private void OnTrackPieceTapped(ITrackPiece track) {
-        Console.WriteLine($"Track Piece Tapped: {track.Name} with tapCount={_tapCount}");
-        _selectedTrack = track;
-        _tapCount++; // Increment the tap count whenever a tap is detected
-        Console.WriteLine($"Tapped Event with TapCount now = {_tapCount}");
-
-        if (_tapCount == 1) {
-            // Start or reset the timer when the first tap is detected
-            _tapTimer.Stop(); // Stop in case it's already running
-            _tapTimer.Start();
-        } else if (_tapCount == 2) {
-            Console.WriteLine("Double Tap Detected.");
-
-            // If a second tap is detected within the timer interval, consider it a double tap
-            _tapTimer.Stop(); // Stop the timer since we detected a double tap
-            HandleTrackPieceTapped(_selectedTrack, 2);
-            _tapCount = 0; // Reset tap count
+        if (DesignMode) {
+            if (track.IsSelected) MarkTrackUnSelected(track);
+            else MarkTrackSelected(track);
         }
     }
 
-    private void OnTapTimerElapsed(object? sender, ElapsedEventArgs e) {
-        // When the timer elapses, it's a single tap
-        if (_tapCount == 1 && _selectedTrack is not null) {
-            Console.WriteLine("Single Tap Detected.");
-            HandleTrackPieceTapped(_selectedTrack);
+    private void ClearSelectedTracks() {
+        if (Panel is { HasSelectedTracks: true }) {
+            foreach (var selectedTrack in Panel.SelectedTracks) {
+                UnHighlightCell(selectedTrack.X, selectedTrack.Y);
+                selectedTrack.IsSelected = false;
+            }
         }
-
-        _tapCount = 0; // Reset tap count after handling
     }
 
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
@@ -355,27 +328,23 @@ public partial class ControlPanelView {
                             trackPiece.X = position.Col;
                             trackPiece.Y = position.Row;
                             Panel?.Tracks?.Add(newTrack);
-                            AddImageToLayout(track);            
+                            MarkTrackSelected(newTrack);
                         } else {
                             trackPiece.X = position.Col;
                             trackPiece.Y = position.Row;
                         }
-
-                        // TODO: Can we optimise this and not redraw the whole grid?
-                        RebuildGrid(true);
+                        RebuildGrid();
                         break;
                     case "Symbol":
                         if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
                             Panel?.Tracks?.Add(newPiece);
-
-                            // TODO: Can we optimise this and not redraw the whole grid?
-                            RebuildGrid(true);
+                            MarkTrackSelected(newPiece);
                         } else {
                             Console.WriteLine("Could not create a new Piece as a TrackPiece.");
                         }
-
+                        RebuildGrid();
                         break;
                     default:
                         Console.WriteLine($"Invalid source: '{source}'");
@@ -448,7 +417,7 @@ public partial class ControlPanelView {
     public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
         if (DesignMode) {
             Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
-            TrackPieceTapped?.Invoke(this, new TrackSelectedEvent { Track = track, Taps = taps });
+            TrackPieceTapped?.Invoke(this, track);
         } else {
             if (track is ITrackInteractive) {
                 switch (track) {

@@ -1,4 +1,4 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCWithrottleClient.ServiceHelper;
 
@@ -12,5 +12,5 @@ public partial class WiServer(string? name = null, string? ipAddress = null, int
     public WiServer() : this(string.Empty, string.Empty) { }
 }
 
-[JsonSerializable(typeof(WiServer))]
-internal sealed partial class WiServerStateContext : JsonSerializerContext { }
+//[JsonSerializable(typeof(WiServer))]
+//internal sealed partial class WiServerStateContext : JsonSerializerContext { }

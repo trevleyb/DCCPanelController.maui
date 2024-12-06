@@ -1,4 +1,3 @@
-using DCCPanelController.Events;
 using DCCPanelController.Model;
 using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using DCCPanelController.View.PropertPages;
@@ -20,9 +19,7 @@ public partial class PanelEditorPage : ContentPage {
         Panel = _panelsViewModel.SelectedPanel;
         ViewModel = new PanelEditorViewModel(Panel);
         BindingContext = ViewModel;
-
         InitializeComponent();
-        PanelView.TrackPieceTapped += OnTrackPieceTapped;
     }
 
     private Panel Panel { get; }
@@ -51,16 +48,13 @@ public partial class PanelEditorPage : ContentPage {
     protected override bool OnBackButtonPressed() {
         if (_editState == EditState.Changed) {
             Console.WriteLine("Panel was changed.");
-
-            //    var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-            //    if (answer) PanelsViewModel.Save();
-            //    PanelsViewModel.Load();
+                var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
+                //if (answer) PanelsViewModel.Save();
+                //PanelsViewModel.Load();
         }
-
         return base.OnBackButtonPressed();
     }
 
-    #region Support Drag and Drop of the Symbols from the Symbol Pane
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         Console.WriteLine("OnSymbolDragStarting");
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
@@ -68,33 +62,6 @@ public partial class PanelEditorPage : ContentPage {
             e.Data.Properties.Add("Source", "Symbol");
         }
     }
-    #endregion Drag and drop
-
-    #region Handle Selecting and Actioning on a Track including multiple selections
-    /// <summary>
-    ///     When a TrackPiece is selected, track it and keep it and tell the
-    ///     underlying panel to highlight it. This is to support future MULTI-SELECT
-    ///     mode.
-    /// </summary>
-    private void OnTrackPieceTapped(object? sender, TrackSelectedEvent trackSelectedEvent) {
-        switch (trackSelectedEvent.Taps) {
-        case 1:
-            _editState = EditState.Changed;
-            trackSelectedEvent.Track?.RotateRight();
-            break;
-        case 2:
-            _editState = EditState.Changed;
-            if (trackSelectedEvent.Track is { } trackPiece) {
-                Navigation.PushModalAsync(new DynamicPropertyPage(trackPiece));
-            }
-
-            break;
-        }
-
-        // We need to tell it to only redraw the item not the whole view
-        //PanelView.RebuildGrid(true);
-    }
-    #endregion
 
     private void SavePanelAndExit(object? sender, EventArgs e) {
         _panelsViewModel.Save();
@@ -112,12 +79,26 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void ShowPropertyPage(object? sender, EventArgs e) {
+        _ = ShowPropertyPageAsync(sender, e);
+    }
+
+    private async Task ShowPropertyPageAsync(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
         _editState = EditState.Changed;
-        Navigation.PushModalAsync(new PanelPropertyPage(Panel));
+        if (Panel.HasSelectedTracks) {
+            foreach (var track in Panel.SelectedTracks) {
+                await Navigation.PushModalAsync(new DynamicPropertyPage(track));
+                PanelView.MarkTrackUnSelected(track);
+            }
+        } else {
+            await Navigation.PushModalAsync(new PanelPropertyPage(Panel));
+        }
+        PanelView?.RebuildGrid(true);
     }
 
+    
+    
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
         Console.WriteLine("Drop Track In Trash");
         e.Data.Properties.TryGetValue("Source", out var source);
@@ -138,6 +119,14 @@ public partial class PanelEditorPage : ContentPage {
     private void DropTrackInTrashHoverLeave(object? sender, DragEventArgs e) {
         Console.WriteLine("Drop Track In Trash Hover Leave");
         DragTrashIcon.BackgroundColor = Colors.White;
+    }
+
+    private void RotateLeft(object? sender, EventArgs e) {
+        foreach (var track in Panel.SelectedTracks) track.RotateLeft();
+    }
+
+    private void RotateRight(object? sender, EventArgs e) {
+        foreach (var track in Panel.SelectedTracks) track.RotateRight();
     }
 }
 

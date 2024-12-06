@@ -19,11 +19,24 @@
             x:Name="EditModeToolItem"/>
 
         <ToolbarItem
+            ToolTipProperties.Text="Rotate Left"
+            Clicked="RotateLeft"
+            IconImageSource="rotate_counterclockwise.png"
+            Text="Rotate Left" IsEnabled="{Binding Panel.HasSelectedTracks, Source={x:Reference PanelView}, FallbackValue=false}"/>
+
+        <ToolbarItem
+            ToolTipProperties.Text="Rotate Right"
+            Clicked="RotateRight"
+            IconImageSource="rotate_clockwise.png"
+            Text="Rotate Right" IsEnabled="{Binding Panel.HasSelectedTracks, Source={x:Reference PanelView}, FallbackValue=false}"/>
+        
+        <ToolbarItem
             ToolTipProperties.Text="Save this Panel"
             Clicked="SavePanelAndExit"
             IconImageSource="save.png"
             Text="Save"
             x:Name="SaveButton"/>
+        
         <ToolbarItem
             Clicked="ToggleGrid"
             ToolTipProperties.Text="Toggle the Grid On|Off"

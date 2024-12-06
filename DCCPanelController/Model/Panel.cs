@@ -1,9 +1,9 @@
 using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.Tracks.TrackPieces.Interfaces;
+using Newtonsoft.Json;
 
 namespace DCCPanelController.Model;
 
@@ -18,11 +18,14 @@ public partial class Panel : ObservableValidator, ICloneable {
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private int _sortOrder;
 
-    [NotifyPropertyChangedFor(nameof(Panel.PanelRatio))] [ObservableProperty] private int _cols = 24;
-    [NotifyPropertyChangedFor(nameof(Panel.PanelRatio))] [ObservableProperty] private int _rows = 18;
+    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _cols = 24;
+    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _rows = 18;
 
     [JsonIgnore] public string PanelRatio => Panel.CalculateRatio(Cols, Rows);
     [JsonIgnore] public Panel? Copy => Clone() as Panel;
+    
+    [JsonIgnore] public bool HasSelectedTracks => this.Tracks.Any(t => t.IsSelected);
+    [JsonIgnore] public List<ITrackPiece> SelectedTracks => this.Tracks.Where(t => t.IsSelected).ToList() ?? [];
 
     /// <summary>
     ///     Create a deep copy of the Panel object.
@@ -55,6 +58,3 @@ public partial class Panel : ObservableValidator, ICloneable {
         }
     }
 }
-
-[JsonSerializable(typeof(List<Panel>))]
-internal sealed partial class PanelStateContext : JsonSerializerContext { }

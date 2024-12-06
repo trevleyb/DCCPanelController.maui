@@ -1,12 +1,10 @@
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Model;
 
 public partial class Route : ObservableObject {
-    [JsonPropertyName("Id")] [ObservableProperty]
-    private string? _id;
-
+    [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
@@ -17,13 +15,14 @@ public partial class Route : ObservableObject {
     public Route() { }
 }
 
-[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
-[JsonSerializable(typeof(List<Route>))]
-internal sealed partial class RouteContext : JsonSerializerContext { }
-
-[JsonConverter(typeof(JsonStringEnumConverter<RouteStateEnum>))]
 public enum RouteStateEnum {
     Active,
     Inactive,
     Unknown
 }
+
+//[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
+//[JsonSerializable(typeof(List<Route>))]
+//internal sealed partial class RouteContext : JsonSerializerContext { }
+//
+//[JsonConverter(typeof(JsonStringEnumConverter<RouteStateEnum>))]

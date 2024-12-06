@@ -17,7 +17,8 @@ public abstract partial class TrackBase : ObservableObject, ICloneable {
     [ObservableProperty] private int _width = 1;                // How Width is it (normally 1, Text might be 2)
     [ObservableProperty] private int _x;                        // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                        // What Grid Position (Vertical) is this component?
-
+    [ObservableProperty] private bool _isSelected;
+    
     protected TrackBase() {
         Initialise();
         OnPropertyChanged(nameof(Image));

@@ -12,8 +12,11 @@ public partial class PanelPropertyPage : ContentPage {
     private void Order_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (sender is Entry field) {
             if (int.TryParse(e.NewTextValue, out var order)) {
-                if (order >= 99) field.Text = "99";
-                if (order <= 0) field.Text = "0";
+                field.Text = order switch {
+                    >= 99 => "99",
+                    <= 0  => "0",
+                    _     => field.Text
+                };
             } else {
                 field.Text = e.NewTextValue;
             }

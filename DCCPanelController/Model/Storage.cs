@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace DCCPanelController.Model;
 
@@ -8,9 +8,9 @@ namespace DCCPanelController.Model;
 /// </summary>
 public class Storage {
     public Settings Settings { get; set; } = new();
-    public ObservableCollection<Turnout> Turnouts { get; set; } = new();
-    public ObservableCollection<Route> Routes { get; set; } = new();
-    public ObservableCollection<Panel> Panels { get; set; } = new();
+    public ObservableCollection<Turnout> Turnouts { get; set; } = [];
+    public ObservableCollection<Route> Routes { get; set; } = [];
+    public ObservableCollection<Panel> Panels { get; set; } = [];
 
     public void ReOrderPanels() {
         if (Panels.Count <= 1) {
@@ -25,5 +25,5 @@ public class Storage {
     }
 }
 
-[JsonSerializable(typeof(Storage))]
-internal sealed partial class StorageContext : JsonSerializerContext { }
+//[JsonSerializable(typeof(Storage))]
+//internal sealed partial class StorageContext : JsonSerializerContext { }

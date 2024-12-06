@@ -63,15 +63,13 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             if (!string.IsNullOrEmpty(fileName)) {
                 if (_viewModel is { SettingsService: not null } settings) {
                     var loadedJson = await LoadJsonFromFile(fileName);
-                    var settingsLoaded = settings.SettingsService.FromJsonString(loadedJson);
-                    if (settingsLoaded is not null) {
-                        settings.Settings = settingsLoaded;
-                        await DisplayAlert("Success", "File Loaded.", "OK");
-                    } else {
-                        throw new Exception("File could not be loaded.");
-                    }
+                    settings.SettingsService.UploadNewSettings(loadedJson);
+                    await DisplayAlert("Success", "File Loaded.", "OK");
+                } else {
+                    throw new Exception("File could not be loaded.");
                 }
             }
+
         } catch (Exception ex) {
             await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
         }
@@ -95,7 +93,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         }
     }
 
-    private async Task<string> PromptUserForConfigFile() {
+    private static async Task<string> PromptUserForConfigFile() {
         var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
         if (result is not null) {
             Console.WriteLine("Uploading: " + result.FullPath);
@@ -105,7 +103,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         return string.Empty;
     }
 
-    private async Task<string> PromptUserForSaveLocation() {
+    private static async Task<string> PromptUserForSaveLocation() {
         var result = await FolderPicker.PickAsync(new CancellationToken());
         result.EnsureSuccess();
         return result.Folder.Path ?? string.Empty;
@@ -113,9 +111,8 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     // Method to save the JSON file to the specified location
     private async Task SaveJsonToFile(string filePath, string jsonData) {
-        using (var streamWriter = new StreamWriter(filePath, false)) {
-            await streamWriter.WriteAsync(jsonData);
-        }
+        await using var streamWriter = new StreamWriter(filePath, false);
+        await streamWriter.WriteAsync(jsonData);
     }
 
     // Method to save the JSON file to the specified location
