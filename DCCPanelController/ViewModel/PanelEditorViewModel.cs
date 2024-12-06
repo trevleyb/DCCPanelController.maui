@@ -1,8 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks;
-using DCCPanelController.Tracks.TrackPieces.Interfaces;
 
 namespace DCCPanelController.ViewModel;
 
@@ -18,6 +18,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
+    public bool HasSelectedTracks => Panel.HasSelectedTracks;
     public ObservableCollection<ITrackSymbol> TrackSymbols { get; set; } = [];
     public bool TracksOutsideBounds => Panel.Tracks.Any(track => track.X < 0 || track.X >= Panel.Cols || track.Y < 0 || track.Y >= Panel.Rows);
     public void Validate() {

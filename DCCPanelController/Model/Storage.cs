@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace DCCPanelController.Model;
 

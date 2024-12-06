@@ -3,8 +3,8 @@ using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Helpers.EditableProperties;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using DCCPanelController.View.Components;
 
 namespace DCCPanelController.ViewModel;

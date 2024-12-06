@@ -1,0 +1,60 @@
+using System.Text.Json.Serialization;
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.EditableProperties;
+using DCCPanelController.Tracks.ImageManager;
+using DCCPanelController.Tracks.StyleManager;
+
+namespace DCCPanelController.Model.Tracks.Base;
+
+public abstract partial class TrackPieceBase : TrackBase {
+    [ObservableProperty] 
+    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
+    private bool _isHidden;
+
+    [ObservableProperty] 
+    private bool _isOccupied;
+
+    [ObservableProperty] 
+    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleType.Mainline, TrackStyleType.Branchline })]
+    private TrackStyleType _trackType = TrackStyleType.Mainline;
+
+    [JsonIgnore]
+    protected override SvgImage ActiveImage {
+        get {
+            // Find the appropriate image reference for the details we have
+            // ---------------------------------------------------------------------------------------------------
+            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackRotation);
+            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+            ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
+
+            Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
+
+            // Apply the various styles that need to be applied based on the 
+            // details that we have within the context of this track type
+            // --------------------------------------------------------------------------------------------------
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal);
+            if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden);
+            if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied);
+            return imageInfo.ApplyStyle(style);
+        }
+    }
+
+    [JsonIgnore]
+    protected override SvgImage SymbolImage {
+        get {
+            // Find the appropriate image reference for the details we have
+            // ---------------------------------------------------------------------------------------------------
+            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
+            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal);
+            return imageInfo.ApplyStyle(style);
+        }
+    }
+
+    public override object Clone() {
+        var clone = (TrackPieceBase)MemberwiseClone();
+        return clone;
+    }
+
+}

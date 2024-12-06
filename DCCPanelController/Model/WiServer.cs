@@ -1,6 +1,6 @@
-using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCWithrottleClient.ServiceHelper;
+using System.Text.Json.Serialization;
 
 namespace DCCPanelController.Model;
 

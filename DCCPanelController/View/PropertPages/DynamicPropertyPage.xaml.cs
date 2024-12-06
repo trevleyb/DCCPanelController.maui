@@ -1,4 +1,4 @@
-using DCCPanelController.Tracks.TrackPieces.Interfaces;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.PropertPages;

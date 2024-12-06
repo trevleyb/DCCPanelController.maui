@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Text.Json;
 using DCCPanelController.Model;
-using Newtonsoft.Json;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace DCCPanelController.Services;
@@ -9,15 +8,10 @@ namespace DCCPanelController.Services;
 public class SettingsService {
     private const string StorageFilename = "DCCPanelController.json";
     private readonly Storage _storage;
-
-    private JsonSerializerSettings _jsonSettings =>
-        new() {
-            TypeNameHandling = TypeNameHandling.Auto,
-            Formatting = Formatting.Indented,
-        };
-
+    private readonly JsonSerializerOptions? _options = new() { WriteIndented = true };
+    
     public SettingsService() {
-        _storage = Load(StorageFilename);
+        _storage = Load();
         _storage.ReOrderPanels();
     }
 
@@ -26,12 +20,12 @@ public class SettingsService {
     public ObservableCollection<Turnout> Turnouts => _storage.Turnouts;
     public ObservableCollection<Route> Routes => _storage.Routes;
 
-    public string ToJsonString() => JsonConvert.SerializeObject(_storage, Formatting.Indented);
-    public Storage? FromJsonString(string jsonString) => JsonConvert.DeserializeObject<Storage?>(jsonString, _jsonSettings);
+    public string ToJsonString() => JsonSerializer.Serialize(_storage, _options);
+    public Storage? FromJsonString(string jsonString) => JsonSerializer.Deserialize<Storage?>(jsonString, _options);
 
     public void Save(string fileName = StorageFilename) {
-        var jsonString = ToJsonString();
         try {
+            var jsonString = ToJsonString();
             SaveJson(fileName, jsonString);
         } catch (Exception ex) {
             Console.WriteLine($"Unable to SAVE Data: {ex.Message}");

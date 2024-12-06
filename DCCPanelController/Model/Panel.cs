@@ -1,9 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
-using DCCPanelController.Tracks.TrackPieces.Interfaces;
-using Newtonsoft.Json;
 
 namespace DCCPanelController.Model;
 
@@ -21,10 +24,9 @@ public partial class Panel : ObservableValidator, ICloneable {
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _cols = 24;
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _rows = 18;
 
-    [JsonIgnore] public string PanelRatio => Panel.CalculateRatio(Cols, Rows);
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public Panel? Copy => Clone() as Panel;
-    
-    [JsonIgnore] public bool HasSelectedTracks => this.Tracks.Any(t => t.IsSelected);
+    [JsonIgnore] public bool HasSelectedTracks => Tracks.Any(t => t.IsSelected);
     [JsonIgnore] public List<ITrackPiece> SelectedTracks => this.Tracks.Where(t => t.IsSelected).ToList() ?? [];
 
     /// <summary>

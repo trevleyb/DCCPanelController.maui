@@ -1,4 +1,4 @@
-using DCCPanelController.Tracks.TrackPieces;
+using DCCPanelController.Model.Tracks;
 
 namespace DCCPanelController.Tracks.ImageManager;
 

@@ -1,5 +1,5 @@
 using System.Reflection;
-using DCCPanelController.Tracks.TrackPieces.Interfaces;
+using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 

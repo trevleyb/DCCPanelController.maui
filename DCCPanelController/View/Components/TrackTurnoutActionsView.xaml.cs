@@ -1,5 +1,5 @@
 using System.Collections.ObjectModel;
-using TrackTurnoutAction = DCCPanelController.Tracks.TrackPieces.Base.TrackTurnoutAction;
+using TrackTurnoutAction = DCCPanelController.Model.Tracks.Base.TrackTurnoutAction;
 
 namespace DCCPanelController.View.Components;
 

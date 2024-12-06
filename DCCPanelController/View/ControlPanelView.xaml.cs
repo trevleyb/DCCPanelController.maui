@@ -2,9 +2,9 @@ using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
-using DCCPanelController.Tracks.TrackPieces;
-using DCCPanelController.Tracks.TrackPieces.Interfaces;
 using Microsoft.Maui.Layouts;
 
 //
@@ -21,6 +21,7 @@ public partial class ControlPanelView {
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
 
+    public bool HasSelectedTracks => Panel?.HasSelectedTracks ?? false;
     public EditModeEum EditMode = EditModeEum.Move;
     public event EventHandler<ITrackPiece>? TrackPieceTapped;
    
@@ -340,6 +341,7 @@ public partial class ControlPanelView {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
                             Panel?.Tracks?.Add(newPiece);
+                            ClearSelectedTracks();
                             MarkTrackSelected(newPiece);
                         } else {
                             Console.WriteLine("Could not create a new Piece as a TrackPiece.");

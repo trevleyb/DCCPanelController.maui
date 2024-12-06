@@ -1,6 +1,6 @@
 using System.Diagnostics;
-using Newtonsoft.Json;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization;
 
 namespace DCCPanelController.Model;
 

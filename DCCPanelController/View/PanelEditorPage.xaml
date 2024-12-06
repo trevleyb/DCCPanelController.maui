@@ -8,7 +8,7 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:interfaces="clr-namespace:DCCPanelController.Tracks.TrackPieces.Interfaces">
+    xmlns:interfaces="clr-namespace:DCCPanelController.Model.Tracks.Interfaces">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -22,13 +22,13 @@
             ToolTipProperties.Text="Rotate Left"
             Clicked="RotateLeft"
             IconImageSource="rotate_counterclockwise.png"
-            Text="Rotate Left" IsEnabled="{Binding Panel.HasSelectedTracks, Source={x:Reference PanelView}, FallbackValue=false}"/>
+            Text="Rotate Left" IsEnabled="{Binding HasSelectedTracks, FallbackValue=false}"/>
 
         <ToolbarItem
             ToolTipProperties.Text="Rotate Right"
             Clicked="RotateRight"
             IconImageSource="rotate_clockwise.png"
-            Text="Rotate Right" IsEnabled="{Binding Panel.HasSelectedTracks, Source={x:Reference PanelView}, FallbackValue=false}"/>
+            Text="Rotate Right" IsEnabled="{Binding HasSelectedTracks, FallbackValue=false}"/>
         
         <ToolbarItem
             ToolTipProperties.Text="Save this Panel"
