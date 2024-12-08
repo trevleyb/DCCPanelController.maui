@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.View.PropertPages;
@@ -8,32 +9,31 @@ namespace DCCPanelController.View;
 public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
-    private readonly PanelsViewModel _panelsViewModel;
     private EditModeEum _editMode = EditModeEum.Move;
     private EditState _editState = EditState.None;
-
-    public PanelEditorPage(PanelsViewModel panelsViewModel) {
-        ArgumentNullException.ThrowIfNull(panelsViewModel, nameof(panelsViewModel));
-        ArgumentNullException.ThrowIfNull(panelsViewModel.SelectedPanel, nameof(panelsViewModel.SelectedPanel));
-        _panelsViewModel = panelsViewModel;
-        Panel = _panelsViewModel.SelectedPanel;
-        ViewModel = new PanelEditorViewModel(Panel);
-        BindingContext = ViewModel;
-        InitializeComponent();
-    }
 
     private Panel Panel { get; }
     private PanelEditorViewModel ViewModel { get; }
 
-    private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
-        if (track.IsSelected) PanelView.MarkTrackUnSelected(track); else PanelView.MarkTrackSelected(track);
-        OnPropertyChanged(nameof(_panelsViewModel.));
+    public PanelEditorPage(Panel panel) {
+        ArgumentNullException.ThrowIfNull(panel, nameof(Panel));
+        ViewModel = new PanelEditorViewModel(panel);
+        Panel = panel;
+        BindingContext = ViewModel;
+        InitializeComponent();
+        PanelView.TrackPieceTapped  += PanelView_OnTrackPieceTapped;
+        PanelView.TrackPieceChanged += PanelView_OnTrackPieceChanged;
     }
-    
-    //protected override void OnNavigatedTo(NavigatedToEventArgs args) {
-    //    base.OnNavigatedTo(args);
-    //    PanelView.RebuildGrid(true);
-    //}
+
+    private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
+        Console.WriteLine("PanelView_OnTrackPieceChanged: Track Piece Changed");
+        ViewModel.HasSelectedTracks = Panel.HasSelectedTracks;
+    }
+
+    private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
+        Console.WriteLine($"In Edit Mode: Track {track.Name} was tapped");
+        if (track.IsSelected) PanelView.MarkTrackUnSelected(track); else PanelView.MarkTrackSelected(track);
+    }
 
     private void ChangeEditMode(object? sender, EventArgs e) {
         _editMode = _editMode switch {
@@ -69,8 +69,8 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void SavePanelAndExit(object? sender, EventArgs e) {
-        _panelsViewModel.Save();
         _editState = EditState.Saved;
+        Navigation.PopModalAsync();
     }
 
     private void ToggleGrid(object? sender, EventArgs e) {

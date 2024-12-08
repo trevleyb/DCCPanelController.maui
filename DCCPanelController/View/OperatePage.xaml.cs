@@ -21,8 +21,8 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
     
     private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece e) {
+        Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
         if (e is not null and ITrackInteractive trackPieceTapped) {
-            Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
             trackPieceTapped.Clicked();
         }
     }

@@ -13,13 +13,13 @@ namespace DCCPanelController.View;
 public partial class ControlPanelView {
 
     public event EventHandler<ITrackPiece>? TrackPieceTapped;
+    public event EventHandler<ITrackPiece>? TrackPieceChanged;
 
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null, BindingMode.OneTime, propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
 
-    public bool HasSelectedTracks => Panel?.HasSelectedTracks ?? false;
     public EditModeEum EditMode = EditModeEum.Move;
    
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
@@ -30,7 +30,6 @@ public partial class ControlPanelView {
     public ControlPanelView() {
         BindingContext = this;
         InitializeComponent();
-        PropertyChanged += OnPropertyChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
 
@@ -56,6 +55,11 @@ public partial class ControlPanelView {
 
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
+
+    private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
+        Console.WriteLine($"Track was changed: {e.PropertyName}");
+        if (sender is ITrackPiece track) TrackPieceChanged?.Invoke(this,track);
+    }
 
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
@@ -87,11 +91,6 @@ public partial class ControlPanelView {
         Console.WriteLine(bindable.GetType().Name + $" OnPanelChanged to {control.Panel?.Name}");
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
-        //if (e.PropertyName is nameof(Image)) RebuildGrid();
-    }
-
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         RebuildGrid();
     }
@@ -120,11 +119,15 @@ public partial class ControlPanelView {
             }
         }
 
-        if (DesignMode) AddOutlineToGrid();
+        AddOutlineToGrid();
         AddTrackPiecesToGrid();
     }
 
+    /// <summary>
+    /// Only highlight a cell if we are in Design Mode
+    /// </summary>
     public void HighlightCell(int col, int row) {
+        if (!DesignMode) return;
         var border = new Border {
             BackgroundColor = Colors.Transparent,
             Stroke = Colors.Red,
@@ -141,7 +144,12 @@ public partial class ControlPanelView {
         DynamicGrid.Children.Add(border);
     }
 
+    /// <summary>
+    /// Only UnHighlight a cell if we are operating in Design mode
+    /// If we are in Operate mode, then we do not highlight cells so this has no function. 
+    /// </summary>
     public void UnHighlightCell(int col, int row) {
+        if (!DesignMode) return;
         var children = DynamicGrid.Children.Where(x => x is Border && x.Parent is Grid).ToList();
         foreach (var child in children) {
             if (DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col) {
@@ -232,7 +240,7 @@ public partial class ControlPanelView {
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
         var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += (s, e) => OnTrackPieceTapped(track);
+        tapGesture.Tapped += (_, _) => TrackPieceTapped?.Invoke(this, track);
         tapGesture.NumberOfTapsRequired = 1;
         image.GestureRecognizers.Add(tapGesture);
 
@@ -250,37 +258,24 @@ public partial class ControlPanelView {
         DynamicGrid.SetRow(image, track.Y);
         DynamicGrid.SetColumn(image, track.X);
         DynamicGrid.Children.Add(image);
-        track.PropertyChanged += OnPropertyChanged;
+        track.PropertyChanged += OnTrackPieceChanged;
         return image;
     }
-
-    private void OnTrackPieceTapped(ITrackPiece track) {
-        if (DesignMode) {
-            if (track.IsSelected) MarkTrackUnSelected(track);
-            else MarkTrackSelected(track);
-        }
-    }
-
+    
     public void MarkTrackSelected(ITrackPiece track) {
         HighlightCell(track.X, track.Y);
         track.IsSelected = true;
-        OnPropertyChanged(nameof(HasSelectedTracks));
     }
 
     public void MarkTrackUnSelected(ITrackPiece track) {
         UnHighlightCell(track.X,track.Y);
         track.IsSelected = false;
-        OnPropertyChanged(nameof(HasSelectedTracks));
     }
 
     private void ClearSelectedTracks() {
-        if (Panel is { HasSelectedTracks: true }) {
-            foreach (var selectedTrack in Panel.SelectedTracks) {
-                UnHighlightCell(selectedTrack.X, selectedTrack.Y);
-                selectedTrack.IsSelected = false;
-            }
+        if (Panel is not null) {
+            foreach (var track in Panel.SelectedTracks.Where(x => x.IsSelected)) MarkTrackUnSelected(track);
         }
-        OnPropertyChanged(nameof(HasSelectedTracks));
     }
 
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
@@ -412,25 +407,25 @@ public partial class ControlPanelView {
         ViewHeight = GridSize * Rows;
     }
 
-    public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
-        TrackPieceTapped?.Invoke(this, track);
-        if (DesignMode) {
-            Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
-        } else {
-            // if (track is ITrackInteractive) {
-            //     switch (track) {
-            //     case ITrackButton button:
-                    Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
-                //     button.Clicked();
-                //     break;
-                // case ITrackTurnout turnout:
-                //     Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
-                //     turnout.Clicked();
-                //     break;
-                // }
-            //}
-        }
-    }
+    // public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
+    //     TrackPieceTapped?.Invoke(this, track);
+    //     if (DesignMode) {
+    //         Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
+    //     } else {
+    //         // if (track is ITrackInteractive) {
+    //         //     switch (track) {
+    //         //     case ITrackButton button:
+    //                 Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
+    //             //     button.Clicked();
+    //             //     break;
+    //             // case ITrackTurnout turnout:
+    //             //     Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
+    //             //     turnout.Clicked();
+    //             //     break;
+    //             // }
+    //         //}
+    //     }
+    // }
 }
 
 /// <summary>

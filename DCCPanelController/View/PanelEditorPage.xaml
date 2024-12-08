@@ -22,13 +22,13 @@
             ToolTipProperties.Text="Rotate Left"
             Clicked="RotateLeft"
             IconImageSource="rotate_counterclockwise.png"
-            Text="Rotate Left" IsEnabled="{Binding HasSelectedTracks, Mode=OneWay}"/>
+            Text="Rotate Left" IsEnabled="{Binding HasSelectedTracks}"/>
 
         <ToolbarItem
             ToolTipProperties.Text="Rotate Right"
             Clicked="RotateRight"
             IconImageSource="rotate_clockwise.png"
-            Text="Rotate Right" IsEnabled="{Binding HasSelectedTracks, Mode=OneWay}"/>
+            Text="Rotate Right" IsEnabled="{Binding HasSelectedTracks}"/>
         
         <ToolbarItem
             ToolTipProperties.Text="Save this Panel"
@@ -43,6 +43,7 @@
             IconImageSource="grid.png"
             Text="Show Grid"
             x:Name="GridButton" />
+        
         <ToolbarItem
             Clicked="ToggleValidation"
             ToolTipProperties.Text="Show Validation on connections."

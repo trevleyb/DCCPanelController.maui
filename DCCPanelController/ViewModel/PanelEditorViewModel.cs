@@ -13,7 +13,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public PanelEditorViewModel(Panel panel) {
         _panel = panel;
-        Panel.PropertyChanged += OnPropertyChanged;
+        PropertyChanged += OnPropertyChanged;
+        Panel.PropertyChanged += OnPanelPropertyChanged;
         foreach (var symbol in TrackPieceFactory.TrackPieces) {
             if (symbol is ITrackSymbol trackSymbol) {
                 TrackSymbols.Add(trackSymbol);
@@ -23,10 +24,10 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"PanelEditorView: PropertyChanged: {sender} - {e.PropertyName}");
-        if (e.PropertyName is nameof(Panel.HasSelectedTracks)) {
-            HasSelectedTracks = Panel.HasSelectedTracks;
-            OnPropertyChanged(nameof(HasSelectedTracks));
-        }        
+    }
+
+    private void OnPanelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        Console.WriteLine($"PanelEditorView: PanelPropertyChanged: {sender} - {e.PropertyName}");
     }
 
     public ObservableCollection<ITrackSymbol> TrackSymbols { get; set; } = [];

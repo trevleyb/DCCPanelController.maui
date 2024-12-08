@@ -9,7 +9,6 @@ namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
-    [ObservableProperty] private Panel? _selectedPanel;
 
     public PanelsViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();

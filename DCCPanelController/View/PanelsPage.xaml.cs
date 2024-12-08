@@ -14,15 +14,15 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
         InitializeComponent();
     }
 
-    protected override void OnAppearing() {
-        base.OnAppearing();
-        if (_viewModel.SelectedPanel is not null) {
-            Console.WriteLine($"On Appearing Selected Panel: {_viewModel.SelectedPanel.Name}");
-            _viewModel.OnEditorPageFinished(_viewModel.SelectedPanel);
-        }
-
-        _viewModel.SelectedPanel = null;
-    }
+    // protected override void OnAppearing() {
+    //     base.OnAppearing();
+    //     if (_viewModel.SelectedPanel is not null) {
+    //         Console.WriteLine($"On Appearing Selected Panel: {_viewModel.SelectedPanel.Name}");
+    //         _viewModel.OnEditorPageFinished(_viewModel.SelectedPanel);
+    //     }
+    //
+    //     _viewModel.SelectedPanel = null;
+    // }
 
     protected override void OnDisappearing() {
         base.OnDisappearing();
@@ -57,9 +57,8 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
         Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
         IsBusy = true;
         try {
-            _viewModel.SelectedPanel = panel;
-            Console.WriteLine($"Launch Editor Selected Panel: {_viewModel.SelectedPanel.Name}");
-            var editorPage = new PanelEditorPage(_viewModel);
+            Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
+            var editorPage = new PanelEditorPage(panel);
             await Navigation.PushAsync(editorPage);
         } catch (Exception ex) {
             Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
