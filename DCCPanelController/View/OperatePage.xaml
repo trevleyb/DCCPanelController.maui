@@ -74,6 +74,7 @@
                 <CarouselView.ItemTemplate>
                     <DataTemplate>
                         <view:ControlPanelView
+                            x:Name="PanelView"
                             x:DataType="model:Panel"
                             Panel="{Binding .}"
                             BackgroundColor="White"

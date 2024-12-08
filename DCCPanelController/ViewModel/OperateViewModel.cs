@@ -7,18 +7,25 @@ using DCCPanelController.Services;
 namespace DCCPanelController.ViewModel;
 
 public partial class OperateViewModel : BaseViewModel {
-    private readonly SettingsService _settingsService;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
 
     public OperateViewModel() {
-        _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
-        PropertyChanged += OnPropertyChanged;
-
-        Panels = _settingsService.Panels;
+        var settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
+        Panels = settingsService.Panels;
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }
+        PropertyChanged += OnPropertyChanged;
+    }
+    
+    public string SetActivePanel(Panel? panelCarouselCurrentItem) {
+        SelectedPanel = panelCarouselCurrentItem;
+        return SelectedPanel?.Name ?? "Control Panel";
+    }
+
+    private void SelectedPanelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        throw new NotImplementedException();
     }
 
     public ObservableCollection<Panel> Panels { get; set; }
