@@ -77,6 +77,7 @@
                             x:Name="PanelView"
                             x:DataType="model:Panel"
                             Panel="{Binding .}"
+                            TrackPieceTapped="PanelView_OnTrackPieceTapped"
                             BackgroundColor="White"
                             HorizontalOptions="Fill"
                             VerticalOptions="Fill" />

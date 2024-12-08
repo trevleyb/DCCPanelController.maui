@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
@@ -18,7 +19,14 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             OnPropertyChanged(nameof(viewModel.SelectedPanel));
         }
     }
-
+    
+    private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece e) {
+        if (e is not null and ITrackInteractive trackPieceTapped) {
+            Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
+            trackPieceTapped.Clicked();
+        }
+    }
+    
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
@@ -26,4 +34,5 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new InstructionsPage());
     }
+
 }

@@ -25,6 +25,11 @@ public partial class PanelEditorPage : ContentPage {
     private Panel Panel { get; }
     private PanelEditorViewModel ViewModel { get; }
 
+    private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
+        if (track.IsSelected) PanelView.MarkTrackUnSelected(track); else PanelView.MarkTrackSelected(track);
+        OnPropertyChanged(nameof(_panelsViewModel.));
+    }
+    
     //protected override void OnNavigatedTo(NavigatedToEventArgs args) {
     //    base.OnNavigatedTo(args);
     //    PanelView.RebuildGrid(true);
@@ -96,8 +101,6 @@ public partial class PanelEditorPage : ContentPage {
         }
         PanelView?.RebuildGrid(true);
     }
-
-    
     
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
         Console.WriteLine("Drop Track In Trash");
