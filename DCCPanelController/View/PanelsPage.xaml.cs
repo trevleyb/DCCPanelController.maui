@@ -6,11 +6,11 @@ using OnScreenSizeMarkup.Maui.Helpers;
 namespace DCCPanelController.View;
 
 public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
-    private readonly PanelsViewModel _viewModel;
+    public readonly PanelsViewModel ViewModel;
 
     public PanelsPage() {
-        _viewModel = new PanelsViewModel();
-        BindingContext = _viewModel;
+        ViewModel = new PanelsViewModel();
+        BindingContext = ViewModel;
         InitializeComponent();
     }
 
@@ -39,40 +39,39 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
         PanelsCollectionViewLayout.Span = span;
     }
 
-    private async void GoToSelectedPanelEditor(object? sender, TappedEventArgs e) {
-        IsBusy = true;
-        Console.WriteLine("GoToSelectedPanelEditor");
-        if (sender is BindableObject { BindingContext: Panel panel }) {
-            await LaunchPanelEditor(panel);
-        }
-
-        IsBusy = false;
-    }
+    // private async void GoToSelectedPanelEditor(object? sender, TappedEventArgs e) {
+    //     IsBusy = true;
+    //     Console.WriteLine("GoToSelectedPanelEditor");
+    //     if (sender is BindableObject { BindingContext: Panel panel }) {
+    //         await LaunchPanelEditor(panel);
+    //     }
+    //
+    //     IsBusy = false;
+    // }
 
     /// <summary>
     ///     Launch the Panel Editor passing through the selected panel to be edited.
     /// </summary>
-    /// <param name="panel">The current seleced Panel</param>
-    private async Task LaunchPanelEditor(Panel panel) {
-        Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
-        IsBusy = true;
-        try {
-            Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
-            var editorPage = new PanelEditorPage(panel);
-            await Navigation.PushAsync(editorPage);
-        } catch (Exception ex) {
-            Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
-        }
-
-        IsBusy = false;
-    }
+    // private async Task LaunchPanelEditor(Panel panel) {
+    //     Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
+    //     IsBusy = true;
+    //     try {
+    //         Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
+    //         var editorPage = new PanelEditorPage(panel);
+    //         await Navigation.PushAsync(editorPage);
+    //     } catch (Exception ex) {
+    //         Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
+    //     }
+    //
+    //     IsBusy = false;
+    // }
 
     private void Panel_OnDragStarting(object? sender, DragStartingEventArgs e) {
         Console.WriteLine("DragGestureRecognizer_OnDragStarting");
         if (sender is BindableObject { BindingContext: Panel panel }) {
             e.Data.Properties.Add("Panel", panel);
             e.Data.Properties.Add("Source", "Panel");
-            e.Data.Properties.Add("Index", _viewModel.Panels.IndexOf(panel));
+            e.Data.Properties.Add("Index", ViewModel.Panels.IndexOf(panel));
         }
     }
 
@@ -85,17 +84,17 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
             var index = e?.Data?.Properties["Index"] as int? ?? -1;
             if (source is not "Panel" || panel is null || index < 0) return;
 
-            var newIndex = _viewModel.Panels.IndexOf(target);
+            var newIndex = ViewModel.Panels.IndexOf(target);
             if (newIndex < 0) return;
             if (index < newIndex) newIndex--;
 
-            _viewModel.Panels.RemoveAt(index);
-            _viewModel.Panels.Insert(newIndex, panel);
+            ViewModel.Panels.RemoveAt(index);
+            ViewModel.Panels.Insert(newIndex, panel);
 
             // ReApply the Sort Order so we order the list by this number
             // ------------------------------------------------------------
-            for (var panelIndex = 0; panelIndex < _viewModel.Panels.Count; panelIndex++) {
-                _viewModel.Panels[panelIndex].SortOrder = panelIndex + 1;
+            for (var panelIndex = 0; panelIndex < ViewModel.Panels.Count; panelIndex++) {
+                ViewModel.Panels[panelIndex].SortOrder = panelIndex + 1;
             }
         }
     }

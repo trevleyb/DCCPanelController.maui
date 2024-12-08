@@ -77,6 +77,7 @@
                 ShowGrid="True"
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill"
+                TrackPieceChanged="PanelView_OnTrackPieceChanged"
                 TrackPieceTapped="PanelView_OnTrackPieceTapped"
                 Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"
                 x:Name="PanelView" />

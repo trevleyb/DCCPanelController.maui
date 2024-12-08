@@ -3,9 +3,25 @@ using DCCPanelController.View;
 
 namespace DCCPanelController.Services.NavigationService;
 
-public class NavigationService(IServiceProvider serviceProvider) : INavigationService {
+public class NavigationService(IServiceProvider serviceProvider) {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
+    public async Task<Panel?> NavigateToPanelEditor(Panel panel) {
+        var mainPage = App.Current.Windows[0].Page;
+        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+
+        var editPage = new PanelEditorPage(panel);
+        var tcs = new TaskCompletionSource<Panel?>();
+        if (editPage?.ViewModel != null) {
+            editPage.ViewModel.OnSaveCompleted += turnoutResult => {
+                tcs.SetResult(turnoutResult);
+                mainPage.Navigation.PopAsync();
+            };
+        }
+        await mainPage.Navigation.PushAsync(editPage);
+        return await tcs.Task;
+    }
+    
     public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
         if (turnout is null) return null;
 

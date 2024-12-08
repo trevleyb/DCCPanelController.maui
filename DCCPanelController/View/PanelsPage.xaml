@@ -41,6 +41,35 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Panel">
                         <SwipeView HeightRequest="250" x:Name="PanelCardSwipeView">
+                            <SwipeView.RightItems>
+                                <SwipeItems>
+                                    <!-- Edit SwipeItem -->
+                                    <SwipeItemView BackgroundColor="LightGreen"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}},
+                                                   x:DataType= viewModel:PanelsViewModel,
+                                                   Path=EditPanelCommand}" 
+                                                   CommandParameter="{Binding}">
+                                        <StackLayout Orientation="Horizontal" Padding="10">
+                                            <Image Source="edit.png" WidthRequest="24" HeightRequest="24" />
+                                            <Label Text="Edit" VerticalOptions="Center" Padding="10,0,0,0" />
+                                        </StackLayout>
+                                    </SwipeItemView>
+
+                                    <!-- Delete SwipeItem -->
+                                    <SwipeItemView BackgroundColor="LightCoral" 
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}},
+                                                   x:DataType= viewModel:PanelsViewModel, 
+                                                   Path=DeletePanelCommand}" 
+                                                   CommandParameter="{Binding}">
+                                        <StackLayout Orientation="Horizontal" Padding="10">
+                                            <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
+                                            <Label Text="Delete" VerticalOptions="Center" Padding="10,0,0,0" />
+                                        </StackLayout>
+                                    </SwipeItemView>
+
+                                </SwipeItems>
+                            </SwipeView.RightItems>
+                            
                             <SwipeView.Content>
                                 <Grid
                                     HorizontalOptions="Fill"
@@ -51,7 +80,12 @@
                                         <Border.GestureRecognizers>
                                             <DragGestureRecognizer DragStarting="Panel_OnDragStarting" />
                                             <DropGestureRecognizer Drop="Panel_OnDrop" />
-                                            <TapGestureRecognizer Tapped="GoToSelectedPanelEditor" />
+                                            <TapGestureRecognizer NumberOfTapsRequired="2" 
+                                                                  Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewModel}},
+                                                                  x:DataType= viewModel:PanelsViewModel, 
+                                                                  Path=EditPanelCommand}"
+                                                                  CommandParameter="{Binding}"/>
+                                            <!--<TapGestureRecognizer Tapped="GoToSelectedPanelEditor" />-->
                                         </Border.GestureRecognizers>
 
                                         <StackLayout>

@@ -21,7 +21,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
-    public TurnoutsViewModel(TurnoutsService turnoutService, ConnectionService connectionService, INavigationService navigationService) {
+    public TurnoutsViewModel(TurnoutsService turnoutService, ConnectionService connectionService, NavigationService navigationService) {
         TurnoutService = turnoutService;
         ConnectionService = connectionService;
         NavigationService = navigationService;
@@ -30,7 +30,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
         SetLabels();
     }
 
-    private INavigationService NavigationService { get; }
+    private NavigationService NavigationService { get; }
     private ConnectionService ConnectionService { get; }
     private TurnoutsService TurnoutService { get; }
 

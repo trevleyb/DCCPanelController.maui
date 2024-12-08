@@ -25,7 +25,7 @@ public static class MauiProgram {
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageTabbed>();
-        services.AddTransient<INavigationService, NavigationService>();
+        services.AddTransient<NavigationService>();
 
         // Add dependant Services
         // --------------------------------------------------------------------------

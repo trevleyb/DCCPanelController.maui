@@ -28,8 +28,8 @@ public partial class ControlPanelView {
     [ObservableProperty] private double _viewWidth;
 
     public ControlPanelView() {
-        BindingContext = this;
         InitializeComponent();
+        BindingContext = this;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
 
@@ -118,7 +118,6 @@ public partial class ControlPanelView {
                 DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
             }
         }
-
         AddOutlineToGrid();
         AddTrackPiecesToGrid();
     }
@@ -240,8 +239,12 @@ public partial class ControlPanelView {
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
         var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += (_, _) => TrackPieceTapped?.Invoke(this, track);
-        tapGesture.NumberOfTapsRequired = 1;
+        tapGesture.Tapped += (sender, args) => {
+            Console.WriteLine($"Tapped on Track: {track?.Name ?? "Unknown or Invalid Track"}");
+            Console.WriteLine($"There are {TrackPieceTapped?.GetInvocationList().Length ?? -1} listeners for TrackPieceTapped.");
+            if (track != null) TrackPieceTapped?.Invoke(this, track);
+        }; 
+        //tapGesture.NumberOfTapsRequired = 1;
         image.GestureRecognizers.Add(tapGesture);
 
         // If we are in Design mode, then add support for 
@@ -261,7 +264,14 @@ public partial class ControlPanelView {
         track.PropertyChanged += OnTrackPieceChanged;
         return image;
     }
-    
+
+    // If we click on a grid that is NOT a track piece and in design mode, 
+    // then clear all the selected tracks.
+    // -------------------------------------------------------------------------
+    private void TapGestureRecognizer_OnTapped(object? sender, TappedEventArgs e) {
+        if (DesignMode) ClearSelectedTracks();
+    }
+
     public void MarkTrackSelected(ITrackPiece track) {
         HighlightCell(track.X, track.Y);
         track.IsSelected = true;
@@ -338,6 +348,7 @@ public partial class ControlPanelView {
                             Panel?.Tracks?.Add(newPiece);
                             ClearSelectedTracks();
                             MarkTrackSelected(newPiece);
+                            OnTrackPieceChanged(newPiece, new PropertyChangedEventArgs(nameof(ITrackPiece)));
                         } else {
                             Console.WriteLine("Could not create a new Piece as a TrackPiece.");
                         }

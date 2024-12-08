@@ -13,7 +13,7 @@ public partial class PanelEditorPage : ContentPage {
     private EditState _editState = EditState.None;
 
     private Panel Panel { get; }
-    private PanelEditorViewModel ViewModel { get; }
+    public PanelEditorViewModel ViewModel { get; }
 
     public PanelEditorPage(Panel panel) {
         ArgumentNullException.ThrowIfNull(panel, nameof(Panel));
@@ -21,18 +21,19 @@ public partial class PanelEditorPage : ContentPage {
         Panel = panel;
         BindingContext = ViewModel;
         InitializeComponent();
-        PanelView.TrackPieceTapped  += PanelView_OnTrackPieceTapped;
-        PanelView.TrackPieceChanged += PanelView_OnTrackPieceChanged;
     }
 
     private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
-        Console.WriteLine("PanelView_OnTrackPieceChanged: Track Piece Changed");
-        ViewModel.HasSelectedTracks = Panel.HasSelectedTracks;
+        ViewModel.HasSelectedTracks = Panel?.HasSelectedTracks ?? false;
     }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
         Console.WriteLine($"In Edit Mode: Track {track.Name} was tapped");
-        if (track.IsSelected) PanelView.MarkTrackUnSelected(track); else PanelView.MarkTrackSelected(track);
+        if (track.IsSelected) {
+            PanelView.MarkTrackUnSelected(track);
+        } else {
+            PanelView.MarkTrackSelected(track);
+        }
     }
 
     private void ChangeEditMode(object? sender, EventArgs e) {
@@ -53,10 +54,10 @@ public partial class PanelEditorPage : ContentPage {
     protected override bool OnBackButtonPressed() {
         if (_editState == EditState.Changed) {
             Console.WriteLine("Panel was changed.");
-                var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-                //if (answer) PanelsViewModel.Save();
-                //PanelsViewModel.Load();
-        }
+            var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
+            if (answer) ViewModel.Save();
+            else ViewModel.Cancel();
+        } else ViewModel.Cancel();
         return base.OnBackButtonPressed();
     }
 
