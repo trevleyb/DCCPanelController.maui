@@ -26,7 +26,25 @@ public abstract partial class TrackBase : ObservableObject, ICloneable {
     [JsonIgnore] public ImageSource Image => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
     [JsonIgnore] public ImageSource Symbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
-    [JsonIgnore] public Panel? Parent { get; set; }
+
+    private Panel? _parent;
+
+    [JsonIgnore] public Panel? Parent {
+        get {
+            Console.WriteLine($"GET:Track:{Name} Parent: {_parent?.Name}");
+            if (_parent is null) {
+                Console.WriteLine("Null");
+            }
+            return _parent;
+        }
+        set {
+            if (value == null) {
+                Console.WriteLine("Set Null");
+            }
+            _parent = value;
+            Console.WriteLine($"SET:Track:{Name} Parent: {_parent?.Name}");
+        }
+    }
 
     protected TrackBase() {
         Initialise();

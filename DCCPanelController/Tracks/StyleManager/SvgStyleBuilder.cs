@@ -12,10 +12,9 @@ public class SvgStyle {
     }
 
     public void AddElement(SvgStyleElement element) {
-        if (!Elements.TryAdd(element.Name, element)) {
-            foreach (var attr in element.Attributes) {
-                Elements[element.Name].AddOrUpdateAttribute(attr.Key, attr.Value);
-            }
+        Elements.TryAdd(element.Name, element);
+        foreach (var attr in element.Attributes) {
+            Elements[element.Name].AddOrUpdateAttribute(attr.Key, attr.Value);
         }
     }
 
@@ -41,7 +40,7 @@ public class SvgStyleElement {
     }
 
     public void AddOrUpdateAttribute(string key, string value) {
-        Attributes[key] = value;
+        if (Attributes.TryAdd(key, value)) Attributes[key] = value;
     }
 
     public override string ToString() {

@@ -1,27 +1,26 @@
+using System.Collections.ObjectModel;
 using System.Reflection;
+using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Tracks;
 
 public static class TrackPieceFactory {
-    private static List<ITrackPiece>? _trackPieces;
-    public static List<ITrackPiece> TrackPieces => _trackPieces ??= BuildTrackPieces();
-
-    private static List<ITrackPiece> BuildTrackPieces() {
+    public static ObservableCollection<ITrackSymbol> BuildSymbols(Panel parent) {
         var trackPieceType = typeof(ITrackSymbol);
         var assembly = Assembly.GetExecutingAssembly();
         var pieces = assembly.GetTypes().Where(type => trackPieceType.IsAssignableFrom(type) && type.IsClass);
 
-        List<ITrackPiece> pieceList = [];
+        ObservableCollection<ITrackSymbol> pieceList = [];
         foreach (var trackPiece in pieces) {
             try {
                 var track = (ITrackPiece)Activator.CreateInstance(trackPiece)!;
-                pieceList.Add(track);
+                track.Parent = parent;
+                pieceList.Add((ITrackSymbol)track);
             } catch (Exception ex) {
                 Console.WriteLine($"Could not create instance of Track {trackPiece.ToString() ?? "xxx"} due to {ex.Message}");
             }
         }
-
         return pieceList;
     }
 }

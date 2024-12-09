@@ -5,9 +5,8 @@ using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Helpers;
 
-public class TrackPieceJsonConverter : JsonConverter<ITrackPiece> {
+public class JsonConverterTrackPiece : JsonConverter<ITrackPiece> {
     public override ITrackPiece? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
-        Console.WriteLine($"Start: Reader is: {reader.TokenType} at {reader.CurrentDepth} and {reader.Position}");
         
         // Use the type discriminator or another property to determine the specific type
         using (var document = JsonDocument.ParseValue(ref reader)) {
@@ -35,7 +34,6 @@ public class TrackPieceJsonConverter : JsonConverter<ITrackPiece> {
                 "TrackText"                 => JsonSerializer.Deserialize<TrackText>(rawText, options),
                 _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\""),
             };
-            Console.WriteLine($"Start: Reader is: {reader.TokenType} at {reader.CurrentDepth} and {reader.Position}");
             if (obj == null) throw new JsonException("Unknown type: " + "\"" + typeName + "\"" + ".");
             return obj;
         }

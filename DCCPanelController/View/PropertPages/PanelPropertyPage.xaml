@@ -145,7 +145,16 @@
                                 <Label Text="Background" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BackgroundColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.BackgroundColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Border" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.BorderColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -154,7 +163,7 @@
                                 <Label Text="MainLine" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=MainLineColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.MainLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -163,7 +172,7 @@
                                 <Label Text="BranchLine" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BranchLineColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.BranchLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -172,7 +181,16 @@
                                 <Label Text="Diverging" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=DivergingColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.DivergingColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Button Border" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ButtonBorder, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -181,7 +199,7 @@
                                 <Label Text="Button(On)" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=ButtonOnColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ButtonOnColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -190,7 +208,7 @@
                                 <Label Text="Button(off)" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=ButtonOffColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ButtonOffColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -199,7 +217,7 @@
                                 <Label Text="Occupied" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=OccupiedColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.OccupiedColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
@@ -208,10 +226,31 @@
                                 <Label Text="Hidden" VerticalOptions="Center" WidthRequest="120" />
                                 <VerticalStackLayout WidthRequest="250">
                                     <components:ColorDropdown
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=HiddenColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.HiddenColor, Mode=TwoWay}"
                                         VerticalOptions="Center" />
                                 </VerticalStackLayout>
                             </HorizontalStackLayout>
+                            
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Terminator" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.TerminatorColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Continuation" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ContinuationColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+
+                            
                         </VerticalStackLayout>
                     </ScrollView>
 

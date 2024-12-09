@@ -108,7 +108,7 @@ public partial class ControlPanelView {
         SetScreenSize(MainGrid.Width, MainGrid.Height);
         DynamicGrid.WidthRequest = ViewWidth;
         DynamicGrid.HeightRequest = ViewHeight;
-        DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
+        DynamicGrid.BackgroundColor = Panel?.Defaults.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
         if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
@@ -200,6 +200,7 @@ public partial class ControlPanelView {
         Console.WriteLine("AddTrackPiecesToGrid()");
         if (Panel is { Tracks: { } tracks } panel) {
             foreach (var track in tracks) {
+                if (track.Parent != Panel) track.Parent = panel;
 
                 if (DynamicGrid.ColumnDefinitions.Count >= Cols && DynamicGrid.RowDefinitions.Count >= Rows && track.X < Cols && track.Y < Rows) {
                     AddImageToLayout(track);
@@ -294,7 +295,6 @@ public partial class ControlPanelView {
     }
 
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
-        Console.WriteLine($"Dragging Track: {track.Name}");
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
         args.Data.Properties.Add("Copy", EditMode == EditModeEum.Copy ? true: false);
@@ -338,7 +338,7 @@ public partial class ControlPanelView {
                             var newTrack = track.Clone(); 
                             trackPiece.X = position.Col;
                             trackPiece.Y = position.Row;
-                            Panel?.Tracks?.Add(newTrack);
+                            Panel?.AddTrack(newTrack);
                             MarkTrackSelected(newTrack);
                         } else {
                             trackPiece.X = position.Col;
@@ -350,7 +350,7 @@ public partial class ControlPanelView {
                         if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
-                            Panel?.Tracks?.Add(newPiece);
+                            Panel?.AddTrack(newPiece);
                             ClearSelectedTracks();
                             MarkTrackSelected(newPiece);
                             OnTrackPieceChanged(newPiece, new PropertyChangedEventArgs(nameof(ITrackPiece)));
@@ -375,7 +375,7 @@ public partial class ControlPanelView {
     }
 
     private int GetHighestOccupiedLayer(int col, int row) {
-        var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row).ToList() ?? new List<ITrackPiece>();
+        var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row).ToList() ?? [];
         if (tracksInGrid is {Count: > 0} ) return tracksInGrid.Max(track => (int?)track.Layer) ?? 0;
         return 0;
     }

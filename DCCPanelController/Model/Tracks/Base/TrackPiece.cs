@@ -28,14 +28,13 @@ public abstract partial class TrackPieceBase : TrackBase {
             ImageRotation = trackInfo.ImageRotation;
             TrackRotation = trackInfo.TrackRotation;
 
-            Console.WriteLine($"Track: {TrackStyleImage.Normal}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
-
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
             // --------------------------------------------------------------------------------------------------
-            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent);
-            if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden);
-            if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied);
+            Console.WriteLine("Parent Mainline: " + Parent?.Defaults.MainLineColor.ToArgbHex().ToString());            
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
+            if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden,Parent?.Defaults);
+            if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied,Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
     }
@@ -47,7 +46,7 @@ public abstract partial class TrackPieceBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent);
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
     }

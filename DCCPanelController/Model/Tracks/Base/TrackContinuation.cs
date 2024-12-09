@@ -31,14 +31,12 @@ public abstract partial class TrackContinuationBase : TrackBase {
             ImageRotation = trackInfo.ImageRotation;
             TrackRotation = trackInfo.TrackRotation;
 
-            Console.WriteLine($"Track: {TrackImage}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
-
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
             // --------------------------------------------------------------------------------------------------
-            var style = SvgStyles.GetStyle(TrackType, TrackImage, Parent);
-            if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden);
-            if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied);
+            var style = SvgStyles.GetStyle(TrackType, TrackImage, Parent?.Defaults);
+            if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden,Parent?.Defaults);
+            if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied,Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
     }
@@ -50,7 +48,7 @@ public abstract partial class TrackContinuationBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent);
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
     }

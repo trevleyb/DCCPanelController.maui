@@ -13,11 +13,7 @@ public static class Panels {
     }
 
     private static Panel CreateTestPanel(string name) {
-        var panel = new Panel();
-        panel.Name = name;
-        panel.Cols = 18;
-        panel.Rows = 12;
-        panel.Tracks = [];
+        var panel = new Panel(name, 18, 12);
 
         // panel.Tracks.Add(new TrackStraight() { X = 1, Y = 1, ImageRotation = 0 });
         // panel.Tracks.Add(new TrackStraight() { X = 2, Y = 2, ImageRotation = 90 });

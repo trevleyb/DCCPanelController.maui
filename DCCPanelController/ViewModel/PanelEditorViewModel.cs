@@ -17,7 +17,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     public EditState EditState = EditState.None;
-    public ObservableCollection<ITrackSymbol> TrackSymbols { get; set; } = [];
+    public ObservableCollection<ITrackSymbol> TrackSymbols { get; init; } = [];
 
     public event Action<Panel?>? OnSaveCompleted;
     public event EventHandler? CloseRequested;
@@ -26,11 +26,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         _panel = panel;
         PropertyChanged += OnPropertyChanged;
         Panel.PropertyChanged += OnPanelPropertyChanged;
-        foreach (var symbol in TrackPieceFactory.TrackPieces) {
-            if (symbol is ITrackSymbol trackSymbol) {
-                TrackSymbols.Add(trackSymbol);
-            }
-        }
+        TrackSymbols = TrackPieceFactory.BuildSymbols(Panel);
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

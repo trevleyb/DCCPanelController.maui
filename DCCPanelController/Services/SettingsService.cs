@@ -12,7 +12,7 @@ public class SettingsService {
     private readonly JsonSerializerOptions? _options = new() {
         WriteIndented = true, 
         Converters = {
-            new TrackPieceJsonConverter(),
+            new JsonConverterTrackPiece(),
             new MauiColorJsonConverter()
         }
     };

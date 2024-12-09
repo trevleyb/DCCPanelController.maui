@@ -5,11 +5,6 @@ using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DCCPanelController.Helpers;
 
-public class ColorSerializer {
-    [JsonConverter(typeof(MauiColorJsonConverter))]
-    public Color? MyColor { get; set; } = Colors.White;
-}
-
 public class MauiColorJsonConverter : JsonConverter<Color> {
     public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         try {
@@ -21,7 +16,7 @@ public class MauiColorJsonConverter : JsonConverter<Color> {
     }
 
     public override void Write(Utf8JsonWriter writer, Color colorValue, JsonSerializerOptions options) {
-        var hex = colorValue?.ToHex() ?? Colors.White.ToHex();
+        var hex = colorValue?.ToArgbHex() ?? Colors.White.ToArgbHex();
         writer.WriteStringValue(hex);
     }
 }

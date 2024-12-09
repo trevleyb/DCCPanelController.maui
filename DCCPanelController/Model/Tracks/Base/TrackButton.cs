@@ -27,12 +27,10 @@ public abstract partial class TrackButtonBase : TrackBase {
             ImageRotation = trackInfo.ImageRotation;
             TrackRotation = trackInfo.TrackRotation;
 
-            Console.WriteLine($"Track: {TrackImage}:{TrackRotation} = {trackInfo.ImageSource}:{trackInfo.ImageRotation}");
-
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
             // --------------------------------------------------------------------------------------------------
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackImage, Parent);
+            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackImage, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
     }
@@ -44,7 +42,7 @@ public abstract partial class TrackButtonBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent);
+            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
     }

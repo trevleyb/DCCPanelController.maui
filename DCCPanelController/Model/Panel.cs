@@ -22,24 +22,25 @@ public partial class Panel : ObservableObject, ICloneable {
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
+    [ObservableProperty] private PanelDefaults _defaults = new();
     
-    [ObservableProperty] private Color _backgroundColor = Colors.White;
-    [ObservableProperty] private Color _mainLineColor = Colors.Green;
-    [ObservableProperty] private Color _branchLineColor = Colors.Grey;
-    [ObservableProperty] private Color _divergingColor = Colors.Grey;
-    [ObservableProperty] private Color _buttonOnColor = Colors.Lime;
-    [ObservableProperty] private Color _buttonOffColor = Colors.Crimson;
-    [ObservableProperty] private Color _occupiedColor = Colors.Crimson;
-    [ObservableProperty] private Color _hiddenColor = Colors.White;
-    [ObservableProperty] private Color _terminatorColor = Colors.Black;
-
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _cols = 24;
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _rows = 18;
 
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public bool HasSelectedTracks => Tracks.Any(t => t.IsSelected);
-    [JsonIgnore] public List<ITrackPiece> SelectedTracks => Tracks.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public bool HasSelectedTracks => _tracks.Any(t => t.IsSelected);
+    [JsonIgnore] public List<ITrackPiece> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
     
+    public Panel() {
+        _tracks = [];
+    }
+
+    public Panel(string name, int cols, int rows) : this() {
+        Name = name;        
+        Cols = cols;
+        Rows = rows;
+    }
+
     // When we add an item to the collection, make sure the Parent
     // property is set so we know where this item lives. We need this
     // to be able to get the references to things like colors. 
@@ -51,6 +52,12 @@ public partial class Panel : ObservableObject, ICloneable {
        } 
     }
 
+    public ITrackPiece AddTrack(ITrackPiece track) {
+        track.Parent = this;
+        Tracks.Add(track);
+        return track;
+    }
+    
     private static void SetParent(IList<ITrackPiece>? tracks, Panel parent) {
         Console.WriteLine($"Setting Parent: {tracks?.Count}");
         if (tracks is null) return;
@@ -78,11 +85,7 @@ public partial class Panel : ObservableObject, ICloneable {
     /// </summary>
     /// <returns>A new instance of the Panel object with the same property values as the original.</returns>
     public object Clone() {
-        try {
-            return ObjectCloner.Clone(this) ?? throw new ArgumentException("Cannot clone the Panel.");
-        } catch (Exception ex) {
-            throw new ArgumentException("Cannot clone the Panel.", ex);
-        }
+        return ObjectCloner.Clone(this) ?? throw new ArgumentException("Cannot clone the Panel.");
     }
 
     private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) => TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
