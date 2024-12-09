@@ -3,7 +3,9 @@ using DCCPanelController.Model;
 
 namespace DCCPanelController.View.PropertPages;
 
-public partial class PanelPropertyPage : ContentPage {
+public partial class PanelPropertyPage : ContentPage, IPropertyPage {
+    public event EventHandler? CloseRequested;
+
     public PanelPropertyPage(Panel panel) {
         InitializeComponent();
         BindingContext = panel;
@@ -46,6 +48,7 @@ public partial class PanelPropertyPage : ContentPage {
     }
 
     private void ClosePropertyPage(object? sender, EventArgs e) {
-        Navigation.PopModalAsync();
+        //Navigation.PopModalAsync(true);
+        CloseRequested?.Invoke(this, EventArgs.Empty);
     }
 }

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Services.NavigationService;
 using DCCPanelController.View.PropertPages;
 using DCCPanelController.ViewModel;
 
@@ -10,7 +11,7 @@ public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
     private EditModeEum _editMode = EditModeEum.Move;
-    private EditState _editState = EditState.None;
+    private NavigationService _navigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
 
     private Panel Panel { get; }
     public PanelEditorViewModel ViewModel { get; }
@@ -21,10 +22,18 @@ public partial class PanelEditorPage : ContentPage {
         Panel = panel;
         BindingContext = ViewModel;
         InitializeComponent();
+
+        ViewModel.HasSelectedTracks = Panel.HasSelectedTracks;
+        ViewModel.CanUsePropertyPage = Panel.SelectedTracks.Count <= 1;
+        ViewModel.CloseRequested += async (sender, e) => {
+            await Navigation.PopAsync();
+        };
     }
 
     private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
         ViewModel.HasSelectedTracks = Panel?.HasSelectedTracks ?? false;
+        ViewModel.CanUsePropertyPage = Panel?.SelectedTracks?.Count <= 1;
+        ViewModel.EditState = EditState.Changed;
     }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
@@ -51,16 +60,6 @@ public partial class PanelEditorPage : ContentPage {
         };
     }
 
-    protected override bool OnBackButtonPressed() {
-        if (_editState == EditState.Changed) {
-            Console.WriteLine("Panel was changed.");
-            var answer = DisplayAlert("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-            if (answer) ViewModel.Save();
-            else ViewModel.Cancel();
-        } else ViewModel.Cancel();
-        return base.OnBackButtonPressed();
-    }
-
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         Console.WriteLine("OnSymbolDragStarting");
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
@@ -70,8 +69,8 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void SavePanelAndExit(object? sender, EventArgs e) {
-        _editState = EditState.Saved;
-        Navigation.PopModalAsync();
+        ViewModel.EditState = EditState.Saved;
+        ViewModel.Save();
     }
 
     private void ToggleGrid(object? sender, EventArgs e) {
@@ -84,23 +83,27 @@ public partial class PanelEditorPage : ContentPage {
         PanelView.RebuildGrid(true);
     }
 
-    private void ShowPropertyPage(object? sender, EventArgs e) {
-        _ = ShowPropertyPageAsync(sender, e);
+    private async void ShowPropertyPage(object? sender, EventArgs e) {
+        Console.WriteLine("Show Property Page...");
+        await ShowPropertyPageAsync(sender, e);
+        Console.WriteLine("... done");
+        PanelView?.RebuildGrid(true);
     }
 
     private async Task ShowPropertyPageAsync(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
-        _editState = EditState.Changed;
+        ViewModel.EditState = EditState.Changed;
         if (Panel.HasSelectedTracks) {
             foreach (var track in Panel.SelectedTracks) {
-                await Navigation.PushModalAsync(new DynamicPropertyPage(track));
+                await _navigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
+                //await Navigation.PushModalAsync(new DynamicPropertyPage(track), true);
                 PanelView.MarkTrackUnSelected(track);
             }
         } else {
-            await Navigation.PushModalAsync(new PanelPropertyPage(Panel));
+            await _navigationService.NavigateToPopupWindow(new PanelPropertyPage(Panel));
+            //await Navigation.PushModalAsync(new PanelPropertyPage(Panel),true);
         }
-        PanelView?.RebuildGrid(true);
     }
     
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
@@ -111,7 +114,7 @@ public partial class PanelEditorPage : ContentPage {
         if (source is string && source.Equals("Panel") && track is ITrackPiece trackPiece) Panel.Tracks.Remove(trackPiece);
         DragTrashIcon.BackgroundColor = Colors.Transparent;
         PanelView.RebuildGrid(true);
-        _editState = EditState.Changed;
+        ViewModel.EditState = EditState.Changed;
     }
 
     private void DropTrackInTrashHoverOver(object? sender, DragEventArgs e) {
@@ -127,17 +130,22 @@ public partial class PanelEditorPage : ContentPage {
 
     private void RotateLeft(object? sender, EventArgs e) {
         foreach (var track in Panel.SelectedTracks) track.RotateLeft();
+        ViewModel.EditState = EditState.Changed;
     }
 
     private void RotateRight(object? sender, EventArgs e) {
         foreach (var track in Panel.SelectedTracks) track.RotateRight();
+        ViewModel.EditState = EditState.Changed;
     }
-}
 
-public enum EditState {
-    None,
-    Saved,
-    Changed
+    private void DeleteTrackPiece(object? sender, EventArgs e) {
+        foreach (var track in Panel.SelectedTracks) {
+            PanelView.MarkTrackUnSelected(track);
+            Panel.Tracks.Remove(track);
+        }
+        PanelView.RebuildGrid(true);
+        ViewModel.EditState = EditState.Changed;
+    }
 }
 
 public enum EditModeEum { Move, Copy }

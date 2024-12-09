@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,14 +14,14 @@ public partial class PanelsViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
     private readonly NavigationService _navigationService;
 
+    public ObservableCollection<Panel> Panels { get; set; }
+
     public PanelsViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
         Panels = _settingsService.Panels;
     }
-
-    public ObservableCollection<Panel> Panels { get; set; }
-
+    
     public async void Save() {
         _settingsService?.Save();
     }
@@ -43,7 +44,13 @@ public partial class PanelsViewModel : BaseViewModel {
         Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
         try {
             Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
-            await _navigationService.NavigateToPanelEditor(panel);
+            var result = await _navigationService.NavigateToPanelEditor(panel);
+            if (result is not null) {
+                Console.WriteLine($"Result from Editor: {result.Name}");
+                Save();
+            } else {
+                Console.WriteLine($"Result from Editor: {result?.Name ?? "null"}");
+            }
         } catch (Exception ex) {
             Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
         }

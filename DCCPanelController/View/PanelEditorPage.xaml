@@ -10,6 +10,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:interfaces="clr-namespace:DCCPanelController.Model.Tracks.Interfaces">
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior Command="{Binding CancelCommand}" />   
+    </Shell.BackButtonBehavior>
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem
             ToolTipProperties.Text="Change Edit Mode"
@@ -31,6 +35,12 @@
             Text="Rotate Right" IsEnabled="{Binding HasSelectedTracks}"/>
         
         <ToolbarItem
+            ToolTipProperties.Text="Delete Track Piece"
+            Clicked="DeleteTrackPiece"
+            IconImageSource="trash.png"
+            Text="Delete Track" IsEnabled="{Binding HasSelectedTracks}"/>
+
+        <ToolbarItem
             ToolTipProperties.Text="Save this Panel"
             Clicked="SavePanelAndExit"
             IconImageSource="save.png"
@@ -50,11 +60,13 @@
             IconImageSource="validate.png"
             Text="Validate"
             x:Name="ValidateButton" />
+        
         <ToolbarItem
             Clicked="ShowPropertyPage"
             ToolTipProperties.Text="Panel Properties"
             IconImageSource="tuning.png"
             Text="Properties"
+            IsEnabled="{Binding CanUsePropertyPage}"
             x:Name="PropertyButton" />
     </ContentPage.ToolbarItems>
 

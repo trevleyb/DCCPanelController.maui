@@ -24,8 +24,7 @@
             BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}"
             x:Name="MainGrid">
 
-            <CollectionView x:Name="PanelsCollectionView"
-                            ItemsSource="{Binding Panels}" SelectionMode="None">
+            <CollectionView x:Name="PanelsCollectionView" ItemsSource="{Binding Panels}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">

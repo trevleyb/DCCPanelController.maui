@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -14,8 +15,8 @@ namespace DCCPanelController.Model;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableValidator, ICloneable {
-    [ObservableProperty] private ObservableCollection<ITrackPiece> _tracks = [];
-
+    public ObservableCollection<ITrackPiece> _tracks = [];
+    
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
@@ -27,8 +28,18 @@ public partial class Panel : ObservableValidator, ICloneable {
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public Panel? Copy => Clone() as Panel;
     [JsonIgnore] public bool HasSelectedTracks => Tracks.Any(t => t.IsSelected);
-    [JsonIgnore] public List<ITrackPiece> SelectedTracks => this.Tracks.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public List<ITrackPiece> SelectedTracks => Tracks.Where(t => t.IsSelected).ToList() ?? [];
 
+    public ObservableCollection<ITrackPiece> Tracks {
+        get => _tracks;
+        set {
+            if (_tracks != value) {
+                _tracks = value;
+                OnPropertyChanged(nameof(Tracks));
+            }
+        }
+    }
+    
     /// <summary>
     ///     Create a deep copy of the Panel object.
     /// </summary>

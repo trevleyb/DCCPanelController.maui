@@ -4,6 +4,7 @@ using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Services.SampleData;
 using DCCPanelController.Tracks.Helpers;
 using Microsoft.Maui.Layouts;
 
@@ -56,6 +57,10 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
+    public void Redraw() {
+        RebuildGrid(true);
+    }
+    
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"Track was changed: {e.PropertyName}");
         if (sender is ITrackPiece track) TrackPieceChanged?.Invoke(this,track);
@@ -88,7 +93,7 @@ public partial class ControlPanelView {
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
-        Console.WriteLine(bindable.GetType().Name + $" OnPanelChanged to {control.Panel?.Name}");
+        control.ClearSelectedTracks();
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
