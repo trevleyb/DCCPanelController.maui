@@ -19,6 +19,7 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
                 WidthRequest="500">
+
             <VerticalStackLayout>
                 <Label
                     FontAttributes="Bold"
@@ -136,18 +137,83 @@
 
                     </HorizontalStackLayout>
 
-                    <!--  Panel Background Color  -->
-                    <HorizontalStackLayout Margin="0,5,0,5">
-                        <Label
-                            Text="Background"
-                            VerticalOptions="Center"
-                            WidthRequest="120" />
-                        <VerticalStackLayout WidthRequest="250">
-                            <components:ColorDropdown
-                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BackgroundColor, Mode=TwoWay}"
-                                VerticalOptions="Center" />
+                    <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Always">
+
+                        <VerticalStackLayout>
+                            <!--  Panel Background Color  -->
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Background" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BackgroundColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="MainLine" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=MainLineColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="BranchLine" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=BranchLineColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Diverging" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=DivergingColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Button(On)" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=ButtonOnColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Button(off)" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=ButtonOffColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Occupied" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=OccupiedColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
+
+                            <HorizontalStackLayout Margin="0,5,0,5">
+                                <Label Text="Hidden" VerticalOptions="Center" WidthRequest="120" />
+                                <VerticalStackLayout WidthRequest="250">
+                                    <components:ColorDropdown
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=HiddenColor, Mode=TwoWay}"
+                                        VerticalOptions="Center" />
+                                </VerticalStackLayout>
+                            </HorizontalStackLayout>
                         </VerticalStackLayout>
-                    </HorizontalStackLayout>
+                    </ScrollView>
 
                 </VerticalStackLayout>
 

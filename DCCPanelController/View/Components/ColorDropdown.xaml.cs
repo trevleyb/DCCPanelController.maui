@@ -9,7 +9,13 @@ public partial class ColorDropdown : ContentView {
     private const string DefaultPlaceholderText = "Click here to select a color";
 
     // Property for the currently selected color
-    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White);
+    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White, propertyChanged: ColorPropertyChanged);
+
+    private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        var control = (ColorDropdown)bindable; 
+        control.OnPropertyChanged(nameof(DisplayText));           // Update DisplayText when the color changes
+        control.OnPropertyChanged(nameof(ContrastColor));          // Update DisplayText when the color changes
+    }
 
     public ColorDropdown() {
         InitializeComponent();

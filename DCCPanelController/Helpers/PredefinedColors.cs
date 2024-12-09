@@ -9,25 +9,23 @@ public class ColorOption {
 }
 
 public static class PredefinedColors {
-    private static readonly object padlock = new();
-    private static List<ColorOption>? colorOptions;
+    private static readonly Lock Padlock = new();
+    private static List<ColorOption>? _colorOptions;
 
     public static string ColorName(this Color color) {
         foreach (var knownColor in GetColors().Where(knownColor => color.ToHex().Equals(knownColor.Color.ToHex()))) {
             return knownColor.Name;
         }
-
         return "Unknown Color";
     }
 
     public static List<ColorOption> GetColors() {
-        if (colorOptions == null) {
-            lock (padlock) {
-                colorOptions ??= BuildColorOptions();
+        if (_colorOptions == null) {
+            lock (Padlock) {
+                _colorOptions ??= BuildColorOptions();
             }
         }
-
-        return colorOptions;
+        return _colorOptions;
     }
 
     private static List<ColorOption> BuildColorOptions() {
@@ -182,6 +180,10 @@ public static class PredefinedColors {
             new() { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black }
         };
 
+        return colors;
+
+        /* This was to limit the colors. Allow all colors.
+         
         var selectedColorOptions = new List<ColorOption>();
         foreach (var color in colors) {
             var alpha = color.Color.GetByteAlpha();
@@ -193,8 +195,8 @@ public static class PredefinedColors {
                 selectedColorOptions.Add(color);
             }
         }
-
         return selectedColorOptions;
+        */
     }
 
     private static bool IsColorDark(Color color) {

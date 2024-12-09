@@ -206,7 +206,7 @@ public partial class ControlPanelView {
 
                     // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
                     // -------------------------------------------------------------------------------------
-                    if (DesignMode && ShowTrackErrors) {
+                    if (ShowTrackErrors) {
                         var pointImage = new TrackPoints { X = track.X, Y = track.Y };
                         var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
                         pointImage.SetPoints(validPoints);

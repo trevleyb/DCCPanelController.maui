@@ -5,11 +5,8 @@ using System.Text.Json.Serialization;
 namespace DCCPanelController.Model;
 
 public partial class Settings : ObservableObject {
-    [ObservableProperty]
-    private bool _useConnection;
-    
-    [ObservableProperty]
-    private WiServer _wiServer;
+    [ObservableProperty] private bool _useConnection;
+    [ObservableProperty] private WiServer _wiServer;
 
     public Settings() {
         var thisIp = ServiceHelper.GetLocalIPAddress();

@@ -55,19 +55,13 @@
             x:Name="GridButton" />
         
         <ToolbarItem
-            Clicked="ToggleValidation"
-            ToolTipProperties.Text="Show Validation on connections."
-            IconImageSource="validate.png"
-            Text="Validate"
-            x:Name="ValidateButton" />
-        
-        <ToolbarItem
             Clicked="ShowPropertyPage"
             ToolTipProperties.Text="Panel Properties"
             IconImageSource="tuning.png"
             Text="Properties"
             IsEnabled="{Binding CanUsePropertyPage}"
             x:Name="PropertyButton" />
+        
     </ContentPage.ToolbarItems>
 
     <Grid

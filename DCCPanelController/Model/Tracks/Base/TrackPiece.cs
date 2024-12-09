@@ -33,7 +33,7 @@ public abstract partial class TrackPieceBase : TrackBase {
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
             // --------------------------------------------------------------------------------------------------
-            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal);
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent);
             if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden);
             if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied);
             return imageInfo.ApplyStyle(style);
@@ -47,7 +47,7 @@ public abstract partial class TrackPieceBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal);
+            var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent);
             return imageInfo.ApplyStyle(style);
         }
     }

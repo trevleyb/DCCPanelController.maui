@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
 
@@ -14,27 +16,58 @@ namespace DCCPanelController.Model;
 /// <summary>
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
-public partial class Panel : ObservableValidator, ICloneable {
-    public ObservableCollection<ITrackPiece> _tracks = [];
-    
+public partial class Panel : ObservableObject, ICloneable {
+    private ObservableCollection<ITrackPiece> _tracks = [];
+
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
+    
     [ObservableProperty] private Color _backgroundColor = Colors.White;
+    [ObservableProperty] private Color _mainLineColor = Colors.Green;
+    [ObservableProperty] private Color _branchLineColor = Colors.Grey;
+    [ObservableProperty] private Color _divergingColor = Colors.Grey;
+    [ObservableProperty] private Color _buttonOnColor = Colors.Lime;
+    [ObservableProperty] private Color _buttonOffColor = Colors.Crimson;
+    [ObservableProperty] private Color _occupiedColor = Colors.Crimson;
+    [ObservableProperty] private Color _hiddenColor = Colors.White;
+    [ObservableProperty] private Color _terminatorColor = Colors.Black;
 
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _cols = 24;
     [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _rows = 18;
 
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public Panel? Copy => Clone() as Panel;
     [JsonIgnore] public bool HasSelectedTracks => Tracks.Any(t => t.IsSelected);
     [JsonIgnore] public List<ITrackPiece> SelectedTracks => Tracks.Where(t => t.IsSelected).ToList() ?? [];
+    
+    // When we add an item to the collection, make sure the Parent
+    // property is set so we know where this item lives. We need this
+    // to be able to get the references to things like colors. 
+    // -------------------------------------------------------------------------------
+    private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+       Console.WriteLine($"Collection Changed: {e.Action} {e.NewItems?.Count} {e.OldItems?.Count} {e.NewStartingIndex} {e.OldStartingIndex}");
+       if (e.NewItems != null) {
+           SetParent(e.NewItems as IList<ITrackPiece>, this);
+       } 
+    }
+
+    private static void SetParent(IList<ITrackPiece>? tracks, Panel parent) {
+        Console.WriteLine($"Setting Parent: {tracks?.Count}");
+        if (tracks is null) return;
+        foreach (var track in tracks) track.Parent = parent;
+    }
 
     public ObservableCollection<ITrackPiece> Tracks {
         get => _tracks;
         set {
             if (_tracks != value) {
-                _tracks = value;
+                try {
+                    _tracks = value;
+                } catch (Exception ex) {
+                    Console.WriteLine("Failed to set Tracks: " + ex.Message);
+                }
+                _tracks.CollectionChanged += TracksOnCollectionChanged;
+                SetParent(_tracks, this);
                 OnPropertyChanged(nameof(Tracks));
             }
         }
@@ -70,4 +103,5 @@ public partial class Panel : ObservableValidator, ICloneable {
             return a;
         }
     }
+
 }

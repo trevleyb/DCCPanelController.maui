@@ -15,7 +15,8 @@
 
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    WidthRequest="500">
+                    WidthRequest="500"
+                    HeightRequest="500">
 
                 <StackLayout>
                     <Label Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" />

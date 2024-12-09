@@ -9,7 +9,6 @@ using Compass = DCCPanelController.Helpers.Compass;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackBase : ObservableObject, ICloneable {
-    // Collection of images and rotations associated with this track piece
     protected readonly StyleTrackImages StyleTrackImages = new();
     
     [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
@@ -27,6 +26,7 @@ public abstract partial class TrackBase : ObservableObject, ICloneable {
     [JsonIgnore] public ImageSource Image => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
     [JsonIgnore] public ImageSource Symbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
+    [JsonIgnore] public Panel? Parent { get; set; }
 
     protected TrackBase() {
         Initialise();
@@ -76,6 +76,6 @@ public abstract partial class TrackBase : ObservableObject, ICloneable {
     }
 
     public virtual object Clone() {
-        return this.MemberwiseClone();
+        return MemberwiseClone();
     }
 }

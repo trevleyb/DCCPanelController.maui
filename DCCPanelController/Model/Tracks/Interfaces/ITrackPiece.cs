@@ -16,7 +16,7 @@ public interface ITrackPiece {
     bool IsSelected { get; set; }
     
     ImageSource? Image { get; }
-
+    Panel? Parent { get; set; }
     ITrackPiece Clone();
     TrackConnectionsEnum[] Connections { get; }
 

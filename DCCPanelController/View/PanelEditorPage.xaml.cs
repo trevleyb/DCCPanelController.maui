@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services.NavigationService;
@@ -78,16 +79,18 @@ public partial class PanelEditorPage : ContentPage {
         PanelView.RebuildGrid(true);
     }
 
-    private void ToggleValidation(object? sender, EventArgs e) {
-        PanelView.ShowTrackErrors = !PanelView.ShowTrackErrors;
-        PanelView.RebuildGrid(true);
-    }
+    //private void ToggleValidation(object? sender, EventArgs e) {
+    //    PanelView.ShowTrackErrors = !PanelView.ShowTrackErrors;
+    //    PanelView.RebuildGrid(true);
+    //}
 
     private async void ShowPropertyPage(object? sender, EventArgs e) {
-        Console.WriteLine("Show Property Page...");
-        await ShowPropertyPageAsync(sender, e);
-        Console.WriteLine("... done");
-        PanelView?.RebuildGrid(true);
+        try {
+            await ShowPropertyPageAsync(sender, e);
+            PanelView?.RebuildGrid(true);
+        } catch (Exception ex) {
+            Trace.WriteLine($"Exception {ex.Message} in Property Pages."); // TODO handle exception
+        }
     }
 
     private async Task ShowPropertyPageAsync(object? sender, EventArgs e) {
