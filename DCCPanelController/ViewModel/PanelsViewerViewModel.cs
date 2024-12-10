@@ -10,7 +10,7 @@ using DCCPanelController.View;
 
 namespace DCCPanelController.ViewModel;
 
-public partial class PanelsViewModel : BaseViewModel {
+public partial class PanelsViewerViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
     private readonly NavigationService _navigationService;
 
@@ -25,7 +25,8 @@ public partial class PanelsViewModel : BaseViewModel {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))] 
-    [NotifyPropertyChangedFor(nameof(SidePanelWidth))] 
+    [NotifyPropertyChangedFor(nameof(SidePanelWidth))]
+    [NotifyPropertyChangedFor(nameof(ShouldShowPanelView))]
     private bool _isSidePanelOpen;
     public bool IsSidePanelClosed => !IsSidePanelOpen;
 
@@ -34,8 +35,11 @@ public partial class PanelsViewModel : BaseViewModel {
     public bool NoPanelSelected => SelectedPanel == null;
     
     public ObservableCollection<Panel> Panels { get; set; }
-
-    public PanelsViewModel() {
+    [ObservableProperty] private bool _canExpandCollapse = true;
+    
+    public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
+    
+    public PanelsViewerViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
         Panels = _settingsService.Panels;
@@ -55,7 +59,19 @@ public partial class PanelsViewModel : BaseViewModel {
     private async Task SelectionChangedAsync() { }
     
     [RelayCommand]
-    public async Task AddPanelAsync() {
+    private async Task DuplicatePanelAsync(Panel? panel = null) {
+        if (panel is not null) SelectedPanel = panel;
+        if (SelectedPanel is null) return;
+        var newPanel = SelectedPanel.Clone();
+        var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
+        newPanel.Name = "Panel " + maxSort;
+        newPanel.SortOrder = maxSort;
+        Panels.Add(newPanel);
+        Save();
+    }
+
+    [RelayCommand]
+    private async Task AddPanelAsync() {
         var panel = new Panel();
         var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
         panel.Name = "Panel " + maxSort;
@@ -65,40 +81,30 @@ public partial class PanelsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task EditPanelAsync(Panel panel) {
-        Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
+    private async Task EditPanelAsync(Panel? panel = null) {
+        if (panel is not null) SelectedPanel = panel;
+        if (SelectedPanel is null) return;
         try {
-            Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
-            var result = await _navigationService.NavigateToPanelEditor(panel);
-            if (result is not null) {
-                Console.WriteLine($"Result from Editor: {result.Name}");
-                Save();
-            } else {
-                Console.WriteLine($"Result from Editor: {result?.Name ?? "null"}");
-            }
+            var result = await _navigationService.NavigateToPanelEditor(SelectedPanel);
+            if (result is not null) Save();
         } catch (Exception ex) {
-            Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
+            Console.WriteLine($"Failed to goto the Panel details for {SelectedPanel.Name} due to {ex.Message}");
         }
     }
 
     [RelayCommand]
-    public async Task DeletePanelAsync(Panel panel) {
+    private async Task DeletePanelAsync(Panel? panel = null) {
+        if (panel is not null) SelectedPanel = panel;
+        if (SelectedPanel is null) return;
         try {
-            Panels.Remove(panel);
+            Panels.Remove(SelectedPanel);
             for (var index = 0; index < Panels.Count; index++) {
                 Panels[index].SortOrder = index + 1;
             }
             Save();
         } catch {
-            Console.WriteLine($"Failed to delete panel {panel.Name}");
+            Console.WriteLine($"Failed to delete panel {SelectedPanel.Name}");
         }
-    }
-
-    public void OnEditorPageFinished(Panel panel) {
-        // What we need to do is force the Panel/Card that we are associated with
-        // to refresh. It should be doing this as the SystemName/ID are refreshing, but not
-        // the PanelViewer.
-        Panels[Panels.IndexOf(panel)] = panel;
     }
 
     [GeneratedRegex(@"[^0-9]")]

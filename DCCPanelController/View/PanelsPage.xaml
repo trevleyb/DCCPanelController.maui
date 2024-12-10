@@ -15,7 +15,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddNewPanelCommand}" IconImageSource="add.png" />
+        <ToolbarItem Command="{Binding AddPanelCommand}" IconImageSource="add.png" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

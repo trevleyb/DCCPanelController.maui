@@ -16,7 +16,7 @@ public partial class ControlPanelView {
     public event EventHandler<ITrackPiece>? TrackPieceTapped;
     public event EventHandler<ITrackPiece>? TrackPieceChanged;
 
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null, BindingMode.OneTime, propertyChanged: OnPanelChanged);
+    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null, BindingMode.OneWay, propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
@@ -94,6 +94,7 @@ public partial class ControlPanelView {
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
         control.ClearSelectedTracks();
+        control.RebuildGrid(true);
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -340,6 +341,7 @@ public partial class ControlPanelView {
                             trackPiece.Y = position.Row;
                             Panel?.AddTrack(newTrack);
                             MarkTrackSelected(newTrack);
+                            MarkTrackUnSelected(track);
                         } else {
                             trackPiece.X = position.Col;
                             trackPiece.Y = position.Row;

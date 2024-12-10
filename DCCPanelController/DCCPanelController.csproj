@@ -345,4 +345,17 @@
         <ProjectReference Include="..\DCCWithrottleClient\DCCWithrottleClient.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <MauiXaml Update="View\PanelsViewerPage.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="View\PanelsViewerPage.xaml.cs">
+        <DependentUpon>PanelsViewerPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+    </ItemGroup>
+
 </Project>
