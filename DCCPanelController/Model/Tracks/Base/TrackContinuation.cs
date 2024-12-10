@@ -53,9 +53,4 @@ public abstract partial class TrackContinuationBase : TrackBase {
         }
     }
     
-    public override object Clone() {
-        var clone = (TrackContinuationBase)MemberwiseClone();
-        return clone;
-    }
-
 }

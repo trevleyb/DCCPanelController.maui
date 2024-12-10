@@ -7,8 +7,7 @@ namespace DCCPanelController.View.Components;
 public partial class ColorPopup : Popup {
     public ColorPopup() {
         InitializeComponent();
-        var colors = PredefinedColors.GetColors();
-        ColorOptions = new ObservableCollection<ColorOption>(colors);
+        ColorOptions = new ObservableCollection<ColorOption>(PredefinedColors.SelectableColors());
         BindingContext = this;
     }
 

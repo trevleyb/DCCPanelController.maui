@@ -91,11 +91,6 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             OnPropertyChanged(nameof(Image));
         }
     }
-    
-    public override object Clone() {
-        var clone = (TrackTurnoutBase)MemberwiseClone();
-        return clone;
-    }
 }
 
 public partial class TrackTurnoutAction : ObservableObject {

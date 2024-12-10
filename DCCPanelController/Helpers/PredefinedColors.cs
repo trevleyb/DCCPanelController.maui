@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
 
 namespace DCCPanelController.Helpers;
@@ -9,26 +10,29 @@ public class ColorOption {
 }
 
 public static class PredefinedColors {
-    private static readonly Lock Padlock = new();
-    private static List<ColorOption>? _colorOptions;
+    private static readonly ReadOnlyCollection<ColorOption> _AllColors;
+    private static readonly ReadOnlyCollection<ColorOption> _SelectableColors;
 
+    static PredefinedColors() {
+        _AllColors = new ReadOnlyCollection<ColorOption>(BuildAllColors());
+        _SelectableColors = new ReadOnlyCollection<ColorOption>(BuildSelectableColors(_AllColors));
+    }
+    
     public static string ColorName(this Color color) {
-        foreach (var knownColor in GetColors().Where(knownColor => color.ToHex().Equals(knownColor.Color.ToHex()))) {
+        foreach (var knownColor in _AllColors.Where(knownColor => color.ToHex().Equals(knownColor.Color.ToHex()))) {
             return knownColor.Name;
         }
         return "Unknown Color";
     }
 
-    public static List<ColorOption> GetColors() {
-        if (_colorOptions == null) {
-            lock (Padlock) {
-                _colorOptions ??= BuildColorOptions();
-            }
-        }
-        return _colorOptions;
+    public static ReadOnlyCollection<ColorOption> AllColors() {
+        return _AllColors;
+    }
+    public static ReadOnlyCollection<ColorOption> SelectableColors() {
+        return _SelectableColors;
     }
 
-    private static List<ColorOption> BuildColorOptions() {
+    private static List<ColorOption> BuildAllColors() {
         var colors = new List<ColorOption> {
             new() { Name = "AliceBlue", Color = Colors.AliceBlue, ContrastColor = Colors.Black },
             new() { Name = "AntiqueWhite", Color = Colors.AntiqueWhite, ContrastColor = Colors.Black },
@@ -179,13 +183,12 @@ public static class PredefinedColors {
             new() { Name = "Yellow", Color = Colors.Yellow, ContrastColor = Colors.Black },
             new() { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black }
         };
-
         return colors;
+    }
 
-        /* This was to limit the colors. Allow all colors.
-         
+    public static List<ColorOption> BuildSelectableColors(ReadOnlyCollection<ColorOption> allColors) {
         var selectedColorOptions = new List<ColorOption>();
-        foreach (var color in colors) {
+        foreach (var color in allColors) {
             var alpha = color.Color.GetByteAlpha();
             var green = color.Color.GetByteGreen();
             var red = color.Color.GetByteRed();
@@ -196,17 +199,16 @@ public static class PredefinedColors {
             }
         }
         return selectedColorOptions;
-        */
     }
-
+    
+    private static Color GetContrastingColor(Color color) {
+        return color.GetComplementary();
+        //return IsColorDark(color) ? Colors.White : Colors.Black;
+    }
+    
     private static bool IsColorDark(Color color) {
         // Using relative luminance to determine if the color is dark or light
         double brightness = (color.Red * 255 * 299 + color.Green * 255 * 587 + color.Blue * 255 * 114) / 1000;
-
         return brightness < 128;
-    }
-
-    private static Color GetContrastingColor(Color color) {
-        return IsColorDark(color) ? Colors.White : Colors.Black;
     }
 }

@@ -9,22 +9,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components">
 
-    <ScrollView HeightRequest="300" WidthRequest="250">
+    <StackLayout HeightRequest="300" WidthRequest="250">
+        <Border Stroke="#95000000"
+                StrokeThickness="5"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                BackgroundColor="Snow" 
+                Padding="20"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                WidthRequest="500">
 
-        <Frame
-            BackgroundColor="White"
-            BorderColor="Gray"
-            CornerRadius="5"
-            HasShadow="True"
-            HorizontalOptions="Center"
-            VerticalOptions="Start">
-
-            <StackLayout>
-                <!--
-                <Frame BackgroundColor="Gray">
-                    <Label Text="Select a Color" TextColor="White" />
-                </Frame>
-                -->
+            <ScrollView>
                 <CollectionView
                     ItemsSource="{Binding ColorOptions}"
                     SelectionChanged="OnColorSelected"
@@ -43,6 +38,7 @@
                                     HeightRequest="20"
                                     WidthRequest="20" />
                                 <Label
+                                    Margin="10,5,5,5"
                                     Grid.Column="1"
                                     Text="{Binding Name}"
                                     VerticalOptions="Center" />
@@ -50,7 +46,7 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </StackLayout>
-        </Frame>
-    </ScrollView>
+            </ScrollView>
+        </Border>
+    </StackLayout>
 </toolkit:Popup>

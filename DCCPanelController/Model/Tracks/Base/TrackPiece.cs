@@ -31,7 +31,6 @@ public abstract partial class TrackPieceBase : TrackBase {
             // Apply the various styles that need to be applied based on the 
             // details that we have within the context of this track type
             // --------------------------------------------------------------------------------------------------
-            Console.WriteLine("Parent Mainline: " + Parent?.Defaults.MainLineColor.ToArgbHex().ToString());            
             var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
             if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden,Parent?.Defaults);
             if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied,Parent?.Defaults);
@@ -50,10 +49,4 @@ public abstract partial class TrackPieceBase : TrackBase {
             return imageInfo.ApplyStyle(style);
         }
     }
-
-    public override object Clone() {
-        var clone = (TrackPieceBase)MemberwiseClone();
-        return clone;
-    }
-
 }

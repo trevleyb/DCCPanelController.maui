@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -30,10 +31,9 @@ public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, I
         AddImageSourceAndRotation(TrackStyleImage.Active, "Button");
         AddImageSourceAndRotation(TrackStyleImage.InActive, "Button");
     }
-    
+
     public override ITrackPiece Clone() {
-        var clone = (ITrackPiece)MemberwiseClone();
-        return clone;
+        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
 
 }

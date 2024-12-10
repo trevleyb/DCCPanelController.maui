@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
@@ -12,8 +13,8 @@ public partial class TrackImage : TrackPieceBase, ITrackSymbol, ITrackPiece {
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
     }
     public override ITrackPiece Clone() {
-        var clone = (ITrackPiece)MemberwiseClone();
-        return clone;
+        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
+
 
 }

@@ -55,9 +55,4 @@ public abstract partial class TrackButtonBase : TrackBase {
             _     => TrackStyleImage.Normal
         };
     }
-
-    public override object Clone() {
-        var clone = (TrackButtonBase)MemberwiseClone();
-        return clone;
-    }
 }

@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
@@ -46,8 +47,8 @@ public partial class TrackPoints : TrackPieceBase, ITrackPiece {
         };
     }
     public override ITrackPiece Clone() {
-        var clone = (ITrackPiece)MemberwiseClone();
-        return clone;
+        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
+
 
 }

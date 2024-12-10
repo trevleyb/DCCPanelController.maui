@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
@@ -14,8 +15,8 @@ public partial class TrackLabelCircle : TrackLabelBase, ITrackSymbol, ITrackPiec
     }
 
     public override ITrackPiece Clone() {
-        var clone = (ITrackPiece)MemberwiseClone();
-        return clone;
+        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
+
 
 }

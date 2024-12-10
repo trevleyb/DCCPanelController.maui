@@ -132,6 +132,11 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
+                <!--
+                
+                Remove the Trashcan Icon - use the Toolbar Button to delete track
+                =================================================================
+                
                 <Border
                     BackgroundColor="White"
                     HorizontalOptions="Center"
@@ -150,6 +155,7 @@
                         Source="trash.png"
                         WidthRequest="50" />
                 </Border>
+                -->
             </StackLayout>
         </ContentView>
     </Grid>

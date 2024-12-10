@@ -37,9 +37,4 @@ public abstract partial class TrackLabelBase : TrackBase {
             return imageInfo.ApplyStyle(style);
         }
     }
-
-    public override object Clone() {
-        var clone = (TrackLabelBase)MemberwiseClone();
-        return clone;
-    }
 }

@@ -16,7 +16,7 @@ namespace DCCPanelController.Model;
 /// <summary>
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
-public partial class Panel : ObservableObject, ICloneable {
+public partial class Panel : ObservableObject {
     private ObservableCollection<ITrackPiece> _tracks = [];
 
     [ObservableProperty] private string _name = string.Empty;
@@ -58,8 +58,7 @@ public partial class Panel : ObservableObject, ICloneable {
         return track;
     }
     
-    private static void SetParent(IList<ITrackPiece>? tracks, Panel parent) {
-        Console.WriteLine($"Setting Parent: {tracks?.Count}");
+    public void SetParent(IList<ITrackPiece>? tracks, Panel parent) {
         if (tracks is null) return;
         foreach (var track in tracks) track.Parent = parent;
     }
@@ -84,8 +83,10 @@ public partial class Panel : ObservableObject, ICloneable {
     ///     Create a deep copy of the Panel object.
     /// </summary>
     /// <returns>A new instance of the Panel object with the same property values as the original.</returns>
-    public object Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException("Cannot clone the Panel.");
+    public Panel Clone() {
+        var cloned= ObjectCloner.Clone<Panel>(this) ?? throw new ArgumentException("Cannot clone the Panel.");
+        cloned.SetParent(cloned.Tracks, cloned);
+        return cloned;
     }
 
     private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) => TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);

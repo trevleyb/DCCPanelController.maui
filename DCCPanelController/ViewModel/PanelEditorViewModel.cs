@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
@@ -11,6 +12,7 @@ using DCCPanelController.Tracks;
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
+    private Panel _originalPanel;
     [ObservableProperty] private Panel _panel;
     [ObservableProperty] private bool _hasSelectedTracks;
     [ObservableProperty] private bool _canUsePropertyPage;
@@ -23,7 +25,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public event EventHandler? CloseRequested;
 
     public PanelEditorViewModel(Panel panel) {
-        _panel = panel;
+        _originalPanel = panel;
+        Panel = (Panel)panel.Clone();               // Clone the Panel so we are working on a Clone 
         PropertyChanged += OnPropertyChanged;
         Panel.PropertyChanged += OnPanelPropertyChanged;
         TrackSymbols = TrackPieceFactory.BuildSymbols(Panel);
@@ -43,6 +46,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public void Save() {
+        ObjectCloner.UpdateOriginal(_originalPanel, Panel);
         OnSaveCompleted?.Invoke(Panel);
         CloseRequested?.Invoke(Panel, EventArgs.Empty);
     }
@@ -53,11 +57,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public void Cancel() {
-        if (EditState == EditState.Changed) {
-            Console.WriteLine("Panel was changed.");
-            var answer = _navigationService.DisplayAlertAsync("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-            if (answer) { Save(); return; }
-        }
+        //if (EditState == EditState.Changed) {
+        //  Console.WriteLine("Panel was changed.");
+        // var answer = _navigationService.DisplayAlertAsync("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
+        // if (answer) { Save(); return; }
+        //}
         OnSaveCompleted?.Invoke(null);
         CloseRequested?.Invoke(null, EventArgs.Empty);
     }

@@ -12,15 +12,14 @@ public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
     private EditModeEum _editMode = EditModeEum.Move;
-    private NavigationService _navigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
+    private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
 
-    private Panel Panel { get; }
+    private Panel Panel => ViewModel.Panel;
     public PanelEditorViewModel ViewModel { get; }
 
     public PanelEditorPage(Panel panel) {
         ArgumentNullException.ThrowIfNull(panel, nameof(Panel));
         ViewModel = new PanelEditorViewModel(panel);
-        Panel = panel;
         BindingContext = ViewModel;
         InitializeComponent();
 
@@ -99,16 +98,17 @@ public partial class PanelEditorPage : ContentPage {
         ViewModel.EditState = EditState.Changed;
         if (Panel.HasSelectedTracks) {
             foreach (var track in Panel.SelectedTracks) {
-                await _navigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
+                await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
                 //await Navigation.PushModalAsync(new DynamicPropertyPage(track), true);
                 PanelView.MarkTrackUnSelected(track);
             }
         } else {
-            await _navigationService.NavigateToPopupWindow(new PanelPropertyPage(Panel));
+            await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(Panel));
             //await Navigation.PushModalAsync(new PanelPropertyPage(Panel),true);
         }
     }
     
+    /*
     private void DropTrackInTrash(object? sender, DropEventArgs e) {
         Console.WriteLine("Drop Track In Trash");
         e.Data.Properties.TryGetValue("Source", out var source);
@@ -130,7 +130,8 @@ public partial class PanelEditorPage : ContentPage {
         Console.WriteLine("Drop Track In Trash Hover Leave");
         DragTrashIcon.BackgroundColor = Colors.White;
     }
-
+    */
+    
     private void RotateLeft(object? sender, EventArgs e) {
         foreach (var track in Panel.SelectedTracks) track.RotateLeft();
         ViewModel.EditState = EditState.Changed;

@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -20,9 +21,9 @@ public partial class TrackText : TrackBase, ITrackSymbol, ITrackPiece {
         SetTrackSymbol("Label");
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Label");
     }
+    
     public override ITrackPiece Clone() {
-        var clone = (ITrackPiece)MemberwiseClone();
-        return clone;
+        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
 
 }
