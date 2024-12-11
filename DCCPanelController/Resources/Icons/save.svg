@@ -1,9 +1,1 @@
-<svg id="Save--Streamline-Carbon.svg" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 24 24" height="24"
-     width="24">
-    <desc>Save Streamline Icon: https://streamlinehq.com</desc>
-    <defs></defs>
-    <title>save</title>
-    <path d="m19.9165625 6.6771875 -3.59375 -3.59375A0.71875 0.71875 0 0 0 15.8125 2.875H4.3125a1.4375 1.4375 0 0 0 -1.4375 1.4375v14.375a1.4375 1.4375 0 0 0 1.4375 1.4375h14.375a1.4375 1.4375 0 0 0 1.4375 -1.4375V7.1875a0.71875 0.71875 0 0 0 -0.2084375 -0.5103125ZM8.625 4.3125h5.75v2.875h-5.75Zm5.75 14.375h-5.75v-5.75h5.75Zm1.4375 0v-5.75a1.4375 1.4375 0 0 0 -1.4375 -1.4375h-5.75a1.4375 1.4375 0 0 0 -1.4375 1.4375v5.75H4.3125V4.3125h2.875v2.875a1.4375 1.4375 0 0 0 1.4375 1.4375h5.75a1.4375 1.4375 0 0 0 1.4375 -1.4375V4.6071875l2.875 2.875V18.6875Z"
-          stroke-width="1"></path>
-    <path id="_Transparent_Rectangle_" d="M0 0h23v23H0Z" fill="none" stroke-width="1"></path>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>

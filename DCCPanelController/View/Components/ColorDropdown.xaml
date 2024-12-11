@@ -9,12 +9,12 @@
 
     <ContentView.Content>
         <Button
-            BackgroundColor="{Binding SelectedColor}"
             BorderColor="{StaticResource Gray100}"
             BorderWidth="2"
+            CornerRadius="10"
             Command="{Binding ShowDropdownCommand}"
-            CornerRadius="5"
-            Text="{Binding DisplayText}"
+            BackgroundColor="{Binding Color}"
+            Text="{Binding Text}"
             TextColor="{Binding ContrastColor}" />
     </ContentView.Content>
 </ContentView>

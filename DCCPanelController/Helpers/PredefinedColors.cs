@@ -12,7 +12,7 @@ public class ColorOption {
 public static class PredefinedColors {
     private static readonly ReadOnlyCollection<ColorOption> _AllColors;
     private static readonly ReadOnlyCollection<ColorOption> _SelectableColors;
-
+    
     static PredefinedColors() {
         _AllColors = new ReadOnlyCollection<ColorOption>(BuildAllColors());
         _SelectableColors = new ReadOnlyCollection<ColorOption>(BuildSelectableColors(_AllColors));
@@ -186,6 +186,15 @@ public static class PredefinedColors {
         return colors;
     }
 
+    public static ColorOption FindColor(Color value) {
+        foreach (var colorOption in _AllColors) {
+            if (colorOption.Color == value) return colorOption;
+        }
+        return Default;
+    }
+    
+    public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
+    
     public static List<ColorOption> BuildSelectableColors(ReadOnlyCollection<ColorOption> allColors) {
         var selectedColorOptions = new List<ColorOption>();
         foreach (var color in allColors) {
@@ -199,11 +208,6 @@ public static class PredefinedColors {
             }
         }
         return selectedColorOptions;
-    }
-    
-    private static Color GetContrastingColor(Color color) {
-        return color.GetComplementary();
-        //return IsColorDark(color) ? Colors.White : Colors.Black;
     }
     
     private static bool IsColorDark(Color color) {

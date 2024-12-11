@@ -30,6 +30,21 @@ public partial class PanelDefaults : ObservableObject {
     [ObservableProperty] private Color _continuationColor  = Colors.Black;
     [ObservableProperty] private Color _borderColor        = Colors.Black;
 
+    public void ResetToDefaults() {
+        BackgroundColor    = Colors.White;
+        MainLineColor      = Colors.Green;
+        BranchLineColor    = Colors.Grey;
+        DivergingColor     = Colors.Grey;
+        ButtonOnColor      = Colors.Lime;
+        ButtonOffColor     = Colors.Crimson;
+        OccupiedColor      = Colors.Crimson;
+        HiddenColor        = Colors.White;
+        TerminatorColor    = Colors.Black;
+        ButtonBorder       = Colors.Crimson;
+        ContinuationColor  = Colors.Black;
+        BorderColor        = Colors.Black;
+    }
+    
     public PanelDefaults Clone() {
         return ObjectCloner.Clone<PanelDefaults>(this) ?? throw new ArgumentException("Cannot clone the Panel Defaults.");
     }

@@ -9,27 +9,24 @@
     <ContentPage.Content>
         <Grid HorizontalOptions="Center" VerticalOptions="Center">
             <Border Stroke="{StaticResource Primary}"
-                    StrokeThickness="2"
+                    StrokeShape="RoundRectangle 10,10,10,10"
+                    StrokeThickness="3"
                     Background="White"
-                    Padding="10"
-
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
                     WidthRequest="500"
                     HeightRequest="500">
 
                 <StackLayout>
-                    <Label Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" />
-                    <BoxView
-                        BackgroundColor="{StaticResource Primary}"
-                        HeightRequest="2"
-                        HorizontalOptions="Fill"
-                        Margin="0,5,0,5" />
-
+                    <Grid ColumnDefinitions="*,auto" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
+                        <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" VerticalOptions="Center" />
+                        <ImageButton Grid.Column="1" Source="information.png" Aspect="Center" WidthRequest="25" HeightRequest="25"/>
+                    </Grid>
+                    
                     <TableView x:Name="PropertyContainer" HasUnevenRows="True" />
 
                     <Button Text="Close"
-                            Padding="10"
+                            Margin="0,20,0,20"
                             Style="{StaticResource ButtonOutline}"
                             VerticalOptions="End"
                             HorizontalOptions="Center"

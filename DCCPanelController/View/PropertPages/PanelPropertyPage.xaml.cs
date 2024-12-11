@@ -51,4 +51,10 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
         //Navigation.PopModalAsync(true);
         CloseRequested?.Invoke(this, EventArgs.Empty);
     }
+
+    private void ResetColorsClicked(object? sender, EventArgs e) {
+        if (BindingContext is Panel panel) {
+            panel.Defaults.ResetToDefaults();
+        }
+    }
 }
