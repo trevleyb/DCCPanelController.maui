@@ -20,9 +20,9 @@ public enum TrackStyleImage {
 // ----------------------------------------------------------------------------
 public enum TrackStyleType {
     Button,
-    Text,
     Mainline,
-    Branchline
+    Branchline,
+    Text
 }
 
 // Attributes are additional rules we can apply to a track peice to set additional

@@ -61,6 +61,7 @@
                     </HorizontalStackLayout>
 
                     <!--  Sort Order  -->
+                    <!-- Not sure we need the sort order as we can drag/drop to change the order.
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label
                             Text="Sort Order"
@@ -79,7 +80,8 @@
                             Minimum="1"
                             Value="{Binding SortOrder}" />
                     </HorizontalStackLayout>
-
+                    --> 
+                    
                     <HorizontalStackLayout>
 
                         <VerticalStackLayout>

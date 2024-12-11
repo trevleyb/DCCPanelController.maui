@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
+using DCCPanelController.Tracks.StyleManager;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace DCCPanelController.Services;
@@ -13,7 +14,11 @@ public class SettingsService {
         WriteIndented = true, 
         Converters = {
             new JsonConverterTrackPiece(),
-            new MauiColorJsonConverter()
+            new MauiColorJsonConverter(),
+            new JsonConverterEnumToString<TrackStyleImage>(),
+            new JsonConverterEnumToString<TrackStyleType>(),
+            new JsonConverterEnumToString<TrackStyleAttribute>(),
+            new JsonConverterEnumToString<TrackStyleImage>(),
         }
     };
     

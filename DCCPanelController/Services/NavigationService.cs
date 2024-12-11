@@ -29,7 +29,7 @@ public class NavigationService(IServiceProvider serviceProvider) {
         return await tcs.Task;
     }
 
-    public async Task NavigateToPopupWindow(ContentPage page) {
+    public static async Task NavigateToPopupWindow(ContentPage page) {
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
 
