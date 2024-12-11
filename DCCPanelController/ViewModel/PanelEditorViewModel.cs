@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.NavigationService;
@@ -26,10 +28,10 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public PanelEditorViewModel(Panel panel) {
         _originalPanel = panel;
-        Panel = (Panel)panel.Clone();               // Clone the Panel so we are working on a Clone 
+        Panel = panel.Clone();               // Clone the Panel so we are working on a Clone 
         PropertyChanged += OnPropertyChanged;
         Panel.PropertyChanged += OnPanelPropertyChanged;
-        TrackSymbols = TrackPieceFactory.BuildSymbols(Panel);
+        TrackSymbols = BuildTrackSymbols(Panel);
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
@@ -77,6 +79,24 @@ public partial class PanelEditorViewModel : BaseViewModel {
                 Panel.Tracks.Remove(track);
             }
         }
+    }
+
+    private static ObservableCollection<ITrackSymbol> BuildTrackSymbols(Panel parent) {
+        return [
+            new TrackButton(parent),
+            new TrackLabelCircle(parent),
+            new TrackText(parent),
+            new TrackImage(parent),
+            new TrackStraight(parent),
+            new TrackStraightContinuation(parent),
+            new TrackCorner(parent),
+            new TrackCornerContinuation(parent),
+            new TrackLeftTurnout(parent),
+            new TrackRightTurnout(parent),
+            new TrackCrossing(parent),
+            new TrackTerminator(parent),
+            new TrackCompass(parent)
+        ];
     }
 }
 

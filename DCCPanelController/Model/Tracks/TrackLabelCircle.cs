@@ -5,8 +5,8 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackLabelCircle : TrackLabelBase, ITrackSymbol, ITrackPiece {
-
+public partial class TrackLabelCircle(Panel? parent = null) : TrackLabelBase(parent), ITrackSymbol, ITrackPiece {
+    public TrackLabelCircle() : this(null) { }
     protected override void Setup() {
         Layer = 2;
         Name="Label";

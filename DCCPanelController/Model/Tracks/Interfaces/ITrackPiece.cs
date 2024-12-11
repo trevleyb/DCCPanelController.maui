@@ -10,12 +10,12 @@ public interface ITrackPiece {
     int TrackRotation { get; set; }
     int X { get; set; }
     int Y { get; set; }
-    int Width { get; set; }
-    int Height { get; set; }
     int Layer { get; }
+    double GridSize { get; }
     bool IsSelected { get; set; }
+
+    IView GetDisplayItem(double gridSize, bool passthrough = false);
     
-    ImageSource? Image { get; }
     Panel? Parent { get; set; }
     ITrackPiece Clone();
     TrackConnectionsEnum[] Connections { get; }

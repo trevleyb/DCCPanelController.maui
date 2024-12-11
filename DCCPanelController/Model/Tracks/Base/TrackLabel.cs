@@ -7,6 +7,9 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackLabelBase : TrackBase {
+
+    protected TrackLabelBase(Panel? parent = null) : base(parent) { }
+    
     [ObservableProperty] 
     [property: EditableStringProperty(Name = "Circle Label", Description = "Label to display in the Circle")]
     private string _circlelabel = string.Empty;

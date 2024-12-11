@@ -17,11 +17,6 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         SetSidePanelState(true);
     }
 
-    protected override void OnAppearing() {
-        //UpdateLayout();
-        base.OnAppearing();
-    }
-
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
@@ -30,17 +25,6 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         Navigation.PushAsync(new InstructionsPage());
     }
    
-    private void UpdateLayout() {
-        var orientation = DeviceDisplay.MainDisplayInfo.Orientation;
-        var span = orientation switch {
-            DisplayOrientation.Portrait  => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2),
-            DisplayOrientation.Landscape => OnScreenSizeHelpers.Instance.GetScreenSizeValue(2, 2, 2, 2, 2, 3),
-            _                            => OnScreenSizeHelpers.Instance.GetScreenSizeValue(1, 1, 1, 1, 1, 2)
-        };
-        //PanelsCollectionViewLayout.Span = span;
-        //PanelsCollectionView.InvalidateMeasure();
-    }
-    
     private void Panel_OnDragStarting(object? sender, DragStartingEventArgs e) {
         Console.WriteLine("DragGestureRecognizer_OnDragStarting");
         if (sender is BindableObject { BindingContext: Panel panel }) {
@@ -74,11 +58,7 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void SidePanelExpander_OnClicked(object? sender, EventArgs e) {
-        if (_viewModel.IsSidePanelOpen) {
-            SetSidePanelState(false);
-        } else {
-            SetSidePanelState(true);
-        }
+        SetSidePanelState(!_viewModel.IsSidePanelOpen);
     }
 
     private void SetSidePanelState(bool expanded) {

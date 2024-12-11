@@ -19,6 +19,7 @@ namespace DCCPanelController.Model;
 public partial class Panel : ObservableObject {
     private ObservableCollection<ITrackPiece> _tracks = [];
 
+    [ObservableProperty] private string _id = Guid.NewGuid().ToString();
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;

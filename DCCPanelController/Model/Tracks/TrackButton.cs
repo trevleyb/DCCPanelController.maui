@@ -8,7 +8,9 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, ITrackSymbol {
+public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent), ITrackPiece, ITrackButton, ITrackSymbol {
+
+    public TrackButton() : this(null) { }       
     private IAudioPlayer? _clickSoundPlayer;
 
     [ObservableProperty] [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
@@ -27,9 +29,12 @@ public partial class TrackButton : TrackButtonBase, ITrackPiece, ITrackButton, I
         Layer = 2;
         Name= "Button";
         SetTrackSymbol("Button");
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Button");
-        AddImageSourceAndRotation(TrackStyleImage.Active, "Button");
-        AddImageSourceAndRotation(TrackStyleImage.InActive, "Button");
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Button",(0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "ButtonCorner",(45, 270), (135, 0), (225, 90), (315, 180));
+        AddImageSourceAndRotation(TrackStyleImage.Active, "Button",(0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Active, "ButtonCorner",(45, 270), (135, 0), (225, 90), (315, 180));
+        AddImageSourceAndRotation(TrackStyleImage.InActive, "Button",(0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImage.InActive, "ButtonCorner",(45, 270), (135, 0), (225, 90), (315, 180));
     }
 
     public override ITrackPiece Clone() {

@@ -15,128 +15,148 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddPanelCommand}" Text="Add"  IconImageSource="add.png"/>
-        <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}"  IconImageSource="add_filled.png" />
-        <ToolbarItem Command="{Binding EditPanelCommand}" Text="Edit" IconImageSource="edit.png" IsEnabled="{Binding IsPanelSelected}" />
-        <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="trash.png" IsEnabled="{Binding IsPanelSelected}"/>
-        <ToolbarItem Text="Expand" x:Name="SidePanelButton" IconImageSource="side_panel_close_filled.png" Clicked="SidePanelExpander_OnClicked" IsEnabled="{Binding CanExpandCollapse}" />
+        <ToolbarItem Command="{Binding AddPanelCommand}" Text="Add" IconImageSource="add.png" />
+        <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}"
+                     IconImageSource="add_filled.png" />
+        <ToolbarItem Command="{Binding EditPanelCommand}" Text="Edit" IconImageSource="edit.png"
+                     IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="trash.png"
+                     IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Text="Expand" x:Name="SidePanelButton" IconImageSource="side_panel_close_filled.png"
+                     Clicked="SidePanelExpander_OnClicked" IsEnabled="{Binding CanExpandCollapse}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding SidePanelWidth}"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="{Binding SidePanelWidth}" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            
+
             <Border Stroke="#95000000"
                     StrokeThickness="0.5"
-                    Opacity="50"
-                    BackgroundColor="WhiteSmoke" 
+                    BackgroundColor="WhiteSmoke"
                     Padding="5"
                     Grid.Column="0"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
-                
-            <CollectionView
-                x:Name="PanelsList"
-                IsVisible="{Binding IsSidePanelOpen}"
-                ItemsSource="{Binding Panels}"
-                SelectedItem="{Binding SelectedPanel, Mode=TwoWay}"
-                SelectionChangedCommand="{Binding SelectionChangedCommand}"
-                SelectionMode="Single">
 
-                <CollectionView.EmptyView>
-                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <Label Text="No Panels were found. Please use + to add a new Panel." />
-                        </StackLayout>
-                    </Grid>
-                </CollectionView.EmptyView>
+                <CollectionView
+                    x:Name="PanelsList"
+                    IsVisible="{Binding IsSidePanelOpen}"
+                    ItemsSource="{Binding Panels}"
+                    SelectedItem="{Binding SelectedPanel, Mode=TwoWay}"
+                    SelectionChangedCommand="{Binding SelectionChangedCommand}"
+                    SelectionMode="Single">
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="model:Panel">
-                        <SwipeView>
-                            <SwipeView.RightItems>
-                                <SwipeItemView BackgroundColor="LightGreen" 
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},
-                                x:DataType= viewModel:PanelsViewerViewModel, Path=EditPanelCommand}" 
-                                CommandParameter="{Binding}">
-                                 <StackLayout Orientation="Horizontal" Padding="10">
-                                        <Image Source="edit.png" WidthRequest="24" HeightRequest="24" />
-                                    </StackLayout>
-                                </SwipeItemView>
-
-                                <!-- Delete SwipeItem -->
-                                <SwipeItemView BackgroundColor="LightCoral" 
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},
-                                                   x:DataType= viewModel:PanelsViewerViewModel, 
-                                                   Path=DeletePanelCommand}" 
-                                               CommandParameter="{Binding}">
-                                    <StackLayout Orientation="Horizontal" Padding="10">
-                                        <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
-                                    </StackLayout>
-                                </SwipeItemView>
-                            </SwipeView.RightItems>
-                            <StackLayout Margin="10" Padding="10">
-                                <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"></Label>
-                                <Label Text="{Binding Description}" Style="{StaticResource SmallLabel}"></Label>
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label Text="No Panels were found. Please use + to add a new Panel." />
                             </StackLayout>
-                        </SwipeView>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-            </Border>
-            
-            <StackLayout Grid.Column="1" IsVisible="{Binding NoPanelSelected}">
-                <StackLayout
-                        HorizontalOptions="CenterAndExpand"
-                        Padding="20"
-                        VerticalOptions="CenterAndExpand">
-                        <StackLayout
-                            HorizontalOptions="CenterAndExpand"
-                            Padding="20"
-                            VerticalOptions="CenterAndExpand">
-                            <Label
-                                FontAttributes="Bold"
-                                HorizontalOptions="Center"
-                                Text="Welcome to the DCC Model Layout Panel Controller" />
-                            <Label HorizontalOptions="Center" Text="  " />
-                            <Label HorizontalOptions="Center"
-                                   Text="This page will populate once you have created panels and turnout control. " />
-                            <Label HorizontalOptions="Center"
-                                   Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
-                            <Label HorizontalOptions="Center" Text="  " />
-                        </StackLayout>
-                        <StackLayout
-                            HorizontalOptions="CenterAndExpand"
-                            Padding="20"
-                            VerticalOptions="CenterAndExpand">
-                            <Button
-                                Clicked="ButtonInstructions_OnClicked"
-                                Margin="0,10,0,10"
-                                Style="{StaticResource ButtonOutline}"
-                                Text="Instructions" />
-                            <Button
-                                Clicked="ButtonAbout_OnClicked"
-                                Margin="0,10,0,10"
-                                Style="{StaticResource ButtonOutline}"
-                                Text="About" />
-                        </StackLayout>
-                    </StackLayout>            
-            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
 
-            <view:ControlPanelView x:Name="ControlPanelView" 
-               Grid.Column="1"
-               IsVisible="{Binding IsPanelSelected}"
-               HorizontalOptions="Fill"
-               VerticalOptions="Fill"
-               Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, Path=SelectedPanel}"
-               TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
-               DesignMode="false"
-               ShowGrid="false" />
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="model:Panel">
+                            <SwipeView>
+                                <SwipeView.RightItems>
+                                    <SwipeItemView BackgroundColor="LightGreen"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},
+                                x:DataType= viewModel:PanelsViewerViewModel, Path=EditPanelCommand}"
+                                                   CommandParameter="{Binding}">
+                                        <StackLayout Orientation="Horizontal" Padding="10">
+                                            <Image Source="edit.png" WidthRequest="24" HeightRequest="24" />
+                                        </StackLayout>
+                                    </SwipeItemView>
+
+                                    <!-- Delete SwipeItem -->
+                                    <SwipeItemView BackgroundColor="LightCoral"
+                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},
+                                                   x:DataType= viewModel:PanelsViewerViewModel, 
+                                                   Path=DeletePanelCommand}"
+                                                   CommandParameter="{Binding}">
+                                        <StackLayout Orientation="Horizontal" Padding="10">
+                                            <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
+                                        </StackLayout>
+                                    </SwipeItemView>
+                                </SwipeView.RightItems>
+                                <StackLayout Margin="10" Padding="10">
+                                    <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"
+                                           TextColor="{StaticResource Primary}">
+                                    </Label>
+                                    <Label Text="{Binding Description}" Style="{StaticResource SmallLabel}"></Label>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Border>
+
+            <Border Stroke="#95000000"
+                    Grid.Column="1"
+                    StrokeThickness="0.5"
+                    BackgroundColor="Transparent"
+                    Padding="5"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+                
+                <Grid Grid.Column="1" HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <StackLayout Grid.Column="0" IsVisible="{Binding NoPanelSelected}"
+                                 HorizontalOptions="Fill"
+                                 VerticalOptions="Fill">
+                        <StackLayout
+                            HorizontalOptions="CenterAndExpand"
+                            Padding="20"
+                            VerticalOptions="CenterAndExpand">
+                            <StackLayout
+                                HorizontalOptions="CenterAndExpand"
+                                Padding="20"
+                                VerticalOptions="CenterAndExpand">
+                                <Label
+                                    FontAttributes="Bold"
+                                    HorizontalOptions="Center"
+                                    Text="Welcome to the DCC Model Layout Panel Controller" />
+                                <Label HorizontalOptions="Center" Text="  " />
+                                <Label HorizontalOptions="Center"
+                                       Text="This page will populate once you have created panels and turnout control. " />
+                                <Label HorizontalOptions="Center"
+                                       Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
+                                <Label HorizontalOptions="Center" Text="  " />
+                            </StackLayout>
+                            <StackLayout
+                                HorizontalOptions="CenterAndExpand"
+                                Padding="20"
+                                VerticalOptions="CenterAndExpand">
+                                <Button
+                                    Clicked="ButtonInstructions_OnClicked"
+                                    Margin="0,10,0,10"
+                                    Style="{StaticResource ButtonOutline}"
+                                    Text="Instructions" />
+                                <Button
+                                    Clicked="ButtonAbout_OnClicked"
+                                    Margin="0,10,0,10"
+                                    Style="{StaticResource ButtonOutline}"
+                                    Text="About" />
+                            </StackLayout>
+                        </StackLayout>
+                    </StackLayout>
+
+                        <view:ControlPanelView
+                            Grid.Column="0"
+                            x:Name="ControlPanelView"
+                            HorizontalOptions="Fill"
+                            VerticalOptions="Fill"
+                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
+                            Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
+                            TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
+                            ShowTrackErrors="False"
+                            DesignMode="false"
+                            ShowGrid="false" />
+                </Grid>
+            </Border>
         </Grid>
-        
+
     </ContentPage.Content>
 
 </ContentPage>

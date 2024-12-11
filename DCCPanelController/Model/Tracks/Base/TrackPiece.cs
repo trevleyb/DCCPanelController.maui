@@ -7,6 +7,9 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
+    
+    protected TrackPieceBase(Panel? parent= null) : base(parent) { }
+    
     [ObservableProperty] 
     [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
     private bool _isHidden;
@@ -17,7 +20,7 @@ public abstract partial class TrackPieceBase : TrackBase {
     [ObservableProperty] 
     [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleType.Mainline, TrackStyleType.Branchline })]
     private TrackStyleType _trackType = TrackStyleType.Mainline;
-
+    
     [JsonIgnore]
     protected override SvgImage ActiveImage {
         get {

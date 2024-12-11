@@ -56,7 +56,9 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private async Task SelectionChangedAsync() { }
+    private async Task SelectionChangedAsync() {
+        Console.WriteLine("Selection Changed");
+    }
     
     [RelayCommand]
     private async Task DuplicatePanelAsync(Panel? panel = null) {

@@ -64,7 +64,7 @@ public partial class PanelEditorPage : ContentPage {
         Console.WriteLine("OnSymbolDragStarting");
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
             e.Data.Properties.Add("Track", symbol);
-            e.Data.Properties.Add("Source", "Symbol");
+            e.Data.Properties.Add("Source", "DisplaySymbol");
         }
     }
 
@@ -147,7 +147,8 @@ public partial class PanelEditorPage : ContentPage {
             PanelView.MarkTrackUnSelected(track);
             Panel.Tracks.Remove(track);
         }
-        PanelView.RebuildGrid(true);
+        // Going to see what happens if I do not rebuild the grid here?
+        //PanelView.RebuildGrid(true);
         ViewModel.EditState = EditState.Changed;
     }
 }

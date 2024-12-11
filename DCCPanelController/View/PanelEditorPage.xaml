@@ -123,7 +123,7 @@
                                 ToolTipProperties.Text="{Binding Name}"
                                 Margin="5"
                                 Padding="0">
-                                <Image WidthRequest="48" HeightRequest="48" Source="{Binding Symbol}"/>
+                                <Image WidthRequest="48" HeightRequest="48" Source="{Binding DisplaySymbol}"/>
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
                                 </Border.GestureRecognizers>

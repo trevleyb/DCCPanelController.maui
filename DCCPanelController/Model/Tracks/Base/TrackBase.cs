@@ -11,30 +11,52 @@ using Compass = DCCPanelController.Helpers.Compass;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackBase : ObservableObject {
+
+    protected TrackBase(Panel? parent = null) {
+        Initialise();
+        OnPropertyChanged(nameof(DisplayImage));
+        PropertyChanged += OnPropertyChanged;
+        if (parent != null) Parent = parent;
+    }
+    
     protected readonly StyleTrackImages StyleTrackImages = new();
 
     [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
-    [ObservableProperty] private int _height = 1;              // How High is it (Normally 1, Text might be 2)
+    [ObservableProperty] private double _gridSize;             // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _layer = 1;               // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece
-    [ObservableProperty] private int _width = 1;               // How Width is it (normally 1, Text might be 2)
     [ObservableProperty] private int _x;                       // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                       // What Grid Position (Vertical) is this component?
 
     [JsonIgnore] [ObservableProperty] private int _imageRotation;
     [JsonIgnore] [ObservableProperty] private bool _isSelected;
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
-    [JsonIgnore] public ImageSource Image => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
-    [JsonIgnore] public ImageSource Symbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
+    [JsonIgnore] public ImageSource DisplayImage => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
+    [JsonIgnore] public ImageSource DisplaySymbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
     [JsonIgnore] protected abstract SvgImage ActiveImage { get; }
     [JsonIgnore] protected abstract SvgImage SymbolImage { get; }
     
     [DoNotClone][JsonIgnore] public Panel? Parent { get; set; }
+   
+    public IView GetDisplayItem(double gridSize, bool passthrough = false ) {
+        GridSize = gridSize;
+        var image = new Image {
+            Scale = 1.5,
+            ZIndex = Layer,
+            Rotation = 0,
+            InputTransparent = passthrough,
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Center,
+            BackgroundColor = Colors.Transparent
+        };
 
-    protected TrackBase() {
-        Initialise();
-        OnPropertyChanged(nameof(Image));
-        PropertyChanged += OnPropertyChanged;
+        // Setup bindings to the size and source of the Track DisplayImage. DisplayImage can change on events
+        // -------------------------------------------------------------------------------------------
+        image.SetBinding(Image.SourceProperty, new Binding(nameof(DisplayImage)) { Source = this });
+        image.SetBinding(VisualElement.RotationProperty, new Binding(nameof(ImageRotation)) { Source = this });
+        image.SetBinding(VisualElement.WidthRequestProperty, new Binding(nameof(GridSize)) { Source = this });
+        image.SetBinding(VisualElement.HeightRequestProperty, new Binding(nameof(GridSize)) { Source = this });
+        return image;
     }
 
     public virtual string TrackObjectType {
@@ -58,12 +80,12 @@ public abstract partial class TrackBase : ObservableObject {
 
     public void RotateLeft() {
         TrackRotation = Compass.ToCompass(TrackRotation).Prev().ToRotation();
-        OnPropertyChanged(nameof(Image));
+        OnPropertyChanged(nameof(DisplayImage));
     }
 
     public void RotateRight() {
         TrackRotation = Compass.ToCompass(TrackRotation).Next().ToRotation();
-        OnPropertyChanged(nameof(Image));
+        OnPropertyChanged(nameof(DisplayImage));
     }
 
     protected void SetTrackSymbol(string imageSource) {

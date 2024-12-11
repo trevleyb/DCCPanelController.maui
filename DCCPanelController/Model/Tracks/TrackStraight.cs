@@ -5,7 +5,8 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackStraight : TrackPieceBase, ITrackSymbol, ITrackPiece {
+public partial class TrackStraight(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+    public TrackStraight() : this(null) { }
     protected override void Setup() {
         SetTrackSymbol("Straight1");
         Name = "Straight Track";

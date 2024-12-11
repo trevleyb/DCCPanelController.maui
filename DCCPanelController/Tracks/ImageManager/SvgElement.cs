@@ -3,7 +3,7 @@ namespace DCCPanelController.Tracks.ImageManager;
 public static class SvgElement {
     /// <summary>
     ///     Simple Map to convert Enum to String and visa-versa. Could just use the enum conversion but
-    ///     might want flexibility as the text words are the element names (id='name') inside the SVG Image.
+    ///     might want flexibility as the text words are the element names (id='name') inside the SVG DisplayImage.
     /// </summary>
     private static readonly Dictionary<SvgElementEnum, string> ElementMap = new() {
         { SvgElementEnum.Track, "Track" },

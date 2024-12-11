@@ -7,15 +7,16 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackButtonBase : TrackBase {
+    
+    protected TrackButtonBase(Panel? parent = null) : base(parent) {
+        PropertyChanged += OnPropertyChanged;
+    }
+   
     [ObservableProperty] 
     private bool? _buttonState;
     
     [ObservableProperty] 
     private TrackStyleImage _trackImage = TrackStyleImage.Normal;
-
-    protected TrackButtonBase() {
-        PropertyChanged += OnPropertyChanged;
-    }
 
     [JsonIgnore]
     protected override SvgImage ActiveImage {

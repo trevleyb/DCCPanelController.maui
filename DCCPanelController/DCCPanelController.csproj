@@ -339,6 +339,8 @@
         <EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg"/>
         <None Remove="Resources\TrackPieces\Track_Unknown.svg"/>
         <EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg"/>
+        <None Remove="Resources\TrackPieces\Track_Text.svg" />
+        <EmbeddedResource Include="Resources\TrackPieces\Track_Text.svg" />
     </ItemGroup>
 
     <ItemGroup>

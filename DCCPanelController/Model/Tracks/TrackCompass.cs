@@ -6,7 +6,9 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCompass : TrackPieceBase, ITrackSymbol, ITrackPiece {
+public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+    
+    public TrackCompass() : this(null) { }
     protected override void Setup() {
         Layer = 2;
         Name = "Compass";

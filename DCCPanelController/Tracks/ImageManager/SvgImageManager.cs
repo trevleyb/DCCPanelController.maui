@@ -14,7 +14,7 @@ public class SvgImageManager {
     private string? _resourceName;
 
     /// <summary>
-    ///     Creates an instance of the Image Manager with the given name of the
+    ///     Creates an instance of the DisplayImage Manager with the given name of the
     ///     image to manage. This needs to be a part of the resource name as it will
     ///     find the first match in the list of .SVG resources that matches the name.
     ///     If it does not find one, it will throw a FileNotFound exception.
@@ -46,9 +46,9 @@ public class SvgImageManager {
     }
 
     /// <summary>
-    ///     Converts the SVG Image into a PNG. Up-scales it to the default size as part of the process.
+    ///     Converts the SVG DisplayImage into a PNG. Up-scales it to the default size as part of the process.
     /// </summary>
-    /// <returns>A PNG Image of the SVG</returns>
+    /// <returns>A PNG DisplayImage of the SVG</returns>
     private ImageSource GetSvgAsImage() {
         var svg = new SKSvg();
         svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
@@ -65,7 +65,7 @@ public class SvgImageManager {
     }
 
     /// <summary>
-    ///     Converts the XDocument SVG Image into a stream which can be consumed by
+    ///     Converts the XDocument SVG DisplayImage into a stream which can be consumed by
     ///     the ImageSource.FromStream method
     /// </summary>
     private Stream ConvertXDocumentToStream(XDocument svgDocument) {

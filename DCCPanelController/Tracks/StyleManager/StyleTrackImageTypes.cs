@@ -20,6 +20,7 @@ public enum TrackStyleImage {
 // ----------------------------------------------------------------------------
 public enum TrackStyleType {
     Button,
+    Text,
     Mainline,
     Branchline
 }

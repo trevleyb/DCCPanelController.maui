@@ -26,11 +26,14 @@ public static class SvgImages {
 
             Add("Unknown", "********", "Track_Unknown");
 
-            Add("Button", "********", "Track_Button");
+            Add("Text", "********", "Track_Text");
             Add("Label", "********", "Track_Label");
-            Add("Image", "********", "Track_Image");
+            Add("DisplayImage", "********", "Track_Image");
             Add("Compass", "********", "Track_Compass");
             Add("Points", "********", "Track_Points");
+
+            Add("Button", "********", "Track_Button");
+            Add("ButtonCorner", "********", "Track_Button_Corner");
 
             Add("Straight1", "**S***S*", "Track_Straight");
             Add("Straight2", "*S***S**", "Track_Angle");
@@ -81,6 +84,6 @@ public static class SvgImages {
     private static SvgImage Create(string id, string directions, string resourceName) {
         var fullPath = SvgImageFinder.GetFullPathOfResource(resourceName);
         if (!string.IsNullOrEmpty(fullPath)) return new SvgImage(id, fullPath, directions);
-        throw new ApplicationException($"Invalid Track Image resourceName: {resourceName}. Track name wrong or not included in project.");
+        throw new ApplicationException($"Invalid Track DisplayImage resourceName: {resourceName}. Track name wrong or not included in project.");
     }
 }

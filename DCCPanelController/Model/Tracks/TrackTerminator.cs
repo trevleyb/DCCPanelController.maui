@@ -5,7 +5,8 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackTerminator : TrackPieceBase, ITrackSymbol, ITrackPiece {
+public partial class TrackTerminator(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+    public TrackTerminator() : this(null) { }
     protected override void Setup() {
         SetTrackSymbol("Terminator1");
         Name = "Track Terminator";

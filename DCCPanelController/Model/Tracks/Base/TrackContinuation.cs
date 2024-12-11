@@ -7,6 +7,9 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackContinuationBase : TrackBase {
+
+    protected TrackContinuationBase(Panel? parent = null) : base(parent) { }
+    
     [ObservableProperty] 
     [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
     private bool _isHidden;

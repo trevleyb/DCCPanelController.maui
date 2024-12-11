@@ -9,6 +9,11 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
+    
+    protected TrackTurnoutBase(Panel? parent= null) : base(parent) { 
+        PropertyChanged += OnPropertyChanged;
+    }
+
     private TurnoutsService? _turnoutsService;
 
     [ObservableProperty] 
@@ -31,11 +36,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
 
     private Turnout? _turnout;
-
-    protected TrackTurnoutBase() {
-        PropertyChanged += OnPropertyChanged;
-    }
-
+    
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
     
     [JsonIgnore]
@@ -88,7 +89,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
                 _                        => TrackStyleImage.Normal
             };
 
-            OnPropertyChanged(nameof(Image));
+            OnPropertyChanged(nameof(DisplayImage));
         }
     }
 }

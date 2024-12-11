@@ -12,7 +12,7 @@ public static class SvgStyles {
     }
 
     /// <summary>
-    ///     Get a Style based on the Track Type and the Image Type
+    ///     Get a Style based on the Track Type and the DisplayImage Type
     /// </summary>
     /// <param name="styleType">Mainline, Branchline or Button</param>
     /// <param name="styleImage">Normal, Straight, Diverging</param>
@@ -47,7 +47,8 @@ public static class SvgStyles {
                 .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden());
             break;
         
-        case TrackStyleType.Button:
+        case TrackStyleType.Button or 
+            TrackStyleType.Text:
             style = new SvgStyleBuilder()
                 .AddElement(e => e.WithName(SvgElementEnum.Border).Visible().WithColor(defaults.ButtonBorder))
                 .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(defaults.ButtonBorder));
@@ -60,6 +61,7 @@ public static class SvgStyles {
                      .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(defaults.ButtonBorder));
             }
             break;
+
         default:
             Trace.TraceWarning($"Unknown Track Style Type: {styleType}");
             break;

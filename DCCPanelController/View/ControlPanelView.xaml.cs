@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
@@ -7,6 +8,7 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services.SampleData;
 using DCCPanelController.Tracks.Helpers;
 using Microsoft.Maui.Layouts;
+using Microsoft.Win32.SafeHandles;
 
 namespace DCCPanelController.View;
 
@@ -57,13 +59,12 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    public void Redraw() {
-        RebuildGrid(true);
-    }
-    
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"Track was changed: {e.PropertyName}");
-        if (sender is ITrackPiece track) TrackPieceChanged?.Invoke(this,track);
+        if (sender is ITrackPiece track) {
+            TrackPieceChanged?.Invoke(this,track);
+            InvalidateCell(track);
+        }
     }
 
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldValue, object newValue) {
@@ -95,6 +96,23 @@ public partial class ControlPanelView {
         var control = (ControlPanelView)bindable;
         control.ClearSelectedTracks();
         control.RebuildGrid(true);
+        if (control.Panel != null) {
+            control.Panel.Tracks.CollectionChanged += TracksOnCollectionChanged;
+        }
+    }
+
+    private static void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        Console.WriteLine("Tracks Collection Changed");
+        if (e.OldItems is not null) {
+            foreach (var track in e.OldItems.OfType<ITrackPiece>()) {
+                Console.WriteLine($"Removing Track: {track.Name}");
+            }
+        }
+        if (e.NewItems is not null) {
+            foreach (var track in e.NewItems.OfType<ITrackPiece>()) {
+                Console.WriteLine($"Adding Track: {track.Name}");
+            }
+        }
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -106,6 +124,8 @@ public partial class ControlPanelView {
         if (MainGrid.Width < 1 || MainGrid.Height < 1) return;
         if (!forceRefresh && !HasScreenSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
+        Console.WriteLine($"Rebuilding the Dynamic Grid: {Panel.Name}");
+        
         SetScreenSize(MainGrid.Width, MainGrid.Height);
         DynamicGrid.WidthRequest = ViewWidth;
         DynamicGrid.HeightRequest = ViewHeight;
@@ -142,7 +162,7 @@ public partial class ControlPanelView {
             InputTransparent = true
         };
 
-        // Add the Track Image to the appropriate grid position
+        // Add the Track DisplayImage to the appropriate grid position
         // ------------------------------------------------------
         DynamicGrid.SetRow(border, row);
         DynamicGrid.SetColumn(border, col);
@@ -198,13 +218,13 @@ public partial class ControlPanelView {
     ///     Add the tracks from the view model onto the Grid
     /// </summary>
     private void AddTrackPiecesToGrid() {
-        Console.WriteLine("AddTrackPiecesToGrid()");
         if (Panel is { Tracks: { } tracks } panel) {
+            Console.WriteLine($"Adding {Panel.Tracks.Count} Track Pieces To Grid");
             foreach (var track in tracks) {
                 if (track.Parent != Panel) track.Parent = panel;
 
                 if (DynamicGrid.ColumnDefinitions.Count >= Cols && DynamicGrid.RowDefinitions.Count >= Rows && track.X < Cols && track.Y < Rows) {
-                    AddImageToLayout(track);
+                    AddDisplayItemToGrid(track);
 
                     // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
                     // -------------------------------------------------------------------------------------
@@ -212,7 +232,7 @@ public partial class ControlPanelView {
                         var pointImage = new TrackPoints { X = track.X, Y = track.Y };
                         var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
                         pointImage.SetPoints(validPoints);
-                        AddImageToLayout(pointImage, true);
+                        AddDisplayItemToGrid(pointImage, true);
                     }
                     if (track.IsSelected) MarkTrackSelected(track);
                 }
@@ -220,56 +240,49 @@ public partial class ControlPanelView {
         }
     }
 
-    private void RemoveImageFromLayout(ITrackPiece track) {
-        var tracksInGrid = DynamicGrid.Children;
+    private IView? GetCellElement(ITrackPiece track) => DynamicGrid.Children.FirstOrDefault(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X);
+    
+    public void InvalidateCell(ITrackPiece track) {
+        if (GetCellElement(track) is GraphicsView graphicsView) {
+            graphicsView.Invalidate();
+        } else {
+            Console.WriteLine($"Cell at Column: {track.X}, Row: {track.Y} does not have a GraphicsView.");
+        }
     }
 
-    private Image AddImageToLayout(ITrackPiece track, bool transparentInput = false) {
-        var image = new Image {
-            Scale = 1.5,
-            ZIndex = track.Layer,
-            Rotation = 0,
-            InputTransparent = transparentInput,
-            VerticalOptions = LayoutOptions.Center,
-            HorizontalOptions = LayoutOptions.Center,
-            BackgroundColor = Colors.Transparent
-        };
+    private void RemoveImageFromLayout(ITrackPiece track) {
+        if (GetCellElement(track) is GraphicsView graphicsView) {
+            DynamicGrid.Children.Remove(graphicsView);
+        }
+    }
 
-        // Setup bindings to the size and source of the Track Image. Image can change on events
-        // -------------------------------------------------------------------------------------------
-        image.SetBinding(Image.SourceProperty, new Binding(nameof(track.Image)) { Source = track });
-        image.SetBinding(RotationProperty, new Binding(nameof(track.ImageRotation)) { Source = track });
-        image.SetBinding(WidthRequestProperty, new Binding(nameof(GridSize)) { Source = this });
-        image.SetBinding(HeightRequestProperty, new Binding(nameof(GridSize)) { Source = this });
-
+    private void AddDisplayItemToGrid(ITrackPiece track, bool transparentInput = false) {
+        var displayItem = track.GetDisplayItem(GridSize, transparentInput);
+        
         // Setup trigger control to trap if we click on or select the track item
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
-        var tapGesture = new TapGestureRecognizer();
-        tapGesture.Tapped += (sender, args) => {
-            Console.WriteLine($"Tapped on Track: {track?.Name ?? "Unknown or Invalid Track"}");
-            Console.WriteLine($"There are {TrackPieceTapped?.GetInvocationList().Length ?? -1} listeners for TrackPieceTapped.");
-            if (track != null) TrackPieceTapped?.Invoke(this, track);
-        }; 
-        //tapGesture.NumberOfTapsRequired = 1;
-        image.GestureRecognizers.Add(tapGesture);
+        if (displayItem is Microsoft.Maui.Controls.View view) {
+            var tapGesture = new TapGestureRecognizer();
+            tapGesture.Tapped += (sender, args) => TrackPieceTapped?.Invoke(this, track);
+            view.GestureRecognizers.Add(tapGesture);
 
-        // If we are in Design mode, then add support for 
-        // dragging and dropping of the items on the page
-        // ---------------------------------------------------------------------------------------
-        if (DesignMode) {
-            var dragGesture = new DragGestureRecognizer();
-            dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
-            image.GestureRecognizers.Add(dragGesture);
+            // If we are in Design mode, then add support for 
+            // dragging and dropping of the items on the page
+            // ---------------------------------------------------------------------------------------
+            if (DesignMode) {
+                var dragGesture = new DragGestureRecognizer();
+                dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
+                view.GestureRecognizers.Add(dragGesture);
+            }
         }
 
-        // Add the Track Image to the appropriate grid position
+        // Add the Track DisplayImage to the appropriate grid position
         // ------------------------------------------------------
-        DynamicGrid.SetRow(image, track.Y);
-        DynamicGrid.SetColumn(image, track.X);
-        DynamicGrid.Children.Add(image);
-        track.PropertyChanged += OnTrackPieceChanged;
-        return image;
+        DynamicGrid.SetRow(displayItem, track.Y);
+        DynamicGrid.SetColumn(displayItem, track.X);
+        DynamicGrid.Children.Add(displayItem);
+        track.PropertyChanged += OnTrackPieceChanged; 
     }
 
     // If we click on a grid that is NOT a track piece and in design mode, 
@@ -348,7 +361,7 @@ public partial class ControlPanelView {
                         }
                         RebuildGrid();
                         break;
-                    case "Symbol":
+                    case "DisplaySymbol":
                         if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
@@ -424,26 +437,6 @@ public partial class ControlPanelView {
         ViewWidth = GridSize * Cols;
         ViewHeight = GridSize * Rows;
     }
-
-    // public void HandleTrackPieceTapped(ITrackPiece track, int taps = 1) {
-    //     TrackPieceTapped?.Invoke(this, track);
-    //     if (DesignMode) {
-    //         Console.WriteLine($"In design Mode: Handling {taps} for {track.Name}");
-    //     } else {
-    //         // if (track is ITrackInteractive) {
-    //         //     switch (track) {
-    //         //     case ITrackButton button:
-    //                 Console.WriteLine($"You just tapped on {track.Name} - its a button so we will toggle it. ");
-    //             //     button.Clicked();
-    //             //     break;
-    //             // case ITrackTurnout turnout:
-    //             //     Console.WriteLine($"You just tapped on {track.Name} - its turnout so we will cycle states. ");
-    //             //     turnout.Clicked();
-    //             //     break;
-    //             // }
-    //         //}
-    //     }
-    // }
 }
 
 /// <summary>
