@@ -32,7 +32,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [property: EditableTurnoutProperty(Name = "Actions", Group="Actions",  Description = "ID of the item to do an action against")]
     private List<TrackTurnoutAction> _actions = [];
 
-    [JsonIgnore] [ObservableProperty] private bool _isOccupied;
+    [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
     [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
 
     private Turnout? _turnout;

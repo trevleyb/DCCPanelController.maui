@@ -22,14 +22,14 @@ public abstract partial class TrackBase : ObservableObject {
     protected readonly StyleTrackImages StyleTrackImages = new();
 
     [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
-    [ObservableProperty] private double _gridSize;             // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _layer = 1;               // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece
     [ObservableProperty] private int _x;                       // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                       // What Grid Position (Vertical) is this component?
 
-    [JsonIgnore] [ObservableProperty] private int _imageRotation;
-    [JsonIgnore] [ObservableProperty] private bool _isSelected;
+    [ObservableProperty] [property: JsonIgnore] private double _gridSize;             // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] [property: JsonIgnore] private int _imageRotation;
+    [ObservableProperty] [property: JsonIgnore] private bool _isSelected;
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
     [JsonIgnore] public ImageSource DisplayImage => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
     [JsonIgnore] public ImageSource DisplaySymbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");

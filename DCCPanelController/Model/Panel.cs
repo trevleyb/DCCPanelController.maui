@@ -17,17 +17,16 @@ namespace DCCPanelController.Model;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableObject {
-    private ObservableCollection<ITrackPiece> _tracks = [];
-
     [ObservableProperty] private string _id = Guid.NewGuid().ToString();
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
     [ObservableProperty] private PanelDefaults _defaults = new();
-    
-    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _cols = 24;
-    [NotifyPropertyChangedFor(nameof(PanelRatio))] [ObservableProperty] private int _rows = 18;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 24;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
 
+    private ObservableCollection<ITrackPiece> _tracks = [];
+    
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public bool HasSelectedTracks => _tracks.Any(t => t.IsSelected);
     [JsonIgnore] public List<ITrackPiece> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];

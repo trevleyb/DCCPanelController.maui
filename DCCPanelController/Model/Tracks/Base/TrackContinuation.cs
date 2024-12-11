@@ -14,7 +14,7 @@ public abstract partial class TrackContinuationBase : TrackBase {
     [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
     private bool _isHidden;
 
-    [ObservableProperty] private bool _isOccupied;
+    [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
 
     [ObservableProperty] 
     [property: EditableTrackImageProperty(Name = "Track Style", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImage.Arrow, TrackStyleImage.Lines })]
