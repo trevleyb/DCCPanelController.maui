@@ -75,6 +75,7 @@ public partial class PanelEditorPage : ContentPage {
 
     private void ToggleGrid(object? sender, EventArgs e) {
         PanelView.ShowGrid = !PanelView.ShowGrid;
+        GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
         PanelView.RebuildGrid(true);
     }
 

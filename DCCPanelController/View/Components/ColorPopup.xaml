@@ -9,44 +9,38 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components">
 
-    <StackLayout HeightRequest="300" WidthRequest="250">
-        <Border Stroke="#95000000"
-                StrokeThickness="5"
+    <StackLayout HeightRequest="300" WidthRequest="300">
+        <Border Stroke="{StaticResource Primary}"
                 StrokeShape="RoundRectangle 10,10,10,10"
-                BackgroundColor="Snow" 
-                Padding="20"
+                StrokeThickness="3"
+                Background="White"
                 HorizontalOptions="Center"
-                VerticalOptions="Center"
-                WidthRequest="500">
+                VerticalOptions="Center">
 
-            <ScrollView>
-                <CollectionView
-                    ItemsSource="{Binding ColorOptions}"
-                    SelectionChanged="OnColorSelected"
-                    SelectionMode="Single">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="helpers:ColorOption">
-                            <Grid Padding="5">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="30" />
-                                    <ColumnDefinition Width="*" />
-                                </Grid.ColumnDefinitions>
+            <StackLayout>
+                <Grid ColumnDefinitions="*,auto" HeightRequest="30" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
+                    <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}"
+                           Text="Color Selector" VerticalOptions="Center" />
+                </Grid>
 
-                                <BoxView
-                                    Color="{Binding Color}"
-                                    Grid.Column="0"
-                                    HeightRequest="20"
-                                    WidthRequest="20" />
-                                <Label
-                                    Margin="10,5,5,5"
-                                    Grid.Column="1"
-                                    Text="{Binding Name}"
-                                    VerticalOptions="Center" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </ScrollView>
+                <ScrollView HeightRequest="264" VerticalOptions="Fill" HorizontalOptions="Fill"  VerticalScrollBarVisibility="Always">
+                    <CollectionView
+                        ItemsSource="{Binding ColorOptions}"
+                        SelectionChanged="OnColorSelected"
+                        SelectionMode="Single">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="helpers:ColorOption">
+                                <Grid ColumnDefinitions="30,*" Padding="5">
+                                    <BoxView Color="{Binding Color}" Grid.Column="0" HeightRequest="20"
+                                             WidthRequest="20" />
+                                    <Label Margin="10,5,5,5" Grid.Column="1" Text="{Binding Name}"
+                                           VerticalOptions="Center" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </StackLayout>
         </Border>
     </StackLayout>
 </toolkit:Popup>

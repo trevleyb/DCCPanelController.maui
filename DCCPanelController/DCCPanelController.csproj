@@ -183,11 +183,25 @@
       <MauiXaml Update="View\PanelsViewerPage.xaml">
         <SubType>Designer</SubType>
       </MauiXaml>
+      <MauiXaml Update="View\Components\ColorGrid.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
+      <MauiXaml Update="View\Components\ColorGridDropdown.xaml">
+        <SubType>Designer</SubType>
+      </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
       <Compile Update="View\PanelsViewerPage.xaml.cs">
         <DependentUpon>PanelsViewerPage.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\Components\ColorGrid.xaml.cs">
+        <DependentUpon>ColorGrid.xaml</DependentUpon>
+        <SubType>Code</SubType>
+      </Compile>
+      <Compile Update="View\Components\ColorGridDropdown.xaml.cs">
+        <DependentUpon>ColorGridDropdown.xaml</DependentUpon>
         <SubType>Code</SubType>
       </Compile>
     </ItemGroup>

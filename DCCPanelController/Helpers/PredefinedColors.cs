@@ -4,35 +4,72 @@ using CommunityToolkit.Maui.Core.Extensions;
 namespace DCCPanelController.Helpers;
 
 public class ColorOption {
+    private static List<int>? validLevels = null;
+    
     public required string Name { get; set; }
     public required Color Color { get; set; }
     public required Color ContrastColor { get; set; }
+    public string Hex => Color.ToHex();
+    public bool IsPrimary => IsPrimaryColor(Color, 5);
+    
+    /// <summary>
+    /// Determines if a color is a valid 'primary' color based on the number of combinations.
+    /// </summary>
+    /// <param name="color">The color to check.</param>
+    /// <param name="levels">The number of levels (2: 0,255; 3: 0,128,255; etc.).</param>
+    /// <returns>True if the color is valid, otherwise False.</returns>
+    private static bool IsPrimaryColor(Color color, int levels) {
+        // Generate the threshold levels (e.g., for 3 levels: 0, 128, 255)
+        var step = 255 / (levels - 1) + 1;
+        if (validLevels == null || validLevels.Count != levels) {
+            validLevels = new List<int> { 0, 255 };
+            for (var i = 1; i < levels -1; i++) validLevels.Add((i * step) -1);
+        }
+
+        // Validate if the Red, Green, and Blue components are in the valid levels
+        var red = (int)(color.Red * 255);
+        var green = (int)(color.Green * 255);
+        var blue =(int)(color.Blue * 255);
+        
+        return validLevels.Contains(red) && validLevels.Contains(green) && validLevels.Contains(blue);
+    }
 }
 
 public static class PredefinedColors {
-    private static readonly ReadOnlyCollection<ColorOption> _AllColors;
-    private static readonly ReadOnlyCollection<ColorOption> _SelectableColors;
+    private static readonly ReadOnlyCollection<ColorOption> _allColors = new(BuildAllColors());
+    private static readonly ReadOnlyCollection<ColorOption> _selectableColors = new(BuildSelectableColors());
     
-    static PredefinedColors() {
-        _AllColors = new ReadOnlyCollection<ColorOption>(BuildAllColors());
-        _SelectableColors = new ReadOnlyCollection<ColorOption>(BuildSelectableColors(_AllColors));
+    public static ColorOption FindColor(Color value) {
+        return _allColors.FirstOrDefault(color => color.Hex == value.ToHex()) ?? Default;
     }
     
-    public static string ColorName(this Color color) {
-        foreach (var knownColor in _AllColors.Where(knownColor => color.ToHex().Equals(knownColor.Color.ToHex()))) {
-            return knownColor.Name;
-        }
-        return "Unknown Color";
-    }
+    public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
 
     public static ReadOnlyCollection<ColorOption> AllColors() {
-        return _AllColors;
-    }
-    public static ReadOnlyCollection<ColorOption> SelectableColors() {
-        return _SelectableColors;
+        return _allColors;
     }
 
-    private static List<ColorOption> BuildAllColors() {
+    public static ReadOnlyCollection<ColorOption> SelectableColors() {
+        return _selectableColors;
+    }
+
+    public static ReadOnlyCollection<ColorOption> BuildSelectableColors() {
+        List<ColorOption> colors = new();
+        var steps = new List<int> { 0, 128, 255 };
+
+        foreach (var red in steps) {
+            foreach (var green in steps) {
+                foreach (var blue in steps) {
+                    var color = Color.FromRgb(red,green,blue);
+                    var foundColor = _allColors.FirstOrDefault(c => c.Hex == color.ToHex());
+                    colors.Add(foundColor ?? new ColorOption { Name = color.ToHex(), Color = color, ContrastColor = Colors.White });
+                }
+            }
+        }
+        return new ReadOnlyCollection<ColorOption>(colors);
+    }
+
+    private static ReadOnlyCollection<ColorOption> BuildAllColors() {
         var colors = new List<ColorOption> {
             new() { Name = "AliceBlue", Color = Colors.AliceBlue, ContrastColor = Colors.Black },
             new() { Name = "AntiqueWhite", Color = Colors.AntiqueWhite, ContrastColor = Colors.Black },
@@ -183,18 +220,9 @@ public static class PredefinedColors {
             new() { Name = "Yellow", Color = Colors.Yellow, ContrastColor = Colors.Black },
             new() { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black }
         };
-        return colors;
+        return new ReadOnlyCollection<ColorOption>(colors);
     }
 
-    public static ColorOption FindColor(Color value) {
-        foreach (var colorOption in _AllColors) {
-            if (colorOption.Color == value) return colorOption;
-        }
-        return Default;
-    }
-    
-    public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
-    
     public static List<ColorOption> BuildSelectableColors(ReadOnlyCollection<ColorOption> allColors) {
         var selectedColorOptions = new List<ColorOption>();
         foreach (var color in allColors) {
@@ -209,7 +237,7 @@ public static class PredefinedColors {
         }
         return selectedColorOptions;
     }
-    
+
     private static bool IsColorDark(Color color) {
         // Using relative luminance to determine if the color is dark or light
         double brightness = (color.Red * 255 * 299 + color.Green * 255 * 587 + color.Blue * 255 * 114) / 1000;

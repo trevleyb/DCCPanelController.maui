@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<toolkit:Popup
+    x:Class="DCCPanelController.View.Components.ColorGrid"
+    x:DataType="colorPickerControl:ColorGrid"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components">
+
+    <StackLayout WidthRequest="300">
+        <Border Stroke="{StaticResource Primary}"
+                StrokeShape="RoundRectangle 10,10,10,10"
+                StrokeThickness="3"
+                Background="White"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+
+            <StackLayout>
+                <Grid ColumnDefinitions="*,auto" HeightRequest="30" VerticalOptions="Center"
+                      BackgroundColor="{StaticResource Primary}">
+                    <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}"
+                           Text="Color Selector" VerticalOptions="Center" />
+                </Grid>
+
+                <CollectionView Margin="10" ItemsSource="{Binding ColorOptions}" SelectionChanged="OnColorSelected" SelectionMode="Single">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="5" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="helpers:ColorOption">
+                            <BoxView Margin="10" Color="{Binding Color}" Height="20" Width="20" HeightRequest="20"  WidthRequest="20" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </StackLayout>
+        </Border>
+    </StackLayout>
+</toolkit:Popup>

@@ -31,6 +31,10 @@ public partial class PanelDefaults : ObservableObject {
     [ObservableProperty] private Color _continuationColor  = Colors.Black;
     [ObservableProperty] private Color _borderColor        = Colors.Black;
 
+    public PanelDefaults() {
+        ResetToDefaults();
+    }
+
     public void ResetToDefaults() {
         BackgroundColor    = Colors.White;
         MainLineColor      = Colors.Green;
