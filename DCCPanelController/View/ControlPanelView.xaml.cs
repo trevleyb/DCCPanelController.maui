@@ -60,8 +60,8 @@ public partial class ControlPanelView {
     public int Cols => Panel?.Cols ?? 1;
 
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Track was changed: {e.PropertyName}");
         if (sender is ITrackPiece track) {
+            Console.WriteLine($"Track '{track.Name}' was changed: Property={e.PropertyName}");
             TrackPieceChanged?.Invoke(this,track);
             InvalidateCell(track);
         }
@@ -240,18 +240,20 @@ public partial class ControlPanelView {
         }
     }
 
-    private IView? GetCellElement(ITrackPiece track) => DynamicGrid.Children.FirstOrDefault(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X);
-    
-    public void InvalidateCell(ITrackPiece track) {
-        if (GetCellElement(track) is GraphicsView graphicsView) {
-            graphicsView.Invalidate();
-        } else {
-            Console.WriteLine($"Cell at Column: {track.X}, Row: {track.Y} does not have a GraphicsView.");
-        }
+    private IView? GetCellElement(ITrackPiece track) {
+        var cells = DynamicGrid.Children.Where(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X); 
+        var cell = DynamicGrid.Children.FirstOrDefault(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X);
+        return cell;
     }
 
-    private void RemoveImageFromLayout(ITrackPiece track) {
-        if (GetCellElement(track) is GraphicsView graphicsView) {
+    public void InvalidateCell(ITrackPiece track) {
+        RemoveDisplayItemFromGrid(track);
+        AddDisplayItemToGrid(track);
+    }
+
+    private void RemoveDisplayItemFromGrid(ITrackPiece track) {
+        if (GetCellElement(track) is { } graphicsView) {
+            track.PropertyChanged -= OnTrackPieceChanged; 
             DynamicGrid.Children.Remove(graphicsView);
         }
     }

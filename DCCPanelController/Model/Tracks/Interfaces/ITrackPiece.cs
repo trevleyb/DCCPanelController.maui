@@ -14,6 +14,7 @@ public interface ITrackPiece {
     double GridSize { get; }
     bool IsSelected { get; set; }
 
+    ImageSource DisplayImage { get; }
     IView GetDisplayItem(double gridSize, bool passthrough = false);
     
     Panel? Parent { get; set; }

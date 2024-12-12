@@ -40,7 +40,8 @@ public class SvgStyleElement {
     }
 
     public void AddOrUpdateAttribute(string key, string value) {
-        if (Attributes.TryAdd(key, value)) Attributes[key] = value;
+        Attributes.TryAdd(key, value); 
+        Attributes[key] = value;
     }
 
     public override string ToString() {

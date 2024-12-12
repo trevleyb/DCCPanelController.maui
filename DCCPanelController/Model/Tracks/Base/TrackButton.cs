@@ -10,16 +10,12 @@ namespace DCCPanelController.Model.Tracks.Base;
 public abstract partial class TrackButtonBase : TrackBase {
 
     private IAudioPlayer? _clickSoundPlayer;
+    protected bool? ButtonState;
+    protected TrackStyleImage TrackImage = TrackStyleImage.Normal;
 
     protected TrackButtonBase(Panel? parent = null) : base(parent) {
         PropertyChanged += OnPropertyChanged;
     }
-   
-    [ObservableProperty] 
-    private bool? _buttonState;
-    
-    [ObservableProperty] 
-    private TrackStyleImage _trackImage = TrackStyleImage.Normal;
 
     public void Clicked() {
         if (_clickSoundPlayer is null) {
