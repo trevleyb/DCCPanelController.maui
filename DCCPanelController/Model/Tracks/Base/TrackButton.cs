@@ -3,11 +3,14 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackButtonBase : TrackBase {
-    
+
+    private IAudioPlayer? _clickSoundPlayer;
+
     protected TrackButtonBase(Panel? parent = null) : base(parent) {
         PropertyChanged += OnPropertyChanged;
     }
@@ -18,6 +21,22 @@ public abstract partial class TrackButtonBase : TrackBase {
     [ObservableProperty] 
     private TrackStyleImage _trackImage = TrackStyleImage.Normal;
 
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
+
+        ButtonState ??= false;
+        ButtonState = !ButtonState;
+        TrackImage  = (ButtonState ?? false) ? TrackStyleImage.Active : TrackStyleImage.InActive;
+        PushButtonAction(ButtonState ?? false);
+    }
+
+    protected abstract void PushButtonAction(bool isActive); // ( Turnout turnout)
+
+    
     [JsonIgnore]
     protected override SvgImage ActiveImage {
         get {

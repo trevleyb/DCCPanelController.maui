@@ -11,19 +11,9 @@ namespace DCCPanelController.Model.Tracks;
 public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent), ITrackPiece, ITrackButton, ITrackSymbol {
 
     public TrackButton() : this(null) { }       
-    private IAudioPlayer? _clickSoundPlayer;
 
     [ObservableProperty] [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
     private bool _isEnabled = true;
-
-    public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
-        }
-
-        _clickSoundPlayer?.Play();
-    }
 
     protected override void Setup() {
         Layer = 2;
@@ -41,4 +31,7 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
         return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
 
+    protected override void PushButtonAction(bool isActive) {
+        Console.WriteLine($"Button '{Name}' is {(isActive ? "ACTIVE" : "INACTIVE")}");
+    }
 }

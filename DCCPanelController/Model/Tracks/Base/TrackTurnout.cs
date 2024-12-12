@@ -5,11 +5,42 @@ using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
     
+    private IAudioPlayer? _clickSoundPlayer;
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
+
+        if (_turnout is null) {
+            TrackImage = TrackStyleImage.Normal;
+        } else {
+            switch (_turnout.State) {
+            case TurnoutStateEnum.Closed:
+                TrackImage = TrackStyleImage.Diverging;
+                ThrowTurnout(_turnout, TurnoutStateEnum.Thrown);
+                break;
+            case TurnoutStateEnum.Thrown or TurnoutStateEnum.Unknown:
+                TrackImage = TrackStyleImage.Straight;
+                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
+                break;
+            default:
+                TrackImage = TrackStyleImage.Normal;
+                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
+                break;
+            }
+        }
+    }
+    
+    protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
+
     protected TrackTurnoutBase(Panel? parent= null) : base(parent) { 
         PropertyChanged += OnPropertyChanged;
     }

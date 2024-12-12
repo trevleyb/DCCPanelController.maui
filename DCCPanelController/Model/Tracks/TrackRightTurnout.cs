@@ -7,8 +7,6 @@ using Plugin.Maui.Audio;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackRightTurnout(Panel? parent = null) : TrackTurnoutBase(parent), ITrackTurnout, ITrackSymbol, ITrackPiece {
-    private IAudioPlayer? _clickSoundPlayer;
-
     public TrackRightTurnout() : this(null) { }
     protected override void Setup() {
         SetTrackSymbol("TurnoutR1");
@@ -18,17 +16,12 @@ public partial class TrackRightTurnout(Panel? parent = null) : TrackTurnoutBase(
         AddImageSourceAndRotation(TrackStyleImage.Diverging, "TurnoutR3", (0, 0), (90, 90), (180, 180), (270, 270));
     }
     
-    public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
-        }
-
-        _clickSoundPlayer?.Play();
-    }
     public override ITrackPiece Clone() {
         return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
     }
 
+    protected override void ThrowTurnout(Turnout turnout, TurnoutStateEnum state) {
+        Console.WriteLine($"Turnout '{turnout.Name}' is {(state == TurnoutStateEnum.Closed ? "CLOSED" : state == TurnoutStateEnum.Thrown ? "THROWN" : "UNKNOWN")}");
+    }
 
 }
