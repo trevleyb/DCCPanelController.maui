@@ -14,7 +14,7 @@
         <ShellContent Title="Panels"    Icon="panels.png"  ContentTemplate="{DataTemplate view:PanelsViewerPage}" />
         <ShellContent Title="Turnouts"  Icon="turnouts.png"  ContentTemplate="{DataTemplate view:TurnoutsPage}" />
         <ShellContent Title="Routes"    Icon="routes.png" ContentTemplate="{DataTemplate view:RoutesPage}" />
-        <ShellContent Title="Settings"  Icon="settings.png" ContentTemplate="{DataTemplate view:SettingsPage}" />
+        <ShellContent Title="Settings"  Icon="properties.png" ContentTemplate="{DataTemplate view:SettingsPage}" />
     </FlyoutItem>
 
 </Shell>

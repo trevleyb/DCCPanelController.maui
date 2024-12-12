@@ -18,26 +18,26 @@
         <ToolbarItem
             ToolTipProperties.Text="Change Edit Mode"
             Clicked="ChangeEditMode"
-            IconImageSource="shape_intersect.png"
+            IconImageSource="move.png"
             Text="Edit"
             x:Name="EditModeToolItem"/>
 
         <ToolbarItem
             ToolTipProperties.Text="Rotate Left"
             Clicked="RotateLeft"
-            IconImageSource="rotate_counterclockwise.png"
+            IconImageSource="rotate_ccw.png"
             Text="Rotate Left" IsEnabled="{Binding HasSelectedTracks}"/>
 
         <ToolbarItem
             ToolTipProperties.Text="Rotate Right"
             Clicked="RotateRight"
-            IconImageSource="rotate_clockwise.png"
+            IconImageSource="rotate_cw.png"
             Text="Rotate Right" IsEnabled="{Binding HasSelectedTracks}"/>
         
         <ToolbarItem
             ToolTipProperties.Text="Delete Track Piece"
             Clicked="DeleteTrackPiece"
-            IconImageSource="trash.png"
+            IconImageSource="trash_2.png"
             Text="Delete Track" IsEnabled="{Binding HasSelectedTracks}"/>
 
         <ToolbarItem
@@ -50,14 +50,14 @@
         <ToolbarItem
             Clicked="ToggleGrid"
             ToolTipProperties.Text="Toggle the Grid On|Off"
-            IconImageSource="grid.png"
+            IconImageSource="grid_off.png"
             Text="Show Grid"
             x:Name="GridButton" />
         
         <ToolbarItem
             Clicked="ShowPropertyPage"
             ToolTipProperties.Text="Panel Properties"
-            IconImageSource="tuning.png"
+            IconImageSource="settings.png"
             Text="Properties"
             IsEnabled="{Binding CanUsePropertyPage}"
             x:Name="PropertyButton" />
@@ -152,7 +152,7 @@
                     </Border.GestureRecognizers>
                     <Image
                         HeightRequest="50"
-                        Source="trash.png"
+                        Source="trash_2.png"
                         WidthRequest="50" />
                 </Border>
                 -->

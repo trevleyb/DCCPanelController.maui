@@ -15,7 +15,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddPanelCommand}" IconImageSource="add.png" />
+        <ToolbarItem Command="{Binding AddPanelCommand}" IconImageSource="plus_circle.png" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -61,7 +61,7 @@
                                                    Path=DeletePanelCommand}" 
                                                    CommandParameter="{Binding}">
                                         <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
+                                            <Image Source="trash_2.png" WidthRequest="24" HeightRequest="24" />
                                             <Label Text="Delete" VerticalOptions="Center" Padding="10,0,0,0" />
                                         </StackLayout>
                                     </SwipeItemView>

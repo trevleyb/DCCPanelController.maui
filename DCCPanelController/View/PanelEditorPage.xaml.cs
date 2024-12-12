@@ -54,9 +54,9 @@ public partial class PanelEditorPage : ContentPage {
         PanelView.EditMode = _editMode;
 
         EditModeToolItem.IconImageSource = _editMode switch {
-            EditModeEum.Move => "shape_intersect.png",
-            EditModeEum.Copy => "shape_except.png",
-            _                => "shape_intersect.png",
+            EditModeEum.Move => "move.png",
+            EditModeEum.Copy => "copy.png",
+            _                => "move.png",
         };
     }
 

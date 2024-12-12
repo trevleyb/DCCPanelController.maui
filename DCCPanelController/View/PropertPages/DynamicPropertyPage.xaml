@@ -20,7 +20,7 @@
                 <StackLayout>
                     <Grid ColumnDefinitions="*,auto" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
                         <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" VerticalOptions="Center" />
-                        <ImageButton Grid.Column="1" Source="information.png" Aspect="Center" WidthRequest="25" HeightRequest="25"/>
+                        <ImageButton Grid.Column="1" Source="info.png" Aspect="Center" WidthRequest="25" HeightRequest="25"/>
                     </Grid>
                     
                     <TableView x:Name="PropertyContainer" HasUnevenRows="True" />

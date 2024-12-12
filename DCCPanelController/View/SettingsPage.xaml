@@ -20,10 +20,9 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Clicked="About_OnClicked" IconImageSource="help.png" />
-        <ToolbarItem Clicked="Instructions_OnClicked" IconImageSource="information.png" />
-        <ToolbarItem Clicked="ShowMessages_OnClicked" IconImageSource="open_panel_bottom.png"
-                     x:Name="ShowMessagesButton" />
+        <ToolbarItem Clicked="About_OnClicked" IconImageSource="help_circle.png" />
+        <ToolbarItem Clicked="Instructions_OnClicked" IconImageSource="info.png" />
+        <ToolbarItem Clicked="ShowMessages_OnClicked" IconImageSource="chevron_down.png" x:Name="ShowMessagesButton" />
         <ToolbarItem Clicked="Upload_OnClicked" IconImageSource="upload.png" />
         <ToolbarItem Clicked="Download_OnClicked" IconImageSource="download.png" />
     </ContentPage.ToolbarItems>
@@ -118,7 +117,7 @@
                     Command="{Binding RefreshWiServersCommand}"
                     Grid.Column="1"
                     HorizontalOptions="End"
-                    ImageSource="refresh_circle.png"
+                    ImageSource="refresh_cw.png"
                     Style="{StaticResource SmallLabel}"
                     Text="Refresh"
                     TextColor="{StaticResource Primary}"
@@ -204,7 +203,7 @@
                     Command="{Binding ClearMessagesCommand}"
                     Grid.Column="1"
                     HorizontalOptions="End"
-                    ImageSource="trash.png"
+                    ImageSource="trash_2.png"
                     Style="{StaticResource SmallLabel}"
                     Text="Clear"
                     TextColor="{StaticResource Primary}"

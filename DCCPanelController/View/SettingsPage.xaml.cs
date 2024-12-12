@@ -52,7 +52,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private void ShowMessages_OnClicked(object? sender, EventArgs e) {
         if (_viewModel is not null) {
             _viewModel.ShowMessages = !_viewModel.ShowMessages;
-            ShowMessagesButton.IconImageSource = _viewModel.ShowMessages ? "open_panel_bottom.png" : "open_panel_filled_bottom.png";
+            ShowMessagesButton.IconImageSource = _viewModel.ShowMessages ? "chevron_down.png" : "chevron_up.png";
         }
     }
 

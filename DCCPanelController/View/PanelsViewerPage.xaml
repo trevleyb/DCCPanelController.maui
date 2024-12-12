@@ -15,11 +15,11 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddPanelCommand}" Text="Add" IconImageSource="add.png" />
-        <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}" IconImageSource="add_filled.png" />
+        <ToolbarItem Command="{Binding AddPanelCommand}" Text="Add" IconImageSource="plus_circle.png" />
+        <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}" IconImageSource="copy.png" />
         <ToolbarItem Command="{Binding EditPanelCommand}" Text="Edit" IconImageSource="edit.png" IsEnabled="{Binding IsPanelSelected}" />
-        <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="trash.png" IsEnabled="{Binding IsPanelSelected}" />
-        <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings_adjust.png" IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="x_circle.png" IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings.png" IsEnabled="{Binding IsPanelSelected}" />
         <ToolbarItem Text="Expand" x:Name="SidePanelButton" IconImageSource="side_panel_close_filled.png" Clicked="SidePanelExpander_OnClicked" IsEnabled="{Binding CanExpandCollapse}" />
     </ContentPage.ToolbarItems>
 
@@ -74,7 +74,7 @@
                                                    Path=DeletePanelCommand}"
                                                    CommandParameter="{Binding}">
                                         <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
+                                            <Image Source="trash_2.png" WidthRequest="24" HeightRequest="24" />
                                         </StackLayout>
                                     </SwipeItemView>
                                 </SwipeView.RightItems>

@@ -15,7 +15,8 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="add.png" Command="{Binding AddTurnoutCommand}" />
+        <ToolbarItem IconImageSource="plus_circle.png" Command="{Binding AddTurnoutCommand}" />
+        <ToolbarItem IconImageSource="x_circle.png" IsEnabled="False" />
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">
@@ -91,7 +92,7 @@
                                             <Binding />
                                         </SwipeItemView.CommandParameter>
                                         <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image Source="trash.png" WidthRequest="24" HeightRequest="24" />
+                                            <Image Source="trash_2.png" WidthRequest="24" HeightRequest="24" />
                                             <Label Text="Delete" VerticalOptions="Center" Padding="10,0,0,0" />
                                         </StackLayout>
                                     </SwipeItemView>
