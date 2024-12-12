@@ -135,17 +135,47 @@
                         </StackLayout>
                     </StackLayout>
 
-                        <view:ControlPanelView
+                    <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,Auto">
+                        <ActivityIndicator
                             Grid.Column="0"
-                            x:Name="ControlPanelView"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="Fill"
-                            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
-                            Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
-                            TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
-                            ShowTrackErrors="False"
-                            DesignMode="false"
-                            ShowGrid="false" />
+                            Grid.Row="0"
+                            HorizontalOptions="Center"
+                            IsRunning="{Binding IsBusy}"
+                            VerticalOptions="Center" />
+                    <CarouselView
+                        CurrentItem="{Binding SelectedPanel}"
+                        Grid.Column="0"
+                        Grid.Row="0"
+                        IndicatorView="IndicatorView"
+                        x:Name="PanelCarousel">
+
+                        <CarouselView.ItemsSource>
+                            <Binding Path="Panels" />
+                        </CarouselView.ItemsSource>
+
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate>
+                            <view:ControlPanelView
+                                x:Name="ControlPanelView"
+                                HorizontalOptions="Fill"
+                                VerticalOptions="Fill"
+                                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
+                                Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
+                                TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
+                                ShowTrackErrors="False"
+                                DesignMode="false"
+                                ShowGrid="false" />
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>   
+                    <IndicatorView
+                        Grid.Column="0"
+                        Grid.Row="1"
+                        HorizontalOptions="Center"
+                        IndicatorColor="LightGray"
+                        SelectedIndicatorColor="DarkGray"
+                        x:Name="IndicatorView" />
+                    </Grid>
                 </Grid>
             </Border>
         </Grid>

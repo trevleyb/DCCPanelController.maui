@@ -50,13 +50,14 @@ public static class SvgStyles {
         case TrackStyleType.Button or 
             TrackStyleType.Text:
             style = new SvgStyleBuilder()
-                .AddElement(e => e.WithName(SvgElementEnum.Border).Visible().WithColor(defaults.ButtonBorder))
-                .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(defaults.ButtonBorder));
+                    .AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(defaults.ButtonUnknownColor))
+                    .AddElement(e => e.WithName(SvgElementEnum.Border).Visible().WithColor(defaults.ButtonBorder))
+                    .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(defaults.ButtonBorder));
 
             if (styleImage == TrackStyleImage.Active) {
                 style.AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(defaults.ButtonOnColor))
                      .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(defaults.ButtonBorder));
-            } else {
+            } else if (styleImage == TrackStyleImage.InActive) {
                 style.AddElement(e => e.WithName(SvgElementEnum.Button).Visible().WithColor(defaults.ButtonOffColor))
                      .AddElement(e => e.WithName(SvgElementEnum.ButtonOutline).Visible().WithColor(defaults.ButtonBorder));
             }

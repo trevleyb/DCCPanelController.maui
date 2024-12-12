@@ -23,6 +23,7 @@ public partial class PanelDefaults : ObservableObject {
     [ObservableProperty] private Color _divergingColor     = Colors.Grey;
     [ObservableProperty] private Color _buttonOnColor      = Colors.Lime;
     [ObservableProperty] private Color _buttonOffColor     = Colors.Crimson;
+    [ObservableProperty] private Color _buttonUnknownColor = Colors.LightGray;
     [ObservableProperty] private Color _occupiedColor      = Colors.Crimson;
     [ObservableProperty] private Color _hiddenColor        = Colors.White;
     [ObservableProperty] private Color _terminatorColor    = Colors.Black;
@@ -37,6 +38,7 @@ public partial class PanelDefaults : ObservableObject {
         DivergingColor     = Colors.Grey;
         ButtonOnColor      = Colors.Lime;
         ButtonOffColor     = Colors.Crimson;
+        ButtonUnknownColor = Colors.LightGray;
         OccupiedColor      = Colors.Crimson;
         HiddenColor        = Colors.White;
         TerminatorColor    = Colors.Black;
