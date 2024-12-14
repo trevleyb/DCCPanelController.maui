@@ -6,7 +6,7 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackLeftTurnout(Panel? parent = null) : TrackTurnoutBase(parent), ITrackTurnout, ITrackSymbol, ITrackPiece {
+public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackTurnoutBase(parent, styleType), ITrackTurnout, ITrackSymbol, ITrackPiece {
     public TrackLeftTurnout() : this(null) { }
     protected override void Setup() {
         SetTrackSymbol("TurnoutL1");

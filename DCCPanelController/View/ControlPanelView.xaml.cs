@@ -17,6 +17,10 @@ namespace DCCPanelController.View;
 [ObservableObject]
 public partial class ControlPanelView {
 
+    private int _lastDragCol = 0;
+    private int _lastDragRow = 0;
+    public enum CellHighlightAction {Selected, DragInvalid, DragValid}
+    
     public event EventHandler<ITrackPiece>? TrackPieceTapped;
     public event EventHandler<ITrackPiece>? TrackPieceChanged;
 
@@ -65,7 +69,7 @@ public partial class ControlPanelView {
         if (sender is ITrackPiece track) {
             Console.WriteLine($"Track '{track.Name}' was changed: Property={e.PropertyName}");
             TrackPieceChanged?.Invoke(this,track);
-            InvalidateCell(track);
+            if (e.PropertyName == nameof(track.DisplayImage)) InvalidateCell(track);
         }
     }
 
@@ -175,11 +179,16 @@ public partial class ControlPanelView {
     /// <summary>
     /// Only highlight a cell if we are in Design Mode
     /// </summary>
-    public void HighlightCell(int col, int row) {
+    public void HighlightCell(int col, int row, CellHighlightAction action) {
         if (!DesignMode) return;
         var border = new Border {
             BackgroundColor = Colors.Transparent,
-            Stroke = Colors.Red,
+            Stroke = action switch {
+                CellHighlightAction.Selected => Colors.Blue,
+                CellHighlightAction.DragValid => Colors.Green,
+                CellHighlightAction.DragInvalid => Colors.Red,
+                _ => Colors.Red,
+            },
             StrokeThickness = 4,
             Opacity = 0.5,
             ZIndex = 10,
@@ -328,7 +337,7 @@ public partial class ControlPanelView {
     }
 
     public void MarkTrackSelected(ITrackPiece track) {
-        HighlightCell(track.X, track.Y);
+        HighlightCell(track.X, track.Y, CellHighlightAction.Selected);
         track.IsSelected = true;
     }
 
@@ -347,31 +356,39 @@ public partial class ControlPanelView {
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
         args.Data.Properties.Add("Copy", EditMode == EditModeEum.Copy ? true: false);
+        _lastDragCol = 0;
+        _lastDragRow = 0;
+    }
+
+    private void DragLeaveTrackOnPanel(object? sender, DragEventArgs e) {
+        UnHighlightCell(_lastDragCol, _lastDragRow);
+        _lastDragCol = 0;
+        _lastDragRow = 0;
     }
 
     private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
         var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-
+       
         e.AcceptedOperation = DataPackageOperation.None;
         if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
+            if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
+                UnHighlightCell(_lastDragCol, _lastDragRow);
+            }
+
             if (track.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
                 e.AcceptedOperation = DataPackageOperation.Copy;
+                HighlightCell(position.Col, position.Row, CellHighlightAction.DragValid);
+            } else {
+                HighlightCell(position.Col, position.Row, CellHighlightAction.DragInvalid);
             }
+            _lastDragCol = position.Col;
+            _lastDragRow = position.Row;
+        } else {
+            UnHighlightCell(_lastDragCol, _lastDragRow);
+            _lastDragCol = 0;
+            _lastDragRow = 0;
         }
-    }
-
-    private void DragLeaveTrackOnPanel(object? sender, DragEventArgs e) {
-        Console.WriteLine("DragLeaveTrackOnPanel");
-        // var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
-        // var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-        //
-        // e.AcceptedOperation = DataPackageOperation.None;
-        // if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
-        //     if (track.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
-        //         e.AcceptedOperation = DataPackageOperation.Copy;
-        //     }
-        // }
     }
 
     private void DropTrackOnPanel(object? sender, DropEventArgs e) {
@@ -380,6 +397,7 @@ public partial class ControlPanelView {
                 !e.Data.Properties.ContainsKey("Track")) {
                 return;
             }
+            UnHighlightCell(_lastDragCol, _lastDragRow);
             
             var source = e.Data.Properties["Source"] as string ?? null;
             var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
@@ -387,6 +405,7 @@ public partial class ControlPanelView {
             var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
             
             if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
+
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
@@ -410,15 +429,13 @@ public partial class ControlPanelView {
                         }
                         break;
                     case "DisplaySymbol":
-                        if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
-                            newPiece.X = position.Col;
-                            newPiece.Y = position.Row;
-                            Panel?.AddTrack(newPiece);
-                            AddDisplayItemToGrid(newPiece);
-                            MarkTrackSelected(newPiece);
-                        } else {
-                            Console.WriteLine("Could not create a new Piece as a TrackPiece.");
-                        }
+                        // if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
+                        var newPiece = trackPiece.Clone(); 
+                        newPiece.X = position.Col;
+                        newPiece.Y = position.Row;
+                        Panel?.AddTrack(newPiece);
+                        AddDisplayItemToGrid(newPiece);
+                        MarkTrackSelected(newPiece);
                         break;
                     default:
                         Console.WriteLine($"Invalid source: '{source}'");
@@ -433,6 +450,8 @@ public partial class ControlPanelView {
         } catch (Exception ex) {
             Console.WriteLine("Error dropping item: " + ex.Message);
         }
+        _lastDragCol = 0;
+        _lastDragRow = 0;
     }
 
     private int GetHighestOccupiedLayer(int col, int row) {
@@ -448,8 +467,6 @@ public partial class ControlPanelView {
     /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
     private Result<(int Col, int Row)> GetGridPosition(Point? point) {
         if (point is { } tapPosition) {
-
-            Console.WriteLine($"GetGridPosition: {point} => {tapPosition.X},{tapPosition.Y}");
 
             var totalHeight = DynamicGrid.Height;
             var totalWidth = DynamicGrid.Width;

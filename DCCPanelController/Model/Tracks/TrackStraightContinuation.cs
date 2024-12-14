@@ -5,7 +5,7 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackStraightContinuation(Panel? parent = null) : TrackContinuationBase(parent), ITrackSymbol, ITrackPiece {
+public partial class TrackStraightContinuation(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackContinuationBase(parent, styleType), ITrackSymbol, ITrackPiece {
     public TrackStraightContinuation() : this(null) { }
     protected override void Setup() {
         SetTrackSymbol("ContinuationSA1");

@@ -10,42 +10,10 @@ using Plugin.Maui.Audio;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
-    
-    private IAudioPlayer? _clickSoundPlayer;
-    public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
-        }
-        _clickSoundPlayer?.Play();
 
-        if (_turnout is null) {
-            TrackImage = TrackImage switch {
-                TrackStyleImage.Diverging => TrackStyleImage.Straight,
-                TrackStyleImage.Straight  => TrackStyleImage.Diverging,
-                TrackStyleImage.Normal    =>TrackStyleImage.Diverging,
-                _                         => TrackStyleImage.Normal
-            };
-        } else {
-            switch (_turnout.State) {
-            case TurnoutStateEnum.Closed:
-                TrackImage = TrackStyleImage.Diverging;
-                ThrowTurnout(_turnout, TurnoutStateEnum.Thrown);
-                break;
-            case TurnoutStateEnum.Thrown or TurnoutStateEnum.Unknown:
-                TrackImage = TrackStyleImage.Straight;
-                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
-                break;
-            default:
-                TrackImage = TrackStyleImage.Normal;
-                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
-                break;
-            }
-        }
-        OnPropertyChanged(nameof(ActiveImage));
+    protected TrackTurnoutBase(Panel? parent= null, TrackStyleType styleType = TrackStyleType.Mainline) : base(parent) { 
+        _trackType = styleType;
     }
-    
-    protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
 
     protected TrackTurnoutBase(Panel? parent= null) : base(parent) { 
         PropertyChanged += OnPropertyChanged;
@@ -73,7 +41,8 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
 
     private Turnout? _turnout;
-    
+    protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
+   
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
     
     [JsonIgnore]
@@ -129,6 +98,41 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             OnPropertyChanged(nameof(DisplayImage));
         }
     }
+    
+    private IAudioPlayer? _clickSoundPlayer;
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
+
+        if (_turnout is null) {
+            TrackImage = TrackImage switch {
+                TrackStyleImage.Diverging => TrackStyleImage.Straight,
+                TrackStyleImage.Straight  => TrackStyleImage.Diverging,
+                TrackStyleImage.Normal    =>TrackStyleImage.Diverging,
+                _                         => TrackStyleImage.Normal
+            };
+        } else {
+            switch (_turnout.State) {
+            case TurnoutStateEnum.Closed:
+                TrackImage = TrackStyleImage.Diverging;
+                ThrowTurnout(_turnout, TurnoutStateEnum.Thrown);
+                break;
+            case TurnoutStateEnum.Thrown or TurnoutStateEnum.Unknown:
+                TrackImage = TrackStyleImage.Straight;
+                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
+                break;
+            default:
+                TrackImage = TrackStyleImage.Normal;
+                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
+                break;
+            }
+        }
+        OnPropertyChanged(nameof(DisplayImage));
+    }
+
 }
 
 public partial class TrackTurnoutAction : ObservableObject {

@@ -5,7 +5,7 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCrossing(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+public partial class TrackCrossing(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackPieceBase(parent, styleType), ITrackSymbol, ITrackPiece {
     public TrackCrossing() : this(null) { }
     protected override void Setup() {
         SetTrackSymbol("Cross1");

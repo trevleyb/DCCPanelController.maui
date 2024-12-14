@@ -28,7 +28,7 @@ public abstract partial class TrackButtonBase : TrackBase {
         ButtonState = !ButtonState;
         TrackImage  = (ButtonState ?? false) ? TrackStyleImage.Active : TrackStyleImage.InActive;
         PushButtonAction(ButtonState ?? false);
-        OnPropertyChanged(nameof(ActiveImage));
+        OnPropertyChanged(nameof(DisplayImage));
     }
 
     protected abstract void PushButtonAction(bool isActive); // ( Turnout turnout)

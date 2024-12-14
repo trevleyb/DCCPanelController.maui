@@ -10,6 +10,7 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.NavigationService;
 using DCCPanelController.Tracks;
+using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.ViewModel;
 
@@ -95,7 +96,16 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackRightTurnout(parent),
             new TrackCrossing(parent),
             new TrackTerminator(parent),
-            new TrackCompass(parent)
+            
+            new TrackStraight(parent, TrackStyleType.Branchline),
+            new TrackStraightContinuation(parent, TrackStyleType.Branchline),
+            new TrackCorner(parent, TrackStyleType.Branchline),
+            new TrackCornerContinuation(parent, TrackStyleType.Branchline),
+            new TrackLeftTurnout(parent, TrackStyleType.Branchline),
+            new TrackRightTurnout(parent, TrackStyleType.Branchline),
+            new TrackCrossing(parent, TrackStyleType.Branchline),
+            new TrackTerminator(parent, TrackStyleType.Branchline),
+            
         ];
     }
 }

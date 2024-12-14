@@ -8,6 +8,11 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackContinuationBase : TrackBase {
 
+    protected TrackContinuationBase(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline, TrackStyleImage style = TrackStyleImage.Arrow) : base(parent) {
+        TrackType = styleType;
+        TrackImage = style;
+    }
+
     protected TrackContinuationBase(Panel? parent = null) : base(parent) { }
     
     [ObservableProperty] 

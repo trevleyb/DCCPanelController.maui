@@ -6,7 +6,7 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackPoints(Panel? parent = null) : TrackPieceBase(parent), ITrackPiece {
+public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackPieceBase(parent, styleType), ITrackPiece {
     public TrackPoints() : this(null) { }
     protected override void Setup() {
         Layer = 2;

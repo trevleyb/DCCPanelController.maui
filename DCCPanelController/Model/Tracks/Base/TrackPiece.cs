@@ -8,6 +8,10 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
     
+    protected TrackPieceBase(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : base(parent) {
+        _trackType = styleType;
+    }
+    
     protected TrackPieceBase(Panel? parent= null) : base(parent) { }
     
     [ObservableProperty] 
