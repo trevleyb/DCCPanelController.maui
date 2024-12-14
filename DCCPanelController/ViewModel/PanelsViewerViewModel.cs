@@ -57,10 +57,12 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     
     public async void Save() {
         _settingsService?.Save();
+        SelectPanel(SelectedPanel);
     }
 
     public async void Load() {
         _settingsService?.Load();
+        SelectPanel(SelectedPanel);
     }
 
     [RelayCommand]

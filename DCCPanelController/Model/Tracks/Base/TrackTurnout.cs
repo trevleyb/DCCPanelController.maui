@@ -20,7 +20,12 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         _clickSoundPlayer?.Play();
 
         if (_turnout is null) {
-            TrackImage = TrackStyleImage.Normal;
+            TrackImage = TrackImage switch {
+                TrackStyleImage.Diverging => TrackStyleImage.Straight,
+                TrackStyleImage.Straight  => TrackStyleImage.Diverging,
+                TrackStyleImage.Normal    =>TrackStyleImage.Diverging,
+                _                         => TrackStyleImage.Normal
+            };
         } else {
             switch (_turnout.State) {
             case TurnoutStateEnum.Closed:
@@ -37,6 +42,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
                 break;
             }
         }
+        OnPropertyChanged(nameof(ActiveImage));
     }
     
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)

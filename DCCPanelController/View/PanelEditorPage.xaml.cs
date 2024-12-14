@@ -145,11 +145,8 @@ public partial class PanelEditorPage : ContentPage {
 
     private void DeleteTrackPiece(object? sender, EventArgs e) {
         foreach (var track in Panel.SelectedTracks) {
-            PanelView.MarkTrackUnSelected(track);
-            Panel.Tracks.Remove(track);
+            PanelView.RemoveTrackPiece(track);
         }
-        // Going to see what happens if I do not rebuild the grid here?
-        //PanelView.RebuildGrid(true);
         ViewModel.EditState = EditState.Changed;
     }
 }

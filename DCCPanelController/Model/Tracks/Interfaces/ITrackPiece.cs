@@ -6,14 +6,12 @@ namespace DCCPanelController.Model.Tracks.Interfaces;
 public interface ITrackPiece {
     string Name { get; }
 
-    int ImageRotation { get; set; }
-    int TrackRotation { get; set; }
     int X { get; set; }
     int Y { get; set; }
     int Layer { get; }
-    double GridSize { get; }
     bool IsSelected { get; set; }
 
+    int TrackRotation { get; set; }
     ImageSource DisplayImage { get; }
     IView GetDisplayItem(double gridSize, bool passthrough = false);
     

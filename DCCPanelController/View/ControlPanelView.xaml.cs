@@ -1,5 +1,7 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
+using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
@@ -69,13 +71,11 @@ public partial class ControlPanelView {
 
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
-        Console.WriteLine(bindable.GetType().Name + $" OnShowTrackErrorsChanged to {control.ShowTrackErrors}");
         control.RebuildGrid();
     }
 
     private static void OnShowGridChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
-        Console.WriteLine(bindable.GetType().Name + $" OnShowGridChanged to {control.ShowGrid}");
         control.AddOutlineToGrid();
     }
 
@@ -86,6 +86,7 @@ public partial class ControlPanelView {
             var dropRecogniser = new DropGestureRecognizer();
             dropRecogniser.Drop += control.DropTrackOnPanel;
             dropRecogniser.DragOver += control.DragOverTrackOnPanel;
+            dropRecogniser.DragLeave += control.DragLeaveTrackOnPanel;
             control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
         } else {
             control.DynamicGrid.GestureRecognizers.Clear();
@@ -118,14 +119,37 @@ public partial class ControlPanelView {
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         RebuildGrid();
     }
+    
+    public bool HasGridSizeChanged(double width, double height) {
+        if (width < 1.0 || height < 1.0) return false;
+        var difference = Math.Abs(CalculateGridSize(width, height) - GridSize);
+        return difference > 1;
+    }
+
+    public double CalculateGridSize(double width, double height) {
+        if (width <= 0 || height <= 0) return 1;
+        var gridSize = Math.Min(width / Cols, height / Rows);
+        // Round down to the nearest 0.01
+        gridSize = Math.Floor(gridSize * 100) / 100.0;
+        return gridSize;
+    }
+    
+    public void SetScreenSize(double width, double height) {
+        GridSize = CalculateGridSize(width, height);
+        ViewWidth = GridSize * Cols;
+        ViewHeight = GridSize * Rows;
+    }
 
     public void RebuildGrid(bool forceRefresh = false) {
-        if (Panel is null) return;
-        if (MainGrid.Width < 1 || MainGrid.Height < 1) return;
-        if (!forceRefresh && !HasScreenSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
-        Console.WriteLine($"Rebuilding the Dynamic Grid: {Panel.Name}");
-        
+        // Only redraw the grid if we absolutely need to. Events may mean that this 
+        // is called multiple times, but if we really have not changed, then do not 
+        // waste time redrawing and rebuilding the grid. 
+        // -------------------------------------------------------------------------
+        if (Panel is null) return;
+        if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
+        if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
+
         SetScreenSize(MainGrid.Width, MainGrid.Height);
         DynamicGrid.WidthRequest = ViewWidth;
         DynamicGrid.HeightRequest = ViewHeight;
@@ -214,12 +238,22 @@ public partial class ControlPanelView {
         }
     }
 
+    public void RemoveTrackPiece(ITrackPiece track) {
+        if (Panel is { Tracks: { } tracks } panel) {
+            if (track.Parent == panel) {
+                track.Parent = null;
+                MarkTrackUnSelected(track);
+                RemoveDisplayItemFromGrid(track);
+                Panel.Tracks.Remove(track);
+            }
+        }
+    }
+    
     /// <summary>
     ///     Add the tracks from the view model onto the Grid
     /// </summary>
     private void AddTrackPiecesToGrid() {
         if (Panel is { Tracks: { } tracks } panel) {
-            Console.WriteLine($"Adding {Panel.Tracks.Count} Track Pieces To Grid");
             foreach (var track in tracks) {
                 if (track.Parent != Panel) track.Parent = panel;
 
@@ -241,7 +275,6 @@ public partial class ControlPanelView {
     }
 
     private IView? GetCellElement(ITrackPiece track) {
-        var cells = DynamicGrid.Children.Where(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X); 
         var cell = DynamicGrid.Children.FirstOrDefault(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X);
         return cell;
     }
@@ -328,12 +361,23 @@ public partial class ControlPanelView {
         }
     }
 
+    private void DragLeaveTrackOnPanel(object? sender, DragEventArgs e) {
+        Console.WriteLine("DragLeaveTrackOnPanel");
+        // var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
+        // var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
+        //
+        // e.AcceptedOperation = DataPackageOperation.None;
+        // if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
+        //     if (track.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
+        //         e.AcceptedOperation = DataPackageOperation.Copy;
+        //     }
+        // }
+    }
+
     private void DropTrackOnPanel(object? sender, DropEventArgs e) {
-        Console.WriteLine("Drop Gesture Recognizer OnDrop");
         try {
             if (!e.Data.Properties.ContainsKey("Source") ||
                 !e.Data.Properties.ContainsKey("Track")) {
-                Console.WriteLine("Could not determine the source of the item being dropped.");
                 return;
             }
             
@@ -348,33 +392,33 @@ public partial class ControlPanelView {
                 // item that has a higher Z factor. 
                 // -----------------------------------------------------------------
                 if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
+                    ClearSelectedTracks();
                     switch (source) {
                     case "Panel":
                         if (isCopyOperation) {
-                            var newTrack = track.Clone(); 
-                            trackPiece.X = position.Col;
-                            trackPiece.Y = position.Row;
+                            var newTrack = trackPiece.Clone(); 
+                            newTrack.X = position.Col;
+                            newTrack.Y = position.Row;
                             Panel?.AddTrack(newTrack);
+                            AddDisplayItemToGrid(newTrack);
                             MarkTrackSelected(newTrack);
-                            MarkTrackUnSelected(track);
                         } else {
+                            RemoveDisplayItemFromGrid(trackPiece);
                             trackPiece.X = position.Col;
                             trackPiece.Y = position.Row;
+                            AddDisplayItemToGrid(trackPiece);
                         }
-                        RebuildGrid();
                         break;
                     case "DisplaySymbol":
                         if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
                             Panel?.AddTrack(newPiece);
-                            ClearSelectedTracks();
+                            AddDisplayItemToGrid(newPiece);
                             MarkTrackSelected(newPiece);
-                            OnTrackPieceChanged(newPiece, new PropertyChangedEventArgs(nameof(ITrackPiece)));
                         } else {
                             Console.WriteLine("Could not create a new Piece as a TrackPiece.");
                         }
-                        RebuildGrid();
                         break;
                     default:
                         Console.WriteLine($"Invalid source: '{source}'");
@@ -404,6 +448,9 @@ public partial class ControlPanelView {
     /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
     private Result<(int Col, int Row)> GetGridPosition(Point? point) {
         if (point is { } tapPosition) {
+
+            Console.WriteLine($"GetGridPosition: {point} => {tapPosition.X},{tapPosition.Y}");
+
             var totalHeight = DynamicGrid.Height;
             var totalWidth = DynamicGrid.Width;
             var rowCount = DynamicGrid.RowDefinitions.Count;
@@ -427,17 +474,6 @@ public partial class ControlPanelView {
         }
 
         return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,") ?? throw new InvalidOperationException();
-    }
-
-    public bool HasScreenSizeChanged(double width, double height) {
-        const double tolerance = 5f;
-        return Math.Abs(width - ViewWidth) > tolerance || Math.Abs(height - ViewHeight) > tolerance;
-    }
-
-    public void SetScreenSize(double width, double height) {
-        GridSize = width > 0 && height > 0 ? Math.Min(width / Cols, height / Rows) / 2 * 2 : 1;
-        ViewWidth = GridSize * Cols;
-        ViewHeight = GridSize * Rows;
     }
 }
 

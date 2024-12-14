@@ -16,11 +16,16 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddPanelCommand}" Text="Add" IconImageSource="plus_circle.png" />
-        <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}" IconImageSource="copy.png" />
-        <ToolbarItem Command="{Binding EditPanelCommand}" Text="Edit" IconImageSource="edit.png" IsEnabled="{Binding IsPanelSelected}" />
-        <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="trash_2.png" IsEnabled="{Binding IsPanelSelected}" />
-        <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings.png" IsEnabled="{Binding IsPanelSelected}" />
-        <ToolbarItem Text="Expand" x:Name="SidePanelButton" IconImageSource="side_panel_close_filled.png" Clicked="SidePanelExpander_OnClicked" IsEnabled="{Binding CanExpandCollapse}" />
+        <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}"
+                     IconImageSource="copy.png" />
+        <ToolbarItem Command="{Binding EditPanelCommand}" Text="Edit" IconImageSource="edit.png"
+                     IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="trash_2.png"
+                     IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings.png"
+                     IsEnabled="{Binding IsPanelSelected}" />
+        <ToolbarItem Text="Expand" x:Name="SidePanelButton" IconImageSource="side_panel_close_filled.png"
+                     Clicked="SidePanelExpander_OnClicked" IsEnabled="{Binding CanExpandCollapse}" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -49,7 +54,7 @@
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Panels were found." HorizontalOptions="Center"/>
+                                <Label Text="No Panels were found." HorizontalOptions="Center" />
                                 <Label Text="Please use + to add a new Panel." HorizontalOptions="Center" />
                             </StackLayout>
                         </Grid>
@@ -80,13 +85,17 @@
                                 </SwipeView.RightItems>
                                 <StackLayout Margin="10" Padding="10">
                                     <StackLayout.GestureRecognizers>
-                                        <DragGestureRecognizer 
-                                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}"/>
-                                        <DropGestureRecognizer 
-                                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DropPanelCommand}" DropCommandParameter="{Binding}"
-                                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelOverCommand}" DragOverCommandParameter="{Binding}"
-                                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelLeaveCommand}" DragLeaveCommandParameter="{Binding}"/>
-                                    </StackLayout.GestureRecognizers>                                    
+                                        <DragGestureRecognizer
+                                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelCommand}"
+                                            DragStartingCommandParameter="{Binding}" />
+                                        <DropGestureRecognizer
+                                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DropPanelCommand}"
+                                            DropCommandParameter="{Binding}"
+                                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelOverCommand}"
+                                            DragOverCommandParameter="{Binding}"
+                                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelLeaveCommand}"
+                                            DragLeaveCommandParameter="{Binding}" />
+                                    </StackLayout.GestureRecognizers>
                                     <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"
                                            TextColor="{StaticResource Primary}">
                                     </Label>
@@ -105,18 +114,22 @@
                     Padding="5"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
-                
+
                 <Grid Grid.Column="1" HorizontalOptions="Fill" VerticalOptions="Fill">
-                    <StackLayout Grid.Column="0" IsVisible="{Binding NoPanelSelected}" HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <StackLayout Grid.Column="0" IsVisible="{Binding NoPanelSelected}" HorizontalOptions="Fill"
+                                 VerticalOptions="Fill">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                                 <Label Style="{StaticResource Headline }" HorizontalOptions="Center" Margin="0,10,0,10"
-                                    Text="Welcome to the DCC Model Layout Panel Controller" />
-                                <Label MaximumWidthRequest="500" HorizontalOptions="Center" Margin="0,10,0,10" HorizontalTextAlignment="Center" Style="{StaticResource SubHeadline}"
+                                       Text="Welcome to the DCC Model Layout Panel Controller" />
+                                <Label MaximumWidthRequest="500" HorizontalOptions="Center" Margin="0,10,0,10"
+                                       HorizontalTextAlignment="Center" Style="{StaticResource SubHeadline}"
                                        Text="This page will populate once you have created panels and turnout control. " />
-                                <Label MaximumWidthRequest="500" HorizontalOptions="Center" Margin="0,10,0,10" HorizontalTextAlignment="Center" Style="{StaticResource SubHeadline}"
+                                <Label MaximumWidthRequest="500" HorizontalOptions="Center" Margin="0,10,0,10"
+                                       HorizontalTextAlignment="Center" Style="{StaticResource SubHeadline}"
                                        Text="To get started, head over to the instructions page and then head to Settings to connect to your WiThrottle server." />
-                                <Label MaximumWidthRequest="500" HorizontalOptions="Center" Margin="0,10,0,20" HorizontalTextAlignment="Center" Style="{StaticResource SubHeadline}"
+                                <Label MaximumWidthRequest="500" HorizontalOptions="Center" Margin="0,10,0,20"
+                                       HorizontalTextAlignment="Center" Style="{StaticResource SubHeadline}"
                                        Text="You can have as many control panels defined as you would like and can scroll through them using Left and Right swiping or select a Panel from the left panel list. Use the Collapse and Expand toolbar button to toggle the Panels list on or off. " />
                             </StackLayout>
                             <HorizontalStackLayout
@@ -124,9 +137,9 @@
                                 Padding="20" Margin="20"
                                 VerticalOptions="CenterAndExpand">
                                 <Button Margin="20" WidthRequest="120"
-                                    Clicked="ButtonInstructions_OnClicked"
-                                    Style="{StaticResource ButtonOutline}"
-                                    Text="Instructions" />
+                                        Clicked="ButtonInstructions_OnClicked"
+                                        Style="{StaticResource ButtonOutline}"
+                                        Text="Instructions" />
                                 <Button Margin="20" WidthRequest="120"
                                         Clicked="ButtonAbout_OnClicked"
                                         Style="{StaticResource ButtonOutline}"
@@ -142,39 +155,16 @@
                             HorizontalOptions="Center"
                             IsRunning="{Binding IsBusy}"
                             VerticalOptions="Center" />
-                    <CarouselView
-                        CurrentItem="{Binding SelectedPanel}"
-                        Grid.Column="0"
-                        Grid.Row="0"
-                        IndicatorView="IndicatorView"
-                        x:Name="PanelCarousel">
-
-                        <CarouselView.ItemsSource>
-                            <Binding Path="Panels" />
-                        </CarouselView.ItemsSource>
-
-                        <CarouselView.ItemTemplate>
-                            <DataTemplate>
-                            <view:ControlPanelView
-                                x:Name="ControlPanelView"
-                                HorizontalOptions="Fill"
-                                VerticalOptions="Fill"
-                                IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
-                                Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
-                                TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
-                                ShowTrackErrors="False"
-                                DesignMode="false"
-                                ShowGrid="false" />
-                            </DataTemplate>
-                        </CarouselView.ItemTemplate>
-                    </CarouselView>   
-                    <IndicatorView
-                        Grid.Column="0"
-                        Grid.Row="1"
-                        HorizontalOptions="Center"
-                        IndicatorColor="LightGray"
-                        SelectedIndicatorColor="DarkGray"
-                        x:Name="IndicatorView" />
+                                    <view:ControlPanelView
+                                        x:Name="ControlPanelView"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill"
+                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
+                                        Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
+                                        TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
+                                        ShowTrackErrors="False"
+                                        DesignMode="false"
+                                        ShowGrid="false" />
                     </Grid>
                 </Grid>
             </Border>
@@ -183,3 +173,42 @@
     </ContentPage.Content>
 
 </ContentPage>
+
+
+<!--
+
+                        <CarouselView
+                            CurrentItem="{Binding SelectedPanel}"
+                            Grid.Column="0"
+                            Grid.Row="0"
+                            IndicatorView="IndicatorView"
+                            x:Name="PanelCarousel">
+
+                            <CarouselView.ItemsSource>
+                                <Binding Path="Panels" />
+                            </CarouselView.ItemsSource>
+
+                            <CarouselView.ItemTemplate>
+                                <DataTemplate>
+                                    <view:ControlPanelView
+                                        x:Name="ControlPanelView"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill"
+                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
+                                        Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType= viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
+                                        TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
+                                        ShowTrackErrors="False"
+                                        DesignMode="false"
+                                        ShowGrid="false" />
+                                </DataTemplate>
+                            </CarouselView.ItemTemplate>
+                        </CarouselView>
+                        <IndicatorView
+                            Grid.Column="0"
+                            Grid.Row="1"
+                            HorizontalOptions="Center"
+                            IndicatorColor="LightGray"
+                            SelectedIndicatorColor="DarkGray"
+                            x:Name="IndicatorView" />
+                            
+                            -->
