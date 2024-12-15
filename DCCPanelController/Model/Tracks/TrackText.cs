@@ -18,8 +18,8 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
 
     protected override void Setup() {
         Layer = 2;
-        Name = "Text Block";
-        SetTrackSymbol("Text");
+        Name = "Text";
+        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Text");
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Text");
     }
     

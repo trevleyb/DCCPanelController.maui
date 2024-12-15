@@ -9,8 +9,8 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     public TrackImage() : this(null) { }
     protected override void Setup() {
         Layer = 0;
-        Name = "DisplayImage";
-        SetTrackSymbol("DisplayImage");
+        Name = "ImageStyle";
+        AddImageSourceAndRotation(TrackStyleImage.Symbol, "DisplayImage", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "DisplayImage", (0, 0), (90, 0), (180, 0), (270, 0));
     }
     public override ITrackPiece Clone() {

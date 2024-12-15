@@ -18,13 +18,13 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     protected override void Setup() {
         Layer = 2;
         Name= "Button";
-        SetTrackSymbol("Button");
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Button",(0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "ButtonCorner",(45, 270), (135, 0), (225, 90), (315, 180));
-        AddImageSourceAndRotation(TrackStyleImage.Active, "Button",(0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Active, "ButtonCorner",(45, 270), (135, 0), (225, 90), (315, 180));
-        AddImageSourceAndRotation(TrackStyleImage.InActive, "Button",(0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.InActive, "ButtonCorner",(45, 270), (135, 0), (225, 90), (315, 180));
+        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
+        AddImageSourceAndRotation(TrackStyleImage.Active, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Active, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
+        AddImageSourceAndRotation(TrackStyleImage.InActive, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.InActive, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
     }
 
     public override ITrackPiece Clone() {

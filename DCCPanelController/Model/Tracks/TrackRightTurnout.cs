@@ -9,8 +9,9 @@ namespace DCCPanelController.Model.Tracks;
 public partial class TrackRightTurnout(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackTurnoutBase(parent, styleType), ITrackTurnout, ITrackSymbol, ITrackPiece {
     public TrackRightTurnout() : this(null) { }
     protected override void Setup() {
-        SetTrackSymbol("TurnoutR1");
-        Name = "Right Turnout";
+        Name = "Turnout(R)";
+        ShowAboveSymbol = true;
+        AddImageSourceAndRotation(TrackStyleImage.Symbol, "TurnoutR1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "TurnoutR1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Straight, "TurnoutR2", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Diverging, "TurnoutR3", (0, 0), (90, 90), (180, 180), (270, 270));

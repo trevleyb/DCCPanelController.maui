@@ -6,11 +6,14 @@ using DCCPanelController.ViewModel;
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
+
+    private bool _tabBarState = true;
     
     public OperatePage() {
         InitializeComponent();
         BindingContext = new OperateViewModel();
         PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
+        SetTabBarState(true);
     }
 
     private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {
@@ -37,4 +40,18 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         Navigation.PushAsync(new InstructionsPage());
     }
 
+    private void HideUnHideTabBar(object? sender, EventArgs e) {
+        SetTabBarState(!_tabBarState);
+    }
+
+    private void SetTabBarState(bool state) {
+        if (state) {
+            Shell.SetTabBarIsVisible(this, true);
+            HideUnHide.IconImageSource = "maximize_2.png";
+        } else {
+            Shell.SetTabBarIsVisible(this, false);
+            HideUnHide.IconImageSource = "minimize_2.png";
+        }
+        _tabBarState = state;
+    }
 }

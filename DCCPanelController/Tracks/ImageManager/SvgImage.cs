@@ -9,11 +9,10 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 [DebuggerDisplay("{Id}")]
 public partial class SvgImage : ObservableObject {
-    [ObservableProperty] private SvgCompass _connections;
-    [ObservableProperty] private string _filename;
-
     [ObservableProperty] private string _id;
+    [ObservableProperty] private string _filename;
     [ObservableProperty] private SvgImageManager _imageManager;
+    [ObservableProperty] private SvgCompass _connections;
 
     public SvgImage(string id, string imageName, string connections) : this(id, imageName, new SvgCompass(connections)) { }
 

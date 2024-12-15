@@ -6,7 +6,6 @@ using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using Compass = DCCPanelController.Helpers.Compass;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
@@ -23,31 +22,33 @@ public abstract partial class TrackBase : ObservableObject {
 
     [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
     [ObservableProperty] private int _layer = 1;               // What layer is this on? Only 1 element per layer.
-    [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece
     [ObservableProperty] private int _x;                       // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                       // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece?
+    [ObservableProperty] private int _imageRotation;
     [ObservableProperty] [property: JsonIgnore] private bool _isSelected;
-
-    [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
-    [JsonIgnore] public ImageSource DisplayImage => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
-    [JsonIgnore] public ImageSource DisplaySymbol => SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
-    [JsonIgnore] public double GridSize;             
-    [JsonIgnore] public int ImageRotation;
-    [JsonIgnore] protected abstract SvgImage ActiveImage { get; }
-    [JsonIgnore] protected abstract SvgImage SymbolImage { get; }
     
+    [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage.Connections.ConnectionPointsRotated(ImageRotation);
+    
+    [DoNotClone][JsonIgnore] protected abstract SvgImage ActiveImage { get; }
+    [DoNotClone][JsonIgnore] protected abstract SvgImage SymbolImage { get; }
+    [DoNotClone][JsonIgnore] public ImageSource DisplayImage => ActiveImage.Image ?? throw new ApplicationException("Unable to set the image");
+    [DoNotClone][JsonIgnore] public ImageSource DisplaySymbol =>SymbolImage.Image ?? throw new ApplicationException("Unable to set the symbol");
+    [DoNotClone][JsonIgnore] public IView? ViewReference { get; set; }
     [DoNotClone][JsonIgnore] public Panel? Parent { get; set; }
+
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] [property: JsonIgnore] private bool _showAboveSymbol = false;
+    public bool ShowBelowSymbol => !ShowAboveSymbol;
    
     public IView GetDisplayItem(double gridSize, bool passthrough = false ) {
-        GridSize = gridSize;
-        var image = new Image {
+        //ViewReference = null;
+        ViewReference = new Image {
             Source = DisplayImage,
             Scale = 1.5,
             ZIndex = Layer,
-            Rotation = 0,
+            Rotation = ImageRotation,
             WidthRequest = gridSize,
             HeightRequest = gridSize,
-            RotationX = ImageRotation,
             InputTransparent = passthrough,
             VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Center,
@@ -56,11 +57,11 @@ public abstract partial class TrackBase : ObservableObject {
 
         // Setup bindings to the size and source of the Track DisplayImage. DisplayImage can change on events
         // -------------------------------------------------------------------------------------------
-        //image.SetBinding(Image.SourceProperty, new Binding(nameof(DisplayImage)) { Source = this });
+        //image.SetBinding(ImageStyle.SourceProperty, new Binding(nameof(DisplayImage)) { Source = this });
         //image.SetBinding(VisualElement.RotationProperty, new Binding(nameof(ImageRotation)) { Source = this });
         //image.SetBinding(VisualElement.WidthRequestProperty, new Binding(nameof(GridSize)) { Source = this });
         //image.SetBinding(VisualElement.HeightRequestProperty, new Binding(nameof(GridSize)) { Source = this });
-        return image;
+        return ViewReference;
     }
 
     public virtual string TrackObjectType {
@@ -83,19 +84,17 @@ public abstract partial class TrackBase : ObservableObject {
     private static void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     public void RotateLeft() {
-        TrackRotation = Compass.ToCompass(TrackRotation).Prev().ToRotation();
+        TrackRotation -= 45;
+        if (TrackRotation < 0) TrackRotation += 360;
         OnPropertyChanged(nameof(DisplayImage));
     }
 
     public void RotateRight() {
-        TrackRotation = Compass.ToCompass(TrackRotation).Next().ToRotation();
+        TrackRotation += 45;
+        if (TrackRotation > 360) TrackRotation -= 360;
         OnPropertyChanged(nameof(DisplayImage));
     }
-
-    protected void SetTrackSymbol(string imageSource) {
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, imageSource, (0, 0), (0, 0), (0, 0), (0, 0));
-    }
-
+    
     protected void AddImageSourceAndRotation(TrackStyleImage trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {
         StyleTrackImages.AddImageSourceAndRotation(trackType, imageSource, rotations);
     }

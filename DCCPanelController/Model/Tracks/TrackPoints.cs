@@ -11,7 +11,7 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType 
     protected override void Setup() {
         Layer = 2;
         Name = "Points";
-        SetTrackSymbol("Points");
+        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
     }
 

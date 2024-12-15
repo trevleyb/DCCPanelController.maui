@@ -33,7 +33,6 @@ public abstract partial class TrackButtonBase : TrackBase {
 
     protected abstract void PushButtonAction(bool isActive); // ( Turnout turnout)
 
-    
     [JsonIgnore]
     protected override SvgImage ActiveImage {
         get {
@@ -59,6 +58,8 @@ public abstract partial class TrackButtonBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+            ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
             var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }

@@ -3,12 +3,12 @@ namespace DCCPanelController.Tracks.StyleManager;
 public class StyleTrackImage {
     private StyleTrackImage(Builder builder) {
         ImageSource = builder.ImageSource;
-        Image = builder.Image;
+        ImageStyle = builder.Image;
         Rotations = builder.Rotations;
     }
 
     public string ImageSource { get; private set; }
-    public TrackStyleImage Image { get; private set; }
+    public TrackStyleImage ImageStyle { get; private set; }
     public List<Rotation> Rotations { get; private set; }
 
     public static Builder Create(TrackStyleImage trackType, string imageSource) {

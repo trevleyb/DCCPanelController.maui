@@ -68,8 +68,10 @@ public partial class ControlPanelView {
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrackPiece track) {
             Console.WriteLine($"Track '{track.Name}' was changed: Property={e.PropertyName}");
+            if (e.PropertyName == nameof(track.DisplayImage) && track.ViewReference is not null) {
+                InvalidateCell(track);
+            }
             TrackPieceChanged?.Invoke(this,track);
-            if (e.PropertyName == nameof(track.DisplayImage)) InvalidateCell(track);
         }
     }
 
@@ -283,25 +285,22 @@ public partial class ControlPanelView {
         }
     }
 
-    private IView? GetCellElement(ITrackPiece track) {
-        var cell = DynamicGrid.Children.FirstOrDefault(child => DynamicGrid.GetRow(child) == track.Y && DynamicGrid.GetColumn(child) == track.X);
-        return cell;
-    }
-
     public void InvalidateCell(ITrackPiece track) {
         RemoveDisplayItemFromGrid(track);
         AddDisplayItemToGrid(track);
     }
 
     private void RemoveDisplayItemFromGrid(ITrackPiece track) {
-        if (GetCellElement(track) is { } graphicsView) {
-            track.PropertyChanged -= OnTrackPieceChanged; 
-            DynamicGrid.Children.Remove(graphicsView);
+        if (track.ViewReference is { } view) {
+            DynamicGrid.Children.Remove(view);
+            track.PropertyChanged -= OnTrackPieceChanged;
+            //track.ViewReference = null;
         }
     }
-
+    
     private void AddDisplayItemToGrid(ITrackPiece track, bool transparentInput = false) {
         var displayItem = track.GetDisplayItem(GridSize, transparentInput);
+        track.PropertyChanged += OnTrackPieceChanged; 
         
         // Setup trigger control to trap if we click on or select the track item
         // -------------------------------------------------------------------------------------------
@@ -326,7 +325,6 @@ public partial class ControlPanelView {
         DynamicGrid.SetRow(displayItem, track.Y);
         DynamicGrid.SetColumn(displayItem, track.X);
         DynamicGrid.Children.Add(displayItem);
-        track.PropertyChanged += OnTrackPieceChanged; 
     }
 
     // If we click on a grid that is NOT a track piece and in design mode, 

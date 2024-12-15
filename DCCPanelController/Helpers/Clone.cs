@@ -25,35 +25,48 @@ public static class ObjectCloner {
             var elementType = type.GetElementType();
             var sourceArray = (Array)source;
             if (elementType != null) {
-                var copiedArray = Array.CreateInstance(elementType, sourceArray.Length);
-                for (var i = 0; i < sourceArray.Length; i++) {
-                    copiedArray.SetValue(CloneObject(sourceArray.GetValue(i)), i);
+                try {
+                    var copiedArray = Array.CreateInstance(elementType, sourceArray.Length);
+                    for (var i = 0; i < sourceArray.Length; i++) {
+                        copiedArray.SetValue(CloneObject(sourceArray.GetValue(i)), i);
+                    }
+                    return copiedArray;
+                } catch (Exception e) {
+                    Console.WriteLine($"Unable to clone '{type.ToString()}': {e.Message}");
+                    throw;
                 }
-
-                return copiedArray;
             }
         }
 
         // Handle collections
         if (source is IList sourceList) {
-            var copiedList = (IList)Activator.CreateInstance(source.GetType())!;
-            foreach (var item in sourceList) {
-                copiedList.Add(CloneObject(item));
-            }
+            try {
+                var copiedList = (IList)Activator.CreateInstance(source.GetType())!;
+                foreach (var item in sourceList) {
+                    copiedList.Add(CloneObject(item));
+                }
 
-            return copiedList;
+                return copiedList;
+            } catch (Exception e) {
+                Console.WriteLine($"Unable to clone '{type.ToString()}': {e.Message}");
+                throw;
+            }
         }
 
         // Handle other reference types
-        var copy = Activator.CreateInstance(type);
-        foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
-            if (property is { CanWrite: true, CanRead: true } && !Attribute.IsDefined(property, typeof(DoNotCloneAttribute))) {
-                var propertyValue = property.GetValue(source);
-                property.SetValue(copy, CloneObject(propertyValue));
+        try {
+            var copy = Activator.CreateInstance(type);
+            foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
+                if (property is { CanWrite: true, CanRead: true } && !Attribute.IsDefined(property, typeof(DoNotCloneAttribute))) {
+                    var propertyValue = property.GetValue(source);
+                    property.SetValue(copy, CloneObject(propertyValue));
+                }
             }
+            return copy;
+        } catch (Exception e) {
+            Console.WriteLine($"Unable to clone '{type.ToString()}': {e.Message}");
+            throw;
         }
-
-        return copy;
     }
 
     //public static void UpdateOriginal<T>(T original, T modified) => UpdateOriginal(original, modified);

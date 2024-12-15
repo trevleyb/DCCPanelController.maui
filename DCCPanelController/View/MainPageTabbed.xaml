@@ -10,7 +10,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-        <!--<ShellContent Title="Operate"   Icon="control.png" ContentTemplate="{DataTemplate view:OperatePage}" /> -->
+        <ShellContent Title="Operate"   Icon="control.png" ContentTemplate="{DataTemplate view:OperatePage}" />
         <ShellContent Title="Panels"    Icon="panels.png"  ContentTemplate="{DataTemplate view:PanelsViewerPage}" />
         <ShellContent Title="Turnouts"  Icon="turnouts.png"  ContentTemplate="{DataTemplate view:TurnoutsPage}" />
         <ShellContent Title="Routes"    Icon="routes.png" ContentTemplate="{DataTemplate view:RoutesPage}" />

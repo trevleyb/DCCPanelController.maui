@@ -56,6 +56,9 @@ public abstract partial class TrackContinuationBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+            ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
+
             var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }

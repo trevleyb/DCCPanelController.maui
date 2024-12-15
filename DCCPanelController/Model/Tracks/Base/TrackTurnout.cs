@@ -11,7 +11,7 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
 
-    protected TrackTurnoutBase(Panel? parent= null, TrackStyleType styleType = TrackStyleType.Mainline) : base(parent) { 
+    protected TrackTurnoutBase(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : base(parent) { 
         _trackType = styleType;
     }
 
@@ -72,6 +72,9 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             // ---------------------------------------------------------------------------------------------------
             var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+            ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
+
             var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }

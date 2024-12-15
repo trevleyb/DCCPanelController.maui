@@ -52,12 +52,12 @@ public partial class PanelEditorPage : ContentPage {
             _                => EditModeEum.Move,
         };
         PanelView.EditMode = _editMode;
-
-        EditModeToolItem.IconImageSource = _editMode switch {
-            EditModeEum.Move => "move.png",
-            EditModeEum.Copy => "copy.png",
-            _                => "move.png",
-        };
+        
+        // EditModeToolItem.IconImageSource = _editMode switch {
+        //     EditModeEum.Move => "move.png",
+        //     EditModeEum.Copy => "copy.png",
+        //     _                => "move.png",
+        // };
     }
 
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {

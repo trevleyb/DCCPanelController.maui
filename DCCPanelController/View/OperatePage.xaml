@@ -14,6 +14,15 @@
         <viewModel:OperateViewModel />
     </ContentPage.BindingContext>
 
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            ToolTipProperties.Text="Hide Bottom Tab Bar"
+            Clicked="HideUnHideTabBar"
+            IconImageSource="maximize_2.png"
+            Text="Hide"
+            x:Name="HideUnHide"/>
+        </ContentPage.ToolbarItems>
+    
     <ContentPage.Content>
         <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,Auto">
             <ActivityIndicator

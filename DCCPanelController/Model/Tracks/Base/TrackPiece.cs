@@ -50,8 +50,11 @@ public abstract partial class TrackPieceBase : TrackBase {
         get {
             // Find the appropriate image reference for the details we have
             // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
+            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, TrackRotation);
             var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+            ImageRotation = trackInfo.ImageRotation;
+            TrackRotation = trackInfo.TrackRotation;
+
             var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
             return imageInfo.ApplyStyle(style);
         }
