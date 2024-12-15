@@ -14,11 +14,4 @@ public partial class TrackCrossing(Panel? parent = null, TrackStyleType styleTyp
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Cross1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Cross2", (45, 0), (135, 90), (225, 0), (315, 90));
     }
-    
-    public override ITrackPiece Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
-    }
-
-
-
 }

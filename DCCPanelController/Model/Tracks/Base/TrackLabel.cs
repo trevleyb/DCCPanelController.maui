@@ -14,33 +14,27 @@ public abstract partial class TrackLabelBase : TrackBase {
     [property: EditableStringProperty(Name = "Circle Label", Description = "Label to display in the Circle")]
     private string _circlelabel = string.Empty;
 
-    [JsonIgnore]
-    protected override SvgImage ActiveImage {
-        get {
-            // Find the appropriate image reference for the details we have
-            // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackRotation);
-            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            ImageRotation = trackInfo.ImageRotation;
-            TrackRotation = trackInfo.TrackRotation;
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
-            style = SvgStyles.AddTextToStyle(style, Circlelabel);
-            return imageInfo.ApplyStyle(style);
-        }
+    protected override ImageSource GetViewForSymbol(double gridSize) {
+        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
+
     }
 
-    [JsonIgnore]
-    protected override SvgImage SymbolImage {
-        get {
-            // Find the appropriate image reference for the details we have
-            // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
-            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            ImageRotation = trackInfo.ImageRotation;
-            TrackRotation = trackInfo.TrackRotation;
-
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
-            return imageInfo.ApplyStyle(style);
-        }
+    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+        var image = CreateImageView(TrackStyleImage.Normal, TrackRotation, gridSize, passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
+
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+        // Find the appropriate image reference for the details we have
+        // ---------------------------------------------------------------------------------------------------
+        var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
+        var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+        ImageRotation = trackInfo.ImageRotation;
+        TrackRotation = trackInfo.TrackRotation;
+        var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
+        style = SvgStyles.AddTextToStyle(style, Circlelabel);
+        ActiveImage = imageInfo.ApplyStyle(style);
+        return (ActiveImage.Image, trackInfo.ImageRotation);
+    }
+
 }

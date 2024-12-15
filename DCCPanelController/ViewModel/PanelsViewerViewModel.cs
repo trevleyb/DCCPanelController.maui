@@ -126,15 +126,15 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     
     [RelayCommand]
     private async Task DuplicatePanelAsync(Panel? panel = null) {
-        if (panel is not null) SelectedPanel = panel;
-        if (SelectedPanel is null) return;
-        var newPanel = SelectedPanel.Clone();
-        var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
-        newPanel.Name = "Panel " + maxSort;
-        newPanel.SortOrder = maxSort;
-        Panels.Add(newPanel);
-        Save();
-        SelectPanel(newPanel);
+        // if (panel is not null) SelectedPanel = panel;
+        // if (SelectedPanel is null) return;
+        // var newPanel = SelectedPanel.Clone();
+        // var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
+        // newPanel.Name = "Panel " + maxSort;
+        // newPanel.SortOrder = maxSort;
+        // Panels.Add(newPanel);
+        // Save();
+        // SelectPanel(newPanel);
     }
 
     [RelayCommand]

@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
+using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services.SampleData;
 using DCCPanelController.Tracks.Helpers;
@@ -67,8 +68,8 @@ public partial class ControlPanelView {
 
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrackPiece track) {
-            Console.WriteLine($"Track '{track.Name}' was changed: Property={e.PropertyName}");
-            if (e.PropertyName == nameof(track.DisplayImage) && track.ViewReference is not null) {
+            Console.WriteLine($"Track '{track.Name}' with ID:'{track.Id} was changed: Property={e.PropertyName}");
+            if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }
             TrackPieceChanged?.Invoke(this,track);
@@ -291,15 +292,15 @@ public partial class ControlPanelView {
     }
 
     private void RemoveDisplayItemFromGrid(ITrackPiece track) {
-        if (track.ViewReference is { } view) {
+        if (track.TrackViewRef is { } view) {
             DynamicGrid.Children.Remove(view);
             track.PropertyChanged -= OnTrackPieceChanged;
-            //track.ViewReference = null;
+            track.TrackViewRef = null;
         }
     }
     
     private void AddDisplayItemToGrid(ITrackPiece track, bool transparentInput = false) {
-        var displayItem = track.GetDisplayItem(GridSize, transparentInput);
+        var displayItem = track.TrackView(GridSize, transparentInput);
         track.PropertyChanged += OnTrackPieceChanged; 
         
         // Setup trigger control to trap if we click on or select the track item
@@ -412,28 +413,19 @@ public partial class ControlPanelView {
                     ClearSelectedTracks();
                     switch (source) {
                     case "Panel":
-                        if (isCopyOperation) {
-                            var newTrack = trackPiece.Clone(); 
-                            newTrack.X = position.Col;
-                            newTrack.Y = position.Row;
-                            Panel?.AddTrack(newTrack);
-                            AddDisplayItemToGrid(newTrack);
-                            MarkTrackSelected(newTrack);
-                        } else {
-                            RemoveDisplayItemFromGrid(trackPiece);
-                            trackPiece.X = position.Col;
-                            trackPiece.Y = position.Row;
-                            AddDisplayItemToGrid(trackPiece);
-                        }
+                        RemoveDisplayItemFromGrid(trackPiece);
+                        trackPiece.X = position.Col;
+                        trackPiece.Y = position.Row;
+                        AddDisplayItemToGrid(trackPiece);
                         break;
                     case "DisplaySymbol":
-                        // if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
-                        var newPiece = trackPiece.Clone(); 
-                        newPiece.X = position.Col;
-                        newPiece.Y = position.Row;
-                        Panel?.AddTrack(newPiece);
-                        AddDisplayItemToGrid(newPiece);
-                        MarkTrackSelected(newPiece);
+                        if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
+                            newPiece.X = position.Col;
+                            newPiece.Y = position.Row;
+                            Panel?.AddTrack(newPiece);
+                            AddDisplayItemToGrid(newPiece);
+                            MarkTrackSelected(newPiece);
+                        }
                         break;
                     default:
                         Console.WriteLine($"Invalid source: '{source}'");

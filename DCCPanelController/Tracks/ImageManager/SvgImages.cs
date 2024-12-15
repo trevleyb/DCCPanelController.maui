@@ -28,7 +28,7 @@ public static class SvgImages {
 
             Add("Text", "********", "Track_Text");
             Add("Label", "********", "Track_Label");
-            Add("DisplayImage", "********", "Track_Image");
+            Add("Image", "********", "Track_Image");
             Add("Compass", "********", "Track_Compass");
             Add("Points", "********", "Track_Points");
 

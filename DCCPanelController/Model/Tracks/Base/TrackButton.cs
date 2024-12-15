@@ -28,41 +28,34 @@ public abstract partial class TrackButtonBase : TrackBase {
         ButtonState = !ButtonState;
         TrackImage  = (ButtonState ?? false) ? TrackStyleImage.Active : TrackStyleImage.InActive;
         PushButtonAction(ButtonState ?? false);
-        OnPropertyChanged(nameof(DisplayImage));
+        OnPropertyChanged(nameof(TrackView));
     }
 
     protected abstract void PushButtonAction(bool isActive); // ( Turnout turnout)
 
-    [JsonIgnore]
-    protected override SvgImage ActiveImage {
-        get {
-            // Find the appropriate image reference for the details we have
-            // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackImage, TrackRotation);
-            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            ImageRotation = trackInfo.ImageRotation;
-            TrackRotation = trackInfo.TrackRotation;
-
-            // Apply the various styles that need to be applied based on the 
-            // details that we have within the context of this track type
-            // --------------------------------------------------------------------------------------------------
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackImage, Parent?.Defaults);
-            return imageInfo.ApplyStyle(style);
-        }
+    protected override ImageSource GetViewForSymbol(double gridSize) {
+        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
     }
 
-    [JsonIgnore]
-    protected override SvgImage SymbolImage {
-        get {
-            // Find the appropriate image reference for the details we have
-            // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
-            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            ImageRotation = trackInfo.ImageRotation;
-            TrackRotation = trackInfo.TrackRotation;
-            var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
-            return imageInfo.ApplyStyle(style);
-        }
+    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+        var image = CreateImageView(TrackImage, TrackRotation, gridSize, passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+    }
+
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+        // Find the appropriate image reference for the details we have
+        // ---------------------------------------------------------------------------------------------------
+        var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
+        var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+        ImageRotation = trackInfo.ImageRotation;
+        TrackRotation = trackInfo.TrackRotation;
+
+        // Apply the various styles that need to be applied based on the 
+        // details that we have within the context of this track type
+        // --------------------------------------------------------------------------------------------------
+        var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackImage, Parent?.Defaults);
+        ActiveImage = imageInfo.ApplyStyle(style);
+        return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

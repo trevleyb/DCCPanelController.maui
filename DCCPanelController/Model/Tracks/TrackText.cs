@@ -23,33 +23,24 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
         AddImageSourceAndRotation(TrackStyleImage.Normal, "Text");
     }
     
-    public override ITrackPiece Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
+    protected override ImageSource GetViewForSymbol(double gridSize) {
+        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
     }
 
-    [JsonIgnore]
-    protected override SvgImage ActiveImage {
-        get {
-            // Find the appropriate image reference for the details we have
-            // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Normal, TrackRotation);
-            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            ImageRotation = trackInfo.ImageRotation;
-            TrackRotation = trackInfo.TrackRotation;
-            var style = SvgStyles.GetStyle(TrackStyleType.Text, TrackStyleImage.Normal, Parent?.Defaults);
-            return imageInfo.ApplyStyle(style);
-        }
+    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+        var image = CreateImageView(TrackStyleImage.Normal, TrackRotation, gridSize, passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    [JsonIgnore]
-    protected override SvgImage SymbolImage {
-        get {
-            // Find the appropriate image reference for the details we have
-            // ---------------------------------------------------------------------------------------------------
-            var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(TrackStyleImage.Symbol, 0);
-            var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-            var style = SvgStyles.GetStyle(TrackStyleType.Text, TrackStyleImage.Normal, Parent?.Defaults);
-            return imageInfo.ApplyStyle(style);
-        }
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+        // Find the appropriate image reference for the details we have
+        // ---------------------------------------------------------------------------------------------------
+        var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
+        var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+        ImageRotation = trackInfo.ImageRotation;
+        TrackRotation = trackInfo.TrackRotation;
+        var style = SvgStyles.GetStyle(TrackStyleType.Text, TrackStyleImage.Normal, Parent?.Defaults);
+        ActiveImage = imageInfo.ApplyStyle(style);
+        return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 }

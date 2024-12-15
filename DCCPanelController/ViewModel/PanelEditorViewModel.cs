@@ -15,7 +15,6 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
-    private Panel _originalPanel;
     [ObservableProperty] private Panel _panel;
     [ObservableProperty] private bool _hasSelectedTracks;
     [ObservableProperty] private bool _canUsePropertyPage;
@@ -28,10 +27,9 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public event EventHandler? CloseRequested;
 
     public PanelEditorViewModel(Panel panel) {
-        _originalPanel = panel;
-        Panel = panel.Clone();               // Clone the Panel so we are working on a Clone 
-        PropertyChanged += OnPropertyChanged;
+        Panel = panel;
         Panel.PropertyChanged += OnPanelPropertyChanged;
+        PropertyChanged += OnPropertyChanged;
         TrackSymbols = BuildTrackSymbols(Panel);
     }
 
@@ -49,7 +47,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public void Save() {
-        ObjectCloner.UpdateOriginal(_originalPanel, Panel);
         OnSaveCompleted?.Invoke(Panel);
         CloseRequested?.Invoke(Panel, EventArgs.Empty);
     }

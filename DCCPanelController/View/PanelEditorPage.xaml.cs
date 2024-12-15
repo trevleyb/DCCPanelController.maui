@@ -11,7 +11,6 @@ namespace DCCPanelController.View;
 public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
-    private EditModeEum _editMode = EditModeEum.Move;
     private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
 
     private Panel Panel => ViewModel.Panel;
@@ -44,22 +43,7 @@ public partial class PanelEditorPage : ContentPage {
             PanelView.MarkTrackSelected(track);
         }
     }
-
-    private void ChangeEditMode(object? sender, EventArgs e) {
-        _editMode = _editMode switch {
-            EditModeEum.Move => EditModeEum.Copy,
-            EditModeEum.Copy => EditModeEum.Move,
-            _                => EditModeEum.Move,
-        };
-        PanelView.EditMode = _editMode;
-        
-        // EditModeToolItem.IconImageSource = _editMode switch {
-        //     EditModeEum.Move => "move.png",
-        //     EditModeEum.Copy => "copy.png",
-        //     _                => "move.png",
-        // };
-    }
-
+    
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         Console.WriteLine("OnSymbolDragStarting");
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {

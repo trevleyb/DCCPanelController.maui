@@ -16,9 +16,10 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType 
     }
 
     public void SetPoints(bool[] points) {
-        var svgImage = ActiveImage;
-        for (var point = 0; point < 8; point++) {
-            SetPointColor(svgImage, PointLabel(point), points[point]);
+        if (ActiveImage is { } svgImage) {
+            for (var point = 0; point < 8; point++) {
+                SetPointColor(svgImage, PointLabel(point), points[point]);
+            }
         }
     }
 
@@ -47,9 +48,4 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType 
             _ => "PointN"
         };
     }
-    public override ITrackPiece Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
-    }
-
-
 }

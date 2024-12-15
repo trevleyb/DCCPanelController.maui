@@ -10,12 +10,7 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     protected override void Setup() {
         Layer = 0;
         Name = "ImageStyle";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "DisplayImage", (0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "DisplayImage", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImage.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
     }
-    public override ITrackPiece Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
-    }
-
-
 }

@@ -58,8 +58,4 @@ public partial class PanelDefaults : ObservableObject {
         ButtonBorder       = Colors.DarkGrey;
 
     }
-    
-    public PanelDefaults Clone() {
-        return ObjectCloner.Clone<PanelDefaults>(this) ?? throw new ArgumentException("Cannot clone the Panel Defaults.");
-    }
 }

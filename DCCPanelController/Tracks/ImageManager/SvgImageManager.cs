@@ -34,7 +34,7 @@ public class SvgImageManager {
     ///     change to any of the elements. The change functions will set _imageSource to null which will
     ///     cause a call to the image function to re-calculate/re-draw the image itself.
     /// </summary>
-    public ImageSource? Image => GetSvgAsImage();
+    public ImageSource Image => GetSvgAsImage();
 
     public List<string> SupportedElements => _svgDocument.Descendants().SelectMany(element => element.Attributes().Where(attribute => attribute.Name.LocalName == "id").Select(attribute => attribute.Value)).Distinct().ToList();
 

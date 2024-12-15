@@ -79,15 +79,19 @@ public partial class Panel : ObservableObject {
         }
     }
     
-    /// <summary>
-    ///     Create a deep copy of the Panel object.
-    /// </summary>
-    /// <returns>A new instance of the Panel object with the same property values as the original.</returns>
-    public Panel Clone() {
-        var cloned= ObjectCloner.Clone<Panel>(this) ?? throw new ArgumentException("Cannot clone the Panel.");
-        cloned.SetParent(cloned.Tracks, cloned);
-        return cloned;
+    public void Merge(Panel modified) {
+        Id = modified.Id;
+        Name = modified.Name;
+        SortOrder = modified.SortOrder;
+        Cols = modified.Cols;
+        Rows = modified.Rows;
+        Description = modified.Description;
+        Defaults = modified.Defaults;
+        foreach (var track in modified.Tracks) {
+            
+        }
     }
+
 
     private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) => TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
 

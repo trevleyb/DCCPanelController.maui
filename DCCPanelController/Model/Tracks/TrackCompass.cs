@@ -59,8 +59,4 @@ public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent)
             break;
         }
     }
-    public override ITrackPiece Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
-    }
-
 }

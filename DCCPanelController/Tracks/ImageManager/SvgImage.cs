@@ -24,7 +24,7 @@ public partial class SvgImage : ObservableObject {
         PropertyChanged += OnPropertyChanged;
     }
 
-    public ImageSource? Image => ImageManager.Image;
+    public ImageSource Image => ImageManager.Image;
 
     public bool SupportsLabel => ImageManager.IsSupported(SvgElementEnum.Text);
 

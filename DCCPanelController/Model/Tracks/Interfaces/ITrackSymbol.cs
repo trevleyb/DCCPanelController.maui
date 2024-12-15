@@ -5,6 +5,5 @@ public interface ITrackSymbol {
     bool ShowAboveSymbol { get; }
     bool ShowBelowSymbol { get; }
     int ImageRotation { get; }
-    ImageSource? DisplaySymbol { get; }
-    Panel? Parent { get; }
+    ImageSource SymbolView { get; }
 }

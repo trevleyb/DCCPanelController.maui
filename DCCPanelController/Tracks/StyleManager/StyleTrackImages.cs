@@ -19,7 +19,6 @@ public class StyleTrackImages {
                 if (supportedImage.ImageStyle == imageStyle) {
                     foreach (var rotation in supportedImage.Rotations) {
                         if (rotation.TrackRotation == currentRotation) {
-                            Console.WriteLine($"Found Image: '{supportedImage.ImageSource} for {imageStyle} at {trackRotation} to rotate {rotation.ImageRotation}");
                             return new StyleImageRotation(supportedImage.ImageSource, rotation.TrackRotation, rotation.ImageRotation);
                         }
                     }

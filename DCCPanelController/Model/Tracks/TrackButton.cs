@@ -27,10 +27,6 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
         AddImageSourceAndRotation(TrackStyleImage.InActive, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
     }
 
-    public override ITrackPiece Clone() {
-        return ObjectCloner.Clone(this) ?? throw new ArgumentException($"Cannot clone the Track '{this.GetType().Name}'");
-    }
-
     protected override void PushButtonAction(bool isActive) {
         Console.WriteLine($"Button '{Name}' is {(isActive ? "ACTIVE" : "INACTIVE")}");
     }
