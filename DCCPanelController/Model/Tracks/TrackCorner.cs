@@ -15,4 +15,10 @@ public partial class TrackCorner(Panel? parent = null, TrackStyleType styleType 
         AddImageSourceAndRotation(TrackStyleImage.Normal, "CornerR", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Normal, "CornerL", (45, 270), (135, 0), (225, 90), (315, 180));
     }
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackCorner)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

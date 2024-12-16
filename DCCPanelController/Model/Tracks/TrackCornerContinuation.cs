@@ -17,4 +17,10 @@ public partial class TrackCornerContinuation(Panel? parent = null, TrackStyleTyp
         AddImageSourceAndRotation(TrackStyleImage.Lines, "ContinuationCL1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImage.Lines, "ContinuationCL2", (45, 0), (135, 90), (225, 180), (315, 270));
     }
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackCornerContinuation)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

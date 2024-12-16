@@ -18,11 +18,11 @@ public partial class TrackTurnoutActionsView : ContentView {
         foreach (var action in Actions) {
             var entry = new Entry {
                 Placeholder = "Enter ID",
-                Text = action.Id // Two-way binding preferred
+                Text = action?.TurnoutId ?? string.Empty // Two-way binding preferred
                 // Connect this to a picker or set proper options based on Turnouts
             };
 
-            entry.SetBinding(Entry.TextProperty, nameof(action.Id), BindingMode.TwoWay);
+            entry.SetBinding(Entry.TextProperty, nameof(action.TurnoutId), BindingMode.TwoWay);
 
             var deleteButton = new Button {
                 Text = "Remove",

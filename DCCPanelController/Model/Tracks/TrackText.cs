@@ -43,4 +43,10 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackText)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

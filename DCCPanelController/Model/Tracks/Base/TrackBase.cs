@@ -12,6 +12,7 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackBase : ObservableObject {
 
+    public Guid Id { get; set; } = Guid.NewGuid();
     protected TrackBase(Panel? parent = null) {
         Initialise();
         OnPropertyChanged(nameof(TrackView));
@@ -21,7 +22,6 @@ public abstract partial class TrackBase : ObservableObject {
 
     protected readonly StyleTrackImages StyleTrackImages = new();
 
-    [DoNotClone] public Guid Id { get; set; } = Guid.NewGuid();
     [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
     [ObservableProperty] private int _layer  = 1;              // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private int _x;                       // What Grid Position (Horizontal) is this component?
@@ -32,14 +32,14 @@ public abstract partial class TrackBase : ObservableObject {
 
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage?.Connections.ConnectionPointsRotated(ImageRotation) ?? SvgCompass.NoConnections();
-    [DoNotClone][JsonIgnore] public Panel? Parent { get; set; }
+    [JsonIgnore] public Panel? Parent { get; set; }
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] [property: JsonIgnore] private bool _showAboveSymbol = false;
     public bool ShowBelowSymbol => !ShowAboveSymbol;
 
     public IView TrackView (double gridSize, bool passthrough = false) => TrackViewRef ??= GetViewForTrack(gridSize, passthrough);
-    [DoNotClone][JsonIgnore] public IView? TrackViewRef { get; set; }
-    [DoNotClone][JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
+    [JsonIgnore] public IView? TrackViewRef { get; set; }
+    [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
 
     // This routine can be overriden by other routines up the chain. It is to work out how the track
     // piece should be displayed and then to create a common IView that can be shown on the screen. Most

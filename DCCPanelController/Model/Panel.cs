@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Linq;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
-using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
 
@@ -17,7 +11,6 @@ namespace DCCPanelController.Model;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableObject {
-    [ObservableProperty] private string _id = Guid.NewGuid().ToString();
     [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
@@ -30,7 +23,8 @@ public partial class Panel : ObservableObject {
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public bool HasSelectedTracks => _tracks.Any(t => t.IsSelected);
     [JsonIgnore] public List<ITrackPiece> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
-    
+
+    public string Id { get; set; } = Guid.NewGuid().ToString();
     public Panel() {
         _tracks = [];
     }
@@ -79,20 +73,6 @@ public partial class Panel : ObservableObject {
         }
     }
     
-    public void Merge(Panel modified) {
-        Id = modified.Id;
-        Name = modified.Name;
-        SortOrder = modified.SortOrder;
-        Cols = modified.Cols;
-        Rows = modified.Rows;
-        Description = modified.Description;
-        Defaults = modified.Defaults;
-        foreach (var track in modified.Tracks) {
-            
-        }
-    }
-
-
     private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) => TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
 
     private static string CalculateRatio(int col, int row) {
@@ -112,4 +92,13 @@ public partial class Panel : ObservableObject {
         }
     }
 
+    public Panel Clone() {
+        if (MemberwiseClone() is not Panel panel) throw new Exception("Failed to clone panel");
+        panel.Defaults = Defaults.Clone();
+        panel.Tracks = [];
+        foreach (var track in Tracks) {
+            panel.Tracks.Add(track.Clone(panel));
+        }
+        return panel;
+    }
 }

@@ -413,13 +413,23 @@ public partial class ControlPanelView {
                     ClearSelectedTracks();
                     switch (source) {
                     case "Panel":
-                        RemoveDisplayItemFromGrid(trackPiece);
-                        trackPiece.X = position.Col;
-                        trackPiece.Y = position.Row;
-                        AddDisplayItemToGrid(trackPiece);
+                        if (isCopyOperation && Panel is { } panel) {
+                            var newTrack = trackPiece.Clone(panel); 
+                            newTrack.X = position.Col;
+                            newTrack.Y = position.Row;
+                            panel.AddTrack(newTrack);
+                            AddDisplayItemToGrid(newTrack);
+                            MarkTrackSelected(newTrack);
+                        } else {
+                            RemoveDisplayItemFromGrid(trackPiece);
+                            trackPiece.X = position.Col;
+                            trackPiece.Y = position.Row;
+                            AddDisplayItemToGrid(trackPiece);
+                        }
                         break;
                     case "DisplaySymbol":
-                        if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
+                        //if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
+                        if (Panel is not null && trackPiece.Clone(Panel) is { } newPiece) {
                             newPiece.X = position.Col;
                             newPiece.Y = position.Row;
                             Panel?.AddTrack(newPiece);

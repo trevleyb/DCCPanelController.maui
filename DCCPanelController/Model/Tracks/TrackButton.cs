@@ -30,4 +30,11 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     protected override void PushButtonAction(bool isActive) {
         Console.WriteLine($"Button '{Name}' is {(isActive ? "ACTIVE" : "INACTIVE")}");
     }
+
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackButton)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

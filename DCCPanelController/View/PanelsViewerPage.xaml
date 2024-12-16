@@ -16,10 +16,8 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding AddPanelCommand}" Text="Add" IconImageSource="plus_circle.png" />
-        <!--
         <ToolbarItem Command="{Binding DuplicatePanelCommand}" Text="Duplicate" IsEnabled="{Binding IsPanelSelected}"
                      IconImageSource="copy.png" />
-                     -->
         <ToolbarItem Command="{Binding EditPanelCommand}" Text="Edit" IconImageSource="edit.png"
                      IsEnabled="{Binding IsPanelSelected}" />
         <ToolbarItem Command="{Binding DeletePanelCommand}" Text="Delete" IconImageSource="trash_2.png"

@@ -59,4 +59,11 @@ public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent)
             break;
         }
     }
+
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackCompass)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

@@ -14,10 +14,7 @@ public interface ITrackPiece {
     IView? TrackViewRef { get; set; }
     IView TrackView(double gridSize, bool passthrough = false);
 
-    //ImageSource DisplayImage { get; }
-    //IView GetDisplayItem(double gridSize, bool passthrough = false);
-    //IView? ViewReference { get; set; }
-
+    ITrackPiece Clone(Panel parent);
     Panel? Parent { get; set; }
     TrackConnectionsEnum[] Connections { get; }
 

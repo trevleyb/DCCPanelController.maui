@@ -56,6 +56,9 @@ public partial class PanelDefaults : ObservableObject {
         ButtonOffBorder    = Colors.Crimson;
         ButtonColor        = Colors.LightGray;
         ButtonBorder       = Colors.DarkGrey;
-
+    }
+    
+    public PanelDefaults Clone() {
+        return (PanelDefaults)MemberwiseClone();
     }
 }

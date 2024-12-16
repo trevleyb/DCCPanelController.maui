@@ -126,15 +126,16 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     
     [RelayCommand]
     private async Task DuplicatePanelAsync(Panel? panel = null) {
-        // if (panel is not null) SelectedPanel = panel;
-        // if (SelectedPanel is null) return;
-        // var newPanel = SelectedPanel.Clone();
-        // var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
-        // newPanel.Name = "Panel " + maxSort;
-        // newPanel.SortOrder = maxSort;
-        // Panels.Add(newPanel);
-        // Save();
-        // SelectPanel(newPanel);
+        if (panel is not null) SelectedPanel = panel;
+        if (SelectedPanel is null) return;
+        
+        var newPanel = SelectedPanel.Clone();
+        var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
+        newPanel.Name = "Panel " + maxSort;
+        newPanel.SortOrder = maxSort;
+        Panels.Add(newPanel);
+        Save();
+        SelectPanel(newPanel);
     }
 
     [RelayCommand]
@@ -154,7 +155,10 @@ public partial class PanelsViewerViewModel : BaseViewModel {
         if (SelectedPanel is null) return;
         try {
             var result = await _navigationService.NavigateToPanelEditor(SelectedPanel);
-            if (result is not null) Save();
+            if (result is not null) {
+                Panels[Panels.IndexOf(SelectedPanel)] = result;
+                Save();
+            }
         } catch (Exception ex) {
             Console.WriteLine($"Failed to goto the Panel details for {SelectedPanel.Name} due to {ex.Message}");
         }

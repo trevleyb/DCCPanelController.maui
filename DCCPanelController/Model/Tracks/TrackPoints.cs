@@ -48,4 +48,10 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType 
             _ => "PointN"
         };
     }
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackPoints)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

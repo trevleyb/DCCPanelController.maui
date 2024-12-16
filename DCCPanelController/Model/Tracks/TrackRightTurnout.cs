@@ -19,5 +19,10 @@ public partial class TrackRightTurnout(Panel? parent = null, TrackStyleType styl
     protected override void ThrowTurnout(Turnout turnout, TurnoutStateEnum state) {
         Console.WriteLine($"Turnout '{turnout.Name}' is {(state == TurnoutStateEnum.Closed ? "CLOSED" : state == TurnoutStateEnum.Thrown ? "THROWN" : "UNKNOWN")}");
     }
-
+    public ITrackPiece Clone(Panel parent) {
+        var track = (TrackRightTurnout)MemberwiseClone();
+        track.Id = Guid.NewGuid();
+        track.Parent = parent;
+        return track;
+    }
 }

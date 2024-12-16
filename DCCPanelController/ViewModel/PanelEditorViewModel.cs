@@ -27,7 +27,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public event EventHandler? CloseRequested;
 
     public PanelEditorViewModel(Panel panel) {
-        Panel = panel;
+        Panel = panel.Clone();
         Panel.PropertyChanged += OnPanelPropertyChanged;
         PropertyChanged += OnPropertyChanged;
         TrackSymbols = BuildTrackSymbols(Panel);
