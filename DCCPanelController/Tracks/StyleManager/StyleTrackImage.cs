@@ -3,15 +3,15 @@ namespace DCCPanelController.Tracks.StyleManager;
 public class StyleTrackImage {
     private StyleTrackImage(Builder builder) {
         ImageSource = builder.ImageSource;
-        ImageStyle = builder.Image;
+        ImageEnumStyle = builder.ImageEnum;
         Rotations = builder.Rotations;
     }
 
     public string ImageSource { get; private set; }
-    public TrackStyleImage ImageStyle { get; private set; }
+    public TrackStyleImageEnum ImageEnumStyle { get; private set; }
     public List<Rotation> Rotations { get; private set; }
 
-    public static Builder Create(TrackStyleImage trackType, string imageSource) {
+    public static Builder Create(TrackStyleImageEnum trackType, string imageSource) {
         return new Builder(trackType, imageSource);
     }
 
@@ -20,9 +20,9 @@ public class StyleTrackImage {
         public int ImageRotation { get; set; }
     }
 
-    public class Builder(TrackStyleImage track, string imageSource) {
+    public class Builder(TrackStyleImageEnum track, string imageSource) {
         public string ImageSource { get; } = imageSource ?? throw new ArgumentNullException(nameof(imageSource));
-        public TrackStyleImage Image { get; } = track;
+        public TrackStyleImageEnum ImageEnum { get; } = track;
         public List<Rotation> Rotations { get; } = new();
 
         public Builder AddRotation(int trackRotation, int imageRotation) {
@@ -53,5 +53,9 @@ public class StyleTrackImage {
         public StyleTrackImage Build() {
             return new StyleTrackImage(this);
         }
+    }
+
+    public StyleTrackImage Clone() {
+        return (StyleTrackImage)MemberwiseClone();
     }
 }

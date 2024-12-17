@@ -12,7 +12,8 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -33,7 +34,7 @@
 
         <Label Margin="10,10,0,0" Style="{StaticResource MediumLabel}" TextColor="{StaticResource Primary}"
                Text="WiThrottle Server Address:" />
-        <HorizontalStackLayout HorizontalOptions="Center" Margin="-15">
+        <HorizontalStackLayout HorizontalOptions="Start" Margin="10,-15,10,10">
             <Frame Style="{StaticResource IpAddress}">
                 <Entry Focused="OnEntryFocused" IsEnabled="{Binding IsLiveMode}" Text="{Binding IpAddress1}">
                     <Entry.Behaviors>
@@ -85,18 +86,25 @@
                     IsEnabled="{Binding IsLiveMode}"
                     Text="{Binding Port}" />
             </Frame>
+            
+            <Button
+                Command="{Binding ConnectCommand}"
+                HorizontalOptions="Center"
+                IsEnabled="{Binding IsConnectAvailable}"
+                Margin="10,0,0,0"
+                Style="{StaticResource ButtonOutline}"
+                Text="{Binding ConnectLabel}"
+                WidthRequest="150" />
+
         </HorizontalStackLayout>
-
-        <Button
-            Command="{Binding ConnectCommand}"
-            HorizontalOptions="Center"
-            IsEnabled="{Binding IsConnectAvailable}"
-            Margin="10,0,0,20"
-            Padding="20"
-            Style="{StaticResource ButtonOutline}"
-            Text="{Binding ConnectLabel}"
-            WidthRequest="150" />
-
+        
+        <HorizontalStackLayout>
+            <Label Text="Main Window Background Color"/>
+            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                          SelectedColor="{Binding Path=Settings.BackgroundColor, Mode=TwoWay}" VerticalOptions="Center" />
+        </HorizontalStackLayout>
+        
+        
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="2"

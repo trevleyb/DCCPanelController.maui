@@ -5,20 +5,17 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCorner(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackPieceBase(parent, styleType), ITrackSymbol, ITrackPiece {
+public partial class TrackCorner(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackSymbol, ITrackPiece {
     public TrackCorner() : this(null) { }
     protected override void Setup() {
         Name = "Corner";
         ShowAboveSymbol = true;
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "CornerR", (0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "CornerL", (0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "CornerR", (0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "CornerL", (45, 270), (135, 0), (225, 90), (315, 180));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "CornerR", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "CornerL", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "CornerR", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "CornerL", (45, 270), (135, 0), (225, 90), (315, 180));
     }
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackCorner)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return Clone<TrackCorner>(parent);
     }
 }

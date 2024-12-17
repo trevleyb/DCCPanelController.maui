@@ -10,13 +10,10 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     protected override void Setup() {
         Layer = 0;
         Name = "ImageStyle";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
     }
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackImage)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return Clone<TrackImage>(parent);
     }
 }

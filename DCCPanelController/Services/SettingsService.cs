@@ -10,27 +10,28 @@ namespace DCCPanelController.Services;
 public class SettingsService {
     private const string StorageFilename = "DCCPanelController.json";
     private Storage? _storage;
-    private readonly JsonSerializerOptions? _options = new() {
-        WriteIndented = true, 
-        Converters = {
-            new JsonConverterTrackPiece(),
-            new MauiColorJsonConverter(),
-            new JsonConverterEnumToString<TrackStyleImage>(),
-            new JsonConverterEnumToString<TrackStyleType>(),
-            new JsonConverterEnumToString<TrackStyleAttribute>(),
-            new JsonConverterEnumToString<TrackStyleImage>(),
-        }
-    };
     
     public Storage Storage => _storage ??= Load();
     public Settings Settings => Storage.Settings;
     public ObservableCollection<Panel> Panels => Storage.Panels;
     public ObservableCollection<Turnout> Turnouts => Storage.Turnouts;
     public ObservableCollection<Route> Routes => Storage.Routes;
+
+    public static JsonSerializerOptions? PanelSerializerOptions = new() {
+        WriteIndented = true, 
+        Converters = {
+            new JsonConverterTrackPiece(),
+            new MauiColorJsonConverter(),
+            new JsonConverterEnumToString<TrackStyleImageEnum>(),
+            new JsonConverterEnumToString<TrackStyleTypeEnum>(),
+            new JsonConverterEnumToString<TrackStyleAttributeEnum>(),
+            new JsonConverterEnumToString<TrackStyleImageEnum>(),
+        }
+    };
     
     public void Save(string fileName = StorageFilename) {
         try {
-            var jsonString = JsonSerializer.Serialize(_storage, _options);
+            var jsonString = JsonSerializer.Serialize(_storage, PanelSerializerOptions);
             SaveJson(fileName, jsonString);
         } catch (Exception ex) {
             Console.WriteLine($"Unable to SAVE Data: {ex.Message}");
@@ -42,7 +43,6 @@ public class SettingsService {
     }
 
     public Storage Load(string fileName = StorageFilename) {
-        Console.WriteLine("Storage Load Called");
         var filePath = GetStorageFilePath(fileName);
         try {
             if (File.Exists(filePath)) {
@@ -63,9 +63,8 @@ public class SettingsService {
     }
 
     private Storage LoadJson(string jsonString) {
-        Console.WriteLine("Storage LoadJson Called");
         try {
-            var result = JsonSerializer.Deserialize<Storage?>(jsonString, _options);
+            var result = JsonSerializer.Deserialize<Storage?>(jsonString, PanelSerializerOptions);
             return result ?? new Storage();
         } catch (Exception ex) {
             Console.WriteLine("Could not deserialize settings. New set created: " + ex.Message);
@@ -103,6 +102,6 @@ public class SettingsService {
     }
 
     public string ToJsonString() {
-        return JsonSerializer.Serialize(_storage, _options);
+        return JsonSerializer.Serialize(_storage, PanelSerializerOptions);
     }
 }

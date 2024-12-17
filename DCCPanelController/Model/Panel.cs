@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.Tracks.Helpers;
 
 namespace DCCPanelController.Model;
@@ -21,7 +23,6 @@ public partial class Panel : ObservableObject {
     private ObservableCollection<ITrackPiece> _tracks = [];
     
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public bool HasSelectedTracks => _tracks.Any(t => t.IsSelected);
     [JsonIgnore] public List<ITrackPiece> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
 
     public string Id { get; set; } = Guid.NewGuid().ToString();
@@ -93,12 +94,8 @@ public partial class Panel : ObservableObject {
     }
 
     public Panel Clone() {
-        if (MemberwiseClone() is not Panel panel) throw new Exception("Failed to clone panel");
-        panel.Defaults = Defaults.Clone();
-        panel.Tracks = [];
-        foreach (var track in Tracks) {
-            panel.Tracks.Add(track.Clone(panel));
-        }
-        return panel;
+        var copy =  JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
+        var panel = JsonSerializer.Deserialize<Panel>(copy,SettingsService.PanelSerializerOptions);
+        return panel ?? throw new Exception("Failed to clone panel");
     }
 }

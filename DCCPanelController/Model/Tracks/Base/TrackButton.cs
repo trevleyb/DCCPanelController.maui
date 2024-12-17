@@ -11,7 +11,7 @@ public abstract partial class TrackButtonBase : TrackBase {
 
     private IAudioPlayer? _clickSoundPlayer;
     protected bool? ButtonState;
-    protected TrackStyleImage TrackImage = TrackStyleImage.Normal;
+    protected TrackStyleImageEnum TrackImageEnum = TrackStyleImageEnum.Normal;
 
     protected TrackButtonBase(Panel? parent = null) : base(parent) {
         PropertyChanged += OnPropertyChanged;
@@ -26,7 +26,7 @@ public abstract partial class TrackButtonBase : TrackBase {
 
         ButtonState ??= false;
         ButtonState = !ButtonState;
-        TrackImage  = (ButtonState ?? false) ? TrackStyleImage.Active : TrackStyleImage.InActive;
+        TrackImageEnum  = (ButtonState ?? false) ? TrackStyleImageEnum.Active : TrackStyleImageEnum.InActive;
         PushButtonAction(ButtonState ?? false);
         OnPropertyChanged(nameof(TrackView));
     }
@@ -34,15 +34,15 @@ public abstract partial class TrackButtonBase : TrackBase {
     protected abstract void PushButtonAction(bool isActive); // ( Turnout turnout)
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackImage, TrackRotation, gridSize, passthrough);
+        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough);
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
         // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
@@ -53,17 +53,17 @@ public abstract partial class TrackButtonBase : TrackBase {
         // Apply the various styles that need to be applied based on the 
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
-        var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackImage, Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Button, TrackImageEnum, Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         // Add code to determine if the state of the button has changed
-        TrackImage = ButtonState switch {
-            true  => TrackStyleImage.Active,
-            false => TrackStyleImage.InActive,
-            _     => TrackStyleImage.Normal
+        TrackImageEnum = ButtonState switch {
+            true  => TrackStyleImageEnum.Active,
+            false => TrackStyleImageEnum.InActive,
+            _     => TrackStyleImageEnum.Normal
         };
     }
 }

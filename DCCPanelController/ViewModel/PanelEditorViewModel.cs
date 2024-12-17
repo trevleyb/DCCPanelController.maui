@@ -1,71 +1,47 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Reflection;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.Services;
 using DCCPanelController.Services.NavigationService;
-using DCCPanelController.Tracks;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelEditorViewModel : BaseViewModel {
     [ObservableProperty] private Panel _panel;
-    [ObservableProperty] private bool _hasSelectedTracks;
-    [ObservableProperty] private bool _canUsePropertyPage;
     
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
-    public EditState EditState = EditState.None;
     public ObservableCollection<ITrackSymbol> TrackSymbols { get; init; } = [];
 
-    public event Action<Panel?>? OnSaveCompleted;
-    public event EventHandler? CloseRequested;
+    public bool HasSelectedTracks => Panel.SelectedTracks.Count > 0; 
+    public bool CanUsePropertyPage => Panel.SelectedTracks.Count <= 1;
 
-    public PanelEditorViewModel(Panel panel) {
-        Panel = panel.Clone();
-        Panel.PropertyChanged += OnPanelPropertyChanged;
-        PropertyChanged += OnPropertyChanged;
+    public ICommand SaveCommand { get; }
+    public ICommand CancelCommand { get; }
+    
+    public PanelEditorViewModel(Panel panel, Action<bool> onCompleted) {
+        Panel = panel;
         TrackSymbols = BuildTrackSymbols(Panel);
+        OnPropertyChanged(nameof(HasSelectedTracks));
+        OnPropertyChanged(nameof(CanUsePropertyPage));
+        
+        SaveCommand = new Command(() => {
+            onCompleted(true); // Indicates successful save
+        });
+
+        CancelCommand = new Command(() => {
+            onCompleted(false); // Indicates cancel
+        });
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"PanelEditorView: PropertyChanged: {sender} - {e.PropertyName}");
+    public void TrackPieceChanged() {
+        OnPropertyChanged(nameof(HasSelectedTracks));
+        OnPropertyChanged(nameof(CanUsePropertyPage));
     }
-
-    private void OnPanelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"PanelEditorView: PanelPropertyChanged: {sender} - {e.PropertyName}");
-    }
-
-    [RelayCommand]
-    private async Task SaveAsync() {
-        Save();
-    }
-
-    public void Save() {
-        OnSaveCompleted?.Invoke(Panel);
-        CloseRequested?.Invoke(Panel, EventArgs.Empty);
-    }
-
-    [RelayCommand]
-    private async Task CancelAsync() {
-        Cancel();
-    }
-
-    public void Cancel() {
-        //if (EditState == EditState.Changed) {
-        //  Console.WriteLine("Panel was changed.");
-        // var answer = _navigationService.DisplayAlertAsync("Save Changed?", "You have unsaved Changes. Do you want to save?", "Yes", "No").GetAwaiter().GetResult();
-        // if (answer) { Save(); return; }
-        //}
-        OnSaveCompleted?.Invoke(null);
-        CloseRequested?.Invoke(null, EventArgs.Empty);
-    }
-
+    
     public bool TracksOutsideBounds => Panel.Tracks.Any(track => track.X < 0 || track.X >= Panel.Cols || track.Y < 0 || track.Y >= Panel.Rows);
     public void Validate() {
         // Make sure that all the Coordinates for the Track Pieces are valid and 
@@ -98,23 +74,18 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackCrossing(parent),
             new TrackTerminator(parent),
             
-            new TrackStraight(parent, TrackStyleType.Branchline),
-            new TrackStraight(parent, TrackStyleType.Branchline) {TrackRotation = 90},
-            new TrackStraightContinuation(parent, TrackStyleType.Branchline),
-            new TrackStraightContinuation(parent, TrackStyleType.Branchline) {TrackRotation = 90},
-            new TrackCorner(parent, TrackStyleType.Branchline),
-            new TrackCornerContinuation(parent, TrackStyleType.Branchline),
-            new TrackLeftTurnout(parent, TrackStyleType.Branchline),
-            new TrackRightTurnout(parent, TrackStyleType.Branchline),
-            new TrackCrossing(parent, TrackStyleType.Branchline),
-            new TrackTerminator(parent, TrackStyleType.Branchline),
+            new TrackStraight(parent, TrackStyleTypeEnum.Branchline),
+            new TrackStraight(parent, TrackStyleTypeEnum.Branchline) {TrackRotation = 90},
+            new TrackStraightContinuation(parent, TrackStyleTypeEnum.Branchline),
+            new TrackStraightContinuation(parent, TrackStyleTypeEnum.Branchline) {TrackRotation = 90},
+            new TrackCorner(parent, TrackStyleTypeEnum.Branchline),
+            new TrackCornerContinuation(parent, TrackStyleTypeEnum.Branchline),
+            new TrackLeftTurnout(parent, TrackStyleTypeEnum.Branchline),
+            new TrackRightTurnout(parent, TrackStyleTypeEnum.Branchline),
+            new TrackCrossing(parent, TrackStyleTypeEnum.Branchline),
+            new TrackTerminator(parent, TrackStyleTypeEnum.Branchline),
             
         ];
     }
 }
 
-public enum EditState {
-    None,
-    Saved,
-    Changed
-}

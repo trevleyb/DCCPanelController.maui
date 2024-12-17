@@ -12,8 +12,8 @@ public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent)
     protected override void Setup() {
         Layer = 2;
         Name = "Compass";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Compass",(0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Compass",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
     }
 
     public void SetCompassPoints(ITrackPiece track) {
@@ -61,9 +61,6 @@ public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent)
     }
 
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackCompass)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return Clone<TrackCompass>(parent);
     }
 }

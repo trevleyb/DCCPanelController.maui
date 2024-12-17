@@ -19,34 +19,31 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     protected override void Setup() {
         Layer = 2;
         Name = "Text";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Text");
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Text");
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Text");
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Text");
     }
     
     protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackStyleImage.Normal, TrackRotation, gridSize, passthrough);
+        var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
         // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
         var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
         ImageRotation = trackInfo.ImageRotation;
         TrackRotation = trackInfo.TrackRotation;
-        var style = SvgStyles.GetStyle(TrackStyleType.Text, TrackStyleImage.Normal, Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Text, TrackStyleImageEnum.Normal, Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackText)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return new TrackText(parent);
     }
 }

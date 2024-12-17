@@ -24,18 +24,20 @@
         </ContentPage.ToolbarItems>
     
     <ContentPage.Content>
-        <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,Auto">
+        <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,20">
             <ActivityIndicator
                 Grid.Column="0"
                 Grid.Row="0"
                 HorizontalOptions="Center"
                 IsRunning="{Binding IsBusy}"
                 VerticalOptions="Center" />
+            <Grid                 
+                Grid.Column="0"
+                Grid.Row="0">
             <CarouselView
                 CurrentItem="{Binding SelectedPanel}"
-                Grid.Column="0"
-                Grid.Row="0"
                 IndicatorView="IndicatorView"
+                BackgroundColor="{Binding BackgroundColor}"
                 x:Name="PanelCarousel">
 
                 <CarouselView.ItemsSource>
@@ -85,7 +87,7 @@
                         <view:ControlPanelView
                             x:Name="PanelView"
                             x:DataType="model:Panel"
-                            Panel="{Binding .}"
+                            Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
                             TrackPieceChanged="PanelView_OnTrackPieceChanged"
                             TrackPieceTapped="PanelView_OnTrackPieceTapped"
                             BackgroundColor="White"
@@ -94,12 +96,16 @@
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
+            </Grid>
+            
             <IndicatorView
                 Grid.Column="0"
                 Grid.Row="1"
+                Margin="0,-5,0,0"
+                VerticalOptions="Start"
                 HorizontalOptions="Center"
-                IndicatorColor="LightGray"
-                SelectedIndicatorColor="DarkGray"
+                IndicatorColor="DarkGrey"
+                SelectedIndicatorColor="{StaticResource Primary}"
                 x:Name="IndicatorView" />
         </Grid>
 

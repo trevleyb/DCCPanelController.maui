@@ -18,13 +18,13 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     protected override void Setup() {
         Layer = 2;
         Name= "Button";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Active, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.Active, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
-        AddImageSourceAndRotation(TrackStyleImage.InActive, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImage.InActive, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Active, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Active, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.InActive, "Button",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.InActive, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
     }
 
     protected override void PushButtonAction(bool isActive) {
@@ -32,9 +32,6 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     }
 
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackButton)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return Clone<TrackButton>(parent);
     }
 }

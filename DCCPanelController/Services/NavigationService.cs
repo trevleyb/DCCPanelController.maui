@@ -13,21 +13,21 @@ public class NavigationService(IServiceProvider serviceProvider) {
         return await mainPage.DisplayAlert(title, message, accept, cancel);
     }
     
-    public async Task<Panel?> NavigateToPanelEditor(Panel panel) {
-        var mainPage = App.Current.Windows[0].Page;
-        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
-
-        var editPage = new PanelEditorPage(panel);
-        var tcs = new TaskCompletionSource<Panel?>();
-        if (editPage?.ViewModel != null) {
-            editPage.ViewModel.OnSaveCompleted += panelResult => {
-                tcs.SetResult(panelResult);
-                mainPage.Navigation.PopAsync();
-            };
-        }
-        await mainPage.Navigation.PushAsync(editPage);
-        return await tcs.Task;
-    }
+    // public async Task<Panel?> NavigateToPanelEditor(Panel panel) {
+    //     var mainPage = App.Current.Windows[0].Page;
+    //     if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+    //
+    //     var editPage = new PanelEditorPage(panel);
+    //     var tcs = new TaskCompletionSource<Panel?>();
+    //     if (editPage?.ViewModel != null) {
+    //         editPage.ViewModel.OnSaveCompleted += panelResult => {
+    //             tcs.SetResult(panelResult);
+    //             mainPage.Navigation.PopAsync();
+    //         };
+    //     }
+    //     await mainPage.Navigation.PushAsync(editPage);
+    //     return await tcs.Task;
+    // }
 
     public static async Task NavigateToPopupWindow(ContentPage page) {
         var mainPage = App.Current.Windows[0].Page;

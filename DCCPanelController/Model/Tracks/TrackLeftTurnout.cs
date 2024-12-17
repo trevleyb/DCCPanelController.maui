@@ -6,14 +6,14 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackTurnoutBase(parent, styleType), ITrackTurnout, ITrackSymbol, ITrackPiece {
+public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnoutBase(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrackPiece {
     public TrackLeftTurnout() : this(null) { }
     protected override void Setup() {
         Name = "Turnout(L)";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "TurnoutL1", (0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "TurnoutL1", (0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Straight, "TurnoutL2", (0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Diverging, "TurnoutL3", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "TurnoutL1", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "TurnoutL1", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Straight, "TurnoutL2", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Diverging, "TurnoutL3", (0, 0), (90, 90), (180, 180), (270, 270));
     }
 
     protected override void ThrowTurnout(Turnout turnout, TurnoutStateEnum state) {
@@ -21,9 +21,6 @@ public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleType style
     }
 
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackLeftTurnout)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return Clone<TrackLeftTurnout>(parent);
     }
 }

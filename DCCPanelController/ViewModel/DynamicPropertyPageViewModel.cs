@@ -104,7 +104,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
         case EditableTrackImagePropertyAttribute trackImageProp:
             Console.WriteLine("EditableTrackImagePropertyAttribute");
-            return CreateRadioGroupForEnums<TrackStyleImage>(trackImageProp.TrackTypes, property.Owner, property.Info.Name);
+            return CreateRadioGroupForEnums<TrackStyleImageEnum>(trackImageProp.TrackTypes, property.Owner, property.Info.Name);
 //            var typePicker = new Picker { Title = "Track Type"};
 //            foreach (var value in trackImageProp.TrackTypes) typePicker.Items.Add(value.ToString());
 //            typePicker.SetBinding(Picker.SelectedIndexProperty, new Binding(property.Info.Name, BindingMode.TwoWay, new EnumToIndexConverter<TrackStyleImage>()) { Source = property.Owner });
@@ -113,10 +113,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         
         case EditableTrackTypePropertyAttribute trackTypeProp:
             Console.WriteLine("EditableTrackTypePropertyAttribute");
-            return CreateRadioGroupForEnums<TrackStyleType>(trackTypeProp.TrackTypes, property.Owner, property.Info.Name);
+            return CreateRadioGroupForEnums<TrackStyleTypeEnum>(trackTypeProp.TrackTypes, property.Owner, property.Info.Name);
 //            var stylePicker = new Picker { Title = "Track Style"};
 //            foreach (var value in trackTypeProp.TrackTypes) stylePicker.Items.Add(value.ToString());
-//            stylePicker.SetBinding(Picker.SelectedIndexProperty, new Binding(property.Info.Name, BindingMode.TwoWay, new EnumToIndexConverter<TrackStyleType>()) { Source = property.Owner });
+//            stylePicker.SetBinding(Picker.SelectedIndexProperty, new Binding(property.Info.Name, BindingMode.TwoWay, new EnumToIndexConverter<TrackStyleTypeEnum>()) { Source = property.Owner });
 //            var stylePickerCell = new ViewCell { View = stylePicker};
 //            return stylePickerCell;
 

@@ -8,8 +8,8 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
     
-    protected TrackPieceBase(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : base(parent) {
-        _trackType = styleType;
+    protected TrackPieceBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
+        _trackTypeEnum = styleTypeEnum;
     }
     
     protected TrackPieceBase(Panel? parent= null) : base(parent) { }
@@ -22,19 +22,19 @@ public abstract partial class TrackPieceBase : TrackBase {
     private bool _isOccupied;
 
     [ObservableProperty] 
-    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleType.Mainline, TrackStyleType.Branchline })]
-    private TrackStyleType _trackType = TrackStyleType.Mainline;
+    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline })]
+    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
     
     protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackStyleImage.Normal, TrackRotation, gridSize, passthrough);
+        var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
         // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
@@ -45,9 +45,9 @@ public abstract partial class TrackPieceBase : TrackBase {
         // Apply the various styles that need to be applied based on the 
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
-        var style = SvgStyles.GetStyle(TrackType, TrackStyleImage.Normal, Parent?.Defaults);
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden,Parent?.Defaults);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied,Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackTypeEnum, TrackStyleImageEnum.Normal, Parent?.Defaults);
+        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden,Parent?.Defaults);
+        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied,Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

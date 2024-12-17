@@ -4,7 +4,7 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Model.Tracks.Interfaces;
 
 public interface ITrackPiece {
-    Guid Id { get; }
+    Guid Id { get; set; }
     string Name { get; }
     int X { get; set; }
     int Y { get; set; }

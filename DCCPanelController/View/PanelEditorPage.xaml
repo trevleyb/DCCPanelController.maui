@@ -35,7 +35,7 @@
 
         <ToolbarItem
             ToolTipProperties.Text="Save this Panel"
-            Clicked="SavePanelAndExit"
+            Command="{Binding SaveCommand}"
             IconImageSource="save.png"
             Text="Save"
             x:Name="SaveButton"/>
@@ -78,9 +78,11 @@
                 VerticalOptions="Fill"
                 TrackPieceChanged="PanelView_OnTrackPieceChanged"
                 TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"
+                Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"        
                 x:Name="PanelView" />
         </ContentView>
+        
+        
 
         <!--  Right Pane  -->
         <ContentView
@@ -128,31 +130,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
-                <!--
-                
-                Remove the Trashcan Icon - use the Toolbar Button to delete track
-                =================================================================
-                
-                <Border
-                    BackgroundColor="White"
-                    HorizontalOptions="Center"
-                    Margin="5"
-                    Padding="5"
-                    VerticalOptions="End"
-                    x:Name="DragTrashIcon">
-                    <Border.GestureRecognizers>
-                        <DropGestureRecognizer
-                            DragLeave="DropTrackInTrashHoverLeave"
-                            DragOver="DropTrackInTrashHoverOver"
-                            Drop="DropTrackInTrash" />
-                    </Border.GestureRecognizers>
-                    <Image
-                        HeightRequest="50"
-                        Source="trash_2.png"
-                        WidthRequest="50" />
-                </Border>
-                -->
             </StackLayout>
         </ContentView>
     </Grid>

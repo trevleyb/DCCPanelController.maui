@@ -6,13 +6,13 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : TrackPieceBase(parent, styleType), ITrackPiece {
+public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackPiece {
     public TrackPoints() : this(null) { }
     protected override void Setup() {
         Layer = 2;
         Name = "Points";
-        AddImageSourceAndRotation(TrackStyleImage.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImage.Normal, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
     }
 
     public void SetPoints(bool[] points) {
@@ -49,9 +49,6 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleType styleType 
         };
     }
     public ITrackPiece Clone(Panel parent) {
-        var track = (TrackPoints)MemberwiseClone();
-        track.Id = Guid.NewGuid();
-        track.Parent = parent;
-        return track;
+        return Clone<TrackPoints>(parent);
     }
 }

@@ -13,26 +13,28 @@ public partial class PanelEditorPage : ContentPage {
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
     private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
 
-    private Panel Panel => ViewModel.Panel;
-    public PanelEditorViewModel ViewModel { get; }
+    //private Panel Panel => ViewModel.Panel;
+    private PanelEditorViewModel ViewModel { get; }
 
-    public PanelEditorPage(Panel panel) {
-        ArgumentNullException.ThrowIfNull(panel, nameof(Panel));
-        ViewModel = new PanelEditorViewModel(panel);
+    public PanelEditorPage(PanelEditorViewModel viewModel) {
+        ViewModel = viewModel;
         BindingContext = ViewModel;
         InitializeComponent();
+    }
 
-        ViewModel.HasSelectedTracks = Panel.HasSelectedTracks;
-        ViewModel.CanUsePropertyPage = Panel.SelectedTracks.Count <= 1;
-        ViewModel.CloseRequested += async (sender, e) => {
-            await Navigation.PopAsync();
-        };
+    protected override void OnDisappearing() {
+        Console.WriteLine("OnDisappearing");
+        PanelView.Dispose();
+        base.OnDisappearing();
+    }
+
+    protected override void OnNavigatedFrom(NavigatedFromEventArgs args) {
+        Console.WriteLine("OnNavigatedFrom");
+        base.OnNavigatedFrom(args);
     }
 
     private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
-        ViewModel.HasSelectedTracks = Panel?.HasSelectedTracks ?? false;
-        ViewModel.CanUsePropertyPage = Panel?.SelectedTracks?.Count <= 1;
-        ViewModel.EditState = EditState.Changed;
+        ViewModel.TrackPieceChanged();
     }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
@@ -51,12 +53,7 @@ public partial class PanelEditorPage : ContentPage {
             e.Data.Properties.Add("Source", "DisplaySymbol");
         }
     }
-
-    private void SavePanelAndExit(object? sender, EventArgs e) {
-        ViewModel.EditState = EditState.Saved;
-        ViewModel.Save();
-    }
-
+    
     private void ToggleGrid(object? sender, EventArgs e) {
         PanelView.ShowGrid = !PanelView.ShowGrid;
         GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
@@ -80,59 +77,27 @@ public partial class PanelEditorPage : ContentPage {
     private async Task ShowPropertyPageAsync(object? sender, EventArgs e) {
         // If the view model has selected items, then we do the properties on 
         // those item(s). If not, then we do the main panel page properties.
-        ViewModel.EditState = EditState.Changed;
-        if (Panel.HasSelectedTracks) {
-            foreach (var track in Panel.SelectedTracks) {
+        if (ViewModel.HasSelectedTracks) {
+            foreach (var track in ViewModel.Panel.SelectedTracks) {
                 await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
-                //await Navigation.PushModalAsync(new DynamicPropertyPage(track), true);
                 PanelView.MarkTrackUnSelected(track);
             }
         } else {
-            await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(Panel));
-            //await Navigation.PushModalAsync(new PanelPropertyPage(Panel),true);
+            await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
         }
     }
     
-    /*
-    private void DropTrackInTrash(object? sender, DropEventArgs e) {
-        Console.WriteLine("Drop Track In Trash");
-        e.Data.Properties.TryGetValue("Source", out var source);
-        e.Data.Properties.TryGetValue("Track", out var track);
-        Console.WriteLine($"Deleting track {track}");
-        if (source is string && source.Equals("Panel") && track is ITrackPiece trackPiece) Panel.Tracks.Remove(trackPiece);
-        DragTrashIcon.BackgroundColor = Colors.Transparent;
-        PanelView.RebuildGrid(true);
-        ViewModel.EditState = EditState.Changed;
-    }
-
-    private void DropTrackInTrashHoverOver(object? sender, DragEventArgs e) {
-        Console.WriteLine("Drop Track In Trash Hover Over");
-        e.Data.Properties.TryGetValue("Source", out var source);
-        if (source is string && source.Equals("Panel")) DragTrashIcon.BackgroundColor = Colors.Red;
-    }
-
-    private void DropTrackInTrashHoverLeave(object? sender, DragEventArgs e) {
-        Console.WriteLine("Drop Track In Trash Hover Leave");
-        DragTrashIcon.BackgroundColor = Colors.White;
-    }
-    */
-    
     private void RotateLeft(object? sender, EventArgs e) {
-        foreach (var track in Panel.SelectedTracks) track.RotateLeft();
-        ViewModel.EditState = EditState.Changed;
+        foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateLeft();
     }
 
     private void RotateRight(object? sender, EventArgs e) {
-        foreach (var track in Panel.SelectedTracks) track.RotateRight();
-        ViewModel.EditState = EditState.Changed;
+        foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateRight();
     }
 
     private void DeleteTrackPiece(object? sender, EventArgs e) {
-        foreach (var track in Panel.SelectedTracks) {
+        foreach (var track in ViewModel.Panel.SelectedTracks) {
             PanelView.RemoveTrackPiece(track);
         }
-        ViewModel.EditState = EditState.Changed;
     }
 }
-
-public enum EditModeEum { Move, Copy }

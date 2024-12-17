@@ -4,7 +4,7 @@ namespace DCCPanelController.Tracks.StyleManager;
 // They are normally paired Diverging/Stright, Active/InActive, Lines/Arrows
 // Normal, Default and Unknown should all have the same effect. 
 // ----------------------------------------------------------------------------
-public enum TrackStyleImage {
+public enum TrackStyleImageEnum {
     Normal,
     Straight,
     Diverging,
@@ -15,10 +15,10 @@ public enum TrackStyleImage {
     Symbol
 }
 
-// The TrackStyleType sets up the track as being a Branchline or Mainline track
+// The TrackStyleTypeEnum sets up the track as being a Branchline or Mainline track
 // This is a set of rules for making the tracks thiner or thicker only
 // ----------------------------------------------------------------------------
-public enum TrackStyleType {
+public enum TrackStyleTypeEnum {
     Button,
     Mainline,
     Branchline,
@@ -28,13 +28,13 @@ public enum TrackStyleType {
 // Attributes are additional rules we can apply to a track peice to set additional
 // attributes such as making the lines dashed or shoing a occupied border. 
 // ----------------------------------------------------------------------------
-public enum TrackStyleAttribute {
+public enum TrackStyleAttributeEnum {
     Hidden,
     Normal,
     Occupied
 }
 
-public enum TextFontWeight {
+public enum TextFontWeightEnum {
     Normal,
     Bold,
 }

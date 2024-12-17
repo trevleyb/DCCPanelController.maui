@@ -7,7 +7,8 @@ namespace DCCPanelController.Model;
 public partial class Settings : ObservableObject {
     [ObservableProperty] private bool _useConnection;
     [ObservableProperty] private WiServer _wiServer;
-
+    [ObservableProperty] private Color _backgroundColor = Colors.White;
+    
     public Settings() {
         var thisIp = ServiceHelper.GetLocalIPAddress();
         _wiServer = new WiServer("WiThrottle", thisIp);

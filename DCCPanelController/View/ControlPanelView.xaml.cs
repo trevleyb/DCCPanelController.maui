@@ -1,22 +1,17 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Diagnostics;
-using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
-using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.Services.SampleData;
 using DCCPanelController.Tracks.Helpers;
 using Microsoft.Maui.Layouts;
-using Microsoft.Win32.SafeHandles;
 
 namespace DCCPanelController.View;
 
 [ObservableObject]
-public partial class ControlPanelView {
+public partial class ControlPanelView : IDisposable {
 
     private int _lastDragCol = 0;
     private int _lastDragRow = 0;
@@ -37,12 +32,31 @@ public partial class ControlPanelView {
     [ObservableProperty] private double _viewHeight;
     [ObservableProperty] private double _viewWidth;
 
+    public int Rows => Panel?.Rows ?? 1;
+    public int Cols => Panel?.Cols ?? 1;
+    
     public ControlPanelView() {
         InitializeComponent();
         BindingContext = this;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
-
+    
+    /// <summary>
+    /// Clean up. We need to make sure all events are cleared and that
+    /// we reset the view to the image as this view has guestures attached
+    /// which cause other issues if not cleared. Clearing makes it regenerate. 
+    /// </summary>
+    public void Dispose() {
+        Console.WriteLine("ControlPanelView.Dispose");
+        MainGrid.SizeChanged -= OnGridSizeChanged;
+        if (Panel is { } panel) {
+            foreach (var track in panel.Tracks) {
+                track.PropertyChanged -= OnTrackPieceChanged;
+                track.TrackViewRef = null;
+            }
+        }
+    }
+    
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
@@ -62,9 +76,6 @@ public partial class ControlPanelView {
         get => (bool)GetValue(ShowTrackErrorsProperty);
         set => SetValue(ShowTrackErrorsProperty, value);
     }
-
-    public int Rows => Panel?.Rows ?? 1;
-    public int Cols => Panel?.Cols ?? 1;
 
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrackPiece track) {
@@ -104,23 +115,6 @@ public partial class ControlPanelView {
         var control = (ControlPanelView)bindable;
         control.ClearSelectedTracks();
         control.RebuildGrid(true);
-        if (control.Panel != null) {
-            control.Panel.Tracks.CollectionChanged += TracksOnCollectionChanged;
-        }
-    }
-
-    private static void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        Console.WriteLine("Tracks Collection Changed");
-        if (e.OldItems is not null) {
-            foreach (var track in e.OldItems.OfType<ITrackPiece>()) {
-                Console.WriteLine($"Removing Track: {track.Name}");
-            }
-        }
-        if (e.NewItems is not null) {
-            foreach (var track in e.NewItems.OfType<ITrackPiece>()) {
-                Console.WriteLine($"Adding Track: {track.Name}");
-            }
-        }
     }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
@@ -492,7 +486,10 @@ public partial class ControlPanelView {
 
         return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,") ?? throw new InvalidOperationException();
     }
+
 }
+
+public enum EditModeEum { Move, Copy }
 
 /// <summary>
 ///     This is a helper class that draws the Grid Lines on the Page.

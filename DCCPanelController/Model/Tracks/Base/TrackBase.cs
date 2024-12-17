@@ -1,12 +1,11 @@
 using System.ComponentModel;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
-using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
@@ -19,8 +18,8 @@ public abstract partial class TrackBase : ObservableObject {
         PropertyChanged += OnPropertyChanged;
         if (parent != null) Parent = parent;
     }
-
-    protected readonly StyleTrackImages StyleTrackImages = new();
+    
+    protected StyleTrackImages StyleTrackImages = new();
 
     [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
     [ObservableProperty] private int _layer  = 1;              // What layer is this on? Only 1 element per layer.
@@ -37,9 +36,12 @@ public abstract partial class TrackBase : ObservableObject {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] [property: JsonIgnore] private bool _showAboveSymbol = false;
     public bool ShowBelowSymbol => !ShowAboveSymbol;
 
-    public IView TrackView (double gridSize, bool passthrough = false) => TrackViewRef ??= GetViewForTrack(gridSize, passthrough);
     [JsonIgnore] public IView? TrackViewRef { get; set; }
     [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
+    public IView TrackView (double gridSize, bool passthrough = false) {
+        TrackViewRef = GetViewForTrack(gridSize, passthrough);
+        return TrackViewRef;
+    }
 
     // This routine can be overriden by other routines up the chain. It is to work out how the track
     // piece should be displayed and then to create a common IView that can be shown on the screen. Most
@@ -99,11 +101,23 @@ public abstract partial class TrackBase : ObservableObject {
         OnPropertyChanged(nameof(TrackView));
     }
     
-    protected void AddImageSourceAndRotation(TrackStyleImage trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {
+    protected void AddImageSourceAndRotation(TrackStyleImageEnum trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {
         StyleTrackImages.AddImageSourceAndRotation(trackType, imageSource, rotations);
     }
 
-    protected void AddImageSourceAndRotation(TrackStyleImage trackType, string imageSource, List<StyleTrackImage.Rotation> rotations) {
+    protected void AddImageSourceAndRotation(TrackStyleImageEnum trackType, string imageSource, List<StyleTrackImage.Rotation> rotations) {
         StyleTrackImages.AddImageSourceAndRotation(trackType, imageSource, rotations);
     }
+
+    protected T Clone<T>(Panel parent) where T: ITrackPiece {    
+        var original = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
+        var copy = JsonSerializer.Deserialize<T>(original, SettingsService.PanelSerializerOptions);
+        if (copy is { } clone) {
+            clone.Id = Guid.NewGuid();
+            clone.Parent = parent;
+            return clone;
+        }
+        throw new Exception("Failed to clone panel");
+    }
+
 }

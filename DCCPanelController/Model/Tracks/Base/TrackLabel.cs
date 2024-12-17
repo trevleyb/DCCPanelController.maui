@@ -15,23 +15,23 @@ public abstract partial class TrackLabelBase : TrackBase {
     private string _circlelabel = string.Empty;
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
 
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackStyleImage.Normal, TrackRotation, gridSize, passthrough);
+        var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
         // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
         var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
         ImageRotation = trackInfo.ImageRotation;
         TrackRotation = trackInfo.TrackRotation;
-        var style = SvgStyles.GetStyle(TrackStyleType.Button, TrackStyleImage.Normal, Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Button, TrackStyleImageEnum.Normal, Parent?.Defaults);
         style = SvgStyles.AddTextToStyle(style, Circlelabel);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);

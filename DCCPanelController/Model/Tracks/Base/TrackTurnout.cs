@@ -11,8 +11,8 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
 
-    protected TrackTurnoutBase(Panel? parent = null, TrackStyleType styleType = TrackStyleType.Mainline) : base(parent) { 
-        _trackType = styleType;
+    protected TrackTurnoutBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) { 
+        _trackTypeEnum = styleTypeEnum;
     }
 
     protected TrackTurnoutBase(Panel? parent= null) : base(parent) { 
@@ -30,15 +30,15 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     private bool _isHidden;
 
     [ObservableProperty] 
-    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleType.Mainline, TrackStyleType.Branchline })]
-    private TrackStyleType _trackType = TrackStyleType.Mainline;
+    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline })]
+    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     [ObservableProperty] 
     [property: EditableTurnoutProperty(Name = "Actions", Group="Actions",  Description = "ID of the item to do an action against")]
     private List<TrackTurnoutAction> _actions = [];
 
     [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
-    [ObservableProperty] private TrackStyleImage _trackImage = TrackStyleImage.Normal;
+    [ObservableProperty] private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
 
     private Turnout? _turnout;
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
@@ -46,15 +46,15 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
     
     protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImage.Symbol, TrackRotation, gridSize).Image;
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackImage, TrackRotation, gridSize, passthrough);
+        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough);
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImage trackStyle, int rotation, double gridSize, bool passthrough = false) {        // Find the appropriate image reference for the details we have
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {        // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
         var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
@@ -64,9 +64,9 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         // Apply the various styles that need to be applied based on the 
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
-        var style = SvgStyles.GetStyle(TrackType, TrackImage, Parent?.Defaults);
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Hidden,Parent?.Defaults);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttribute.Occupied,Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackTypeEnum, TrackImageEnum, Parent?.Defaults);
+        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden,Parent?.Defaults);
+        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied,Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
@@ -82,11 +82,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is Turnout turnout) {
-            TrackImage = turnout.State switch {
-                TurnoutStateEnum.Unknown => TrackStyleImage.Normal,
-                TurnoutStateEnum.Closed  => TrackStyleImage.Straight,
-                TurnoutStateEnum.Thrown  => TrackStyleImage.Diverging,
-                _                        => TrackStyleImage.Normal
+            TrackImageEnum = turnout.State switch {
+                TurnoutStateEnum.Unknown => TrackStyleImageEnum.Normal,
+                TurnoutStateEnum.Closed  => TrackStyleImageEnum.Straight,
+                TurnoutStateEnum.Thrown  => TrackStyleImageEnum.Diverging,
+                _                        => TrackStyleImageEnum.Normal
             };
 
             OnPropertyChanged(nameof(TrackView));
@@ -102,24 +102,24 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         _clickSoundPlayer?.Play();
 
         if (_turnout is null) {
-            TrackImage = TrackImage switch {
-                TrackStyleImage.Diverging => TrackStyleImage.Straight,
-                TrackStyleImage.Straight  => TrackStyleImage.Diverging,
-                TrackStyleImage.Normal    =>TrackStyleImage.Diverging,
-                _                         => TrackStyleImage.Normal
+            TrackImageEnum = TrackImageEnum switch {
+                TrackStyleImageEnum.Diverging => TrackStyleImageEnum.Straight,
+                TrackStyleImageEnum.Straight  => TrackStyleImageEnum.Diverging,
+                TrackStyleImageEnum.Normal    =>TrackStyleImageEnum.Diverging,
+                _                         => TrackStyleImageEnum.Normal
             };
         } else {
             switch (_turnout.State) {
             case TurnoutStateEnum.Closed:
-                TrackImage = TrackStyleImage.Diverging;
+                TrackImageEnum = TrackStyleImageEnum.Diverging;
                 ThrowTurnout(_turnout, TurnoutStateEnum.Thrown);
                 break;
             case TurnoutStateEnum.Thrown or TurnoutStateEnum.Unknown:
-                TrackImage = TrackStyleImage.Straight;
+                TrackImageEnum = TrackStyleImageEnum.Straight;
                 ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
                 break;
             default:
-                TrackImage = TrackStyleImage.Normal;
+                TrackImageEnum = TrackStyleImageEnum.Normal;
                 ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
                 break;
             }

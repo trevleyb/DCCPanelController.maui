@@ -4,5 +4,5 @@ namespace DCCPanelController.Helpers.EditableProperties;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableTrackTypePropertyAttribute : EditableProperty {
-    public TrackStyleType[] TrackTypes { get; set; } = [];
+    public TrackStyleTypeEnum[] TrackTypes { get; set; } = [];
 }

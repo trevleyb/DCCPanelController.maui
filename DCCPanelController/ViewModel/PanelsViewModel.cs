@@ -66,19 +66,19 @@ public partial class PanelsViewModel : BaseViewModel {
 
     [RelayCommand]
     public async Task EditPanelAsync(Panel panel) {
-        Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
-        try {
-            Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
-            var result = await _navigationService.NavigateToPanelEditor(panel);
-            if (result is not null) {
-                Console.WriteLine($"Result from Editor: {result.Name}");
-                Save();
-            } else {
-                Console.WriteLine($"Result from Editor: {result?.Name ?? "null"}");
-            }
-        } catch (Exception ex) {
-            Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
-        }
+        // Console.WriteLine($"Stopping here to check out the panel {panel.Name}");
+        // try {
+        //     Console.WriteLine($"Launch Editor Selected Panel: {panel.Name}");
+        //     var result = await _navigationService.NavigateToPanelEditor(panel);
+        //     if (result is not null) {
+        //         Console.WriteLine($"Result from Editor: {result.Name}");
+        //         Save();
+        //     } else {
+        //         Console.WriteLine($"Result from Editor: {result?.Name ?? "null"}");
+        //     }
+        // } catch (Exception ex) {
+        //     Console.WriteLine($"Failed to goto the Panel details for {panel.Name} due to {ex.Message}");
+        // }
     }
 
     [RelayCommand]

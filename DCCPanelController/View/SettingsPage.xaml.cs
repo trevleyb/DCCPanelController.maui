@@ -14,6 +14,12 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         BindingContext = _viewModel;
     }
 
+    protected override void OnDisappearing() {
+        base.OnDisappearing();
+        Console.WriteLine("Saving...");
+        _viewModel?.SaveSettings();
+    }
+
     private void OnLabelTapped(object sender, EventArgs args) {
         if (_lastGridSelected is not null) {
             foreach (var item in _lastGridSelected.Children) {
