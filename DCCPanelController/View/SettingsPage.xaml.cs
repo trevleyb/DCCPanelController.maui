@@ -16,7 +16,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     protected override void OnDisappearing() {
         base.OnDisappearing();
-        Console.WriteLine("Saving...");
         _viewModel?.SaveSettings();
     }
 

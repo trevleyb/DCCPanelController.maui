@@ -8,7 +8,16 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:model="clr-namespace:DCCPanelController.Model">
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
+    BackgroundColor="{Binding BackgroundColor,  Converter={StaticResource ColorFallbackConverter}}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <!-- Register ColorFallbackConverter -->
+            <converters:ColorFallbackConverter x:Key="ColorFallbackConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.BindingContext>
         <viewModel:OperateViewModel />
@@ -20,95 +29,96 @@
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"
             Text="Hide"
-            x:Name="HideUnHide"/>
-        </ContentPage.ToolbarItems>
-    
+            x:Name="HideUnHide" />
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
-        <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,20">
-            <ActivityIndicator
-                Grid.Column="0"
-                Grid.Row="0"
-                HorizontalOptions="Center"
-                IsRunning="{Binding IsBusy}"
-                VerticalOptions="Center" />
-            <Grid                 
-                Grid.Column="0"
-                Grid.Row="0">
-            <CarouselView
-                CurrentItem="{Binding SelectedPanel}"
-                IndicatorView="IndicatorView"
-                BackgroundColor="{Binding BackgroundColor}"
-                x:Name="PanelCarousel">
+        <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,20">
+                <ActivityIndicator
+                    Grid.Column="0"
+                    Grid.Row="0"
+                    HorizontalOptions="Center"
+                    IsRunning="{Binding IsBusy}"
+                    VerticalOptions="Center" />
+                <Grid
+                    Grid.Column="0"
+                    Grid.Row="0">
+                    <CarouselView
+                        CurrentItem="{Binding SelectedPanel}"
+                        IndicatorView="IndicatorView"
+                        BackgroundColor="{Binding BackgroundColor,  Converter={StaticResource ColorFallbackConverter}}"
+                        x:Name="PanelCarousel">
 
-                <CarouselView.ItemsSource>
-                    <Binding Path="Panels" />
-                </CarouselView.ItemsSource>
+                        <CarouselView.ItemsSource>
+                            <Binding Path="Panels" />
+                        </CarouselView.ItemsSource>
 
-                <CarouselView.EmptyView>
-                    <StackLayout
-                        HorizontalOptions="CenterAndExpand"
-                        Padding="20"
-                        VerticalOptions="CenterAndExpand">
-                        <StackLayout
-                            HorizontalOptions="CenterAndExpand"
-                            Padding="20"
-                            VerticalOptions="CenterAndExpand">
-                            <Label
-                                FontAttributes="Bold"
-                                HorizontalOptions="Center"
-                                Text="Welcome to the DCC Model Layout Panel Controller" />
-                            <Label HorizontalOptions="Center" Text="  " />
-                            <Label HorizontalOptions="Center"
-                                   Text="This page will populate once you have created panels and turnout control. " />
-                            <Label HorizontalOptions="Center"
-                                   Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
-                            <Label HorizontalOptions="Center" Text="  " />
-                        </StackLayout>
-                        <StackLayout
-                            HorizontalOptions="CenterAndExpand"
-                            Padding="20"
-                            VerticalOptions="CenterAndExpand">
-                            <Button
-                                Clicked="ButtonInstructions_OnClicked"
-                                Margin="0,10,0,10"
-                                Style="{StaticResource ButtonOutline}"
-                                Text="Instructions" />
-                            <Button
-                                Clicked="ButtonAbout_OnClicked"
-                                Margin="0,10,0,10"
-                                Style="{StaticResource ButtonOutline}"
-                                Text="About" />
-                        </StackLayout>
-                    </StackLayout>
-                </CarouselView.EmptyView>
+                        <CarouselView.EmptyView>
+                            <StackLayout
+                                HorizontalOptions="CenterAndExpand"
+                                Padding="20"
+                                VerticalOptions="CenterAndExpand">
+                                <StackLayout
+                                    HorizontalOptions="CenterAndExpand"
+                                    Padding="20"
+                                    VerticalOptions="CenterAndExpand">
+                                    <Label
+                                        FontAttributes="Bold"
+                                        HorizontalOptions="Center"
+                                        Text="Welcome to the DCC Model Layout Panel Controller" />
+                                    <Label HorizontalOptions="Center" Text="  " />
+                                    <Label HorizontalOptions="Center"
+                                           Text="This page will populate once you have created panels and turnout control. " />
+                                    <Label HorizontalOptions="Center"
+                                           Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
+                                    <Label HorizontalOptions="Center" Text="  " />
+                                </StackLayout>
+                                <StackLayout
+                                    HorizontalOptions="CenterAndExpand"
+                                    Padding="20"
+                                    VerticalOptions="CenterAndExpand">
+                                    <Button
+                                        Clicked="ButtonInstructions_OnClicked"
+                                        Margin="0,10,0,10"
+                                        Style="{StaticResource ButtonOutline}"
+                                        Text="Instructions" />
+                                    <Button
+                                        Clicked="ButtonAbout_OnClicked"
+                                        Margin="0,10,0,10"
+                                        Style="{StaticResource ButtonOutline}"
+                                        Text="About" />
+                                </StackLayout>
+                            </StackLayout>
+                        </CarouselView.EmptyView>
 
-                <CarouselView.ItemTemplate>
-                    <DataTemplate>
-                        <view:ControlPanelView
-                            x:Name="PanelView"
-                            x:DataType="model:Panel"
-                            Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
-                            TrackPieceChanged="PanelView_OnTrackPieceChanged"
-                            TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                            BackgroundColor="White"
-                            HorizontalOptions="Fill"
-                            VerticalOptions="Fill" />
-                    </DataTemplate>
-                </CarouselView.ItemTemplate>
-            </CarouselView>
+                        <CarouselView.ItemTemplate>
+                            <DataTemplate>
+                                <view:ControlPanelView
+                                    x:Name="PanelView"
+                                    x:DataType="model:Panel"
+                                    Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
+                                    BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=BackgroundColor}"
+                                    TrackPieceChanged="PanelView_OnTrackPieceChanged"
+                                    TrackPieceTapped="PanelView_OnTrackPieceTapped"
+                                    HorizontalOptions="Fill"
+                                    VerticalOptions="Fill" />
+                            </DataTemplate>
+                        </CarouselView.ItemTemplate>
+                    </CarouselView>
+                </Grid>
+
+                <IndicatorView
+                    Grid.Column="0"
+                    Grid.Row="1"
+                    Margin="0,-5,0,0"
+                    VerticalOptions="Start"
+                    HorizontalOptions="Center"
+                    IndicatorColor="DarkGrey"
+                    SelectedIndicatorColor="{StaticResource Primary}"
+                    x:Name="IndicatorView" />
             </Grid>
-            
-            <IndicatorView
-                Grid.Column="0"
-                Grid.Row="1"
-                Margin="0,-5,0,0"
-                VerticalOptions="Start"
-                HorizontalOptions="Center"
-                IndicatorColor="DarkGrey"
-                SelectedIndicatorColor="{StaticResource Primary}"
-                x:Name="IndicatorView" />
         </Grid>
-
     </ContentPage.Content>
 </ContentPage>
 

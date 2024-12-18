@@ -100,8 +100,8 @@
         
         <HorizontalStackLayout>
             <Label Text="Main Window Background Color"/>
-            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
-                                          SelectedColor="{Binding Path=Settings.BackgroundColor, Mode=TwoWay}" VerticalOptions="Center" />
+            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100" VerticalOptions="Center"
+                                          SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, x:DataType=viewmodel:SettingsViewModel, Path=BackgroundColor, Mode=TwoWay}"/>
         </HorizontalStackLayout>
         
         

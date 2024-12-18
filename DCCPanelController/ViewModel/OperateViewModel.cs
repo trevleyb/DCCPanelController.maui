@@ -9,12 +9,12 @@ namespace DCCPanelController.ViewModel;
 public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
-    [ObservableProperty] private Color _backgroundColor = Colors.White;
+
+    public Color BackgroundColor => SelectedPanel?.Defaults.BackgroundColor ?? Colors.White; 
     
     public OperateViewModel() {
         var settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         Panels = settingsService.Panels;
-        BackgroundColor = settingsService.Settings.BackgroundColor;
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }
@@ -23,6 +23,7 @@ public partial class OperateViewModel : BaseViewModel {
     
     public string SetActivePanel(Panel? panelCarouselCurrentItem) {
         SelectedPanel = panelCarouselCurrentItem;
+        OnPropertyChanged(nameof(BackgroundColor));
         return SelectedPanel?.Name ?? "Control Panel";
     }
 

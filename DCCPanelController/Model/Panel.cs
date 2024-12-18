@@ -58,6 +58,14 @@ public partial class Panel : ObservableObject {
         foreach (var track in tracks) track.Parent = parent;
     }
 
+    public bool HasChanged(Panel original, Panel modified) {
+        var originalJson = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
+        var modifiedJson = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
+        var originalHash = originalJson.GetHashCode();
+        var modifiedHash = modifiedJson.GetHashCode();
+        return originalJson.GetHashCode() != modifiedJson.GetHashCode();        
+    }
+
     public ObservableCollection<ITrackPiece> Tracks {
         get => _tracks;
         set {

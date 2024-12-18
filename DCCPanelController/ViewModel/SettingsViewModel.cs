@@ -39,6 +39,14 @@ public partial class SettingsViewModel : BaseViewModel {
         Console.WriteLine("Saving... in viewModel");
         SettingsService?.Save();        
     }
+
+    public Color BackgroundColor {
+        get => Settings?.BackgroundColor ?? Colors.White;
+        set {
+            Settings.BackgroundColor = value;
+            OnPropertyChanged();
+        }
+    }
     
     public string IpAddress {
         get => Settings?.WiServer?.IpAddress ?? "";
