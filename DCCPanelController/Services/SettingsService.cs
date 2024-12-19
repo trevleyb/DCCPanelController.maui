@@ -26,6 +26,8 @@ public class SettingsService {
             new JsonConverterEnumToString<TrackStyleTypeEnum>(),
             new JsonConverterEnumToString<TrackStyleAttributeEnum>(),
             new JsonConverterEnumToString<TrackStyleImageEnum>(),
+            new JsonConverterEnumToString<TextAlignment>(),
+            
         }
     };
     

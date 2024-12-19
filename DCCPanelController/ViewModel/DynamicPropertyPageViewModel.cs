@@ -1,8 +1,10 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Net.Mime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Helpers.EditableProperties;
+using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.Components;
@@ -51,7 +53,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             };
 
             switchCell.SetBinding(SwitchCell.OnProperty, new Binding(property.Info.Name) { Source = property.Owner, Mode = BindingMode.TwoWay });
-            //switchCell.SetBinding(SwitchCell.OnProperty, new Binding(property.Info.Name,BindingMode.TwoWay));
             return switchCell;
         
         // Deal with String-based data entry fields
@@ -91,6 +92,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             var viewCell = new ViewCell { View = turnoutActionsView };
             return viewCell;
 
+        // Deal with Date-based Data Entry fields
+        // ---------------------------------------------------------------------------------------
         case EditableDatePropertyAttribute dateProp:
             Console.WriteLine("EditableDatePropertyAttribute");
             var datePicker = new DatePicker {
@@ -102,6 +105,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             var datePickerCell = new ViewCell { View = datePicker };
             return datePickerCell;
 
+        // Deal with Track Image and Track Type
+        // ---------------------------------------------------------------------------------------
         case EditableTrackImagePropertyAttribute trackImageProp:
             Console.WriteLine("EditableTrackImagePropertyAttribute");
             return CreateRadioGroupForEnums<TrackStyleImageEnum>(trackImageProp.TrackTypes, property.Owner, property.Info.Name);
@@ -111,6 +116,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 //            var typePickerCell = new ViewCell { View = typePicker };
 //            return typePickerCell;
         
+        // Deal with Track Image and Track Type
+        // ---------------------------------------------------------------------------------------
         case EditableTrackTypePropertyAttribute trackTypeProp:
             Console.WriteLine("EditableTrackTypePropertyAttribute");
             return CreateRadioGroupForEnums<TrackStyleTypeEnum>(trackTypeProp.TrackTypes, property.Owner, property.Info.Name);
@@ -120,9 +127,61 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 //            var stylePickerCell = new ViewCell { View = stylePicker};
 //            return stylePickerCell;
 
+        case EditableEnumPropertyAttribute enumAttr:
+            if (property.Type == typeof(TextAlignment))
+                return CreateRadioGroupForEnums<TextAlignment>(enumAttr.Name, property.Owner, property.Info.Name);
+            return null;
+
+        case EditableColorPropertyAttribute colorAttr:
+            var colorCell = new HorizontalStackLayout() { HorizontalOptions = LayoutOptions.Start,  HeightRequest = 30, VerticalOptions = LayoutOptions.Center, WidthRequest = 200, Margin=new Thickness(0,5,0,5)};
+            var colorCellLabel = new Label { Text = colorAttr.Name, VerticalOptions = LayoutOptions.Center, WidthRequest = 100, HeightRequest = 30};
+            var colorCellSelector = new ColorGridDropdown() { BindingContext = property.Owner, WidthRequest = 100, HeightRequest = 30};
+            colorCellSelector.SetBinding(ColorGridDropdown.SelectedColorProperty, new Binding(property.Info.Name) { Source = property.Owner, Mode = BindingMode.TwoWay });
+            colorCell.Children.Add(colorCellLabel);
+            colorCell.Children.Add(colorCellSelector);
+            return new ViewCell { View = colorCell };
+
         default:
             return null;
         }
+    }
+
+    public static ViewCell CreateRadioGroupForEnums<T>(string name, object source, string fieldName) where T : struct, Enum { 
+        if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
+        if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+
+        // Create horizontal StackLayout for the radio group
+        var radioGroup = new StackLayout {
+            Margin = new Thickness(5, 0, 0, 0),
+            Orientation = StackOrientation.Horizontal,
+            VerticalOptions = LayoutOptions.Center
+        };
+
+        // Loop through each value in the enum
+        foreach (var value in Enum.GetValues(typeof(T))) {
+            var radioButton = new RadioButton {
+                Content = value.ToString(), // Display the value
+                VerticalOptions = LayoutOptions.Center,
+                BindingContext = source // Set the source for the binding
+            };
+
+            // Bind the IsChecked property to the specified field, using a converter
+            radioButton.SetBinding(
+                RadioButton.IsCheckedProperty,
+                new Binding(fieldName, BindingMode.TwoWay, new EnumToIndexConverter<T>()) {
+                    Source = source
+                });
+
+            // Add the radio button to the stack
+            radioGroup.Children.Add(radioButton);
+        }
+
+        // Return a ViewCell containing the radio group
+        var group = new HorizontalStackLayout() { HorizontalOptions = LayoutOptions.Start,  HeightRequest = 30, VerticalOptions = LayoutOptions.Center, WidthRequest = 200, Margin=new Thickness(0,5,0,5)};
+        var groupLabel = new Label { Text = name, VerticalOptions = LayoutOptions.Center, WidthRequest = 100, HeightRequest = 30};
+        group.Children.Add(groupLabel);
+        group.Children.Add(radioGroup);
+        return new ViewCell { View = group };
     }
     
     public static ViewCell CreateRadioGroupForEnums<T>(IEnumerable<T> enumCollection, object source, string fieldName) where T : struct, Enum {

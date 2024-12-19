@@ -7,6 +7,9 @@ using OnScreenSizeMarkup.Maui.Helpers;
 namespace DCCPanelController.View;
 
 public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
+    
+    private readonly double _minSidePanelWidth = 100; // Min width for the left column
+    private readonly double _maxSidePanelWidth = 500; // Max width for the left column
     private readonly PanelsViewerViewModel _viewModel;
 
     public PanelsViewerPage() {
@@ -24,9 +27,15 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new InstructionsPage());
     }
-   
+
+    private void OnSeparatorDrag(object sender, PanUpdatedEventArgs e) {
+        if (e.StatusType == GestureStatus.Running){
+            var newWidth = (int)Math.Max(_minSidePanelWidth, Math.Min(_maxSidePanelWidth, _viewModel.SidePanelWidth + e.TotalX));
+            ((PanelsViewerViewModel)BindingContext).SidePanelWidth = newWidth;
+        }
+    }
+    
     private void Panel_OnDragStarting(object? sender, DragStartingEventArgs e) {
-        Console.WriteLine("DragGestureRecognizer_OnDragStarting");
         if (sender is BindableObject { BindingContext: Panel panel }) {
             e.Data.Properties.Add("Panel", panel);
             e.Data.Properties.Add("Source", "Panel");
@@ -35,7 +44,6 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void Panel_OnDrop(object? sender, DropEventArgs e) {
-        Console.WriteLine("DropGestureRecognizer_OnDrop");
         if (sender is BindableObject { BindingContext: Panel target }) {
             var source = e?.Data?.Properties["Source"] as string ?? null;
             var panel = e?.Data?.Properties["Panel"] as Panel ?? null;

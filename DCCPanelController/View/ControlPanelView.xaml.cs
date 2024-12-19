@@ -47,14 +47,14 @@ public partial class ControlPanelView : IDisposable {
     /// which cause other issues if not cleared. Clearing makes it regenerate. 
     /// </summary>
     public void Dispose() {
-        Console.WriteLine("ControlPanelView.Dispose");
-        MainGrid.SizeChanged -= OnGridSizeChanged;
-        if (Panel is { } panel) {
-            foreach (var track in panel.Tracks) {
-                track.PropertyChanged -= OnTrackPieceChanged;
-                track.TrackViewRef = null;
-            }
-        }
+        // Console.WriteLine("ControlPanelView.Dispose");
+        // MainGrid.SizeChanged -= OnGridSizeChanged;
+        // if (Panel is { } panel) {
+        //     foreach (var track in panel.Tracks) {
+        //         track.PropertyChanged -= OnTrackPieceChanged;
+        //         track.TrackViewRef = null;
+        //     }
+        // }
     }
     
     public Panel? Panel {
@@ -79,7 +79,6 @@ public partial class ControlPanelView : IDisposable {
 
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrackPiece track) {
-            Console.WriteLine($"Track '{track.Name}' with ID:'{track.Id} was changed: Property={e.PropertyName}");
             if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }

@@ -12,6 +12,7 @@ namespace DCCPanelController.Model.Tracks.Base;
 public abstract partial class TrackBase : ObservableObject {
 
     public Guid Id { get; set; } = Guid.NewGuid();
+    
     protected TrackBase(Panel? parent = null) {
         Initialise();
         OnPropertyChanged(nameof(TrackView));
@@ -29,12 +30,15 @@ public abstract partial class TrackBase : ObservableObject {
     [ObservableProperty] private int _imageRotation;
     [ObservableProperty] private bool _isSelected;
 
+    [JsonIgnore] protected double Scale = 1.5;
+    [JsonIgnore] protected int RotationIncrement = 45; 
+
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage?.Connections.ConnectionPointsRotated(ImageRotation) ?? SvgCompass.NoConnections();
     [JsonIgnore] public Panel? Parent { get; set; }
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] [property: JsonIgnore] private bool _showAboveSymbol = false;
-    public bool ShowBelowSymbol => !ShowAboveSymbol;
+    [JsonIgnore] public bool ShowBelowSymbol => !ShowAboveSymbol;
 
     [JsonIgnore] public IView? TrackViewRef { get; set; }
     [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
@@ -61,7 +65,7 @@ public abstract partial class TrackBase : ObservableObject {
     protected IView CreateViewFromImage(ImageSource image, int imageRotation, double gridSize, bool passthrough = false) {
         return new Image {
             Source = image,
-            Scale = 1.5,
+            Scale = Scale,
             ZIndex = Layer,
             Rotation = imageRotation,
             WidthRequest = gridSize,
@@ -90,13 +94,13 @@ public abstract partial class TrackBase : ObservableObject {
     }
     
     public void RotateLeft() {
-        TrackRotation -= 45;
+        TrackRotation -= RotationIncrement;
         if (TrackRotation < 0) TrackRotation += 360;
         OnPropertyChanged(nameof(TrackView));
     }
 
     public void RotateRight() {
-        TrackRotation += 45;
+        TrackRotation += RotationIncrement;
         if (TrackRotation > 360) TrackRotation -= 360;
         OnPropertyChanged(nameof(TrackView));
     }

@@ -28,11 +28,12 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding SidePanelWidth}" />
+                <ColumnDefinition Width="2" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
             <Border Stroke="#95000000"
-                    StrokeThickness="0.5"
+                    StrokeThickness="1"
                     BackgroundColor="WhiteSmoke"
                     Padding="5"
                     Grid.Column="0"
@@ -44,6 +45,7 @@
                     IsVisible="{Binding IsSidePanelOpen}"
                     ItemsSource="{Binding Panels}"
                     SelectedItem="{Binding SelectedPanel, Mode=TwoWay}"
+                    BackgroundColor="WhiteSmoke"
                     SelectionChangedCommand="{Binding SelectionChangedCommand}"
                     SelectionMode="Single">
 
@@ -92,10 +94,10 @@
                                             DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelLeaveCommand}"
                                             DragLeaveCommandParameter="{Binding}" />
                                     </StackLayout.GestureRecognizers>
-                                    <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"
-                                           TextColor="{StaticResource Primary}">
-                                    </Label>
-                                    <Label Text="{Binding Description}" Style="{StaticResource SmallLabel}"></Label>
+                                        <Label Text="{Binding Name}" Style="{StaticResource LargeLabel}"
+                                               TextColor="{StaticResource Primary}">
+                                        </Label>
+                                        <Label Text="{Binding Description}" Style="{StaticResource SmallLabel}"></Label>
                                 </StackLayout>
                             </SwipeView>
                         </DataTemplate>
@@ -103,15 +105,26 @@
                 </CollectionView>
             </Border>
 
+            <!-- Draggable Separator -->
+            <BoxView
+                Grid.Column="1"
+                BackgroundColor="#95000000"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+                <BoxView.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="OnSeparatorDrag" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+            
             <Border Stroke="#95000000"
-                    Grid.Column="1"
-                    StrokeThickness="0.5"
+                    Grid.Column="2"
+                    StrokeThickness="1"
                     BackgroundColor="Transparent"
                     Padding="5"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
 
-                <Grid Grid.Column="1" HorizontalOptions="Fill" VerticalOptions="Fill">
+                <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
                     <StackLayout Grid.Column="0" IsVisible="{Binding NoPanelSelected}" HorizontalOptions="Fill"
                                  VerticalOptions="Fill">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">

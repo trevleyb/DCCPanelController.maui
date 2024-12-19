@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.EditableProperties;
@@ -14,13 +15,35 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     public TrackText() : this(null) { }
     
     [ObservableProperty] [property: EditableStringProperty(Name = "Text", Description = "Text to Display")]
-    private string _text = "Text";
+    private string _text = "";
 
+    [ObservableProperty] [property: EditableBoolProperty(Name = "Bold", Description = "Bold Text")]
+    private bool _bold = false;
+    
+    [ObservableProperty] [property: EditableIntProperty(Name = "Font Size", Description = "Font Size")]
+    private int _fontSize = 12;
+
+    [ObservableProperty] [property: EditableIntProperty(Name = "Width", Description = "Text Grid Width")]
+    private int _textWidth = 2;
+
+    [ObservableProperty] [property: EditableEnumProperty(Name = "Horizontal", Description = "Horizontal Justification of the Text")]
+    private TextAlignment _horizontalJustification = TextAlignment.Center;
+    
+    [ObservableProperty] [property: EditableEnumProperty(Name = "Vertical", Description = "Vertical Justification of the Text")]
+    private TextAlignment _verticalJustification = TextAlignment.Center;
+
+    [ObservableProperty] [property: EditableColorProperty(Name = "Font Color", Description = "Font Color")]
+    private Color _textColor = Colors.Black;
+
+    [ObservableProperty] [property: EditableColorProperty(Name = "Background", Description = "Background Color")]
+    private Color _backgroundColor = Colors.Transparent;
+    
     protected override void Setup() {
         Layer = 2;
         Name = "Text";
-        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Text");
-        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Text");
+        RotationIncrement = 90;
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Text", (0, 0), (90, 90), (180, 180), (270, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Text", (0, 0), (90, 90), (180, 180), (270, 270));
     }
     
     protected override ImageSource GetViewForSymbol(double gridSize) {
@@ -28,10 +51,38 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
-        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+        if (string.IsNullOrEmpty(Text)) {
+            var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
+            return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough); 
+        }
+        
+        var label = new Label {
+            Text = Text,
+            FontSize = FontSize,
+            FontAttributes = Bold ? FontAttributes.Bold : FontAttributes.None,
+            HorizontalTextAlignment = HorizontalJustification,
+            VerticalTextAlignment = VerticalJustification,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Fill,
+            TextColor = TextColor,
+            BackgroundColor = BackgroundColor,
+            ZIndex = Layer,
+            RotationX = TrackRotation,
+            LineBreakMode = LineBreakMode.TailTruncation,
+            InputTransparent = passthrough,
+            
+            WidthRequest = gridSize * MaxGridWidth,
+            HeightRequest = gridSize,
+            
+            //WidthRequest = TextWidthRequest(gridSize),
+            //HeightRequest = TextHeightRequest(gridSize)
+        };
+        return (IView)label;
     }
 
+    private double TextWidthRequest(double gridSize) => (TrackRotation % 360 == 0 || TrackRotation % 360 == 180) ? gridSize * MaxGridWidth : gridSize; 
+    private double TextHeightRequest(double gridSize) => (TrackRotation % 360 == 90 || TrackRotation % 360 == 270) ? gridSize * MaxGridWidth : gridSize; 
+    
     protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
         // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
@@ -43,7 +94,30 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
+    
     public ITrackPiece Clone(Panel parent) {
         return new TrackText(parent);
+    }
+
+    private int MaxGridWidth =>
+        (Parent is not null) ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, TextWidth, X, Y, TrackRotation) : TextWidth;
+
+    private int CalculateMaxGridWidth(int rows, int cols, int textWidth, int x, int y, int rotation) {
+        var maxWidth = textWidth;
+        maxWidth = (rotation % 360) switch {
+            // Normalize rotation (handle values >= 360 or < 0)
+            0 => Math.Min(maxWidth, cols - x), // Horizontal, to the right
+            90 => Math.Min(maxWidth, rows - y), // Vertical, downward
+            180 => Math.Min(maxWidth, x + 1), // Horizontal, to the left
+            270 => Math.Min(maxWidth, y + 1), // Vertical, upward
+            _ => throw new ArgumentException("Rotation not supported. Must be 0, 90, 180, or 270 degrees.")
+        };
+
+        if (cols - x < 0 || rows - y < 0) {
+            Console.WriteLine("Text too wide for grid");
+        }
+        
+        
+        return maxWidth;
     }
 }

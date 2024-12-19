@@ -17,8 +17,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private readonly NavigationService _navigationService;
     private Panel? _draggedPanel;
 
-    [ObservableProperty]
-    private int _sidePanelWidth = 300;
+    [ObservableProperty] private int _sidePanelWidth = 300;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
