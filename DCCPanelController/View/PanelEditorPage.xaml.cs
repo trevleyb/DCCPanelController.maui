@@ -12,8 +12,6 @@ public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
     private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
-
-    //private Panel Panel => ViewModel.Panel;
     private PanelEditorViewModel ViewModel { get; }
 
     public PanelEditorPage(PanelEditorViewModel viewModel) {
@@ -22,23 +20,11 @@ public partial class PanelEditorPage : ContentPage {
         InitializeComponent();
     }
 
-    protected override void OnDisappearing() {
-        Console.WriteLine("OnDisappearing");
-        PanelView.Dispose();
-        base.OnDisappearing();
-    }
-
-    protected override void OnNavigatedFrom(NavigatedFromEventArgs args) {
-        Console.WriteLine("OnNavigatedFrom");
-        base.OnNavigatedFrom(args);
-    }
-
     private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
         ViewModel.TrackPieceChanged();
     }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
-        Console.WriteLine($"In Edit Mode: Track {track.Name} was tapped");
         if (track.IsSelected) {
             PanelView.MarkTrackUnSelected(track);
         } else {
@@ -47,7 +33,6 @@ public partial class PanelEditorPage : ContentPage {
     }
     
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
-        Console.WriteLine("OnSymbolDragStarting");
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
             e.Data.Properties.Add("Track", symbol);
             e.Data.Properties.Add("Source", "DisplaySymbol");

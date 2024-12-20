@@ -113,9 +113,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private async Task SelectionChangedAsync() {
-        Console.WriteLine("Selection Changed");
-    }
+    private async Task SelectionChangedAsync() { }
 
     [RelayCommand]
     private async Task DuplicatePanelAsync(Panel? panel = null) {
@@ -155,15 +153,12 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             // need to update the original panel in the Panels
             // collection to be this new Panel. 
             // ------------------------------------------------------------------
-            Console.WriteLine($"Result from Editor: SAVED");
             var index = Panels.IndexOf(SelectedPanel);
             if (index >= 0) Panels[index] = tempPanel;
+            SelectedPanel = Panels[index];
             Save();
-            SelectPanel(tempPanel);
-        } else {
-            Console.WriteLine($"Result from Editor: CANCELLED");
-            SelectPanel(SelectedPanel); 
-        }
+        } 
+        SelectPanel(SelectedPanel); 
     }
 
     public async Task<bool> LaunchEditPanelAsync(Panel panel) {

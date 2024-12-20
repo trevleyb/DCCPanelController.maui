@@ -4,6 +4,7 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.NavigationService;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
+using Maui.FreakyControls.Extensions;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController;
@@ -14,7 +15,11 @@ public static class MauiProgram {
         builder.UseMauiApp<App>().ConfigureFonts(fonts => {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-        }).UseMauiCommunityToolkit().UseMauiCommunityToolkitMarkup().UseMauiCommunityToolkitMediaElement();
+        })
+               .InitializeFreakyControls(true, true)
+               .UseMauiCommunityToolkit()
+               .UseMauiCommunityToolkitMarkup()
+               .UseMauiCommunityToolkitMediaElement();
 
 #if DEBUG
         builder.Logging.AddDebug();

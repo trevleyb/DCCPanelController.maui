@@ -5,7 +5,8 @@ namespace DCCPanelController.Helpers.Converters;
 public class EnumToIndexConverter<T> : IValueConverter where T : struct, Enum {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
         if (value is T enumValue) {
-            return Array.IndexOf(Enum.GetValues<T>(), enumValue);
+            var index = Array.IndexOf(Enum.GetValues<T>(), enumValue);
+            return index;
         }
         return -1;
     }
@@ -14,7 +15,8 @@ public class EnumToIndexConverter<T> : IValueConverter where T : struct, Enum {
         if (value is int index and >= 0) {
             var values = Enum.GetValues<T>();
             if (index < values.Length) {
-                return (T)(values.GetValue(index) ?? default(T));
+                var enumValue = (T)(values.GetValue(index) ?? default(T));
+                return enumValue;
             }
         }
         return default(T); // Default value if not selected or invalid index
