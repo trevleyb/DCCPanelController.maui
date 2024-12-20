@@ -14,25 +14,34 @@
                     Background="White"
                     HorizontalOptions="Center"
                     VerticalOptions="Center"
-                    WidthRequest="500"
-                    HeightRequest="500">
-
-                <StackLayout>
-                    <Grid ColumnDefinitions="*,auto" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
+                    MaximumHeightRequest="500"
+                    WidthRequest="500">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" /> <!-- Title block height -->
+                        <RowDefinition Height="*" />    <!-- Scrollable content -->
+                        <RowDefinition Height="Auto" /> <!-- Button fixed at the bottom -->
+                    </Grid.RowDefinitions>
+                    
+                    <Grid Grid.Row="0" ColumnDefinitions="*,auto" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
                         <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}" Text="{Binding PropertyName}" VerticalOptions="Center" />
                         <ImageButton Grid.Column="1" Source="info.png" Aspect="Center" WidthRequest="25" HeightRequest="25"/>
                     </Grid>
                     
-                    <TableView x:Name="PropertyContainer" HasUnevenRows="True" />
-
-                    <Button Text="Close"
+                        <!-- <TableView x:Name="PropertyContainer" HasUnevenRows="True" /> -->
+                    <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Always">
+                        <StackLayout x:Name="PropertyContainer" Margin = "10,20,0,00"/>
+                    </ScrollView>
+                        
+                    <Button Grid.Row="2" 
+                        Text="Close"
                             Margin="0,20,0,20"
                             Style="{StaticResource ButtonOutline}"
                             VerticalOptions="End"
                             HorizontalOptions="Center"
                             WidthRequest="150"
                             Clicked="ClosePropertyPage" />
-                </StackLayout>
+                </Grid>
             </Border>
         </Grid>
     </ContentPage.Content>

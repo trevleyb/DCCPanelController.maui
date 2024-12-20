@@ -17,25 +17,25 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     [ObservableProperty] [property: EditableStringProperty(Name = "Text", Description = "Text to Display")]
     private string _text = "";
 
-    [ObservableProperty] [property: EditableBoolProperty(Name = "Bold", Description = "Bold Text")]
+    [ObservableProperty] [property: EditableBoolProperty(Name = "Bold", Description = "Bold Text", Group = "Attributes")]
     private bool _bold = false;
     
-    [ObservableProperty] [property: EditableIntProperty(Name = "Font Size", Description = "Font Size")]
+    [ObservableProperty] [property: EditableIntProperty(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
     private int _fontSize = 12;
 
-    [ObservableProperty] [property: EditableIntProperty(Name = "Width", Description = "Text Grid Width")]
+    [ObservableProperty] [property: EditableIntProperty(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
     private int _textWidth = 2;
 
-    [ObservableProperty] [property: EditableEnumProperty(Name = "Horizontal", Description = "Horizontal Justification of the Text")]
+    [ObservableProperty] [property: EditableEnumProperty(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
     
-    [ObservableProperty] [property: EditableEnumProperty(Name = "Vertical", Description = "Vertical Justification of the Text")]
+    [ObservableProperty] [property: EditableEnumProperty(Name = "Vertical", Description = "Vertical Justification of the Text", Group = "Attributes")]
     private TextAlignment _verticalJustification = TextAlignment.Center;
 
-    [ObservableProperty] [property: EditableColorProperty(Name = "Font Color", Description = "Font Color")]
+    [ObservableProperty] [property: EditableColorProperty(Name = "Font Color", Description = "Font Color", Group = "Colors")]
     private Color _textColor = Colors.Black;
 
-    [ObservableProperty] [property: EditableColorProperty(Name = "Background", Description = "Background Color")]
+    [ObservableProperty] [property: EditableColorProperty(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Transparent;
     
     protected override void Setup() {

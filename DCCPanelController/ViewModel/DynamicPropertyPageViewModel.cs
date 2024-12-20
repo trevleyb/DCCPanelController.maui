@@ -1,20 +1,23 @@
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Net.Mime;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.Components;
+using Switch = Microsoft.Maui.Controls.Switch;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;
 
-    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, TableView tableView) {
+    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, StackLayout tableView) {
         PropertyName = propertyName ?? $"{trackPiece.Name ?? "Track"}";
         BuildProperties(tableView, trackPiece);
         PropertyChanged += OnPropertyChanged;
@@ -24,67 +27,213 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
     }
 
-    private static void BuildProperties(TableView tableView, object obj) {
+    private static void BuildProperties(StackLayout tableView, object obj) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
+        tableView.Children.Clear();
+        bool isFirst = true;
         foreach (var group in propertiesByGroup) {
-            var tableSection = CreateSection(group.Key);
-            foreach (var tableCell in group.Value.Select(CreateCell).OfType<Cell>()) {
-                tableSection.Add(tableCell);
-            }
-            tableView.Root.Add(tableSection);
+            var tableGroup = CreateGroup(group.Key, group.Value, isFirst);
+            tableView.Children.Add(tableGroup);
+            isFirst = false;
         }
     }
 
-    private static TableSection CreateSection(string sectionName) {
-        var tableSection = new TableSection(sectionName);
-        return tableSection;
+    private static IView CreateGroup(string groupKey, List<EditablePropertyDetails> groupValue, bool isFirst) {
+        var tableGroup = new StackLayout {
+            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
+        };
+        if (!string.IsNullOrWhiteSpace(groupKey)) {
+            tableGroup.Add(GroupHeading(groupKey));
+            tableGroup.Add(GroupDivider());
+        }
+        foreach (var value in groupValue) {
+            tableGroup.Add(GroupCell(value));
+        }
+        return tableGroup;
+    }
+
+    private static IView GroupHeading(string groupKey) {
+        var heading = new Label() {
+            Text = groupKey,
+            TextColor = StyleColor.Get("Primary"),
+            FontSize = 18,
+            Margin = new Thickness(0, 0, 0, 0)
+        };
+        return heading;
+    }
+
+    private static IView GroupDivider() {
+        var divider = new BoxView() {
+            BackgroundColor = StyleColor.Get("Primary"),
+            HeightRequest = 2,
+            HorizontalOptions = LayoutOptions.Fill,
+            Margin = new Thickness(0, 0, 10, 15)
+        };
+        return divider;
+    }
+
+    private static IView GroupCell(EditablePropertyDetails value) {
+        var groupCell = new HorizontalStackLayout() {
+            Margin = new Thickness(0, 5, 0, 5),
+        };
+        var label = new Label() {
+            Text = value.Attribute.Name,
+            TextColor = Colors.Black,
+            FontSize = 15,
+            LineBreakMode = LineBreakMode.MiddleTruncation,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(0, 5, 0, 5),
+            WidthRequest = 150
+        };
+        var cell = CreateDataEntry(value);
+        groupCell.Children.Add(label);
+        groupCell.Children.Add(cell);
+        return groupCell;
+    }
+
+    private static IView CreateDataEntry(EditablePropertyDetails value) {
+        try {
+            return value.Attribute switch {
+                EditableBoolPropertyAttribute        => CreateBool(value),
+                EditableColorPropertyAttribute       => CreateColor(value),
+                EditableDatePropertyAttribute        => CreateDate(value),
+                EditableEnumPropertyAttribute        => CreateEnum(value),
+                EditableInformationPropertyAttribute => CreateInfo(value),
+                EditableIntPropertyAttribute         => CreateInt(value),
+                EditableStringPropertyAttribute      => CreateString(value),
+                EditableTrackImagePropertyAttribute  => CreateTrackImage(value),
+                EditableTrackTypePropertyAttribute   => CreateTrackType(value),
+                EditableTurnoutPropertyAttribute     => CreateTurnout(value),
+                _                                    => CreateUndefined(value),
+            };
+        } catch (Exception ex) {
+            Debug.WriteLine($"Unable to create entry for {value.Attribute.Name} - {ex.Message}");
+            return CreateUndefined(value);
+        }
+    }
+
+    private static IView CreateTurnout(EditablePropertyDetails value) {
+        return CreateUndefined(value,"Turnout");
+        //var cell = new Switch { BindingContext = value.Owner };
+        //cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        //return cell;    
+    }
+
+    private static IView CreateTrackType(EditablePropertyDetails value) {
+        return CreateUndefined(value,"Track type");
+        //var cell = new Switch { BindingContext = value.Owner };
+        //cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        //return cell;    
+    }
+
+    private static IView CreateTrackImage(EditablePropertyDetails value) {
+        return CreateUndefined(value,"Track Image");
+        //var cell = new Switch { BindingContext = value.Owner };
+        //cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        //return cell;    
+    }
+
+    private static Entry CreateString(EditablePropertyDetails value) {
+        var cell = new Entry {
+            Placeholder = value.Attribute.Description,
+            Keyboard = Keyboard.Text,
+            WidthRequest = 300,
+            BindingContext = value.Owner
+        };
+        cell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        return cell;
+    }
+
+    private static HorizontalStackLayout CreateInt(EditablePropertyDetails value) {
+        var cell = new HorizontalStackLayout();
+        var datacell = new Entry {
+            BindingContext = value.Owner,
+            WidthRequest = 75,
+            Placeholder = value.Attribute.Description,
+            Keyboard = Keyboard.Numeric,
+            Margin = new Thickness(0, 0, 10, 0),
+            Text = value.Info.GetValue(value.Owner)?.ToString() ?? "0"
+        };
+        datacell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+
+        var attr = value.Attribute as EditableIntPropertyAttribute;
+        var updown = new Stepper {
+            Minimum = attr?.MinValue ?? 0, // Define the stepper min value if needed
+            Maximum = attr?.MaxValue ?? 99, // Define the stepper max value if needed
+            Increment = 1,          // Increment/decrement step
+            HorizontalOptions = LayoutOptions.End
+        };
+        
+        // To initialize the Stepper with the current value
+        if (int.TryParse(datacell.Text, out var initialStepperValue)) {
+            updown.Value = initialStepperValue;
+        }
+
+        // Sync Stepper and Entry when Stepper value changes
+        updown.ValueChanged += (s, e) => {
+            datacell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0";
+        };
+
+        // Sync Entry and Stepper when Entry value is manually changed
+        datacell.TextChanged += (s, e) => {
+            if (int.TryParse(e.NewTextValue, out var parsedValue)) {
+                updown.Value = parsedValue;
+            }
+        };
+
+        // Add Entry and Stepper to the horizontal layout
+        cell.Children.Add(datacell);
+        cell.Children.Add(updown);
+        return cell;    
+    }
+
+    private static Label CreateInfo(EditablePropertyDetails value) {
+        var cell = new Label { BindingContext = value.Owner, Text = value.Attribute.Description };
+        return cell;    
+    }
+
+    private static IView CreateEnum(EditablePropertyDetails value) {
+        return CreateUndefined(value,"Enum Value Option");
+        //var cell = new Switch { BindingContext = value.Owner };
+        //cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        //return cell;    
+    }
+
+    private static DatePicker CreateDate(EditablePropertyDetails value) {
+        var cell = new DatePicker() { BindingContext = value.Owner, Format = "D"};
+        cell.SetBinding(DatePicker.DateProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        return cell;    
+    }
+
+    private static ColorGridDropdown CreateColor(EditablePropertyDetails value) {
+        var cell = new ColorGridDropdown() { BindingContext = value.Owner, WidthRequest = 100, HeightRequest = 30 };
+        cell.SetBinding(ColorGridDropdown.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        return cell;    
+    }
+
+    private static Switch CreateBool(EditablePropertyDetails value) {
+        var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.Gray};
+        cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        return cell;    
+    }
+
+    private static Label CreateUndefined(EditablePropertyDetails value, string text="Not yet defined") {
+        return new Label() { 
+            Text = text,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Center,
+        };
     }
 
     private static Cell? CreateCell(EditablePropertyDetails property) {
 
         switch (property.Attribute) {
 
-        // Deal with Switches (on/off)
-        // ---------------------------------------------------------------------------------------
-        case EditableBoolPropertyAttribute boolAttr:
-            var switchCell = new SwitchCell {
-                Text = boolAttr.Name,
-                BindingContext = property.Owner
-            };
-
-            switchCell.SetBinding(SwitchCell.OnProperty, new Binding(property.Info.Name) { Source = property.Owner, Mode = BindingMode.TwoWay });
-            return switchCell;
-        
-        // Deal with String-based data entry fields
-        // ---------------------------------------------------------------------------------------
-        case EditableStringPropertyAttribute strAttr:
-            var entryCell = new EntryCell {
-                Placeholder = strAttr.Description,
-                Label = strAttr.Name,
-                Keyboard = Keyboard.Text,
-                BindingContext = property.Owner
-            };
-
-            entryCell.SetBinding(EntryCell.TextProperty, new Binding(property.Info.Name) { Source = property.Owner, Mode = BindingMode.TwoWay });
-            return entryCell;
-
-        // Deal with Integer-based Data Entry fields
-        // ---------------------------------------------------------------------------------------
-        case EditableIntPropertyAttribute intAttr:
-            var numCell = new EntryCell {
-                Placeholder = intAttr.Name ?? "0",
-                Label = intAttr.Description,
-                Keyboard = Keyboard.Numeric,
-                BindingContext = property.Owner
-            };
-
-            numCell.SetBinding(EntryCell.TextProperty, new Binding(property.Info.Name) { Source = property.Owner, Mode = BindingMode.TwoWay });
-            return numCell;
 
         // Deal with Turnouts (on/off)
         // ---------------------------------------------------------------------------------------
         case EditableTurnoutPropertyAttribute turnoutAttr:
-            Console.WriteLine("EditableTurnoutPropertyAttribute");
             var turnoutActionsView = new TrackTurnoutActionsView {
                 BindingContext = property.Owner
             };
@@ -94,16 +243,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
         // Deal with Date-based Data Entry fields
         // ---------------------------------------------------------------------------------------
-        case EditableDatePropertyAttribute dateProp:
-            Console.WriteLine("EditableDatePropertyAttribute");
-            var datePicker = new DatePicker {
-                Format = "D",
-                BindingContext = property.Owner
-            };
-
-            datePicker.SetBinding(DatePicker.DateProperty, new Binding(property.Info.Name, BindingMode.TwoWay) { Source = property.Owner });
-            var datePickerCell = new ViewCell { View = datePicker };
-            return datePickerCell;
 
         // Deal with Track Image and Track Type
         // ---------------------------------------------------------------------------------------
@@ -131,15 +270,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             if (property.Type == typeof(TextAlignment))
                 return CreateRadioGroupForEnums<TextAlignment>(enumAttr.Name, property.Owner, property.Info.Name);
             return null;
-
-        case EditableColorPropertyAttribute colorAttr:
-            var colorCell = new HorizontalStackLayout() { HorizontalOptions = LayoutOptions.Start,  HeightRequest = 30, VerticalOptions = LayoutOptions.Center, WidthRequest = 200, Margin=new Thickness(0,5,0,5)};
-            var colorCellLabel = new Label { Text = colorAttr.Name, VerticalOptions = LayoutOptions.Center, WidthRequest = 100, HeightRequest = 30};
-            var colorCellSelector = new ColorGridDropdown() { BindingContext = property.Owner, WidthRequest = 100, HeightRequest = 30};
-            colorCellSelector.SetBinding(ColorGridDropdown.SelectedColorProperty, new Binding(property.Info.Name) { Source = property.Owner, Mode = BindingMode.TwoWay });
-            colorCell.Children.Add(colorCellLabel);
-            colorCell.Children.Add(colorCellSelector);
-            return new ViewCell { View = colorCell };
 
         default:
             return null;
