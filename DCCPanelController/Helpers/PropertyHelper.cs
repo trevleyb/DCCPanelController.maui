@@ -31,6 +31,26 @@ public static class PropertyHelper
         // Find the index of the current value within the enum values
         return enumValues.IndexOf(enumValue);
     }
+
+    public static T? GetEnumPropertyValue<T>(object obj, string fieldName)  where T: struct, Enum
+    {
+        // Get the type of the object
+        var objType = obj.GetType();
+
+        // Fetch the property info based on the property name
+        var property = objType.GetProperty(fieldName);
+
+        if (property == null)
+            throw new ArgumentException($"Property '{fieldName}' not found on object of type {objType.Name}.");
+
+        // Check if the property is an enum
+        if (!property.PropertyType.IsEnum)
+            throw new InvalidOperationException($"Property '{fieldName}' is not an enum.");
+
+        // Get the current value of the enum
+        return property.GetValue(obj) as T?;
+    }
+
     
     public static void SetEnumPropertyValue(object obj, string propertyName, object enumValue)
     {
@@ -52,6 +72,6 @@ public static class PropertyHelper
             throw new ArgumentException($"Value '{enumValue}' is not valid for enum type {property.PropertyType.Name}.");
         
         // Set the value
-        property.SetValue(obj, Enum.Parse(property.PropertyType, enumValue.ToString()));
+        property.SetValue(obj, Enum.Parse(property.PropertyType, enumValue.ToString() ?? string.Empty));
     }
 }

@@ -347,6 +347,7 @@ public partial class ControlPanelView : IDisposable {
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
+        args.Data.Properties.Add(EditMode == EditModeEum.Copy ? "Copy" : "Move" , "Red");
         args.Data.Properties.Add("Copy", EditMode == EditModeEum.Copy ? true: false);
         _lastDragCol = 0;
         _lastDragRow = 0;

@@ -122,11 +122,13 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
 
     private static IView CreateTrackType(EditablePropertyDetails value) {
-        return CreateRadioGroupForEnums<TrackStyleTypeEnum>(value.Owner, value.Info.Name);
+        var attr = value.Attribute as EditableTrackTypePropertyAttribute;
+        return CreateRadioGroupForEnums<TrackStyleTypeEnum>("Track Type", attr?.TrackTypes ?? [], value.Owner, value.Info.Name);
     }
 
     private static IView CreateTrackImage(EditablePropertyDetails value) {
-        return CreateRadioGroupForEnums<TrackStyleImageEnum>(value.Owner, value.Info.Name);
+        var attr = value.Attribute as EditableTrackImagePropertyAttribute;
+        return CreateRadioGroupForEnums<TrackStyleImageEnum>("Track Style", attr?.TrackTypes ?? [], value.Owner, value.Info.Name);
     }
 
     private static Entry CreateString(EditablePropertyDetails value) {
@@ -189,9 +191,11 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
 
     private static IView CreateEnum(EditablePropertyDetails value) {
-        if (value.Type == typeof(TextAlignment))
-            return CreateDropDownForEnums<TextAlignment>(value.Attribute.Name, value.Owner, value.Info.Name);
-            //return CreateRadioGroupForEnums<TextAlignment>(value.Owner, value.Info.Name);
+        if (value.Type == typeof(TextAlignment)) {
+            var items = new TextAlignment[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End };    
+            return CreateRadioGroupForEnums<TextAlignment>("Alignment", items, value.Owner, value.Info.Name);
+        }
+
         return CreateUndefined(value,"Enum Value Option");
     }
 
@@ -208,7 +212,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
 
     private static Switch CreateBool(EditablePropertyDetails value) {
-        var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.Gray};
+        var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White};
         cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
@@ -220,7 +224,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             VerticalOptions = LayoutOptions.Center,
         };
     }
-
 
     public static IView CreateDropDownForEnums<T>(string name, object source, string fieldName) where T : struct, Enum {
         var items = Enum.GetValues<T>().Select(x => x.ToString()).ToList();
@@ -239,12 +242,45 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return picker;
     }
     
-    
-    
-    public static HorizontalStackLayout CreateRadioGroupForEnums<T>(object source, string fieldName) where T : struct, Enum { 
+    public static StackLayout CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum { 
         if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
 
+        var radioGroup = new StackLayout() {
+            HeightRequest = 30,
+            Orientation = StackOrientation.Horizontal,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(-5, 0, 0, 0),
+        };
+        
+        foreach (var value in items) {
+            var radioButton = new RadioButton {
+                HeightRequest = 30,
+                Content = value.ToString(), // Display the value
+            };
+            radioButton.CheckedChanged += (sender, args) => { PropertyHelper.SetEnumPropertyValue(source, fieldName, value); };
+            radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(source, fieldName));
+            radioGroup.Children.Add(radioButton);
+        }
+        
+        return radioGroup;
+    }
+    
+    public static HorizontalStackLayout CreateFreakyRadioGroupForEnums<T>(object source, string fieldName) where T : struct, Enum { 
+        if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
+        if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+
+        
+        // <freakyControls:FreakyRadioGroup
+//     Orientation="Vertical"
+// SelectedIndex="{Binding CheckedRadioButton}"
+// SelectedRadioButtonChanged="FreakyRadioGroup_SelectedRadioButtonChanged"
+// SelectedRadioButtonChangedCommand="{Binding SelectedIndexCommand}"
+// Spacing="10">
+//     <HorizontalStackLayout Spacing="10">
+
+        
         // Create horizontal StackLayout for the radio group
         var radioGroup = new HorizontalStackLayout();
 
@@ -258,15 +294,34 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
             // Bind the IsChecked property to the specified field, using a converter
             radioButton.SetBinding(
-                 RadioButton.IsCheckedProperty,
-                 new Binding(fieldName, 
-                             BindingMode.TwoWay, 
-                             new EnumToIndexConverter<T>()) { Source = source });
+                RadioButton.IsCheckedProperty,
+                new Binding(fieldName, 
+                            BindingMode.TwoWay, 
+                            new EnumToIndexConverter<T>()) { Source = source });
 
             // Add the radio button to the stack
             radioGroup.Children.Add(radioButton);
         }
         return radioGroup;
     }
+
+    
+    
 }
 
+// <freakyControls:FreakyRadioGroup
+//     Orientation="Vertical"
+// SelectedIndex="{Binding CheckedRadioButton}"
+// SelectedRadioButtonChanged="FreakyRadioGroup_SelectedRadioButtonChanged"
+// SelectedRadioButtonChangedCommand="{Binding SelectedIndexCommand}"
+// Spacing="10">
+//
+//     <HorizontalStackLayout Spacing="10">
+//
+//     <freakyControls:FreakyRadioButton
+//     CheckColor="White"
+// FillColor="{StaticResource Primary}"
+// OutlineColor="{StaticResource Tertiary}" />
+//
+//     <Label Text="Color Scheme" />
+//     </HorizontalStackLayout>
