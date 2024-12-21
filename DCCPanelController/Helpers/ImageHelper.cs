@@ -1,0 +1,23 @@
+namespace DCCPanelController.Helpers;
+
+public static class ImageHelper {
+
+    public static async Task<string> ImageToBase64Async(FileResult result) {
+        await using var stream = await result.OpenReadAsync();
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream);
+        var imageBytes  = memoryStream.ToArray();
+        var base64Image = Convert.ToBase64String(imageBytes);
+        return base64Image;
+    }
+
+    public static string ImageToBase64(FileResult result) {
+        return ImageToBase64Async(result).Result;
+    }
+
+    public static ImageSource ImageFromBase64(string base64String) {
+        var imageBytes = Convert.FromBase64String(base64String);
+        MemoryStream imageDecodeStream = new(imageBytes);
+        return ImageSource.FromStream(() => imageDecodeStream);
+    }
+}
