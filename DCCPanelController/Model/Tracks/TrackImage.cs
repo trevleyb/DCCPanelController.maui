@@ -16,7 +16,10 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     [ObservableProperty] [property: EditableIntProperty(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
     private int _imageHeight = 2;
     
+    [EditableIntProperty(Name = "Image", Description = "Image to display", Group = "Attributes")]
     public string TrackImageSource { get; set; } = "";
+
+    public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
     
     protected override void Setup() {
         Layer = 0;

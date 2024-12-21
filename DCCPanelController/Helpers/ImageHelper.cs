@@ -15,9 +15,14 @@ public static class ImageHelper {
         return ImageToBase64Async(result).Result;
     }
 
-    public static ImageSource ImageFromBase64(string base64String) {
-        var imageBytes = Convert.FromBase64String(base64String);
-        MemoryStream imageDecodeStream = new(imageBytes);
-        return ImageSource.FromStream(() => imageDecodeStream);
+    public static ImageSource? ImageFromBase64(string base64String) {
+        try {
+            var imageBytes = Convert.FromBase64String(base64String);
+            MemoryStream imageDecodeStream = new(imageBytes);
+            return ImageSource.FromStream(() => imageDecodeStream) ?? null;
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+            return null;
+        }
     }
 }
