@@ -25,7 +25,7 @@ public partial class ControlPanelView : IDisposable {
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
 
-    public EditModeEum EditMode = EditModeEum.Move;
+    public EditModeEnum EditMode = EditModeEnum.Move;
    
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
     [ObservableProperty] private double _gridSize;
@@ -347,8 +347,6 @@ public partial class ControlPanelView : IDisposable {
     private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
-        args.Data.Properties.Add(EditMode == EditModeEum.Copy ? "Copy" : "Move" , "Red");
-        args.Data.Properties.Add("Copy", EditMode == EditModeEum.Copy ? true: false);
         _lastDragCol = 0;
         _lastDragRow = 0;
     }
@@ -391,10 +389,8 @@ public partial class ControlPanelView : IDisposable {
                 return;
             }
             UnHighlightCell(_lastDragCol, _lastDragRow);
-            
             var source = e.Data.Properties["Source"] as string ?? null;
             var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
-            var isCopyOperation = e.Data.Properties.ContainsKey("Copy") && (bool)e.Data.Properties["Copy"];
             var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
             
             if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
@@ -405,35 +401,43 @@ public partial class ControlPanelView : IDisposable {
                 // -----------------------------------------------------------------
                 if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
                     ClearSelectedTracks();
-                    switch (source) {
-                    case "Panel":
-                        if (isCopyOperation && Panel is { } panel) {
-                            var newTrack = trackPiece.Clone(panel); 
-                            newTrack.X = position.Col;
-                            newTrack.Y = position.Row;
-                            panel.AddTrack(newTrack);
-                            AddDisplayItemToGrid(newTrack);
-                            MarkTrackSelected(newTrack);
-                        } else {
-                            RemoveDisplayItemFromGrid(trackPiece);
-                            trackPiece.X = position.Col;
-                            trackPiece.Y = position.Row;
-                            AddDisplayItemToGrid(trackPiece);
+                    if (Panel is { } panel) {
+                        switch (source) {
+                        case "Panel":
+                            switch (EditMode) {
+                            case EditModeEnum.Move:
+                                RemoveDisplayItemFromGrid(trackPiece);
+                                trackPiece.X = position.Col;
+                                trackPiece.Y = position.Row;
+                                AddDisplayItemToGrid(trackPiece);
+                                break;
+                            case EditModeEnum.Copy:
+                                var newTrack = trackPiece.Clone(panel);
+                                newTrack.X = position.Col;
+                                newTrack.Y = position.Row;
+                                panel.AddTrack(newTrack);
+                                AddDisplayItemToGrid(newTrack);
+                                MarkTrackSelected(newTrack);
+                                break;
+                            case EditModeEnum.Size:
+                                break;
+                            }
+
+                            break;
+                        case "DisplaySymbol":
+                            if (Panel is not null && trackPiece.Clone(Panel) is { } newPiece) {
+                                newPiece.X = position.Col;
+                                newPiece.Y = position.Row;
+                                Panel?.AddTrack(newPiece);
+                                AddDisplayItemToGrid(newPiece);
+                                MarkTrackSelected(newPiece);
+                            }
+
+                            break;
+                        default:
+                            Console.WriteLine($"Invalid source: '{source}'");
+                            break;
                         }
-                        break;
-                    case "DisplaySymbol":
-                        //if (Activator.CreateInstance(trackPiece.GetType()) is ITrackPiece newPiece) {
-                        if (Panel is not null && trackPiece.Clone(Panel) is { } newPiece) {
-                            newPiece.X = position.Col;
-                            newPiece.Y = position.Row;
-                            Panel?.AddTrack(newPiece);
-                            AddDisplayItemToGrid(newPiece);
-                            MarkTrackSelected(newPiece);
-                        }
-                        break;
-                    default:
-                        Console.WriteLine($"Invalid source: '{source}'");
-                        break;
                     }
                 } else {
                     Console.WriteLine("Grid location is already occupied.");
@@ -489,7 +493,7 @@ public partial class ControlPanelView : IDisposable {
 
 }
 
-public enum EditModeEum { Move, Copy }
+public enum EditModeEnum { Move, Copy, Size }
 
 /// <summary>
 ///     This is a helper class that draws the Grid Lines on the Page.

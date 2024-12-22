@@ -79,10 +79,28 @@ public partial class PanelEditorPage : ContentPage {
     private void RotateRight(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateRight();
     }
-
+    
     private void DeleteTrackPiece(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) {
             PanelView.RemoveTrackPiece(track);
         }
     }
+
+    private void ChangeEditMode(object? sender, EventArgs e) {
+        switch (PanelView.EditMode) {
+        case EditModeEnum.Move:
+            PanelView.EditMode = EditModeEnum.Copy;
+            EditModeToolbar.IconImageSource = "copy.png";
+            break;
+        case EditModeEnum.Copy:
+            PanelView.EditMode = EditModeEnum.Size;
+            EditModeToolbar.IconImageSource = "crop.png";
+            break;
+        case EditModeEnum.Size:
+            PanelView.EditMode = EditModeEnum.Move;
+            EditModeToolbar.IconImageSource = "move.png";
+            break;
+        }
+    }
+    
 }

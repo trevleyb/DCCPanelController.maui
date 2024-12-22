@@ -1,13 +1,12 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net.Mime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Helpers.EditableProperties;
-using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Services.NavigationService;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.Components;
 using Maui.FreakyControls;
@@ -16,6 +15,7 @@ using Switch = Microsoft.Maui.Controls.Switch;
 namespace DCCPanelController.ViewModel;
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
+    private NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     [ObservableProperty] private string _propertyName;
 
     public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, StackLayout tableView) {
@@ -28,18 +28,17 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
     }
 
-    private static void BuildProperties(StackLayout tableView, object obj) {
+    private void BuildProperties(StackLayout tableView, object obj) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         tableView.Children.Clear();
-        bool isFirst = true;
-        foreach (var group in propertiesByGroup) {
-            var tableGroup = CreateGroup(group.Key, group.Value, isFirst);
+        var isFirst = true;
+        foreach (var tableGroup in propertiesByGroup.Select(group => CreateGroup(group.Key, group.Value, isFirst))) {
             tableView.Children.Add(tableGroup);
             isFirst = false;
         }
     }
 
-    private static IView CreateGroup(string groupKey, List<EditablePropertyDetails> groupValue, bool isFirst) {
+    private IView CreateGroup(string groupKey, List<EditablePropertyDetails> groupValue, bool isFirst) {
         var tableGroup = new StackLayout {
             Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
         };
@@ -53,7 +52,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return tableGroup;
     }
 
-    private static IView GroupHeading(string groupKey) {
+    private IView GroupHeading(string groupKey) {
         var heading = new Label() {
             Text = groupKey,
             TextColor = StyleColor.Get("Primary"),
@@ -63,7 +62,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return heading;
     }
 
-    private static IView GroupDivider() {
+    private IView GroupDivider() {
         var divider = new BoxView() {
             BackgroundColor = StyleColor.Get("Primary"),
             HeightRequest = 2,
@@ -73,7 +72,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return divider;
     }
 
-    private static IView GroupCell(EditablePropertyDetails value) {
+    private IView GroupCell(EditablePropertyDetails value) {
         var groupCell = new HorizontalStackLayout() {
             Margin = new Thickness(0, 5, 0, 5),
         };
@@ -93,7 +92,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return groupCell;
     }
 
-    private static IView CreateDataEntry(EditablePropertyDetails value) {
+    private IView CreateDataEntry(EditablePropertyDetails value) {
         try {
             return value.Attribute switch {
                 EditableBoolPropertyAttribute        => CreateBool(value),
@@ -106,6 +105,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                 EditableTrackImagePropertyAttribute  => CreateTrackImage(value),
                 EditableTrackTypePropertyAttribute   => CreateTrackType(value),
                 EditableTurnoutPropertyAttribute     => CreateTurnout(value),
+                EditableImagePropertyAttribute       => CreateImage(value),
                 _                                    => CreateUndefined(value),
             };
         } catch (Exception ex) {
@@ -114,24 +114,131 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         }
     }
 
-    private static IView CreateTurnout(EditablePropertyDetails value) {
+    private IView CreateImage(EditablePropertyDetails value) {
+        
+        var stack = new StackLayout {
+            Orientation = StackOrientation.Vertical,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(0, 0, 0, 0),
+        };
+
+        var imageString = PropertyHelper.GetPropertyValue<string>(value.Owner, value.Info.Name) ?? string.Empty; 
+        var image = new Image {
+            Source = string.IsNullOrEmpty(imageString) ? null : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(imageString))) ?? null,
+            WidthRequest = 200,
+            HeightRequest = 200,
+        };
+
+        var horizontal = new StackLayout() {
+            Orientation = StackOrientation.Horizontal,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(0, 0, 0, 0),
+        };
+        
+        var fileButton = new Button() {
+            Text = "Select Image",
+            BackgroundColor = StyleColor.Get("Primary"),
+            TextColor = Colors.White,
+            FontSize = 15,
+            Margin = new Thickness(10, 10, 10, 10),
+        };
+        fileButton.Clicked += async (s, e) => await SelectImageAsync(image, value);
+        
+        var photoButton = new Button() {
+            Text = "Select Photo",
+            BackgroundColor = StyleColor.Get("Primary"),
+            TextColor = Colors.White,
+            FontSize = 15,
+            Margin = new Thickness(10, 10, 10, 10),
+        };
+        photoButton.Clicked += async (s, e) => await SelectPhotoAsync(image, value);
+        horizontal.Children.Add(fileButton);
+        horizontal.Children.Add(photoButton);
+        stack.Children.Add(image);
+        stack.Children.Add(horizontal);
+        return stack;   
+    }
+
+    private async Task SelectPhotoAsync(Image image, EditablePropertyDetails value) {
+        try {
+            // Open file-picker to select an image
+            var result = await MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions {
+                Title = "Please select an image",
+            });
+
+            if (result == null) {
+                // Handle when the user cancels the file picker
+                await _navigationService.DisplayOKAlertAsync("Cancelled", "No file was selected.");
+                return;
+            }
+
+            // Read the selected file's content as a byte array
+            var stream = await result.OpenReadAsync();
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            var fileBytes = memoryStream.ToArray();
+
+            // Convert to Base64 string
+            var base64String = Convert.ToBase64String(fileBytes);
+            image.Source = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(base64String)));
+            PropertyHelper.SetPropertyValue<string>(value.Owner, value.Info.Name, base64String);
+        } catch (Exception ex) {
+            // Handle any errors
+            await _navigationService.DisplayOKAlertAsync("Error", $"Unable to load Image: {ex.Message}");
+        }
+    }
+
+    private async Task SelectImageAsync(Image image, EditablePropertyDetails value) {
+        try{
+            // Open file-picker to select an image
+            var result = await FilePicker.Default.PickAsync(new PickOptions {
+                PickerTitle = "Please select an image",
+                FileTypes = FilePickerFileType.Images // Restrict to image files only
+            });
+
+            if (result == null) {
+                // Handle when the user cancels the file picker
+                await _navigationService.DisplayOKAlertAsync("Cancelled", "No file was selected.");
+                return;
+            }
+
+            // Read the selected file's content as a byte array
+            var stream = await result.OpenReadAsync();
+            using var memoryStream = new MemoryStream();
+            await stream.CopyToAsync(memoryStream);
+            byte[] fileBytes = memoryStream.ToArray();
+
+            // Convert to Base64 string
+            var base64String = Convert.ToBase64String(fileBytes);
+            image.Source = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(base64String)));
+            PropertyHelper.SetPropertyValue<string>(value.Owner, value.Info.Name, base64String);
+        }
+        catch (Exception ex) {
+            // Handle any errors
+            await _navigationService.DisplayOKAlertAsync("Error", $"Unable to load Image: {ex.Message}");
+        }
+    }
+
+    private IView CreateTurnout(EditablePropertyDetails value) {
         return CreateUndefined(value,"Turnout");
         //var cell = new Switch { BindingContext = value.Owner };
         //cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         //return cell;    
     }
 
-    private static IView CreateTrackType(EditablePropertyDetails value) {
+    private IView CreateTrackType(EditablePropertyDetails value) {
         var attr = value.Attribute as EditableTrackTypePropertyAttribute;
         return CreateRadioGroupForEnums<TrackStyleTypeEnum>("Track Type", attr?.TrackTypes ?? [], value.Owner, value.Info.Name);
     }
 
-    private static IView CreateTrackImage(EditablePropertyDetails value) {
+    private IView CreateTrackImage(EditablePropertyDetails value) {
         var attr = value.Attribute as EditableTrackImagePropertyAttribute;
         return CreateRadioGroupForEnums<TrackStyleImageEnum>("Track Style", attr?.TrackTypes ?? [], value.Owner, value.Info.Name);
     }
 
-    private static Entry CreateString(EditablePropertyDetails value) {
+    private Entry CreateString(EditablePropertyDetails value) {
         var cell = new Entry {
             Placeholder = value.Attribute.Description,
             Keyboard = Keyboard.Text,
@@ -142,7 +249,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return cell;
     }
 
-    private static HorizontalStackLayout CreateInt(EditablePropertyDetails value) {
+    private HorizontalStackLayout CreateInt(EditablePropertyDetails value) {
         var cell = new HorizontalStackLayout();
         var datacell = new Entry {
             BindingContext = value.Owner,
@@ -185,12 +292,12 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return cell;    
     }
 
-    private static Label CreateInfo(EditablePropertyDetails value) {
+    private Label CreateInfo(EditablePropertyDetails value) {
         var cell = new Label { BindingContext = value.Owner, Text = value.Attribute.Description };
         return cell;    
     }
 
-    private static IView CreateEnum(EditablePropertyDetails value) {
+    private IView CreateEnum(EditablePropertyDetails value) {
         if (value.Type == typeof(TextAlignment)) {
             var items = new TextAlignment[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End };    
             return CreateRadioGroupForEnums<TextAlignment>("Alignment", items, value.Owner, value.Info.Name);
@@ -199,25 +306,25 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return CreateUndefined(value,"Enum Value Option");
     }
 
-    private static DatePicker CreateDate(EditablePropertyDetails value) {
+    private DatePicker CreateDate(EditablePropertyDetails value) {
         var cell = new DatePicker() { BindingContext = value.Owner, Format = "D"};
         cell.SetBinding(DatePicker.DateProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
 
-    private static ColorGridDropdown CreateColor(EditablePropertyDetails value) {
+    private ColorGridDropdown CreateColor(EditablePropertyDetails value) {
         var cell = new ColorGridDropdown() { WidthRequest = 100, HeightRequest = 30 };
         cell.SetBinding(ColorGridDropdown.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
 
-    private static Switch CreateBool(EditablePropertyDetails value) {
+    private Switch CreateBool(EditablePropertyDetails value) {
         var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White};
         cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
 
-    private static Label CreateUndefined(EditablePropertyDetails value, string text="Not yet defined") {
+    private Label CreateUndefined(EditablePropertyDetails value, string text="Not yet defined") {
         return new Label() { 
             Text = text,
             HorizontalOptions = LayoutOptions.Start,
@@ -225,7 +332,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         };
     }
 
-    public static IView CreateDropDownForEnums<T>(string name, object source, string fieldName) where T : struct, Enum {
+    public IView CreateDropDownForEnums<T>(string name, object source, string fieldName) where T : struct, Enum {
         var items = Enum.GetValues<T>().Select(x => x.ToString()).ToList();
         var picker = new FreakyPicker() {
             Title = name,
@@ -242,7 +349,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return picker;
     }
     
-    public static StackLayout CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum { 
+    public StackLayout CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum { 
         if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
 
@@ -267,20 +374,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return radioGroup;
     }
     
-    public static HorizontalStackLayout CreateFreakyRadioGroupForEnums<T>(object source, string fieldName) where T : struct, Enum { 
+    public HorizontalStackLayout CreateFreakyRadioGroupForEnums<T>(object source, string fieldName) where T : struct, Enum { 
         if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
-
-        
-        // <freakyControls:FreakyRadioGroup
-//     Orientation="Vertical"
-// SelectedIndex="{Binding CheckedRadioButton}"
-// SelectedRadioButtonChanged="FreakyRadioGroup_SelectedRadioButtonChanged"
-// SelectedRadioButtonChangedCommand="{Binding SelectedIndexCommand}"
-// Spacing="10">
-//     <HorizontalStackLayout Spacing="10">
-
-        
         // Create horizontal StackLayout for the radio group
         var radioGroup = new HorizontalStackLayout();
 
@@ -309,19 +405,3 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     
 }
 
-// <freakyControls:FreakyRadioGroup
-//     Orientation="Vertical"
-// SelectedIndex="{Binding CheckedRadioButton}"
-// SelectedRadioButtonChanged="FreakyRadioGroup_SelectedRadioButtonChanged"
-// SelectedRadioButtonChangedCommand="{Binding SelectedIndexCommand}"
-// Spacing="10">
-//
-//     <HorizontalStackLayout Spacing="10">
-//
-//     <freakyControls:FreakyRadioButton
-//     CheckColor="White"
-// FillColor="{StaticResource Primary}"
-// OutlineColor="{StaticResource Tertiary}" />
-//
-//     <Label Text="Color Scheme" />
-//     </HorizontalStackLayout>

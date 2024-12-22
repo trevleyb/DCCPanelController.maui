@@ -7,12 +7,18 @@ namespace DCCPanelController.Services.NavigationService;
 public class NavigationService(IServiceProvider serviceProvider) {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
+    public async Task<bool> DisplayOKAlertAsync(string title, string message) {
+        var mainPage = App.Current.Windows[0].Page;
+        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+        return await mainPage.DisplayAlert(title, message, null, "OK");
+    }
+
     public async Task<bool> DisplayAlertAsync(string title, string message, string accept, string cancel) {
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
         return await mainPage.DisplayAlert(title, message, accept, cancel);
     }
-    
+
     // public async Task<Panel?> NavigateToPanelEditor(Panel panel) {
     //     var mainPage = App.Current.Windows[0].Page;
     //     if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");

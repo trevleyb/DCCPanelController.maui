@@ -16,6 +16,13 @@
     
     <ContentPage.ToolbarItems>
         <ToolbarItem
+            x:Name="EditModeToolbar"
+            ToolTipProperties.Text="Edit Mode"
+            Clicked="ChangeEditMode"
+            IconImageSource="move.png"
+            Text="Edit Mode"/>
+        
+        <ToolbarItem
             ToolTipProperties.Text="Rotate Left"
             Clicked="RotateLeft"
             IconImageSource="rotate_cw.png"

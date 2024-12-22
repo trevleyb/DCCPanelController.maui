@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace DCCPanelController.Helpers;
 
 using System;
@@ -50,7 +52,6 @@ public static class PropertyHelper
         // Get the current value of the enum
         return property.GetValue(obj) as T?;
     }
-
     
     public static void SetEnumPropertyValue(object obj, string propertyName, object enumValue)
     {
@@ -74,4 +75,36 @@ public static class PropertyHelper
         // Set the value
         property.SetValue(obj, Enum.Parse(property.PropertyType, enumValue.ToString() ?? string.Empty));
     }
+    
+    public static void SetPropertyValue<T>(object obj, string propertyName, object value)
+    {
+        // Get the type of the object
+        var objType = obj.GetType();
+        
+        // Fetch the property by name
+        var property = objType.GetProperty(propertyName);
+
+        if (property == null)
+            throw new ArgumentException($"Property '{propertyName}' not found on object of type {objType.Name}.");
+        
+        // Set the value
+        property.SetValue(obj, value);
+    }
+    
+    public static T? GetPropertyValue<T>(object obj, string fieldName)
+    {
+        // Get the type of the object
+        var objType = obj.GetType();
+
+        // Fetch the property info based on the property name
+        var property = objType.GetProperty(fieldName);
+
+        if (property == null)
+            throw new ArgumentException($"Property '{fieldName}' not found on object of type {objType.Name}.");
+
+        // Get the current value of the enum
+        return (property.GetValue(obj) is T? ? (T?)property.GetValue(obj) : default) ?? default(T);
+    }
+
+    
 }

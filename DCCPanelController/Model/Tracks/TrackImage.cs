@@ -10,19 +10,19 @@ namespace DCCPanelController.Model.Tracks;
 public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
     public TrackImage() : this(null) { }
     
+    [EditableImageProperty(Name = "Image", Description = "Image to display")]
+    public string TrackImageSource { get; set; } = "";
+    
     [ObservableProperty] [property: EditableIntProperty(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
     private int _imageWidth = 2;
 
     [ObservableProperty] [property: EditableIntProperty(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
     private int _imageHeight = 2;
     
-    [EditableIntProperty(Name = "Image", Description = "Image to display", Group = "Attributes")]
-    public string TrackImageSource { get; set; } = "";
-
     public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
     
     protected override void Setup() {
-        Layer = 0;
+        Layer = 2;
         Name = "ImageStyle";
         RotationIncrement = 90;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
