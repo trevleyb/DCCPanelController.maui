@@ -28,19 +28,37 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
     }
+    
+    private double ImageWidthRequest(double gridSize) => (TrackRotation % 360 == 0 || TrackRotation % 360 == 180) ? gridSize * MaxGridWidth : gridSize; 
+    private double ImageHeightRequest(double gridSize) => (TrackRotation % 360 == 90 || TrackRotation % 360 == 270) ? gridSize * MaxGridHeight : gridSize; 
+    
+    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+        if (string.IsNullOrEmpty(TrackImageSource)) {
+            var defaultImage = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
+            return CreateViewFromImage(defaultImage.Image, defaultImage.Rotation, gridSize, passthrough); 
+        }
+        
+        var image = new Image {
+            Source = ImageHelper.ImageFromBase64(TrackImageSource),
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+            ZIndex = Layer,
+            RotationX = TrackRotation,
+            InputTransparent = passthrough,
+            WidthRequest = gridSize * MaxGridWidth,
+            HeightRequest = gridSize * MaxGridHeight,
+        };
+        return (IView)image;
+    }
+
+    private int MaxGridWidth => (Parent is not null) ? Width <= Parent.Cols - X ? Width : Parent.Cols - X : Width;
+    private int MaxGridHeight => (Parent is not null) ? Height <= Parent.Rows - Y ? Height : Parent.Rows - Y : Height;
+
     public ITrackPiece Clone(Panel parent) {
         return Clone<TrackImage>(parent);
     }
-
-    //public static string SerializeImage(ImageSource? imageSource) {
-    //    var imageBytes = Convert.FromBase64String(Base64ImageProvider.Base64EncodedImage);
-    //    MemoryStream imageDecodeStream = new(imageBytes);
-    //    base64DecodedImage.Source = ImageSource.FromStream(() => imageDecodeStream);
-    //}
-
-    public static ImageSource? DeserializeImage(string base64String) {
-        var imageBytes = Convert.FromBase64String(base64String);
-        MemoryStream imageDecodeStream = new(imageBytes);
-        return ImageSource.FromStream(() => imageDecodeStream);    
-    }
+    
+    
+    
+    
 }

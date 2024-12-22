@@ -26,6 +26,9 @@ public abstract partial class TrackBase : ObservableObject {
     [ObservableProperty] private int _layer  = 1;              // What layer is this on? Only 1 element per layer.
     [ObservableProperty] private int _x;                       // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _y;                       // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _z = 1;                   // What position (layer) should this exist at 
+    [ObservableProperty] private int _width = 1;               // What width is this component?
+    [ObservableProperty] private int _height = 1;              // What height is this component?
     [ObservableProperty] private int _trackRotation;           // What is the expected direction of the Track Piece?
     [ObservableProperty] private int _imageRotation;
     [ObservableProperty] private bool _isSelected;

@@ -16,7 +16,6 @@ public abstract partial class TrackLabelBase : TrackBase {
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
-
     }
 
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
