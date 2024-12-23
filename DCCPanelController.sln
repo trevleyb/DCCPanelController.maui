@@ -6,6 +6,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCWithrottleClient", "DCCW
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCWithrottleClient.Tests", "DCCWithrottleClient.Tests\DCCWithrottleClient.Tests.csproj", "{2F9022A3-B795-4F17-B974-35163D06B116}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCJMRIClient", "DCCJMRIClient\DCCJMRIClient.csproj", "{7A823ED3-AE91-4F8E-82DC-51F7F81750BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCJMRIClient.Tests", "DCCJMRIClient.Tests\DCCJMRIClient.Tests.csproj", "{642F352C-9E04-45BA-9EC2-9B8EAF49C868}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +28,13 @@ Global
 		{2F9022A3-B795-4F17-B974-35163D06B116}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F9022A3-B795-4F17-B974-35163D06B116}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F9022A3-B795-4F17-B974-35163D06B116}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A823ED3-AE91-4F8E-82DC-51F7F81750BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A823ED3-AE91-4F8E-82DC-51F7F81750BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A823ED3-AE91-4F8E-82DC-51F7F81750BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A823ED3-AE91-4F8E-82DC-51F7F81750BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{642F352C-9E04-45BA-9EC2-9B8EAF49C868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{642F352C-9E04-45BA-9EC2-9B8EAF49C868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{642F352C-9E04-45BA-9EC2-9B8EAF49C868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{642F352C-9E04-45BA-9EC2-9B8EAF49C868}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

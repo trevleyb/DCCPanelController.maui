@@ -206,6 +206,8 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=050d78dd_002Dc212_002D43a7_002D9b94_002D2153b386cd9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RunClientTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
     &lt;TestId&gt;NUnit3x::2F9022A3-B795-4F17-B974-35163D06B116::net8.0::DCCWithrottleClient.Tests.ClientTest&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::642F352C-9E04-45BA-9EC2-9B8EAF49C868::net9.0::DCCJMRIClient.Tests.JmriClientTests&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::642F352C-9E04-45BA-9EC2-9B8EAF49C868::net9.0::DCCJMRIClient.Tests.JmriClienttestsLive+JmriClientIntegrationTests&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	
