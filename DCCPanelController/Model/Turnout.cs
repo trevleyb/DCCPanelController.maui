@@ -23,10 +23,3 @@ public partial class Turnout : ObservableObject {
     /// </summary>
     public Turnout() { }
 }
-
-//[JsonConverter(typeof(JsonStringEnumConverter<TurnoutStateEnum>))]
-public enum TurnoutStateEnum {
-    Closed,
-    Thrown,
-    Unknown
-}

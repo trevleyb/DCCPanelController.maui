@@ -34,8 +34,12 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     [ObservableProperty] 
-    [property: EditableTurnoutProperty(Name = "Actions", Group="Actions",  Description = "ID of the item to do an action against")]
-    private List<TrackTurnoutAction> _actions = [];
+    [property: EditableTurnoutProperty(Name = "Turnout Actions", Group="Actions",  Description = "Turnouts to change when ths turnout changes")]
+    private TurnoutActions _turnoutActions = [];
+
+    [ObservableProperty] 
+    [property: EditableTurnoutProperty(Name = "Button Actions", Group="Actions",  Description = "Buttons to set when this turnout changes")]
+    private ButtonActions _buttonActions = [];
 
     [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
     [ObservableProperty] private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
@@ -126,11 +130,4 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         }
         OnPropertyChanged(nameof(TrackView));
     }
-
-}
-
-public partial class TrackTurnoutAction : ObservableObject {
-    [ObservableProperty] private TurnoutStateEnum _closedState = TurnoutStateEnum.Unknown; // State to set the item to when Thrown
-    [ObservableProperty] private string? _turnoutId; // ID of the item to do an action against
-    [ObservableProperty] private TurnoutStateEnum _thrownState = TurnoutStateEnum.Unknown; // State to set the item to when Closed
 }

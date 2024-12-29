@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using Plugin.Maui.Audio;
@@ -13,6 +14,14 @@ public abstract partial class TrackButtonBase : TrackBase {
     protected bool? ButtonState;
     protected TrackStyleImageEnum TrackImageEnum = TrackStyleImageEnum.Normal;
 
+    [ObservableProperty] 
+    [property: EditableTurnoutProperty(Name = "Turnout Actions", Group="Actions",  Description = "Turnouts to change when ths turnout changes")]
+    private TurnoutActions _turnoutActions = [];
+
+    [ObservableProperty] 
+    [property: EditableTurnoutProperty(Name = "Button Actions", Group="Actions",  Description = "Buttons to set when this turnout changes")]
+    private ButtonActions _buttonActions = [];
+    
     protected TrackButtonBase(Panel? parent = null) : base(parent) {
         PropertyChanged += OnPropertyChanged;
     }
