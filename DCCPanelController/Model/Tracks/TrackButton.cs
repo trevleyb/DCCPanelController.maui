@@ -27,10 +27,6 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
         AddImageSourceAndRotation(TrackStyleImageEnum.InActive, "ButtonCorner",(45, 0), (135, 90), (225, 180), (315, 270));
     }
 
-    protected override void PushButtonAction(bool isActive) {
-        Console.WriteLine($"Button '{Name}' is {(isActive ? "ACTIVE" : "INACTIVE")}");
-    }
-
     public ITrackPiece Clone(Panel parent) {
         return Clone<TrackButton>(parent);
     }

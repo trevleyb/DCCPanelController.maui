@@ -11,4 +11,5 @@ public partial class ButtonAction : ObservableObject {
 public enum ButtonStateEnum {
     InActive = 0,
     Active = 1,
+    Unknown = 2
 }

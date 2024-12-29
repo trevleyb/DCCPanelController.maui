@@ -26,28 +26,30 @@
                     Margin="0,5,0,15" />
 
                 <StackLayout Padding="10" Margin="10">
-                    <Grid ColumnDefinitions="100,300" RowDefinitions="auto,auto">
-                        <Label Grid.Column="0" Grid.Row="0" VerticalOptions="Center" Text="System Name:" />
-                        <Entry Grid.Column="1" Grid.Row="0" VerticalOptions="Center" Text="{Binding SystemName }" />
-                        <Label Grid.Column="0" Grid.Row="2" VerticalOptions="Center" Text="User Name:" />
-                        <Entry Grid.Column="1" Grid.Row="2" VerticalOptions="Center" Text="{Binding UserName}" />
+                    <Grid ColumnDefinitions="120,300" RowDefinitions="auto,auto,auto,25,auto,auto">
+                        <Label Grid.Column="0" Grid.Row="0" HorizontalOptions="Start" VerticalOptions="Center" Text="System Name" />
+                        <Entry Grid.Column="1" Grid.Row="0" HorizontalOptions="Start" VerticalOptions="Center" WidthRequest="300" Text="{Binding SystemName }" />
+                        <Label Grid.Column="0" Grid.Row="1" HorizontalOptions="Start" VerticalOptions="Center" Text="User Name" />
+                        <Entry Grid.Column="1" Grid.Row="1" HorizontalOptions="Start" VerticalOptions="Center" WidthRequest="300" Text="{Binding UserName}" />
+                        <Label Grid.Column="0" Grid.Row="2" HorizontalOptions="Start" VerticalOptions="Center" Text="DCC Address" />
+                        <Entry Grid.Column="1" Grid.Row="2" HorizontalOptions="Start" VerticalOptions="Center" WidthRequest="100" Text="{Binding DccAddress}" />
+                        <Label Grid.Column="0" Grid.Row="4" HorizontalOptions="Start" VerticalOptions="Center" Text="Current State" Width="100" />
+                        <components:TurnoutStateControl
+                            Grid.Column="1" Grid.Row="4"
+                            HorizontalOptions="Start"
+                            Turnout="{Binding Turnout}"
+                            State="{Binding CurrentState}"
+                            StateChangedCommand="{Binding ToggleTurnoutStateCommand}"
+                            CanToggleState="True" />
+                        <Label Grid.Column="0" Grid.Row="5" HorizontalOptions="Start"  VerticalOptions="Center" Text="Default State" Width="100" />
+                        <components:TurnoutStateControl
+                            Grid.Column="1" Grid.Row="5"
+                            Turnout="{Binding Turnout}"
+                            HorizontalOptions="Start"
+                            State="{Binding DefaultState}"
+                            StateChangedCommand="{Binding ToggleTurnoutDefaultStateCommand}"
+                            CanToggleState="True" />
                     </Grid>
-
-                    <StackLayout Margin="0,10,0,10">
-                        <HorizontalStackLayout VerticalOptions="Center">
-                            <Label Text="Current State:" VerticalOptions="Center" Width="100" />
-                            <components:TurnoutStateControl Turnout="{Binding Turnout}"
-                                                            State="{Binding CurrentState}"
-                                                            StateChangedCommand="{Binding ToggleTurnoutStateCommand}"
-                                                            CanToggleState="True" />
-                        </HorizontalStackLayout>
-                        <HorizontalStackLayout VerticalOptions="Center">
-                            <Label Text="Default State:" VerticalOptions="Center" Width="100" />
-                            <components:TurnoutStateControl Turnout="{Binding Turnout}" State="{Binding DefaultState}"
-                                                            CanToggleState="True" />
-                        </HorizontalStackLayout>
-                    </StackLayout>
-
                     <StackLayout Margin="0,20,0,0" Orientation="Horizontal" HorizontalOptions="Center" Spacing="20">
                         <Button Text="Save" Command="{Binding SaveCommand}" />
                         <Button Text="Cancel" Command="{Binding CancelCommand}" />

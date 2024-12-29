@@ -44,7 +44,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
     [ObservableProperty] private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
 
-    private Turnout? _turnout;
+    [ObservableProperty] private Turnout? _turnout;
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
    
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
@@ -77,13 +77,29 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is nameof(TurnoutId) && _turnoutsService is not null) {
-            _turnout = TurnoutsService.GetTurnoutById(TurnoutId);
-            if (_turnout is not null) {
-                _turnout.PropertyChanged += TurnoutOnPropertyChanged;
+            if (Turnout is not null) Turnout.PropertyChanged -= TurnoutOnPropertyChanged;
+            Turnout = TurnoutsService.GetTurnoutById(TurnoutId);
+            if (Turnout is not null) {
+                Turnout.PropertyChanged += TurnoutOnPropertyChanged;
             }
         }
     }
 
+    public void SetTurnoutState(TurnoutStateEnum state) {
+        if (Turnout is { } turnout) {
+            turnout.State = turnout.State switch {
+                TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+                TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+                _                       => TurnoutStateEnum.Closed
+            };
+        }
+    }
+    
+    public void ExecTurnoutState(TurnoutStateEnum state) {
+        SetTurnoutState(state);
+        if (Turnout is {} turnout) ThrowTurnout(turnout, turnout.State);
+    }
+    
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is Turnout turnout) {
             TrackImageEnum = turnout.State switch {
@@ -92,7 +108,6 @@ public abstract partial class TrackTurnoutBase : TrackBase {
                 TurnoutStateEnum.Thrown  => TrackStyleImageEnum.Diverging,
                 _                        => TrackStyleImageEnum.Normal
             };
-
             OnPropertyChanged(nameof(TrackView));
         }
     }
@@ -104,29 +119,15 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
         }
         _clickSoundPlayer?.Play();
-
-        if (_turnout is null) {
+        if (Turnout is null) {
             TrackImageEnum = TrackImageEnum switch {
                 TrackStyleImageEnum.Diverging => TrackStyleImageEnum.Straight,
                 TrackStyleImageEnum.Straight  => TrackStyleImageEnum.Diverging,
                 TrackStyleImageEnum.Normal    =>TrackStyleImageEnum.Diverging,
-                _                         => TrackStyleImageEnum.Normal
+                _                             => TrackStyleImageEnum.Normal
             };
         } else {
-            switch (_turnout.State) {
-            case TurnoutStateEnum.Closed:
-                TrackImageEnum = TrackStyleImageEnum.Diverging;
-                ThrowTurnout(_turnout, TurnoutStateEnum.Thrown);
-                break;
-            case TurnoutStateEnum.Thrown or TurnoutStateEnum.Unknown:
-                TrackImageEnum = TrackStyleImageEnum.Straight;
-                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
-                break;
-            default:
-                TrackImageEnum = TrackStyleImageEnum.Normal;
-                ThrowTurnout(_turnout, TurnoutStateEnum.Closed);
-                break;
-            }
+            ExecTurnoutState(Turnout.State);    
         }
         OnPropertyChanged(nameof(TrackView));
     }

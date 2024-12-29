@@ -11,7 +11,7 @@ namespace DCCPanelController.Model.Tracks.Base;
 public abstract partial class TrackButtonBase : TrackBase {
 
     private IAudioPlayer? _clickSoundPlayer;
-    protected bool? ButtonState;
+    protected ButtonStateEnum ButtonState = ButtonStateEnum.Unknown;
     protected TrackStyleImageEnum TrackImageEnum = TrackStyleImageEnum.Normal;
 
     [ObservableProperty] 
@@ -26,22 +26,34 @@ public abstract partial class TrackButtonBase : TrackBase {
         PropertyChanged += OnPropertyChanged;
     }
 
+    public void SetButtonState(ButtonStateEnum state) {
+        ButtonState = state;
+        OnPropertyChanged(nameof(TrackView));
+    }
+
+    public void ExecButtonState(ButtonStateEnum state) {
+        SetButtonState(state);
+        // Actually Perform the Actions
+    }
+
+    public ButtonStateEnum ToggleButtonState => 
+         ButtonState switch {
+            ButtonStateEnum.Active   => ButtonStateEnum.InActive,
+            ButtonStateEnum.InActive => ButtonStateEnum.Active,
+            _                        => ButtonStateEnum.Active
+        };
+    
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
         }
         _clickSoundPlayer?.Play();
-
-        ButtonState ??= false;
-        ButtonState = !ButtonState;
-        TrackImageEnum  = (ButtonState ?? false) ? TrackStyleImageEnum.Active : TrackStyleImageEnum.InActive;
-        PushButtonAction(ButtonState ?? false);
+        ButtonState = ToggleButtonState;
+        ExecButtonState(ButtonState);
         OnPropertyChanged(nameof(TrackView));
     }
-
-    protected abstract void PushButtonAction(bool isActive); // ( Turnout turnout)
-
+    
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
@@ -70,9 +82,10 @@ public abstract partial class TrackButtonBase : TrackBase {
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         // Add code to determine if the state of the button has changed
         TrackImageEnum = ButtonState switch {
-            true  => TrackStyleImageEnum.Active,
-            false => TrackStyleImageEnum.InActive,
-            _     => TrackStyleImageEnum.Normal
+            ButtonStateEnum.Unknown  => TrackStyleImageEnum.Normal,
+            ButtonStateEnum.Active   => TrackStyleImageEnum.Active,
+            ButtonStateEnum.InActive => TrackStyleImageEnum.InActive,
+            _                        => TrackStyleImageEnum.Normal
         };
     }
 }

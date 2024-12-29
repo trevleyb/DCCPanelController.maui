@@ -19,6 +19,9 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     [ObservableProperty] [property: EditableIntProperty(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
     private int _imageHeight = 2;
     
+    [ObservableProperty] [property: EditableBoolProperty(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
+    private bool _keepAspectRatio = true;
+
     public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
     
     protected override void Setup() {
@@ -40,9 +43,10 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
         
         var image = new Image {
             Source = ImageHelper.ImageFromBase64(TrackImageSource),
-            HorizontalOptions = LayoutOptions.Center,
-            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
             ZIndex = Layer,
+            Aspect = KeepAspectRatio ? Aspect.AspectFit : Aspect.Fill,
             RotationX = TrackRotation,
             InputTransparent = passthrough,
             WidthRequest = gridSize * MaxGridWidth,
@@ -51,8 +55,8 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
         return (IView)image;
     }
 
-    private int MaxGridWidth => (Parent is not null) ? Width <= Parent.Cols - X ? Width : Parent.Cols - X : Width;
-    private int MaxGridHeight => (Parent is not null) ? Height <= Parent.Rows - Y ? Height : Parent.Rows - Y : Height;
+    private int MaxGridWidth => (Parent is not null) ? ImageWidth <= Parent.Cols - X ? ImageWidth : Parent.Cols - X : ImageWidth;
+    private int MaxGridHeight => (Parent is not null) ? ImageHeight <= Parent.Rows - Y ? ImageHeight : Parent.Rows - Y : ImageHeight;
 
     public ITrackPiece Clone(Panel parent) {
         return Clone<TrackImage>(parent);

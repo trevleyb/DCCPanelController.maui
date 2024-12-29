@@ -13,11 +13,13 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
 
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
+    [ObservableProperty] private int? _dccAddress;
 
     public TurnoutsEditViewModel(Turnout turnout) {
         Turnout = turnout;
         SystemName = Turnout.Id ?? "NT001";
         UserName = Turnout.Name ?? "New Turnout";
+        DccAddress = Turnout.DccAddress;
         CurrentState = Turnout.State;
         DefaultState = Turnout.Default;
         IsEditable = Turnout.IsEditable;
@@ -40,12 +42,12 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [RelayCommand]
     private async Task ToggleTurnoutDefaultStateAsync() {
         // DefaultState = DefaultState switch {
-        //     TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-        //     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-        //     _                       => TurnoutStateEnum.Closed
+        //      TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+        //      TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+        //      _                       => TurnoutStateEnum.Closed
         // };
-        OnPropertyChanged(nameof(DefaultState));
-        OnPropertyChanged(nameof(Turnout));
+        // OnPropertyChanged(nameof(DefaultState));
+        // OnPropertyChanged(nameof(Turnout));
     }
 
     [RelayCommand]
@@ -54,6 +56,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
             Turnout.Id = SystemName;
             Turnout.Name = UserName;
             Turnout.Default = DefaultState;
+            Turnout.DccAddress = DccAddress;
             OnSaveCompleted?.Invoke(Turnout);
             CloseRequested?.Invoke(Turnout, EventArgs.Empty);
         }
