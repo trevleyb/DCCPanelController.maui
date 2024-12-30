@@ -18,7 +18,7 @@ public class JmriClienttestsLive {
 
         [SetUp]
         public void SetUp() {
-            // Setup a new JmriClient for each test
+            // Set up a new JmriClient for each test
             _client = new JmriClient(JmriUrl);
         }
 
