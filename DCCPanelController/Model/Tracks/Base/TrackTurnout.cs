@@ -102,7 +102,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is Turnout turnout) {
-            TrackImageEnum = turnout.State switch {
+            TrackImageEnum = GetCurrentTurnoutState switch {
                 TurnoutStateEnum.Unknown => TrackStyleImageEnum.Normal,
                 TurnoutStateEnum.Closed  => TrackStyleImageEnum.Straight,
                 TurnoutStateEnum.Thrown  => TrackStyleImageEnum.Diverging,
@@ -111,7 +111,15 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             OnPropertyChanged(nameof(TrackView));
         }
     }
-    
+
+    private TurnoutStateEnum GetCurrentTurnoutState => 
+        Turnout?.State ?? 
+        (TrackImageEnum switch {
+            TrackStyleImageEnum.Straight  => TurnoutStateEnum.Closed,
+            TrackStyleImageEnum.Diverging => TurnoutStateEnum.Thrown,
+            _                             => TurnoutStateEnum.Unknown
+        });
+
     private IAudioPlayer? _clickSoundPlayer;
     public void Clicked() {
         if (_clickSoundPlayer is null) {
@@ -119,6 +127,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
         }
         _clickSoundPlayer?.Play();
+        
         if (Turnout is null) {
             TrackImageEnum = TrackImageEnum switch {
                 TrackStyleImageEnum.Diverging => TrackStyleImageEnum.Straight,
@@ -127,7 +136,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
                 _                             => TrackStyleImageEnum.Normal
             };
         } else {
-            ExecTurnoutState(Turnout.State);    
+            ExecTurnoutState(Turnout.State);
+            if (Parent is not null) {
+                ButtonActions.ApplyButtonActionsToPanel(Parent, Turnout.State);
+                TurnoutActions.ApplyTurnoutActionsToPanel(Parent, Turnout.State);
+            }
         }
         OnPropertyChanged(nameof(TrackView));
     }

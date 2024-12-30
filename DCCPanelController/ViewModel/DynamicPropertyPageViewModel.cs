@@ -9,7 +9,7 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services.NavigationService;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.Components;
-using Maui.FreakyControls;
+using Microsoft.Maui.Controls;
 using Switch = Microsoft.Maui.Controls.Switch;
 
 namespace DCCPanelController.ViewModel;
@@ -314,7 +314,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     private ColorGridDropdown CreateColor(EditablePropertyDetails value) {
         var cell = new ColorGridDropdown() { WidthRequest = 100, HeightRequest = 30 };
-        cell.SetBinding(ColorGridDropdown.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        cell.SetBinding((BindableProperty)ColorGridDropdown.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
 
@@ -332,23 +332,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         };
     }
 
-    public IView CreateDropDownForEnums<T>(string name, object source, string fieldName) where T : struct, Enum {
-        var items = Enum.GetValues<T>().Select(x => x.ToString()).ToList();
-        var picker = new FreakyPicker() {
-            Title = name,
-            FontAttributes = FontAttributes.Bold,
-            FontSize = 15,
-            ItemsSource = items,
-            TextColor = Colors.Black,
-            TitleColor= Colors.LightGray
-        };
-        picker.SelectedIndexChanged += (s, e) => {
-            PropertyHelper.SetEnumPropertyValue(source, fieldName,items[picker.SelectedIndex]);
-        };
-        picker.SelectedIndex = PropertyHelper.GetEnumValueIndex(source, fieldName);
-        return picker;
-    }
-    
     public StackLayout CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum { 
         if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));

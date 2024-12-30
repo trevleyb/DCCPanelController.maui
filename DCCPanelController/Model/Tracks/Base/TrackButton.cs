@@ -33,7 +33,10 @@ public abstract partial class TrackButtonBase : TrackBase {
 
     public void ExecButtonState(ButtonStateEnum state) {
         SetButtonState(state);
-        // Actually Perform the Actions
+        if (Parent is not null) {
+            ButtonActions.ApplyButtonActionsToPanel(Parent,state);
+            TurnoutActions.ApplyTurnoutActionsToPanel(Parent,state);
+        }
     }
 
     public ButtonStateEnum ToggleButtonState => 

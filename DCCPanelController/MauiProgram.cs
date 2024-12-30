@@ -1,11 +1,15 @@
-﻿using CommunityToolkit.Maui;
+﻿using System;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Services;
 using DCCPanelController.Services.NavigationService;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
-using Maui.FreakyControls.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls;
+using Microsoft.Maui.Controls.Hosting;
+using Microsoft.Maui.Hosting;
 
 namespace DCCPanelController;
 
@@ -16,7 +20,6 @@ public static class MauiProgram {
             fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
             fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
         })
-               .InitializeFreakyControls(false, false)
                .UseMauiCommunityToolkit()
                .UseMauiCommunityToolkitMarkup()
                .UseMauiCommunityToolkitMediaElement();

@@ -4,8 +4,8 @@ namespace DCCPanelController.Model;
 
 public partial class ButtonAction : ObservableObject {
     [ObservableProperty] private Guid _id;
-    [ObservableProperty] private ButtonStateEnum _whenOn;
-    [ObservableProperty] private ButtonStateEnum _whenOff;
+    [ObservableProperty] private ButtonStateEnum _whenActiveOrClosed;
+    [ObservableProperty] private ButtonStateEnum _whenInactiveOrThrown;
 }
 
 public enum ButtonStateEnum {
