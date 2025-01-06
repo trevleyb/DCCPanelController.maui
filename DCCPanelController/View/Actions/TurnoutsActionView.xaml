@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DCCPanelController.View.Actions.TurnoutActionsView"
+             x:DataType="actions:TurnoutActionsView"
+             x:Name="TurnoutActionView"
+             xmlns:model="clr-namespace:DCCPanelController.Model"
+             xmlns:actions="clr-namespace:DCCPanelController.View.Actions">
+    
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill" RowDefinitions="*,*">
+        <!-- Section Title -->
+        <Grid ColumnDefinitions="*,auto" Grid.Row="0">
+            <Label Grid.Column="0" Text="Turnout Actions" Style="{StaticResource MediumLabel}" />
+            <ImageButton Grid.Column="1" Source="plus_circle.png" Margin="0,-15,20,0" Aspect="Center" WidthRequest="25" HeightRequest="25"/>
+        </Grid>
+
+        <!-- Turnout Actions Table -->
+        <ScrollView Grid.Row="1">
+        <CollectionView VerticalOptions="Fill" ItemsSource="{Binding TurnoutActions}" Grid.Row="1"  Margin="0,-10,0,0">
+            <CollectionView.Header>
+                <HorizontalStackLayout Padding="10">
+                    <Label WidthRequest="25"/>
+                    <Label WidthRequest="250" TextColor="{StaticResource Primary}" Text="Turnout ID" FontAttributes="Bold" />
+                    <Label WidthRequest="100" TextColor="{StaticResource Primary}" Text="{Binding StateLabelClosed}" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label WidthRequest="100" TextColor="{StaticResource Primary}" Text="{Binding StateLabelThrown}" FontAttributes="Bold" HorizontalOptions="Center" />
+                </HorizontalStackLayout>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:TurnoutAction">
+                    <HorizontalStackLayout Padding="10">
+                        <Label Text="sss"></Label>
+                    </HorizontalStackLayout>
+                    
+                    <!--
+                    <HorizontalStackLayout Padding="10">
+                        <ImageButton Source="minus_circle.png" Margin="0,0,0,0" Aspect="Center" WidthRequest="25" HeightRequest="25"/>
+                        <Label Text="sss"></Label>
+                        <Entry WidthRequest="200" Text="{Binding Id}" />
+                        <Label WidthRequest="75" Text="{Binding WhenClosedOrActive}" />
+                        <Label WidthRequest="75" Text="{Binding WhenThrownOrInActive}" />
+                        <HorizontalStackLayout Spacing="5" x:DataType="actions:TurnoutActionsView" >
+                            <Button Text="Delete" Command="{Binding Path=RemoveTurnoutActionCommand, Source={x:Reference TurnoutActionView}}" CommandParameter="{Binding}" />
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                    -->
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        </ScrollView>
+    </Grid>
+</ContentView>

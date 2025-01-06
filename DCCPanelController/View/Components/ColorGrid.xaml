@@ -30,7 +30,10 @@
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="helpers:ColorOption">
-                            <BoxView Margin="10" Color="{Binding Color}" Height="20" Width="20" HeightRequest="20"  WidthRequest="20" />
+                            <Grid Margin="10" Padding="0" Height="20" Width="20" HeightRequest="20"  WidthRequest="20">
+                                <BoxView Color="{Binding Color}" HorizontalOptions="Fill" VerticalOptions="Fill"/>
+                                <Label Padding="0" Margin="-10" Text="{Binding Name}" FontSize="8" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>

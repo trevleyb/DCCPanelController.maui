@@ -5,9 +5,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Helpers.EditableProperties;
+using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services.NavigationService;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.Actions;
 using DCCPanelController.View.Components;
 using Microsoft.Maui.Controls;
 using Switch = Microsoft.Maui.Controls.Switch;
@@ -18,7 +20,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     [ObservableProperty] private string _propertyName;
 
-    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, StackLayout tableView) {
+    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, VerticalStackLayout tableView) {
         PropertyName = propertyName ?? $"{trackPiece.Name ?? "Track"}";
         BuildProperties(tableView, trackPiece);
         PropertyChanged += OnPropertyChanged;
@@ -28,7 +30,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
     }
 
-    private void BuildProperties(StackLayout tableView, object obj) {
+    private void BuildProperties(VerticalStackLayout tableView, object obj) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         tableView.Children.Clear();
         var isFirst = true;
@@ -76,18 +78,21 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         var groupCell = new HorizontalStackLayout() {
             Margin = new Thickness(0, 5, 0, 5),
         };
-        var label = new Label() {
-            Text = value.Attribute.Name,
-            TextColor = Colors.Black,
-            FontSize = 15,
-            LineBreakMode = LineBreakMode.MiddleTruncation,
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Center,
-            Margin = new Thickness(0, 5, 0, 5),
-            WidthRequest = 150
-        };
+
+        if (!string.IsNullOrWhiteSpace(value.Attribute.Name)) {
+            var label = new Label() {
+                Text = value.Attribute.Name,
+                TextColor = Colors.Black,
+                FontSize = 15,
+                LineBreakMode = LineBreakMode.MiddleTruncation,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Center,
+                Margin = new Thickness(0, 5, 0, 5),
+                WidthRequest = 150
+            };
+            groupCell.Children.Add(label);
+        }
         var cell = CreateDataEntry(value);
-        groupCell.Children.Add(label);
         groupCell.Children.Add(cell);
         return groupCell;
     }
@@ -95,6 +100,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private IView CreateDataEntry(EditablePropertyDetails value) {
         try {
             return value.Attribute switch {
+                EditableActionsPropertyAttribute     => CreateActions(value),
                 EditableBoolPropertyAttribute        => CreateBool(value),
                 EditableColorPropertyAttribute       => CreateColor(value),
                 EditableDatePropertyAttribute        => CreateDate(value),
@@ -221,6 +227,22 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         }
     }
 
+    private IView CreateActions(EditablePropertyDetails value) {
+        if (value.Attribute is EditableActionsPropertyAttribute attr) {
+            var prop = value.Info.GetValue(value.Owner);
+            if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions)  {
+                Console.WriteLine("Turnout Actions");
+                return new TurnoutActionsView(turnoutActions,attr.IsTurnoutContext);
+            } 
+            if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
+                Console.WriteLine("Button Actions");
+                return new ButtonActionsView(buttonActions,attr.IsButtonContext);
+            }
+        }
+        return CreateUndefined(value);
+    }
+
+    
     private IView CreateTurnout(EditablePropertyDetails value) {
         return CreateUndefined(value,"Turnout");
         //var cell = new Switch { BindingContext = value.Owner };
@@ -314,7 +336,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     private ColorGridDropdown CreateColor(EditablePropertyDetails value) {
         var cell = new ColorGridDropdown() { WidthRequest = 100, HeightRequest = 30 };
-        cell.SetBinding((BindableProperty)ColorGridDropdown.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+        cell.SetBinding((BindableProperty)ColorPickerButton.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
 

@@ -43,6 +43,7 @@ public static class PredefinedColors {
         return _allColors.FirstOrDefault(color => color.Hex == value.ToHex()) ?? Default;
     }
     
+    public static ColorOption None => new() { Name = "None", Color = Colors.White, ContrastColor = Colors.Black };
     public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
 
     public static ReadOnlyCollection<ColorOption> AllColors() {
@@ -66,6 +67,7 @@ public static class PredefinedColors {
                 }
             }
         }
+        colors.Add(new ColorOption { Name = "None", Color = Colors.White, ContrastColor = Colors.Black });
         return new ReadOnlyCollection<ColorOption>(colors);
     }
 

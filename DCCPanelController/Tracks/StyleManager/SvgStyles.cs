@@ -70,7 +70,7 @@ public static class SvgStyles {
         }
         return style.Build();
     }
-
+    
     /// <summary>
     ///     Apply an additional attributeEnum to a Style such as marking it
     ///     hidden, or Occupied.

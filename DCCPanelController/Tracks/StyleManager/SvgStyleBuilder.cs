@@ -103,7 +103,7 @@ public class SvgElementBuilder(string name) {
     }
 
     public SvgElementBuilder WithColor(Color color) {
-        return WithColor(color.ToArgbHex());
+        return WithColor(color?.ToArgbHex() ?? Colors.Black.ToArgbHex());
     }
 
     public SvgElementBuilder WithColor(string color) {

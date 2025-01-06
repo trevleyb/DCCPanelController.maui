@@ -137,13 +137,13 @@
                             <HorizontalStackLayout>
                             <HorizontalStackLayout Margin="0,5,20,5">
                                 <Label WidthRequest="120" Text="Background" VerticalOptions="Center" />
-                                <components:ColorGridDropdown WidthRequest="100" HeightRequest="30" 
+                                <components:ColorPickerButton WidthRequest="100" HeightRequest="30" 
                                                           SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.BackgroundColor, Mode=TwoWay}"
                                                           VerticalOptions="Center" />
                             </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label WidthRequest="120" Text="Track Border" VerticalOptions="Center" />
-                                    <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                    <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                               SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.BorderColor, Mode=TwoWay}"
                                                               VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -153,13 +153,13 @@
                             <HorizontalStackLayout>
                             <HorizontalStackLayout Margin="0,5,20,5">
                             <Label WidthRequest="120" Text="MainLine Track" VerticalOptions="Center" />
-                            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                            <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                       SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.MainLineColor, Mode=TwoWay}"
                                                       VerticalOptions="Center" />
                             </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label WidthRequest="120" Text="BranchLine Track" VerticalOptions="Center" />
-                                    <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                    <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                               SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.BranchLineColor, Mode=TwoWay}"
                                                               VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -168,13 +168,13 @@
                             <HorizontalStackLayout>
                             <HorizontalStackLayout Margin="0,5,20,5">
                             <Label WidthRequest="120"  Text="Diverging Track" VerticalOptions="Center" />
-                            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                            <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                       SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.DivergingColor, Mode=TwoWay}"
                                                       VerticalOptions="Center" />
                             </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label WidthRequest="120" Text="Button Border" VerticalOptions="Center" />
-                                    <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                    <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                               SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ButtonBorder, Mode=TwoWay}"
                                                               VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -183,13 +183,13 @@
                             <HorizontalStackLayout>
                             <HorizontalStackLayout Margin="0,5,20,5">
                             <Label WidthRequest="120" Text="Button(On)" VerticalOptions="Center" />
-                            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                            <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                       SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ButtonOnColor, Mode=TwoWay}"
                                                       VerticalOptions="Center" />
                             </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label WidthRequest="120" Text="Button(off)" VerticalOptions="Center" />
-                                    <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                    <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                               SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ButtonOffColor, Mode=TwoWay}"
                                                               VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -198,13 +198,13 @@
                             <HorizontalStackLayout>
                             <HorizontalStackLayout Margin="0,5,20,5">
                             <Label WidthRequest="120" Text="Occupied Track" VerticalOptions="Center" />
-                            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                            <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                       SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.OccupiedColor, Mode=TwoWay}"
                                                       VerticalOptions="Center" />
                             </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label WidthRequest="120" Text="Hidden Track" VerticalOptions="Center" />
-                                    <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                    <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                               SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.HiddenColor, Mode=TwoWay}"
                                                               VerticalOptions="Center" />
                                 </HorizontalStackLayout>
@@ -213,13 +213,13 @@
                             <HorizontalStackLayout>
                             <HorizontalStackLayout Margin="0,5,20,5">
                             <Label WidthRequest="120" Text="Terminator" VerticalOptions="Center" />
-                            <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                            <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                       SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.TerminatorColor, Mode=TwoWay}"
                                                       VerticalOptions="Center" />
                             </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label WidthRequest="120" Text="Continuation" VerticalOptions="Center" />
-                                    <components:ColorGridDropdown HeightRequest="30" WidthRequest="100"
+                                    <components:ColorPickerButton HeightRequest="30" WidthRequest="100"
                                                               SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type model:Panel}}, Path=Defaults.ContinuationColor, Mode=TwoWay}"
                                                               VerticalOptions="Center" />
                                 </HorizontalStackLayout>

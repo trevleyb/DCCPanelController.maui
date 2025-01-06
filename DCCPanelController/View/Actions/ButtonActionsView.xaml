@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DCCPanelController.View.Actions.ButtonActionsView"
+             x:DataType="actions:ButtonActionsView"
+             x:Name="ButtonActionView"
+             xmlns:model="clr-namespace:DCCPanelController.Model"
+             xmlns:actions="clr-namespace:DCCPanelController.View.Actions">
+    <VerticalStackLayout Padding="10" Spacing="15" >
+        <!-- Section Title -->
+        <Label Text="Button Actions" FontAttributes="Bold" FontSize="Medium"/>
+        
+        <!-- Button Actions Table -->
+        <CollectionView ItemsSource="{Binding ButtonActions}">
+            <CollectionView.Header>
+                <Grid ColumnDefinitions="2*,*,*,*">
+                    <Label Text="Button ID" FontAttributes="Bold" />
+                    <Label Text="{Binding StateLabelActive}" FontAttributes="Bold" />
+                    <Label Text="{Binding StateLabelInactive}" FontAttributes="Bold" />
+                    <Label Text="Actions" FontAttributes="Bold" />
+                </Grid>
+            </CollectionView.Header>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:ButtonAction">
+                    <Grid ColumnDefinitions="2*,*,*,*" Padding="5">
+                        <Label Text="{Binding Id}" />
+                        <Label Text="{Binding WhenActiveOrClosed}" />
+                        <Label Text="{Binding WhenInactiveOrThrown}" />
+                        <HorizontalStackLayout Spacing="5" x:DataType="actions:ButtonActionsView">
+                            <Button Text="Edit" Command="{Binding Path=EditButtonActionCommand, Source={x:Reference ButtonActionView}}" CommandParameter="{Binding}" />
+                            <Button Text="Delete" Command="{Binding Path=RemoveButtonActionCommand, Source={x:Reference ButtonActionView}}" CommandParameter="{Binding}" />
+                        </HorizontalStackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
+        <!-- Add Button Action -->
+        <Button Text="Add Button" Command="{Binding AddButtonActionCommand}" WidthRequest="100" HorizontalOptions="Center"/>
+    </VerticalStackLayout>
+</ContentView>

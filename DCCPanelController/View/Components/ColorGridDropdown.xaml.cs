@@ -8,12 +8,16 @@ namespace DCCPanelController.View.Components;
 
 public partial class ColorGridDropdown : ContentView {
     private ColorOption _selectedColorOption = PredefinedColors.Default;
-    
+
     // Property for the currently selected color
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White, propertyChanged: ColorPropertyChanged);
 
     private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = bindable as ColorGridDropdown;
+        //if (bindable is ColorGridDropdown control)
+        //    if (newvalue is Color { } color) {
+        //        control._selectedColorOption = PredefinedColors.FindColor(color) ?? PredefinedColors.None;
+        //    } 
+        //    else control._selectedColorOption = PredefinedColors.None;
     }
 
     public ColorGridDropdown() {
@@ -24,11 +28,17 @@ public partial class ColorGridDropdown : ContentView {
 
     public ICommand ShowDropdownCommand { get; set; }
 
-    public Color SelectedColor {
+    public Color SelectedColorContrast => _selectedColorOption.ContrastColor;
+    public string SelectedColorName => _selectedColorOption.Name ?? "None";
+    
+    public Color? SelectedColor {
         get => (Color)GetValue(SelectedColorProperty);
         set {
-            SetValue(SelectedColorProperty, value);
+            _selectedColorOption = value != null ? PredefinedColors.FindColor(value) : PredefinedColors.None;
+            SetValue(SelectedColorProperty, _selectedColorOption.Color);
             OnPropertyChanged(nameof(SelectedColorProperty)); // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(SelectedColorName));     // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(SelectedColorContrast));     // Update DisplayText when the color changes
         }
     }
 
@@ -39,7 +49,7 @@ public partial class ColorGridDropdown : ContentView {
             var result = await mainpage.ShowPopupAsync(popup);
             if (result is ColorOption selectedColor) {
                 SelectedColor = selectedColor.Color;
-            }
+            } else SelectedColor = null;
         }
     }
 }

@@ -15,6 +15,7 @@ public partial class ColorGrid : Popup {
 
     private void OnColorSelected(object sender, SelectionChangedEventArgs e) {
         var selected = (e.CurrentSelection.Count > 0 ? e.CurrentSelection[0] : null) as ColorOption;
+        if (selected is {Name: "None"}) selected = null;        
         Close(selected);
     }
 }

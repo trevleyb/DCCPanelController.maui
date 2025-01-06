@@ -29,8 +29,8 @@
                     </Grid>
                     
                         <!-- <TableView x:Name="PropertyContainer" HasUnevenRows="True" /> -->
-                    <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Always">
-                        <StackLayout x:Name="PropertyContainer" Margin = "10,20,0,00"/>
+                    <ScrollView Grid.Row="1" VerticalScrollBarVisibility="Always" HorizontalOptions="Fill">
+                        <VerticalStackLayout x:Name="PropertyContainer" Margin="10,20,0,00" HorizontalOptions="Fill"/>
                     </ScrollView>
                         
                     <Button Grid.Row="2" 

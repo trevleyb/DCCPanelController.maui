@@ -29,6 +29,10 @@ public abstract partial class TrackContinuationBase : TrackBase {
     [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline })]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
+    [ObservableProperty]
+    [property: EditableColorProperty(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
+    private Color? _trackColor = null;
+    
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
@@ -49,6 +53,11 @@ public abstract partial class TrackContinuationBase : TrackBase {
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackImageEnum, Parent?.Defaults);
+        if (TrackColor is not null) {
+            style = new SvgStyleBuilder()
+                    .AddExistingStyle(style)
+                    .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor)).Build();
+        }        
         if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden,Parent?.Defaults);
         if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied,Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);

@@ -34,15 +34,19 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     [ObservableProperty] 
-    [property: EditableTurnoutProperty(Name = "Turnout Actions", Group="Actions",  Description = "Turnouts to change when ths turnout changes")]
+    [property: EditableActionsProperty(IsTurnoutContext = true, Group="Actions",  Description = "Turnouts to change when ths turnout changes")]
     private TurnoutActions _turnoutActions = [];
 
     [ObservableProperty] 
-    [property: EditableTurnoutProperty(Name = "Button Actions", Group="Actions",  Description = "Buttons to set when this turnout changes")]
+    [property: EditableActionsProperty(IsTurnoutContext = true, Group="Actions",  Description = "Buttons to set when this turnout changes")]
     private ButtonActions _buttonActions = [];
 
     [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
     [ObservableProperty] private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
+    
+    [ObservableProperty]
+    [property: EditableColorProperty(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
+    private Color? _trackColor = null;
 
     [ObservableProperty] private Turnout? _turnout;
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
@@ -69,6 +73,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackImageEnum, Parent?.Defaults);
+        if (TrackColor is not null) {
+            style = new SvgStyleBuilder()
+                    .AddExistingStyle(style)
+                    .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor)).Build();
+        }        
         if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden,Parent?.Defaults);
         if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied,Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
