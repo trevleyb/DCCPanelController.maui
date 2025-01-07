@@ -18,8 +18,33 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         InitializeComponent();
         _viewModel.SelectedPanel = (_viewModel.Panels.Count > 0) ? _viewModel.Panels[0] : null;
         SetSidePanelState(true);
+        
+        // Listen to size changes to adjust the visual state
+        this.SizeChanged += PanelsViewerPage_SizeChanged;
     }
+ 
+    private void PanelsViewerPage_SizeChanged(object? sender, EventArgs e) {
+        // Determine whether to use "Thin" or "Wide" mode
+        var width = this.Width;
+        var height = this.Height;
+        var isPortraitMode = width < height; // Portrait
+        var isThinWidth = width < 600;       // Thin screen threshold
 
+        _viewModel.IsThinMode = isThinWidth || isPortraitMode;
+        
+        // Apply "Thin" mode for iPhone Portrait Mode or Thin MacCatalyst Windows
+        if (DeviceInfo.Platform == DevicePlatform.iOS && _viewModel.IsThinMode) {
+            LeftPanelColumn.Width = new GridLength(1, GridUnitType.Star);
+            RightPanelColumn.Width = new GridLength(0);
+            SidePanelButton.IsEnabled = false;
+        }
+        else {
+            LeftPanelColumn.Width = new GridLength(_viewModel.SidePanelWidth);
+            RightPanelColumn.Width = new GridLength(1, GridUnitType.Star);
+            SidePanelButton.IsEnabled = true;
+        }
+    }
+    
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
