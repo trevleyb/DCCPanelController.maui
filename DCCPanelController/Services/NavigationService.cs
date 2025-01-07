@@ -2,12 +2,12 @@ using DCCPanelController.Model;
 using DCCPanelController.View;
 using DCCPanelController.View.PropertPages;
 
-namespace DCCPanelController.Services.NavigationService;
+namespace DCCPanelController.Services;
 
 public class NavigationService(IServiceProvider serviceProvider) {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
-    public async Task<bool> DisplayOKAlertAsync(string title, string message) {
+    public async Task<bool> DisplayOkAlertAsync(string title, string message) {
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
         return await mainPage.DisplayAlert(title, message, null, "OK");
@@ -42,7 +42,7 @@ public class NavigationService(IServiceProvider serviceProvider) {
         var tcs = new TaskCompletionSource();
         ((IPropertyPage)page).CloseRequested += (sender, e) => {
             tcs.SetResult();
-            mainPage.Navigation.PopModalAsync();
+            mainPage.Navigation.PopModalAsync(true);
         };
         await mainPage.Navigation.PushModalAsync(page,true);
         await tcs.Task;
@@ -53,8 +53,6 @@ public class NavigationService(IServiceProvider serviceProvider) {
 
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
-
-        //var popup = new TurnoutsEditView(turnout);
 
         var editPage = new TurnoutsEditView(turnout);
         var tcs = new TaskCompletionSource<Turnout?>();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
-    Title="{Binding SelectedPanel.Name, FallbackValue='Unknown'}"
+    Title="{Binding SelectedPanel.Name, FallbackValue='DCC Panel Controller'}"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="viewModel:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -55,29 +55,21 @@
                         </CarouselView.ItemsSource>
 
                         <CarouselView.EmptyView>
-                            <StackLayout
-                                HorizontalOptions="CenterAndExpand"
-                                Padding="20"
-                                VerticalOptions="CenterAndExpand">
+                            <StackLayout Margin="20" HorizontalOptions="Center" VerticalOptions="Center">
                                 <StackLayout
-                                    HorizontalOptions="CenterAndExpand"
-                                    Padding="20"
-                                    VerticalOptions="CenterAndExpand">
+                                    HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
                                     <Label
+                                        Margin="0,0,0,20"
                                         FontAttributes="Bold"
                                         HorizontalOptions="Center"
                                         Text="Welcome to the DCC Model Layout Panel Controller" />
-                                    <Label HorizontalOptions="Center" Text="  " />
-                                    <Label HorizontalOptions="Center"
-                                           Text="This page will populate once you have created panels and turnout control. " />
-                                    <Label HorizontalOptions="Center"
+                                    <Label HorizontalOptions="Start" Margin="20,0,20,20"
+                                           Text="This page will populate once you have created panels. " />
+                                    <Label HorizontalOptions="Start" Margin="20,0,20,20"
                                            Text="To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
-                                    <Label HorizontalOptions="Center" Text="  " />
                                 </StackLayout>
-                                <StackLayout
-                                    HorizontalOptions="CenterAndExpand"
-                                    Padding="20"
-                                    VerticalOptions="CenterAndExpand">
+                                
+                                <StackLayout HorizontalOptions="Center" Padding="20" VerticalOptions="End">
                                     <Button
                                         Clicked="ButtonInstructions_OnClicked"
                                         Margin="0,10,0,10"

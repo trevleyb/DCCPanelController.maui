@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.Services.NavigationService;
+using DCCPanelController.Services;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.ViewModel;

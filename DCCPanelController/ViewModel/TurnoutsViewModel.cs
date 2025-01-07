@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
-using DCCPanelController.Services.NavigationService;
 
 namespace DCCPanelController.ViewModel;
 

@@ -10,7 +10,7 @@
     xmlns:colorPicker="clr-namespace:Dynamensions.ColorPicker.Maui;assembly=Dynamensions.ColorPicker.Maui"
     xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components">
 
-    <StackLayout WidthRequest="300">
+    <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
         <Border Stroke="{StaticResource Primary}"
                 StrokeShape="RoundRectangle 10,10,10,10"
                 StrokeThickness="3"
@@ -18,24 +18,26 @@
                 HorizontalOptions="Center"
                 VerticalOptions="Center">
 
-            <StackLayout Margin="10">
+            <StackLayout>
                 <Grid ColumnDefinitions="*,auto" HeightRequest="30" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
                     <Label TextColor="White"
                            Grid.Column="0" Style="{StaticResource LargeLabel}"
                            Text="Select a Color" VerticalOptions="Center" />
                 </Grid>
 
-                <colorPicker:ColorPicker NumberOfColors="32" 
-                                         Saturation="1" 
-                                         Brightness="1" 
-                                         Wrap="Wrap" 
-                                         IsSorted="False" 
-                                         IncludeBlack="True" 
-                                         IncludeWhite="True"
-                                         IncludeGrey="True"
-                                         SelectedColor="{Binding Path=SelectedColor}" />
+                <colorPicker:ColorPicker
+                    Margin="10"
+                    NumberOfColors="32" 
+                    Saturation="1" 
+                    Brightness="1" 
+                    Wrap="Wrap" 
+                    IsSorted="False" 
+                    IncludeBlack="True" 
+                    IncludeWhite="True"
+                    IncludeGrey="True"
+                    SelectedColor="{Binding Path=SelectedColor, Mode=TwoWay}" />
                 
-                <Button Text="Close" HorizontalOptions="Center" Style="{StaticResource ButtonOutline}" WidthRequest="80" Clicked="CloseOnSelected"/>
+                <Button Margin="0,10,0,10" Text="Close" HorizontalOptions="Center" Style="{StaticResource ButtonOutline}" WidthRequest="80" Clicked="CloseOnSelected"/>
             </StackLayout>
         </Border>
     </StackLayout>

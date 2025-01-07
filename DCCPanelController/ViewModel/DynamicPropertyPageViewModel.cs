@@ -7,7 +7,7 @@ using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.Services.NavigationService;
+using DCCPanelController.Services;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.Actions;
 using DCCPanelController.View.Components;
@@ -176,7 +176,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
             if (result == null) {
                 // Handle when the user cancels the file picker
-                await _navigationService.DisplayOKAlertAsync("Cancelled", "No file was selected.");
+                await _navigationService.DisplayOkAlertAsync("Cancelled", "No file was selected.");
                 return;
             }
 
@@ -192,7 +192,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             PropertyHelper.SetPropertyValue<string>(value.Owner, value.Info.Name, base64String);
         } catch (Exception ex) {
             // Handle any errors
-            await _navigationService.DisplayOKAlertAsync("Error", $"Unable to load Image: {ex.Message}");
+            await _navigationService.DisplayOkAlertAsync("Error", $"Unable to load Image: {ex.Message}");
         }
     }
 
@@ -206,7 +206,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
             if (result == null) {
                 // Handle when the user cancels the file picker
-                await _navigationService.DisplayOKAlertAsync("Cancelled", "No file was selected.");
+                await _navigationService.DisplayOkAlertAsync("Cancelled", "No file was selected.");
                 return;
             }
 
@@ -223,7 +223,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         }
         catch (Exception ex) {
             // Handle any errors
-            await _navigationService.DisplayOKAlertAsync("Error", $"Unable to load Image: {ex.Message}");
+            await _navigationService.DisplayOkAlertAsync("Error", $"Unable to load Image: {ex.Message}");
         }
     }
 

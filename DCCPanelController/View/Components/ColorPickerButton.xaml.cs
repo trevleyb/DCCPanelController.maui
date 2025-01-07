@@ -9,7 +9,11 @@ namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerButton : ContentView {
     // Property for the currently selected color
-    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White);
+    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: SelectedColorPropertyChanged);
+
+    private static void SelectedColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        var control = (ColorPickerButton)bindable;
+    }
 
     public ColorPickerButton() {
         InitializeComponent();
@@ -30,8 +34,8 @@ public partial class ColorPickerButton : ContentView {
         var popup = new ColorPicker(SelectedColor ?? Colors.White);
         if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
             var result = await mainpage.ShowPopupAsync(popup);
-            if (result is ColorOption selectedColor) {
-                SelectedColor = selectedColor.Color;
+            if (result is Color selectedColor) {
+                SelectedColor = selectedColor;
             }
         }
     }

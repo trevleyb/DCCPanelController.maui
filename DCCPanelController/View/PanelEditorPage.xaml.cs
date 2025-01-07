@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.Services.NavigationService;
+using DCCPanelController.Services;
 using DCCPanelController.View.PropertPages;
 using DCCPanelController.ViewModel;
 
