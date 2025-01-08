@@ -27,7 +27,7 @@
         <ToolbarItem Text="Expand" x:Name="SidePanelButton" IconImageSource="side_panel_close_filled.png"
                      Clicked="SidePanelExpander_OnClicked" IsEnabled="{Binding CanExpandCollapse}" />
     </ContentPage.ToolbarItems>
-    
+
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
@@ -91,13 +91,18 @@
                                         DragLeaveCommandParameter="{Binding}" />
                                 </StackLayout.GestureRecognizers>
                                 <Grid ColumnDefinitions="*,auto">
-                                    <Label Grid.Column="0" Text="{Binding Name}" Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
-                                    <Image Grid.Column="1" 
-                                           Source="chevron_right.png"
-                                           Margin="0,0,0,0" VerticalOptions="Center"
-                                           IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},Path=IsThinMode}" />
+                                    <Label Grid.Column="0" Text="{Binding Name}" Style="{StaticResource LargeLabel}"
+                                           TextColor="{StaticResource Primary}" />
+                                    <ImageButton Grid.Column="1"
+                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},
+                                                   x:DataType= viewModel:PanelsViewerViewModel, 
+                                                   Path=EditPanelCommand}"
+                                                 CommandParameter="{Binding}"
+                                                 Source="chevron_right.png"
+                                                 Margin="0,0,0,0" VerticalOptions="Center"
+                                                 IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}},Path=IsThinMode, x:DataType= viewModel:PanelsViewerViewModel}" />
                                 </Grid>
-                                <Label Text="{Binding Description}" Style="{StaticResource SmallLabel}"/>
+                                <Label Text="{Binding Description}" Style="{StaticResource SmallLabel}" />
                             </StackLayout>
                         </SwipeView>
                     </DataTemplate>
@@ -137,9 +142,9 @@
                 </Grid>
             </Grid>
         </Grid>
-        
+
     </ContentPage.Content>
- 
+
 </ContentPage>
 
 

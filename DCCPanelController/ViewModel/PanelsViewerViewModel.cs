@@ -117,7 +117,11 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private async Task SelectionChangedAsync() { }
+    private async Task SelectionChangedAsync() {
+        if (IsThinMode) {
+            await EditPanelAsync(SelectedPanel);
+        }
+    }
 
     [RelayCommand]
     private async Task DuplicatePanelAsync(Panel? panel = null) {

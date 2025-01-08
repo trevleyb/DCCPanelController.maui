@@ -30,7 +30,7 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         var isPortraitMode = width < height; // Portrait
         var isThinWidth = width < 600;       // Thin screen threshold
 
-        _viewModel.IsThinMode = isThinWidth || isPortraitMode;
+        _viewModel.IsThinMode = isThinWidth;// || isPortraitMode;
         
         // Apply "Thin" mode for iPhone Portrait Mode or Thin MacCatalyst Windows
         if (DeviceInfo.Platform == DevicePlatform.iOS && _viewModel.IsThinMode) {

@@ -334,8 +334,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return cell;    
     }
 
-    private ColorGridDropdown CreateColor(EditablePropertyDetails value) {
-        var cell = new ColorGridDropdown() { WidthRequest = 100, HeightRequest = 30 };
+    private ColorPickerButton CreateColor(EditablePropertyDetails value) {
+        var cell = new ColorPickerButton() { WidthRequest = 100, HeightRequest = 30 };
         cell.SetBinding((BindableProperty)ColorPickerButton.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         return cell;    
     }
