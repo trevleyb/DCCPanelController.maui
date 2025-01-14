@@ -232,11 +232,17 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             var prop = value.Info.GetValue(value.Owner);
             if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions)  {
                 Console.WriteLine("Turnout Actions");
-                return new TurnoutActionsView(turnoutActions,attr.IsTurnoutContext);
+                return new TurnoutActionsView(turnoutActions,attr.IsTurnoutContext) {
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                };
             } 
             if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
                 Console.WriteLine("Button Actions");
-                return new ButtonActionsView(buttonActions,attr.IsButtonContext);
+                return new ButtonActionsView(buttonActions,attr.IsButtonContext){
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                };
             }
         }
         return CreateUndefined(value);

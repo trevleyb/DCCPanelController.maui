@@ -13,9 +13,13 @@
                     StrokeThickness="3"
                     Background="White"
                     HorizontalOptions="Center"
-                    VerticalOptions="Center"
+                    VerticalOptions="Fill"
+                    >
+                    <!-- 
                     MaximumHeightRequest="500"
-                    WidthRequest="500">
+                    WidthRequest="500" 
+                    -->
+                    
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" /> <!-- Title block height -->

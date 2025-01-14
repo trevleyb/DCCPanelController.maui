@@ -4,8 +4,7 @@ using DCCPanelController.Model;
 
 namespace DCCPanelController.View.Actions;
 
-public partial class TurnoutActionsView : ContentView
-{
+public partial class TurnoutActionsView : ContentView {
     public ObservableCollection<TurnoutAction> TurnoutActions { get; init; }
     private bool IsTurnoutContext { get; set; }
 
@@ -15,7 +14,8 @@ public partial class TurnoutActionsView : ContentView
 
     public TurnoutActionsView(TurnoutActions actions, bool isTurnoutContext = true) {
         InitializeComponent();
-        TurnoutActions = actions;
+        TurnoutActions = [];
+        foreach (var action in actions) { TurnoutActions.Add(action);}
         IsTurnoutContext = isTurnoutContext;
         BindingContext = this;
         UpdateLabels();
