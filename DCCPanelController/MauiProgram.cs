@@ -1,6 +1,7 @@
 ﻿using System;
 using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
+using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
@@ -15,20 +16,23 @@ namespace DCCPanelController;
 public static class MauiProgram {
     public static MauiApp CreateMauiApp() {
         var builder = MauiApp.CreateBuilder();
-        builder.UseMauiApp<App>().ConfigureFonts(fonts => {
-            fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-            fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-        })
+        builder.UseMauiApp<App>()
+               .ConfigureFonts(fonts => {
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                })
+               .ConfigureMauiHandlers(handlers => { })
                .UseMauiCommunityToolkit()
                .UseMauiCommunityToolkitMarkup()
                .UseMauiCommunityToolkitMediaElement();
 
 #if DEBUG
         builder.Logging.AddDebug();
+        builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
         var services = builder.Services;
-
+        
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageTabbed>();
@@ -53,6 +57,7 @@ public static class MauiProgram {
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
+        LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
         return app;
     }
 
