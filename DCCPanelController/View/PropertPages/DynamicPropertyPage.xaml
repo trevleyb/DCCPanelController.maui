@@ -23,11 +23,11 @@
 
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" /> 
+                        <RowDefinition Height="Auto" />
                         <!--  Title block height  -->
-                        <RowDefinition Height="*" />    
+                        <RowDefinition Height="*" />
                         <!--  Scrollable content  -->
-                        <RowDefinition Height="Auto" /> 
+                        <RowDefinition Height="Auto" />
                         <!--  Button fixed at the bottom  -->
                     </Grid.RowDefinitions>
 

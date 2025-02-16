@@ -4,7 +4,8 @@
         <g id="Track_Unknown">
             <rect id="Rectangle" stroke-opacity="0.2509804" stroke="#979797" x="8.5" y="8.5" width="31"
                   height="31"></rect>
-            <text id="?" stroke="#000000" font-family="Inter-Regular, Inter" font-size="38" font-weight="normal" fill="#000000">
+            <text id="?" stroke="#000000" font-family="Inter-Regular, Inter" font-size="38" font-weight="normal"
+                  fill="#000000">
                 <tspan x="14" y="36">?</tspan>
             </text>
         </g>
