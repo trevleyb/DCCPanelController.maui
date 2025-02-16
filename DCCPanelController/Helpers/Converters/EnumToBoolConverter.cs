@@ -12,6 +12,7 @@ public class EnumToBoolConverter<T>(T enumValue) : IValueConverter where T : str
         if (value is bool and true) {
             return enumValue;
         }
+
         return Binding.DoNothing;
     }
 }

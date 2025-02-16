@@ -1,40 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DCCPanelController.View.Actions.TurnoutActionsView"
-             x:DataType="actions:TurnoutActionsView"
-             x:Name="TurnoutActionView"
-             xmlns:model="clr-namespace:DCCPanelController.Model"
-             xmlns:actions="clr-namespace:DCCPanelController.View.Actions"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+<ContentView
+    x:Class="DCCPanelController.View.Actions.TurnoutActionsView"
+    x:DataType="actions:TurnoutActionsView"
+    x:Name="TurnoutActionView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:actions="clr-namespace:DCCPanelController.View.Actions"
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-        <VerticalStackLayout Padding="10" Spacing="15" >            
-            <Grid ColumnDefinitions="*,auto">
-                <Label       Grid.Column="0" Text="Turnout Actions" Style="{StaticResource MediumLabel}" />
-                <ImageButton Grid.Column="1" Source="plus_circle.png" Margin="0,-25,20,0" Aspect="Center" WidthRequest="25" HeightRequest="25" Command="{Binding AddTurnoutActionCommand}" />
-            </Grid>
+    <VerticalStackLayout Padding="10" Spacing="15">
+        <Grid ColumnDefinitions="*,auto">
+            <Label
+                Grid.Column="0"
+                Style="{StaticResource MediumLabel}"
+                Text="Turnout Actions" />
+            <ImageButton
+                Aspect="Center"
+                Command="{Binding AddTurnoutActionCommand}"
+                Grid.Column="1"
+                HeightRequest="25"
+                Margin="0,-25,20,0"
+                Source="plus_circle.png"
+                WidthRequest="25" />
+        </Grid>
 
-            <!-- Turnout Actions Table -->
-                <CollectionView ItemsSource="{Binding TurnoutActions}" Margin="0,-10,0,0">
-                    <CollectionView.Header>
-                        <Grid ColumnDefinitions="25,2*,*,*">
-                            <Label Grid.Column="1" TextColor="{StaticResource Primary}" Text="Turnout ID" FontAttributes="Bold" />
-                            <Label Grid.Column="2" TextColor="{StaticResource Primary}" Text="{Binding StateLabelClosed}" FontAttributes="Bold" HorizontalOptions="Center" />
-                            <Label Grid.Column="3" TextColor="{StaticResource Primary}" Text="{Binding StateLabelThrown}" FontAttributes="Bold" HorizontalOptions="Center" />
-                        </Grid>
-                    </CollectionView.Header>
+        <!--  Turnout Actions Table  -->
+        <CollectionView ItemsSource="{Binding TurnoutActions}" Margin="0,-10,0,0">
+            <CollectionView.Header>
+                <Grid ColumnDefinitions="25,2*,*,*">
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="1"
+                        Text="Turnout ID"
+                        TextColor="{StaticResource Primary}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="2"
+                        HorizontalOptions="Center"
+                        Text="{Binding StateLabelClosed}"
+                        TextColor="{StaticResource Primary}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="3"
+                        HorizontalOptions="Center"
+                        Text="{Binding StateLabelThrown}"
+                        TextColor="{StaticResource Primary}" />
+                </Grid>
+            </CollectionView.Header>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="model:TurnoutAction">
-                            <Grid ColumnDefinitions="25,2*,*,*">
-                                <ImageButton Grid.Column="0" Source="minus_circle.png" Margin="0,0,0,0" />
-                                <Label Grid.Column="1" TextColor="{StaticResource Primary}" Text="{Binding Id}" />
-                                <Label Grid.Column="2" TextColor="{StaticResource Primary}" Text="{Binding WhenClosedOrActive}" />
-                                <Label Grid.Column="3" TextColor="{StaticResource Primary}" Text="{Binding WhenThrownOrInActive}" />
-                            </Grid>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-        </VerticalStackLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="model:TurnoutAction">
+                    <Grid ColumnDefinitions="25,2*,*,*">
+                        <ImageButton
+                            Grid.Column="0"
+                            Margin="0,0,0,0"
+                            Source="minus_circle.png" />
+                        <Label
+                            Grid.Column="1"
+                            Text="{Binding Id}"
+                            TextColor="{StaticResource Primary}" />
+                        <Label
+                            Grid.Column="2"
+                            Text="{Binding WhenClosedOrActive}"
+                            TextColor="{StaticResource Primary}" />
+                        <Label
+                            Grid.Column="3"
+                            Text="{Binding WhenThrownOrInActive}"
+                            TextColor="{StaticResource Primary}" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
 </ContentView>

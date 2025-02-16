@@ -1,4 +1,3 @@
-using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
@@ -6,8 +5,13 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackPiece {
+public class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackPiece {
     public TrackPoints() : this(null) { }
+
+    public ITrackPiece Clone(Panel parent) {
+        return Clone<TrackPoints>(parent);
+    }
+
     protected override void Setup() {
         Layer = 2;
         Name = "Points";
@@ -47,8 +51,5 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleT
             7 => "PointNW",
             _ => "PointN"
         };
-    }
-    public ITrackPiece Clone(Panel parent) {
-        return Clone<TrackPoints>(parent);
     }
 }

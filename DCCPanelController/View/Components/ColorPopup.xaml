@@ -1,29 +1,43 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <toolkit:Popup
     x:Class="DCCPanelController.View.Components.ColorPopup"
     x:DataType="colorPickerControl:ColorPopup"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
     xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <StackLayout HeightRequest="300" WidthRequest="300">
-        <Border Stroke="{StaticResource Primary}"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                StrokeThickness="3"
-                Background="White"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
+        <Border
+            Background="White"
+            HorizontalOptions="Center"
+            Stroke="{StaticResource Primary}"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            StrokeThickness="3"
+            VerticalOptions="Center">
 
             <StackLayout>
-                <Grid ColumnDefinitions="*,auto" HeightRequest="30" VerticalOptions="Center" BackgroundColor="{StaticResource Primary}">
-                    <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}"
-                           Text="Color Selector" VerticalOptions="Center" />
+                <Grid
+                    BackgroundColor="{StaticResource Primary}"
+                    ColumnDefinitions="*,auto"
+                    HeightRequest="30"
+                    VerticalOptions="Center">
+                    <Label
+                        Grid.Column="0"
+                        Margin="10,0,0,0"
+                        Style="{StaticResource LargeLabel}"
+                        Text="Color Selector"
+                        TextColor="White"
+                        VerticalOptions="Center" />
                 </Grid>
 
-                <ScrollView HeightRequest="264" VerticalOptions="Fill" HorizontalOptions="Fill"  VerticalScrollBarVisibility="Always">
+                <ScrollView
+                    HeightRequest="264"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    VerticalScrollBarVisibility="Always">
                     <CollectionView
                         ItemsSource="{Binding ColorOptions}"
                         SelectionChanged="OnColorSelected"
@@ -31,10 +45,16 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="helpers:ColorOption">
                                 <Grid ColumnDefinitions="30,*" Padding="5">
-                                    <BoxView Color="{Binding Color}" Grid.Column="0" HeightRequest="20"
-                                             WidthRequest="20" />
-                                    <Label Margin="10,5,5,5" Grid.Column="1" Text="{Binding Name}"
-                                           VerticalOptions="Center" />
+                                    <BoxView
+                                        Color="{Binding Color}"
+                                        Grid.Column="0"
+                                        HeightRequest="20"
+                                        WidthRequest="20" />
+                                    <Label
+                                        Grid.Column="1"
+                                        Margin="10,5,5,5"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center" />
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

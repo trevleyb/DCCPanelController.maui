@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
-using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
@@ -12,17 +10,10 @@ using DCCPanelController.View.PropertPages;
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewerViewModel : BaseViewModel {
-    private readonly SettingsService _settingsService;
     private readonly NavigationService _navigationService;
+    private readonly SettingsService _settingsService;
+    [ObservableProperty] private bool _canExpandCollapse = true;
     private Panel? _draggedPanel;
-
-    [ObservableProperty] private int _sidePanelWidth = 300;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(Title))]
-    private Panel? _selectedPanel;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))]
@@ -30,21 +21,17 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     [NotifyPropertyChangedFor(nameof(ShouldShowPanelView))]
     private bool _isSidePanelOpen;
 
-    public bool IsWideMode => !IsThinMode;
-    [ObservableProperty] 
-    [NotifyPropertyChangedFor(nameof(IsWideMode))] 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsWideMode))]
     private bool _isThinMode;
-    
-    public bool IsSidePanelClosed => !IsSidePanelOpen;
 
-    public string Title => SelectedPanel == null ? "DCC Panel Controller" : SelectedPanel.Name;
-    public bool IsPanelSelected => SelectedPanel != null;
-    public bool NoPanelSelected => SelectedPanel == null;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(Title))]
+    private Panel? _selectedPanel;
 
-    public ObservableCollection<Panel> Panels { get; set; }
-    [ObservableProperty] private bool _canExpandCollapse = true;
-
-    public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
+    [ObservableProperty] private int _sidePanelWidth = 300;
 
     public PanelsViewerViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
@@ -53,6 +40,18 @@ public partial class PanelsViewerViewModel : BaseViewModel {
         SidePanelWidth = 300;
         IsSidePanelOpen = true;
     }
+
+    public bool IsWideMode => !IsThinMode;
+
+    public bool IsSidePanelClosed => !IsSidePanelOpen;
+
+    public string Title => SelectedPanel == null ? "DCC Panel Controller" : SelectedPanel.Name;
+    public bool IsPanelSelected => SelectedPanel != null;
+    public bool NoPanelSelected => SelectedPanel == null;
+
+    public ObservableCollection<Panel> Panels { get; set; }
+
+    public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
 
     public void SelectPanel(Panel? panel = null) {
         SelectedPanel = null;
@@ -99,6 +98,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             Panels.Remove(_draggedPanel);
             Panels.Insert(targetIndex, _draggedPanel);
         }
+
         RefreshSortOrder();
     }
 
@@ -111,7 +111,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     private void RefreshSortOrder() {
         // Update the SortOrder of all panels based on their current position in the collection
-        for (int i = 0; i < Panels.Count; i++) {
+        for (var i = 0; i < Panels.Count; i++) {
             Panels[i].SortOrder = i + 1;
         }
     }
@@ -165,8 +165,9 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             if (index >= 0) Panels[index] = tempPanel;
             SelectedPanel = Panels[index];
             Save();
-        } 
-        SelectPanel(SelectedPanel); 
+        }
+
+        SelectPanel(SelectedPanel);
     }
 
     public async Task<bool> LaunchEditPanelAsync(Panel panel) {
@@ -196,13 +197,13 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             for (var index = 0; index < Panels.Count; index++) {
                 Panels[index].SortOrder = index + 1;
             }
+
             Save();
             SelectPanel();
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             Console.WriteLine($"Failed to delete panel {SelectedPanel.Name} due to: {ex.Message}");
         }
-        
+
         async Task<bool> AskUserToConfirmDelete(Panel panel) {
             // Replace this code with the appropriate logic to display a confirmation dialog in your app
             if (App.Current.Windows[0].Page is { } window) {
@@ -212,13 +213,15 @@ public partial class PanelsViewerViewModel : BaseViewModel {
                     "Yes",
                     "No"
                 );
+
                 return result;
             }
+
             return false;
         }
     }
 
-    [RelayCommand] 
+    [RelayCommand]
     private async Task PanelPropertiesAsync(Panel? panel = null) {
         if (panel is not null) SelectedPanel = panel;
         if (SelectedPanel is null) return;

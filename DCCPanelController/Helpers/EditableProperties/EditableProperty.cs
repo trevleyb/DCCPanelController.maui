@@ -1,5 +1,3 @@
-using System.Runtime.CompilerServices;
-
 namespace DCCPanelController.Helpers.EditableProperties;
 
 [AttributeUsage(AttributeTargets.Property)]

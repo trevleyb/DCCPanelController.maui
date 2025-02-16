@@ -5,21 +5,25 @@ using DCCPanelController.Model;
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsView : ContentView {
-    public ObservableCollection<TurnoutAction> TurnoutActions { get; init; }
-    private bool IsTurnoutContext { get; set; }
-
-    // Dynamic Column Header Labels
-    public string StateLabelClosed { get; private set; } = "Closed";
-    public string StateLabelThrown { get; private set; } = "Thrown";
 
     public TurnoutActionsView(TurnoutActions actions, bool isTurnoutContext = true) {
         InitializeComponent();
         TurnoutActions = [];
-        foreach (var action in actions) { TurnoutActions.Add(action);}
+        foreach (var action in actions) {
+            TurnoutActions.Add(action);
+        }
+
         IsTurnoutContext = isTurnoutContext;
         BindingContext = this;
         UpdateLabels();
     }
+
+    public ObservableCollection<TurnoutAction> TurnoutActions { get; init; }
+    private bool IsTurnoutContext { get; }
+
+    // Dynamic Column Header Labels
+    public string StateLabelClosed { get; private set; } = "Closed";
+    public string StateLabelThrown { get; private set; } = "Thrown";
 
     private void UpdateLabels() {
         StateLabelClosed = IsTurnoutContext ? "Closed" : "Active";
@@ -30,7 +34,7 @@ public partial class TurnoutActionsView : ContentView {
 
     [RelayCommand]
     private void AddTurnoutAction() {
-        TurnoutActions.Add(new TurnoutAction { });
+        TurnoutActions.Add(new TurnoutAction());
         OnPropertyChanged(nameof(TurnoutActions));
     }
 
@@ -39,6 +43,7 @@ public partial class TurnoutActionsView : ContentView {
         if (selectedTurnout != null) {
             // Edit logic here
         }
+
         OnPropertyChanged(nameof(TurnoutActions));
     }
 
@@ -47,6 +52,7 @@ public partial class TurnoutActionsView : ContentView {
         if (selectedTurnout != null) {
             TurnoutActions.Remove(selectedTurnout);
         }
+
         OnPropertyChanged(nameof(TurnoutActions));
     }
 }

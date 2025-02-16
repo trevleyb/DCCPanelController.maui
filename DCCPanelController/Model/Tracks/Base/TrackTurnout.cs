@@ -11,48 +11,60 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
 
-    protected TrackTurnoutBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) { 
-        _trackTypeEnum = styleTypeEnum;
-    }
+    [ObservableProperty]
+    [property: EditableActionsProperty(IsTurnoutContext = true, Group = "Actions", Description = "Buttons to set when this turnout changes")]
+    private ButtonActions _buttonActions = [];
 
-    protected TrackTurnoutBase(Panel? parent= null) : base(parent) { 
-        PropertyChanged += OnPropertyChanged;
-    }
+    private IAudioPlayer? _clickSoundPlayer;
 
-    private TurnoutsService? _turnoutsService;
+    [ObservableProperty]
+    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes")]
+    private bool _isHidden;
 
-    [ObservableProperty] 
+    [ObservableProperty] [property: JsonIgnore] private bool _isOccupied;
+
+    [ObservableProperty]
+    [property: EditableColorProperty(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
+    private Color? _trackColor;
+
+    [ObservableProperty] private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
+
+    [ObservableProperty]
+    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes")]
+    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
+
+    [ObservableProperty] private Turnout? _turnout;
+
+    [ObservableProperty]
+    [property: EditableActionsProperty(IsTurnoutContext = true, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
+    private TurnoutActions _turnoutActions = [];
+
+    [ObservableProperty]
     [property: EditableStringProperty(Name = "TurnoutID", Description = "Turnout ID")]
     private string _turnoutId = string.Empty;
 
-    [ObservableProperty] 
-    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group="Attributes")]
-    private bool _isHidden;
+    private TurnoutsService? _turnoutsService;
 
-    [ObservableProperty] 
-    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group="Attributes")]
-    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
+    protected TrackTurnoutBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
+        _trackTypeEnum = styleTypeEnum;
+    }
 
-    [ObservableProperty] 
-    [property: EditableActionsProperty(IsTurnoutContext = true, Group="Actions",  Description = "Turnouts to change when ths turnout changes")]
-    private TurnoutActions _turnoutActions = [];
+    protected TrackTurnoutBase(Panel? parent = null) : base(parent) {
+        PropertyChanged += OnPropertyChanged;
+    }
 
-    [ObservableProperty] 
-    [property: EditableActionsProperty(IsTurnoutContext = true, Group="Actions",  Description = "Buttons to set when this turnout changes")]
-    private ButtonActions _buttonActions = [];
-
-    [ObservableProperty] [property:JsonIgnore] private bool _isOccupied;
-    [ObservableProperty] private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
-    
-    [ObservableProperty]
-    [property: EditableColorProperty(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
-    private Color? _trackColor = null;
-
-    [ObservableProperty] private Turnout? _turnout;
-    protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
-   
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
-    
+
+    private TurnoutStateEnum GetCurrentTurnoutState =>
+        Turnout?.State ??
+        TrackImageEnum switch {
+            TrackStyleImageEnum.Straight  => TurnoutStateEnum.Closed,
+            TrackStyleImageEnum.Diverging => TurnoutStateEnum.Thrown,
+            _                             => TurnoutStateEnum.Unknown
+        };
+
+    protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
+
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
@@ -62,7 +74,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {        // Find the appropriate image reference for the details we have
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) { // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
         var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
@@ -75,11 +87,13 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackImageEnum, Parent?.Defaults);
         if (TrackColor is not null) {
             style = new SvgStyleBuilder()
-                    .AddExistingStyle(style)
-                    .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor)).Build();
-        }        
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden,Parent?.Defaults);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied,Parent?.Defaults);
+                   .AddExistingStyle(style)
+                   .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor))
+                   .Build();
+        }
+
+        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent?.Defaults);
+        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
@@ -103,12 +117,12 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             };
         }
     }
-    
+
     public void ExecTurnoutState(TurnoutStateEnum state) {
         SetTurnoutState(state);
-        if (Turnout is {} turnout) ThrowTurnout(turnout, turnout.State);
+        if (Turnout is { } turnout) ThrowTurnout(turnout, turnout.State);
     }
-    
+
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is Turnout turnout) {
             TrackImageEnum = GetCurrentTurnoutState switch {
@@ -117,31 +131,24 @@ public abstract partial class TrackTurnoutBase : TrackBase {
                 TurnoutStateEnum.Thrown  => TrackStyleImageEnum.Diverging,
                 _                        => TrackStyleImageEnum.Normal
             };
+
             OnPropertyChanged(nameof(TrackView));
         }
     }
 
-    private TurnoutStateEnum GetCurrentTurnoutState => 
-        Turnout?.State ?? 
-        (TrackImageEnum switch {
-            TrackStyleImageEnum.Straight  => TurnoutStateEnum.Closed,
-            TrackStyleImageEnum.Diverging => TurnoutStateEnum.Thrown,
-            _                             => TurnoutStateEnum.Unknown
-        });
-
-    private IAudioPlayer? _clickSoundPlayer;
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
         }
+
         _clickSoundPlayer?.Play();
-        
+
         if (Turnout is null) {
             TrackImageEnum = TrackImageEnum switch {
                 TrackStyleImageEnum.Diverging => TrackStyleImageEnum.Straight,
                 TrackStyleImageEnum.Straight  => TrackStyleImageEnum.Diverging,
-                TrackStyleImageEnum.Normal    =>TrackStyleImageEnum.Diverging,
+                TrackStyleImageEnum.Normal    => TrackStyleImageEnum.Diverging,
                 _                             => TrackStyleImageEnum.Normal
             };
         } else {
@@ -151,6 +158,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
                 TurnoutActions.ApplyTurnoutActionsToPanel(Parent, Turnout.State);
             }
         }
+
         OnPropertyChanged(nameof(TrackView));
     }
 }

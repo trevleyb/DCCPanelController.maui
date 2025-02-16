@@ -8,17 +8,18 @@ namespace DCCPanelController.View.PropertPages;
 
 public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 
-    public event EventHandler? CloseRequested;
-
     public DynamicPropertyPage(ITrackPiece obj, string? propertyName = null) {
         InitializeComponent();
         BindingContext = new DynamicPropertyPageViewModel(obj, propertyName, PropertyContainer);
     }
 
+    public event EventHandler? CloseRequested;
+
     protected override void OnAppearing() {
         base.OnAppearing();
 
 #if IOS
+
         // Access the native view controller
         var window = App.Current.Windows[0].Page;
         if (window?.Handler?.PlatformView is UIWindow viewController) {
@@ -33,6 +34,7 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
                             UISheetPresentationControllerDetent.CreateMediumDetent(),
                             UISheetPresentationControllerDetent.CreateLargeDetent()
                         ];
+
                         sheetController.PrefersGrabberVisible = true;
                     }
                 }
@@ -40,7 +42,7 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
         }
 #endif
     }
-    
+
     private void ClosePropertyPage(object? sender, EventArgs? e) {
         //Navigation.PopModalAsync(true);
         CloseRequested?.Invoke(this, EventArgs.Empty);

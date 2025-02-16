@@ -17,7 +17,7 @@ public static class TrackPointsValidator {
 
     public static bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece, int cols, int rows) {
         var results = new bool[8];
-        var enumerable = trackPieces.ToList() as List<ITrackPiece>;
+        var enumerable = trackPieces.ToList();
         for (var i = 0; i < 8; i++) {
             results[i] = EvaluateConnection(enumerable, trackPiece, i, cols, rows);
         }

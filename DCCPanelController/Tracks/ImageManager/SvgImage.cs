@@ -9,10 +9,10 @@ namespace DCCPanelController.Tracks.ImageManager;
 
 [DebuggerDisplay("{Id}")]
 public partial class SvgImage : ObservableObject {
-    [ObservableProperty] private string _id;
-    [ObservableProperty] private string _filename;
-    [ObservableProperty] private SvgImageManager _imageManager;
     [ObservableProperty] private SvgCompass _connections;
+    [ObservableProperty] private string _filename;
+    [ObservableProperty] private string _id;
+    [ObservableProperty] private SvgImageManager _imageManager;
 
     public SvgImage(string id, string imageName, string connections) : this(id, imageName, new SvgCompass(connections)) { }
 
@@ -76,11 +76,11 @@ public partial class SvgImage : ObservableObject {
             _ = ImageManager.ElementType(element) switch {
                 "rect"    => SetFillType(element, attributeName, attributeValue),
                 "polygon" => SetFillType(element, attributeName, attributeValue),
-                "text"    => elementName.ToLowerInvariant() switch {
+                "text" => elementName.ToLowerInvariant() switch {
                     "text" => SetTextData(element, attributeName, attributeValue),
-                    _      => SetFillType(element, attributeName, attributeValue),
-                    },
-                "line"    => SetStrokeType(element, attributeName, attributeValue),
+                    _      => SetFillType(element, attributeName, attributeValue)
+                },
+                "line" => SetStrokeType(element, attributeName, attributeValue),
                 "circle" => elementName.ToLowerInvariant() switch {
                     "border" => SetStrokeType(element, attributeName, attributeValue),
                     "button" => SetFillType(element, attributeName, attributeValue),
@@ -126,9 +126,10 @@ public partial class SvgImage : ObservableObject {
         default:
             return false;
         }
+
         return true;
     }
-    
+
     private bool SetStrokeType(XElement element, string attributeName, string attributeValue) {
         switch (attributeName.ToLowerInvariant()) {
         case "color":

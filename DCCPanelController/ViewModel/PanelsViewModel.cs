@@ -1,21 +1,21 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
-using DCCPanelController.View;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewModel : BaseViewModel {
-    private readonly SettingsService _settingsService;
     private readonly NavigationService _navigationService;
+    private readonly SettingsService _settingsService;
 
     [ObservableProperty]
-    private int _sidePanelWidth = 300;
-    
+    [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))]
+    [NotifyPropertyChangedFor(nameof(SidePanelWidth))]
+    private bool _isSidePanelOpen;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
@@ -23,16 +23,7 @@ public partial class PanelsViewModel : BaseViewModel {
     private Panel? _selectedPanel;
 
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))] 
-    [NotifyPropertyChangedFor(nameof(SidePanelWidth))] 
-    private bool _isSidePanelOpen;
-    public bool IsSidePanelClosed => !IsSidePanelOpen;
-
-    public string Title => SelectedPanel == null ? "DCC Panel Controller" : SelectedPanel.Name;
-    public bool IsPanelSelected => SelectedPanel != null;
-    public bool NoPanelSelected => SelectedPanel == null;
-    
-    public ObservableCollection<Panel> Panels { get; set; }
+    private int _sidePanelWidth = 300;
 
     public PanelsViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
@@ -41,7 +32,15 @@ public partial class PanelsViewModel : BaseViewModel {
         SidePanelWidth = 300;
         IsSidePanelOpen = true;
     }
-    
+
+    public bool IsSidePanelClosed => !IsSidePanelOpen;
+
+    public string Title => SelectedPanel == null ? "DCC Panel Controller" : SelectedPanel.Name;
+    public bool IsPanelSelected => SelectedPanel != null;
+    public bool NoPanelSelected => SelectedPanel == null;
+
+    public ObservableCollection<Panel> Panels { get; set; }
+
     public async void Save() {
         _settingsService?.Save();
     }
@@ -52,7 +51,7 @@ public partial class PanelsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task SelectionChangedAsync() { }
-    
+
     [RelayCommand]
     public async Task AddPanelAsync() {
         var panel = new Panel();
@@ -87,6 +86,7 @@ public partial class PanelsViewModel : BaseViewModel {
             for (var index = 0; index < Panels.Count; index++) {
                 Panels[index].SortOrder = index + 1;
             }
+
             Save();
         } catch {
             Console.WriteLine($"Failed to delete panel {panel.Name}");

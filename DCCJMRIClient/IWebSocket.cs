@@ -2,8 +2,7 @@ using System.Net.WebSockets;
 
 namespace DCCJmriClient;
 
-public interface IWebSocket : IDisposable
-{
+public interface IWebSocket : IDisposable {
     WebSocketState State { get; }
     Task ConnectAsync(Uri uri, CancellationToken token);
     Task CloseAsync(WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken token);

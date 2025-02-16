@@ -1,27 +1,15 @@
 using System.Windows.Input;
-using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ColorDropdown : ContentView {
     private const string DefaultPlaceholderText = "Click here to select a color";
-    private ColorOption _selectedColorOption = PredefinedColors.Default;
-    
+
     // Property for the currently selected color
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White, propertyChanged: ColorPropertyChanged);
-
-    private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ColorDropdown)bindable;
-        if (newvalue is Color color) {
-            control._selectedColorOption = PredefinedColors.FindColor(color);
-            control.OnPropertyChanged(nameof(Text));          // Update DisplayText when the color changes
-            control.OnPropertyChanged(nameof(Color));         // Update DisplayText when the color changes
-            control.OnPropertyChanged(nameof(ContrastColor)); // Update DisplayText when the color changes
-        }
-    }
+    private ColorOption _selectedColorOption = PredefinedColors.Default;
 
     public ColorDropdown() {
         InitializeComponent();
@@ -36,7 +24,7 @@ public partial class ColorDropdown : ContentView {
         set {
             SetValue(SelectedColorProperty, value);
             OnPropertyChanged(nameof(SelectedColorProperty)); // Update DisplayText when the color changes
-            OnPropertyChanged(nameof(Text));           // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(Text));                  // Update DisplayText when the color changes
             OnPropertyChanged(nameof(ContrastColor));         // Update DisplayText when the color changes
         }
     }
@@ -44,6 +32,16 @@ public partial class ColorDropdown : ContentView {
     public string Text => _selectedColorOption.Name ?? DefaultPlaceholderText;
     public Color Color => _selectedColorOption.Color;
     public Color ContrastColor => _selectedColorOption.ContrastColor;
+
+    private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        var control = (ColorDropdown)bindable;
+        if (newvalue is Color color) {
+            control._selectedColorOption = PredefinedColors.FindColor(color);
+            control.OnPropertyChanged(nameof(Text));          // Update DisplayText when the color changes
+            control.OnPropertyChanged(nameof(Color));         // Update DisplayText when the color changes
+            control.OnPropertyChanged(nameof(ContrastColor)); // Update DisplayText when the color changes
+        }
+    }
 
     // Asynchronously show the popup and update the selected color
     private async void ShowDropdown() {

@@ -7,13 +7,13 @@ namespace DCCPanelController.ViewModel;
 
 public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private TurnoutStateEnum _currentState;
+    [ObservableProperty] private int? _dccAddress;
     [ObservableProperty] private TurnoutStateEnum _defaultState;
     [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private string _systemName;
 
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
-    [ObservableProperty] private int? _dccAddress;
 
     public TurnoutsEditViewModel(Turnout turnout) {
         Turnout = turnout;

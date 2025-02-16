@@ -19,7 +19,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction> {
             }
         }
     }
-    
+
     public void ApplyTurnoutActionsToPanel(Panel panel, TurnoutStateEnum state) {
         foreach (var turnoutAction in this) {
             var track = panel.Tracks.FirstOrDefault(x => x.Id.Equals(turnoutAction.Id));

@@ -10,17 +10,20 @@ public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
 
-    public Color BackgroundColor => SelectedPanel?.Defaults.BackgroundColor ?? Colors.White; 
-    
     public OperateViewModel() {
         var settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         Panels = settingsService.Panels;
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }
+
         PropertyChanged += OnPropertyChanged;
     }
-    
+
+    public Color BackgroundColor => SelectedPanel?.Defaults.BackgroundColor ?? Colors.White;
+
+    public ObservableCollection<Panel> Panels { get; set; }
+
     public string SetActivePanel(Panel? panelCarouselCurrentItem) {
         SelectedPanel = panelCarouselCurrentItem;
         OnPropertyChanged(nameof(BackgroundColor));
@@ -30,8 +33,6 @@ public partial class OperateViewModel : BaseViewModel {
     private void SelectedPanelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         throw new NotImplementedException();
     }
-
-    public ObservableCollection<Panel> Panels { get; set; }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {

@@ -2,7 +2,7 @@ namespace DCCPanelController.Helpers.EditableProperties;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableActionsPropertyAttribute : EditableProperty {
-    
+
     private bool _isButtonContext;
     private bool _isTurnoutContext;
 

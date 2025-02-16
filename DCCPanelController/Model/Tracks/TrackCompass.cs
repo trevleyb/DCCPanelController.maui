@@ -1,4 +1,3 @@
-using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
@@ -6,13 +5,18 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
-    
+public class TrackCompass(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+
     public TrackCompass() : this(null) { }
+
+    public ITrackPiece Clone(Panel parent) {
+        return Clone<TrackCompass>(parent);
+    }
+
     protected override void Setup() {
         Layer = 2;
         Name = "Compass";
-        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Compass",(0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
     }
 
@@ -58,9 +62,5 @@ public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent)
             svgImage.ApplyElementStyle(compassId, "Opacity", "0");
             break;
         }
-    }
-
-    public ITrackPiece Clone(Panel parent) {
-        return Clone<TrackCompass>(parent);
     }
 }

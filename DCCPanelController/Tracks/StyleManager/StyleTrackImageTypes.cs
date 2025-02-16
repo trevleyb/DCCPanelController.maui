@@ -36,5 +36,5 @@ public enum TrackStyleAttributeEnum {
 
 public enum TextFontWeightEnum {
     Normal,
-    Bold,
+    Bold
 }

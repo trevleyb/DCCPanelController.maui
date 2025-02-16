@@ -7,7 +7,6 @@ namespace DCCPanelController.Helpers;
 
 public class JsonConverterTrackPiece : JsonConverter<ITrackPiece> {
     public override ITrackPiece? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
-        
         // Use the type discriminator or another property to determine the specific type
         using (var document = JsonDocument.ParseValue(ref reader)) {
             if (!document.RootElement.TryGetProperty("TrackObjectType", out var typeProperty)) {
@@ -32,15 +31,15 @@ public class JsonConverterTrackPiece : JsonConverter<ITrackPiece> {
                 "TrackStraightContinuation" => JsonSerializer.Deserialize<TrackStraightContinuation>(rawText, options),
                 "TrackTerminator"           => JsonSerializer.Deserialize<TrackTerminator>(rawText, options),
                 "TrackText"                 => JsonSerializer.Deserialize<TrackText>(rawText, options),
-                _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\""),
+                _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\"")
             };
+
             if (obj == null) throw new JsonException("Unknown type: " + "\"" + typeName + "\"" + ".");
             return obj;
         }
     }
 
-
     public override void Write(Utf8JsonWriter writer, ITrackPiece value, JsonSerializerOptions options) {
-        JsonSerializer.Serialize(writer,(object)value, options);
+        JsonSerializer.Serialize(writer, (object)value, options);
     }
 }

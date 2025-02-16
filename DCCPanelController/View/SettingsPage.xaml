@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
     IconImageSource="settings_green.png"
@@ -9,21 +9,21 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:model="clr-namespace:DCCPanelController.Model"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:components="clr-namespace:DCCPanelController.View.Components">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Resources>
-        <ResourceDictionary>
-        </ResourceDictionary>
+        <ResourceDictionary />
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Clicked="About_OnClicked" IconImageSource="help_circle.png" />
         <ToolbarItem Clicked="Instructions_OnClicked" IconImageSource="info.png" />
-        <ToolbarItem Clicked="ShowMessages_OnClicked" IconImageSource="chevron_down.png" x:Name="ShowMessagesButton" />
+        <ToolbarItem
+            Clicked="ShowMessages_OnClicked"
+            IconImageSource="chevron_down.png"
+            x:Name="ShowMessagesButton" />
         <ToolbarItem Clicked="Upload_OnClicked" IconImageSource="upload.png" />
         <ToolbarItem Clicked="Download_OnClicked" IconImageSource="download.png" />
     </ContentPage.ToolbarItems>
@@ -32,18 +32,28 @@
     <StackLayout>
         <!--        <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="FillAndExpand" /> -->
 
-        <Label Margin="10,10,0,0" Style="{StaticResource MediumLabel}" TextColor="{StaticResource Primary}"
-               Text="WiThrottle Server Address:" />
+        <Label
+            Margin="10,10,0,0"
+            Style="{StaticResource MediumLabel}"
+            Text="WiThrottle Server Address:"
+            TextColor="{StaticResource Primary}" />
         <HorizontalStackLayout HorizontalOptions="Start" Margin="10,-15,10,10">
             <Frame Style="{StaticResource IpAddress}">
-                <Entry Focused="OnEntryFocused" IsEnabled="{Binding IsLiveMode}" Text="{Binding IpAddress1}">
+                <Entry
+                    Focused="OnEntryFocused"
+                    IsEnabled="{Binding IsLiveMode}"
+                    Text="{Binding IpAddress1}">
                     <Entry.Behaviors>
                         <view:EntryValidationBehavior />
                     </Entry.Behaviors>
                 </Entry>
             </Frame>
-            <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
-                   VerticalOptions="Center" />
+            <Label
+                FontSize="48"
+                Margin="2,2,2,30"
+                Text="."
+                TextColor="{StaticResource Primary}"
+                VerticalOptions="Center" />
             <Frame Style="{StaticResource IpAddress}">
                 <Entry
                     Focused="OnEntryFocused"
@@ -54,8 +64,12 @@
                     </Entry.Behaviors>
                 </Entry>
             </Frame>
-            <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
-                   VerticalOptions="Center" />
+            <Label
+                FontSize="48"
+                Margin="2,2,2,30"
+                Text="."
+                TextColor="{StaticResource Primary}"
+                VerticalOptions="Center" />
             <Frame Style="{StaticResource IpAddress}">
                 <Entry
                     Focused="OnEntryFocused"
@@ -66,8 +80,12 @@
                     </Entry.Behaviors>
                 </Entry>
             </Frame>
-            <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
-                   VerticalOptions="Center" />
+            <Label
+                FontSize="48"
+                Margin="2,2,2,30"
+                Text="."
+                TextColor="{StaticResource Primary}"
+                VerticalOptions="Center" />
             <Frame Style="{StaticResource IpAddress}">
                 <Entry
                     Focused="OnEntryFocused"
@@ -78,15 +96,20 @@
                     </Entry.Behaviors>
                 </Entry>
             </Frame>
-            <Label FontSize="48" HorizontalOptions="Center" Margin="2,2,2,10" Text=":"
-                   TextColor="{StaticResource Primary}" VerticalOptions="Center" />
+            <Label
+                FontSize="48"
+                HorizontalOptions="Center"
+                Margin="2,2,2,10"
+                Text=":"
+                TextColor="{StaticResource Primary}"
+                VerticalOptions="Center" />
             <Frame Style="{StaticResource IpPort}" WidthRequest="75">
                 <Entry
                     Focused="OnEntryFocused"
                     IsEnabled="{Binding IsLiveMode}"
                     Text="{Binding Port}" />
             </Frame>
-            
+
             <Button
                 Command="{Binding ConnectCommand}"
                 HorizontalOptions="Center"
@@ -97,7 +120,7 @@
                 WidthRequest="150" />
 
         </HorizontalStackLayout>
-        
+
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="2"
@@ -156,9 +179,9 @@
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnLabelTapped" />
                                             <TapGestureRecognizer
-                                                x:DataType="{x:Type viewmodel:SettingsViewModel}"
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, Path=SelectWiServerCommand}"
-                                                CommandParameter="{Binding .}" />
+                                                CommandParameter="{Binding .}"
+                                                x:DataType="{x:Type viewmodel:SettingsViewModel}" />
                                         </Grid.GestureRecognizers>
                                         <Label
                                             Grid.Column="0"
@@ -215,14 +238,17 @@
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand" />
             <ScrollView>
-                <CollectionView x:Name="MessagesList"
-                                ItemsSource="{Binding Messages}"
-                                ItemsUpdatingScrollMode="KeepLastItemInView">
+                <CollectionView
+                    ItemsSource="{Binding Messages}"
+                    ItemsUpdatingScrollMode="KeepLastItemInView"
+                    x:Name="MessagesList">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="viewmodel:SettingsMessage">
                             <HorizontalStackLayout>
-                                <Label WidthRequest="200" Style="{StaticResource MediumLabel}"
-                                       Text="{Binding TimeStamp}" />
+                                <Label
+                                    Style="{StaticResource MediumLabel}"
+                                    Text="{Binding TimeStamp}"
+                                    WidthRequest="200" />
                                 <Label Style="{StaticResource MediumLabel}" Text="{Binding Message}" />
                             </HorizontalStackLayout>
                         </DataTemplate>

@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Reflection;
 using DCCPanelController.Helpers.Attributes;
-using DCCPanelController.Model.Tracks.Base;
 
 namespace DCCPanelController.Helpers;
 
@@ -30,9 +29,10 @@ public static class ObjectCloner {
                     for (var i = 0; i < sourceArray.Length; i++) {
                         copiedArray.SetValue(CloneObject(sourceArray.GetValue(i)), i);
                     }
+
                     return copiedArray;
                 } catch (Exception e) {
-                    Console.WriteLine($"Unable to clone '{type.ToString()}': {e.Message}");
+                    Console.WriteLine($"Unable to clone '{type}': {e.Message}");
                     throw;
                 }
             }
@@ -48,7 +48,7 @@ public static class ObjectCloner {
 
                 return copiedList;
             } catch (Exception e) {
-                Console.WriteLine($"Unable to clone '{type.ToString()}': {e.Message}");
+                Console.WriteLine($"Unable to clone '{type}': {e.Message}");
                 throw;
             }
         }
@@ -62,9 +62,10 @@ public static class ObjectCloner {
                     property.SetValue(copy, CloneObject(propertyValue));
                 }
             }
+
             return copy;
         } catch (Exception e) {
-            Console.WriteLine($"Unable to clone '{type.ToString()}': {e.Message}");
+            Console.WriteLine($"Unable to clone '{type}': {e.Message}");
             throw;
         }
     }

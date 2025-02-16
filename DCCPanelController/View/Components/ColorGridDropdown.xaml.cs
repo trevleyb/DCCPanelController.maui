@@ -1,24 +1,14 @@
 using System.Windows.Input;
-using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ColorGridDropdown : ContentView {
-    private ColorOption _selectedColorOption = PredefinedColors.Default;
 
     // Property for the currently selected color
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorDropdown), Colors.White, propertyChanged: ColorPropertyChanged);
-
-    private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        //if (bindable is ColorGridDropdown control)
-        //    if (newvalue is Color { } color) {
-        //        control._selectedColorOption = PredefinedColors.FindColor(color) ?? PredefinedColors.None;
-        //    } 
-        //    else control._selectedColorOption = PredefinedColors.None;
-    }
+    private ColorOption _selectedColorOption = PredefinedColors.Default;
 
     public ColorGridDropdown() {
         InitializeComponent();
@@ -30,7 +20,7 @@ public partial class ColorGridDropdown : ContentView {
 
     public Color SelectedColorContrast => _selectedColorOption.ContrastColor;
     public string SelectedColorName => _selectedColorOption.Name ?? "None";
-    
+
     public Color? SelectedColor {
         get => (Color)GetValue(SelectedColorProperty);
         set {
@@ -38,8 +28,16 @@ public partial class ColorGridDropdown : ContentView {
             SetValue(SelectedColorProperty, _selectedColorOption.Color);
             OnPropertyChanged(nameof(SelectedColorProperty)); // Update DisplayText when the color changes
             OnPropertyChanged(nameof(SelectedColorName));     // Update DisplayText when the color changes
-            OnPropertyChanged(nameof(SelectedColorContrast));     // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(SelectedColorContrast)); // Update DisplayText when the color changes
         }
+    }
+
+    private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        //if (bindable is ColorGridDropdown control)
+        //    if (newvalue is Color { } color) {
+        //        control._selectedColorOption = PredefinedColors.FindColor(color) ?? PredefinedColors.None;
+        //    } 
+        //    else control._selectedColorOption = PredefinedColors.None;
     }
 
     // Asynchronously show the popup and update the selected color

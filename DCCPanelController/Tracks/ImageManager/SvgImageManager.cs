@@ -167,7 +167,6 @@ public class SvgImageManager {
         element.SetValue(attributeValue);
     }
 
-    
     /// <summary>
     ///     Get the value of an attribute given an element
     /// </summary>

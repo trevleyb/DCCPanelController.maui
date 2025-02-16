@@ -11,15 +11,16 @@ using DCCWithrottleClient.ServiceHelper;
 namespace DCCPanelController.ViewModel;
 
 public partial class SettingsViewModel : BaseViewModel {
-    
+
     private readonly ConnectionService? _connectionService;
     public readonly SettingsService? SettingsService;
-    
-    [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
     [ObservableProperty] private Settings _settings;
+
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
+
+    [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
 
     public SettingsViewModel(SettingsService settingsService) {
         SettingsService = settingsService;
@@ -28,17 +29,12 @@ public partial class SettingsViewModel : BaseViewModel {
         if (_connectionService != null) _connectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
         Settings = SettingsService.Settings;
     }
-    
+
     public bool ShowWiServers => !ShowMessages;
     public bool IsConnected => _connectionService is { IsConnected   : true } ? true : false;
     public string ConnectLabel => _connectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool IsLiveMode => !IsDemoMode || !IsConnected;
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
-
-    public void SaveSettings() {
-        Console.WriteLine("Saving... in viewModel");
-        SettingsService?.Save();        
-    }
 
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
@@ -47,7 +43,7 @@ public partial class SettingsViewModel : BaseViewModel {
             OnPropertyChanged();
         }
     }
-    
+
     public string IpAddress {
         get => Settings?.WiServer?.IpAddress ?? "";
         set {
@@ -96,6 +92,11 @@ public partial class SettingsViewModel : BaseViewModel {
     public string IpAddress4 {
         get => GetIpAddressParts(4);
         set => SetIpAddressParts(4, value);
+    }
+
+    public void SaveSettings() {
+        Console.WriteLine("Saving... in viewModel");
+        SettingsService?.Save();
     }
 
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 

@@ -74,7 +74,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                     throw new Exception("File could not be loaded.");
                 }
             }
-
         } catch (Exception ex) {
             await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
         }

@@ -1,20 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
+    BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
     Title="{Binding SelectedPanel.Name, FallbackValue='DCC Panel Controller'}"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="viewModel:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
+    xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:model="clr-namespace:DCCPanelController.Model"
-    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
-    BackgroundColor="{Binding BackgroundColor,  Converter={StaticResource ColorFallbackConverter}}">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!-- Register ColorFallbackConverter -->
+            <!--  Register ColorFallbackConverter  -->
             <converters:ColorFallbackConverter x:Key="ColorFallbackConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
@@ -25,29 +25,30 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            ToolTipProperties.Text="Hide Bottom Tab Bar"
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"
             Text="Hide"
+            ToolTipProperties.Text="Hide Bottom Tab Bar"
             x:Name="HideUnHide" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
-            <Grid ColumnDefinitions="*" Margin="10" RowDefinitions="*,20">
+            <Grid
+                ColumnDefinitions="*"
+                Margin="10"
+                RowDefinitions="*,20">
                 <ActivityIndicator
                     Grid.Column="0"
                     Grid.Row="0"
                     HorizontalOptions="Center"
                     IsRunning="{Binding IsBusy}"
                     VerticalOptions="Center" />
-                <Grid
-                    Grid.Column="0"
-                    Grid.Row="0">
+                <Grid Grid.Column="0" Grid.Row="0">
                     <CarouselView
+                        BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
                         CurrentItem="{Binding SelectedPanel}"
                         IndicatorView="IndicatorView"
-                        BackgroundColor="{Binding BackgroundColor,  Converter={StaticResource ColorFallbackConverter}}"
                         x:Name="PanelCarousel">
 
                         <CarouselView.ItemsSource>
@@ -55,17 +56,23 @@
                         </CarouselView.ItemsSource>
 
                         <CarouselView.EmptyView>
-                            <VerticalStackLayout Margin="20" HorizontalOptions="Center" VerticalOptions="Center">
-                                <StackLayout
-                                    HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
+                            <VerticalStackLayout
+                                HorizontalOptions="Center"
+                                Margin="20"
+                                VerticalOptions="Center">
+                                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
                                     <Label
-                                        Margin="0,0,0,20"
                                         FontAttributes="Bold"
                                         HorizontalOptions="Center"
+                                        Margin="0,0,0,20"
                                         Text="Welcome to the DCC Model Layout Panel Controller" />
                                 </StackLayout>
-                                
-                                <HorizontalStackLayout Margin="20" Padding="20" HorizontalOptions="Center" VerticalOptions="End">
+
+                                <HorizontalStackLayout
+                                    HorizontalOptions="Center"
+                                    Margin="20"
+                                    Padding="20"
+                                    VerticalOptions="End">
                                     <Button
                                         Clicked="ButtonInstructions_OnClicked"
                                         Margin="10,10,10,10"
@@ -83,14 +90,14 @@
                         <CarouselView.ItemTemplate>
                             <DataTemplate>
                                 <view:ControlPanelView
-                                    x:Name="PanelView"
-                                    x:DataType="model:Panel"
-                                    Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
                                     BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=BackgroundColor}"
+                                    HorizontalOptions="Fill"
+                                    Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
                                     TrackPieceChanged="PanelView_OnTrackPieceChanged"
                                     TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                                    HorizontalOptions="Fill"
-                                    VerticalOptions="Fill" />
+                                    VerticalOptions="Fill"
+                                    x:DataType="model:Panel"
+                                    x:Name="PanelView" />
                             </DataTemplate>
                         </CarouselView.ItemTemplate>
                     </CarouselView>
@@ -99,11 +106,11 @@
                 <IndicatorView
                     Grid.Column="0"
                     Grid.Row="1"
-                    Margin="0,-5,0,0"
-                    VerticalOptions="Start"
                     HorizontalOptions="Center"
                     IndicatorColor="DarkGrey"
+                    Margin="0,-5,0,0"
                     SelectedIndicatorColor="{StaticResource Primary}"
+                    VerticalOptions="Start"
                     x:Name="IndicatorView" />
             </Grid>
         </Grid>
@@ -111,4 +118,4 @@
 </ContentPage>
 
 
-<!-- Panel="{Binding Path=.}" -->
+<!--  Panel="{Binding Path=.}"  -->

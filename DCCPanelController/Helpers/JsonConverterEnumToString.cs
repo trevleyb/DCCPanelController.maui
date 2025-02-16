@@ -1,9 +1,7 @@
-using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-public class JsonConverterEnumToString<T> : JsonConverter<T> where T : struct, Enum
-{
+public class JsonConverterEnumToString<T> : JsonConverter<T> where T : struct, Enum {
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
         switch (reader.TokenType) {
         case JsonTokenType.String: {
@@ -29,8 +27,7 @@ public class JsonConverterEnumToString<T> : JsonConverter<T> where T : struct, E
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
-    {
+    public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options) {
         // Write the enum as a string to JSON
         writer.WriteStringValue(value.ToString());
     }

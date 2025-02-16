@@ -8,7 +8,7 @@ namespace DCCPanelController.View;
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private bool _tabBarState = true;
-    
+
     public OperatePage() {
         InitializeComponent();
         BindingContext = new OperateViewModel();
@@ -22,16 +22,16 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             OnPropertyChanged(nameof(viewModel.SelectedPanel));
         }
     }
-    
+
     private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) { }
-    
+
     private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece e) {
         Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();
         }
     }
-    
+
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
@@ -52,6 +52,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             Shell.SetTabBarIsVisible(this, false);
             HideUnHide.IconImageSource = "minimize_2.png";
         }
+
         _tabBarState = state;
     }
 }

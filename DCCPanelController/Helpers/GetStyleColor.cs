@@ -7,6 +7,7 @@ public static class StyleColor {
                 return (Color)styleColor;
             }
         }
+
         return defaultColor ?? Colors.Black;
     }
 }

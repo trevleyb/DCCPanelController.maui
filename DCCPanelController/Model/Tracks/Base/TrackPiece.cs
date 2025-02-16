@@ -7,27 +7,27 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
-    
-    protected TrackPieceBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
-        TrackTypeEnum = styleTypeEnum;
-    }
-    
-    protected TrackPieceBase(Panel? parent= null) : base(parent) { }
-    
-    [ObservableProperty] 
-    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group="Attributes")]
+
+    [ObservableProperty]
+    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes")]
     private bool _isHidden;
 
     [ObservableProperty] [property: JsonIgnore]
     private bool _isOccupied;
 
-    [ObservableProperty] 
-    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group="Attributes")]
-    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
-
     [ObservableProperty]
     [property: EditableColorProperty(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
-    private Color? _trackColor = null;
+    private Color? _trackColor;
+
+    [ObservableProperty]
+    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes")]
+    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
+
+    protected TrackPieceBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
+        TrackTypeEnum = styleTypeEnum;
+    }
+
+    protected TrackPieceBase(Panel? parent = null) : base(parent) { }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
@@ -52,11 +52,13 @@ public abstract partial class TrackPieceBase : TrackBase {
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackStyleImageEnum.Normal, Parent?.Defaults);
         if (TrackColor is not null) {
             style = new SvgStyleBuilder()
-                    .AddExistingStyle(style)
-                    .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor)).Build();
-        }        
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden,Parent?.Defaults);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied,Parent?.Defaults);
+                   .AddExistingStyle(style)
+                   .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor))
+                   .Build();
+        }
+
+        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent?.Defaults);
+        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent?.Defaults);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

@@ -1,5 +1,4 @@
 namespace DCCPanelController.Helpers.EditableProperties;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class EditableImagePropertyAttribute : EditableProperty {
-}
+public class EditableImagePropertyAttribute : EditableProperty { }

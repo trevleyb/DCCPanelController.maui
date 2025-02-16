@@ -1,4 +1,3 @@
-using System.Collections.Specialized;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
@@ -12,51 +11,36 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView : IDisposable {
+    public enum CellHighlightAction {
+        Selected,
+        DragInvalid,
+        DragValid
+    }
 
-    private int _lastDragCol = 0;
-    private int _lastDragRow = 0;
-    public enum CellHighlightAction {Selected, DragInvalid, DragValid}
-    
-    public event EventHandler<ITrackPiece>? TrackPieceTapped;
-    public event EventHandler<ITrackPiece>? TrackPieceChanged;
-
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), null, BindingMode.OneWay, propertyChanged: OnPanelChanged);
+    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
 
-    public EditModeEnum EditMode = EditModeEnum.Move;
-   
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
     [ObservableProperty] private double _gridSize;
+
+    private int _lastDragCol;
+    private int _lastDragRow;
     [ObservableProperty] private double _viewHeight;
     [ObservableProperty] private double _viewWidth;
 
-    public int Rows => Panel?.Rows ?? 1;
-    public int Cols => Panel?.Cols ?? 1;
-    
+    public EditModeEnum EditMode = EditModeEnum.Move;
+
     public ControlPanelView() {
         InitializeComponent();
         BindingContext = this;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
-    
-    /// <summary>
-    /// Clean up. We need to make sure all events are cleared and that
-    /// we reset the view to the image as this view has guestures attached
-    /// which cause other issues if not cleared. Clearing makes it regenerate. 
-    /// </summary>
-    public void Dispose() {
-        // Console.WriteLine("ControlPanelView.Dispose");
-        // MainGrid.SizeChanged -= OnGridSizeChanged;
-        // if (Panel is { } panel) {
-        //     foreach (var track in panel.Tracks) {
-        //         track.PropertyChanged -= OnTrackPieceChanged;
-        //         track.TrackViewRef = null;
-        //     }
-        // }
-    }
-    
+
+    public int Rows => Panel?.Rows ?? 1;
+    public int Cols => Panel?.Cols ?? 1;
+
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
@@ -77,12 +61,32 @@ public partial class ControlPanelView : IDisposable {
         set => SetValue(ShowTrackErrorsProperty, value);
     }
 
+    /// <summary>
+    ///     Clean up. We need to make sure all events are cleared and that
+    ///     we reset the view to the image as this view has guestures attached
+    ///     which cause other issues if not cleared. Clearing makes it regenerate.
+    /// </summary>
+    public void Dispose() {
+        // Console.WriteLine("ControlPanelView.Dispose");
+        // MainGrid.SizeChanged -= OnGridSizeChanged;
+        // if (Panel is { } panel) {
+        //     foreach (var track in panel.Tracks) {
+        //         track.PropertyChanged -= OnTrackPieceChanged;
+        //         track.TrackViewRef = null;
+        //     }
+        // }
+    }
+
+    public event EventHandler<ITrackPiece>? TrackPieceTapped;
+    public event EventHandler<ITrackPiece>? TrackPieceChanged;
+
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrackPiece track) {
             if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }
-            TrackPieceChanged?.Invoke(this,track);
+
+            TrackPieceChanged?.Invoke(this, track);
         }
     }
 
@@ -119,7 +123,7 @@ public partial class ControlPanelView : IDisposable {
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         RebuildGrid();
     }
-    
+
     public bool HasGridSizeChanged(double width, double height) {
         if (width < 1.0 || height < 1.0) return false;
         var difference = Math.Abs(CalculateGridSize(width, height) - GridSize);
@@ -129,11 +133,12 @@ public partial class ControlPanelView : IDisposable {
     public double CalculateGridSize(double width, double height) {
         if (width <= 0 || height <= 0) return 1;
         var gridSize = Math.Min(width / Cols, height / Rows);
+
         // Round down to the nearest 0.01
         gridSize = Math.Floor(gridSize * 100) / 100.0;
         return gridSize;
     }
-    
+
     public void SetScreenSize(double width, double height) {
         GridSize = CalculateGridSize(width, height);
         ViewWidth = GridSize * Cols;
@@ -141,7 +146,6 @@ public partial class ControlPanelView : IDisposable {
     }
 
     public void RebuildGrid(bool forceRefresh = false) {
-
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -168,22 +172,23 @@ public partial class ControlPanelView : IDisposable {
                 DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
             }
         }
+
         AddOutlineToGrid();
         AddTrackPiecesToGrid();
     }
 
     /// <summary>
-    /// Only highlight a cell if we are in Design Mode
+    ///     Only highlight a cell if we are in Design Mode
     /// </summary>
     public void HighlightCell(int col, int row, CellHighlightAction action) {
         if (!DesignMode) return;
         var border = new Border {
             BackgroundColor = Colors.Transparent,
             Stroke = action switch {
-                CellHighlightAction.Selected => Colors.Blue,
-                CellHighlightAction.DragValid => Colors.Green,
+                CellHighlightAction.Selected    => Colors.Blue,
+                CellHighlightAction.DragValid   => Colors.Green,
                 CellHighlightAction.DragInvalid => Colors.Red,
-                _ => Colors.Red,
+                _                               => Colors.Red
             },
             StrokeThickness = 4,
             Opacity = 0.5,
@@ -199,8 +204,8 @@ public partial class ControlPanelView : IDisposable {
     }
 
     /// <summary>
-    /// Only UnHighlight a cell if we are operating in Design mode
-    /// If we are in Operate mode, then we do not highlight cells so this has no function. 
+    ///     Only UnHighlight a cell if we are operating in Design mode
+    ///     If we are in Operate mode, then we do not highlight cells so this has no function.
     /// </summary>
     public void UnHighlightCell(int col, int row) {
         if (!DesignMode) return;
@@ -253,7 +258,7 @@ public partial class ControlPanelView : IDisposable {
             }
         }
     }
-    
+
     /// <summary>
     ///     Add the tracks from the view model onto the Grid
     /// </summary>
@@ -273,6 +278,7 @@ public partial class ControlPanelView : IDisposable {
                         pointImage.SetPoints(validPoints);
                         AddDisplayItemToGrid(pointImage, true);
                     }
+
                     if (track.IsSelected) MarkTrackSelected(track);
                 }
             }
@@ -291,11 +297,11 @@ public partial class ControlPanelView : IDisposable {
             track.TrackViewRef = null;
         }
     }
-    
+
     private void AddDisplayItemToGrid(ITrackPiece track, bool transparentInput = false) {
         var displayItem = track.TrackView(GridSize, transparentInput);
-        track.PropertyChanged += OnTrackPieceChanged; 
-        
+        track.PropertyChanged += OnTrackPieceChanged;
+
         // Setup trigger control to trap if we click on or select the track item
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
@@ -334,7 +340,7 @@ public partial class ControlPanelView : IDisposable {
     }
 
     public void MarkTrackUnSelected(ITrackPiece track) {
-        UnHighlightCell(track.X,track.Y);
+        UnHighlightCell(track.X, track.Y);
         track.IsSelected = false;
     }
 
@@ -360,7 +366,7 @@ public partial class ControlPanelView : IDisposable {
     private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
         var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-       
+
         e.AcceptedOperation = DataPackageOperation.None;
         if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
             if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
@@ -373,6 +379,7 @@ public partial class ControlPanelView : IDisposable {
             } else {
                 HighlightCell(position.Col, position.Row, CellHighlightAction.DragInvalid);
             }
+
             _lastDragCol = position.Col;
             _lastDragRow = position.Row;
         } else {
@@ -388,13 +395,13 @@ public partial class ControlPanelView : IDisposable {
                 !e.Data.Properties.ContainsKey("Track")) {
                 return;
             }
+
             UnHighlightCell(_lastDragCol, _lastDragRow);
             var source = e.Data.Properties["Source"] as string ?? null;
             var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
             var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
-            
-            if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
 
+            if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
@@ -448,13 +455,14 @@ public partial class ControlPanelView : IDisposable {
         } catch (Exception ex) {
             Console.WriteLine("Error dropping item: " + ex.Message);
         }
+
         _lastDragCol = 0;
         _lastDragRow = 0;
     }
 
     private int GetHighestOccupiedLayer(int col, int row) {
         var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row).ToList() ?? [];
-        if (tracksInGrid is {Count: > 0} ) return tracksInGrid.Max(track => (int?)track.Layer) ?? 0;
+        if (tracksInGrid is { Count: > 0 }) return tracksInGrid.Max(track => (int?)track.Layer) ?? 0;
         return 0;
     }
 
@@ -465,7 +473,6 @@ public partial class ControlPanelView : IDisposable {
     /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
     private Result<(int Col, int Row)> GetGridPosition(Point? point) {
         if (point is { } tapPosition) {
-
             var totalHeight = DynamicGrid.Height;
             var totalWidth = DynamicGrid.Width;
             var rowCount = DynamicGrid.RowDefinitions.Count;
@@ -490,10 +497,13 @@ public partial class ControlPanelView : IDisposable {
 
         return Result<(int Col, int Row)>.Failure("Could not determine the Grid Position from the point provided,") ?? throw new InvalidOperationException();
     }
-
 }
 
-public enum EditModeEnum { Move, Copy, Size }
+public enum EditModeEnum {
+    Move,
+    Copy,
+    Size
+}
 
 /// <summary>
 ///     This is a helper class that draws the Grid Lines on the Page.

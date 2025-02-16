@@ -1,67 +1,70 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
     Title="{Binding Panel.Name}"
     x:Class="DCCPanelController.View.PanelEditorPage"
     x:DataType="viewModel:PanelEditorViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:interfaces="clr-namespace:DCCPanelController.Model.Tracks.Interfaces"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:interfaces="clr-namespace:DCCPanelController.Model.Tracks.Interfaces">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior Command="{Binding CancelCommand}" />   
+        <BackButtonBehavior Command="{Binding CancelCommand}" />
     </Shell.BackButtonBehavior>
-    
+
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            x:Name="EditModeToolbar"
-            ToolTipProperties.Text="Edit Mode"
             Clicked="ChangeEditMode"
             IconImageSource="move.png"
-            Text="Edit Mode"/>
-        
+            Text="Edit Mode"
+            ToolTipProperties.Text="Edit Mode"
+            x:Name="EditModeToolbar" />
+
         <ToolbarItem
-            ToolTipProperties.Text="Rotate Left"
             Clicked="RotateLeft"
             IconImageSource="rotate_cw.png"
-            Text="Rotate Left" IsEnabled="{Binding HasSelectedTracks}"/>
+            IsEnabled="{Binding HasSelectedTracks}"
+            Text="Rotate Left"
+            ToolTipProperties.Text="Rotate Left" />
 
         <ToolbarItem
-            ToolTipProperties.Text="Rotate Right"
             Clicked="RotateRight"
             IconImageSource="rotate_ccw.png"
-            Text="Rotate Right" IsEnabled="{Binding HasSelectedTracks}"/>
-        
-        <ToolbarItem
-            ToolTipProperties.Text="Delete Track Piece"
-            Clicked="DeleteTrackPiece"
-            IconImageSource="trash_2.png"
-            Text="Delete Track" IsEnabled="{Binding HasSelectedTracks}"/>
+            IsEnabled="{Binding HasSelectedTracks}"
+            Text="Rotate Right"
+            ToolTipProperties.Text="Rotate Right" />
 
         <ToolbarItem
-            ToolTipProperties.Text="Save this Panel"
+            Clicked="DeleteTrackPiece"
+            IconImageSource="trash_2.png"
+            IsEnabled="{Binding HasSelectedTracks}"
+            Text="Delete Track"
+            ToolTipProperties.Text="Delete Track Piece" />
+
+        <ToolbarItem
             Command="{Binding SaveCommand}"
             IconImageSource="save.png"
             Text="Save"
-            x:Name="SaveButton"/>
-        
+            ToolTipProperties.Text="Save this Panel"
+            x:Name="SaveButton" />
+
         <ToolbarItem
             Clicked="ToggleGrid"
-            ToolTipProperties.Text="Toggle the Grid On|Off"
             IconImageSource="grid_off.png"
             Text="Show Grid"
+            ToolTipProperties.Text="Toggle the Grid On|Off"
             x:Name="GridButton" />
-        
+
         <ToolbarItem
             Clicked="ShowPropertyPage"
-            ToolTipProperties.Text="Panel Properties"
             IconImageSource="settings.png"
-            Text="Properties"
             IsEnabled="{Binding CanUsePropertyPage}"
+            Text="Properties"
+            ToolTipProperties.Text="Panel Properties"
             x:Name="PropertyButton" />
-        
+
     </ContentPage.ToolbarItems>
 
     <Grid
@@ -80,16 +83,15 @@
             x:Name="LeftPane">
             <view:ControlPanelView
                 DesignMode="True"
-                ShowGrid="True"
                 HorizontalOptions="Fill"
-                VerticalOptions="Fill"
+                Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"
+                ShowGrid="True"
                 TrackPieceChanged="PanelView_OnTrackPieceChanged"
                 TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"        
+                VerticalOptions="Fill"
                 x:Name="PanelView" />
         </ContentView>
-        
-        
+
 
         <!--  Right Pane  -->
         <ContentView
@@ -116,20 +118,44 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="interfaces:ITrackSymbol">
                             <Border
-                                Stroke="#95000000"
-                                StrokeThickness="2"
-                                StrokeShape="RoundRectangle 10,10,10,10"
-                                BackgroundColor="Snow" 
+                                BackgroundColor="Snow"
                                 HorizontalOptions="Center"
-                                VerticalOptions="Center"
-                                ToolTipProperties.Text="{Binding Name}"
                                 Margin="5"
-                                Padding="0">
-                                <StackLayout Margin="0" Padding="0" WidthRequest="48" HeightRequest="48">
-                                    <Label IsVisible="{Binding ShowAboveSymbol}"  Margin="0,5,0,-10" FontSize="8" Text="{Binding Name}" VerticalOptions="End" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation"/>
-                                    <Image VerticalOptions="Center" HorizontalOptions="Center" WidthRequest="48" HeightRequest="48" Rotation="{Binding ImageRotation}"  Source="{Binding SymbolView}"/>
-                                    <Label IsVisible="{Binding ShowBelowSymbol}"  Margin="0,-10,0,10" FontSize="8" Text="{Binding Name}" VerticalOptions="End" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation"/>
-                                </StackLayout>  
+                                Padding="0"
+                                Stroke="#95000000"
+                                StrokeShape="RoundRectangle 10,10,10,10"
+                                StrokeThickness="2"
+                                ToolTipProperties.Text="{Binding Name}"
+                                VerticalOptions="Center">
+                                <StackLayout
+                                    HeightRequest="48"
+                                    Margin="0"
+                                    Padding="0"
+                                    WidthRequest="48">
+                                    <Label
+                                        FontSize="8"
+                                        HorizontalTextAlignment="Center"
+                                        IsVisible="{Binding ShowAboveSymbol}"
+                                        LineBreakMode="TailTruncation"
+                                        Margin="0,5,0,-10"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="End" />
+                                    <Image
+                                        HeightRequest="48"
+                                        HorizontalOptions="Center"
+                                        Rotation="{Binding ImageRotation}"
+                                        Source="{Binding SymbolView}"
+                                        VerticalOptions="Center"
+                                        WidthRequest="48" />
+                                    <Label
+                                        FontSize="8"
+                                        HorizontalTextAlignment="Center"
+                                        IsVisible="{Binding ShowBelowSymbol}"
+                                        LineBreakMode="TailTruncation"
+                                        Margin="0,-10,0,10"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="End" />
+                                </StackLayout>
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
                                 </Border.GestureRecognizers>

@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
+
 <Shell
-    Title="DCC Panel Controller"
     FlyoutBehavior="Disabled"
+    Title="DCC Panel Controller"
     iOsSpecific:Page.UseSafeArea="True"
     x:Class="DCCPanelController.View.MainPageTabbed"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -10,11 +11,26 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
-        <ShellContent Title="Operate"   Icon="control.png" ContentTemplate="{DataTemplate view:OperatePage}" />
-        <ShellContent Title="Panels"    Icon="panels.png"  ContentTemplate="{DataTemplate view:PanelsViewerPage}" />
-        <ShellContent Title="Turnouts"  Icon="turnouts.png"  ContentTemplate="{DataTemplate view:TurnoutsPage}" />
-        <ShellContent Title="Routes"    Icon="routes.png" ContentTemplate="{DataTemplate view:RoutesPage}" />
-        <ShellContent Title="Settings"  Icon="properties.png" ContentTemplate="{DataTemplate view:SettingsPage}" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:OperatePage}"
+            Icon="control.png"
+            Title="Operate" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:PanelsViewerPage}"
+            Icon="panels.png"
+            Title="Panels" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:TurnoutsPage}"
+            Icon="turnouts.png"
+            Title="Turnouts" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:RoutesPage}"
+            Icon="routes.png"
+            Title="Routes" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:SettingsPage}"
+            Icon="properties.png"
+            Title="Settings" />
     </FlyoutItem>
 
 </Shell>
@@ -55,5 +71,4 @@
     </NavigationPage>
 
 </TabbedPage>
-
 -->

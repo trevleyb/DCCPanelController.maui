@@ -8,6 +8,7 @@ public class EnumToIndexConverter<T> : IValueConverter where T : struct, Enum {
             var index = Array.IndexOf(Enum.GetValues<T>(), enumValue);
             return index;
         }
+
         return -1;
     }
 
@@ -19,6 +20,7 @@ public class EnumToIndexConverter<T> : IValueConverter where T : struct, Enum {
                 return enumValue;
             }
         }
+
         return default(T); // Default value if not selected or invalid index
     }
 }

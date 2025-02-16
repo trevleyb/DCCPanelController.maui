@@ -12,11 +12,11 @@ public interface ITrackPiece {
     bool IsSelected { get; set; }
 
     IView? TrackViewRef { get; set; }
+    Panel? Parent { get; set; }
+    TrackConnectionsEnum[] Connections { get; }
     IView TrackView(double gridSize, bool passthrough = false);
 
     ITrackPiece Clone(Panel parent);
-    Panel? Parent { get; set; }
-    TrackConnectionsEnum[] Connections { get; }
 
     event PropertyChangedEventHandler? PropertyChanged;
 

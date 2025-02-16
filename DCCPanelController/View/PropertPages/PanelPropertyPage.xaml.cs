@@ -1,30 +1,31 @@
 using System.Globalization;
 using DCCPanelController.Model;
-using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Entry = Microsoft.Maui.Controls.Entry;
 #if IOS
 using UIKit;
 using UIModalPresentationStyle = UIKit.UIModalPresentationStyle;
 #endif
-using Microsoft.Maui.Controls;
 
 namespace DCCPanelController.View.PropertPages;
 
 public partial class PanelPropertyPage : ContentPage, IPropertyPage {
-    public event EventHandler? CloseRequested;
 
     public PanelPropertyPage(Panel panel) {
         InitializeComponent();
         BindingContext = panel;
     }
-    
+
+    public event EventHandler? CloseRequested;
+
     protected override void OnAppearing() {
         base.OnAppearing();
 
 #if IOS
+
         // Access the native view controller
         var window = App.Current.Windows[0].Page;
         if (window == null) throw new InvalidOperationException("MainPage is not set.");
+
         //var window = Microsoft.Maui.Controls.Application.Current?.Windows.FirstOrDefault();
         if (window?.Handler?.PlatformView is UIWindow viewController) {
             var rootController = viewController.RootViewController;
@@ -35,14 +36,14 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
                 modalController.ModalPresentationStyle = UIModalPresentationStyle.PageSheet;
 
                 // Configure the sheet for iOS 15+
-                if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0))
-                {
+                if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0)) {
                     var sheetController = modalController.SheetPresentationController;
                     if (sheetController != null) {
                         sheetController.Detents = [
                             UISheetPresentationControllerDetent.CreateMediumDetent(),
                             UISheetPresentationControllerDetent.CreateLargeDetent()
                         ];
+
                         sheetController.PrefersGrabberVisible = true;
                     }
                 }

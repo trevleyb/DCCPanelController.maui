@@ -1,10 +1,9 @@
-using System.Collections.ObjectModel;
-
 namespace DCCPanelController.View.Components;
 
 public partial class TrackTurnoutActionsView : ContentView {
     public TrackTurnoutActionsView() {
         InitializeComponent();
+
         //Actions = new ObservableCollection<TrackTurnoutAction>();
 
         // Sample for UI Commands
@@ -34,7 +33,8 @@ public partial class TrackTurnoutActionsView : ContentView {
         // }
 
         var addButton = new Button {
-            Text = "Add Action",
+            Text = "Add Action"
+
             //Command = addActionCommand
         };
 

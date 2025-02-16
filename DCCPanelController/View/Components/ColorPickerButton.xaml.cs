@@ -1,19 +1,11 @@
-using System.Windows.Input;
-using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Views;
-using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerButton : ContentView {
     // Property for the currently selected color
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: SelectedColorPropertyChanged);
-
-    private static void SelectedColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ColorPickerButton)bindable;
-    }
 
     public ColorPickerButton() {
         InitializeComponent();
@@ -26,6 +18,10 @@ public partial class ColorPickerButton : ContentView {
             SetValue(SelectedColorProperty, value);
             OnPropertyChanged(nameof(SelectedColorProperty)); // Update DisplayText when the color changes
         }
+    }
+
+    private static void SelectedColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        var control = (ColorPickerButton)bindable;
     }
 
     // Asynchronously show the popup and update the selected color

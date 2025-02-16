@@ -40,7 +40,7 @@ public class SvgStyleElement {
     }
 
     public void AddOrUpdateAttribute(string key, string value) {
-        Attributes.TryAdd(key, value); 
+        Attributes.TryAdd(key, value);
         Attributes[key] = value;
     }
 
@@ -126,7 +126,7 @@ public class SvgElementBuilder(string name) {
     }
 
     public SvgElementBuilder WithTextSize(string textSize) {
-        _element.AddOrUpdateAttribute("Font-Size", textSize.ToString());
+        _element.AddOrUpdateAttribute("Font-Size", textSize);
         return this;
     }
 
@@ -139,7 +139,7 @@ public class SvgElementBuilder(string name) {
         _element.AddOrUpdateAttribute("Font-Color", color);
         return this;
     }
-    
+
     public SvgElementBuilder Dashed(bool isDashed = true) {
         _element.AddOrUpdateAttribute("Dashed", isDashed.ToString());
         return this;

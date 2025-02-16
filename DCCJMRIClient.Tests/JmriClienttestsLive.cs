@@ -1,20 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using NUnit.Framework;
 using DCCJmriClient;
 using DCCJmriClient.EventArgs;
 
 namespace DCCJMRIClient.Tests;
 
 public class JmriClienttestsLive {
-    
+
     [TestFixture]
     public class JmriClientIntegrationTests {
-        private const string JmriUrl = "http://localhost:12080";
-        private JmriClient _client;
 
         [SetUp]
         public void SetUp() {
@@ -28,6 +21,9 @@ public class JmriClienttestsLive {
             if (_client != null)
                 await _client.StopAsync();
         }
+
+        private const string JmriUrl = "http://localhost:12080";
+        private JmriClient _client;
 
         [Test]
         public async Task InitializeAsync_ShouldFetchInitialDataAndRaiseEvents() {
@@ -47,7 +43,7 @@ public class JmriClienttestsLive {
             Assert.That(turnoutEvents.Count, Is.GreaterThan(0), "Turnout data was not fetched or no events were raised.");
             Assert.That(routeEvents.Count, Is.GreaterThan(0), "Route data was not fetched or no events were raised.");
             Assert.That(occupancyEvents.Count, Is.GreaterThan(0), "Occupancy data was not fetched or no events were raised.");
-        
+
             // Optional: Dump the data for manual inspection
             Console.WriteLine("Turnouts:");
             turnoutEvents.ForEach(evt => Console.WriteLine(JsonSerializer.Serialize(evt)));
@@ -68,9 +64,9 @@ public class JmriClienttestsLive {
             };
 
             // Act
-            await _client.InitializeAsync(); // Ensure the client is initialized
+            await _client.InitializeAsync();                         // Ensure the client is initialized
             await _client.SendTurnoutCommandAsync("Turnout1", true); // Send a command to set "Turnout1" to "THROWN"
-            await Task.Delay(2000); // Allow time for state to propagate
+            await Task.Delay(2000);                                  // Allow time for state to propagate
 
             // Assert
             Assert.That(turnoutState, Is.EqualTo("THROWN"), "Turnout state was not updated correctly.");
@@ -85,9 +81,9 @@ public class JmriClienttestsLive {
             };
 
             // Act
-            await _client.InitializeAsync(); // Ensure the client is initialized
+            await _client.InitializeAsync();               // Ensure the client is initialized
             await _client.SendRouteCommandAsync("Route1"); // Send a command to activate "Route1"
-            await Task.Delay(2000); // Allow time for state to propagate
+            await Task.Delay(2000);                        // Allow time for state to propagate
 
             // Assert
             Assert.That(routeState, Is.EqualTo("ACTIVE"), "Route state was not updated correctly.");
@@ -105,15 +101,15 @@ public class JmriClienttestsLive {
             _client.OccupancyChanged += (_, e) => receivedOccupancyUpdates.Add(e);
 
             // Act
-            await _client.InitializeAsync(); // Initialize to load initial data
+            await _client.InitializeAsync();      // Initialize to load initial data
             await _client.StartMonitoringAsync(); // Start monitoring the JSON server
-            await Task.Delay(10000); // Allow sufficient time to receive updates
+            await Task.Delay(10000);              // Allow sufficient time to receive updates
 
             // Assert
             Assert.That(receivedTurnoutUpdates.Count, Is.GreaterThan(0), "No turnout updates were received.");
             Assert.That(receivedRouteUpdates.Count, Is.GreaterThan(0), "No route updates were received.");
             Assert.That(receivedOccupancyUpdates.Count, Is.GreaterThan(0), "No occupancy updates were received.");
-            
+
             // Optional: Log received data
             Console.WriteLine($"Received {receivedTurnoutUpdates.Count} turnout updates.");
             Console.WriteLine($"Received {receivedRouteUpdates.Count} route updates.");
@@ -128,7 +124,7 @@ public class JmriClienttestsLive {
 
             // Act
             await _client.StopAsync(); // Stop the client
-            await Task.Delay(2000); // Give time for any asynchronous resources to clean up
+            await Task.Delay(2000);    // Give time for any asynchronous resources to clean up
 
             // Assert
             Assert.Pass("Client stopped without exceptions.");

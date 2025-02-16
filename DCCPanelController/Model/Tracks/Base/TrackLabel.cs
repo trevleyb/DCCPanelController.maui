@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
@@ -8,11 +7,11 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackLabelBase : TrackBase {
 
-    protected TrackLabelBase(Panel? parent = null) : base(parent) { }
-    
-    [ObservableProperty] 
+    [ObservableProperty]
     [property: EditableStringProperty(Name = "Circle Label", Description = "Label to display in the Circle")]
     private string _circlelabel = string.Empty;
+
+    protected TrackLabelBase(Panel? parent = null) : base(parent) { }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
@@ -35,5 +34,4 @@ public abstract partial class TrackLabelBase : TrackBase {
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
-
 }

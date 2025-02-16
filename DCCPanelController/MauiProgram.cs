@@ -1,15 +1,10 @@
-﻿using System;
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls;
-using Microsoft.Maui.Controls.Hosting;
-using Microsoft.Maui.Hosting;
 
 namespace DCCPanelController;
 
@@ -32,7 +27,7 @@ public static class MauiProgram {
 #endif
 
         var services = builder.Services;
-        
+
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageTabbed>();

@@ -6,7 +6,7 @@ public static class ImageHelper {
         await using var stream = await result.OpenReadAsync();
         using var memoryStream = new MemoryStream();
         await stream.CopyToAsync(memoryStream);
-        var imageBytes  = memoryStream.ToArray();
+        var imageBytes = memoryStream.ToArray();
         var base64Image = Convert.ToBase64String(imageBytes);
         return base64Image;
     }

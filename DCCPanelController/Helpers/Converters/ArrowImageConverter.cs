@@ -7,6 +7,7 @@ public class BooleanToArrowConverter : IValueConverter {
         if (value is bool isExpanded) {
             return isExpanded ? "chevron_down.png" : "chevron_right.png";
         }
+
         return "chevron_right.png";
     }
 

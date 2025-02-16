@@ -1,38 +1,70 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <toolkit:Popup
     x:Class="DCCPanelController.View.Components.ColorGrid"
     x:DataType="colorPickerControl:ColorGrid"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
     xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <StackLayout WidthRequest="300">
-        <Border Stroke="{StaticResource Primary}"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                StrokeThickness="3"
-                Background="White"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
+        <Border
+            Background="White"
+            HorizontalOptions="Center"
+            Stroke="{StaticResource Primary}"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            StrokeThickness="3"
+            VerticalOptions="Center">
 
             <StackLayout>
-                <Grid ColumnDefinitions="*,auto" HeightRequest="30" VerticalOptions="Center"
-                      BackgroundColor="{StaticResource Primary}">
-                    <Label TextColor="White" Margin="10,0,0,0" Grid.Column="0" Style="{StaticResource LargeLabel}"
-                           Text="Color Selector" VerticalOptions="Center" />
+                <Grid
+                    BackgroundColor="{StaticResource Primary}"
+                    ColumnDefinitions="*,auto"
+                    HeightRequest="30"
+                    VerticalOptions="Center">
+                    <Label
+                        Grid.Column="0"
+                        Margin="10,0,0,0"
+                        Style="{StaticResource LargeLabel}"
+                        Text="Color Selector"
+                        TextColor="White"
+                        VerticalOptions="Center" />
                 </Grid>
 
-                <CollectionView Margin="10" ItemsSource="{Binding ColorOptions}" SelectionChanged="OnColorSelected" SelectionMode="Single">
+                <CollectionView
+                    ItemsSource="{Binding ColorOptions}"
+                    Margin="10"
+                    SelectionChanged="OnColorSelected"
+                    SelectionMode="Single">
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="5" VerticalItemSpacing="5" HorizontalItemSpacing="5"/>
+                        <GridItemsLayout
+                            HorizontalItemSpacing="5"
+                            Orientation="Vertical"
+                            Span="5"
+                            VerticalItemSpacing="5" />
                     </CollectionView.ItemsLayout>
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="helpers:ColorOption">
-                            <Grid Margin="10" Padding="0" Height="20" Width="20" HeightRequest="20"  WidthRequest="20">
-                                <BoxView Color="{Binding Color}" HorizontalOptions="Fill" VerticalOptions="Fill"/>
-                                <Label Padding="0" Margin="-10" Text="{Binding Name}" FontSize="8" HorizontalOptions="Center" VerticalOptions="Center"/>
+                            <Grid
+                                Height="20"
+                                HeightRequest="20"
+                                Margin="10"
+                                Padding="0"
+                                Width="20"
+                                WidthRequest="20">
+                                <BoxView
+                                    Color="{Binding Color}"
+                                    HorizontalOptions="Fill"
+                                    VerticalOptions="Fill" />
+                                <Label
+                                    FontSize="8"
+                                    HorizontalOptions="Center"
+                                    Margin="-10"
+                                    Padding="0"
+                                    Text="{Binding Name}"
+                                    VerticalOptions="Center" />
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

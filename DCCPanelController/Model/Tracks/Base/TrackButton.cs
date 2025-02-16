@@ -9,21 +9,29 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackButtonBase : TrackBase {
 
+    [ObservableProperty]
+    [property: EditableActionsProperty(IsButtonContext = true, Group = "Actions", Description = "Buttons to set when this turnout changes")]
+    private ButtonActions _buttonActions = [];
+
     private IAudioPlayer? _clickSoundPlayer;
+
+    [ObservableProperty]
+    [property: EditableActionsProperty(IsButtonContext = true, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
+    private TurnoutActions _turnoutActions = [];
+
     protected ButtonStateEnum ButtonState = ButtonStateEnum.Unknown;
     protected TrackStyleImageEnum TrackImageEnum = TrackStyleImageEnum.Normal;
 
-    [ObservableProperty] 
-    [property: EditableActionsProperty(IsButtonContext = true, Group="Actions",  Description = "Turnouts to change when ths turnout changes")]
-    private TurnoutActions _turnoutActions = [];
-
-    [ObservableProperty] 
-    [property: EditableActionsProperty(IsButtonContext = true, Group="Actions",  Description = "Buttons to set when this turnout changes")]
-    private ButtonActions _buttonActions = [];
-    
     protected TrackButtonBase(Panel? parent = null) : base(parent) {
         PropertyChanged += OnPropertyChanged;
     }
+
+    public ButtonStateEnum ToggleButtonState =>
+        ButtonState switch {
+            ButtonStateEnum.Active   => ButtonStateEnum.InActive,
+            ButtonStateEnum.InActive => ButtonStateEnum.Active,
+            _                        => ButtonStateEnum.Active
+        };
 
     public void SetButtonState(ButtonStateEnum state) {
         ButtonState = state;
@@ -33,29 +41,23 @@ public abstract partial class TrackButtonBase : TrackBase {
     public void ExecButtonState(ButtonStateEnum state) {
         SetButtonState(state);
         if (Parent is not null) {
-            ButtonActions.ApplyButtonActionsToPanel(Parent,state);
-            TurnoutActions.ApplyTurnoutActionsToPanel(Parent,state);
+            ButtonActions.ApplyButtonActionsToPanel(Parent, state);
+            TurnoutActions.ApplyTurnoutActionsToPanel(Parent, state);
         }
     }
 
-    public ButtonStateEnum ToggleButtonState => 
-         ButtonState switch {
-            ButtonStateEnum.Active   => ButtonStateEnum.InActive,
-            ButtonStateEnum.InActive => ButtonStateEnum.Active,
-            _                        => ButtonStateEnum.Active
-        };
-    
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
         }
+
         _clickSoundPlayer?.Play();
         ButtonState = ToggleButtonState;
         ExecButtonState(ButtonState);
         OnPropertyChanged(nameof(TrackView));
     }
-    
+
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }

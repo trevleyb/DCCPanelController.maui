@@ -17,7 +17,7 @@ public class ButtonActions : ObservableCollection<ButtonAction> {
                     button.SetButtonState(buttonAction.WhenInactiveOrThrown);
                     break;
                 }
-            }            
+            }
         }
     }
 
@@ -33,7 +33,7 @@ public class ButtonActions : ObservableCollection<ButtonAction> {
                     button.SetButtonState(buttonAction.WhenInactiveOrThrown);
                     break;
                 }
-            }            
+            }
         }
     }
 }

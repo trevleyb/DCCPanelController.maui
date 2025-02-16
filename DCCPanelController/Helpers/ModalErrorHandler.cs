@@ -1,13 +1,13 @@
 namespace DCCPanelController.Helpers;
 
 /// <summary>
-/// Modal Error Handler.
+///     Modal Error Handler.
 /// </summary>
 public class ModalErrorHandler : IErrorHandler {
     private readonly SemaphoreSlim _semaphore = new(1, 1);
 
     /// <summary>
-    /// Handle error in UI.
+    ///     Handle error in UI.
     /// </summary>
     /// <param name="ex">Exception.</param>
     public void HandleError(Exception ex) {

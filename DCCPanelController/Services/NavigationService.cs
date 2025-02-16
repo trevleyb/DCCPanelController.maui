@@ -44,7 +44,8 @@ public class NavigationService(IServiceProvider serviceProvider) {
             tcs.SetResult();
             mainPage.Navigation.PopModalAsync(true);
         };
-        await mainPage.Navigation.PushModalAsync(page,true);
+
+        await mainPage.Navigation.PushModalAsync(page, true);
         await tcs.Task;
     }
 

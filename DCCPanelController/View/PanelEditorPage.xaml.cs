@@ -1,6 +1,4 @@
-using System.ComponentModel;
 using System.Diagnostics;
-using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.PropertPages;
@@ -11,14 +9,15 @@ namespace DCCPanelController.View;
 public partial class PanelEditorPage : ContentPage {
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
-    private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
-    private PanelEditorViewModel ViewModel { get; }
 
     public PanelEditorPage(PanelEditorViewModel viewModel) {
         ViewModel = viewModel;
         BindingContext = ViewModel;
         InitializeComponent();
     }
+
+    private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
+    private PanelEditorViewModel ViewModel { get; }
 
     private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
         ViewModel.TrackPieceChanged();
@@ -31,14 +30,14 @@ public partial class PanelEditorPage : ContentPage {
             PanelView.MarkTrackSelected(track);
         }
     }
-    
+
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
             e.Data.Properties.Add("Track", symbol);
             e.Data.Properties.Add("Source", "DisplaySymbol");
         }
     }
-    
+
     private void ToggleGrid(object? sender, EventArgs e) {
         PanelView.ShowGrid = !PanelView.ShowGrid;
         GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
@@ -71,7 +70,7 @@ public partial class PanelEditorPage : ContentPage {
             await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
         }
     }
-    
+
     private void RotateLeft(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateLeft();
     }
@@ -79,7 +78,7 @@ public partial class PanelEditorPage : ContentPage {
     private void RotateRight(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateRight();
     }
-    
+
     private void DeleteTrackPiece(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) {
             PanelView.RemoveTrackPiece(track);
@@ -102,5 +101,4 @@ public partial class PanelEditorPage : ContentPage {
             break;
         }
     }
-    
 }

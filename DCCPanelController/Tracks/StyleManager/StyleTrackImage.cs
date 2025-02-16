@@ -15,6 +15,10 @@ public class StyleTrackImage {
         return new Builder(trackType, imageSource);
     }
 
+    public StyleTrackImage Clone() {
+        return (StyleTrackImage)MemberwiseClone();
+    }
+
     public class Rotation {
         public int TrackRotation { get; set; }
         public int ImageRotation { get; set; }
@@ -53,9 +57,5 @@ public class StyleTrackImage {
         public StyleTrackImage Build() {
             return new StyleTrackImage(this);
         }
-    }
-
-    public StyleTrackImage Clone() {
-        return (StyleTrackImage)MemberwiseClone();
     }
 }

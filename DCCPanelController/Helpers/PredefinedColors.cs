@@ -4,16 +4,16 @@ using CommunityToolkit.Maui.Core.Extensions;
 namespace DCCPanelController.Helpers;
 
 public class ColorOption {
-    private static List<int>? validLevels = null;
-    
+    private static List<int>? validLevels;
+
     public required string Name { get; set; }
     public required Color Color { get; set; }
     public required Color ContrastColor { get; set; }
     public string Hex => Color.ToHex();
     public bool IsPrimary => IsPrimaryColor(Color, 5);
-    
+
     /// <summary>
-    /// Determines if a color is a valid 'primary' color based on the number of combinations.
+    ///     Determines if a color is a valid 'primary' color based on the number of combinations.
     /// </summary>
     /// <param name="color">The color to check.</param>
     /// <param name="levels">The number of levels (2: 0,255; 3: 0,128,255; etc.).</param>
@@ -23,14 +23,14 @@ public class ColorOption {
         var step = 255 / (levels - 1) + 1;
         if (validLevels == null || validLevels.Count != levels) {
             validLevels = new List<int> { 0, 255 };
-            for (var i = 1; i < levels -1; i++) validLevels.Add((i * step) -1);
+            for (var i = 1; i < levels - 1; i++) validLevels.Add(i * step - 1);
         }
 
         // Validate if the Red, Green, and Blue components are in the valid levels
         var red = (int)(color.Red * 255);
         var green = (int)(color.Green * 255);
-        var blue =(int)(color.Blue * 255);
-        
+        var blue = (int)(color.Blue * 255);
+
         return validLevels.Contains(red) && validLevels.Contains(green) && validLevels.Contains(blue);
     }
 }
@@ -38,13 +38,13 @@ public class ColorOption {
 public static class PredefinedColors {
     private static readonly ReadOnlyCollection<ColorOption> _allColors = new(BuildAllColors());
     private static readonly ReadOnlyCollection<ColorOption> _selectableColors = new(BuildSelectableColors());
-    
+
+    public static ColorOption None => new() { Name = "None", Color = Colors.White, ContrastColor = Colors.Black };
+    public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
+
     public static ColorOption FindColor(Color value) {
         return _allColors.FirstOrDefault(color => color.Hex == value.ToHex()) ?? Default;
     }
-    
-    public static ColorOption None => new() { Name = "None", Color = Colors.White, ContrastColor = Colors.Black };
-    public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
 
     public static ReadOnlyCollection<ColorOption> AllColors() {
         return _allColors;
@@ -61,12 +61,13 @@ public static class PredefinedColors {
         foreach (var red in steps) {
             foreach (var green in steps) {
                 foreach (var blue in steps) {
-                    var color = Color.FromRgb(red,green,blue);
+                    var color = Color.FromRgb(red, green, blue);
                     var foundColor = _allColors.FirstOrDefault(c => c.Hex == color.ToHex());
                     colors.Add(foundColor ?? new ColorOption { Name = color.ToHex(), Color = color, ContrastColor = Colors.White });
                 }
             }
         }
+
         colors.Add(new ColorOption { Name = "None", Color = Colors.White, ContrastColor = Colors.Black });
         return new ReadOnlyCollection<ColorOption>(colors);
     }
@@ -222,6 +223,7 @@ public static class PredefinedColors {
             new() { Name = "Yellow", Color = Colors.Yellow, ContrastColor = Colors.Black },
             new() { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black }
         };
+
         return new ReadOnlyCollection<ColorOption>(colors);
     }
 
@@ -233,10 +235,11 @@ public static class PredefinedColors {
             var red = color.Color.GetByteRed();
             var blue = color.Color.GetByteBlue();
 
-            if ((red == 0 || (red == 128) | (red == 255)) && (green == 0 || green == 128 || green == 255) && (blue == 0 || blue == 128 || blue == 255)) {
+            if ((red == 0 || red == 128 | red == 255) && (green == 0 || green == 128 || green == 255) && (blue == 0 || blue == 128 || blue == 255)) {
                 selectedColorOptions.Add(color);
             }
         }
+
         return selectedColorOptions;
     }
 

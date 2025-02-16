@@ -9,16 +9,9 @@ namespace DCCPanelController.Services;
 
 public class SettingsService {
     private const string StorageFilename = "DCCPanelController.json";
-    private Storage? _storage;
-    
-    public Storage Storage => _storage ??= Load();
-    public Settings Settings => Storage.Settings;
-    public ObservableCollection<Panel> Panels => Storage.Panels;
-    public ObservableCollection<Turnout> Turnouts => Storage.Turnouts;
-    public ObservableCollection<Route> Routes => Storage.Routes;
 
     public static JsonSerializerOptions? PanelSerializerOptions = new() {
-        WriteIndented = true, 
+        WriteIndented = true,
         Converters = {
             new JsonConverterTrackPiece(),
             new MauiColorJsonConverter(),
@@ -26,11 +19,18 @@ public class SettingsService {
             new JsonConverterEnumToString<TrackStyleTypeEnum>(),
             new JsonConverterEnumToString<TrackStyleAttributeEnum>(),
             new JsonConverterEnumToString<TrackStyleImageEnum>(),
-            new JsonConverterEnumToString<TextAlignment>(),
-            
+            new JsonConverterEnumToString<TextAlignment>()
         }
     };
-    
+
+    private Storage? _storage;
+
+    public Storage Storage => _storage ??= Load();
+    public Settings Settings => Storage.Settings;
+    public ObservableCollection<Panel> Panels => Storage.Panels;
+    public ObservableCollection<Turnout> Turnouts => Storage.Turnouts;
+    public ObservableCollection<Route> Routes => Storage.Routes;
+
     public void Save(string fileName = StorageFilename) {
         try {
             var jsonString = JsonSerializer.Serialize(_storage, PanelSerializerOptions);
@@ -56,6 +56,7 @@ public class SettingsService {
                     return new Storage();
                 }
             }
+
             Console.WriteLine($"File not found: {filePath}");
             return new Storage();
         } catch (Exception ex) {
@@ -89,7 +90,7 @@ public class SettingsService {
             Load();
         }
     }
-    
+
     private static string GetStorageFilePath(string filename) {
         try {
             var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
@@ -98,7 +99,7 @@ public class SettingsService {
             Console.WriteLine(storageFile);
             return storageFile;
         } catch (Exception ex) {
-            Console.WriteLine("Unable to determine where to store the Config File. "+ ex.Message);
+            Console.WriteLine("Unable to determine where to store the Config File. " + ex.Message);
             throw;
         }
     }
