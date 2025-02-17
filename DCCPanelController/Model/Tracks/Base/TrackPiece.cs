@@ -12,7 +12,8 @@ public abstract partial class TrackPieceBase : TrackBase {
     [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes")]
     private bool _isHidden;
 
-    [ObservableProperty] [property: JsonIgnore]
+    [ObservableProperty] 
+    [property: JsonIgnore]
     private bool _isOccupied;
 
     [ObservableProperty]

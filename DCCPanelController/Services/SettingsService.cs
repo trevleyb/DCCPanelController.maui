@@ -10,7 +10,7 @@ namespace DCCPanelController.Services;
 public class SettingsService {
     private const string StorageFilename = "DCCPanelController.json";
 
-    public static JsonSerializerOptions? PanelSerializerOptions = new() {
+    public static readonly JsonSerializerOptions? PanelSerializerOptions = new() {
         WriteIndented = true,
         Converters = {
             new JsonConverterTrackPiece(),

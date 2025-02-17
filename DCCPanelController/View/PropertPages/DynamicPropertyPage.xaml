@@ -8,7 +8,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Content>
-        <Grid HorizontalOptions="Center" VerticalOptions="Center">
+        <Grid
+            HorizontalOptions="Center"
+            Margin="25"
+            VerticalOptions="Center">
             <Border
                 Background="White"
                 HorizontalOptions="Center"
@@ -25,7 +28,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <!--  Title block height  -->
-                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
                         <!--  Scrollable content  -->
                         <RowDefinition Height="Auto" />
                         <!--  Button fixed at the bottom  -->
@@ -58,7 +61,7 @@
                         VerticalScrollBarVisibility="Always">
                         <VerticalStackLayout
                             HorizontalOptions="Fill"
-                            Margin="10,20,0,00"
+                            Margin="10,20,0,0"
                             x:Name="PropertyContainer" />
                     </ScrollView>
 

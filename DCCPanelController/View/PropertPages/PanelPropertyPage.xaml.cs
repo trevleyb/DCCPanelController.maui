@@ -13,6 +13,8 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
     public PanelPropertyPage(Panel panel) {
         InitializeComponent();
         BindingContext = panel;
+        RowsStepper.Minimum = GetMaxRows(panel);
+        ColsStepper.Minimum = GetMaxCols(panel);
     }
 
     public event EventHandler? CloseRequested;
@@ -97,5 +99,13 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
         if (BindingContext is Panel panel) {
             panel.Defaults.ResetToDefaults();
         }
+    }
+
+    private static int GetMaxRows(Panel panel) {
+        return int.Max(panel.Tracks.Select(track => track.Y).Prepend(0).Max(), 12);
+    }
+
+    private static int GetMaxCols(Panel panel) {
+        return int.Max(panel.Tracks.Select(track => track.X).Prepend(0).Max(), 12);
     }
 }

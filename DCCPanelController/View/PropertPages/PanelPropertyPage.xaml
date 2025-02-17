@@ -89,8 +89,8 @@
                                 <Stepper
                                     HorizontalOptions="FillAndExpand"
                                     Increment="1"
-                                    Maximum="32"
-                                    Minimum="12"
+                                    Maximum="48"
+                                    Minimum="8"
                                     Value="{Binding Cols}"
                                     x:Name="ColsStepper" />
                             </HorizontalStackLayout>
@@ -111,7 +111,7 @@
                                 <Stepper
                                     HorizontalOptions="FillAndExpand"
                                     Increment="1"
-                                    Maximum="32"
+                                    Maximum="48"
                                     Minimum="8"
                                     Value="{Binding Rows}"
                                     x:Name="RowsStepper" />

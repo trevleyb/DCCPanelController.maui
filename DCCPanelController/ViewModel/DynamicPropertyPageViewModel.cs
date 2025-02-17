@@ -245,7 +245,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
             if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
                 Console.WriteLine("Button Actions");
-                return new ButtonActionsView(buttonActions, attr.IsButtonContext) {
+                
+                return new ButtonActionsView(buttonActions, null, attr.IsButtonContext) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };

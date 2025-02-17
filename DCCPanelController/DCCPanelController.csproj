@@ -89,6 +89,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="akgul.Maui.DataGrid" Version="4.0.6" />
         <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1"/>
         <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0"/>
         <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2"/>
@@ -196,6 +197,9 @@
         <MauiXaml Update="View\Components\ColorPickerButton.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\Actions\ButtonActionsViewOld.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -218,6 +222,10 @@
         <Compile Update="View\Components\ColorPickerButton.xaml.cs">
             <DependentUpon>ColorPickerButton.xaml</DependentUpon>
             <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\Actions\ButtonActionsViewOld.xaml.cs">
+          <DependentUpon>ButtonActionsViewOld.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

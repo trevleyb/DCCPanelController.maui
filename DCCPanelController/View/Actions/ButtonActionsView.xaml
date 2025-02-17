@@ -6,26 +6,121 @@
     x:Name="ButtonActionView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:actions="clr-namespace:DCCPanelController.View.Actions"
+    xmlns:dg="clr-namespace:Maui.DataGrid;assembly=Maui.DataGrid"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <VerticalStackLayout Padding="10" Spacing="15">
-        <Grid ColumnDefinitions="*,auto">
+    <VerticalStackLayout HorizontalOptions="Fill" Margin="10,0,10,10">
+        <Grid ColumnDefinitions="100,auto,auto" HeightRequest="30">
             <Label
+                FontAttributes="Bold"
                 Grid.Column="0"
-                Style="{StaticResource MediumLabel}"
-                Text="Button Actions" />
+                HeightRequest="25"
+                Text="Button Actions"
+                TextColor="{StaticResource Primary}" />
             <ImageButton
                 Aspect="Center"
-                Command="{Binding AddTurnoutActionCommand}"
+                Command="{Binding AddButtonActionCommand}"
                 Grid.Column="1"
                 HeightRequest="25"
-                Margin="0,-25,20,0"
+                Margin="0,0,0,0"
                 Source="plus_circle.png"
+                WidthRequest="25" />
+            <ImageButton
+                Aspect="Center"
+                Command="{Binding DeleteButtonActionCommand}"
+                Grid.Column="2"
+                HeightRequest="25"
+                Source="minus_circle.png"
                 WidthRequest="25" />
         </Grid>
 
-        <!--  Button Actions Table  -->
+        <dg:DataGrid
+            ActiveRowColor="{StaticResource Secondary}"
+            BackgroundColor="{StaticResource White}"
+            BorderColor="{StaticResource Primary}"
+            HeaderBackground="{StaticResource LightBackground}"
+            HeaderBordersVisible="true"
+            HeaderHeight="30"
+            HorizontalOptions="Fill"
+            IsRefreshing="{Binding IsRefreshing}"
+            ItemsSource="{Binding ButtonActions}"
+            PaginationEnabled="false"
+            PullToRefreshCommand="{Binding RefreshCommand}"
+            RefreshingEnabled="True"
+            RowToEdit="{Binding EditingButtonAction}"
+            SelectedItem="{Binding SelectedButtonAction}"
+            SelectionMode="Single">
+
+            <dg:DataGrid.Columns>
+                <dg:DataGridColumn
+                    PropertyName="Id"
+                    SortingEnabled="True"
+                    Title="ID"
+                    Width="0.2*" />
+                <dg:DataGridColumn
+                    PropertyName="WhenActiveOrClosed"
+                    SortingEnabled="False"
+                    Title="{Binding StateLabelActive}"
+                    Width="0.4*" />
+                <dg:DataGridColumn
+                    PropertyName="WhenInactiveOrThrown"
+                    SortingEnabled="False"
+                    Title="{Binding StateLabelInactive}"
+                    Width="0.4*" />
+                <dg:DataGridColumn
+                    PropertyName="Cascade"
+                    SortingEnabled="False"
+                    Title="Cascade?"
+                    Width="0.2*">
+                    <dg:DataGridColumn.CellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <CheckBox
+                                HorizontalOptions="Center"
+                                IsChecked="{Binding Cascade}"
+                                IsEnabled="False"
+                                VerticalOptions="Center" />
+                        </DataTemplate>
+                    </dg:DataGridColumn.CellTemplate>
+                    <dg:DataGridColumn.EditCellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <CheckBox
+                                HorizontalOptions="Center"
+                                IsChecked="{Binding Cascade}"
+                                IsEnabled="True"
+                                VerticalOptions="Center" />
+                        </DataTemplate>
+                    </dg:DataGridColumn.EditCellTemplate>
+                </dg:DataGridColumn>
+                <dg:DataGridColumn Width="0.1*">
+                    <dg:DataGridColumn.CellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <Button
+                                BackgroundColor="LightSkyBlue"
+                                Command="{Binding StartEditCommand, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type actions:ButtonActionsView}}, x:DataType={x:Type actions:ButtonActionsView}}"
+                                CommandParameter="{Binding .}"
+                                Text="Edit" />
+                        </DataTemplate>
+                    </dg:DataGridColumn.CellTemplate>
+                    <dg:DataGridColumn.EditCellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <Button
+                                BackgroundColor="MediumSeaGreen"
+                                Command="{Binding CompleteEditCommand, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type actions:ButtonActionsView}}, x:DataType={x:Type actions:ButtonActionsView}}"
+                                CommandParameter="{Binding .}"
+                                Text="Done" />
+                        </DataTemplate>
+                    </dg:DataGridColumn.EditCellTemplate>
+                </dg:DataGridColumn>
+                <dg:DataGridColumn Width="0.2*" />
+            </dg:DataGrid.Columns>
+
+        </dg:DataGrid>
+    </VerticalStackLayout>
+</ContentView>
+
+<!--  Button Actions Table  -->
+<!--
         <CollectionView ItemsSource="{Binding ButtonActions}">
             <CollectionView.Header>
                 <Grid ColumnDefinitions="2*,*,*,*">
@@ -56,12 +151,8 @@
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <!--  Add Button Action  -->
         <Button
             Command="{Binding AddButtonActionCommand}"
             HorizontalOptions="Center"
             Text="Add Button"
-            WidthRequest="100" />
-    </VerticalStackLayout>
-</ContentView>
+            WidthRequest="100" />-->

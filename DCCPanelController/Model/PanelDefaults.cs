@@ -9,7 +9,7 @@ public partial class PanelDefaults : ObservableObject {
 
     [ObservableProperty] private Color _backgroundColor = Colors.White;
     [ObservableProperty] private Color _borderColor = Colors.LightSlateGray;
-    [ObservableProperty] private Color _branchLineColor = Colors.Grey;
+    [ObservableProperty] private Color _branchLineColor = Colors.LightGray;
     [ObservableProperty] private Color _buttonBorder = Colors.Grey;
     [ObservableProperty] private Color _buttonColor = Colors.Grey;
     [ObservableProperty] private Color _buttonOffBorder = Colors.Red;
@@ -31,7 +31,7 @@ public partial class PanelDefaults : ObservableObject {
     public void ResetToDefaults() {
         BackgroundColor = Colors.White;
         MainLineColor = Colors.Green;
-        BranchLineColor = Colors.Grey;
+        BranchLineColor = Colors.LightGray;
         BorderColor = Colors.Black;
         DivergingColor = Colors.Grey;
         OccupiedColor = Colors.Crimson;

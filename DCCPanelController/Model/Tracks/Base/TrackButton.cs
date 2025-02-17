@@ -10,6 +10,10 @@ namespace DCCPanelController.Model.Tracks.Base;
 public abstract partial class TrackButtonBase : TrackBase {
 
     [ObservableProperty]
+    [property: EditableStringProperty(Name="ID",Description  = "Unique Identifier for this Button")]
+    private string _buttonID = "";
+    
+    [ObservableProperty]
     [property: EditableActionsProperty(IsButtonContext = true, Group = "Actions", Description = "Buttons to set when this turnout changes")]
     private ButtonActions _buttonActions = [];
 
