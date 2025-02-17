@@ -6,9 +6,15 @@
     x:Name="ButtonActionView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:actions="clr-namespace:DCCPanelController.View.Actions"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:dg="clr-namespace:Maui.DataGrid;assembly=Maui.DataGrid"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converters:ButtonActionEnumConverter x:Key="ButtonActionEnumConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
 
     <VerticalStackLayout HorizontalOptions="Fill" Margin="10,0,10,10">
         <Grid ColumnDefinitions="100,auto,auto" HeightRequest="30">
@@ -50,7 +56,7 @@
             RefreshingEnabled="True"
             RowToEdit="{Binding EditingButtonAction}"
             SelectedItem="{Binding SelectedButtonAction}"
-            SelectionMode="Single">
+            SelectionMode="None">
 
             <dg:DataGrid.Columns>
                 <dg:DataGridColumn
@@ -62,7 +68,36 @@
                     PropertyName="WhenActiveOrClosed"
                     SortingEnabled="False"
                     Title="{Binding StateLabelActive}"
-                    Width="0.4*" />
+                    Width="0.4*">
+
+                    <dg:DataGridColumn.CellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <Picker
+                                HorizontalOptions="Center"
+                                IsEnabled="False"
+                                SelectedItem="{Binding Converter={StaticResource ButtonActionEnumConverter}}"
+                                VerticalOptions="Center" />
+                        </DataTemplate>
+                    </dg:DataGridColumn.CellTemplate>
+                    <dg:DataGridColumn.EditCellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <Picker
+                                HorizontalOptions="Fill"
+                                IsEnabled="True"
+                                SelectedItem="{Binding Converter={StaticResource ButtonActionEnumConverter}}"
+                                VerticalOptions="Center">
+                                <Picker.Items>
+                                    <x:String>Active (on)</x:String>
+                                    <x:String>Inactive (off)</x:String>
+                                    <x:String>Toggle</x:String>
+                                    <x:String>Leave As-Is</x:String>
+                                </Picker.Items>
+
+                            </Picker>
+                        </DataTemplate>
+                    </dg:DataGridColumn.EditCellTemplate>
+
+                </dg:DataGridColumn>
                 <dg:DataGridColumn
                     PropertyName="WhenInactiveOrThrown"
                     SortingEnabled="False"

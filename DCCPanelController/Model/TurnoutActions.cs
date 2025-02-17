@@ -12,7 +12,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction> {
                 case ButtonStateEnum.Active:
                     turnout.ExecTurnoutState(turnoutAction.WhenClosedOrActive);
                     break;
-                case ButtonStateEnum.InActive:
+                case ButtonStateEnum.Inactive:
                     turnout.ExecTurnoutState(turnoutAction.WhenThrownOrInActive);
                     break;
                 }

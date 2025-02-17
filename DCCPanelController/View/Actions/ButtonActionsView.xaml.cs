@@ -8,7 +8,7 @@ namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsView : ContentView {
 
-    public ButtonActionsView(ButtonActions actions, double? width,  bool isButtonContext = true) {
+    public ButtonActionsView(ButtonActions actions, double? width, bool isButtonContext = true) {
         InitializeComponent();
         ButtonActions = actions;
         IsButtonContext = isButtonContext;
@@ -23,7 +23,7 @@ public partial class ButtonActionsView : ContentView {
 
     public ButtonAction? SelectedButtonAction { get; set; }
     public ButtonAction? EditingButtonAction { get; set; }
-    
+
     // Dynamic Column Header Labels
     public string StateLabelActive { get; private set; } = "Active";
     public string StateLabelInactive { get; private set; } = "Inactive";
@@ -53,7 +53,7 @@ public partial class ButtonActionsView : ContentView {
         EditingButtonAction = buttonToEdit;
         OnPropertyChanged(nameof(EditingButtonAction));
     }
-    
+
     [RelayCommand]
     private void RowTapped(object item) {
         // SelectionChangedEventArgs

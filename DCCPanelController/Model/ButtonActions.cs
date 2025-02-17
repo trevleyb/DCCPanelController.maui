@@ -29,7 +29,7 @@ public class ButtonActions : ObservableCollection<ButtonAction> {
                 case ButtonStateEnum.Active:
                     button.SetButtonState(buttonAction.WhenActiveOrClosed);
                     break;
-                case ButtonStateEnum.InActive:
+                case ButtonStateEnum.Inactive:
                     button.SetButtonState(buttonAction.WhenInactiveOrThrown);
                     break;
                 }

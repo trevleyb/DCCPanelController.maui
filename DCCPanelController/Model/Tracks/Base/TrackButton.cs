@@ -32,8 +32,8 @@ public abstract partial class TrackButtonBase : TrackBase {
 
     public ButtonStateEnum ToggleButtonState =>
         ButtonState switch {
-            ButtonStateEnum.Active   => ButtonStateEnum.InActive,
-            ButtonStateEnum.InActive => ButtonStateEnum.Active,
+            ButtonStateEnum.Active   => ButtonStateEnum.Inactive,
+            ButtonStateEnum.Inactive => ButtonStateEnum.Active,
             _                        => ButtonStateEnum.Active
         };
 
@@ -92,7 +92,7 @@ public abstract partial class TrackButtonBase : TrackBase {
         TrackImageEnum = ButtonState switch {
             ButtonStateEnum.Unknown  => TrackStyleImageEnum.Normal,
             ButtonStateEnum.Active   => TrackStyleImageEnum.Active,
-            ButtonStateEnum.InActive => TrackStyleImageEnum.InActive,
+            ButtonStateEnum.Inactive => TrackStyleImageEnum.InActive,
             _                        => TrackStyleImageEnum.Normal
         };
     }
