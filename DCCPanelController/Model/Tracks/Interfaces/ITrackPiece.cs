@@ -16,6 +16,7 @@ public interface ITrackPiece {
     TrackConnectionsEnum[] Connections { get; }
     IView TrackView(double gridSize, bool passthrough = false);
 
+    void CleanUp();
     ITrackPiece Clone(Panel parent);
 
     event PropertyChangedEventHandler? PropertyChanged;

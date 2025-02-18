@@ -43,6 +43,23 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [property: EditableStringProperty(Name = "TurnoutID", Description = "Turnout ID")]
     private string _turnoutId = string.Empty;
 
+    public override void CleanUp() {
+        for (var i = ButtonActions.Count - 1; i >= 0; i--) {
+            var action = ButtonActions[i];
+            if (string.IsNullOrWhiteSpace(action.Id)) {
+                ButtonActions.RemoveAt(i);
+            }
+        }
+
+        for (var i = TurnoutActions.Count - 1; i >= 0; i--) {
+            var action = TurnoutActions[i];
+            if (string.IsNullOrWhiteSpace(action.Id)) {
+                TurnoutActions.RemoveAt(i);
+            }
+        }
+    }
+
+    
     private TurnoutsService? _turnoutsService;
 
     protected TrackTurnoutBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {

@@ -50,6 +50,22 @@ public abstract partial class TrackButtonBase : TrackBase {
         }
     }
 
+    public override void CleanUp() {
+        for (var i = ButtonActions.Count - 1; i >= 0; i--) {
+            var action = ButtonActions[i];
+            if (string.IsNullOrWhiteSpace(action.Id)) {
+                ButtonActions.RemoveAt(i);
+            }
+        }
+
+        for (var i = TurnoutActions.Count - 1; i >= 0; i--) {
+            var action = TurnoutActions[i];
+            if (string.IsNullOrWhiteSpace(action.Id)) {
+                TurnoutActions.RemoveAt(i);
+            }
+        }
+    }
+
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;

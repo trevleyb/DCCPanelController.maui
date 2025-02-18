@@ -2,7 +2,7 @@
 
 <ContentView
     x:Class="DCCPanelController.View.Actions.ButtonActionsView"
-    x:DataType="actions:ButtonActionsView"
+    x:DataType="actions:ButtonActionsViewModel"
     x:Name="ButtonActionView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:actions="clr-namespace:DCCPanelController.View.Actions"
@@ -17,7 +17,7 @@
     </ContentView.Resources>
 
     <VerticalStackLayout HorizontalOptions="Fill" Margin="10,0,10,10">
-        <Grid ColumnDefinitions="100,auto,auto" HeightRequest="30">
+        <Grid ColumnDefinitions="100,auto" HeightRequest="30">
             <Label
                 FontAttributes="Bold"
                 Grid.Column="0"
@@ -31,13 +31,6 @@
                 HeightRequest="25"
                 Margin="0,0,0,0"
                 Source="plus_circle.png"
-                WidthRequest="25" />
-            <ImageButton
-                Aspect="Center"
-                Command="{Binding DeleteButtonActionCommand}"
-                Grid.Column="2"
-                HeightRequest="25"
-                Source="minus_circle.png"
                 WidthRequest="25" />
         </Grid>
 
@@ -55,8 +48,9 @@
             PullToRefreshCommand="{Binding RefreshCommand}"
             RefreshingEnabled="True"
             RowToEdit="{Binding EditingButtonAction}"
-            SelectedItem="{Binding SelectedButtonAction}"
-            SelectionMode="None">
+            SelectionMode="None"
+            x:DataType="actions:ButtonActionsViewModel"
+            x:Name="ButtonsDataGrid">
 
             <dg:DataGrid.Columns>
                 <dg:DataGridColumn
@@ -70,6 +64,7 @@
                     Title="{Binding StateLabelActive}"
                     Width="0.4*">
 
+                    <!--
                     <dg:DataGridColumn.CellTemplate>
                         <DataTemplate x:DataType="model:ButtonAction">
                             <Picker
@@ -92,47 +87,49 @@
                                     <x:String>Toggle</x:String>
                                     <x:String>Leave As-Is</x:String>
                                 </Picker.Items>
-
                             </Picker>
                         </DataTemplate>
                     </dg:DataGridColumn.EditCellTemplate>
-
+                    -->
                 </dg:DataGridColumn>
                 <dg:DataGridColumn
                     PropertyName="WhenInactiveOrThrown"
                     SortingEnabled="False"
                     Title="{Binding StateLabelInactive}"
                     Width="0.4*" />
+
                 <dg:DataGridColumn
                     PropertyName="Cascade"
                     SortingEnabled="False"
                     Title="Cascade?"
                     Width="0.2*">
+                    <!--
                     <dg:DataGridColumn.CellTemplate>
                         <DataTemplate x:DataType="model:ButtonAction">
                             <CheckBox
                                 HorizontalOptions="Center"
-                                IsChecked="{Binding Cascade}"
+                                IsChecked="{Binding Path=Cascade, Mode=TwoWay}"
                                 IsEnabled="False"
                                 VerticalOptions="Center" />
                         </DataTemplate>
                     </dg:DataGridColumn.CellTemplate>
                     <dg:DataGridColumn.EditCellTemplate>
-                        <DataTemplate x:DataType="model:ButtonAction">
+                        <DataTemplate>
                             <CheckBox
                                 HorizontalOptions="Center"
-                                IsChecked="{Binding Cascade}"
                                 IsEnabled="True"
                                 VerticalOptions="Center" />
                         </DataTemplate>
                     </dg:DataGridColumn.EditCellTemplate>
+                    -->
                 </dg:DataGridColumn>
-                <dg:DataGridColumn Width="0.1*">
+
+                <dg:DataGridColumn PropertyName="." Width="0.1*">
                     <dg:DataGridColumn.CellTemplate>
                         <DataTemplate x:DataType="model:ButtonAction">
                             <Button
                                 BackgroundColor="LightSkyBlue"
-                                Command="{Binding StartEditCommand, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type actions:ButtonActionsView}}, x:DataType={x:Type actions:ButtonActionsView}}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type actions:ButtonActionsViewModel}}, x:DataType=actions:ButtonActionsViewModel, Path=StartEditCommand}"
                                 CommandParameter="{Binding .}"
                                 Text="Edit" />
                         </DataTemplate>
@@ -141,12 +138,25 @@
                         <DataTemplate x:DataType="model:ButtonAction">
                             <Button
                                 BackgroundColor="MediumSeaGreen"
-                                Command="{Binding CompleteEditCommand, Source={RelativeSource Mode=FindAncestorBindingContext, AncestorType={x:Type actions:ButtonActionsView}}, x:DataType={x:Type actions:ButtonActionsView}}"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type actions:ButtonActionsViewModel}}, x:DataType=actions:ButtonActionsViewModel, Path=CompleteEditCommand}"
                                 CommandParameter="{Binding .}"
                                 Text="Done" />
                         </DataTemplate>
                     </dg:DataGridColumn.EditCellTemplate>
                 </dg:DataGridColumn>
+
+                <dg:DataGridColumn Width="0.1*">
+                    <dg:DataGridColumn.CellTemplate>
+                        <DataTemplate x:DataType="model:ButtonAction">
+                            <Button
+                                BackgroundColor="Red"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type actions:ButtonActionsViewModel}}, x:DataType=actions:ButtonActionsViewModel, Path=RemoveButtonActionCommand}"
+                                CommandParameter="{Binding}"
+                                Text="Delete" />
+                        </DataTemplate>
+                    </dg:DataGridColumn.CellTemplate>
+                </dg:DataGridColumn>
+
                 <dg:DataGridColumn Width="0.2*" />
             </dg:DataGrid.Columns>
 

@@ -28,9 +28,9 @@ public abstract partial class TrackBase : ObservableObject {
 
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] protected int RotationIncrement = 45;
-
     [JsonIgnore] protected double Scale = 1.5;
 
+    public virtual void CleanUp() { }
     protected StyleTrackImages StyleTrackImages = new();
 
     protected TrackBase(Panel? parent = null) {

@@ -8,9 +8,11 @@ namespace DCCPanelController.View.PropertPages;
 
 public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 
-    public DynamicPropertyPage(ITrackPiece obj, string? propertyName = null) {
+    private ITrackPiece _trackPiece;
+    public DynamicPropertyPage(ITrackPiece trackPiece, string? propertyName = null) {
         InitializeComponent();
-        BindingContext = new DynamicPropertyPageViewModel(obj, propertyName, PropertyContainer);
+        _trackPiece = trackPiece;
+        BindingContext = new DynamicPropertyPageViewModel(trackPiece, propertyName, PropertyContainer);
     }
 
     public event EventHandler? CloseRequested;
@@ -45,6 +47,7 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {
         //Navigation.PopModalAsync(true);
+        //if (_trackPiece is not null) _trackPiece.CleanUp(); 
         CloseRequested?.Invoke(this, EventArgs.Empty);
     }
 }

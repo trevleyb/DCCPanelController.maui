@@ -25,9 +25,12 @@ public class ButtonActionEnumConverter : IValueConverter {
             // Convert the string from the Picker back to the correct enum value
             return strValue switch {
                 "Active (on)"    => ButtonStateEnum.Active,
+                "Active"         => ButtonStateEnum.Active,
                 "Inactive (off)" => ButtonStateEnum.Inactive,
+                "Inactive"       => ButtonStateEnum.Inactive,
                 "Toggle"         => ButtonStateEnum.Toggle,
                 "Leave As-Is"    => ButtonStateEnum.Leave,
+                "As-Is"          => ButtonStateEnum.Leave,
                 _                => throw new InvalidOperationException($"Unknown option: {strValue}")
             };
         }
