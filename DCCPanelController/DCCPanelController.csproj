@@ -100,6 +100,14 @@
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1"/>
         <PackageReference Include="Svg.Skia" Version="2.0.0.4"/>
+        <PackageReference Include="UraniumUI" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Blurs" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Icons.SegoeFluent" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Material" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.11.0" />
     </ItemGroup>
 
     <!--

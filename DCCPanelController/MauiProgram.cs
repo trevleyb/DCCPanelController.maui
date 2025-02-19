@@ -5,6 +5,7 @@ using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
 using Microsoft.Extensions.Logging;
+using UraniumUI;
 
 namespace DCCPanelController;
 
@@ -12,9 +13,14 @@ public static class MauiProgram {
     public static MauiApp CreateMauiApp() {
         var builder = MauiApp.CreateBuilder();
         builder.UseMauiApp<App>()
+               .UseUraniumUI()
+               .UseUraniumUIMaterial() 
                .ConfigureFonts(fonts => {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+                    fonts.AddFontAwesomeIconFonts();
+                    fonts.AddMaterialSymbolsFonts();
+                    fonts.AddFluentIconFonts();
                 })
                .ConfigureMauiHandlers(handlers => { })
                .UseMauiCommunityToolkit()

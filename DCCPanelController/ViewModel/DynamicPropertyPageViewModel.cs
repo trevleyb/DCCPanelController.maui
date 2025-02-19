@@ -17,8 +17,10 @@ namespace DCCPanelController.ViewModel;
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     [ObservableProperty] private string _propertyName;
+    [ObservableProperty] private ITrackPiece _trackPiece;
 
     public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, VerticalStackLayout tableView) {
+        TrackPiece = trackPiece;
         PropertyName = propertyName ?? $"{trackPiece.Name ?? "Track"}";
         BuildProperties(tableView, trackPiece);
         PropertyChanged += OnPropertyChanged;
@@ -93,7 +95,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                 Margin = new Thickness(0, 5, 0, 5),
                 WidthRequest = 150
             };
-
             groupCell.Children.Add(label);
         }
 
@@ -245,10 +246,13 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
             if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
                 Console.WriteLine("Button Actions");
+                foreach (var buttonAction in buttonActions.Actions) {
+                    Console.WriteLine($"---Action: {buttonAction.Id} Active={buttonAction.WhenActiveOrClosed} Inactive={buttonAction.WhenInactiveOrThrown}");
+                }
                 
-                return new ButtonActionsView(buttonActions, null, attr.IsButtonContext) {
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill
+                return new ButtonActionsList(buttonActions, TrackPiece) {
+                     HorizontalOptions = LayoutOptions.Fill,
+                     VerticalOptions = LayoutOptions.Fill
                 };
             }
         }

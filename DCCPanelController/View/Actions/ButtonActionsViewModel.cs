@@ -9,7 +9,7 @@ namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsViewModel : BaseViewModel {
 
-    public ButtonActionsViewModel(ButtonActions actions, bool isButtonContext = true) {
+    public ButtonActionsViewModel(ButtonActions actions, Dictionary<string,string> availableButtons, bool isButtonContext = true) {
         ButtonActions = actions;
         IsButtonContext = isButtonContext;
         UpdateLabels();

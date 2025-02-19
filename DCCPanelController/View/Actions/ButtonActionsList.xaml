@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DCCPanelController.View.Actions.ButtonActionsList"
+    x:DataType="local:ButtonActionsListViewModel"
+    x:Name="ButtonActionsListView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:converter="clr-namespace:DCCPanelController.Helpers.Converters"
+    xmlns:local="clr-namespace:DCCPanelController.View.Actions"
+    xmlns:m="http://schemas.enisn-projects.io/dotnet/maui/uraniumui"
+    xmlns:material="http://schemas.enisn-projects.io/dotnet/maui/uraniumui/material"
+    xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:toolkit="http://communitytoolkit.maui"
+    xmlns:validations="clr-namespace:InputKit.Shared.Validations;assembly=InputKit.Maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentView.Resources>
+        <ResourceDictionary>
+            <converter:ButtonActionEnumConverter x:Key="ButtonActionEnumConverter" />
+        </ResourceDictionary>
+    </ContentView.Resources>
+
+
+    <ContentView.Content>
+        <VerticalStackLayout HorizontalOptions="Fill" Padding="0">
+            <Grid ColumnDefinitions="100,auto" HeightRequest="30">
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="0"
+                    HeightRequest="25"
+                    Text="Button Actions"
+                    TextColor="{StaticResource Primary}" />
+                <ImageButton
+                    Aspect="Center"
+                    Command="{Binding AddRowCommand}"
+                    Grid.Column="1"
+                    HeightRequest="25"
+                    IsEnabled="{Binding IsAddButtonEnabled}"
+                    Margin="0,0,0,0"
+                    WidthRequest="25">
+                    <ImageButton.Source>
+                        <FontImageSource
+                            Color="Green"
+                            FontFamily="MaterialSharp"
+                            Glyph="{x:Static m:MaterialSharp.Add_circle}" />
+                    </ImageButton.Source>
+                </ImageButton>
+            </Grid>
+
+            <material:DataGrid
+                ItemsSource="{Binding ButtonActions}"
+                Margin="0"
+                Padding="0"
+                x:Name="DataGrid">
+
+                <material:DataGrid.EmptyView>
+                    <VerticalStackLayout>
+                        <Label
+                            HorizontalOptions="Center"
+                            Padding="10"
+                            Text="{Binding NoDataText}"
+                            VerticalOptions="Center" />
+                    </VerticalStackLayout>
+                </material:DataGrid.EmptyView>
+
+                <material:DataGrid.Columns>
+                    <!--  ValueBinding="{Binding Source={RelativeSource AncestorType={x:Type model:ButtonAction}}, Path=Id}"  -->
+                    <material:DataGridColumn
+                        Title="Button ID"
+                        ValueBinding="{Binding Id}"
+                        Width="120">
+                        <material:DataGridColumn.CellItemTemplate>
+                            <DataTemplate>
+                                <material:PickerField
+                                    AllowClear="False"
+                                    Icon="{FontImageSource FontFamily=MaterialSharp,
+                                                           Glyph={x:Static m:MaterialSharp.Expand_circle_down}}"
+                                    ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=ButtonIds}"
+                                    SelectedItem="{Binding Source={RelativeSource AncestorType={x:Type model:ButtonAction}}, x:DataType=model:ButtonAction, Path=Id}"
+                                    SelectedValueChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=IdValueChangedCommand}" />
+                            </DataTemplate>
+                        </material:DataGridColumn.CellItemTemplate>
+                    </material:DataGridColumn>
+
+                    <material:DataGridColumn
+                        Title="Active(On)"
+                        ValueBinding="{Binding WhenActiveOrClosed, x:DataType=model:ButtonAction}"
+                        Width="120">
+
+                        <material:DataGridColumn.CellItemTemplate>
+                            <DataTemplate>
+                                <material:PickerField
+                                    AllowClear="False"
+                                    Icon="{FontImageSource FontFamily=MaterialSharp,
+                                                           Glyph={x:Static m:MaterialSharp.Expand_circle_down}}"
+                                    ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=ButtonStates, x:DataType=local:ButtonActionsListViewModel}"
+                                    SelectedItem="{Binding Source={RelativeSource AncestorType={x:Type model:ButtonAction}}, x:DataType=model:ButtonAction, Path=WhenActiveOrClosed, Converter={StaticResource ButtonActionEnumConverter}}" />
+                            </DataTemplate>
+                        </material:DataGridColumn.CellItemTemplate>
+
+                    </material:DataGridColumn>
+                    <material:DataGridColumn
+                        Title="Inactive(Off)"
+                        ValueBinding="{Binding WhenInactiveOrThrown, x:DataType=model:ButtonAction}"
+                        Width="120">
+                        <material:DataGridColumn.CellItemTemplate>
+                            <DataTemplate>
+                                <material:PickerField
+                                    AllowClear="False"
+                                    Icon="{FontImageSource FontFamily=MaterialSharp,
+                                                           Glyph={x:Static m:MaterialSharp.Expand_circle_down}}"
+                                    ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=ButtonStates, x:DataType=local:ButtonActionsListViewModel}"
+                                    SelectedItem="{Binding Source={RelativeSource AncestorType={x:Type model:ButtonAction}}, x:DataType=model:ButtonAction, Path=WhenInactiveOrThrown, Converter={StaticResource ButtonActionEnumConverter}}" />
+                            </DataTemplate>
+                        </material:DataGridColumn.CellItemTemplate>
+
+                    </material:DataGridColumn>
+
+                    <material:DataGridColumn
+                        Title="Cascade"
+                        ValueBinding="{Binding Cascade}"
+                        x:DataType="model:ButtonAction">
+                        <material:DataGridColumn.CellItemTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Cascade}" x:DataType="model:ButtonAction" />
+                            </DataTemplate>
+                        </material:DataGridColumn.CellItemTemplate>
+                    </material:DataGridColumn>
+
+                    <material:DataGridColumn Title="Actions">
+                        <material:DataGridColumn.CellItemTemplate>
+                            <DataTemplate>
+                                <ImageButton
+                                    Aspect="Center"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=RemoveRowCommand, x:DataType=local:ButtonActionsListViewModel}"
+                                    CommandParameter="{Binding x:DataType=model:ButtonAction}"
+                                    Margin="0,0,0,0"
+                                    WidthRequest="25">
+                                    <ImageButton.Source>
+                                        <FontImageSource
+                                            Color="Red"
+                                            FontFamily="MaterialSharp"
+                                            Glyph="{x:Static m:MaterialSharp.Delete}" />
+                                    </ImageButton.Source>
+                                </ImageButton>
+
+                                <!--  <Button  -->
+                                <!--  Command="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=RemoveRowCommand}"  -->
+                                <!--  CommandParameter="{Binding x:DataType=model:ButtonAction}"  -->
+                                <!--  Style="{StaticResource ButtonOutline}"  -->
+                                <!--  Text="Remove" />  -->
+                            </DataTemplate>
+                        </material:DataGridColumn.CellItemTemplate>
+                    </material:DataGridColumn>
+
+                </material:DataGrid.Columns>
+            </material:DataGrid>
+
+        </VerticalStackLayout>
+    </ContentView.Content>
+</ContentView>
+
+<!--
+            <Grid
+                ColumnSpacing="5"
+                Padding="5"
+                RowSpacing="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="3*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <Label FontAttributes="Bold" Text="ID" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="1"
+                    Text="Description" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="2"
+                    Text="Active / Closed" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="3"
+                    Text="Inactive / Thrown" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="4"
+                    Text="Cascade" />
+                <Label
+                    FontAttributes="Bold"
+                    Grid.Column="5"
+                    Text="Actions" />
+            </Grid>
+
+            <CollectionView
+                HeightRequest="100"
+                HorizontalOptions="Fill"
+                ItemsSource="{Binding ButtonActions}"
+                Margin="0,10,0,0"
+                x:DataType="local:ButtonActionsListViewModel">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid
+                            ColumnSpacing="5"
+                            Padding="5"
+                            RowSpacing="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                            <Picker
+                                Grid.Column="0"
+                                ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=IdDescriptions.Keys}"
+                                SelectedItem="{Binding Id, Mode=TwoWay}">
+                                <Picker.ItemDisplayBinding>
+                                    <Binding Path="." />
+                                </Picker.ItemDisplayBinding>
+                            </Picker>-->
+<!--  Description  -->
+<!--
+                            <Label Grid.Column="1" Text="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=IdDescriptions[Id]}" />
+                            <Label Grid.Column="1" Text="Description" />-->
+<!--
+                            <Picker
+                                Grid.Column="2"
+                                ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=ButtonStates}"
+                                SelectedItem="{Binding WhenActiveOrClosed, Mode=TwoWay}" />
+
+                            <Picker
+                                Grid.Column="3"
+                                ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=ButtonStates}"
+                                SelectedItem="{Binding WhenInactiveOrThrown, Mode=TwoWay}" />
+
+                            <CheckBox Grid.Column="4" IsChecked="{Binding Cascade, Mode=TwoWay}" />
+                            <Label Grid.Column="4" Text="Checked" />
+
+                            <Button
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsListViewModel}}, Path=RemoveRowCommand}"
+                                CommandParameter="{Binding .}"
+                                Grid.Column="5"
+                                Text="X"
+                                TextColor="Red" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>-->

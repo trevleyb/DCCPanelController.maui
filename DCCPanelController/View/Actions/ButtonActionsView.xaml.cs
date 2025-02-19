@@ -7,9 +7,8 @@ using DCCPanelController.Model;
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsView : ContentView {
-    public ButtonActionsView(ButtonActions actions, double? width, bool isButtonContext = true) {
+    public ButtonActionsView(ButtonActions actions, Dictionary<string,string> availableButtons, bool isButtonContext = true) {
         InitializeComponent();
-        BindingContext = new ButtonActionsViewModel(actions, isButtonContext);
-        if (width is not null) this.WidthRequest = (double)width;
+        BindingContext = new ButtonActionsViewModel(actions, availableButtons, isButtonContext);
     }
 }

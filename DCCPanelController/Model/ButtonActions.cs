@@ -1,10 +1,13 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Model;
 
 public class ButtonActions : ObservableCollection<ButtonAction> {
 
+    public ObservableCollection<ButtonAction> Actions => this.ToObservableCollection();
+    
     public void ApplyButtonActionsToPanel(Panel panel, TurnoutStateEnum state) {
         foreach (var buttonAction in this) {
             var track = panel.Tracks.FirstOrDefault(x => x.Id.Equals(buttonAction.Id));
