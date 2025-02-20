@@ -250,7 +250,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     Console.WriteLine($"---Action: {buttonAction.Id} Active={buttonAction.WhenActiveOrClosed} Inactive={buttonAction.WhenInactiveOrThrown}");
                 }
                 
-                return new ButtonActionsList(buttonActions, TrackPiece) {
+                return new ButtonActionsGrid(buttonActions, TrackPiece) {
                      HorizontalOptions = LayoutOptions.Fill,
                      VerticalOptions = LayoutOptions.Fill
                 };

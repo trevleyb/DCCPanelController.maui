@@ -38,14 +38,26 @@
                         FontAttributes="Bold"
                         Grid.Column="2"
                         HorizontalOptions="Center"
-                        Text="{Binding StateLabelClosed}"
+                        Text="Closed(Straight)"
                         TextColor="{StaticResource Primary}" />
                     <Label
                         FontAttributes="Bold"
                         Grid.Column="3"
                         HorizontalOptions="Center"
-                        Text="{Binding StateLabelThrown}"
+                        Text="Thrown(Diverging)"
                         TextColor="{StaticResource Primary}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="4"
+                        HorizontalOptions="Center"
+                        Text="Cascade"
+                        TextColor="{StaticResource Primary}" />
+                    <Label
+                        FontAttributes="Bold"
+                        Grid.Column="5"
+                        HorizontalOptions="Center"
+                        TextColor="{StaticResource Primary}" />
+
                 </Grid>
             </CollectionView.Header>
 

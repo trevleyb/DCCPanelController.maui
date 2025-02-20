@@ -5,7 +5,7 @@ namespace DCCPanelController.Helpers.Converters;
 
 public class ButtonActionEnumConverter : IValueConverter {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        return value?.ToString() ?? string.Empty;
+        return value?.ToString() ?? "Unknown Value";
     }
 
     // Maps the string back to the corresponding enum

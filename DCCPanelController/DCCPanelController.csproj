@@ -205,6 +205,9 @@
         <MauiXaml Update="View\Components\ColorPickerButton.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\Actions\ButtonActionsGrid.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -227,6 +230,10 @@
         <Compile Update="View\Components\ColorPickerButton.xaml.cs">
             <DependentUpon>ColorPickerButton.xaml</DependentUpon>
             <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\Actions\ButtonActionsGrid.xaml.cs">
+          <DependentUpon>ButtonActionsGrid.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

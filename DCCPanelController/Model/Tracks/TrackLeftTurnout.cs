@@ -22,4 +22,5 @@ public class TrackLeftTurnout(Panel? parent = null, TrackStyleTypeEnum styleType
     protected override void ThrowTurnout(Turnout turnout, TurnoutStateEnum state) {
         Console.WriteLine($"Turnout '{turnout.Name}' is {(state == TurnoutStateEnum.Closed ? "CLOSED" : state == TurnoutStateEnum.Thrown ? "THROWN" : "UNKNOWN")}");
     }
+
 }

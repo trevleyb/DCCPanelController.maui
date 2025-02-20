@@ -11,10 +11,6 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
 
-    [ObservableProperty]
-    [property: EditableActionsProperty(IsTurnoutContext = true, Group = "Actions", Description = "Buttons to set when this turnout changes")]
-    private ButtonActions _buttonActions = [];
-
     private IAudioPlayer? _clickSoundPlayer;
 
     [ObservableProperty]
@@ -39,6 +35,10 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [property: EditableActionsProperty(IsTurnoutContext = true, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
     private TurnoutActions _turnoutActions = [];
 
+    [ObservableProperty]
+    [property: EditableActionsProperty(IsButtonContext = true, Group = "Actions", Description = "Buttons to set when this turnout changes")]
+    private ButtonActions _buttonActions = [];
+    
     [ObservableProperty]
     [property: EditableStringProperty(Name = "TurnoutID", Description = "Turnout ID")]
     private string _turnoutId = string.Empty;

@@ -14,7 +14,7 @@ public static class MauiProgram {
         var builder = MauiApp.CreateBuilder();
         builder.UseMauiApp<App>()
                .UseUraniumUI()
-               .UseUraniumUIMaterial() 
+               .UseUraniumUIMaterial()
                .ConfigureFonts(fonts => {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
@@ -22,11 +22,14 @@ public static class MauiProgram {
                     fonts.AddMaterialSymbolsFonts();
                     fonts.AddFluentIconFonts();
                 })
+               .UseMauiCommunityToolkit()
                .ConfigureMauiHandlers(handlers => { })
                .UseMauiCommunityToolkit()
                .UseMauiCommunityToolkitMarkup()
                .UseMauiCommunityToolkitMediaElement();
 
+        FormHelper.RemoveBorders();
+        
 #if DEBUG
         builder.Logging.AddDebug();
         builder.Services.AddLogging(configure => configure.AddDebug());

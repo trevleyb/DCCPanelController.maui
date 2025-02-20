@@ -104,7 +104,6 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
             SidePanelButton.Text = "Close panel";
             SidePanelButton.IconImageSource = "side_panel_close_filled.png";
         }
-
         var tempPanel = _viewModel.SelectedPanel;
         _viewModel.SelectedPanel = null;
         _viewModel.SelectedPanel = tempPanel;
