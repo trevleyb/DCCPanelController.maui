@@ -41,7 +41,7 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     
     [ObservableProperty]
     [property: EditableStringProperty(Name = "TurnoutID", Description = "Turnout ID")]
-    private string _turnoutId = string.Empty;
+    private string _turnoutID = string.Empty;
 
     public override void CleanUp() {
         for (var i = ButtonActions.Count - 1; i >= 0; i--) {
@@ -116,9 +116,9 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName is nameof(TurnoutId) && _turnoutsService is not null) {
+        if (e.PropertyName is nameof(TurnoutID) && _turnoutsService is not null) {
             if (Turnout is not null) Turnout.PropertyChanged -= TurnoutOnPropertyChanged;
-            Turnout = TurnoutsService.GetTurnoutById(TurnoutId);
+            Turnout = TurnoutsService.GetTurnoutById(TurnoutID);
             if (Turnout is not null) {
                 Turnout.PropertyChanged += TurnoutOnPropertyChanged;
             }

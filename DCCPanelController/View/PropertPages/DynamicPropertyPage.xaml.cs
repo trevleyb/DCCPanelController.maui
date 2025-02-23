@@ -9,19 +9,19 @@ namespace DCCPanelController.View.PropertPages;
 public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 
     private ITrackPiece _trackPiece;
+    private DynamicPropertyPageViewModel _viewModel;
     public DynamicPropertyPage(ITrackPiece trackPiece, string? propertyName = null) {
         InitializeComponent();
         _trackPiece = trackPiece;
-        BindingContext = new DynamicPropertyPageViewModel(trackPiece, propertyName, PropertyContainer);
+        BindingContext = _viewModel = new DynamicPropertyPageViewModel(trackPiece, propertyName, PropertyContainer);
     }
-
+    
     public event EventHandler? CloseRequested;
 
     protected override void OnAppearing() {
         base.OnAppearing();
 
 #if IOS
-
         // Access the native view controller
         var window = App.Current.Windows[0].Page;
         if (window?.Handler?.PlatformView is UIWindow viewController) {

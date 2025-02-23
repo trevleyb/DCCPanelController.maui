@@ -16,20 +16,24 @@ namespace DCCPanelController.ViewModel;
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
-    [ObservableProperty] private string _propertyName;
-    [ObservableProperty] private ITrackPiece _trackPiece;
+
+    [ObservableProperty]
+    private string _propertyName;
+    private ITrackPiece _trackPiece;
+    private VerticalStackLayout _tableView;
 
     public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, VerticalStackLayout tableView) {
-        TrackPiece = trackPiece;
-        PropertyName = propertyName ?? $"{trackPiece.Name ?? "Track"}";
-        BuildProperties(tableView, trackPiece);
+        PropertyName = propertyName ?? (string.IsNullOrEmpty(trackPiece.Name) ? "Track" : $"{trackPiece.Name}");
+        _trackPiece = trackPiece;
+        _tableView = tableView;
+        BuildProperties(_tableView, _trackPiece);
         PropertyChanged += OnPropertyChanged;
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
     }
-
+    
     private void BuildProperties(VerticalStackLayout tableView, object obj) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         tableView.Children.Clear();
@@ -156,7 +160,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             Margin = new Thickness(10, 10, 10, 10)
         };
 
-        fileButton.Clicked += async (s, e) => await SelectImageAsync(image, value);
+        fileButton.Clicked += async (_, _) => await SelectImageAsync(image, value);
 
         var photoButton = new Button {
             Text = "Select Photo",
@@ -166,7 +170,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             Margin = new Thickness(10, 10, 10, 10)
         };
 
-        photoButton.Clicked += async (s, e) => await SelectPhotoAsync(image, value);
+        photoButton.Clicked += async (_, _) => await SelectPhotoAsync(image, value);
         horizontal.Children.Add(fileButton);
         horizontal.Children.Add(photoButton);
         stack.Children.Add(image);
@@ -250,7 +254,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     Console.WriteLine($"---Action: {buttonAction.Id} Active={buttonAction.WhenActiveOrClosed} Inactive={buttonAction.WhenInactiveOrThrown}");
                 }
                 
-                return new ButtonActionsGrid(buttonActions, TrackPiece) {
+                return new ButtonActionsGrid(buttonActions, _trackPiece) {
                      HorizontalOptions = LayoutOptions.Fill,
                      VerticalOptions = LayoutOptions.Fill
                 };

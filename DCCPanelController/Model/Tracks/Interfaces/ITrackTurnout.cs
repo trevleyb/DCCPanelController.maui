@@ -4,6 +4,7 @@ namespace DCCPanelController.Model.Tracks.Interfaces;
 ///     Interface indicating that this TrackPiece is a turnout and supports either a Straight or Diverging state
 /// </summary>
 public interface ITrackTurnout : ITrackInteractive {
+    string TurnoutID { get; set; }
     void SetTurnoutState(TurnoutStateEnum state);
     void ExecTurnoutState(TurnoutStateEnum state);
 }

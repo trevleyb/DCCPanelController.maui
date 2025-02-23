@@ -18,13 +18,19 @@
                 Stroke="{StaticResource Primary}"
                 StrokeShape="RoundRectangle 10,10,10,10"
                 StrokeThickness="3"
-                VerticalOptions="Fill">
+                VerticalOptions="Fill"
+                WidthRequest="500">
+
                 <!--
                     MaximumHeightRequest="500"
                     WidthRequest="500"
                 -->
 
                 <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="500" />
+                    </Grid.ColumnDefinitions>
+
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <!--  Title block height  -->
@@ -59,10 +65,7 @@
                         Grid.Row="1"
                         HorizontalOptions="Fill"
                         VerticalScrollBarVisibility="Always">
-                        <VerticalStackLayout
-                            HorizontalOptions="Fill"
-                            Margin="10,20,0,0"
-                            x:Name="PropertyContainer" />
+                        <VerticalStackLayout Margin="10,20,0,0" x:Name="PropertyContainer" />
                     </ScrollView>
 
                     <Button

@@ -229,7 +229,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(SelectedPanel));
             Save();
         } catch {
-            Console.WriteLine($"Failed to delete panel {SelectedPanel.Name}");
+            Console.WriteLine($"Failed to return from Properies {SelectedPanel.Name}");
         }
     }
 
