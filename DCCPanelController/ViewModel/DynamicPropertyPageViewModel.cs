@@ -1,6 +1,9 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using CommunityToolkit.Maui.Behaviors;
+using CommunityToolkit.Maui.Markup;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
@@ -38,12 +41,56 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         tableView.Children.Clear();
         var isFirst = true;
-        foreach (var tableGroup in propertiesByGroup.Select(group => CreateGroup(group.Key, group.Value, isFirst))) {
+        foreach (var tableGroup in propertiesByGroup.Select(group => CreateExpanderGroup(group.Key, group.Value, isFirst))) {
             tableView.Children.Add(tableGroup);
             isFirst = false;
         }
     }
 
+    private IView CreateExpanderGroup(string groupKey, List<EditablePropertyDetails> groupValue, bool isFirst) {
+
+        if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
+
+        var tableExpander = new Expander();
+        tableExpander.Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0);
+
+        var expanderHeading = new StackLayout();
+        var expanderTitle = new HorizontalStackLayout();
+        expanderTitle.Children.Add(GroupChevrons(tableExpander));
+        expanderTitle.Children.Add(GroupHeading(groupKey));
+        expanderHeading.Children.Add(expanderTitle);
+        expanderHeading.Children.Add(GroupDivider());
+        tableExpander.Header = expanderHeading;
+        tableExpander.IsExpanded = true;
+        
+        var tableGroup = new StackLayout {
+            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
+        };
+        
+        foreach (var value in groupValue) {
+            tableGroup.Add(GroupCell(value));
+        } 
+        tableExpander.Content = tableGroup;
+        return tableExpander;
+    }
+
+    private IView GroupChevrons(Expander expander) {
+        var chevron = new Image {
+            Source = "chevron_circle_down.png", // Default chevron for expanded state
+            Behaviors = { new IconTintColorBehavior {
+                    TintColor = (Color?)Application.Current?.Resources["Primary"] ?? Colors.Black
+                }
+            },
+            HeightRequest = 16,
+            WidthRequest = 16,
+            VerticalOptions = LayoutOptions.Center,
+            HorizontalOptions = LayoutOptions.End,
+            Rotation = 0 // Expanded state rotation (facing down)
+        };
+        chevron.Bind(Image.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);
+        return chevron;
+    }
+    
     private IView CreateGroup(string groupKey, List<EditablePropertyDetails> groupValue, bool isFirst) {
         var tableGroup = new StackLayout {
             Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
@@ -56,8 +103,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
         foreach (var value in groupValue) {
             tableGroup.Add(GroupCell(value));
-        }
-
+        } 
         return tableGroup;
     }
 
@@ -68,7 +114,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             FontSize = 18,
             Margin = new Thickness(0, 0, 0, 0)
         };
-
         return heading;
     }
 

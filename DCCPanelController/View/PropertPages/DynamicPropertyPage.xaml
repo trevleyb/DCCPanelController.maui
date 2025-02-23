@@ -1,6 +1,7 @@
 <!--  PanelPropertyPage.xaml  -->
 <ContentPage
     BackgroundColor="Transparent"
+    MaximumHeightRequest="200"
     x:Class="DCCPanelController.View.PropertPages.DynamicPropertyPage"
     x:DataType="viewModel:DynamicPropertyPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -18,13 +19,7 @@
                 Stroke="{StaticResource Primary}"
                 StrokeShape="RoundRectangle 10,10,10,10"
                 StrokeThickness="3"
-                VerticalOptions="Fill"
-                WidthRequest="500">
-
-                <!--
-                    MaximumHeightRequest="500"
-                    WidthRequest="500"
-                -->
+                VerticalOptions="Fill">
 
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -62,8 +57,11 @@
 
                     <!-- <TableView x:Name="PropertyContainer" HasUnevenRows="True" /> -->
                     <ScrollView
+                        BackgroundColor="Aqua"
                         Grid.Row="1"
                         HorizontalOptions="Fill"
+                        IsClippedToBounds="False"
+                        Orientation="Vertical"
                         VerticalScrollBarVisibility="Always">
                         <VerticalStackLayout Margin="10,20,0,0" x:Name="PropertyContainer" />
                     </ScrollView>
