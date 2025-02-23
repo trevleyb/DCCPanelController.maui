@@ -11,11 +11,12 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
     private ITrackPiece _trackPiece;
     private DynamicPropertyPageViewModel _viewModel;
     public DynamicPropertyPage(ITrackPiece trackPiece, string? propertyName = null) {
-        InitializeComponent();
         _trackPiece = trackPiece;
-        BindingContext = _viewModel = new DynamicPropertyPageViewModel(trackPiece, propertyName, PropertyContainer);
+        InitializeComponent();
+        BindingContext = _viewModel = new DynamicPropertyPageViewModel(_trackPiece, propertyName);
+        _viewModel.BuildProperties(PropertyContainer, _trackPiece);
     }
-    
+
     public event EventHandler? CloseRequested;
 
     protected override void OnAppearing() {

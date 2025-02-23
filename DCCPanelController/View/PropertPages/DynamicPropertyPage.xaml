@@ -1,7 +1,6 @@
 <!--  PanelPropertyPage.xaml  -->
 <ContentPage
     BackgroundColor="Transparent"
-    MaximumHeightRequest="200"
     x:Class="DCCPanelController.View.PropertPages.DynamicPropertyPage"
     x:DataType="viewModel:DynamicPropertyPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -9,74 +8,53 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Content>
-        <Grid
+        <Border
+            Background="White"
             HorizontalOptions="Center"
-            Margin="25"
-            VerticalOptions="Center">
-            <Border
-                Background="White"
-                HorizontalOptions="Center"
-                Stroke="{StaticResource Primary}"
-                StrokeShape="RoundRectangle 10,10,10,10"
-                StrokeThickness="3"
-                VerticalOptions="Fill">
+            MaximumHeightRequest="500"
+            MaximumWidthRequest="500"
+            Stroke="{StaticResource Primary}"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            StrokeThickness="3"
+            VerticalOptions="Fill">
 
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="500" />
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <!--  Title block height  -->
-                        <RowDefinition Height="Auto" />
-                        <!--  Scrollable content  -->
-                        <RowDefinition Height="Auto" />
-                        <!--  Button fixed at the bottom  -->
-                    </Grid.RowDefinitions>
-
-                    <Grid
-                        BackgroundColor="{StaticResource Primary}"
-                        ColumnDefinitions="*,auto"
-                        Grid.Row="0"
-                        VerticalOptions="Center">
-                        <Label
-                            Grid.Column="0"
-                            Margin="10,0,0,0"
-                            Style="{StaticResource LargeLabel}"
-                            Text="{Binding PropertyName}"
-                            TextColor="White"
-                            VerticalOptions="Center" />
-                        <ImageButton
-                            Aspect="Center"
-                            Grid.Column="1"
-                            HeightRequest="25"
-                            Source="info.png"
-                            WidthRequest="25" />
-                    </Grid>
-
-                    <!-- <TableView x:Name="PropertyContainer" HasUnevenRows="True" /> -->
-                    <ScrollView
-                        BackgroundColor="Aqua"
-                        Grid.Row="1"
+            <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
+                <HorizontalStackLayout BackgroundColor="{StaticResource Primary}" VerticalOptions="Center">
+                    <Label
+                        HorizontalOptions="Start"
+                        Margin="10,0,0,0"
+                        Style="{StaticResource LargeLabel}"
+                        Text="{Binding PropertyName}"
+                        TextColor="White"
+                        VerticalOptions="Center" />
+                    <ImageButton
+                        Aspect="Center"
+                        HeightRequest="25"
+                        HorizontalOptions="End"
+                        Source="info.png"
+                        WidthRequest="25" />
+                </HorizontalStackLayout>
+                <ScrollView
+                    HeightRequest="380"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+                    <VerticalStackLayout
                         HorizontalOptions="Fill"
-                        IsClippedToBounds="False"
-                        Orientation="Vertical"
-                        VerticalScrollBarVisibility="Always">
-                        <VerticalStackLayout Margin="10,20,0,0" x:Name="PropertyContainer" />
-                    </ScrollView>
-
-                    <Button
-                        Clicked="ClosePropertyPage"
-                        Grid.Row="2"
-                        HorizontalOptions="Center"
-                        Margin="0,20,0,20"
-                        Style="{StaticResource ButtonOutline}"
-                        Text="Close"
-                        VerticalOptions="End"
-                        WidthRequest="150" />
-                </Grid>
-            </Border>
-        </Grid>
+                        Margin="10,20,0,0"
+                        VerticalOptions="Fill"
+                        x:Name="PropertyContainer" />
+                </ScrollView>
+                <Button
+                    Clicked="ClosePropertyPage"
+                    HorizontalOptions="Center"
+                    Margin="10,20,10,20"
+                    Style="{StaticResource ButtonOutline}"
+                    Text="Close"
+                    VerticalOptions="End"
+                    WidthRequest="150" />
+            </VerticalStackLayout>
+            <!-- </Grid> -->
+        </Border>
+        <!-- </Grid> -->
     </ContentPage.Content>
 </ContentPage>

@@ -22,14 +22,11 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     [ObservableProperty]
     private string _propertyName;
-    private ITrackPiece _trackPiece;
-    private VerticalStackLayout _tableView;
+    private readonly ITrackPiece _trackPiece;
 
-    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName, VerticalStackLayout tableView) {
+    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName) {
         PropertyName = propertyName ?? (string.IsNullOrEmpty(trackPiece.Name) ? "Track" : $"{trackPiece.Name}");
         _trackPiece = trackPiece;
-        _tableView = tableView;
-        BuildProperties(_tableView, _trackPiece);
         PropertyChanged += OnPropertyChanged;
     }
 
@@ -37,7 +34,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         Console.WriteLine($"PropertyChanged: {sender} - {e.PropertyName}");
     }
     
-    private void BuildProperties(VerticalStackLayout tableView, object obj) {
+    public void BuildProperties(VerticalStackLayout tableView, object obj) {
         var propertiesByGroup = EditablePropertyCollector.GetEditableProperties(obj);
         tableView.Children.Clear();
         var isFirst = true;
@@ -120,7 +117,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private IView GroupDivider() {
         var divider = new BoxView {
             BackgroundColor = StyleColor.Get("Primary"),
-            HeightRequest = 2,
+            HeightRequest = 1,
             HorizontalOptions = LayoutOptions.Fill,
             Margin = new Thickness(0, 0, 10, 15)
         };
