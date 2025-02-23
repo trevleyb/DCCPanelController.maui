@@ -43,6 +43,7 @@
                 <Label
                     Grid.Column="2"
                     HeightRequest="25"
+                    Style="{StaticResource SmallLabel}"
                     Text="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.NoDataText}"
                     VerticalOptions="Center" />
 

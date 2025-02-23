@@ -43,9 +43,9 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
 
     public string NoDataText {
         get {
-            if (AvailableButtons.Count == 0) return "No Buttons are defined so none can be added.";
+            if (AvailableButtons.Count == 0) return "No Buttons have been defined. Create buttons to assign actions.";
             if (ButtonActions.Count == 0) return "Use the + key to add a button action.";
-            if (SelectableButtons.Count == 0) return "All buttons are in use.";
+            if (SelectableButtons.Count == 0) return "All defined buttons have been assigned.";
             return "";
         }
     }
