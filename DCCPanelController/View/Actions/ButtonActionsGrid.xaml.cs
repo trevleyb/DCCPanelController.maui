@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGrid : ContentView {
-    public ButtonActionsGrid(ButtonActions buttonActions, ITrackPiece trackPiece) {
+    public ButtonActionsGrid(ButtonActions buttonActions, ITrackPiece trackPiece, ActionsContext context) {
         InitializeComponent();
-        BindingContext = new ButtonActionsGridViewModel(buttonActions, trackPiece);
+        BindingContext = new ButtonActionsGridViewModel(buttonActions, trackPiece, context);
     }
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {

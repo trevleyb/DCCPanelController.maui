@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
 
@@ -29,16 +30,25 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(NoDataText))]
     private ObservableCollection<string> _availableButtons;
 
+    [ObservableProperty]
+    private ActionsContext _actionContext;
+    
+    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContext.Button;
+    
     public bool IsGridVisible => ButtonActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
     public double ControlHeight => 40 + (ButtonActions.Count * 40);
 
-    public ButtonActionsGridViewModel(ButtonActions buttonActions, ITrackPiece trackPiece) {
+    public ButtonActionsGridViewModel(ButtonActions buttonActions, ITrackPiece trackPiece, ActionsContext context) {
+        ActionContext = context;
         AvailableButtons = FindAvailableButtons(trackPiece);
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
         ButtonActions = buttonActions;
         UpdateSelectableButtons();
         PropertyChanged += (sender, args) => { Console.WriteLine("Property Changed:" + args.PropertyName); };
+        OnPropertyChanged(nameof(IsTurnoutContext));
+        OnPropertyChanged(nameof(IsButtonContext));
     }
 
     public string NoDataText {

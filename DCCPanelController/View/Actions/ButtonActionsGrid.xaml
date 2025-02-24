@@ -6,6 +6,7 @@
     x:Name="ButtonActionsGridView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:converter="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
     xmlns:model="clr-namespace:DCCPanelController.Model"
@@ -57,51 +58,60 @@
                     WidthRequest="480">
 
                     <ListView.Header>
-                        <Grid ColumnDefinitions="3*,4*,4*,3*,1*" ColumnSpacing="5">
-                            <BoxView
-                                Background="{StaticResource Primary}"
-                                Grid.Column="0"
-                                HeightRequest="25" />
-                            <BoxView
-                                Background="{StaticResource Primary}"
-                                Grid.Column="1"
-                                HeightRequest="25" />
-                            <BoxView
-                                Background="{StaticResource Primary}"
-                                Grid.Column="2"
-                                HeightRequest="25" />
-                            <BoxView
-                                Background="{StaticResource Primary}"
-                                Grid.Column="3"
-                                HeightRequest="25" />
-                            <BoxView
-                                Background="{StaticResource Primary}"
-                                Grid.Column="4"
-                                HeightRequest="25" />
+                        <Grid
+                            ColumnDefinitions="3*,4*,4*,3*,1*"
+                            ColumnSpacing="5"
+                            RowDefinitions="25">
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="0" />
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="1" />
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="2" />
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="3" />
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="4" />
+
                             <Label
                                 FontAttributes="Bold"
                                 Grid.Column="0"
                                 Margin="5"
                                 Text="ID"
                                 TextColor="{StaticResource White}" />
-                            <Label
-                                FontAttributes="Bold"
+
+                            <components:ButtonStateControl
+                                CanToggleState="False"
                                 Grid.Column="1"
-                                Margin="5"
-                                Text="Active (On)"
-                                TextColor="{StaticResource White}" />
-                            <Label
-                                FontAttributes="Bold"
+                                HorizontalOptions="Start"
+                                IsVisible="{Binding IsButtonContext}"
+                                State="Active" />
+
+                            <components:ButtonStateControl
+                                CanToggleState="False"
                                 Grid.Column="2"
-                                Margin="5"
-                                Text="Inactive (Off)"
-                                TextColor="{StaticResource White}" />
+                                HorizontalOptions="Start"
+                                IsVisible="{Binding IsButtonContext}"
+                                State="Inactive" />
+
+                            <components:TurnoutStateControl
+                                CanToggleState="False"
+                                Grid.Column="1"
+                                HorizontalOptions="Start"
+                                IsVisible="{Binding IsTurnoutContext}"
+                                State="Closed" />
+
+                            <components:TurnoutStateControl
+                                CanToggleState="False"
+                                Grid.Column="2"
+                                HorizontalOptions="Start"
+                                IsVisible="{Binding IsTurnoutContext}"
+                                State="Thrown" />
+
+
                             <Label
                                 FontAttributes="Bold"
                                 Grid.Column="3"
+                                HorizontalOptions="Center"
                                 Margin="5"
                                 Text="Cascade?"
                                 TextColor="{StaticResource White}" />
+
                             <Image
                                 Grid.Column="4"
                                 Margin="5"
@@ -129,37 +139,57 @@
                                         VerticalOptions="Center"
                                         x:Name="IDPicker" />
 
-                                    <Picker
+                                    <components:ButtonStateControl
+                                        Button="{Binding WhenActiveOrClosed, Converter={StaticResource ButtonActionEnumConverter}}"
+                                        CanSetStateUnknown="True"
+                                        CanToggleState="True"
                                         Grid.Column="1"
+                                        HorizontalOptions="Start"
                                         Margin="5,0,0,0"
-                                        SelectedItem="{Binding WhenActiveOrClosed, Converter={StaticResource ButtonActionEnumConverter}}"
-                                        TextColor="Black"
-                                        VerticalOptions="Center">
-                                        <Picker.ItemsSource>
-                                            <x:Array Type="{x:Type x:String}">
-                                                <x:String>Active</x:String>
-                                                <x:String>Inactive</x:String>
-                                                <x:String>Leave</x:String>
-                                                <x:String>Toggle</x:String>
-                                            </x:Array>
-                                        </Picker.ItemsSource>
-                                    </Picker>
+                                        State="Active"
+                                        UnknownText="Leave-AsIs" />
 
-                                    <Picker
+                                    <components:ButtonStateControl
+                                        Button="{Binding WhenInactiveOrThrown, Converter={StaticResource ButtonActionEnumConverter}}"
+                                        CanSetStateUnknown="True"
+                                        CanToggleState="True"
                                         Grid.Column="2"
+                                        HorizontalOptions="Start"
                                         Margin="5,0,0,0"
-                                        SelectedItem="{Binding WhenInactiveOrThrown, Converter={StaticResource ButtonActionEnumConverter}}"
-                                        TextColor="Black"
-                                        VerticalOptions="Center">
-                                        <Picker.ItemsSource>
-                                            <x:Array Type="{x:Type x:String}">
-                                                <x:String>Active</x:String>
-                                                <x:String>Inactive</x:String>
-                                                <x:String>Leave</x:String>
-                                                <x:String>Toggle</x:String>
-                                            </x:Array>
-                                        </Picker.ItemsSource>
-                                    </Picker>
+                                        State="Inactive"
+                                        UnknownText="Leave-AsIs" />
+
+                                    <!--  <Picker  -->
+                                    <!--  Grid.Column="1"  -->
+                                    <!--  Margin="5,0,0,0"  -->
+                                    <!--  SelectedItem="{Binding WhenActiveOrClosed, Converter={StaticResource ButtonActionEnumConverter}}"  -->
+                                    <!--  TextColor="Black"  -->
+                                    <!--  VerticalOptions="Center">  -->
+                                    <!--     <Picker.ItemsSource> -->
+                                    <!--         <x:Array Type="{x:Type x:String}"> -->
+                                    <!--             <x:String>Active</x:String> -->
+                                    <!--             <x:String>Inactive</x:String> -->
+                                    <!--             <x:String>Leave</x:String> -->
+                                    <!--             <x:String>Toggle</x:String> -->
+                                    <!--         </x:Array> -->
+                                    <!--     </Picker.ItemsSource> -->
+                                    <!-- </Picker> -->
+                                    <!--    -->
+                                    <!--  <Picker  -->
+                                    <!--  Grid.Column="2"  -->
+                                    <!--  Margin="5,0,0,0"  -->
+                                    <!--  SelectedItem="{Binding WhenInactiveOrThrown, Converter={StaticResource ButtonActionEnumConverter}}"  -->
+                                    <!--  TextColor="Black"  -->
+                                    <!--  VerticalOptions="Center">  -->
+                                    <!--     <Picker.ItemsSource> -->
+                                    <!--         <x:Array Type="{x:Type x:String}"> -->
+                                    <!--             <x:String>Active</x:String> -->
+                                    <!--             <x:String>Inactive</x:String> -->
+                                    <!--             <x:String>Leave</x:String> -->
+                                    <!--             <x:String>Toggle</x:String> -->
+                                    <!--         </x:Array> -->
+                                    <!--     </Picker.ItemsSource> -->
+                                    <!-- </Picker> -->
 
                                     <CheckBox
                                         Grid.Column="3"

@@ -1,19 +1,21 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsView : ContentView {
 
-    public TurnoutActionsView(TurnoutActions actions, bool isTurnoutContext = true) {
+    public TurnoutActionsView(TurnoutActions turnoutActions, ITrackPiece trackPiece, ActionsContext context) {
         InitializeComponent();
         TurnoutActions = [];
-        foreach (var action in actions) {
+        foreach (var action in turnoutActions) {
             TurnoutActions.Add(action);
         }
 
-        IsTurnoutContext = isTurnoutContext;
+        //IsTurnoutContext = isTurnoutContext;
         BindingContext = this;
         UpdateLabels();
     }

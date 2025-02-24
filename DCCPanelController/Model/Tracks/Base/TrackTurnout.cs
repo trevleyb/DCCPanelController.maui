@@ -5,6 +5,7 @@ using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.ViewModel;
 using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;
@@ -32,11 +33,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [ObservableProperty] private Turnout? _turnout;
 
     [ObservableProperty]
-    [property: EditableActionsProperty(IsTurnoutContext = true, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
+    [property: EditableActionsProperty(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
     private TurnoutActions _turnoutActions = [];
 
     [ObservableProperty]
-    [property: EditableActionsProperty(IsButtonContext = true, Group = "Actions", Description = "Buttons to set when this turnout changes")]
+    [property: EditableActionsProperty(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes")]
     private ButtonActions _buttonActions = [];
     
     [ObservableProperty]

@@ -17,6 +17,11 @@ using Switch = Microsoft.Maui.Controls.Switch;
 
 namespace DCCPanelController.ViewModel;
 
+public enum ActionsContext {
+    Button,
+    Turnout
+}
+
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
 
@@ -284,7 +289,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             var prop = value.Info.GetValue(value.Owner);
             if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions) {
                 Console.WriteLine("Turnout Actions");
-                return new TurnoutActionsView(turnoutActions, attr.IsTurnoutContext) {
+                return new TurnoutActionsView(turnoutActions, _trackPiece, attr.ActionsContext) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -296,7 +301,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     Console.WriteLine($"---Action: {buttonAction.Id} Active={buttonAction.WhenActiveOrClosed} Inactive={buttonAction.WhenInactiveOrThrown}");
                 }
                 
-                return new ButtonActionsGrid(buttonActions, _trackPiece) {
+                return new ButtonActionsGrid(buttonActions, _trackPiece, attr.ActionsContext) {
                      HorizontalOptions = LayoutOptions.Fill,
                      VerticalOptions = LayoutOptions.Fill
                 };
