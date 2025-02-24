@@ -40,9 +40,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
     public double ControlHeight => 40 + (TurnoutActions.Count * 40);
 
-    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ITrackPiece trackPiece, ActionsContext context) {
+    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ITrack track, ActionsContext context) {
         ActionContext = context;
-        AvailableTurnouts = FindAvailableTurnouts(trackPiece);
+        AvailableTurnouts = FindAvailableTurnouts(track);
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
         TurnoutActions = turnoutActions;
         UpdateSelectableTurnouts();
@@ -80,12 +80,12 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
 
     // Build a collection of all available turnouts that could be selected.
     // However, if this control IS A Turnout then we can select this one so exclude it. 
-    private ObservableCollection<string> FindAvailableTurnouts(ITrackPiece trackPiece) {
+    private ObservableCollection<string> FindAvailableTurnouts(ITrack track) {
         var foundTurnouts = new ObservableCollection<string>();
-        var thisTurnout = trackPiece as ITrackTurnout ;
-        if (trackPiece is { Parent: { Tracks: { } tracks } }) {
-            foreach (var track in tracks) {
-                if (track is ITrackTurnout trackTurnout) {
+        var thisTurnout = track as ITrackTurnout ;
+        if (track is { Parent: { Tracks: { } tracks } }) {
+            foreach (var trk in tracks) {
+                if (trk is ITrackTurnout trackTurnout) {
                     if (thisTurnout != null && trackTurnout.TurnoutID == thisTurnout.TurnoutID) continue;
                     if (string.IsNullOrWhiteSpace(trackTurnout.TurnoutID)) continue;
                     foundTurnouts.Add(trackTurnout.TurnoutID);

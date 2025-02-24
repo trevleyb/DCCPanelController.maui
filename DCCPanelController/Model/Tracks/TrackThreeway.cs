@@ -6,7 +6,7 @@
 //
 // namespace DCCPanelController.Tracks;
 //
-// public partial class TrackThreeway : TrackPiece, ITrackThreeway, ITrackSymbol, ITrackPiece {
+// public partial class TrackThreeway : TrackPiece, ITrackThreeway, ITrackSymbol, ITrack {
 //     private IAudioPlayer? _clickSoundPlayer;
 //
 //     [ObservableProperty]

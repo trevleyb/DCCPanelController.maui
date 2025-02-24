@@ -23,9 +23,9 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         }
     }
 
-    private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) { }
+    private void PanelView_OnTrackPieceChanged(object? sender, ITrack track) { }
 
-    private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece e) {
+    private void PanelView_OnTrackPieceTapped(object? sender, ITrack e) {
         Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();

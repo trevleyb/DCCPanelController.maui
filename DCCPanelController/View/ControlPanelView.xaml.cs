@@ -77,12 +77,12 @@ public partial class ControlPanelView : IDisposable {
         // }
     }
 
-    public event EventHandler<ITrackPiece>? TrackPieceTapped;
-    public event EventHandler<ITrackPiece>? TrackPieceChanged;
-    public event EventHandler<ITrackPiece>? TrackPieceDoubleTapped;
+    public event EventHandler<ITrack>? TrackPieceTapped;
+    public event EventHandler<ITrack>? TrackPieceChanged;
+    public event EventHandler<ITrack>? TrackPieceDoubleTapped;
     
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
-        if (sender is ITrackPiece track) {
+        if (sender is ITrack track) {
             if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }
@@ -248,7 +248,7 @@ public partial class ControlPanelView : IDisposable {
         }
     }
 
-    public void RemoveTrackPiece(ITrackPiece track) {
+    public void RemoveTrackPiece(ITrack track) {
         if (Panel is { Tracks: { } tracks } panel) {
             if (track.Parent == panel) {
                 track.Parent = null;
@@ -285,12 +285,12 @@ public partial class ControlPanelView : IDisposable {
         }
     }
 
-    public void InvalidateCell(ITrackPiece track) {
+    public void InvalidateCell(ITrack track) {
         RemoveDisplayItemFromGrid(track);
         AddDisplayItemToGrid(track);
     }
 
-    private void RemoveDisplayItemFromGrid(ITrackPiece track) {
+    private void RemoveDisplayItemFromGrid(ITrack track) {
         if (track.TrackViewRef is { } view) {
             DynamicGrid.Children.Remove(view);
             track.PropertyChanged -= OnTrackPieceChanged;
@@ -298,7 +298,7 @@ public partial class ControlPanelView : IDisposable {
         }
     }
 
-    private void AddDisplayItemToGrid(ITrackPiece track, bool transparentInput = false) {
+    private void AddDisplayItemToGrid(ITrack track, bool transparentInput = false) {
         var displayItem = track.TrackView(GridSize, transparentInput);
         track.PropertyChanged += OnTrackPieceChanged;
 
@@ -341,12 +341,12 @@ public partial class ControlPanelView : IDisposable {
         if (DesignMode) ClearSelectedTracks();
     }
 
-    public void MarkTrackSelected(ITrackPiece track) {
+    public void MarkTrackSelected(ITrack track) {
         HighlightCell(track.X, track.Y, CellHighlightAction.Selected);
         track.IsSelected = true;
     }
 
-    public void MarkTrackUnSelected(ITrackPiece track) {
+    public void MarkTrackUnSelected(ITrack track) {
         UnHighlightCell(track.X, track.Y);
         track.IsSelected = false;
     }
@@ -357,7 +357,7 @@ public partial class ControlPanelView : IDisposable {
         }
     }
 
-    private void DragTrackStarting(DragStartingEventArgs args, ITrackPiece track) {
+    private void DragTrackStarting(DragStartingEventArgs args, ITrack track) {
         args.Data.Properties.Add("Track", track);
         args.Data.Properties.Add("Source", "Panel");
         _lastDragCol = 0;
@@ -371,7 +371,7 @@ public partial class ControlPanelView : IDisposable {
     }
 
     private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
-        var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
+        var track = e.Data.Properties["Track"] as ITrack ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
 
         e.AcceptedOperation = DataPackageOperation.None;
@@ -405,7 +405,7 @@ public partial class ControlPanelView : IDisposable {
 
             UnHighlightCell(_lastDragCol, _lastDragRow);
             var source = e.Data.Properties["Source"] as string ?? null;
-            var track = e.Data.Properties["Track"] as ITrackPiece ?? null;
+            var track = e.Data.Properties["Track"] as ITrack ?? null;
             var gridPosition = GetGridPosition(e?.GetPosition(DynamicGrid));
 
             if (gridPosition is { IsSuccess: true, Value: var position } && track is { } trackPiece) {

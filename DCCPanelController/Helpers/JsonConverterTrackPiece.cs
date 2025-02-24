@@ -5,8 +5,8 @@ using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Helpers;
 
-public class JsonConverterTrackPiece : JsonConverter<ITrackPiece> {
-    public override ITrackPiece? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
+public class JsonConverterTrackPiece : JsonConverter<ITrack> {
+    public override ITrack? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
         // Use the type discriminator or another property to determine the specific type
         using (var document = JsonDocument.ParseValue(ref reader)) {
             if (!document.RootElement.TryGetProperty("TrackObjectType", out var typeProperty)) {
@@ -16,7 +16,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrackPiece> {
             // Switch types based on the `Type` property value
             var typeName = typeProperty.GetString();
             var rawText = document.RootElement.GetRawText();
-            ITrackPiece? obj = typeName switch {
+            ITrack? obj = typeName switch {
                 "TrackButton"               => JsonSerializer.Deserialize<TrackButton>(rawText, options),
                 "TrackCompass"              => JsonSerializer.Deserialize<TrackCompass>(rawText, options),
                 "TrackCorner"               => JsonSerializer.Deserialize<TrackCorner>(rawText, options),
@@ -39,7 +39,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrackPiece> {
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, ITrackPiece value, JsonSerializerOptions options) {
+    public override void Write(Utf8JsonWriter writer, ITrack value, JsonSerializerOptions options) {
         JsonSerializer.Serialize(writer, (object)value, options);
     }
 }

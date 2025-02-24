@@ -27,11 +27,11 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     [ObservableProperty]
     private string _propertyName;
-    private readonly ITrackPiece _trackPiece;
+    private readonly ITrack _track;
 
-    public DynamicPropertyPageViewModel(ITrackPiece trackPiece, string? propertyName) {
-        PropertyName = propertyName ?? (string.IsNullOrEmpty(trackPiece.Name) ? "Track" : $"{trackPiece.Name}");
-        _trackPiece = trackPiece;
+    public DynamicPropertyPageViewModel(ITrack track, string? propertyName) {
+        PropertyName = propertyName ?? (string.IsNullOrEmpty(track.Name) ? "Track" : $"{track.Name}");
+        _track = track;
         PropertyChanged += OnPropertyChanged;
     }
 
@@ -288,14 +288,14 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         if (value.Attribute is EditableActionsPropertyAttribute attr) {
             var prop = value.Info.GetValue(value.Owner);
             if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions) {
-                return new TurnoutActionsGrid(turnoutActions, _trackPiece, attr.ActionsContext) {
+                return new TurnoutActionsGrid(turnoutActions, _track, attr.ActionsContext) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
             }
 
             if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
-                return new ButtonActionsGrid(buttonActions, _trackPiece, attr.ActionsContext) {
+                return new ButtonActionsGrid(buttonActions, _track, attr.ActionsContext) {
                      HorizontalOptions = LayoutOptions.Fill,
                      VerticalOptions = LayoutOptions.Fill
                 };

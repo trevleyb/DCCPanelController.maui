@@ -10,49 +10,53 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackBase : ObservableObject {
-    [ObservableProperty] private int _height = 1; // What height is this component?
+    
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    [ObservableProperty] private int _width = 1;    // What width is this component?
+    [ObservableProperty] private int _height = 1;   // What Height is this component? 
+    [ObservableProperty] private int _layer = 1;    // What layer is this on? Higher sits on top of lower
+    
+    [ObservableProperty] private int _x;            // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _y;            // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _z = 1;        // What position (layer) should this exist at 
+
     [ObservableProperty] private int _imageRotation;
-    [ObservableProperty] private bool _isSelected;
-    [ObservableProperty] private int _layer = 1; // What layer is this on? Only 1 element per layer.
+    [ObservableProperty] private int _trackRotation; 
 
-    [ObservableProperty] private string _name = "Track Piece"; // Name of this particular track piece or object
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] [property: JsonIgnore]
+    [ObservableProperty] [property:JsonIgnore] 
+    [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] 
     private bool _showAboveSymbol;
+    
+    [JsonIgnore] 
+    public bool ShowBelowSymbol => !ShowAboveSymbol;
 
-    [ObservableProperty] private int _trackRotation; // What is the expected direction of the Track Piece?
-    [ObservableProperty] private int _width = 1;     // What width is this component?
-    [ObservableProperty] private int _x;             // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _y;             // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _z = 1;         // What position (layer) should this exist at 
-
+    [ObservableProperty] 
+    [property:JsonIgnore] private bool _isSelected;  // Used in Design Mode. Is this track selected? 
+    
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] protected int RotationIncrement = 45;
-    [JsonIgnore] protected double Scale = 1.5;
-
-    public virtual void CleanUp() { }
-    protected StyleTrackImages StyleTrackImages = new();
-
-    protected TrackBase(Panel? parent = null) {
-        Initialise();
-        OnPropertyChanged(nameof(TrackView));
-        PropertyChanged += OnPropertyChanged;
-        if (parent != null) Parent = parent;
-    }
-
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [JsonIgnore] protected readonly double Scale = 1.5;
+    
+    [JsonIgnore] protected readonly StyleTrackImages StyleTrackImages = new();
     [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage?.Connections.ConnectionPointsRotated(ImageRotation) ?? SvgCompass.NoConnections();
     [JsonIgnore] public Panel? Parent { get; set; }
-    [JsonIgnore] public bool ShowBelowSymbol => !ShowAboveSymbol;
 
     [JsonIgnore] public IView? TrackViewRef { get; set; }
     [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
 
-    public virtual string TrackObjectType {
-        get => GetType().Name;
-        set => _ = value;
+    protected TrackBase(Panel? parent = null) {
+        Initialise();
+        OnPropertyChanged(nameof(TrackView));
+        if (parent != null) Parent = parent;
     }
-
+    
+    protected void Initialise() {
+        Setup();
+    }
+    protected abstract void Setup();
+    public virtual void CleanUp() { }
+    
     public IView TrackView(double gridSize, bool passthrough = false) {
         TrackViewRef = GetViewForTrack(gridSize, passthrough);
         return TrackViewRef;
@@ -65,14 +69,8 @@ public abstract partial class TrackBase : ObservableObject {
     protected abstract IView GetViewForTrack(double gridSize, bool passthrough = false);
     protected abstract ImageSource GetViewForSymbol(double gridSize);
 
-    /// <summary>
-    ///     This is a helper function as most track pieces need to create a View from an Image
-    /// </summary>
-    /// <param name="image">The image source to use</param>
-    /// <param name="imageRotation">How the image should be rotated</param>
-    /// <param name="gridSize">The grid size as this sets the Width and Height of the image</param>
-    /// <param name="passthrough">Should this item be a pass-through for taps</param>
-    /// <returns></returns>
+    //  This is a helper function as most track pieces need to create a View from an Image
+    // ---------------------------------------------------------------------------------------------------------
     protected IView CreateViewFromImage(ImageSource image, int imageRotation, double gridSize, bool passthrough = false) {
         return new Image {
             Source = image,
@@ -87,18 +85,7 @@ public abstract partial class TrackBase : ObservableObject {
             BackgroundColor = Colors.Transparent
         };
     }
-
-    /// <summary>
-    ///     Manage when properties have changed as we may need to redraw the image
-    /// </summary>
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
-
-    protected void Initialise() {
-        Setup();
-    }
-
-    protected abstract void Setup();
-
+    
     public void RotateLeft() {
         TrackRotation -= RotationIncrement;
         if (TrackRotation < 0) TrackRotation += 360;
@@ -119,7 +106,7 @@ public abstract partial class TrackBase : ObservableObject {
         StyleTrackImages.AddImageSourceAndRotation(trackType, imageSource, rotations);
     }
 
-    protected T Clone<T>(Panel parent) where T : ITrackPiece {
+    protected T Clone<T>(Panel parent) where T : ITrack {
         var original = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
         var copy = JsonSerializer.Deserialize<T>(original, SettingsService.PanelSerializerOptions);
         if (copy is { } clone) {
@@ -127,7 +114,6 @@ public abstract partial class TrackBase : ObservableObject {
             clone.Parent = parent;
             return clone;
         }
-
         throw new Exception("Failed to clone panel");
     }
 }

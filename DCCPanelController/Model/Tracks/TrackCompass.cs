@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
@@ -5,22 +6,24 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public class TrackCompass(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrack {
 
     public TrackCompass() : this(null) { }
 
-    public ITrackPiece Clone(Panel parent) {
+    [ObservableProperty] 
+    private string _name = "Compass";
+    
+    public ITrack Clone(Panel parent) {
         return Clone<TrackCompass>(parent);
     }
 
     protected override void Setup() {
         Layer = 2;
-        Name = "Compass";
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
     }
 
-    public void SetCompassPoints(ITrackPiece track) {
+    public void SetCompassPoints(ITrack track) {
         SetCompassColor("CompassN", track.Connections[0]);
         SetCompassColor("CompassNE", track.Connections[1]);
         SetCompassColor("CompassE", track.Connections[2]);

@@ -15,23 +15,23 @@ public static class TrackPointsValidator {
         (-1, -1) // North-West
     };
 
-    public static bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece, int cols, int rows) {
+    public static bool[] GetConnectedTracksStatus(IEnumerable<ITrack> trackPieces, ITrack track, int cols, int rows) {
         var results = new bool[8];
         var enumerable = trackPieces.ToList();
         for (var i = 0; i < 8; i++) {
-            results[i] = EvaluateConnection(enumerable, trackPiece, i, cols, rows);
+            results[i] = EvaluateConnection(enumerable, track, i, cols, rows);
         }
 
         return results;
     }
 
-    private static bool EvaluateConnection(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece, int direction, int cols, int rows) {
-        var rotatedPoints = trackPiece.Connections;
+    private static bool EvaluateConnection(IEnumerable<ITrack> trackPieces, ITrack track, int direction, int cols, int rows) {
+        var rotatedPoints = track.Connections;
         if (rotatedPoints[direction] == TrackConnectionsEnum.None) return true;
 
         var (dX, dY) = Directions[direction];
-        var neighborX = trackPiece.X + dX;
-        var neighborY = trackPiece.Y + dY;
+        var neighborX = track.X + dX;
+        var neighborY = track.Y + dY;
 
         // If the Neighbor was OFF the edge of the page and we have a connection, then this would be an error. 
         // ----------------------------------------------------------------------------------------------------
@@ -45,10 +45,10 @@ public static class TrackPointsValidator {
         // If there is no Neighbor track, but we are expecting one, then this is not a valid connection
         // But if this is a Terminator, then the Neighbour is fine to not be there. 
         // ---------------------------------------------------------------------------------------------
-        if (neighborTrack == null) return trackPiece.Connections[direction] == TrackConnectionsEnum.Terminator;
+        if (neighborTrack == null) return track.Connections[direction] == TrackConnectionsEnum.Terminator;
 
         var neighborConnection = neighborTrack.Connections[oppositeDirection];
-        return IsConnected(trackPiece.Connections[direction], neighborConnection);
+        return IsConnected(track.Connections[direction], neighborConnection);
     }
 
     private static bool IsConnected(TrackConnectionsEnum source, TrackConnectionsEnum target) {

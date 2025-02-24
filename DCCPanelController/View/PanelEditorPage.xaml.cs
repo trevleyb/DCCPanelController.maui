@@ -19,11 +19,11 @@ public partial class PanelEditorPage : ContentPage {
     private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
     private PanelEditorViewModel ViewModel { get; }
 
-    private void PanelView_OnTrackPieceChanged(object? sender, ITrackPiece track) {
+    private void PanelView_OnTrackPieceChanged(object? sender, ITrack track) {
         ViewModel.TrackPieceChanged();
     }
 
-    private void PanelView_OnTrackPieceTapped(object? sender, ITrackPiece track) {
+    private void PanelView_OnTrackPieceTapped(object? sender, ITrack track) {
         if (track.IsSelected) {
             PanelView.MarkTrackUnSelected(track);
         } else {
@@ -31,7 +31,7 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
     
-    private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrackPiece track) {
+    private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
         PanelView.ClearSelectedTracks();
         PanelView.MarkTrackSelected(track);
         ShowPropertyPage(sender, EventArgs.Empty);

@@ -6,14 +6,16 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent), ITrackPiece, ITrackButton, ITrackSymbol {
+public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent), ITrack, ITrackButton, ITrackSymbol {
 
     [ObservableProperty] [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
     private bool _isEnabled = true;
 
+    [ObservableProperty] private string _name = "Button";
+    
     public TrackButton() : this(null) { }
 
-    public ITrackPiece Clone(Panel parent) {
+    public ITrack Clone(Panel parent) {
         return Clone<TrackButton>(parent);
     }
 

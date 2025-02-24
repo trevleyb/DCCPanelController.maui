@@ -20,7 +20,7 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private int _sortOrder;
 
-    private ObservableCollection<ITrackPiece> _tracks = [];
+    private ObservableCollection<ITrack> _tracks = [];
 
     public Panel() {
         _tracks = [];
@@ -33,11 +33,11 @@ public partial class Panel : ObservableObject {
     }
 
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public List<ITrackPiece> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
 
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
-    public ObservableCollection<ITrackPiece> Tracks {
+    public ObservableCollection<ITrack> Tracks {
         get => _tracks;
         set {
             if (_tracks != value) {
@@ -61,17 +61,17 @@ public partial class Panel : ObservableObject {
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         Console.WriteLine($"Collection Changed: {e.Action} {e.NewItems?.Count} {e.OldItems?.Count} {e.NewStartingIndex} {e.OldStartingIndex}");
         if (e.NewItems != null) {
-            SetParent(e.NewItems as IList<ITrackPiece>, this);
+            SetParent(e.NewItems as IList<ITrack>, this);
         }
     }
 
-    public ITrackPiece AddTrack(ITrackPiece track) {
+    public ITrack AddTrack(ITrack track) {
         track.Parent = this;
         Tracks.Add(track);
         return track;
     }
 
-    public void SetParent(IList<ITrackPiece>? tracks, Panel parent) {
+    public void SetParent(IList<ITrack>? tracks, Panel parent) {
         if (tracks is null) return;
         foreach (var track in tracks) track.Parent = parent;
     }
@@ -84,8 +84,8 @@ public partial class Panel : ObservableObject {
         return originalJson.GetHashCode() != modifiedJson.GetHashCode();
     }
 
-    private bool[] GetConnectedTracksStatus(IEnumerable<ITrackPiece> trackPieces, ITrackPiece trackPiece) {
-        return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, trackPiece, Cols, Rows);
+    private bool[] GetConnectedTracksStatus(IEnumerable<ITrack> trackPieces, ITrack track) {
+        return TrackPointsValidator.GetConnectedTracksStatus(trackPieces, track, Cols, Rows);
     }
 
     private static string CalculateRatio(int col, int row) {

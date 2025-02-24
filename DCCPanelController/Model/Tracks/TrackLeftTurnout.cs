@@ -1,18 +1,21 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public class TrackLeftTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnoutBase(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrackPiece {
+public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnoutBase(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrack {
     public TrackLeftTurnout() : this(null) { }
 
-    public ITrackPiece Clone(Panel parent) {
+    public ITrack Clone(Panel parent) {
         return Clone<TrackLeftTurnout>(parent);
     }
 
+    [ObservableProperty]
+    private string _name = "Left Turnout";
+
     protected override void Setup() {
-        Name = "Turnout(L)";
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "TurnoutL1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "TurnoutL1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Straight, "TurnoutL2", (0, 0), (90, 90), (180, 180), (270, 270));

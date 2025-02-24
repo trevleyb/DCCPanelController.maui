@@ -109,7 +109,7 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         _viewModel.SelectedPanel = tempPanel;
     }
 
-    private void ControlPanelView_OnTrackPieceTapped(object? sender, ITrackPiece e) {
+    private void ControlPanelView_OnTrackPieceTapped(object? sender, ITrack e) {
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();
         }

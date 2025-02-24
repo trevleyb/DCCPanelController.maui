@@ -7,8 +7,11 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrackPiece {
+public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrack {
 
+    [ObservableProperty]
+    private string _name = "Image";
+    
     [ObservableProperty] [property: EditableIntProperty(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
     private int _imageHeight = 2;
 
@@ -28,13 +31,12 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     private int MaxGridWidth => Parent is not null ? ImageWidth <= Parent.Cols - X ? ImageWidth : Parent.Cols - X : ImageWidth;
     private int MaxGridHeight => Parent is not null ? ImageHeight <= Parent.Rows - Y ? ImageHeight : Parent.Rows - Y : ImageHeight;
 
-    public ITrackPiece Clone(Panel parent) {
+    public ITrack Clone(Panel parent) {
         return Clone<TrackImage>(parent);
     }
 
     protected override void Setup() {
         Layer = 2;
-        Name = "ImageStyle";
         RotationIncrement = 90;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));

@@ -40,9 +40,9 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
     public double ControlHeight => 40 + (ButtonActions.Count * 40);
 
-    public ButtonActionsGridViewModel(ButtonActions buttonActions, ITrackPiece trackPiece, ActionsContext context) {
+    public ButtonActionsGridViewModel(ButtonActions buttonActions, ITrack track, ActionsContext context) {
         ActionContext = context;
-        AvailableButtons = FindAvailableButtons(trackPiece);
+        AvailableButtons = FindAvailableButtons(track);
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
         ButtonActions = buttonActions;
         UpdateSelectableButtons();
@@ -84,12 +84,12 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     /// button is different from the current button, then add that button name
     /// to a collection of available buttons. 
     /// </summary>
-    private ObservableCollection<string> FindAvailableButtons(ITrackPiece trackPiece) {
+    private ObservableCollection<string> FindAvailableButtons(ITrack track) {
         var foundButtons = new ObservableCollection<string>();
-        var thisButton = trackPiece as ITrackButton ;
-        if (trackPiece is { Parent: { Tracks: { } tracks } }) {
-            foreach (var track in tracks) {
-                if (track is ITrackButton trackButton) {
+        var thisButton = track as ITrackButton ;
+        if (track is { Parent: { Tracks: { } tracks } }) {
+            foreach (var trk in tracks) {
+                if (trk is ITrackButton trackButton) {
                     if (thisButton != null && thisButton.ButtonID == trackButton.ButtonID) continue;
                     if (string.IsNullOrWhiteSpace(trackButton.ButtonID)) continue;
                     foundButtons.Add(trackButton.ButtonID);

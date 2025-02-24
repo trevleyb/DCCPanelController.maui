@@ -7,8 +7,11 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrackPiece {
+public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
+    [ObservableProperty]
+    private string _name = "Text Block";
+    
     [ObservableProperty] [property: EditableColorProperty(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Transparent;
 
@@ -37,7 +40,7 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
 
     private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, TextWidth, X, Y, TrackRotation) : TextWidth;
 
-    public ITrackPiece Clone(Panel parent) {
+    public ITrack Clone(Panel parent) {
         return new TrackText(parent);
     }
 
