@@ -35,11 +35,14 @@ public partial class Panel : ObservableObject {
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
 
+    [JsonIgnore] public List<ITrackTurnout> TurnoutsInUse => Tracks.OfType<ITrackTurnout>().ToList() ?? [];
+    [JsonIgnore] public List<ITrackButton>  ButtonsInUse => Tracks.OfType<ITrackButton>().ToList() ?? [];
+    
     public string Id { get; set; } = Guid.NewGuid().ToString();
 
     public ObservableCollection<ITrack> Tracks {
         get => _tracks;
-        set {
+        init {
             if (_tracks != value) {
                 try {
                     _tracks = value;
@@ -48,7 +51,7 @@ public partial class Panel : ObservableObject {
                 }
 
                 _tracks.CollectionChanged += TracksOnCollectionChanged;
-                SetParent(_tracks, this);
+                Panel.SetParent(_tracks, this);
                 OnPropertyChanged();
             }
         }
@@ -61,7 +64,7 @@ public partial class Panel : ObservableObject {
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         Console.WriteLine($"Collection Changed: {e.Action} {e.NewItems?.Count} {e.OldItems?.Count} {e.NewStartingIndex} {e.OldStartingIndex}");
         if (e.NewItems != null) {
-            SetParent(e.NewItems as IList<ITrack>, this);
+            Panel.SetParent(e.NewItems as IList<ITrack>, this);
         }
     }
 
@@ -71,7 +74,7 @@ public partial class Panel : ObservableObject {
         return track;
     }
 
-    public void SetParent(IList<ITrack>? tracks, Panel parent) {
+    public static void SetParent(IList<ITrack>? tracks, Panel parent) {
         if (tracks is null) return;
         foreach (var track in tracks) track.Parent = parent;
     }
@@ -111,3 +114,4 @@ public partial class Panel : ObservableObject {
         return panel ?? throw new Exception("Failed to clone panel");
     }
 }
+
