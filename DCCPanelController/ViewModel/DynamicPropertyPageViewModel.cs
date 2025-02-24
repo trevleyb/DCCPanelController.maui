@@ -54,7 +54,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
 
         var tableExpander = new Expander();
-        tableExpander.Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0);
+        //tableExpander.Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0);
 
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
@@ -66,7 +66,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         tableExpander.IsExpanded = true;
         
         var tableGroup = new StackLayout {
-            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
+            Margin = new Thickness(0)
         };
         
         foreach (var value in groupValue) {

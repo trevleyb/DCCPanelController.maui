@@ -21,7 +21,7 @@
 
     <ContentView.Content>
         <VerticalStackLayout>
-            <Grid ColumnDefinitions="100,auto,auto">
+            <Grid ColumnDefinitions="120,auto,auto">
                 <Label
                     FontAttributes="Bold"
                     Grid.Column="0"
@@ -45,7 +45,7 @@
                     Grid.Column="2"
                     HeightRequest="25"
                     Style="{StaticResource SmallLabel}"
-                    Text="{Binding Source={x:Reference TurnoutActionsGridView}, x:DataType=local:TurnoutActionsGrid, Path=BindingContext.NoDataText}"
+                    Text="{Binding NoDataText}"
                     VerticalOptions="Center" />
             </Grid>
 
@@ -54,7 +54,7 @@
                     HorizontalOptions="Fill"
                     ItemsSource="{Binding TurnoutActions}"
                     VerticalOptions="Fill"
-                    WidthRequest="470">
+                    WidthRequest="440">
 
                     <ListView.Header>
                         <Grid

@@ -78,19 +78,16 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         UpdateSelectableTurnouts();
     }
 
-    /// <summary>
-    /// using the current track piece, look at the parent panel collection and
-    /// iterate over ALL track pieces. If any are a button, and if the name of that
-    /// button is different from the current button, then add that button name
-    /// to a collection of available buttons. 
-    /// </summary>
+    // Build a collection of all available turnouts that could be selected.
+    // However, if this control IS A Turnout then we can select this one so exclude it. 
     private ObservableCollection<string> FindAvailableTurnouts(ITrackPiece trackPiece) {
         var foundTurnouts = new ObservableCollection<string>();
         var thisTurnout = trackPiece as ITrackTurnout ;
         if (trackPiece is { Parent: { Tracks: { } tracks } }) {
             foreach (var track in tracks) {
                 if (track is ITrackTurnout trackTurnout) {
-                    if (thisTurnout != null && trackTurnout.TurnoutID == trackTurnout.TurnoutID) continue;
+                    if (thisTurnout != null && trackTurnout.TurnoutID == thisTurnout.TurnoutID) continue;
+                    if (string.IsNullOrWhiteSpace(trackTurnout.TurnoutID)) continue;
                     foundTurnouts.Add(trackTurnout.TurnoutID);
                 }
             }

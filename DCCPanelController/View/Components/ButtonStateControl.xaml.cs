@@ -12,8 +12,8 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
     public static readonly BindableProperty CanSetStateUnknownProperty = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(ButtonStateControl), false);
     public static readonly BindableProperty StateChangedCommandProperty = BindableProperty.Create(nameof(StateChangedCommand), typeof(ICommand), typeof(ButtonStateControl), null);
 
-    public static readonly BindableProperty ActiveTextProperty = BindableProperty.Create(nameof(ActiveText), typeof(string), typeof(ButtonStateControl),"Active (On)");
-    public static readonly BindableProperty InactiveTextProperty = BindableProperty.Create(nameof(InactiveText), typeof(string), typeof(ButtonStateControl),"Inactive (Off)");
+    public static readonly BindableProperty ActiveTextProperty = BindableProperty.Create(nameof(ActiveText), typeof(string), typeof(ButtonStateControl),"On");
+    public static readonly BindableProperty InactiveTextProperty = BindableProperty.Create(nameof(InactiveText), typeof(string), typeof(ButtonStateControl),"Off");
     public static readonly BindableProperty UnknownTextProperty = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(ButtonStateControl),"Unknown");
 
     public ButtonStateControl() {

@@ -87,6 +87,7 @@
                 Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type viewModel:PanelEditorViewModel}}}"
                 ShowGrid="True"
                 TrackPieceChanged="PanelView_OnTrackPieceChanged"
+                TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
                 TrackPieceTapped="PanelView_OnTrackPieceTapped"
                 VerticalOptions="Fill"
                 x:Name="PanelView" />

@@ -79,13 +79,13 @@ public partial class ControlPanelView : IDisposable {
 
     public event EventHandler<ITrackPiece>? TrackPieceTapped;
     public event EventHandler<ITrackPiece>? TrackPieceChanged;
-
+    public event EventHandler<ITrackPiece>? TrackPieceDoubleTapped;
+    
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrackPiece track) {
             if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }
-
             TrackPieceChanged?.Invoke(this, track);
         }
     }
@@ -307,6 +307,7 @@ public partial class ControlPanelView : IDisposable {
         // Create TapGestureRecognizer
         if (displayItem is Microsoft.Maui.Controls.View view) {
             var tapGesture = new TapGestureRecognizer();
+            tapGesture.NumberOfTapsRequired = 1;
             tapGesture.Tapped += (sender, args) => TrackPieceTapped?.Invoke(this, track);
             view.GestureRecognizers.Add(tapGesture);
 
@@ -317,6 +318,12 @@ public partial class ControlPanelView : IDisposable {
                 var dragGesture = new DragGestureRecognizer();
                 dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
                 view.GestureRecognizers.Add(dragGesture);
+                
+                var doubleTapGesture = new TapGestureRecognizer {
+                    NumberOfTapsRequired = 2,
+                };
+                doubleTapGesture.Tapped += (sender, args) => TrackPieceDoubleTapped?.Invoke(this, track);
+                view.GestureRecognizers.Add(doubleTapGesture);
             }
         }
 
@@ -344,7 +351,7 @@ public partial class ControlPanelView : IDisposable {
         track.IsSelected = false;
     }
 
-    private void ClearSelectedTracks() {
+    public void ClearSelectedTracks() {
         if (Panel is not null) {
             foreach (var track in Panel.SelectedTracks.Where(x => x.IsSelected)) MarkTrackUnSelected(track);
         }

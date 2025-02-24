@@ -30,7 +30,13 @@ public partial class PanelEditorPage : ContentPage {
             PanelView.MarkTrackSelected(track);
         }
     }
-
+    
+    private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrackPiece track) {
+        PanelView.ClearSelectedTracks();
+        PanelView.MarkTrackSelected(track);
+        ShowPropertyPage(sender, EventArgs.Empty);
+    }
+    
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
             e.Data.Properties.Add("Track", symbol);

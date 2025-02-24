@@ -91,6 +91,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
             foreach (var track in tracks) {
                 if (track is ITrackButton trackButton) {
                     if (thisButton != null && thisButton.ButtonID == trackButton.ButtonID) continue;
+                    if (string.IsNullOrWhiteSpace(trackButton.ButtonID)) continue;
                     foundButtons.Add(trackButton.ButtonID);
                 }
             }
