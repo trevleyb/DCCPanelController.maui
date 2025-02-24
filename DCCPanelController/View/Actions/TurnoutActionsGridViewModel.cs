@@ -46,7 +46,6 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
         TurnoutActions = turnoutActions;
         UpdateSelectableTurnouts();
-        PropertyChanged += (sender, args) => { Console.WriteLine("Property Changed:" + args.PropertyName); };
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
     }
@@ -100,7 +99,6 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     }
 
     public void UpdateSelectableTurnouts(string? activeTurnout = "") {
-        Console.WriteLine($"Updating Selectable Turnouts: {string.Join(",", SelectableTurnouts)}");
         for (var i = AvailableTurnouts.Count - 1; i >= 0; i--) {
             var turnout = AvailableTurnouts[i];
 
@@ -117,7 +115,6 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
                 }
             }
         }
-        Console.WriteLine($"Updated Selectable Buttons: {string.Join(",", SelectableTurnouts)}");
         OnPropertyChanged(nameof(TurnoutActions));
         OnPropertyChanged(nameof(IsGridVisible));
         OnPropertyChanged(nameof(IsAddButtonEnabled));

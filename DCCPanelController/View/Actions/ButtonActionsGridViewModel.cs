@@ -46,7 +46,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
         ButtonActions = buttonActions;
         UpdateSelectableButtons();
-        PropertyChanged += (sender, args) => { Console.WriteLine("Property Changed:" + args.PropertyName); };
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
     }
@@ -100,7 +99,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     }
 
     public void UpdateSelectableButtons(string? activeButton = "") {
-        Console.WriteLine($"Updating Selectable Buttons: {string.Join(",", SelectableButtons)}");
         for (var i = AvailableButtons.Count - 1; i >= 0; i--) {
             var button = AvailableButtons[i];
 
@@ -117,7 +115,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
                 }
             }
         }
-        Console.WriteLine($"Updated Selectable Buttons: {string.Join(",", SelectableButtons)}");
         OnPropertyChanged(nameof(ButtonActions));
         OnPropertyChanged(nameof(IsGridVisible));
         OnPropertyChanged(nameof(IsAddButtonEnabled));

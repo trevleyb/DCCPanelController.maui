@@ -19,7 +19,6 @@ public partial class ButtonActionsListViewModel : ObservableObject
             { "BTN002", "Stop Engine" },
         };
         ButtonStates = Enum.GetValues<ButtonStateEnum>().Cast<ButtonStateEnum>().ToList();
-        this.PropertyChanged += (sender, args) => { Console.WriteLine("Property Changed:" + args.PropertyName); };
     }
 
     public bool IsAddButtonEnabled => ButtonIds.Count > 0;
