@@ -1,14 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackLabelBase : TrackBase {
 
     [ObservableProperty]
-    [property: EditableStringProperty(Name = "Circle Label", Description = "Label to display in the Circle")]
+    [property: AttributesString(Name = "Circle Label", Description = "Label to display in the Circle")]
     private string _circlelabel = string.Empty;
 
     protected TrackLabelBase(Panel? parent = null) : base(parent) { }

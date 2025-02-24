@@ -40,9 +40,9 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
     public double ControlHeight => 40 + (ButtonActions.Count * 40);
 
-    public ButtonActionsGridViewModel(ButtonActions buttonActions, ITrack track, ActionsContext context) {
+    public ButtonActionsGridViewModel(ButtonActions buttonActions, ActionsContext context) {
         ActionContext = context;
-        AvailableButtons = FindAvailableButtons(track);
+        //TODO: AvailableButtons = FindAvailableButtons(track);
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
         ButtonActions = buttonActions;
         UpdateSelectableButtons();

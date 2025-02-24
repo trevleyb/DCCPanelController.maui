@@ -1,9 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
-using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks;
 
@@ -12,18 +12,18 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     [ObservableProperty]
     private string _name = "Image";
     
-    [ObservableProperty] [property: EditableIntProperty(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
+    [ObservableProperty] [property: AttributesInt(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
     private int _imageHeight = 2;
 
-    [ObservableProperty] [property: EditableIntProperty(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
+    [ObservableProperty] [property: AttributesInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
     private int _imageWidth = 2;
 
-    [ObservableProperty] [property: EditableBoolProperty(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
+    [ObservableProperty] [property: AttributesBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
     private bool _keepAspectRatio = true;
 
     public TrackImage() : this(null) { }
 
-    [EditableImageProperty(Name = "Image", Description = "Image to display")]
+    [AttributesImage(Name = "Image", Description = "Image to display")]
     public string TrackImageSource { get; set; } = "";
 
     public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);

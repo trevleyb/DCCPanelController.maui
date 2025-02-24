@@ -1,29 +1,29 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackContinuationBase : TrackBase {
 
     [ObservableProperty]
-    [property: EditableBoolProperty(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
+    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
     private bool _isHidden;
 
     [ObservableProperty] [property: JsonIgnore] private bool _isOccupied;
 
     [ObservableProperty]
-    [property: EditableColorProperty(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
+    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: EditableTrackImageProperty(Name = "Track Style", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines })]
+    [property: AttributesTrackImage(Name = "Track Style", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines })]
     private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Arrow;
 
     [ObservableProperty]
-    [property: EditableTrackTypeProperty(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline })]
+    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline })]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     protected TrackContinuationBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline, TrackStyleImageEnum style = TrackStyleImageEnum.Arrow) : base(parent) {

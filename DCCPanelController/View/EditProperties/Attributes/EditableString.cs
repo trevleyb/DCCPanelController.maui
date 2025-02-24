@@ -1,0 +1,25 @@
+using System.Diagnostics;
+using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.View.EditProperties.Base;
+
+namespace DCCPanelController.View.EditProperties.Attributes;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class AttributesStringAttribute : Base.Attributes, IEditableAttribute {
+
+    public IView? CreateView(EditableDetails value) {
+        try {
+            var cell = new Entry {
+                Placeholder = Description,
+                Keyboard = Keyboard.Text,
+                WidthRequest = 300,
+                BindingContext = value.Owner
+            };
+            cell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+            return cell;
+        } catch (Exception e) {
+            Debug.WriteLine($"Unable to create a String:  {e.Message}");
+            return null;
+        }
+    }
+}

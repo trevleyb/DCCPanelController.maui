@@ -13,8 +13,7 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
     public DynamicPropertyPage(ITrack track, string? propertyName = null) {
         _track = track;
         InitializeComponent();
-        BindingContext = _viewModel = new DynamicPropertyPageViewModel(_track, propertyName);
-        _viewModel.BuildProperties(PropertyContainer, _track);
+        BindingContext = _viewModel = new DynamicPropertyPageViewModel(_track, propertyName, PropertyContainer);
     }
 
     public event EventHandler? CloseRequested;

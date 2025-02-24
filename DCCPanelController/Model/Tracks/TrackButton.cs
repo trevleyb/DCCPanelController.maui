@@ -1,14 +1,14 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent), ITrack, ITrackButton, ITrackSymbol {
 
-    [ObservableProperty] [property: EditableBoolProperty(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
+    [ObservableProperty] [property: AttributesBool(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
     private bool _isEnabled = true;
 
     [ObservableProperty] private string _name = "Button";

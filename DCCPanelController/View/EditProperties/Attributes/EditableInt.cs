@@ -1,0 +1,49 @@
+using System.Diagnostics;
+using System.Globalization;
+using DCCPanelController.View.EditProperties.Base;
+
+namespace DCCPanelController.View.EditProperties.Attributes;
+
+[AttributeUsage(AttributeTargets.Property)]
+public class AttributesIntAttribute : Base.Attributes {
+    public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
+    public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
+
+    public IView? CreateView(EditableDetails value) {
+        try {
+            var cell = new HorizontalStackLayout();
+            var dataCell = new Entry {
+                BindingContext = value.Owner,
+                WidthRequest = 75,
+                Placeholder = value.Attribute.Description,
+                Keyboard = Keyboard.Numeric,
+                Margin = new Thickness(0, 0, 10, 0),
+                Text = value.Info.GetValue(value.Owner)?.ToString() ?? "0"
+            };
+            dataCell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
+
+            var attr = value.Attribute as AttributesIntAttribute;
+            var stepperUpDown = new Stepper {
+                Minimum = attr?.MinValue ?? 0,  // Define the stepper min value if needed
+                Maximum = attr?.MaxValue ?? 99, // Define the stepper max value if needed
+                Increment = 1,                  // Increment/decrement step
+                HorizontalOptions = LayoutOptions.End
+            };
+            if (int.TryParse(dataCell.Text, out var initialStepperValue)) {
+                stepperUpDown.Value = initialStepperValue;
+            }
+            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
+            dataCell.TextChanged += (s, e) => {
+                if (int.TryParse(e.NewTextValue, out var parsedValue)) {
+                    stepperUpDown.Value = parsedValue;
+                }
+            };
+            cell.Children.Add(dataCell);
+            cell.Children.Add(stepperUpDown);
+            return cell;
+        } catch (Exception e) {
+            Debug.WriteLine($"Unable to create a Int: {e.Message}");
+            return null;
+        }
+    }
+}

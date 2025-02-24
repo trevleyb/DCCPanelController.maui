@@ -4,8 +4,8 @@ using DCCPanelController.View.PropertPages;
 
 namespace DCCPanelController.Services;
 
-public class NavigationService(IServiceProvider serviceProvider) {
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
+public class NavigationService() {
+    //private readonly IServiceProvider _serviceProvider = serviceProvider;
 
     public async Task<bool> DisplayOkAlertAsync(string title, string message) {
         var mainPage = App.Current.Windows[0].Page;

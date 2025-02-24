@@ -1,8 +1,8 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers.EditableProperties;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.EditProperties.Attributes;
 using DCCPanelController.ViewModel;
 using Plugin.Maui.Audio;
 
@@ -11,17 +11,17 @@ namespace DCCPanelController.Model.Tracks.Base;
 public abstract partial class TrackButtonBase : TrackBase {
 
     [ObservableProperty]
-    [property: EditableStringProperty(Name="ID",Description  = "Unique Identifier for this Button")]
+    [property: AttributesString(Name="ID",Description  = "Unique Identifier for this Button")]
     private string _buttonID = "";
     
     [ObservableProperty]
-    [property: EditableActionsProperty(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes")]
+    [property: AttributesActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes")]
     private ButtonActions _buttonActions = [];
 
     private IAudioPlayer? _clickSoundPlayer;
 
     [ObservableProperty]
-    [property: EditableActionsProperty(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
+    [property: AttributesActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
     private TurnoutActions _turnoutActions = [];
 
     protected ButtonStateEnum ButtonState = ButtonStateEnum.Unknown;

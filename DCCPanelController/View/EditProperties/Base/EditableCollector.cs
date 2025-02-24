@@ -1,18 +1,19 @@
 using System.Reflection;
 
-namespace DCCPanelController.Helpers.EditableProperties;
+namespace DCCPanelController.View.EditProperties.Base;
 
-public class EditablePropertyCollector {
-    public static Dictionary<string, List<EditablePropertyDetails>> GetEditableProperties(object obj) {
+public static class EditableCollector {
+
+    public static Dictionary<string, List<EditableDetails>> GetEditableProperties(object obj) {
         ArgumentNullException.ThrowIfNull(obj);
-        var editableProperties = new List<EditablePropertyDetails>();
+        var editableProperties = new List<EditableDetails>();
         var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         for (var i = 0; i < properties.Length; i++) {
             var property = properties[i];
-            var attribute = property.GetCustomAttribute<EditableProperty>();
+            var attribute = property.GetCustomAttribute<Attributes>();
             if (attribute != null) {
-                editableProperties.Add(new EditablePropertyDetails {
+                editableProperties.Add(new EditableDetails {
                     Attribute = attribute,
                     Info = property,
                     Owner = obj,
@@ -24,16 +25,14 @@ public class EditablePropertyCollector {
 
         // Sort by Group, SortOrder, then by ReadOrder and create a Dictionary
         // -----------------------------------------------------------------------------------------------------------
-        var sorted = new Dictionary<string, List<EditablePropertyDetails>>();
+        var sorted = new Dictionary<string, List<EditableDetails>>();
         foreach (var editableProperty in editableProperties.OrderBy(p => p.Attribute.Group).ThenBy(p => p.Attribute.Order).ThenBy(p => p.Order).ToList()) {
             if (!sorted.TryGetValue(editableProperty.Attribute.Group, out var value)) {
                 value = [];
                 sorted.Add(editableProperty.Attribute.Group, value);
             }
-
             value.Add(editableProperty);
         }
-
         return sorted;
     }
 }

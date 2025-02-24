@@ -40,9 +40,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
     public double ControlHeight => 40 + (TurnoutActions.Count * 40);
 
-    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ITrack track, ActionsContext context) {
+    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ActionsContext context) {
         ActionContext = context;
-        AvailableTurnouts = FindAvailableTurnouts(track);
+        //TODO: AvailableTurnouts = FindAvailableTurnouts(track);
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
         TurnoutActions = turnoutActions;
         UpdateSelectableTurnouts();
