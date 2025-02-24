@@ -215,6 +215,9 @@
         <MauiXaml Update="View\Components\ButtonStateControl.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\Actions\TurnoutActionsGrid.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -244,6 +247,10 @@
         </Compile>
         <Compile Update="View\Components\ButtonStateControl.xaml.cs">
           <DependentUpon>ButtonStateControl.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\Actions\TurnoutActionsGrid.xaml.cs">
+          <DependentUpon>TurnoutActionsGrid.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>

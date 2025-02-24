@@ -7,28 +7,28 @@ using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
 
-public partial class ButtonActionsGridViewModel : ObservableObject {
+public partial class TurnoutActionsGridViewModel : ObservableObject {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<ButtonAction> _buttonActions;
+    private ObservableCollection<TurnoutAction> _turnoutActions;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _selectableButtons;
+    private ObservableCollection<string> _selectableTurnouts;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _availableButtons;
+    private ObservableCollection<string> _availableTurnouts;
 
     [ObservableProperty]
     private ActionsContext _actionContext;
@@ -36,16 +36,16 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
     
-    public bool IsGridVisible => ButtonActions.Count > 0;
-    public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
-    public double ControlHeight => 40 + (ButtonActions.Count * 40);
+    public bool IsGridVisible => TurnoutActions.Count > 0;
+    public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
+    public double ControlHeight => 40 + (TurnoutActions.Count * 40);
 
-    public ButtonActionsGridViewModel(ButtonActions buttonActions, ITrackPiece trackPiece, ActionsContext context) {
+    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ITrackPiece trackPiece, ActionsContext context) {
         ActionContext = context;
-        AvailableButtons = FindAvailableButtons(trackPiece);
-        SelectableButtons = new ObservableCollection<string>(AvailableButtons);
-        ButtonActions = buttonActions;
-        UpdateSelectableButtons();
+        AvailableTurnouts = FindAvailableTurnouts(trackPiece);
+        SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
+        TurnoutActions = turnoutActions;
+        UpdateSelectableTurnouts();
         PropertyChanged += (sender, args) => { Console.WriteLine("Property Changed:" + args.PropertyName); };
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
@@ -53,30 +53,30 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
 
     public string NoDataText {
         get {
-            if (AvailableButtons.Count == 0) return "No Buttons have been defined. ";
-            if (ButtonActions.Count == 0) return "Use the + key to add a button action.";
-            if (SelectableButtons.Count == 0) return "All defined buttons have been assigned.";
+            if (AvailableTurnouts.Count == 0) return "No Turnouts have been defined. ";
+            if (TurnoutActions.Count == 0) return "Use the + key to add a turnout action.";
+            if (SelectableTurnouts.Count == 0) return "All defined turnouts have been assigned.";
             return "";
         }
     }
 
     [RelayCommand]
     private void AddRow() {
-        if (SelectableButtons.Count > 0) {
-            ButtonActions.Add(new ButtonAction() { Id = SelectableButtons[0], WhenActiveOrClosed = ButtonStateEnum.Active, WhenInactiveOrThrown = ButtonStateEnum.Inactive, Cascade = false });
+        if (SelectableTurnouts.Count > 0) {
+            TurnoutActions.Add(new TurnoutAction() { Id = SelectableTurnouts[0], WhenClosedOrActive = TurnoutStateEnum.Closed, WhenThrownOrInActive = TurnoutStateEnum.Thrown, Cascade = false });
         }
-        UpdateSelectableButtons();
+        UpdateSelectableTurnouts();
     }
 
     [RelayCommand]
-    private void RemoveRow(ButtonAction action) {
-        ButtonActions.Remove(action);
-        UpdateSelectableButtons();
+    private void RemoveRow(TurnoutAction action) {
+        TurnoutActions.Remove(action);
+        UpdateSelectableTurnouts();
     }
 
     [RelayCommand]
     private void IdValueChanged(string id) {
-        UpdateSelectableButtons();
+        UpdateSelectableTurnouts();
     }
 
     /// <summary>
@@ -85,45 +85,45 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     /// button is different from the current button, then add that button name
     /// to a collection of available buttons. 
     /// </summary>
-    private ObservableCollection<string> FindAvailableButtons(ITrackPiece trackPiece) {
-        var foundButtons = new ObservableCollection<string>();
-        var thisButton = trackPiece as ITrackButton ;
+    private ObservableCollection<string> FindAvailableTurnouts(ITrackPiece trackPiece) {
+        var foundTurnouts = new ObservableCollection<string>();
+        var thisTurnout = trackPiece as ITrackTurnout ;
         if (trackPiece is { Parent: { Tracks: { } tracks } }) {
             foreach (var track in tracks) {
-                if (track is ITrackButton trackButton) {
-                    if (thisButton != null && thisButton.ButtonID == trackButton.ButtonID) continue;
-                    foundButtons.Add(trackButton.ButtonID);
+                if (track is ITrackTurnout trackTurnout) {
+                    if (thisTurnout != null && trackTurnout.TurnoutID == trackTurnout.TurnoutID) continue;
+                    foundTurnouts.Add(trackTurnout.TurnoutID);
                 }
             }
         }
-        return foundButtons;
+        return foundTurnouts;
     }
 
-    public void UpdateSelectableButtons(string? activeButton = "") {
-        Console.WriteLine($"Updating Selectable Buttons: {string.Join(",", SelectableButtons)}");
-        for (var i = AvailableButtons.Count - 1; i >= 0; i--) {
-            var button = AvailableButtons[i];
+    public void UpdateSelectableTurnouts(string? activeTurnout = "") {
+        Console.WriteLine($"Updating Selectable Turnouts: {string.Join(",", SelectableTurnouts)}");
+        for (var i = AvailableTurnouts.Count - 1; i >= 0; i--) {
+            var turnout = AvailableTurnouts[i];
 
             // If we have already used this button, then remove it from the Selectable ones
             // ---------------------------------------------------------------------------
-            var found = ButtonActions.Any(btn => btn.Id == button);
-            if (ButtonActions.Any(btn => btn.Id == button) && button != activeButton) {
-                SelectableButtons.Remove(button);
+            var found = TurnoutActions.Any(btn => btn.Id == turnout);
+            if (TurnoutActions.Any(btn => btn.Id == turnout) && turnout != activeTurnout) {
+                SelectableTurnouts.Remove(turnout);
             } else {
                 // Otherwise add it to the Selectable ones as it may have been removed
                 // -------------------------------------------------------------------
-                if (!SelectableButtons.Contains(button)) {
-                    SelectableButtons.Add(button);
+                if (!SelectableTurnouts.Contains(turnout)) {
+                    SelectableTurnouts.Add(turnout);
                 }
             }
         }
-        Console.WriteLine($"Updated Selectable Buttons: {string.Join(",", SelectableButtons)}");
-        OnPropertyChanged(nameof(ButtonActions));
+        Console.WriteLine($"Updated Selectable Buttons: {string.Join(",", SelectableTurnouts)}");
+        OnPropertyChanged(nameof(TurnoutActions));
         OnPropertyChanged(nameof(IsGridVisible));
         OnPropertyChanged(nameof(IsAddButtonEnabled));
         OnPropertyChanged(nameof(NoDataText));
-        OnPropertyChanged(nameof(SelectableButtons));
-        OnPropertyChanged(nameof(AvailableButtons));
+        OnPropertyChanged(nameof(SelectableTurnouts));
+        OnPropertyChanged(nameof(AvailableTurnouts));
         OnPropertyChanged(nameof(ControlHeight));
     }
 }

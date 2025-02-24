@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentView
-    x:Class="DCCPanelController.View.Actions.ButtonActionsGrid"
-    x:DataType="local:ButtonActionsGridViewModel"
-    x:Name="ButtonActionsGridView"
+    x:Class="DCCPanelController.View.Actions.TurnoutActionsGrid"
+    x:DataType="local:TurnoutActionsGridViewModel"
+    x:Name="TurnoutActionsGridView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
@@ -15,7 +15,7 @@
 
     <ContentView.Resources>
         <ResourceDictionary>
-            <converter:ButtonActionEnumConverter x:Key="ButtonActionEnumConverter" />
+            <converter:TurnoutActionEnumConverter x:Key="TurnoutActionEnumConverter" />
         </ResourceDictionary>
     </ContentView.Resources>
 
@@ -26,7 +26,7 @@
                     FontAttributes="Bold"
                     Grid.Column="0"
                     HeightRequest="25"
-                    Text="Button Actions"
+                    Text="Turnout Actions"
                     TextColor="{StaticResource Primary}" />
                 <ImageButton
                     Aspect="Center"
@@ -45,15 +45,14 @@
                     Grid.Column="2"
                     HeightRequest="25"
                     Style="{StaticResource SmallLabel}"
-                    Text="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.NoDataText}"
+                    Text="{Binding Source={x:Reference TurnoutActionsGridView}, x:DataType=local:TurnoutActionsGrid, Path=BindingContext.NoDataText}"
                     VerticalOptions="Center" />
-
             </Grid>
 
             <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}">
                 <ListView
                     HorizontalOptions="Fill"
-                    ItemsSource="{Binding ButtonActions}"
+                    ItemsSource="{Binding TurnoutActions}"
                     VerticalOptions="Fill"
                     WidthRequest="470">
 
@@ -72,7 +71,7 @@
                                 FontAttributes="Bold"
                                 Grid.Column="0"
                                 Margin="2"
-                                Text="Button"
+                                Text="Turnout"
                                 TextColor="{StaticResource White}" />
 
                             <components:ButtonStateControl
@@ -120,7 +119,7 @@
                                 Margin="2"
                                 Source="trash.png">
                                 <Image.Behaviors>
-                                    <behaviors:IconTintColorBehavior TintColor="Firebrick" />
+                                    <behaviors:IconTintColorBehavior TintColor="Red" />
                                 </Image.Behaviors>
                             </Image>
 
@@ -128,7 +127,7 @@
                     </ListView.Header>
 
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="model:ButtonAction">
+                        <DataTemplate x:DataType="model:TurnoutAction">
                             <ViewCell>
                                 <Grid
                                     ColumnDefinitions="3*,4*,4*,3*,1*"
@@ -138,7 +137,7 @@
                                     <Picker
                                         Focused="IDPicker_OnFocused"
                                         Grid.Column="0"
-                                        ItemsSource="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.AvailableButtons}"
+                                        ItemsSource="{Binding Source={x:Reference TurnoutActionsGridView}, x:DataType=local:TurnoutActionsGrid, Path=BindingContext.AvailableTurnouts}"
                                         Margin="2,0,0,0"
                                         SelectedItem="{Binding Id}"
                                         TextColor="Black"
@@ -146,22 +145,22 @@
                                         VerticalOptions="Center"
                                         x:Name="IDPicker" />
 
-                                    <components:ButtonStateControl
+                                    <components:TurnoutStateControl
                                         CanSetStateUnknown="True"
                                         CanToggleState="True"
                                         Grid.Column="1"
                                         HorizontalOptions="Start"
                                         Margin="2,0,0,0"
-                                        State="{Binding WhenActiveOrClosed, Mode=TwoWay}"
+                                        State="{Binding WhenClosedOrActive, Mode=TwoWay}"
                                         UnknownText="Leave-AsIs" />
 
-                                    <components:ButtonStateControl
+                                    <components:TurnoutStateControl
                                         CanSetStateUnknown="True"
                                         CanToggleState="True"
                                         Grid.Column="2"
                                         HorizontalOptions="Start"
                                         Margin="2,0,0,0"
-                                        State="{Binding WhenInactiveOrThrown, Mode=TwoWay}"
+                                        State="{Binding WhenThrownOrInActive, Mode=TwoWay}"
                                         UnknownText="Leave-AsIs" />
 
                                     <CheckBox
@@ -172,7 +171,7 @@
 
                                     <ImageButton
                                         Aspect="Center"
-                                        Command="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.RemoveRowCommand}"
+                                        Command="{Binding Source={x:Reference TurnoutActionsGridView}, x:DataType=local:TurnoutActionsGrid, Path=BindingContext.RemoveRowCommand}"
                                         CommandParameter="{Binding .}"
                                         Grid.Column="4"
                                         HeightRequest="10"

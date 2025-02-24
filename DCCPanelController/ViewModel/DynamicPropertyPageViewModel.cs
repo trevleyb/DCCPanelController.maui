@@ -288,19 +288,13 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         if (value.Attribute is EditableActionsPropertyAttribute attr) {
             var prop = value.Info.GetValue(value.Owner);
             if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions) {
-                Console.WriteLine("Turnout Actions");
-                return new TurnoutActionsView(turnoutActions, _trackPiece, attr.ActionsContext) {
+                return new TurnoutActionsGrid(turnoutActions, _trackPiece, attr.ActionsContext) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
             }
 
             if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
-                Console.WriteLine("Button Actions");
-                foreach (var buttonAction in buttonActions.Actions) {
-                    Console.WriteLine($"---Action: {buttonAction.Id} Active={buttonAction.WhenActiveOrClosed} Inactive={buttonAction.WhenInactiveOrThrown}");
-                }
-                
                 return new ButtonActionsGrid(buttonActions, _trackPiece, attr.ActionsContext) {
                      HorizontalOptions = LayoutOptions.Fill,
                      VerticalOptions = LayoutOptions.Fill
