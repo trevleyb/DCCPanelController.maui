@@ -54,7 +54,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private static IView CreateExpanderGroup(string groupKey, List<EditableDetails> groupValue, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
 
-        var tableExpander = new Expander(); 
+        var tableExpander = new Expander() {
+            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
+        };
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
         expanderTitle.Children.Add(GroupChevrons(tableExpander));
@@ -88,7 +90,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             WidthRequest = 16,
             VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Start,
-            Margin = new Thickness(10, 10, 10, 10),
+            Margin = new Thickness(5, 0, 5, 0),
             Rotation = 0 // Expanded state rotation (facing down)
         };
         chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);
@@ -135,12 +137,12 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             var label = new Label {
                 Text = value.EditableAttribute.Name,
                 TextColor = Colors.Black,
-                FontSize = 15,
+                FontSize = 12,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 Margin = new Thickness(0, 5, 0, 5),
-                WidthRequest = 150
+                WidthRequest = 120
             };
             groupCell.Children.Add(label);
         }

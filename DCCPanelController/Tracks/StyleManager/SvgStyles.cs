@@ -104,4 +104,16 @@ public static class SvgStyles {
     public static SvgStyle AddTextToStyle(SvgStyle style, string text) {
         return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Text).Text(text)).Build();
     }
+    
+    public static SvgStyle SetTextToColor(SvgStyle style, Color color) {
+        return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Text).WithTextColor(color)).Build();
+    }
+
+    public static SvgStyle SetButtonColor(SvgStyle style, Color color) {
+        return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Button).WithColor(color)).Build();
+    }
+
+    public static SvgStyle SetButtonOutlineColor(SvgStyle style, Color color) {
+        return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Border).WithColor(color)).Build();
+    }
 }

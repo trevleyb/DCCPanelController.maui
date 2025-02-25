@@ -5,6 +5,7 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.EditProperties.Attributes;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Model.Tracks;
 
@@ -40,14 +41,23 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Transparent;
 
+    [ObservableProperty] [property: EditableInt(Name = "Border Width", Description = "Border With", Group = "Border")]
+    private int _borderWidth = 0;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Radius", Description = "Rounder Corners on the Border", Group = "Border")]
+    private int _borderRadius = 0;
+
+    [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
+    private Color _borderColor = Colors.Transparent;
+
     public TrackText() : this(null) { }
 
     private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, Width, X, Y, TrackRotation) : Width;
 
     public ITrack Clone(Panel parent) {
-        return new TrackText(parent);
+        return Clone<TrackText>(parent);
     }
-
+    
     protected override void Setup() {
         Layer = 2;
         Name = "Text";
@@ -65,7 +75,7 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
             var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
             return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
         }
-
+        
         var label = new Label {
             Text = Text,
             FontSize = FontSize,
@@ -86,7 +96,19 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
             //WidthRequest = TextWidthRequest(gridSize),
             //HeightRequest = TextHeightRequest(gridSize)
         };
-       return label;
+
+        return BorderWidth <= 0 ? label : new Border() {
+            Content = label,
+            InputTransparent = passthrough,
+            RotationX = TrackRotation,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Fill,
+            WidthRequest = gridSize * MaxGridWidth,
+            HeightRequest = gridSize,
+            StrokeThickness = BorderWidth,
+            Stroke = BorderColor,
+            StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(BorderRadius) }
+        };
     }
 
     private double TextWidthRequest(double gridSize) {

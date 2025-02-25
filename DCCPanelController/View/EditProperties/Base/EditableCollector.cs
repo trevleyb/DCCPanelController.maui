@@ -8,11 +8,13 @@ public static class EditableCollector {
         ArgumentNullException.ThrowIfNull(obj);
         var editableProperties = new List<EditableDetails>();
         var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
-
+        List<string> groups = new();
+        
         for (var i = 0; i < properties.Length; i++) {
             var property = properties[i];
             var attribute = property.GetCustomAttribute<EditableAttribute>();
             if (attribute != null) {
+                if (groups.Contains(attribute.Group) == false) groups.Add(attribute.Group);
                 editableProperties.Add(new EditableDetails {
                     EditableAttribute = attribute,
                     Info = property,
@@ -23,16 +25,19 @@ public static class EditableCollector {
             }
         }
 
-        // Sort by Group, SortOrder, then by ReadOrder and create a Dictionary
+        // Sort based on the order that the items were found in the underlying class. 
         // -----------------------------------------------------------------------------------------------------------
         var sorted = new Dictionary<string, List<EditableDetails>>();
-        foreach (var editableProperty in editableProperties.OrderBy(p => p.EditableAttribute.Group).ThenBy(p => p.EditableAttribute.Order).ThenBy(p => p.Order).ToList()) {
-            if (!sorted.TryGetValue(editableProperty.EditableAttribute.Group, out var value)) {
-                value = [];
-                sorted.Add(editableProperty.EditableAttribute.Group, value);
-            }
-            value.Add(editableProperty);
-        }
+        sorted.Add("", GetEditablePropertiesByGroup(""));
+        foreach (var group in groups.Where(grp => grp != "")) {
+            sorted.Add(group, GetEditablePropertiesByGroup(group));
+        } 
         return sorted;
+        
+        List<EditableDetails> GetEditablePropertiesByGroup(string group) {
+            return editableProperties.Where(p => p.EditableAttribute.Group == group).ToList();
+        }
+
     }
+    
 }

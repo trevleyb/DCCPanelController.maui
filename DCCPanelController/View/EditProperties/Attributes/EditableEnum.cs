@@ -11,6 +11,10 @@ public class EditableEnumAttribute : EditableAttribute, IEditableAttribute {
                 var items = new[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End };
                 return CreateRadioGroupForEnums("Alignment", items, value.Owner, value.Info.Name);
             }
+            if (value.Type == typeof(FontWeight)) {
+                var items = new[] { FontWeight.Regular, FontWeight.Bold, FontWeight.Light};
+                return CreateRadioGroupForEnums("Font Weight", items, value.Owner, value.Info.Name);
+            }
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Alignment Enum:  {e.Message}");
             return null;

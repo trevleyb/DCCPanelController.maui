@@ -125,8 +125,28 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
+    public SvgElementBuilder WithTextSize(int textSize) {
+        _element.AddOrUpdateAttribute("Font-Size", textSize.ToString());
+        return this;
+    }
+
     public SvgElementBuilder WithTextSize(string textSize) {
         _element.AddOrUpdateAttribute("Font-Size", textSize);
+        return this;
+    }
+
+    public SvgElementBuilder WithTextRegular() {
+        _element.AddOrUpdateAttribute("Font-Weight", FontWeight.Regular.ToString());
+        return this;
+    }
+
+    public SvgElementBuilder WithTextThin() {
+        _element.AddOrUpdateAttribute("Font-Weight", FontWeight.Thin.ToString());
+        return this;
+    }
+
+    public SvgElementBuilder WithTextBold() {
+        _element.AddOrUpdateAttribute("Font-Weight", FontWeight.Bold.ToString());
         return this;
     }
 
@@ -137,6 +157,11 @@ public class SvgElementBuilder(string name) {
 
     public SvgElementBuilder WithTextColor(string color) {
         _element.AddOrUpdateAttribute("Font-Color", color);
+        return this;
+    }
+
+    public SvgElementBuilder WithTextColor(Color color) {
+        _element.AddOrUpdateAttribute("Font-Color", color.ToArgbHex());
         return this;
     }
 

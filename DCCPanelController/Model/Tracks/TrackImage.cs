@@ -3,12 +3,14 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.EditProperties.Attributes;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent), ITrackSymbol, ITrack {
+public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
     [ObservableProperty]
     private string _name = "Image";
@@ -27,6 +29,15 @@ public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent)
 
     [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
     private bool _keepAspectRatio = true;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Width", Description = "Border With", Group = "Border")]
+    private int _borderWidth = 0;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Radius", Description = "Rounder Corners on the Border", Group = "Border")]
+    private int _borderRadius = 0;
+
+    [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
+    private Color _borderColor = Colors.Transparent;
 
     public TrackImage() : this(null) { }
 
@@ -57,6 +68,25 @@ public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent)
         return TrackRotation % 360 == 90 || TrackRotation % 360 == 270 ? gridSize * MaxGridHeight : gridSize;
     }
 
+    protected override ImageSource GetViewForSymbol(double gridSize) {
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
+    }
+
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
+        // Find the appropriate image reference for the details we have
+        // ---------------------------------------------------------------------------------------------------
+        var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
+        var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
+        ImageRotation = trackInfo.ImageRotation;
+        TrackRotation = trackInfo.TrackRotation;
+
+        // Apply the various styles that need to be applied based on the 
+        // details that we have within the context of this track type
+        // --------------------------------------------------------------------------------------------------
+        ActiveImage = imageInfo;
+        return (ActiveImage.Image, trackInfo.ImageRotation);
+    }
+    
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
         if (string.IsNullOrEmpty(TrackImageSource)) {
             var defaultImage = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
@@ -75,6 +105,17 @@ public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent)
             HeightRequest = gridSize * MaxGridHeight
         };
 
-        return image;
+        return BorderWidth <= 0 ? image : new Border() {
+            Content = image,
+            InputTransparent = passthrough,
+            RotationX = TrackRotation,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
+            WidthRequest = gridSize * MaxGridWidth,
+            HeightRequest = gridSize * MaxGridHeight,
+            StrokeThickness = BorderWidth,
+            Stroke = BorderColor,
+            StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(BorderRadius) }
+        };
     }
 }

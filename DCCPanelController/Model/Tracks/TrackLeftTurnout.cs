@@ -9,7 +9,10 @@ public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleTypeEnum s
     public TrackLeftTurnout() : this(null) { }
 
     public ITrack Clone(Panel parent) {
-        return Clone<TrackLeftTurnout>(parent);
+        var clone = Clone<TrackLeftTurnout>(parent) as TrackLeftTurnout;
+        clone.Address = "";
+        clone.Name = "";
+        return clone;
     }
 
     [ObservableProperty]

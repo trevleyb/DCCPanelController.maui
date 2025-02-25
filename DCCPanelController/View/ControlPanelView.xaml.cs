@@ -183,6 +183,7 @@ public partial class ControlPanelView : IDisposable {
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
         var border = new Border {
+            ClassId = "CellHighlight",
             BackgroundColor = Colors.Transparent,
             Stroke = action switch {
                 CellHighlightAction.Selected    => Colors.Blue,
@@ -213,7 +214,7 @@ public partial class ControlPanelView : IDisposable {
     /// </summary>
     public void UnHighlightCell(int col, int row) {
         if (!DesignMode) return;
-        var children = DynamicGrid.Children.Where(x => x is Border && x.Parent is Grid).ToList();
+        var children = DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
         foreach (var child in children) {
             if (DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col) {
                 DynamicGrid.Remove(child);
@@ -366,6 +367,17 @@ public partial class ControlPanelView : IDisposable {
         args.Data.Properties.Add("Source", "Panel");
         _lastDragCol = 0;
         _lastDragRow = 0;
+        
+#if IOS || MACCATALYST
+        Func<UIKit.UIDragPreview> action = () => {
+            var image = UIKit.UIImage.FromFile("move.png");
+            UIKit.UIImageView imageView = new UIKit.UIImageView(image);
+            imageView.ContentMode = UIKit.UIViewContentMode.Center;
+            imageView.Frame = new CoreGraphics.CGRect(0, 0, 0, 0);
+            return new UIKit.UIDragPreview(imageView);
+        };
+        args?.PlatformArgs?.SetPreviewProvider(action);
+#endif
     }
 
     private void DragLeaveTrackOnPanel(object? sender, DragEventArgs e) {
@@ -377,27 +389,53 @@ public partial class ControlPanelView : IDisposable {
     private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
         var track = e.Data.Properties["Track"] as ITrack ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-
-        e.AcceptedOperation = DataPackageOperation.None;
+        
         if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
-            if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
-                UnHighlightCell(_lastDragCol, _lastDragRow);
-            }
 
-            if (track.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
-                e.AcceptedOperation = DataPackageOperation.Copy;
-                HighlightCell(position.Col, position.Row, track.Width,track.Height, CellHighlightAction.DragValid);
+            if (EditMode == EditModeEnum.Size) {
+                ResizeTrack(track, position.Col, position.Row);
             } else {
-                HighlightCell(position.Col, position.Row, track.Width,track.Height,CellHighlightAction.DragInvalid);
-            }
+                if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
+                    UnHighlightCell(_lastDragCol, _lastDragRow);
+                }
 
-            _lastDragCol = position.Col;
-            _lastDragRow = position.Row;
+                if (track.Layer > GetHighestOccupiedLayer(EditMode, track, position.Col, position.Row)) {
+                    e.AcceptedOperation = DataPackageOperation.Copy;
+                    HighlightCell(position.Col, position.Row, track.Width, track.Height, CellHighlightAction.DragValid);
+                } else {
+                    e.AcceptedOperation = DataPackageOperation.None;
+                    HighlightCell(position.Col, position.Row, track.Width, track.Height, CellHighlightAction.DragInvalid);
+                }
+
+                _lastDragCol = position.Col;
+                _lastDragRow = position.Row;
+            }
         } else {
             UnHighlightCell(_lastDragCol, _lastDragRow);
             _lastDragCol = 0;
             _lastDragRow = 0;
         }
+        
+#if IOS || MACCATALYST
+        switch (EditMode) {
+        case EditModeEnum.Move:
+            e?.PlatformArgs?.SetDropProposal(new UIKit.UIDropProposal(UIKit.UIDropOperation.Move));
+            break;
+        case EditModeEnum.Copy:
+            e?.PlatformArgs?.SetDropProposal(new UIKit.UIDropProposal(UIKit.UIDropOperation.Copy));
+            break;
+        default:
+            e?.PlatformArgs?.SetDropProposal(new UIKit.UIDropProposal(UIKit.UIDropOperation.Forbidden));
+            break;
+        }
+#endif
+        
+#if WINDOWS
+    var dragUI = e.PlatformArgs.DragEventArgs.DragUIOverride;
+    dragUI.IsCaptionVisible = false;
+    dragUI.IsGlyphVisible = false;
+#endif
+        
     }
 
     private void DropTrackOnPanel(object? sender, DropEventArgs e) {
@@ -417,7 +455,7 @@ public partial class ControlPanelView : IDisposable {
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
                 // -----------------------------------------------------------------
-                if (trackPiece.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
+                if (trackPiece.Layer > GetHighestOccupiedLayer(EditMode,track,position.Col, position.Row)) {
                     ClearSelectedTracks();
                     if (Panel is { } panel) {
                         switch (source) {
@@ -440,8 +478,8 @@ public partial class ControlPanelView : IDisposable {
                             case EditModeEnum.Size:
                                 break;
                             }
-
                             break;
+                        
                         case "DisplaySymbol":
                             if (Panel is not null && trackPiece.Clone(Panel) is { } newPiece) {
                                 newPiece.X = position.Col;
@@ -457,26 +495,67 @@ public partial class ControlPanelView : IDisposable {
                             break;
                         }
                     }
-                } else {
-                    Console.WriteLine("Grid location is already occupied.");
-                }
-            } else {
-                Console.WriteLine($"Could not determine grid: {gridPosition.Error}");
-            }
+                } 
+            } 
         } catch (Exception ex) {
             Console.WriteLine("Error dropping item: " + ex.Message);
         }
-
         _lastDragCol = 0;
         _lastDragRow = 0;
     }
 
-    private int GetHighestOccupiedLayer(int col, int row) {
-        var tracksInGrid = Panel?.Tracks.Where(x => x.X == col && x.Y == row).ToList() ?? [];
+    private int GetHighestOccupiedLayer(EditModeEnum editMode, ITrack track, int col, int row) {
+        var tracksInGrid = Panel?.Tracks
+                                 .Where(x =>
+                                            (editMode == EditModeEnum.Copy || x != track) &&     // Include track if Copy mode, exclude if Move
+                                            ((col < x.X + x.Width && col + track.Width > x.X) && // Check X overlap, even if col is before
+                                             (row < x.Y + x.Height && row + track.Height > x.Y)) // Check Y overlap, even if row is before
+                                  )
+                                 .ToList() ?? [];
+
         if (tracksInGrid is { Count: > 0 }) return tracksInGrid.Max(track => (int?)track.Layer) ?? 0;
         return 0;
     }
 
+    private void ResizeTrack(ITrack? track, int newCol, int newRow) {
+        // Original position and size
+        var originalX = track.X;
+        var originalY = track.Y;
+        var originalWidth = track.Width;
+        var originalHeight = track.Height;
+
+        // Resizing right (increasing width)
+        if (newCol > originalX) {
+            track.Width = newCol - originalX + 1; // +1 to include the new column
+        }
+        
+        // Resizing left (shifting X and adjusting width)
+        else if (newCol < originalX) {
+            var deltaX = originalX - newCol;
+            track.X -= deltaX;     // Shift left
+            track.Width += deltaX; // Increase width
+        }
+
+        // Resizing down (increasing height)
+        if (newRow > originalY) {
+            track.Height = newRow - originalY + 1; // +1 to include the new row
+        }
+        
+        // Resizing up (shifting Y and adjusting height)
+        else if (newRow < originalY) {
+            var deltaY = originalY - newRow;
+            track.Y -= deltaY;      // Shift up
+            track.Height += deltaY; // Increase height
+        }
+
+        // Ensure minimum size limits
+        track.Width = Math.Max(1, track.Width);
+        track.Height = Math.Max(1, track.Height);
+
+        // Refresh Grid and Update
+        InvalidateCell(track); // Re-render the grid for the resized component
+    }
+    
     /// <summary>
     ///     Convert a position in the grid (absolute) to a Grid position within the col/row definitions
     /// </summary>

@@ -17,7 +17,9 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     public TrackButton() : this(null) { }
 
     public ITrack Clone(Panel parent) {
-        return Clone<TrackButton>(parent);
+        var cloned = Clone<TrackButton>(parent) as TrackButton;
+        cloned.ButtonID = "";       // TODO: Add this so it takes the last known button and increments. 
+        return cloned;
     }
 
     protected override void Setup() {

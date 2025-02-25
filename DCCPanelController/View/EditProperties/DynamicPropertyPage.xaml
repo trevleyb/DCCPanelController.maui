@@ -4,6 +4,7 @@
     x:Class="DCCPanelController.View.PropertPages.DynamicPropertyPage"
     x:DataType="viewModel:DynamicPropertyPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
@@ -19,9 +20,13 @@
             VerticalOptions="Fill">
 
             <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
-                <HorizontalStackLayout BackgroundColor="{StaticResource Primary}" VerticalOptions="Center">
+                <Grid
+                    BackgroundColor="{StaticResource Primary}"
+                    ColumnDefinitions="*,40"
+                    VerticalOptions="Center">
                     <Label
-                        HorizontalOptions="Start"
+                        Grid.Column="0"
+                        HorizontalOptions="Fill"
                         Margin="10,0,0,0"
                         Style="{StaticResource LargeLabel}"
                         Text="{Binding PropertyName}"
@@ -29,11 +34,16 @@
                         VerticalOptions="Center" />
                     <ImageButton
                         Aspect="Center"
+                        Grid.Column="1"
                         HeightRequest="25"
                         HorizontalOptions="End"
                         Source="info.png"
-                        WidthRequest="25" />
-                </HorizontalStackLayout>
+                        WidthRequest="25">
+                        <ImageButton.Behaviors>
+                            <toolkit:IconTintColorBehavior TintColor="White" />
+                        </ImageButton.Behaviors>
+                    </ImageButton>
+                </Grid>
                 <ScrollView
                     HeightRequest="380"
                     HorizontalOptions="Fill"

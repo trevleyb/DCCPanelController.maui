@@ -109,7 +109,7 @@ public partial class PanelEditorPage : ContentPage {
         EditModeToolbar.IconImageSource = PanelView.EditMode switch {
             EditModeEnum.Move => "move.png",
             EditModeEnum.Copy => "copy.png",
-            EditModeEnum.Size => "crop.png",
+            EditModeEnum.Size => "crop.png",    // Turned off as not worked quite right
             _                 => EditModeToolbar.IconImageSource
         };
     }
@@ -117,8 +117,7 @@ public partial class PanelEditorPage : ContentPage {
     private void ChangeEditMode(object? sender, EventArgs e) {
         PanelView.EditMode = PanelView.EditMode switch {
             EditModeEnum.Move => EditModeEnum.Copy,
-            EditModeEnum.Copy => EditModeEnum.Size,
-            EditModeEnum.Size => EditModeEnum.Move,
+            EditModeEnum.Copy => EditModeEnum.Move,
             _                 => PanelView.EditMode
         };
 

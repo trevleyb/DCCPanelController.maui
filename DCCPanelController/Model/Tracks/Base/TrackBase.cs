@@ -113,14 +113,21 @@ public abstract partial class TrackBase : ObservableObject {
         StyleTrackImages.AddImageSourceAndRotation(trackType, imageSource, rotations);
     }
 
-    protected T Clone<T>(Panel parent) where T : ITrack {
-        var original = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
+    protected T Clone<T>(Panel parent) where T : ITrack, new() {
+        var original = JsonSerializer.Serialize(this, typeof(T), SettingsService.PanelSerializerOptions);
         var copy = JsonSerializer.Deserialize<T>(original, SettingsService.PanelSerializerOptions);
         if (copy is { } clone) {
             clone.Id = Guid.NewGuid();
             clone.Parent = parent;
             return clone;
         }
-        throw new Exception("Failed to clone panel");
+
+        // If we could not clone the object, then just return a new instance of the 
+        // object type ensuring it is part of the current Panel. 
+        // ------------------------------------------------------------------------
+        return new T {
+            Id = Guid.NewGuid(),
+            Parent = parent
+        };
     }
 }

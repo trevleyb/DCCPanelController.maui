@@ -10,8 +10,8 @@ public interface ITrack {
     
     int X { get; set; }
     int Y { get; set; }
-    int Width { get; }
-    int Height { get; }
+    int Width { get; set; }
+    int Height { get; set; }
     int Layer { get; }
     bool IsSelected { get; set; }
 

@@ -45,7 +45,6 @@ public partial class SvgImage : ObservableObject {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
             }
         }
-
         return this;
     }
 
@@ -73,12 +72,16 @@ public partial class SvgImage : ObservableObject {
         // Get back all the elements that have an ID = the element name provided (such as "border")
         // -----------------------------------------------------------------------------------------
         foreach (var element in ImageManager.FindElements(elementName)) {
-            _ = ImageManager.ElementType(element) switch {
+            var elementType = ImageManager.ElementType(element);
+            //Console.WriteLine($"Applying Style to type={elementType} name={elementName}: {attributeName}={attributeValue}");
+
+            _ = elementType switch {
                 "rect"    => SetFillType(element, attributeName, attributeValue),
                 "polygon" => SetFillType(element, attributeName, attributeValue),
                 "text" => elementName.ToLowerInvariant() switch {
-                    "text" => SetTextData(element, attributeName, attributeValue),
-                    _      => SetFillType(element, attributeName, attributeValue)
+                    "text"  => SetTextData(element, attributeName, attributeValue),
+                    "color" => SetFillType(element, attributeName, attributeValue),
+                    _       => SetFillType(element, attributeName, attributeValue)
                 },
                 "line" => SetStrokeType(element, attributeName, attributeValue),
                 "circle" => elementName.ToLowerInvariant() switch {
