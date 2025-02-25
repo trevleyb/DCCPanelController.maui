@@ -12,7 +12,8 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
     private readonly PanelsViewerViewModel _viewModel;
 
     public PanelsViewerPage() {
-        _viewModel = new PanelsViewerViewModel();
+        //_viewModel = new PanelsViewerViewModel();
+        _viewModel = MauiProgram.ServiceHelper.GetService<PanelsViewerViewModel>();
         BindingContext = _viewModel;
         InitializeComponent();
         _viewModel.SelectedPanel = _viewModel.Panels.Count > 0 ? _viewModel.Panels[0] : null;

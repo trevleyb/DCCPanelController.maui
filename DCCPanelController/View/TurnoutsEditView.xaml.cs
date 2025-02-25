@@ -8,7 +8,8 @@ public partial class TurnoutsEditView : ContentPage {
 
     public TurnoutsEditView(Turnout turnout) {
         InitializeComponent();
-        ViewModel = new TurnoutsEditViewModel(turnout);
+        //ViewModel = new TurnoutsEditViewModel(turnout);
+        ViewModel = MauiProgram.ServiceHelper.GetService<TurnoutsEditViewModel>();
         BindingContext = ViewModel;
     }
 }

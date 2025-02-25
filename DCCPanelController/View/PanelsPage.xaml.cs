@@ -9,7 +9,7 @@ public partial class PanelsPage : ContentPage, INotifyPropertyChanged {
     private readonly PanelsViewModel ViewModel;
 
     public PanelsPage() {
-        ViewModel = new PanelsViewModel();
+        ViewModel = MauiProgram.ServiceHelper.GetService<PanelsViewModel>();
         BindingContext = ViewModel;
         InitializeComponent();
     }

@@ -1,21 +1,25 @@
 using System.ComponentModel;
+using System.Reflection;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
+using DCCWithrottleClient.ServiceHelper;
 
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
+    private readonly OperateViewModel _viewModel;
     private bool _tabBarState = true;
 
     public OperatePage() {
         InitializeComponent();
-        BindingContext = new OperateViewModel();
+        _viewModel = MauiProgram.ServiceHelper.GetService<OperateViewModel>();
+        BindingContext = _viewModel;
         PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
         SetTabBarState(true);
     }
-
+    
     protected override void OnAppearing() {
         base.OnAppearing();
         OnPropertyChanged(nameof(OperateViewModel.Panels));
@@ -58,7 +62,17 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             Shell.SetTabBarIsVisible(this, false);
             HideUnHide.IconImageSource = "minimize_2.png";
         }
-
         _tabBarState = state;
+    }
+
+    private void ConnectButton_OnClicked(object? sender, EventArgs e) {
+        _viewModel.Connect();
+        var icon = _viewModel.IsConnected switch {
+            true  => "circle_green.png",
+            false => "circle_red.png",
+            null  => "circle_white.png"
+        };
+        ConnectToolbarButton.IconImageSource = icon;
+        //OnPropertyChanged(nameof(ConnectToolbarButton));
     }
 }

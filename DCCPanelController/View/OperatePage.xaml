@@ -14,14 +14,9 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <!--  Register ColorFallbackConverter  -->
             <converters:ColorFallbackConverter x:Key="ColorFallbackConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-
-    <ContentPage.BindingContext>
-        <viewModel:OperateViewModel />
-    </ContentPage.BindingContext>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -30,6 +25,10 @@
             Text="Hide"
             ToolTipProperties.Text="Hide Bottom Tab Bar"
             x:Name="HideUnHide" />
+        <ToolbarItem
+            Clicked="ConnectButton_OnClicked"
+            IconImageSource="circle_white.png"
+            x:Name="ConnectToolbarButton" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

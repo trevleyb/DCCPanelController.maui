@@ -5,7 +5,6 @@ using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
 using Microsoft.Extensions.Logging;
-using UraniumUI;
 
 namespace DCCPanelController;
 
@@ -50,6 +49,7 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelsPage, PanelsViewModel>();
+        services.AddSingletonViewAndModel<PanelsViewerPage, PanelsViewerViewModel>();
         services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
         services.AddSingletonViewAndModel<SettingsPage, SettingsViewModel>();
