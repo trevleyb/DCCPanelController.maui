@@ -25,7 +25,7 @@ public enum TrackStyleTypeEnum {
     Text
 }
 
-// Attributes are additional rules we can apply to a track peice to set additional
+// EditableAttribute are additional rules we can apply to a track peice to set additional
 // attributes such as making the lines dashed or shoing a occupied border. 
 // ----------------------------------------------------------------------------
 public enum TrackStyleAttributeEnum {

@@ -6,7 +6,7 @@ using Switch = Microsoft.Maui.Controls.Switch;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesBoolAttribute : Base.Attributes, IEditableAttribute {
+public class EditableBoolAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White };

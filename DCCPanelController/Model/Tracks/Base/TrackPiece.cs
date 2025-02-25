@@ -13,15 +13,15 @@ public abstract partial class TrackPieceBase : TrackBase {
     private bool _isOccupied;
 
     [ObservableProperty]
-    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
+    [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
     private bool _isHidden;
 
     [ObservableProperty]
-    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 1)]
+    [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 2)]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
+    [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     protected TrackPieceBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {

@@ -11,31 +11,32 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
 
     [ObservableProperty]
     private string _name = "Text Block";
+
+    [ObservableProperty] [property: EditableString(Name = "Text", Description = "Text to Display")]
+    private string _text = "";
     
-    [ObservableProperty] [property: AttributesColor(Name = "Background", Description = "Background Color", Group = "Colors")]
-    private Color _backgroundColor = Colors.Transparent;
-
-    [ObservableProperty] [property: AttributesBool(Name = "Bold", Description = "Bold Text", Group = "Attributes")]
-    private bool _bold;
-
-    [ObservableProperty] [property: AttributesInt(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
+    [ObservableProperty] [property: EditableInt(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
     private int _fontSize = 12;
 
-    [ObservableProperty] [property: AttributesEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
-    private TextAlignment _horizontalJustification = TextAlignment.Center;
+    [ObservableProperty] [property: EditableBool(Name = "Bold", Description = "Bold Text", Group = "Attributes")]
+    private bool _fontBold;
 
-    [ObservableProperty] [property: AttributesString(Name = "Text", Description = "Text to Display")]
-    private string _text = "";
-
-    [ObservableProperty] [property: AttributesColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
-    private Color _textColor = Colors.Black;
-
-    [ObservableProperty] [property: AttributesInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
+    [ObservableProperty] [property: EditableInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
     private int _textWidth = 2;
 
-    [ObservableProperty] [property: AttributesEnum(Name = "Vertical", Description = "Vertical Justification of the Text", Group = "Attributes")]
-    private TextAlignment _verticalJustification = TextAlignment.Center;
+    [ObservableProperty] [property: EditableEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
+    private TextAlignment _horizontalJustification = TextAlignment.Center;
 
+    [ObservableProperty] [property: EditableEnum(Name = "Vertical", Description = "Vertical Justification of the Text", Group = "Attributes")]
+    private TextAlignment _verticalJustification = TextAlignment.Center;
+    
+    [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
+    private Color _textColor = Colors.Black;
+
+    [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
+    private Color _backgroundColor = Colors.Transparent;
+
+    
     public TrackText() : this(null) { }
 
     private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, TextWidth, X, Y, TrackRotation) : TextWidth;
@@ -65,7 +66,7 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
         var label = new Label {
             Text = Text,
             FontSize = FontSize,
-            FontAttributes = Bold ? FontAttributes.Bold : FontAttributes.None,
+            FontFamily = !FontBold ? "OpenSansRegular" : "OpenSansSemibold",
             HorizontalTextAlignment = HorizontalJustification,
             VerticalTextAlignment = VerticalJustification,
             HorizontalOptions = LayoutOptions.Start,
@@ -76,15 +77,13 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
             RotationX = TrackRotation,
             LineBreakMode = LineBreakMode.TailTruncation,
             InputTransparent = passthrough,
-
             WidthRequest = gridSize * MaxGridWidth,
             HeightRequest = gridSize
 
             //WidthRequest = TextWidthRequest(gridSize),
             //HeightRequest = TextHeightRequest(gridSize)
         };
-
-        return label;
+       return label;
     }
 
     private double TextWidthRequest(double gridSize) {

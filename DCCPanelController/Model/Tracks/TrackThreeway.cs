@@ -1,5 +1,5 @@
 // using CommunityToolkit.Mvvm.ComponentModel;
-// using DCCPanelController.Helpers.Attributes;
+// using DCCPanelController.Helpers.EditableAttribute;
 // using DCCPanelController.Tracks.Base;
 // using DCCPanelController.Tracks.Interfaces;
 // using Plugin.Maui.Audio;

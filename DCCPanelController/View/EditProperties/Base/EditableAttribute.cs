@@ -3,7 +3,7 @@ using DCCPanelController.Helpers;
 namespace DCCPanelController.View.EditProperties.Base;
 
 [AttributeUsage(AttributeTargets.Property)]
-public abstract class Attributes : Attribute {
+public abstract class EditableAttribute : Attribute {
     public string Name { get; set; } = string.Empty;        // SystemName to show on the Properties Page
     public string Description { get; set; } = string.Empty; // Description to show under/next to the Property
     public string Group { get; set; } = string.Empty;       // Group Identifier. Used to group items in a box

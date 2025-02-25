@@ -4,7 +4,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesEnumAttribute : Base.Attributes, IEditableAttribute {
+public class EditableEnumAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             if (value.Type == typeof(TextAlignment)) {

@@ -5,7 +5,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesStringAttribute : Base.Attributes, IEditableAttribute {
+public class EditableStringAttribute : EditableAttribute, IEditableAttribute {
 
     public IView? CreateView(EditableDetails value) {
         try {

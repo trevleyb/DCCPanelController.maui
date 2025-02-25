@@ -4,7 +4,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesDateAttribute : Base.Attributes, IEditableAttribute {
+public class EditableDateAttribute : EditableAttribute, IEditableAttribute {
     public DateOnly MinValue { get; set; } = DateOnly.MinValue; // used for Int (Minimum Value)
     public DateOnly MaxValue { get; set; } = DateOnly.MaxValue; // used for Int (Maximum Value)
 

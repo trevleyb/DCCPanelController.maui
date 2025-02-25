@@ -23,31 +23,31 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
     
     [ObservableProperty]
-    [property: AttributesString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
+    [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
     private string _turnoutID = string.Empty;
     
     [ObservableProperty]
-    [property: AttributesString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
+    [property: EditableString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
     private string _address = string.Empty;
 
     [ObservableProperty]
-    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 3)]
+    [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 3)]
     private bool _isHidden;
     
     [ObservableProperty]
-    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order=4)]
+    [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order=4)]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order=5)]
+    [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order=5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     [ObservableProperty]
-    [property: AttributesActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order=10)]
+    [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order=10)]
     private TurnoutActions _turnoutActions = [];
 
     [ObservableProperty]
-    [property: AttributesActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
+    [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
     private ButtonActions _buttonActions = [];
     
     public override void CleanUp() {

@@ -5,7 +5,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesColorAttribute : Base.Attributes, IEditableAttribute {
+public class EditableColorAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new ColorPickerButton { WidthRequest = 100, HeightRequest = 30 };

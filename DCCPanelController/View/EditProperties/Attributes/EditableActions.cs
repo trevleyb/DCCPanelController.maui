@@ -8,11 +8,11 @@ using DCCPanelController.ViewModel;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesActionsAttribute : Base.Attributes, IEditableAttribute {
+public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
     public ActionsContext ActionsContext { get; set; }
 
     public IView? CreateView(EditableDetails value) {
-        if (value.Attribute is AttributesActionsAttribute attr) {
+        if (value.EditableAttribute is EditableActionsAttribute attr) {
             try {
                 if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions) {
                     var turnout = value.Owner as ITrackTurnout;

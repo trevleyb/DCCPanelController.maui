@@ -7,23 +7,23 @@ using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrack {
+public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent), ITrackSymbol, ITrack {
 
     [ObservableProperty]
     private string _name = "Image";
     
-    [ObservableProperty] [property: AttributesInt(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
+    [ObservableProperty] [property: EditableInt(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
     private int _imageHeight = 2;
 
-    [ObservableProperty] [property: AttributesInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
+    [ObservableProperty] [property: EditableInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
     private int _imageWidth = 2;
 
-    [ObservableProperty] [property: AttributesBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
+    [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
     private bool _keepAspectRatio = true;
 
     public TrackImage() : this(null) { }
 
-    [AttributesImage(Name = "Image", Description = "Image to display")]
+    [EditableImage(Name = "Image", Group="Image", Description = "Image to display")]
     public string TrackImageSource { get; set; } = "";
 
     public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
@@ -36,7 +36,7 @@ public partial class TrackImage(Panel? parent = null) : TrackPieceBase(parent), 
     }
 
     protected override void Setup() {
-        Layer = 2;
+        Layer = 0;
         RotationIncrement = 90;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));

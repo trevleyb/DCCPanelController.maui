@@ -18,7 +18,6 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
             // Switch types based on the `Type` property value
             var rawText = root.GetRawText();
             var typeName = typeProperty.GetString();
-            Console.WriteLine($"Processing for type: {typeName}");
             ITrack? obj = typeName switch {
                 "TrackButton"               => JsonSerializer.Deserialize<TrackButton>(rawText, options),
                 "TrackCompass"              => JsonSerializer.Deserialize<TrackCompass>(rawText, options),

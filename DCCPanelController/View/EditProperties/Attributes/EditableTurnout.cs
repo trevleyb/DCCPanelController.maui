@@ -4,7 +4,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesTurnoutAttribute : Base.Attributes, IEditableAttribute {
+public class EditableTurnoutAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             //var cell = new Switch { BindingContext = value.Owner };

@@ -45,7 +45,7 @@ public class SvgStyleElement {
     }
 
     public override string ToString() {
-        return $"Element: {Name}, Attributes: [{string.Join(", ", Attributes.Select(kv => $"{kv.Key}={kv.Value}"))}]";
+        return $"Element: {Name}, EditableAttribute: [{string.Join(", ", Attributes.Select(kv => $"{kv.Key}={kv.Value}"))}]";
     }
 }
 

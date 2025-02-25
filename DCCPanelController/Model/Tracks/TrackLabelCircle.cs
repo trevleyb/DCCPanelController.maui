@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks;
 
@@ -14,7 +15,7 @@ public partial class TrackLabelCircle(Panel? parent = null) : TrackLabelBase(par
 
     [ObservableProperty]
     private string _name = "Circle wth Image";
-
+    
     protected override void Setup() {
         Layer = 2;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Label", (0, 0), (45, 45), (90, 90), (135, 135), (180, 180), (225, 225), (270, 270), (315, 315));

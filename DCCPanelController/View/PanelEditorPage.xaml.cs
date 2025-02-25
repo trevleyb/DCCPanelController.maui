@@ -39,7 +39,7 @@ public partial class PanelEditorPage : ContentPage {
     private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
         PanelView.ClearSelectedTracks();
         PanelView.MarkTrackSelected(track);
-        ShowPropertyPage(sender, EventArgs.Empty);
+        ShowEditPropertyPage(sender, EventArgs.Empty);
     }
 
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {

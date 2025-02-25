@@ -6,7 +6,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesImageAttribute : Base.Attributes, IEditableAttribute {
+public class EditableImageAttribute : EditableAttribute, IEditableAttribute {
 
     public IView? CreateView(EditableDetails value) {
         try {
@@ -20,8 +20,11 @@ public class AttributesImageAttribute : Base.Attributes, IEditableAttribute {
             var imageString = PropertyHelper.GetPropertyValue<string>(value.Owner, value.Info.Name) ?? string.Empty;
             var image = new Image {
                 Source = string.IsNullOrEmpty(imageString) ? null : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(imageString))) ?? null,
-                WidthRequest = 200,
-                HeightRequest = 200
+                Aspect = Aspect.AspectFit,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center,
+                MaximumHeightRequest = 200,
+                MaximumWidthRequest = 100,
             };
 
             var horizontal = new StackLayout {

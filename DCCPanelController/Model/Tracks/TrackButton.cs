@@ -11,7 +11,7 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     [ObservableProperty] 
     private string _name = "Button";
     
-    [ObservableProperty] [property: AttributesBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
+    [ObservableProperty] [property: EditableBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
     private bool _isEnabled = true;
 
     public TrackButton() : this(null) { }

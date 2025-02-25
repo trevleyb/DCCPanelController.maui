@@ -54,9 +54,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private static IView CreateExpanderGroup(string groupKey, List<EditableDetails> groupValue, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
 
-        var tableExpander = new Expander();
-        tableExpander.Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0);
-        
+        var tableExpander = new Expander {
+            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
+        };
+
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
         expanderTitle.Children.Add(GroupChevrons(tableExpander));
@@ -89,7 +90,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             HeightRequest = 16,
             WidthRequest = 16,
             VerticalOptions = LayoutOptions.Center,
-            HorizontalOptions = LayoutOptions.End,
+            HorizontalOptions = LayoutOptions.Start,
+            Margin = new Thickness(10, 10, 10, 10),
             Rotation = 0 // Expanded state rotation (facing down)
         };
         chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);
@@ -132,9 +134,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         var groupCell = new HorizontalStackLayout {
             Margin = new Thickness(0, 5, 0, 5)
         };
-        if (!string.IsNullOrWhiteSpace(value.Attribute.Name)) {
+        if (!string.IsNullOrWhiteSpace(value.EditableAttribute.Name)) {
             var label = new Label {
-                Text = value.Attribute.Name,
+                Text = value.EditableAttribute.Name,
                 TextColor = Colors.Black,
                 FontSize = 15,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
@@ -151,10 +153,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
 
     private static IView? CreateDataEntry(EditableDetails value) {
-        if (value.Attribute is IEditableAttribute editProperty) {
+        if (value.EditableAttribute is IEditableAttribute editProperty) {
             return editProperty.CreateView(value);
         }
-        Debug.WriteLine($"Unable to create entry for {value.Attribute.Name}");
+        Debug.WriteLine($"Unable to create entry for {value.EditableAttribute.Name}");
         return null;
     }
 

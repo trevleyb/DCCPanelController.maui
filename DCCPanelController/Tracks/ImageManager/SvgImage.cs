@@ -57,7 +57,7 @@ public partial class SvgImage : ObservableObject {
     // <line>       - stroke, stroke-opacity, dash-array
     // <circle>     - Border= stroke, stroke-opacity, Button=fill, fill-opacity 
 
-    // Supported Attributes for Styles
+    // Supported EditableAttribute for Styles
     // ---------------------------------------------------------------------------
     // Color        - sets the color of the element
     // Opacity      - sets the opacity of the element

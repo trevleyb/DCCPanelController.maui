@@ -5,7 +5,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class AttributesIntAttribute : Base.Attributes {
+public class EditableIntAttribute : EditableAttribute ,IEditableAttribute {
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
@@ -15,14 +15,14 @@ public class AttributesIntAttribute : Base.Attributes {
             var dataCell = new Entry {
                 BindingContext = value.Owner,
                 WidthRequest = 75,
-                Placeholder = value.Attribute.Description,
+                Placeholder = value.EditableAttribute.Description,
                 Keyboard = Keyboard.Numeric,
                 Margin = new Thickness(0, 0, 10, 0),
                 Text = value.Info.GetValue(value.Owner)?.ToString() ?? "0"
             };
             dataCell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
 
-            var attr = value.Attribute as AttributesIntAttribute;
+            var attr = value.EditableAttribute as EditableIntAttribute;
             var stepperUpDown = new Stepper {
                 Minimum = attr?.MinValue ?? 0,  // Define the stepper min value if needed
                 Maximum = attr?.MaxValue ?? 99, // Define the stepper max value if needed
