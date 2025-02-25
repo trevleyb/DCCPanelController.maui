@@ -7,12 +7,10 @@ namespace DCCPanelController.View;
 
 public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
     private readonly double _maxSidePanelWidth = 500; // Max width for the left column
-
     private readonly double _minSidePanelWidth = 100; // Min width for the left column
     private readonly PanelsViewerViewModel _viewModel;
 
     public PanelsViewerPage() {
-        //_viewModel = new PanelsViewerViewModel();
         _viewModel = MauiProgram.ServiceHelper.GetService<PanelsViewerViewModel>();
         BindingContext = _viewModel;
         InitializeComponent();
@@ -36,11 +34,11 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         if (DeviceInfo.Platform == DevicePlatform.iOS && _viewModel.IsThinMode) {
             LeftPanelColumn.Width = new GridLength(1, GridUnitType.Star);
             RightPanelColumn.Width = new GridLength(0);
-            SidePanelButton.IsEnabled = false;
+            //SidePanelButton.IsEnabled = false;
         } else {
             LeftPanelColumn.Width = new GridLength(_viewModel.SidePanelWidth);
             RightPanelColumn.Width = new GridLength(1, GridUnitType.Star);
-            SidePanelButton.IsEnabled = true;
+            //SidePanelButton.IsEnabled = true;
         }
     }
 
@@ -97,13 +95,13 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
         if (!expanded) {
             _viewModel.SidePanelWidth = 0;
             _viewModel.IsSidePanelOpen = false;
-            SidePanelButton.Text = "Open Panel";
-            SidePanelButton.IconImageSource = "side_panel_open.png";
+            //SidePanelButton.Text = "Open Panel";
+            //SidePanelButton.IconImageSource = "side_panel_open.png";
         } else {
             _viewModel.SidePanelWidth = 300;
             _viewModel.IsSidePanelOpen = true;
-            SidePanelButton.Text = "Close panel";
-            SidePanelButton.IconImageSource = "side_panel_close_filled.png";
+            //SidePanelButton.Text = "Close panel";
+            //SidePanelButton.IconImageSource = "side_panel_close_filled.png";
         }
         var tempPanel = _viewModel.SelectedPanel;
         _viewModel.SelectedPanel = null;

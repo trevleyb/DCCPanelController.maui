@@ -29,7 +29,6 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(Title))]
     private Panel? _selectedPanel;
 
     [ObservableProperty] private int _sidePanelWidth = 300;
@@ -43,10 +42,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     }
 
     public bool IsWideMode => !IsThinMode;
-
     public bool IsSidePanelClosed => !IsSidePanelOpen;
-
-    public string Title => SelectedPanel == null ? "DCC Panel Controller" : SelectedPanel.Name;
     public bool IsPanelSelected => SelectedPanel != null;
     public bool NoPanelSelected => SelectedPanel == null;
 

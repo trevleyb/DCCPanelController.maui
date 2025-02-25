@@ -54,10 +54,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private static IView CreateExpanderGroup(string groupKey, List<EditableDetails> groupValue, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
 
-        var tableExpander = new Expander {
-            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
-        };
-
+        var tableExpander = new Expander(); 
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
         expanderTitle.Children.Add(GroupChevrons(tableExpander));

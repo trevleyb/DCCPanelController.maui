@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -21,8 +22,11 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     [ObservableProperty] [property: EditableBool(Name = "Bold", Description = "Bold Text", Group = "Attributes")]
     private bool _fontBold;
 
-    [ObservableProperty] [property: EditableInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
-    private int _textWidth = 2;
+    [property: EditableInt(Name = "Width", Description = "Width of the Image", Group = "Attributes")]
+    public new int Width {
+        get => base.Width;
+        set => base.Width = value;
+    }
 
     [ObservableProperty] [property: EditableEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
@@ -36,10 +40,9 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Transparent;
 
-    
     public TrackText() : this(null) { }
 
-    private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, TextWidth, X, Y, TrackRotation) : TextWidth;
+    private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, Width, X, Y, TrackRotation) : Width;
 
     public ITrack Clone(Panel parent) {
         return new TrackText(parent);

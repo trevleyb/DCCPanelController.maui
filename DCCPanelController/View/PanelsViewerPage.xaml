@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
-    Title="{Binding Title}"
+    Title="{Binding SelectedPanel.Title, FallbackValue='DCC Panel Controller'}"
     x:Class="DCCPanelController.View.PanelsViewerPage"
     x:DataType="viewModel:PanelsViewerViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -37,20 +37,20 @@
             Text="Delete" />
         <!--  <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings.png"  -->
         <!--  IsEnabled="{Binding IsPanelSelected}" />  -->
-        <ToolbarItem />
-        <ToolbarItem
-            Clicked="SidePanelExpander_OnClicked"
-            IconImageSource="side_panel_close_filled.png"
-            IsEnabled="{Binding CanExpandCollapse}"
-            Text="Expand"
-            x:Name="SidePanelButton" />
+        <!-- <ToolbarItem /> -->
+        <!--  <ToolbarItem  -->
+        <!--  Clicked="SidePanelExpander_OnClicked"  -->
+        <!--  IconImageSource="side_panel_close_filled.png"  -->
+        <!--  IsEnabled="{Binding CanExpandCollapse}"  -->
+        <!--  Text="Expand"  -->
+        <!--  x:Name="SidePanelButton" />  -->
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding SidePanelWidth}" x:Name="LeftPanelColumn" />
-                <!-- <ColumnDefinition Width="2" x:Name="PanelEdge" /> -->
+                <ColumnDefinition Width="2" x:Name="PanelEdge" />
                 <ColumnDefinition Width="*" x:Name="RightPanelColumn" />
             </Grid.ColumnDefinitions>
 
@@ -127,19 +127,19 @@
             </CollectionView>
 
             <!--  Draggable Separator  -->
-            <!--  <BoxView  -->
-            <!--  BackgroundColor="#95000000"  -->
-            <!--  Grid.Column="1"  -->
-            <!--  HorizontalOptions="Fill"  -->
-            <!--  IsVisible="{Binding IsWideMode}"  -->
-            <!--  VerticalOptions="Fill">  -->
-            <!--     <BoxView.GestureRecognizers> -->
-            <!--         <PanGestureRecognizer PanUpdated="OnSeparatorDrag" /> -->
-            <!--     </BoxView.GestureRecognizers> -->
-            <!-- </BoxView> -->
+            <BoxView
+                BackgroundColor="{StaticResource PrimaryDisabled}"
+                Grid.Column="1"
+                HorizontalOptions="Fill"
+                IsVisible="{Binding IsWideMode}"
+                VerticalOptions="Fill">
+                <BoxView.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="OnSeparatorDrag" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
 
             <Grid
-                Grid.Column="1"
+                Grid.Column="2"
                 HorizontalOptions="Fill"
                 IsVisible="{Binding IsWideMode}"
                 VerticalOptions="Fill">

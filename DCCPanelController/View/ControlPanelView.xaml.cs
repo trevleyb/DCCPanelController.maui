@@ -180,7 +180,7 @@ public partial class ControlPanelView : IDisposable {
     /// <summary>
     ///     Only highlight a cell if we are in Design Mode
     /// </summary>
-    public void HighlightCell(int col, int row, CellHighlightAction action) {
+    public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
         var border = new Border {
             BackgroundColor = Colors.Transparent,
@@ -190,6 +190,10 @@ public partial class ControlPanelView : IDisposable {
                 CellHighlightAction.DragInvalid => Colors.Red,
                 _                               => Colors.Red
             },
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
+            WidthRequest = width * GridSize,
+            HeightRequest = height * GridSize,
             StrokeThickness = 4,
             Opacity = 0.5,
             ZIndex = 10,
@@ -342,7 +346,7 @@ public partial class ControlPanelView : IDisposable {
     }
 
     public void MarkTrackSelected(ITrack track) {
-        HighlightCell(track.X, track.Y, CellHighlightAction.Selected);
+        HighlightCell(track.X, track.Y, track.Width, track.Height, CellHighlightAction.Selected);
         track.IsSelected = true;
     }
 
@@ -382,9 +386,9 @@ public partial class ControlPanelView : IDisposable {
 
             if (track.Layer > GetHighestOccupiedLayer(position.Col, position.Row)) {
                 e.AcceptedOperation = DataPackageOperation.Copy;
-                HighlightCell(position.Col, position.Row, CellHighlightAction.DragValid);
+                HighlightCell(position.Col, position.Row, track.Width,track.Height, CellHighlightAction.DragValid);
             } else {
-                HighlightCell(position.Col, position.Row, CellHighlightAction.DragInvalid);
+                HighlightCell(position.Col, position.Row, track.Width,track.Height,CellHighlightAction.DragInvalid);
             }
 
             _lastDragCol = position.Col;

@@ -2,7 +2,7 @@
 
 <ContentPage
     BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-    Title="{Binding SelectedPanel.Name, FallbackValue='DCC Panel Controller'}"
+    Title="{Binding SelectedPanel.Title, FallbackValue='DCC Panel Controller'}"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="viewModel:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -107,7 +107,8 @@
                     Grid.Row="1"
                     HorizontalOptions="Center"
                     IndicatorColor="DarkGrey"
-                    Margin="0,-5,0,0"
+                    IndicatorSize="10"
+                    Margin="0,5,0,0"
                     SelectedIndicatorColor="{StaticResource Primary}"
                     VerticalOptions="Start"
                     x:Name="IndicatorView" />

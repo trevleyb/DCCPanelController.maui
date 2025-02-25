@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
@@ -12,11 +13,17 @@ public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent)
     [ObservableProperty]
     private string _name = "Image";
     
-    [ObservableProperty] [property: EditableInt(Name = "Height", Description = "Text Grid Height", Group = "Attributes")]
-    private int _imageHeight = 2;
+    [property: EditableInt(Name = "Width", Description = "Width of the Image", Group = "Attributes")]
+    public new int Width {
+        get => base.Width;
+        set => base.Width = value;
+    }
 
-    [ObservableProperty] [property: EditableInt(Name = "Width", Description = "Text Grid Width", Group = "Attributes")]
-    private int _imageWidth = 2;
+    [property: EditableInt(Name = "Height", Description = "Height of the Image", Group = "Attributes")]
+    public new int Height {
+        get => base.Height;
+        set => base.Height = value;
+    }
 
     [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
     private bool _keepAspectRatio = true;
@@ -28,8 +35,8 @@ public partial class TrackImage(Panel? parent = null) : TrackSpecialBase(parent)
 
     public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
 
-    private int MaxGridWidth => Parent is not null ? ImageWidth <= Parent.Cols - X ? ImageWidth : Parent.Cols - X : ImageWidth;
-    private int MaxGridHeight => Parent is not null ? ImageHeight <= Parent.Rows - Y ? ImageHeight : Parent.Rows - Y : ImageHeight;
+    private int MaxGridWidth => Parent is not null ? Width <= Parent.Cols - X ? Width : Parent.Cols - X : Width;
+    private int MaxGridHeight => Parent is not null ? Height <= Parent.Rows - Y ? Height : Parent.Rows - Y : Height;
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackImage>(parent);

@@ -42,6 +42,16 @@ public partial class Panel : ObservableObject {
         Panels = panels;
     }
     
+    public string Title { 
+        get {
+            if (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Description)) return "DCC Panel Controller";
+            if (!string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Description)) return Name;
+            if (string.IsNullOrEmpty(Name) && !string.IsNullOrEmpty(Description)) return Description;
+            return Name + $" - {Description}";
+        }
+    }
+
+
     public string Id { get; init; } = Guid.NewGuid().ToString();
 
     public ObservableCollection<ITrack> Tracks {

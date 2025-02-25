@@ -14,14 +14,13 @@ public abstract partial class TrackBase : ObservableObject {
     
     public Guid Id { get; set; } = Guid.NewGuid();
 
-    [ObservableProperty] private int _width = 1;    // What width is this component?
-    [ObservableProperty] private int _height = 1;   // What Height is this component? 
-    [ObservableProperty] private int _layer = 1;    // What layer is this on? Higher sits on top of lower
+    [ObservableProperty] private int _x;          // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _y;          // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _z = 1;      // What position (layer) should this exist at 
+    [ObservableProperty] private int _width = 1;  // What width is this component?
+    [ObservableProperty] private int _height = 1; // What Height is this component? 
+    [ObservableProperty] private int _layer = 1;  // What layer is this on? Higher sits on top of lower
     
-    [ObservableProperty] private int _x;            // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _y;            // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _z = 1;        // What position (layer) should this exist at 
-
     [ObservableProperty] private int _imageRotation;
     [ObservableProperty] private int _trackRotation; 
 
