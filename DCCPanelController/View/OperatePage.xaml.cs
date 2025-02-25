@@ -16,6 +16,12 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         SetTabBarState(true);
     }
 
+    protected override void OnAppearing() {
+        base.OnAppearing();
+        OnPropertyChanged(nameof(OperateViewModel.Panels));
+        OnPropertyChanged(nameof(OperateViewModel.SelectedPanel));
+    }
+
     private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
             Title = viewModel.SetActivePanel(PanelCarousel.CurrentItem as Panel);

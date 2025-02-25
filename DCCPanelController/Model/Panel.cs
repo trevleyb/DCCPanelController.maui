@@ -3,8 +3,10 @@ using System.Collections.Specialized;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
+using DCCPanelController.Services.SampleData;
 using DCCPanelController.Tracks.Helpers;
 
 namespace DCCPanelController.Model;
@@ -20,51 +22,49 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private int _sortOrder;
 
-    private ObservableCollection<ITrack> _tracks = [];
-
-    public Panel() {
-        _tracks = [];
-    }
-
-    public Panel(string name, int cols, int rows) : this() {
-        Name = name;
-        Cols = cols;
-        Rows = rows;
-    }
-
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public List<ITrackTurnout> AllNamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
+    [JsonIgnore] public List<ITrackButton> AllNamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
+    [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.TurnoutID)).ToList() ?? [];
+    [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ButtonID)).ToList() ?? [];
+    [JsonIgnore] public Panels Panels { get; private set; } = [];
 
-    [JsonIgnore] public List<ITrackTurnout> TurnoutsInUse => Tracks.OfType<ITrackTurnout>().ToList() ?? [];
-    [JsonIgnore] public List<ITrackButton>  ButtonsInUse => Tracks.OfType<ITrackButton>().ToList() ?? [];
+    private ObservableCollection<ITrack> _tracks = [];
+
+    [JsonConstructor]
+    private Panel() { }
+    public Panel(Panels panels) {
+        SetPanels(panels);
+    }
+
+    public void SetPanels(Panels panels) {
+        Panels = panels;
+    }
     
-    public string Id { get; set; } = Guid.NewGuid().ToString();
+    public string Id { get; init; } = Guid.NewGuid().ToString();
 
     public ObservableCollection<ITrack> Tracks {
         get => _tracks;
         init {
-            if (_tracks != value) {
-                try {
-                    _tracks = value;
-                } catch (Exception ex) {
-                    Console.WriteLine("Failed to set Tracks: " + ex.Message);
-                }
-
-                _tracks.CollectionChanged += TracksOnCollectionChanged;
-                Panel.SetParent(_tracks, this);
-                OnPropertyChanged();
+            try {
+                _tracks = value;
+            } catch (Exception ex) {
+                Console.WriteLine("Failed to set Tracks: " + ex.Message);
             }
+            SetParent(_tracks, this);
+            OnPropertyChanged();
         }
     }
 
-    // When we add an item to the collection, make sure the Parent
+    // When we add an item to the collection, make sure the Panels
     // property is set so we know where this item lives. We need this
     // to be able to get the references to things like colors. 
     // -------------------------------------------------------------------------------
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         Console.WriteLine($"Collection Changed: {e.Action} {e.NewItems?.Count} {e.OldItems?.Count} {e.NewStartingIndex} {e.OldStartingIndex}");
         if (e.NewItems != null) {
-            Panel.SetParent(e.NewItems as IList<ITrack>, this);
+            SetParent(e.NewItems as IList<ITrack>, this);
         }
     }
 
@@ -114,4 +114,3 @@ public partial class Panel : ObservableObject {
         return panel ?? throw new Exception("Failed to clone panel");
     }
 }
-

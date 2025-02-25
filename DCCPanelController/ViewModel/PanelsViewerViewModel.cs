@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.View.PropertPages;
@@ -49,13 +50,16 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     public bool IsPanelSelected => SelectedPanel != null;
     public bool NoPanelSelected => SelectedPanel == null;
 
-    public ObservableCollection<Panel> Panels { get; set; }
+    public Panels Panels { get; set; }
 
     public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
 
     public void SelectPanel(Panel? panel = null) {
         SelectedPanel = null;
         SelectedPanel = panel ?? Panels.FirstOrDefault();
+        OnPropertyChanged(nameof(IsPanelSelected));
+        OnPropertyChanged(nameof(Panels));
+        OnPropertyChanged(nameof(SelectedPanel));
     }
 
     public async void Save() {
@@ -139,11 +143,10 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task AddPanelAsync() {
-        var newPanel = new Panel();
+        var newPanel =Panels.CreatePanel();
         var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
         newPanel.Name = "Panel " + maxSort;
         newPanel.SortOrder = maxSort;
-        Panels.Add(newPanel);
         Save();
         SelectPanel(newPanel);
     }
@@ -153,20 +156,15 @@ public partial class PanelsViewerViewModel : BaseViewModel {
         if (panel is not null) SelectedPanel = panel;
         if (SelectedPanel is null) return;
 
-        var tempPanel = SelectedPanel.Clone();
-        var result = await LaunchEditPanelAsync(tempPanel);
-        if (result) {
-            // If we got a Panel Back, it is a COPY of the panel
-            // we passed through, and, it has likely been edited. So we
-            // need to update the original panel in the Panels
-            // collection to be this new Panel. 
-            // ------------------------------------------------------------------
-            var index = Panels.IndexOf(SelectedPanel);
-            if (index >= 0) Panels[index] = tempPanel;
-            SelectedPanel = Panels[index];
-            Save();
-        }
-
+        //var tempPanel = SelectedPanel.Clone();
+        var result = await LaunchEditPanelAsync(SelectedPanel);
+        // if (result) {
+        //     var index = Panels.IndexOf(SelectedPanel);
+        //     if (index >= 0) Panels[index] = tempPanel;
+        //     SelectedPanel = Panels[index];
+        //     Save();
+        // } 
+        Save();
         SelectPanel(SelectedPanel);
     }
 

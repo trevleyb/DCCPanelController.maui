@@ -10,9 +10,9 @@ using DCCPanelController.ViewModel;
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGrid : ContentView {
-    public ButtonActionsGrid(ButtonActions buttonActions, ActionsContext context) {
+    public ButtonActionsGrid(ButtonActions buttonActions, ActionsContext context, List<string> availableButtons) {
         InitializeComponent();
-        BindingContext = new ButtonActionsGridViewModel(buttonActions, context);
+        BindingContext = new ButtonActionsGridViewModel(buttonActions, context, availableButtons);
     }
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {

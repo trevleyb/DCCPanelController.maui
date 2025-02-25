@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -27,7 +29,8 @@ public class SettingsService {
 
     public Storage Storage => _storage ??= Load();
     public Settings Settings => Storage.Settings;
-    public ObservableCollection<Panel> Panels => Storage.Panels;
+    public Panels Panels => Storage.Panels;
+
     public ObservableCollection<Turnout> Turnouts => Storage.Turnouts;
     public ObservableCollection<Route> Routes => Storage.Routes;
 
@@ -50,13 +53,19 @@ public class SettingsService {
             if (File.Exists(filePath)) {
                 try {
                     var jsonString = File.ReadAllText(filePath);
-                    return LoadJson(jsonString);
+                    var storage = LoadJson(jsonString);
+                    
+                    // Each panel needs a reference to the collection
+                    // of ALL panels. When we load from storage the panels
+                    // we need to reset this reference. Creating a new panel
+                    // needs to be done via the storage service which will set this. 
+                    foreach (var panel in storage.Panels) panel.SetPanels(storage.Panels);
+                    return storage;
                 } catch (Exception ex) {
                     Console.WriteLine("Could not deserialize settings. New set created: " + ex.Message);
                     return new Storage();
                 }
             }
-
             Console.WriteLine($"File not found: {filePath}");
             return new Storage();
         } catch (Exception ex) {

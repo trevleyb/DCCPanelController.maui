@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.PropertPages;
@@ -14,6 +15,10 @@ public partial class PanelEditorPage : ContentPage {
         ViewModel = viewModel;
         BindingContext = ViewModel;
         InitializeComponent();
+
+        SetEditModeIcon(EditModeEnum.Move);
+        SetGridIcon(true);
+
     }
 
     private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
@@ -30,24 +35,18 @@ public partial class PanelEditorPage : ContentPage {
             PanelView.MarkTrackSelected(track);
         }
     }
-    
+
     private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
         PanelView.ClearSelectedTracks();
         PanelView.MarkTrackSelected(track);
         ShowPropertyPage(sender, EventArgs.Empty);
     }
-    
+
     private void OnSymbolDragStarting(object sender, DragStartingEventArgs e) {
         if (sender is DragGestureRecognizer { BindingContext: ITrackSymbol symbol }) {
             e.Data.Properties.Add("Track", symbol);
             e.Data.Properties.Add("Source", "DisplaySymbol");
         }
-    }
-
-    private void ToggleGrid(object? sender, EventArgs e) {
-        PanelView.ShowGrid = !PanelView.ShowGrid;
-        GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
-        PanelView.RebuildGrid(true);
     }
 
     //private void ToggleValidation(object? sender, EventArgs e) {
@@ -65,18 +64,28 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private async Task ShowPropertyPageAsync(object? sender, EventArgs e) {
-        // If the view model has selected items, then we do the properties on 
-        // those item(s). If not, then we do the main panel page properties.
+        await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
+    }
+
+    private async void ShowEditPropertyPage(object? sender, EventArgs e) {
+        try {
+            await ShowEditPropertyPageAsync(sender, e);
+            PanelView?.RebuildGrid(true);
+        } catch (Exception ex) {
+            Trace.WriteLine($"Exception {ex.Message} in Property Pages.");
+        }
+    }
+
+    private async Task ShowEditPropertyPageAsync(object? sender, EventArgs e) {
         if (ViewModel.HasSelectedTracks) {
             foreach (var track in ViewModel.Panel.SelectedTracks) {
                 await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
                 PanelView.MarkTrackUnSelected(track);
             }
-        } else {
-            await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
         }
     }
 
+    
     private void RotateLeft(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateLeft();
     }
@@ -91,20 +100,44 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
 
-    private void ChangeEditMode(object? sender, EventArgs e) {
-        switch (PanelView.EditMode) {
-        case EditModeEnum.Move:
-            PanelView.EditMode = EditModeEnum.Copy;
-            EditModeToolbar.IconImageSource = "copy.png";
-            break;
-        case EditModeEnum.Copy:
-            PanelView.EditMode = EditModeEnum.Size;
-            EditModeToolbar.IconImageSource = "crop.png";
-            break;
-        case EditModeEnum.Size:
-            PanelView.EditMode = EditModeEnum.Move;
-            EditModeToolbar.IconImageSource = "move.png";
-            break;
-        }
+    private void SetEditModeIcon(EditModeEnum editMode) {
+        PanelView.EditMode = editMode;
+        SetEditModeIcon();
     }
+
+    private void SetEditModeIcon() {
+        EditModeToolbar.IconImageSource = PanelView.EditMode switch {
+            EditModeEnum.Move => "move.png",
+            EditModeEnum.Copy => "copy.png",
+            EditModeEnum.Size => "crop.png",
+            _                 => EditModeToolbar.IconImageSource
+        };
+    }
+
+    private void ChangeEditMode(object? sender, EventArgs e) {
+        PanelView.EditMode = PanelView.EditMode switch {
+            EditModeEnum.Move => EditModeEnum.Copy,
+            EditModeEnum.Copy => EditModeEnum.Size,
+            EditModeEnum.Size => EditModeEnum.Move,
+            _                 => PanelView.EditMode
+        };
+
+        SetEditModeIcon();
+    }
+
+    private void ToggleGrid(object? sender, EventArgs e) {
+        PanelView.ShowGrid = !PanelView.ShowGrid;
+        SetGridIcon();
+    }
+
+    private void SetGridIcon(bool state) {
+        PanelView.ShowGrid = state;
+        SetGridIcon();
+    }
+
+    private void SetGridIcon() {
+        GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
+        PanelView.RebuildGrid(true);
+    }
+
 }

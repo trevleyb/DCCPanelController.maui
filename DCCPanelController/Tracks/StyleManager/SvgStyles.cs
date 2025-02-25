@@ -16,7 +16,7 @@ public static class SvgStyles {
     /// </summary>
     /// <param name="styleTypeEnum">Mainline, Branchline or Button</param>
     /// <param name="styleImageEnum">Normal, Straight, Diverging</param>
-    /// <param name="defaults">Reference to the Parent or Owner Panel defaults</param>
+    /// <param name="defaults">Reference to the Panels or Owner Panel defaults</param>
     /// <returns></returns>
     public static SvgStyle GetStyle(TrackStyleTypeEnum styleTypeEnum, TrackStyleImageEnum styleImageEnum, PanelDefaults? defaults) {
         defaults ??= new PanelDefaults();

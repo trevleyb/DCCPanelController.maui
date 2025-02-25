@@ -44,11 +44,14 @@
             ToolTipProperties.Text="Delete Track Piece" />
 
         <ToolbarItem
-            Command="{Binding SaveCommand}"
-            IconImageSource="save.png"
-            Text="Save"
-            ToolTipProperties.Text="Save this Panel"
-            x:Name="SaveButton" />
+            Clicked="ShowEditPropertyPage"
+            IconImageSource="edit.png"
+            IsEnabled="{Binding CanUsePropertyPage}"
+            Text="Properties"
+            ToolTipProperties.Text="Panel Properties"
+            x:Name="PropertyEditButton" />
+
+        <ToolbarItem />
 
         <ToolbarItem
             Clicked="ToggleGrid"
@@ -60,10 +63,16 @@
         <ToolbarItem
             Clicked="ShowPropertyPage"
             IconImageSource="settings.png"
-            IsEnabled="{Binding CanUsePropertyPage}"
             Text="Properties"
             ToolTipProperties.Text="Panel Properties"
             x:Name="PropertyButton" />
+
+        <ToolbarItem
+            Command="{Binding SaveCommand}"
+            IconImageSource="save.png"
+            Text="Save"
+            ToolTipProperties.Text="Save this Panel"
+            x:Name="SaveButton" />
 
     </ContentPage.ToolbarItems>
 

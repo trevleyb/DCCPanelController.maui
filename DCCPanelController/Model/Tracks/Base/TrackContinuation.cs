@@ -8,22 +8,23 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackContinuationBase : TrackBase {
 
+    [ObservableProperty] 
+    [property: JsonIgnore] private bool _isOccupied;
+
     [ObservableProperty]
-    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel")]
+    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Order = 1)]
     private bool _isHidden;
-
-    [ObservableProperty] [property: JsonIgnore] private bool _isOccupied;
-
+    
     [ObservableProperty]
-    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
+    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 2)]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: AttributesTrackImage(Name = "Track Style", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines })]
+    [property: AttributesTrackImage(Name = "Track Style", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines }, Order = 5)]
     private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Arrow;
 
     [ObservableProperty]
-    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline })]
+    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Order = 6)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     protected TrackContinuationBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline, TrackStyleImageEnum style = TrackStyleImageEnum.Arrow) : base(parent) {

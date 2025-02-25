@@ -16,8 +16,6 @@ public partial class OperateViewModel : BaseViewModel {
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }
-
-        PropertyChanged += OnPropertyChanged;
     }
 
     public Color BackgroundColor => SelectedPanel?.Defaults.BackgroundColor ?? Colors.White;
@@ -32,13 +30,5 @@ public partial class OperateViewModel : BaseViewModel {
 
     private void SelectedPanelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         throw new NotImplementedException();
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        switch (e.PropertyName) {
-        case nameof(ShowGrid):
-            //if (SelectedPanel is not null) SelectedPanel.ShowGrid = ShowGrid;
-            break;
-        }
     }
 }

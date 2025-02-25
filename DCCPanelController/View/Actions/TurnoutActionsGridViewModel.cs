@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
@@ -40,9 +41,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
     public double ControlHeight => 40 + (TurnoutActions.Count * 40);
 
-    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ActionsContext context) {
+    public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
-        //TODO: AvailableTurnouts = FindAvailableTurnouts(track);
+        AvailableTurnouts = availableTurnouts.ToObservableCollection();
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
         TurnoutActions = turnoutActions;
         UpdateSelectableTurnouts();

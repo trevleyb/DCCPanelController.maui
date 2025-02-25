@@ -8,20 +8,20 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
 
-    [ObservableProperty]
-    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes")]
-    private bool _isHidden;
-
     [ObservableProperty] 
     [property: JsonIgnore]
     private bool _isOccupied;
 
     [ObservableProperty]
-    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes")]
+    [property: AttributesBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
+    private bool _isHidden;
+
+    [ObservableProperty]
+    [property: AttributesColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 1)]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes")]
+    [property: AttributesTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     protected TrackPieceBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {

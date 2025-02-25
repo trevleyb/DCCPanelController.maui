@@ -10,18 +10,18 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackButtonBase : TrackBase {
 
+    private IAudioPlayer? _clickSoundPlayer;
+    
     [ObservableProperty]
-    [property: AttributesString(Name="ID",Description  = "Unique Identifier for this Button")]
+    [property: AttributesString(Name="Button ID",Description  = "Unique Identifier for this Button", Order = 1)]
     private string _buttonID = "";
     
     [ObservableProperty]
-    [property: AttributesActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes")]
+    [property: AttributesActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
     private ButtonActions _buttonActions = [];
-
-    private IAudioPlayer? _clickSoundPlayer;
-
+    
     [ObservableProperty]
-    [property: AttributesActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes")]
+    [property: AttributesActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
     private TurnoutActions _turnoutActions = [];
 
     protected ButtonStateEnum ButtonState = ButtonStateEnum.Unknown;

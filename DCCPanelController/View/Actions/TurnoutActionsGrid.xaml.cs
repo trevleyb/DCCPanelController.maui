@@ -10,9 +10,9 @@ using DCCPanelController.ViewModel;
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGrid : ContentView {
-    public TurnoutActionsGrid(TurnoutActions turnoutActions, ActionsContext context) {
+    public TurnoutActionsGrid(TurnoutActions turnoutActions, ActionsContext context, List<string> availableTurnouts) {
         InitializeComponent();
-        BindingContext = new TurnoutActionsGridViewModel(turnoutActions, context);
+        BindingContext = new TurnoutActionsGridViewModel(turnoutActions, context, availableTurnouts);
     }
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {

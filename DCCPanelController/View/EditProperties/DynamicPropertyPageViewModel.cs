@@ -55,6 +55,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
 
         var tableExpander = new Expander();
+        tableExpander.Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0);
+        
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
         expanderTitle.Children.Add(GroupChevrons(tableExpander));

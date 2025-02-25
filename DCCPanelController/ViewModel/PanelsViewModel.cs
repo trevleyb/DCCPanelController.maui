@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.ViewModel;
@@ -39,7 +40,7 @@ public partial class PanelsViewModel : BaseViewModel {
     public bool IsPanelSelected => SelectedPanel != null;
     public bool NoPanelSelected => SelectedPanel == null;
 
-    public ObservableCollection<Panel> Panels { get; set; }
+    public Panels Panels { get; set; }
 
     public async void Save() {
         _settingsService?.Save();
@@ -54,7 +55,7 @@ public partial class PanelsViewModel : BaseViewModel {
 
     [RelayCommand]
     public async Task AddPanelAsync() {
-        var panel = new Panel();
+        var panel = Panels.CreatePanel();
         var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
         panel.Name = "Panel " + maxSort;
         panel.SortOrder = maxSort;

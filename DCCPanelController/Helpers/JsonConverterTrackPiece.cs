@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DCCPanelController.Model.Tracks;
+using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Helpers;
@@ -9,13 +10,15 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
     public override ITrack? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
         // Use the type discriminator or another property to determine the specific type
         using (var document = JsonDocument.ParseValue(ref reader)) {
-            if (!document.RootElement.TryGetProperty("TrackObjectType", out var typeProperty)) {
-                throw new JsonException("Type property not found.");
+            var root = document.RootElement;
+            if (!root.TryGetProperty("TrackType", out var typeProperty)) {
+                throw new JsonException($"Type property not found: {root.ToString()}");
             }
 
             // Switch types based on the `Type` property value
+            var rawText = root.GetRawText();
             var typeName = typeProperty.GetString();
-            var rawText = document.RootElement.GetRawText();
+            Console.WriteLine($"Processing for type: {typeName}");
             ITrack? obj = typeName switch {
                 "TrackButton"               => JsonSerializer.Deserialize<TrackButton>(rawText, options),
                 "TrackCompass"              => JsonSerializer.Deserialize<TrackCompass>(rawText, options),
@@ -33,13 +36,12 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
                 "TrackText"                 => JsonSerializer.Deserialize<TrackText>(rawText, options),
                 _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\"")
             };
-
             if (obj == null) throw new JsonException("Unknown type: " + "\"" + typeName + "\"" + ".");
             return obj;
         }
     }
 
     public override void Write(Utf8JsonWriter writer, ITrack value, JsonSerializerOptions options) {
-        JsonSerializer.Serialize(writer, (object)value, options);
+        JsonSerializer.Serialize<object>(writer, value, options);
     }
 }

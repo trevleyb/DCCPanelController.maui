@@ -20,6 +20,7 @@
             IconImageSource="edit.png"
             IsEnabled="{Binding IsPanelSelected}"
             Text="Edit" />
+        <ToolbarItem />
         <ToolbarItem
             Command="{Binding AddPanelCommand}"
             IconImageSource="plus_circle.png"
@@ -36,6 +37,7 @@
             Text="Delete" />
         <!--  <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings.png"  -->
         <!--  IsEnabled="{Binding IsPanelSelected}" />  -->
+        <ToolbarItem />
         <ToolbarItem
             Clicked="SidePanelExpander_OnClicked"
             IconImageSource="side_panel_close_filled.png"
@@ -48,7 +50,7 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="{Binding SidePanelWidth}" x:Name="LeftPanelColumn" />
-                <ColumnDefinition Width="2" x:Name="PanelEdge" />
+                <!-- <ColumnDefinition Width="2" x:Name="PanelEdge" /> -->
                 <ColumnDefinition Width="*" x:Name="RightPanelColumn" />
             </Grid.ColumnDefinitions>
 
@@ -62,8 +64,8 @@
                 x:Name="PanelsList">
 
                 <CollectionView.EmptyView>
-                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+                        <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
                             <Label HorizontalOptions="Center" Text="No Panels were found." />
                             <Label HorizontalOptions="Center" Text="Please use + to add a new Panel." />
                         </StackLayout>
@@ -99,7 +101,10 @@
                                     </StackLayout>
                                 </SwipeItemView>
                             </SwipeView.RightItems>
-                            <StackLayout Margin="10" Padding="10">
+                            <StackLayout
+                                Margin="5"
+                                Padding="5"
+                                Spacing="5">
                                 <StackLayout.GestureRecognizers>
                                     <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
                                     <DropGestureRecognizer
@@ -110,21 +115,10 @@
                                         DropCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DropPanelCommand}"
                                         DropCommandParameter="{Binding}" />
                                 </StackLayout.GestureRecognizers>
-                                <Grid ColumnDefinitions="*,auto">
-                                    <Label
-                                        Grid.Column="0"
-                                        Style="{StaticResource LargeLabel}"
-                                        Text="{Binding Name}"
-                                        TextColor="{StaticResource Primary}" />
-                                    <ImageButton
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=EditPanelCommand}"
-                                        CommandParameter="{Binding}"
-                                        Grid.Column="1"
-                                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type viewModel:PanelsViewerViewModel}}, Path=IsThinMode, x:DataType=viewModel:PanelsViewerViewModel}"
-                                        Margin="0,0,0,0"
-                                        Source="chevron_right.png"
-                                        VerticalOptions="Center" />
-                                </Grid>
+                                <Label
+                                    Style="{StaticResource LargeLabel}"
+                                    Text="{Binding Name}"
+                                    TextColor="{StaticResource Primary}" />
                                 <Label Style="{StaticResource SmallLabel}" Text="{Binding Description}" />
                             </StackLayout>
                         </SwipeView>
@@ -133,19 +127,19 @@
             </CollectionView>
 
             <!--  Draggable Separator  -->
-            <BoxView
-                BackgroundColor="#95000000"
-                Grid.Column="1"
-                HorizontalOptions="Fill"
-                IsVisible="{Binding IsWideMode}"
-                VerticalOptions="Fill">
-                <BoxView.GestureRecognizers>
-                    <PanGestureRecognizer PanUpdated="OnSeparatorDrag" />
-                </BoxView.GestureRecognizers>
-            </BoxView>
+            <!--  <BoxView  -->
+            <!--  BackgroundColor="#95000000"  -->
+            <!--  Grid.Column="1"  -->
+            <!--  HorizontalOptions="Fill"  -->
+            <!--  IsVisible="{Binding IsWideMode}"  -->
+            <!--  VerticalOptions="Fill">  -->
+            <!--     <BoxView.GestureRecognizers> -->
+            <!--         <PanGestureRecognizer PanUpdated="OnSeparatorDrag" /> -->
+            <!--     </BoxView.GestureRecognizers> -->
+            <!-- </BoxView> -->
 
             <Grid
-                Grid.Column="2"
+                Grid.Column="1"
                 HorizontalOptions="Fill"
                 IsVisible="{Binding IsWideMode}"
                 VerticalOptions="Fill">

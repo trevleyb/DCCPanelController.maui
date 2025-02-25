@@ -7,12 +7,13 @@ using DCCPanelController.View.EditProperties.Attributes;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent), ITrack, ITrackButton, ITrackSymbol {
-
-    [ObservableProperty] [property: AttributesBool(Name = "IsEnabled", Description = "Is this button active and Enabled?")]
+    
+    [ObservableProperty] 
+    private string _name = "Button";
+    
+    [ObservableProperty] [property: AttributesBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
     private bool _isEnabled = true;
 
-    [ObservableProperty] private string _name = "Button";
-    
     public TrackButton() : this(null) { }
 
     public ITrack Clone(Panel parent) {

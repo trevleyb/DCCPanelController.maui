@@ -3,17 +3,18 @@ using DCCPanelController.Model;
 
 namespace DCCPanelController.Services.SampleData;
 
-public static class Panels {
+public static class SamplePanels {
     public static ObservableCollection<Panel> DemoData() {
-        var panels = new ObservableCollection<Panel>();
-        panels.Add(CreateTestPanel("Test Panel #1"));
-        panels.Add(CreateTestPanel("Test Panel #2"));
-        panels.Add(CreateTestPanel("Test Panel #3"));
-        return panels;
+        //var panels = new ObservableCollection<Panel>();
+        //panels.Add(CreateTestPanel("Test Panel #1"));
+        //panels.Add(CreateTestPanel("Test Panel #2"));
+        //panels.Add(CreateTestPanel("Test Panel #3"));
+        //return panels;
+        return new ObservableCollection<Panel>();
     }
 
-    private static Panel CreateTestPanel(string name) {
-        var panel = new Panel(name, 18, 12);
+    //private static Panel CreateTestPanel(string name) {
+        //var panel = new Panel(name, 18, 12);
 
         // panel.Tracks.Add(new TrackStraight() { X = 1, Y = 1, ImageRotation = 0 });
         // panel.Tracks.Add(new TrackStraight() { X = 2, Y = 2, ImageRotation = 90 });
@@ -39,6 +40,6 @@ public static class Panels {
 
         //panel.Tracks.Add(new TrackThreeway() { X = 13, Y = 11, ImageRotation = 0 });
 
-        return panel;
-    }
+        //return panel;
+    //}
 }

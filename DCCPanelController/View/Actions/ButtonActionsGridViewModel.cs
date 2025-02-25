@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
@@ -40,9 +41,9 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
     public double ControlHeight => 40 + (ButtonActions.Count * 40);
 
-    public ButtonActionsGridViewModel(ButtonActions buttonActions, ActionsContext context) {
+    public ButtonActionsGridViewModel(ButtonActions buttonActions, ActionsContext context, List<string> availableButtons) {
         ActionContext = context;
-        //TODO: AvailableButtons = FindAvailableButtons(track);
+        AvailableButtons = availableButtons.ToObservableCollection();
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
         ButtonActions = buttonActions;
         UpdateSelectableButtons();
@@ -84,20 +85,20 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     /// button is different from the current button, then add that button name
     /// to a collection of available buttons. 
     /// </summary>
-    private ObservableCollection<string> FindAvailableButtons(ITrack track) {
-        var foundButtons = new ObservableCollection<string>();
-        var thisButton = track as ITrackButton ;
-        if (track is { Parent: { Tracks: { } tracks } }) {
-            foreach (var trk in tracks) {
-                if (trk is ITrackButton trackButton) {
-                    if (thisButton != null && thisButton.ButtonID == trackButton.ButtonID) continue;
-                    if (string.IsNullOrWhiteSpace(trackButton.ButtonID)) continue;
-                    foundButtons.Add(trackButton.ButtonID);
-                }
-            }
-        }
-        return foundButtons;
-    }
+    // private ObservableCollection<string> FindAvailableButtons(ITrack track) {
+    //     var foundButtons = new ObservableCollection<string>();
+    //     var thisButton = track as ITrackButton ;
+    //     if (track is { Parent: { Tracks: { } tracks } }) {
+    //         foreach (var trk in tracks) {
+    //             if (trk is ITrackButton trackButton) {
+    //                 if (thisButton != null && thisButton.ButtonID == trackButton.ButtonID) continue;
+    //                 if (string.IsNullOrWhiteSpace(trackButton.ButtonID)) continue;
+    //                 foundButtons.Add(trackButton.ButtonID);
+    //             }
+    //         }
+    //     }
+    //     return foundButtons;
+    // }
 
     public void UpdateSelectableButtons(string? activeButton = "") {
         for (var i = AvailableButtons.Count - 1; i >= 0; i--) {

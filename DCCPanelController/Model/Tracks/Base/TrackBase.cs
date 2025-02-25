@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
@@ -54,6 +55,13 @@ public abstract partial class TrackBase : ObservableObject {
     protected void Initialise() {
         Setup();
     }
+
+    // This is needed for the JSON 
+    public virtual string TrackType {
+        get => GetType().Name;
+        set => _ = value;
+    }
+
     protected abstract void Setup();
     public virtual void CleanUp() { }
     
