@@ -50,7 +50,7 @@ public abstract partial class TrackPiece : Track {
         // Apply the various styles that need to be applied based on the 
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
-        var style = SvgStyles.GetStyle(TrackTypeEnum, TrackStyleImageEnum.Normal, Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackTypeEnum, TrackStyleImageEnum.Normal, Defaults);
         if (TrackColor is not null) {
             style = new SvgStyleBuilder()
                    .AddExistingStyle(style)

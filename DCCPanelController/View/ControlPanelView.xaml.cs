@@ -166,7 +166,7 @@ public partial class ControlPanelView : IDisposable {
         SetScreenSize(MainGrid.Width, MainGrid.Height);
         DynamicGrid.WidthRequest = ViewWidth;
         DynamicGrid.HeightRequest = ViewHeight;
-        DynamicGrid.BackgroundColor = Panel?.Defaults.BackgroundColor ?? Colors.Transparent;
+        DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
         if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {

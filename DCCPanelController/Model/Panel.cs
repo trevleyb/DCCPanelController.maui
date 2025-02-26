@@ -15,19 +15,20 @@ namespace DCCPanelController.Model;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableObject {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 24;
-    [ObservableProperty] private PanelDefaults _defaults = new();
-    [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+    [ObservableProperty] private string _description = string.Empty;
     [ObservableProperty] private int _sortOrder;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 24;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
 
     private ObservableCollection<ITrack> _tracks = [];
 
     [JsonConstructor]
-    private Panel() { }
+    private Panel() {
+        ResetToDefaults();
+    }
 
-    public Panel(Panels panels) {
+    public Panel(Panels panels) : this() {
         SetPanels(panels);
     }
 

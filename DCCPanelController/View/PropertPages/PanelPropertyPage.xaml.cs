@@ -96,7 +96,7 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
 
     private void ResetColorsClicked(object? sender, EventArgs e) {
         if (BindingContext is Panel panel) {
-            panel.Defaults.ResetToDefaults();
+            panel.ResetToDefaults();
         }
     }
 

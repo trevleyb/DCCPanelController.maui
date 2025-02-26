@@ -18,7 +18,7 @@ public partial class OperateViewModel : BaseViewModel {
         }
     }
 
-    public Color BackgroundColor => SelectedPanel?.Defaults.BackgroundColor ?? Colors.White;
+    public Color BackgroundColor => SelectedPanel?.BackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; set; }
 
     public string SetActivePanel(Panel? panelCarouselCurrentItem) {
