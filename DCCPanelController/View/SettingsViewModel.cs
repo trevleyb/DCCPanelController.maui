@@ -8,7 +8,7 @@ using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCWithrottleClient.ServiceHelper;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
 

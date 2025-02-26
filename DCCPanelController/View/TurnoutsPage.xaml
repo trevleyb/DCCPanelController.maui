@@ -1,21 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
     IconImageSource="turnouts_green.png"
     Title="Turnouts List"
     ios:Page.UseSafeArea="False"
-    x:Name="Page"
     x:Class="DCCPanelController.View.TurnoutsPage"
-    x:DataType="viewmodel:TurnoutsViewModel"
+    x:DataType="view:TurnoutsViewModel"
+    x:Name="Page"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:viewmodel="clr-namespace:DCCPanelController.ViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:components="clr-namespace:DCCPanelController.View.Components">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="plus_circle.png" Command="{Binding AddTurnoutCommand}" />
+        <ToolbarItem Command="{Binding AddTurnoutCommand}" IconImageSource="plus_circle.png" />
         <ToolbarItem IconImageSource="x_circle.png" IsEnabled="False" />
     </ContentPage.ToolbarItems>
 
@@ -26,26 +27,26 @@
             Padding="5">
             <HorizontalStackLayout Grid.Column="0">
                 <Button
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                    CommandParameter="ID"
+                    HorizontalOptions="Start"
                     Margin="10,0,10,0"
                     Style="{StaticResource ButtonLabel}"
-                    HorizontalOptions="Start"
-                    Text="{Binding ColumnLabelID}"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                    CommandParameter="ID" />
+                    Text="{Binding ColumnLabelID}" />
                 <Button
-                    Style="{StaticResource ButtonLabel}"
-                    Text="{Binding ColumnLabelName}"
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                    CommandParameter="SystemName"
                     HorizontalOptions="Start"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                    CommandParameter="SystemName" />
+                    Style="{StaticResource ButtonLabel}"
+                    Text="{Binding ColumnLabelName}" />
             </HorizontalStackLayout>
             <HorizontalStackLayout Grid.Column="1">
                 <Button
+                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                    CommandParameter="State"
                     HorizontalOptions="Start"
                     Style="{StaticResource ButtonLabel}"
-                    Text="{Binding ColumnLabelState}"
-                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                    CommandParameter="State" />
+                    Text="{Binding ColumnLabelState}" />
             </HorizontalStackLayout>
         </Grid>
 
@@ -70,30 +71,43 @@
                             <SwipeView.RightItems>
                                 <SwipeItems>
 
-                                    <!-- Edit SwipeItem -->
-                                    <SwipeItemView BackgroundColor="LightGreen"
-                                                   Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, 
-                                                    x:DataType=viewmodel:TurnoutsViewModel,Path=EditTurnoutCommand}"
-                                                   CommandParameter="{Binding}">
+                                    <!--  Edit SwipeItem  -->
+                                    <SwipeItemView
+                                        BackgroundColor="LightGreen"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=viewmodel:TurnoutsViewModel, Path=EditTurnoutCommand}"
+                                        CommandParameter="{Binding}">
                                         <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image Source="edit.png" WidthRequest="24" HeightRequest="24" />
-                                            <Label Text="Edit" VerticalOptions="Center" Padding="10,0,0,0" />
+                                            <Image
+                                                HeightRequest="24"
+                                                Source="edit.png"
+                                                WidthRequest="24" />
+                                            <Label
+                                                Padding="10,0,0,0"
+                                                Text="Edit"
+                                                VerticalOptions="Center" />
                                         </StackLayout>
                                     </SwipeItemView>
 
-                                    <!-- Delete SwipeItem -->
+                                    <!--  Delete SwipeItem  -->
                                     <SwipeItemView BackgroundColor="LightCoral">
                                         <SwipeItemView.Command>
                                             <Binding
-                                                Source="{RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}"
-                                                Path="DeleteTurnoutCommand" x:DataType="viewmodel:TurnoutsViewModel" />
+                                                Path="DeleteTurnoutCommand"
+                                                Source="{RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}"
+                                                x:DataType="view:TurnoutsViewModel" />
                                         </SwipeItemView.Command>
                                         <SwipeItemView.CommandParameter>
                                             <Binding />
                                         </SwipeItemView.CommandParameter>
                                         <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image Source="trash_2.png" WidthRequest="24" HeightRequest="24" />
-                                            <Label Text="Delete" VerticalOptions="Center" Padding="10,0,0,0" />
+                                            <Image
+                                                HeightRequest="24"
+                                                Source="trash_2.png"
+                                                WidthRequest="24" />
+                                            <Label
+                                                Padding="10,0,0,0"
+                                                Text="Delete"
+                                                VerticalOptions="Center" />
                                         </StackLayout>
                                     </SwipeItemView>
 
@@ -105,16 +119,13 @@
                                     <Grid ColumnDefinitions="*,100">
                                         <HorizontalStackLayout Grid.Column="0" HorizontalOptions="Start">
                                             <HorizontalStackLayout.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, 
-                                                    Path=EditTurnoutCommand, x:DataType=viewmodel:TurnoutsViewModel}"
-                                                    CommandParameter="{Binding .}" />
+                                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=viewmodel:TurnoutsViewModel}" CommandParameter="{Binding .}" />
                                             </HorizontalStackLayout.GestureRecognizers>
 
                                             <Label
-                                                Margin="10,0,10,0"
                                                 HorizontalOptions="Start"
                                                 LineBreakMode="NoWrap"
+                                                Margin="10,0,10,0"
                                                 Style="{StaticResource MediumLabel}"
                                                 Text="{Binding Id}"
                                                 VerticalOptions="Center" />
@@ -126,12 +137,12 @@
                                         </HorizontalStackLayout>
 
                                         <components:TurnoutStateControl
-                                            Grid.Column="1" Margin="0,0,10,0"
-                                            Turnout="{Binding}"
+                                            CanToggleState="true"
+                                            Grid.Column="1"
+                                            Margin="0,0,10,0"
                                             State="{Binding State}"
-                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:TurnoutsViewModel}}, 
-                                                    Path=SendTurnoutStateCommand, x:DataType=viewmodel:TurnoutsViewModel}"
-                                            CanToggleState="true" />
+                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=viewmodel:TurnoutsViewModel}"
+                                            Turnout="{Binding}" />
 
                                     </Grid>
                                     <BoxView
@@ -150,7 +161,7 @@
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
             HorizontalOptions="FillAndExpand" />
-            -->
+        -->
     </StackLayout>
 
 </ContentPage>

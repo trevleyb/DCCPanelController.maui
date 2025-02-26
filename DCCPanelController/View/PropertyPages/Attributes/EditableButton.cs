@@ -1,9 +1,6 @@
-using System.Diagnostics;
-using DCCPanelController.Helpers;
-using DCCPanelController.View.EditProperties.Base;
-using Switch = Microsoft.Maui.Controls.Switch;
+using DCCPanelController.View.PropertyPages.Base;
 
-namespace DCCPanelController.View.EditProperties.Attributes;
+namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableButtonAttribute : EditableAttribute, IEditableAttribute {

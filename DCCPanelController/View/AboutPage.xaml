@@ -1,15 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
     IconImageSource="help_circle.png"
     Title="About"
     iOsSpecific:Page.UseSafeArea="True"
     x:Class="DCCPanelController.View.AboutPage"
+    x:DataType="view:AboutViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
-    x:DataType="viewModel:AboutViewModel"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel">
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
         <ScrollView>
             <Label>About Page</Label>

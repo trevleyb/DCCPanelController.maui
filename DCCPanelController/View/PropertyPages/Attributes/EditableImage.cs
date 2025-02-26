@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
-using DCCPanelController.View.EditProperties.Base;
+using DCCPanelController.View.PropertyPages.Base;
 
-namespace DCCPanelController.View.EditProperties.Attributes;
+namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableImageAttribute : EditableAttribute, IEditableAttribute {

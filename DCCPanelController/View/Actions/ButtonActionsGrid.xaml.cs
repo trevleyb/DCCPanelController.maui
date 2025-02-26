@@ -1,4 +1,5 @@
 using DCCPanelController.Model;
+using DCCPanelController.View.PropertyPages;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;

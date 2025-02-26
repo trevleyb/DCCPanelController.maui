@@ -5,7 +5,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelID = "ID";
@@ -43,43 +43,43 @@ public partial class TurnoutsViewModel : BaseViewModel {
         List<Turnout> sortedTurnout;
         if (!_isAscending) {
             sortedTurnout = columnName.ToLower() switch {
-                "name"  => Turnouts.OrderBy(x => x.Name).ToList(),
-                "id"    => Turnouts.OrderBy(x => x.Id).ToList(),
-                "state" => Turnouts.OrderBy(x => x.State).ToList(),
-                _       => Turnouts.ToList()
+                "name"  => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Name).ToList(),
+                "id"    => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Id).ToList(),
+                "state" => Enumerable.OrderBy<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
+                _       => Enumerable.ToList<Turnout>(Turnouts)
             };
         } else {
             sortedTurnout = columnName.ToLower() switch {
-                "name"  => Turnouts.OrderByDescending(x => x.Name).ToList(),
-                "id"    => Turnouts.OrderByDescending(x => x.Id).ToList(),
-                "state" => Turnouts.OrderByDescending(x => x.State).ToList(),
-                _       => Turnouts.ToList()
+                "name"  => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Name).ToList(),
+                "id"    => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Id).ToList(),
+                "state" => Enumerable.OrderByDescending<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
+                _       => Enumerable.ToList<Turnout>(Turnouts)
             };
         }
         _sortColumn = columnName;
         _isAscending = !_isAscending;
 
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
-        OnPropertyChanged(nameof(Turnouts));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
         SetLabels();
     }
 
     [RelayCommand]
     private async Task EditTurnoutAsync(Turnout? turnout) {
         await NavigationService.NavigateToEditTurnoutAsync(turnout);
-        OnPropertyChanged(nameof(Turnouts));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
     }
 
     [RelayCommand]
     private async Task DeleteTurnoutAsync(Turnout turnout) {
         Turnouts.Remove(turnout);
-        OnPropertyChanged(nameof(Turnouts));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
     }
 
     [RelayCommand]
     private async Task AddTurnoutAsync() {
         var turnout = new Turnout {
-            Id = TurnoutAnalyzer.GetUniqueID(Turnouts.ToList()),
+            Id = TurnoutAnalyzer.GetUniqueID(Enumerable.ToList<Turnout>(Turnouts)),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
             Default = TurnoutStateEnum.Closed,
@@ -88,14 +88,14 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
         var result = await NavigationService.NavigateToEditTurnoutAsync(turnout);
         if (result is not null) Turnouts.Add(result);
-        OnPropertyChanged(nameof(Turnouts));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
     }
 
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
-        OnPropertyChanged(nameof(Turnouts));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
     }
 
     [RelayCommand]
@@ -108,6 +108,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
         };
 
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
-        OnPropertyChanged(nameof(Turnouts));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
     }
 }

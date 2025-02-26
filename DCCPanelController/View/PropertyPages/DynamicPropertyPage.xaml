@@ -1,9 +1,10 @@
 <!--  PanelPropertyPage.xaml  -->
 <ContentPage
     BackgroundColor="Transparent"
-    x:Class="DCCPanelController.View.PropertPages.DynamicPropertyPage"
-    x:DataType="viewModel:DynamicPropertyPageViewModel"
+    x:Class="DCCPanelController.View.PropertyPages.DynamicPropertyPage"
+    x:DataType="propertyPages:DynamicPropertyPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:propertyPages="clr-namespace:DCCPanelController.View.PropertyPages"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModel="clr-namespace:DCCPanelController.ViewModel"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">

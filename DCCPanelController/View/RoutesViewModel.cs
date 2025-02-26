@@ -5,7 +5,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class RoutesViewModel : BaseViewModel {
     private const string LabelID = "ID";
@@ -35,17 +35,17 @@ public partial class RoutesViewModel : BaseViewModel {
         List<Route> sortedRoutes;
         if (!_isAscending) {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Routes.OrderBy(x => x.Name).ToList(),
-                "id"    => Routes.OrderBy(x => x.Id).ToList(),
-                "state" => Routes.OrderBy(x => x.State).ToList(),
-                _       => Routes.ToList()
+                "name"  => Enumerable.OrderBy<Route, string>(Routes, x => x.Name).ToList(),
+                "id"    => Enumerable.OrderBy<Route, string>(Routes, x => x.Id).ToList(),
+                "state" => Enumerable.OrderBy<Route, RouteStateEnum>(Routes, x => x.State).ToList(),
+                _       => Enumerable.ToList<Route>(Routes)
             };
         } else {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Routes.OrderByDescending(x => x.Name).ToList(),
-                "id"    => Routes.OrderByDescending(x => x.Id).ToList(),
-                "state" => Routes.OrderByDescending(x => x.State).ToList(),
-                _       => Routes.ToList()
+                "name"  => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Name).ToList(),
+                "id"    => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Id).ToList(),
+                "state" => Enumerable.OrderByDescending<Route, RouteStateEnum>(Routes, x => x.State).ToList(),
+                _       => Enumerable.ToList<Route>(Routes)
             };
         }
 
@@ -53,7 +53,7 @@ public partial class RoutesViewModel : BaseViewModel {
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;
-        OnPropertyChanged(nameof(Routes));
+        OnPropertyChanged(nameof(ViewModel.RoutesViewModel.Routes));
         SetLabels();
     }
 
@@ -63,7 +63,7 @@ public partial class RoutesViewModel : BaseViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
-    [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
+    [RelayCommand(CanExecute = nameof(ViewModel.RoutesViewModel.CanToggleRoutesState))]
     public async Task ToggleRoutesState(Route? route) {
         if (route == null) return;
         route.State = route.State switch {

@@ -1,10 +1,9 @@
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.ViewModel;
 #if IOS
 using UIKit;
 #endif
 
-namespace DCCPanelController.View.PropertPages;
+namespace DCCPanelController.View.PropertyPages;
 
 public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 

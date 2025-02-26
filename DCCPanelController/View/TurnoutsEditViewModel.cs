@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private TurnoutStateEnum _currentState;
@@ -35,8 +35,8 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     private async Task ToggleTurnoutStateAsync() {
         if (Turnout == null) return;
         if (!string.IsNullOrEmpty(Turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(Turnout.Id, CurrentState);
-        OnPropertyChanged(nameof(CurrentState));
-        OnPropertyChanged(nameof(Turnout));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsEditViewModel.CurrentState));
+        OnPropertyChanged(nameof(ViewModel.TurnoutsEditViewModel.Turnout));
     }
 
     [RelayCommand]

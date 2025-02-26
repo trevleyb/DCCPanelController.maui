@@ -7,7 +7,7 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.StyleManager;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : BaseViewModel {
 

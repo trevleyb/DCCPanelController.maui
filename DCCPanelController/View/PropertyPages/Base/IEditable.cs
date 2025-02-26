@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.EditProperties.Base;
+namespace DCCPanelController.View.PropertyPages.Base;
 
 public interface IEditableAttribute {
     IView? CreateView(EditableDetails value);

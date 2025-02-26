@@ -1,6 +1,4 @@
-using DCCPanelController.ViewModel;
-
-namespace DCCPanelController.View.Informational;
+namespace DCCPanelController.View;
 
 public class WelcomePageViewModel : BaseViewModel {
     

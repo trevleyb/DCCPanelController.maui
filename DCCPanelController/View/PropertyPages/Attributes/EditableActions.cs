@@ -2,10 +2,9 @@ using System.Diagnostics;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.View.Actions;
-using DCCPanelController.View.EditProperties.Base;
-using DCCPanelController.ViewModel;
+using DCCPanelController.View.PropertyPages.Base;
 
-namespace DCCPanelController.View.EditProperties.Attributes;
+namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {

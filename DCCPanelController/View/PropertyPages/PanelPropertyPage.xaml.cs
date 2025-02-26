@@ -6,7 +6,7 @@ using UIKit;
 using UIModalPresentationStyle = UIKit.UIModalPresentationStyle;
 #endif
 
-namespace DCCPanelController.View.PropertPages;
+namespace DCCPanelController.View.PropertyPages;
 
 public partial class PanelPropertyPage : ContentPage, IPropertyPage {
 

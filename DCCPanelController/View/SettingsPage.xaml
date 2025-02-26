@@ -5,7 +5,7 @@
     Title="Settings"
     iOsSpecific:Page.UseSafeArea="True"
     x:Class="DCCPanelController.View.SettingsPage"
-    x:DataType="viewmodel:SettingsViewModel"
+    x:DataType="view:SettingsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:model="clr-namespace:DCCPanelController.Model"
@@ -179,9 +179,9 @@
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer Tapped="OnLabelTapped" />
                                             <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodel:SettingsViewModel}}, Path=SelectWiServerCommand}"
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsViewModel}}, Path=SelectWiServerCommand}"
                                                 CommandParameter="{Binding .}"
-                                                x:DataType="{x:Type viewmodel:SettingsViewModel}" />
+                                                x:DataType="{x:Type view:SettingsViewModel}" />
                                         </Grid.GestureRecognizers>
                                         <Label
                                             Grid.Column="0"
@@ -243,7 +243,7 @@
                     ItemsUpdatingScrollMode="KeepLastItemInView"
                     x:Name="MessagesList">
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="viewmodel:SettingsMessage">
+                        <DataTemplate x:DataType="view:SettingsMessage">
                             <HorizontalStackLayout>
                                 <Label
                                     Style="{StaticResource MediumLabel}"

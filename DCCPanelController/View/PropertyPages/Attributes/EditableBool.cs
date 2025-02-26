@@ -1,9 +1,9 @@
 using System.Diagnostics;
 using DCCPanelController.Helpers;
-using DCCPanelController.View.EditProperties.Base;
+using DCCPanelController.View.PropertyPages.Base;
 using Switch = Microsoft.Maui.Controls.Switch;
 
-namespace DCCPanelController.View.EditProperties.Attributes;
+namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableBoolAttribute : EditableAttribute, IEditableAttribute {

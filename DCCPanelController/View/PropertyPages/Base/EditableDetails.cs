@@ -1,6 +1,6 @@
 using System.Reflection;
 
-namespace DCCPanelController.View.EditProperties.Base;
+namespace DCCPanelController.View.PropertyPages.Base;
 
 /// <summary>
 ///     Holds information about the editable properties in a provided object

@@ -5,6 +5,11 @@ using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.ViewModel;
 using Microsoft.Extensions.Logging;
+using OperateViewModel = DCCPanelController.View.OperateViewModel;
+using PanelsViewerViewModel = DCCPanelController.View.PanelsViewerViewModel;
+using RoutesViewModel = DCCPanelController.View.RoutesViewModel;
+using SettingsViewModel = DCCPanelController.View.SettingsViewModel;
+using TurnoutsViewModel = DCCPanelController.View.TurnoutsViewModel;
 
 namespace DCCPanelController;
 

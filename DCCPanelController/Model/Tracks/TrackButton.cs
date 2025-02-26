@@ -5,7 +5,6 @@ using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.View.EditProperties.Attributes;
 using DCCPanelController.ViewModel;
 using Plugin.Maui.Audio;
 

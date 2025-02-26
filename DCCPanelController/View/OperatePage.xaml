@@ -4,7 +4,7 @@
     BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
     Title="{Binding SelectedPanel.Title, FallbackValue='DCC Panel Controller'}"
     x:Class="DCCPanelController.View.OperatePage"
-    x:DataType="viewModel:OperateViewModel"
+    x:DataType="view:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:model="clr-namespace:DCCPanelController.Model"
@@ -89,9 +89,9 @@
                         <CarouselView.ItemTemplate>
                             <DataTemplate>
                                 <view:ControlPanelView
-                                    BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=BackgroundColor}"
+                                    BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=BackgroundColor}"
                                     HorizontalOptions="Fill"
-                                    Panel="{Binding Source={RelativeSource AncestorType={x:Type viewModel:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
+                                    Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=viewModel:OperateViewModel, Path=SelectedPanel}"
                                     TrackPieceChanged="PanelView_OnTrackPieceChanged"
                                     TrackPieceTapped="PanelView_OnTrackPieceTapped"
                                     VerticalOptions="Fill"

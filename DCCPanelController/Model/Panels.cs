@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace DCCPanelController.Model.Tracks;
+namespace DCCPanelController.Model;
 
 public class Panels : ObservableCollection<Panel> {
 

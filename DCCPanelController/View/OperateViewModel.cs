@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private bool? _isConnected;

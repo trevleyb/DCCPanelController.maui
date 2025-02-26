@@ -6,9 +6,9 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.View.EditProperties.Base;
+using DCCPanelController.View.PropertyPages.Base;
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View.PropertyPages;
 
 public enum ActionsContext {
     Button,

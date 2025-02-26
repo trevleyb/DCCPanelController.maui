@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.View.EditProperties.Base;
+using DCCPanelController.View.PropertyPages.Base;
 
-namespace DCCPanelController.View.EditProperties.Attributes;
+namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableTrackImageAttribute : EditableAttribute, IEditableAttribute {

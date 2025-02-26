@@ -1,6 +1,6 @@
 using DCCPanelController.Helpers;
 
-namespace DCCPanelController.View.EditProperties.Base;
+namespace DCCPanelController.View.PropertyPages.Base;
 
 [AttributeUsage(AttributeTargets.Property)]
 public abstract class EditableAttribute : Attribute {

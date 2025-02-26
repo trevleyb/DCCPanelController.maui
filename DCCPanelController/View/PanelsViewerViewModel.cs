@@ -2,16 +2,14 @@ using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
-using DCCPanelController.Model.Tracks;
 using DCCPanelController.Services;
-using DCCPanelController.View;
-using DCCPanelController.View.PropertPages;
+using DCCPanelController.View.PropertyPages;
 #if IOS || MACCATALYST
 using CoreGraphics;
 using UIKit;
 #endif
 
-namespace DCCPanelController.ViewModel;
+namespace DCCPanelController.View;
 
 public partial class PanelsViewerViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
@@ -20,7 +18,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))]
-    [NotifyPropertyChangedFor(nameof(SidePanelWidth))]
+    [NotifyPropertyChangedFor(nameof(ViewModel.PanelsViewerViewModel.SidePanelWidth))]
     [NotifyPropertyChangedFor(nameof(ShouldShowPanelView))]
     private bool _isSidePanelOpen;
 
@@ -53,8 +51,8 @@ public partial class PanelsViewerViewModel : BaseViewModel {
         SelectedPanel = null;
         SelectedPanel = panel ?? Panels.FirstOrDefault();
         OnPropertyChanged(nameof(IsPanelSelected));
-        OnPropertyChanged(nameof(Panels));
-        OnPropertyChanged(nameof(SelectedPanel));
+        OnPropertyChanged(nameof(ViewModel.PanelsViewerViewModel.Panels));
+        OnPropertyChanged(nameof(ViewModel.PanelsViewerViewModel.SelectedPanel));
     }
 
     public async void Save() {
