@@ -11,7 +11,7 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackButton(Panel? parent = null) : TrackBase(parent), ITrack, ITrackButton, ITrackSymbol {
+public partial class TrackButton(Panel? parent = null) : Track(parent), ITrack, ITrackButton, ITrackSymbol {
 
     public TrackButton() : this(null) {
         PropertyChanged += OnPropertyChanged;

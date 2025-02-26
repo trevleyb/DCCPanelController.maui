@@ -6,7 +6,7 @@ using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackPiece : TrackBase {
+public abstract partial class TrackPiece : Track {
 
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]

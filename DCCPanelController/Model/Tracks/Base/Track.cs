@@ -8,7 +8,7 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackBase : ObservableObject {
+public abstract partial class Track : ObservableObject {
     
     public Guid Id { get; set; } = Guid.NewGuid();
 
@@ -30,7 +30,7 @@ public abstract partial class TrackBase : ObservableObject {
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] protected int RotationIncrement = 45;
 
-    protected TrackBase(Panel? parent = null) {
+    protected Track(Panel? parent = null) {
         Initialise();
         OnPropertyChanged(nameof(TrackView));
         if (parent != null) Parent = parent;

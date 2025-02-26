@@ -8,7 +8,7 @@ using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
+public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymbol, ITrack {
 
     public string Name => "Text Block";
 
