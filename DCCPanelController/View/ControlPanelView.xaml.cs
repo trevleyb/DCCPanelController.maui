@@ -71,14 +71,19 @@ public partial class ControlPanelView : IDisposable {
     ///     which cause other issues if not cleared. Clearing makes it regenerate.
     /// </summary>
     public void Dispose() {
-        // Console.WriteLine("ControlPanelView.Dispose");
-        // MainGrid.SizeChanged -= OnGridSizeChanged;
-        // if (Panel is { } panel) {
-        //     foreach (var track in panel.Tracks) {
-        //         track.PropertyChanged -= OnTrackPieceChanged;
-        //         track.TrackViewRef = null;
-        //     }
-        // }
+        Console.WriteLine("ControlPanelView.Dispose Started");
+        MainGrid.SizeChanged -= OnGridSizeChanged;
+        if (Panel is { } panel) {
+            try {
+                foreach (var track in panel.Tracks) {
+                    track.PropertyChanged -= OnTrackPieceChanged;
+                    track.TrackViewRef = null;
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"ControlPanelView.Dispose Error: {ex.Message}");
+            }
+        }
+        Console.WriteLine("ControlPanelView.Dispose Finished");
     }
 
     public event EventHandler<ITrack>? TrackPieceTapped;
@@ -107,7 +112,6 @@ public partial class ControlPanelView : IDisposable {
 
     private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
-        Console.WriteLine(bindable.GetType().Name + $" OnDesignModeChanged to {control.DesignMode}");
         if (control.DesignMode) {
             var dropRecogniser = new DropGestureRecognizer();
             dropRecogniser.Drop += control.DropTrackOnPanel;
@@ -497,14 +501,14 @@ public partial class ControlPanelView : IDisposable {
 
                             break;
                         default:
-                            Console.WriteLine($"Invalid source: '{source}'");
+                            Console.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
                         }
                     }
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine("Error dropping item: " + ex.Message);
+            Console.WriteLine("ERROR: Error dropping item: " + ex.Message);
         }
 
         _lastDragCol = 0;
@@ -617,7 +621,6 @@ internal class GridLinesDrawable(int rows, int columns, Color? gridColor = null,
     public void Draw(ICanvas canvas, RectF dirtyRect) {
         var cellWidth = dirtyRect.Width / columns;
         var cellHeight = dirtyRect.Height / rows;
-        Console.WriteLine("Drawing the Grid");
         canvas.StrokeColor = GridColor;
         for (var i = 0; i <= rows; i++) {
             canvas.StrokeSize = i == 0 || i == rows ? GridWidth : LineWidth;

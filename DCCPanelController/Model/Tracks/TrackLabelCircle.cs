@@ -9,6 +9,9 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackLabelCircle(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
+    // TODO: Thoughts, could a Label Circle be a special case that is linked to 
+    //       a turnout and shows the ID of the turnout?? And a Line to the Turnout?
+    
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Green;
 
