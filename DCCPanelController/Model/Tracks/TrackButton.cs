@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -17,8 +18,9 @@ public partial class TrackButton(Panel? parent = null) : TrackButtonBase(parent)
     public TrackButton() : this(null) { }
 
     public ITrack Clone(Panel parent) {
-        var cloned = Clone<TrackButton>(parent) as TrackButton;
-        cloned.ButtonID = "";       // TODO: Add this so it takes the last known button and increments. 
+        var cloned = Clone<TrackButton>(parent);
+        cloned.ButtonID = cloned?.Parent?.NextButtonID() ?? "";
+        Debug.Assert(cloned != null, nameof(cloned) + " != null");
         return cloned;
     }
 

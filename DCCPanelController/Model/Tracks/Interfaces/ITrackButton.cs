@@ -5,6 +5,9 @@ namespace DCCPanelController.Model.Tracks.Interfaces;
 /// </summary>
 public interface ITrackButton : ITrack, ITrackInteractive {
     string ButtonID { get; set; }
-    void SetButtonState(ButtonStateEnum state);
-    void ExecButtonState(ButtonStateEnum state);
+    ButtonActions ButtonActions { get; }
+    TurnoutActions TurnoutActions { get; }
+    bool SetButtonState(ButtonStateEnum state);
+    bool ExecButtonState();
+    bool ExecButtonState(ButtonStateEnum state);
 }

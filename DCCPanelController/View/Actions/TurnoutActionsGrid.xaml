@@ -151,7 +151,7 @@
                                         Grid.Column="1"
                                         HorizontalOptions="Start"
                                         Margin="2,0,0,0"
-                                        State="{Binding WhenClosedOrActive, Mode=TwoWay}"
+                                        State="{Binding WhenClosedStraight, Mode=TwoWay}"
                                         UnknownText="Leave-AsIs" />
 
                                     <components:TurnoutStateControl
@@ -160,7 +160,7 @@
                                         Grid.Column="2"
                                         HorizontalOptions="Start"
                                         Margin="2,0,0,0"
-                                        State="{Binding WhenThrownOrInActive, Mode=TwoWay}"
+                                        State="{Binding WhenThrownDiverging, Mode=TwoWay}"
                                         UnknownText="Leave-AsIs" />
 
                                     <CheckBox

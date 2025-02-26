@@ -6,6 +6,9 @@ namespace DCCPanelController.Model.Tracks.Interfaces;
 public interface ITrackTurnout : ITrack, ITrackInteractive {
     string TurnoutID { get; set; }
     string Address { get; set; }
-    void SetTurnoutState(TurnoutStateEnum state);
-    void ExecTurnoutState(TurnoutStateEnum state);
+    ButtonActions ButtonActions { get; }
+    TurnoutActions TurnoutActions { get; }
+    bool SetTurnoutState(TurnoutStateEnum state);
+    bool ExecTurnoutState();
+    bool ExecTurnoutState(TurnoutStateEnum state);
 }

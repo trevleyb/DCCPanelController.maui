@@ -17,7 +17,7 @@ public partial class TurnoutActionsGrid : ContentView {
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {
         if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem.ToString();
+            var selectedItem = picker.SelectedItem?.ToString() ?? "";
             if (BindingContext is TurnoutActionsGridViewModel viewModel) {
                 viewModel.UpdateSelectableTurnouts(selectedItem);
                 picker.ItemsSource = viewModel.SelectableTurnouts;
@@ -29,12 +29,12 @@ public partial class TurnoutActionsGrid : ContentView {
 
     private void IDPicker_OnUnfocused(object? sender, FocusEventArgs e) {
         if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem.ToString();
+            var selectedItem = picker.SelectedItem?.ToString() ?? "";
             if (BindingContext is TurnoutActionsGridViewModel viewModel) {
                 picker.ItemsSource = viewModel.AvailableTurnouts;
                 picker.SelectedItem = selectedItem;
                 picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.AvailableTurnouts.IndexOf(selectedItem);
-                viewModel.UpdateSelectableTurnouts();
+                //viewModel.UpdateSelectableTurnouts();
             }
         }
     }

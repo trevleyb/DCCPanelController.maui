@@ -12,7 +12,7 @@ public partial class TrackCornerContinuation(Panel? parent = null, TrackStyleTyp
         return Clone<TrackCornerContinuation>(parent);
     }
 
-    [ObservableProperty] private string _name = "Corner Track (Continued)";
+    [ObservableProperty] private string _name = "Corner Track";
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "ContinuationCA1", (0, 0), (90, 90), (180, 180), (270, 270));

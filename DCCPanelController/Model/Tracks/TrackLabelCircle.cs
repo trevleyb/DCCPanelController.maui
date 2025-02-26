@@ -37,7 +37,7 @@ public partial class TrackLabelCircle(Panel? parent = null) : TrackBase(parent),
     }
 
     [ObservableProperty]
-    private string _name = "Circle wth Image";
+    private string _name = "Circle Image";
     
     protected override void Setup() {
         Layer = 2;

@@ -63,7 +63,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [RelayCommand]
     private void AddRow() {
         if (SelectableTurnouts.Count > 0) {
-            TurnoutActions.Add(new TurnoutAction() { Id = SelectableTurnouts[0], WhenClosedOrActive = TurnoutStateEnum.Closed, WhenThrownOrInActive = TurnoutStateEnum.Thrown, Cascade = false });
+            TurnoutActions.Add(new TurnoutAction() { Id = SelectableTurnouts[0], WhenClosedStraight = TurnoutStateEnum.Closed, WhenThrownDiverging = TurnoutStateEnum.Thrown, Cascade = false });
         }
         UpdateSelectableTurnouts();
     }
@@ -114,11 +114,11 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
             }
         }
         OnPropertyChanged(nameof(TurnoutActions));
-        OnPropertyChanged(nameof(IsGridVisible));
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
-        OnPropertyChanged(nameof(NoDataText));
         OnPropertyChanged(nameof(SelectableTurnouts));
         OnPropertyChanged(nameof(AvailableTurnouts));
         OnPropertyChanged(nameof(ControlHeight));
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        OnPropertyChanged(nameof(IsGridVisible));
+        OnPropertyChanged(nameof(NoDataText));
     }
 }

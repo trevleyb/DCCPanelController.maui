@@ -82,7 +82,7 @@
         x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" x:Name="LeftColumn" />
-            <ColumnDefinition Width="80" x:Name="RightColumn" />
+            <ColumnDefinition Width="60" x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
 
         <!--  Left Pane  -->
@@ -101,7 +101,6 @@
                 VerticalOptions="Fill"
                 x:Name="PanelView" />
         </ContentView>
-
 
         <!--  Right Pane  -->
         <ContentView
@@ -137,35 +136,35 @@
                                 StrokeThickness="2"
                                 ToolTipProperties.Text="{Binding Name}"
                                 VerticalOptions="Center">
-                                <StackLayout
-                                    HeightRequest="48"
+                                <Grid
+                                    HeightRequest="24"
                                     Margin="0"
                                     Padding="0"
-                                    WidthRequest="48">
-                                    <Label
-                                        FontSize="8"
-                                        HorizontalTextAlignment="Center"
-                                        IsVisible="{Binding ShowAboveSymbol}"
-                                        LineBreakMode="TailTruncation"
-                                        Margin="0,5,0,-10"
-                                        Text="{Binding Name}"
-                                        VerticalOptions="End" />
+                                    WidthRequest="24">
+                                    <!--  <Label  -->
+                                    <!--  FontSize="7"  -->
+                                    <!--  HorizontalTextAlignment="Center"  -->
+                                    <!--  IsVisible="{Binding ShowAboveSymbol}"  -->
+                                    <!--  LineBreakMode="WordWrap"  -->
+                                    <!--  Margin="0,0,0,0"  -->
+                                    <!--  Text="{Binding Name}"  -->
+                                    <!--  VerticalOptions="Start"  -->
+                                    <!--  WidthRequest="48" />  -->
                                     <Image
-                                        HeightRequest="48"
                                         HorizontalOptions="Center"
                                         Rotation="{Binding ImageRotation}"
                                         Source="{Binding SymbolView}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="48" />
-                                    <Label
-                                        FontSize="8"
-                                        HorizontalTextAlignment="Center"
-                                        IsVisible="{Binding ShowBelowSymbol}"
-                                        LineBreakMode="TailTruncation"
-                                        Margin="0,-10,0,10"
-                                        Text="{Binding Name}"
-                                        VerticalOptions="End" />
-                                </StackLayout>
+                                        VerticalOptions="Center" />
+                                    <!--  <Label  -->
+                                    <!--  FontSize="7"  -->
+                                    <!--  HorizontalTextAlignment="Center"  -->
+                                    <!--  IsVisible="{Binding ShowBelowSymbol}"  -->
+                                    <!--  LineBreakMode="WordWrap"  -->
+                                    <!--  Margin="0,0,0,0"  -->
+                                    <!--  Text="{Binding Name}"  -->
+                                    <!--  VerticalOptions="End"  -->
+                                    <!--  WidthRequest="48" />  -->
+                                </Grid>
                                 <Border.GestureRecognizers>
                                     <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
                                 </Border.GestureRecognizers>

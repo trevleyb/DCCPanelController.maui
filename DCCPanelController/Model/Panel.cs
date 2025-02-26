@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -22,18 +23,22 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private int _sortOrder;
 
+    [JsonIgnore] public Panels Panels { get; private set; } = [];
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
     [JsonIgnore] public List<ITrackTurnout> AllNamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
     [JsonIgnore] public List<ITrackButton> AllNamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
     [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.TurnoutID)).ToList() ?? [];
     [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ButtonID)).ToList() ?? [];
-    [JsonIgnore] public Panels Panels { get; private set; } = [];
+
+    public ITrackTurnout? GetTurnout(string id) => AllNamedTurnouts.FirstOrDefault(t => t.TurnoutID == id);
+    public ITrackButton? GetButton(string id) => AllNamedButtons.FirstOrDefault(t => t.ButtonID == id);
 
     private ObservableCollection<ITrack> _tracks = [];
 
     [JsonConstructor]
     private Panel() { }
+
     public Panel(Panels panels) {
         SetPanels(panels);
     }
@@ -41,8 +46,8 @@ public partial class Panel : ObservableObject {
     public void SetPanels(Panels panels) {
         Panels = panels;
     }
-    
-    public string Title { 
+
+    public string Title {
         get {
             if (string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Description)) return "DCC Panel Controller";
             if (!string.IsNullOrEmpty(Name) && string.IsNullOrEmpty(Description)) return Name;
@@ -50,7 +55,6 @@ public partial class Panel : ObservableObject {
             return Name + $" - {Description}";
         }
     }
-
 
     public string Id { get; init; } = Guid.NewGuid().ToString();
 
@@ -62,6 +66,7 @@ public partial class Panel : ObservableObject {
             } catch (Exception ex) {
                 Console.WriteLine("Failed to set Tracks: " + ex.Message);
             }
+
             SetParent(_tracks, this);
             OnPropertyChanged();
         }
@@ -123,4 +128,71 @@ public partial class Panel : ObservableObject {
         var panel = JsonSerializer.Deserialize<Panel>(copy, SettingsService.PanelSerializerOptions);
         return panel ?? throw new Exception("Failed to clone panel");
     }
+
+    public string NextTurnoutID() => GetNextName(AllNamedTurnouts, t => t.TurnoutID, "TRN" );
+    public string NextButtonID() => GetNextName(AllNamedButtons, t => t.ButtonID, "BTN" );
+    
+    public static string GetNextName<T>(IEnumerable<T> allNamedItems, Func<T, string> idSelector, string defaultPrefix = "UKN") {
+        // Step 1: Extract IDs using the provided selector and sort them for pattern detection.
+        var ids = allNamedItems
+                 .Select(idSelector)
+                 .OrderBy(id => id)
+                 .ToList();
+
+        if (!ids.Any()) return $"{defaultPrefix}1"; // Default name if the list is empty.
+
+        // Step 2: Look for numerical patterns (Prefix + Number)
+        var numericalPattern = ids
+                              .Select(id => {
+                                   var match = Regex.Match(id, @"^(.*?)(\d+)$"); // Match a prefix and a number (e.g., "Button123").
+                                   if (match.Success) {
+                                       return (Prefix: match.Groups[1].Value, Number: int.Parse(match.Groups[2].Value));
+                                   }
+
+                                   return (Prefix: id, Number: 0); // No numerical suffix, treat as 0.
+                               })
+                              .OrderBy(item => item.Number)
+                              .ToList();
+
+        if (numericalPattern.Count > 0) {
+            var latestItem = numericalPattern.Last(); // Get the last item in the sequence.
+            var nextNumber = latestItem.Number + 1;   // Increment the number for the new item.
+            return $"{latestItem.Prefix}{nextNumber}";
+        }
+
+        // Step 3: Look for alphabetical patterns (e.g., ButtonA, ButtonB).
+        var alphabeticalPattern = ids
+                                 .Where(id => Regex.IsMatch(id, @"^[a-zA-Z]+$")) // Match IDs containing only letters.
+                                 .OrderBy(id => id)
+                                 .ToList();
+
+        if (alphabeticalPattern.Count > 0) {
+            var lastID = alphabeticalPattern.Last();          // Get the last ID in the alphabetical sequence.
+            var nextID = IncrementAlphabeticalString(lastID); // Increment alphabetically.
+            return nextID;
+        }
+
+        // Step 4: Fallback if no discernible pattern is found (e.g., "UnnamedItem1").
+        return $"{defaultPrefix}{ids.Count + 1}";
+    }
+
+// Helper Method: Increment alphabetical strings (e.g., "A" -> "B", "Z" -> "AA").
+    private static string IncrementAlphabeticalString(string input) {
+        var chars = input.ToCharArray();
+        for (int i = chars.Length - 1; i >= 0; i--) {
+            if (chars[i] < 'Z') {
+                chars[i]++;
+                return new string(chars);
+            } else {
+                chars[i] = 'A';
+                if (i == 0) {
+                    // If we're at the beginning and need to carry over (e.g., "Z" -> "AA").
+                    return 'A' + new string(chars);
+                }
+            }
+        }
+
+        return new string(chars);
+    }
+
 }

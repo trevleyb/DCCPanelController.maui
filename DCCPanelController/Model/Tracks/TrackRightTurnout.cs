@@ -11,7 +11,7 @@ public partial class TrackRightTurnout(Panel? parent = null, TrackStyleTypeEnum 
     public ITrack Clone(Panel parent) {
         var clone = Clone<TrackRightTurnout>(parent) as TrackRightTurnout;
         clone.Address = "";
-        clone.Name = "";
+        clone.Name = parent.NextTurnoutID();
         return clone;
     }
 

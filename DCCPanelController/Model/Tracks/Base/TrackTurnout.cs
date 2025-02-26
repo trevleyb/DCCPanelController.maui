@@ -16,16 +16,16 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
     [ObservableProperty] private Turnout? _turnout;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     [property: JsonIgnore] private bool _isOccupied;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
-    
+
     [ObservableProperty]
     [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
     private string _turnoutID = string.Empty;
-    
+
     [ObservableProperty]
     [property: EditableString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
     private string _address = string.Empty;
@@ -33,23 +33,23 @@ public abstract partial class TrackTurnoutBase : TrackBase {
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 3)]
     private bool _isHidden;
-    
+
     [ObservableProperty]
-    [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order=4)]
+    [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 4)]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order=5)]
+    [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     [ObservableProperty]
-    [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order=10)]
+    [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 10)]
     private TurnoutActions _turnoutActions = [];
 
     [ObservableProperty]
     [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
     private ButtonActions _buttonActions = [];
-    
+
     public override void CleanUp() {
         for (var i = ButtonActions.Count - 1; i >= 0; i--) {
             var action = ButtonActions[i];
@@ -66,7 +66,6 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         }
     }
 
-    
     private TurnoutsService? _turnoutsService;
 
     protected TrackTurnoutBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
@@ -132,19 +131,24 @@ public abstract partial class TrackTurnoutBase : TrackBase {
         }
     }
 
-    public void SetTurnoutState(TurnoutStateEnum state) {
-        if (Turnout is { } turnout) {
-            turnout.State = turnout.State switch {
-                TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-                TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-                _                       => TurnoutStateEnum.Closed
-            };
-        }
+    public bool SetTurnoutState(TurnoutStateEnum state) {
+        if (state == TurnoutStateEnum.Unknown) return false;
+        TrackImageEnum = TrackImageEnum switch {
+            TrackStyleImageEnum.Diverging => TrackStyleImageEnum.Straight,
+            TrackStyleImageEnum.Straight  => TrackStyleImageEnum.Diverging,
+            TrackStyleImageEnum.Normal    => TrackStyleImageEnum.Diverging,
+            _                             => TrackStyleImageEnum.Normal
+        };
+        OnPropertyChanged(nameof(TrackView));
+        return true;
     }
 
-    public void ExecTurnoutState(TurnoutStateEnum state) {
+    public bool ExecTurnoutState() => ExecTurnoutState(GetCurrentTurnoutState);
+
+    public bool ExecTurnoutState(TurnoutStateEnum state) {
         SetTurnoutState(state);
         if (Turnout is { } turnout) ThrowTurnout(turnout, turnout.State);
+        return true;
     }
 
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

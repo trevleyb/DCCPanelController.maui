@@ -90,7 +90,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             WidthRequest = 16,
             VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Start,
-            Margin = new Thickness(5, 0, 5, 0),
+            Margin = new Thickness(0, 0, 5, 0),
             Rotation = 0 // Expanded state rotation (facing down)
         };
         chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);

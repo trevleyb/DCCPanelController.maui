@@ -518,6 +518,8 @@ public partial class ControlPanelView : IDisposable {
     }
 
     private void ResizeTrack(ITrack? track, int newCol, int newRow) {
+        if (track is null) return;
+        
         // Original position and size
         var originalX = track.X;
         var originalY = track.Y;

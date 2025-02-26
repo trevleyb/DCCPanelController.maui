@@ -49,10 +49,10 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
 
-    //private void ToggleValidation(object? sender, EventArgs e) {
-    //    PanelView.ShowTrackErrors = !PanelView.ShowTrackErrors;
-    //    PanelView.RebuildGrid(true);
-    //}
+    private void ToggleValidation(object? sender, EventArgs e) {
+        PanelView.ShowTrackErrors = !PanelView.ShowTrackErrors;
+        PanelView.RebuildGrid(true);
+    }
 
     private async void ShowPropertyPage(object? sender, EventArgs e) {
         try {
@@ -77,11 +77,14 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private async Task ShowEditPropertyPageAsync(object? sender, EventArgs e) {
-        if (ViewModel.HasSelectedTracks) {
-            foreach (var track in ViewModel.Panel.SelectedTracks) {
-                await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
-                PanelView.MarkTrackUnSelected(track);
-            }
+        if (ViewModel.HasSelectedTracks && ViewModel.CanUsePropertyPage) {
+            var track = ViewModel.Panel.SelectedTracks.First();
+            await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
+            PanelView.MarkTrackUnSelected(track);
+            // foreach (var track in ViewModel.Panel.SelectedTracks) {
+            //     await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
+            //     PanelView.MarkTrackUnSelected(track);
+            // }
         }
     }
 

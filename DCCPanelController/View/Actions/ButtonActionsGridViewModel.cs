@@ -63,7 +63,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [RelayCommand]
     private void AddRow() {
         if (SelectableButtons.Count > 0) {
-            ButtonActions.Add(new ButtonAction() { Id = SelectableButtons[0], WhenActiveOrClosed = ButtonStateEnum.Active, WhenInactiveOrThrown = ButtonStateEnum.Inactive, Cascade = false });
+            ButtonActions.Add(new ButtonAction() { Id = SelectableButtons[0], WhenActiveOn = ButtonStateEnum.Active, WhenInactiveOff = ButtonStateEnum.Inactive, Cascade = false });
         }
         UpdateSelectableButtons();
     }
@@ -118,11 +118,12 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
             }
         }
         OnPropertyChanged(nameof(ButtonActions));
-        OnPropertyChanged(nameof(IsGridVisible));
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
-        OnPropertyChanged(nameof(NoDataText));
         OnPropertyChanged(nameof(SelectableButtons));
         OnPropertyChanged(nameof(AvailableButtons));
+        OnPropertyChanged(nameof(TurnoutActions));
         OnPropertyChanged(nameof(ControlHeight));
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        OnPropertyChanged(nameof(IsGridVisible));
+        OnPropertyChanged(nameof(NoDataText));
     }
 }

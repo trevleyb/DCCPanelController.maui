@@ -17,7 +17,7 @@ public partial class ButtonActionsGrid : ContentView {
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {
         if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem.ToString();
+            var selectedItem = picker.SelectedItem?.ToString() ?? "";
             if (BindingContext is ButtonActionsGridViewModel viewModel) {
                 viewModel.UpdateSelectableButtons(selectedItem);
                 picker.ItemsSource = viewModel.SelectableButtons;
@@ -29,12 +29,12 @@ public partial class ButtonActionsGrid : ContentView {
 
     private void IDPicker_OnUnfocused(object? sender, FocusEventArgs e) {
         if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem.ToString();
+            var selectedItem = picker.SelectedItem?.ToString() ?? "";
             if (BindingContext is ButtonActionsGridViewModel viewModel) {
                 picker.ItemsSource = viewModel.AvailableButtons;
                 picker.SelectedItem = selectedItem;
                 picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.AvailableButtons.IndexOf(selectedItem);
-                viewModel.UpdateSelectableButtons();
+                // viewModel.UpdateSelectableButtons();
             }
         }
     }

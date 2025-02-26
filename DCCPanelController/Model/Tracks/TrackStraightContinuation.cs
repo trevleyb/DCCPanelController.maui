@@ -13,7 +13,7 @@ public partial class TrackStraightContinuation(Panel? parent = null, TrackStyleT
     }
 
     [ObservableProperty]
-    private string _name = "Straight Track (Continuation)";
+    private string _name = "Straight Track";
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "ContinuationSA1", (0, 0), (90, 90), (180, 180), (270, 270));

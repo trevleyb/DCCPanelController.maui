@@ -15,9 +15,10 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
         if (value.EditableAttribute is EditableActionsAttribute attr) {
             try {
                 if (value.Type == typeof(TurnoutActions) && value.Info.GetValue(value.Owner) is TurnoutActions turnoutActions) {
-                    var turnout = value.Owner as ITrackTurnout;
+                    var owner = value.Owner as ITrack;
+                    var turnout = owner as ITrackTurnout;
                     var turnoutID = turnout?.TurnoutID ?? "";
-                    var availableTurnouts = turnout?.Parent?.AllNamedTurnouts.Where(t => !string.IsNullOrWhiteSpace(t.TurnoutID) && t.TurnoutID != turnoutID).Select(t => t.TurnoutID).ToList<string>() ?? [];                
+                    var availableTurnouts = owner?.Parent?.AllNamedTurnouts.Where(t => !string.IsNullOrWhiteSpace(t.TurnoutID) && t.TurnoutID != turnoutID).Select(t => t.TurnoutID).ToList<string>() ?? [];                
                     return new TurnoutActionsGrid(turnoutActions, attr.ActionsContext, availableTurnouts) {
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill
@@ -25,9 +26,10 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
                 }
 
                 if (value.Type == typeof(ButtonActions) && value.Info.GetValue(value.Owner) is ButtonActions buttonActions) {
-                    var button = value.Owner as ITrackButton;
+                    var owner = value.Owner as ITrack;
+                    var button = owner as ITrackButton;
                     var buttonID = button?.ButtonID ?? "";
-                    var availableButtons = button?.Parent?.AllNamedButtons.Where(b => !string.IsNullOrWhiteSpace(b.ButtonID) && b.ButtonID != buttonID).Select(b => b.ButtonID) .ToList<string>() ?? [];
+                    var availableButtons = owner?.Parent?.AllNamedButtons.Where(b => !string.IsNullOrWhiteSpace(b.ButtonID) && b.ButtonID != buttonID).Select(b => b.ButtonID) .ToList<string>() ?? [];
                     return new ButtonActionsGrid(buttonActions, attr.ActionsContext, availableButtons) {
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill
