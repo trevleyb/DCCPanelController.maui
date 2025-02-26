@@ -12,59 +12,43 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnoutBase : TrackBase {
 
-    private IAudioPlayer? _clickSoundPlayer;
-
-    [ObservableProperty] private Turnout? _turnout;
-
-    [ObservableProperty]
-    [property: JsonIgnore] private bool _isOccupied;
-
-    [ObservableProperty]
-    private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
-
-    [ObservableProperty]
-    [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
-    private string _turnoutID = string.Empty;
-
     [ObservableProperty]
     [property: EditableString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
     private string _address = string.Empty;
+
+    [ObservableProperty]
+    [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
+    private ButtonActions _buttonActions = [];
+
+    private IAudioPlayer? _clickSoundPlayer;
 
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 3)]
     private bool _isHidden;
 
     [ObservableProperty]
+    [property: JsonIgnore] private bool _isOccupied;
+
+    [ObservableProperty]
     [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 4)]
     private Color? _trackColor;
 
     [ObservableProperty]
+    private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Normal;
+
+    [ObservableProperty]
     [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
+
+    [ObservableProperty] private Turnout? _turnout;
 
     [ObservableProperty]
     [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 10)]
     private TurnoutActions _turnoutActions = [];
 
     [ObservableProperty]
-    [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
-    private ButtonActions _buttonActions = [];
-
-    public override void CleanUp() {
-        for (var i = ButtonActions.Count - 1; i >= 0; i--) {
-            var action = ButtonActions[i];
-            if (string.IsNullOrWhiteSpace(action.Id)) {
-                ButtonActions.RemoveAt(i);
-            }
-        }
-
-        for (var i = TurnoutActions.Count - 1; i >= 0; i--) {
-            var action = TurnoutActions[i];
-            if (string.IsNullOrWhiteSpace(action.Id)) {
-                TurnoutActions.RemoveAt(i);
-            }
-        }
-    }
+    [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
+    private string _turnoutID = string.Empty;
 
     private TurnoutsService? _turnoutsService;
 
@@ -85,6 +69,22 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             TrackStyleImageEnum.Diverging => TurnoutStateEnum.Thrown,
             _                             => TurnoutStateEnum.Unknown
         };
+
+    public override void CleanUp() {
+        for (var i = ButtonActions.Count - 1; i >= 0; i--) {
+            var action = ButtonActions[i];
+            if (string.IsNullOrWhiteSpace(action.Id)) {
+                ButtonActions.RemoveAt(i);
+            }
+        }
+
+        for (var i = TurnoutActions.Count - 1; i >= 0; i--) {
+            var action = TurnoutActions[i];
+            if (string.IsNullOrWhiteSpace(action.Id)) {
+                TurnoutActions.RemoveAt(i);
+            }
+        }
+    }
 
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
 
@@ -139,11 +139,14 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             TrackStyleImageEnum.Normal    => TrackStyleImageEnum.Diverging,
             _                             => TrackStyleImageEnum.Normal
         };
+
         OnPropertyChanged(nameof(TrackView));
         return true;
     }
 
-    public bool ExecTurnoutState() => ExecTurnoutState(GetCurrentTurnoutState);
+    public bool ExecTurnoutState() {
+        return ExecTurnoutState(GetCurrentTurnoutState);
+    }
 
     public bool ExecTurnoutState(TurnoutStateEnum state) {
         SetTurnoutState(state);

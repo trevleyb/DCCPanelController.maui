@@ -7,7 +7,7 @@ public interface ITrack {
 
     Guid Id { get; set; }
     string Name { get; }
-    
+
     int X { get; set; }
     int Y { get; set; }
     int Width { get; set; }
@@ -15,15 +15,15 @@ public interface ITrack {
     int Layer { get; }
     bool IsSelected { get; set; }
 
-    void RotateLeft();
-    void RotateRight();
-
     IView? TrackViewRef { get; set; }
     Panel? Parent { get; set; }
     TrackConnectionsEnum[] Connections { get; }
+
+    void RotateLeft();
+    void RotateRight();
     IView TrackView(double gridSize, bool passthrough = false);
 
     ITrack Clone(Panel parent);
-    
+
     event PropertyChangedEventHandler? PropertyChanged;
 }

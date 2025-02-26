@@ -1,20 +1,12 @@
-using System.ComponentModel;
 using System.Diagnostics;
-using System.Globalization;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
-using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.Services;
-using DCCPanelController.View.Actions;
-using DCCPanelController.View.Components;
-using DCCPanelController.View.EditProperties.Attributes;
 using DCCPanelController.View.EditProperties.Base;
-using Switch = Microsoft.Maui.Controls.Switch;
 
 namespace DCCPanelController.ViewModel;
 
@@ -34,10 +26,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     }
 
     /// <summary>
-    /// This is the main method that iterates over all the properties in the given ITrack and builds up a dynamic
-    /// collection of the editable properties that the track contains.
-    /// It uses attributes attached to the ITrack properties, and each of the properties knows how to create an
-    /// IView which allows the editing or viewing of that given property.  
+    ///     This is the main method that iterates over all the properties in the given ITrack and builds up a dynamic
+    ///     collection of the editable properties that the track contains.
+    ///     It uses attributes attached to the ITrack properties, and each of the properties knows how to create an
+    ///     IView which allows the editing or viewing of that given property.
     /// </summary>
     /// <param name="tableView">A Stack (Normally VerticalStackLayout) that the properties are added to</param>
     /// <param name="track">The track piece that we will build properties for</param>
@@ -54,9 +46,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private static IView CreateExpanderGroup(string groupKey, List<EditableDetails> groupValue, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, groupValue, isFirst);
 
-        var tableExpander = new Expander() {
+        var tableExpander = new Expander {
             Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
         };
+
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
         expanderTitle.Children.Add(GroupChevrons(tableExpander));
@@ -93,6 +86,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             Margin = new Thickness(0, 0, 5, 0),
             Rotation = 0 // Expanded state rotation (facing down)
         };
+
         chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);
         return chevron;
     }
@@ -133,6 +127,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         var groupCell = new HorizontalStackLayout {
             Margin = new Thickness(0, 5, 0, 5)
         };
+
         if (!string.IsNullOrWhiteSpace(value.EditableAttribute.Name)) {
             var label = new Label {
                 Text = value.EditableAttribute.Name,
@@ -144,8 +139,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                 Margin = new Thickness(0, 5, 0, 5),
                 WidthRequest = 120
             };
+
             groupCell.Children.Add(label);
         }
+
         var cell = CreateDataEntry(value);
         if (cell is not null) groupCell.Children.Add(cell);
         return groupCell;
@@ -155,8 +152,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         if (value.EditableAttribute is IEditableAttribute editProperty) {
             return editProperty.CreateView(value);
         }
+
         Debug.WriteLine($"Unable to create entry for {value.EditableAttribute.Name}");
         return null;
     }
-
 }

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.PropertPages;
@@ -18,7 +17,6 @@ public partial class PanelEditorPage : ContentPage {
 
         SetEditModeIcon(EditModeEnum.Move);
         SetGridIcon(true);
-
     }
 
     private static NavigationService NavigationService => MauiProgram.ServiceHelper.GetService<NavigationService>();
@@ -81,6 +79,7 @@ public partial class PanelEditorPage : ContentPage {
             var track = ViewModel.Panel.SelectedTracks.First();
             await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
             PanelView.MarkTrackUnSelected(track);
+
             // foreach (var track in ViewModel.Panel.SelectedTracks) {
             //     await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
             //     PanelView.MarkTrackUnSelected(track);
@@ -88,7 +87,6 @@ public partial class PanelEditorPage : ContentPage {
         }
     }
 
-    
     private void RotateLeft(object? sender, EventArgs e) {
         foreach (var track in ViewModel.Panel.SelectedTracks) track.RotateLeft();
     }
@@ -112,7 +110,7 @@ public partial class PanelEditorPage : ContentPage {
         EditModeToolbar.IconImageSource = PanelView.EditMode switch {
             EditModeEnum.Move => "move.png",
             EditModeEnum.Copy => "copy.png",
-            EditModeEnum.Size => "crop.png",    // Turned off as not worked quite right
+            EditModeEnum.Size => "crop.png", // Turned off as not worked quite right
             _                 => EditModeToolbar.IconImageSource
         };
     }
@@ -141,5 +139,4 @@ public partial class PanelEditorPage : ContentPage {
         GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
         PanelView.RebuildGrid(true);
     }
-
 }

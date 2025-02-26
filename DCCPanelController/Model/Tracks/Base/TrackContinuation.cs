@@ -8,19 +8,19 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackContinuationBase : TrackBase {
 
-    [ObservableProperty] 
+    [ObservableProperty]
+    [property: EditableBool(Name = "Hidden Track", Group = "Attributes", Description = "Indicates track hidden such as in a tunnel", Order = 1)]
+    private bool _isHidden;
+
+    [ObservableProperty]
     [property: JsonIgnore] private bool _isOccupied;
 
     [ObservableProperty]
-    [property: EditableBool(Name = "Hidden Track",Group="Attributes", Description = "Indicates track hidden such as in a tunnel", Order = 1)]
-    private bool _isHidden;
-    
-    [ObservableProperty]
-    [property: EditableColor(Name = "Track Color", Group="Attributes", Description = "Color of the Track or leave None to use defaults.",  Order = 2)]
+    [property: EditableColor(Name = "Track Color", Group = "Attributes", Description = "Color of the Track or leave None to use defaults.", Order = 2)]
     private Color? _trackColor;
 
     [ObservableProperty]
-    [property: EditableTrackImage(Name = "Track Style", Group="Attributes", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines }, Order = 5)]
+    [property: EditableTrackImage(Name = "Track Style", Group = "Attributes", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines }, Order = 5)]
     private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Arrow;
 
     [ObservableProperty]

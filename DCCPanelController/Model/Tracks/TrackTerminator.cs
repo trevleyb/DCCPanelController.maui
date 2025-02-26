@@ -6,14 +6,15 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackTerminator(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
+
+    [ObservableProperty]
+    private string _name = "Terminator Track";
+
     public TrackTerminator() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackTerminator>(parent);
     }
-
-    [ObservableProperty]
-    private string _name = "Terminator Track";
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Terminator1", (0, 0), (90, 90), (180, 180), (270, 270));

@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.EditProperties.Attributes;
@@ -11,16 +10,16 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackButtonBase : TrackBase {
 
-    private IAudioPlayer? _clickSoundPlayer;
-    
-    [ObservableProperty]
-    [property: EditableString(Name="Button ID",Description  = "Unique Identifier for this Button", Order = 1)]
-    private string _buttonID = "";
-    
     [ObservableProperty]
     [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
     private ButtonActions _buttonActions = [];
-    
+
+    [ObservableProperty]
+    [property: EditableString(Name = "Button ID", Description = "Unique Identifier for this Button", Order = 1)]
+    private string _buttonID = "";
+
+    private IAudioPlayer? _clickSoundPlayer;
+
     [ObservableProperty]
     [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
     private TurnoutActions _turnoutActions = [];
@@ -46,13 +45,17 @@ public abstract partial class TrackButtonBase : TrackBase {
         return true;
     }
 
-    public bool ExecButtonState() => ExecButtonState(State);
+    public bool ExecButtonState() {
+        return ExecButtonState(State);
+    }
+
     public bool ExecButtonState(ButtonStateEnum state) {
         SetButtonState(state);
         if (Parent is not null) {
             ButtonActions.ApplyButtonActionsToPanel(Parent, state);
             TurnoutActions.ApplyTurnoutActionsToPanel(Parent, state);
         }
+
         return true;
     }
 

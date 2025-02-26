@@ -1,8 +1,6 @@
-using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
@@ -11,49 +9,48 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackBase : ObservableObject {
-    
-    public Guid Id { get; set; } = Guid.NewGuid();
+    [JsonIgnore] protected readonly double Scale = 1.5;
 
-    [ObservableProperty] private int _x;          // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _y;          // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _z = 1;      // What position (layer) should this exist at 
-    [ObservableProperty] private int _width = 1;  // What width is this component?
+    [JsonIgnore] protected readonly StyleTrackImages StyleTrackImages = new();
     [ObservableProperty] private int _height = 1; // What Height is this component? 
-    [ObservableProperty] private int _layer = 1;  // What layer is this on? Higher sits on top of lower
-    
+
     [ObservableProperty] private int _imageRotation;
-    [ObservableProperty] private int _trackRotation; 
 
-    [ObservableProperty] [property:JsonIgnore] 
-    [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))] 
+    [ObservableProperty]
+    [property: JsonIgnore] private bool _isSelected; // Used in Design Mode. Is this track selected? 
+
+    [ObservableProperty] private int _layer = 1; // What layer is this on? Higher sits on top of lower
+
+    [ObservableProperty] [property: JsonIgnore]
+    [NotifyPropertyChangedFor(nameof(ShowBelowSymbol))]
     private bool _showAboveSymbol;
-    
-    [JsonIgnore] 
-    public bool ShowBelowSymbol => !ShowAboveSymbol;
 
-    [ObservableProperty] 
-    [property:JsonIgnore] private bool _isSelected;  // Used in Design Mode. Is this track selected? 
-    
+    [ObservableProperty] private int _trackRotation;
+    [ObservableProperty] private int _width = 1; // What width is this component?
+
+    [ObservableProperty] private int _x;     // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _y;     // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _z = 1; // What position (layer) should this exist at 
+
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] protected int RotationIncrement = 45;
-    [JsonIgnore] protected readonly double Scale = 1.5;
-    
-    [JsonIgnore] protected readonly StyleTrackImages StyleTrackImages = new();
-    [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage?.Connections.ConnectionPointsRotated(ImageRotation) ?? SvgCompass.NoConnections();
-    [JsonIgnore] public Panel? Parent { get; set; }
-
-    [JsonIgnore] public IView? TrackViewRef { get; set; }
-    [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
 
     protected TrackBase(Panel? parent = null) {
         Initialise();
         OnPropertyChanged(nameof(TrackView));
         if (parent != null) Parent = parent;
     }
-    
-    protected void Initialise() {
-        Setup();
-    }
+
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    [JsonIgnore]
+    public bool ShowBelowSymbol => !ShowAboveSymbol;
+
+    [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage?.Connections.ConnectionPointsRotated(ImageRotation) ?? SvgCompass.NoConnections();
+    [JsonIgnore] public Panel? Parent { get; set; }
+
+    [JsonIgnore] public IView? TrackViewRef { get; set; }
+    [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
 
     // This is needed for the JSON 
     public virtual string TrackType {
@@ -61,9 +58,13 @@ public abstract partial class TrackBase : ObservableObject {
         set => _ = value;
     }
 
+    protected void Initialise() {
+        Setup();
+    }
+
     protected abstract void Setup();
     public virtual void CleanUp() { }
-    
+
     public IView TrackView(double gridSize, bool passthrough = false) {
         TrackViewRef = GetViewForTrack(gridSize, passthrough);
         return TrackViewRef;
@@ -92,7 +93,7 @@ public abstract partial class TrackBase : ObservableObject {
             BackgroundColor = Colors.Transparent
         };
     }
-    
+
     public void RotateLeft() {
         TrackRotation -= RotationIncrement;
         if (TrackRotation < 0) TrackRotation += 360;

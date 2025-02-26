@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -9,36 +8,37 @@ using DCCPanelController.View.EditProperties.Attributes;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackLabelCircle(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
-    public TrackLabelCircle() : this(null) { }
-
-    [ObservableProperty]
-    [property: EditableString(Name = "Circle Label", Description = "Label to display in the Circle")]
-    private string _label = string.Empty;
-
-    [ObservableProperty] [property: EditableInt(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
-    private int _fontSize = 8;
-
-    [ObservableProperty] [property: EditableEnum(Name = "Font Weight", Description = "Font Weight", Group = "Attributes")]
-    private FontWeight _fontWeight = FontWeight.Regular;
-   
-    [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
-    private Color _textColor = Colors.White;
 
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Green;
 
     [ObservableProperty] [property: EditableColor(Name = "Border", Description = "Border Color", Group = "Colors")]
     private Color _borderColor = Colors.Black;
-    
+
+    [ObservableProperty] [property: EditableInt(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
+    private int _fontSize = 8;
+
+    [ObservableProperty] [property: EditableEnum(Name = "Font Weight", Description = "Font Weight", Group = "Attributes")]
+    private FontWeight _fontWeight = FontWeight.Regular;
+
+    [ObservableProperty]
+    [property: EditableString(Name = "Circle Label", Description = "Label to display in the Circle")]
+    private string _label = string.Empty;
+
+    [ObservableProperty]
+    private string _name = "Circle Image";
+
+    [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
+    private Color _textColor = Colors.White;
+
+    public TrackLabelCircle() : this(null) { }
+
     public ITrack Clone(Panel parent) {
-        var clone = Clone<TrackLabelCircle>(parent) as TrackLabelCircle;
+        var clone = Clone<TrackLabelCircle>(parent);
         clone.Label = "";
         return clone;
     }
 
-    [ObservableProperty]
-    private string _name = "Circle Image";
-    
     protected override void Setup() {
         Layer = 2;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Label", (0, 0), (45, 45), (90, 90), (135, 135), (180, 180), (225, 225), (270, 270), (315, 315));
@@ -63,7 +63,8 @@ public partial class TrackLabelCircle(Panel? parent = null) : TrackBase(parent),
         TrackRotation = trackInfo.TrackRotation;
         var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Button, TrackStyleImageEnum.Normal, Parent?.Defaults);
         style = SvgStyles.AddTextToStyle(style, Label);
-        style = new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Text).WithTextSize(FontSize)).Build();;
+        style = new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Text).WithTextSize(FontSize)).Build();
+        ;
         if (!TextColor.Equals(Colors.Transparent)) style = SvgStyles.SetTextToColor(style, TextColor);
         if (!BackgroundColor.Equals(Colors.Transparent)) style = SvgStyles.SetButtonColor(style, BackgroundColor);
         if (!BorderColor.Equals(Colors.Transparent)) style = SvgStyles.SetButtonOutlineColor(style, BorderColor);

@@ -16,7 +16,6 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
     public static readonly BindableProperty ThrownTextProperty = BindableProperty.Create(nameof(ThrownText), typeof(string), typeof(TurnoutStateControl), "Thrown");
     public static readonly BindableProperty UnknownTextProperty = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(TurnoutStateControl), "Unknown");
 
-    
     public TurnoutStateControl() {
         InitializeComponent();
     }
@@ -35,7 +34,7 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
         get => (bool)GetValue(CanSetStateUnknownProperty);
         init => SetValue(CanSetStateUnknownProperty, value);
     }
-    
+
     public bool CanToggleState {
         get => (bool)GetValue(CanToggleStateProperty);
         init => SetValue(CanToggleStateProperty, value);
@@ -45,15 +44,17 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
         get => (ICommand)GetValue(StateChangedCommandProperty);
         set => SetValue(StateChangedCommandProperty, value);
     }
-    
+
     public string ClosedText {
         get => (string)GetValue(ClosedTextProperty);
         set => SetValue(ClosedTextProperty, value);
     }
+
     public string ThrownText {
         get => (string)GetValue(ThrownTextProperty);
         set => SetValue(ThrownTextProperty, value);
     }
+
     public string UnknownText {
         get => (string)GetValue(UnknownTextProperty);
         set => SetValue(UnknownTextProperty, value);
@@ -80,10 +81,11 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
                 };
             }
 
-            if (StateChangedCommand is {} command) {
+            if (StateChangedCommand is { } command) {
                 if (command.CanExecute(Turnout)) command.Execute(Turnout);
             }
         }
+
         OnPropertyChanged(nameof(Turnout));
     }
 }

@@ -1,15 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g>
-        <rect width="256" height="256" />
+        <rect width="256" height="256"/>
         <g id="Straight" transform="translate(82 55)">
             <g id="Straight_Layer2">
-                <rect id="Rectangle" width="30" height="65" fill="#DADADA" fill-rule="evenodd" transform="translate(8.875 27.5)" />
-                <path id="Path" d="M26.0637 0L43.517 18.0734L17.4533 43.2428L0 25.1694L26.0637 0Z" fill="#DADADA" transform="translate(8.875 46.25)" />
-                <path id="Path" d="M52.1952 0L72 20.5337L19.8048 71L0 50.4663L52.1952 0Z" fill="#F26077" transform="translate(9 18)" />
-                <path id="Path" d="M0 28L24 0L48 28L0 28Z" fill="#DADADA" />
-                <path id="Path" d="M0 5.3033L33.5876 0L28.2843 33.5876L0 5.3033Z" fill="#F26077" transform="translate(56.6 9.942)" />
-                <rect id="Rectangle" width="30" height="63" fill="#F26077" fill-rule="evenodd" transform="translate(9 69)" />
+                <rect id="Rectangle" width="30" height="65" fill="#DADADA" fill-rule="evenodd"
+                      transform="translate(8.875 27.5)"/>
+                <path id="Path" d="M26.0637 0L43.517 18.0734L17.4533 43.2428L0 25.1694L26.0637 0Z" fill="#DADADA"
+                      transform="translate(8.875 46.25)"/>
+                <path id="Path" d="M52.1952 0L72 20.5337L19.8048 71L0 50.4663L52.1952 0Z" fill="#F26077"
+                      transform="translate(9 18)"/>
+                <path id="Path" d="M0 28L24 0L48 28L0 28Z" fill="#DADADA"/>
+                <path id="Path" d="M0 5.3033L33.5876 0L28.2843 33.5876L0 5.3033Z" fill="#F26077"
+                      transform="translate(56.6 9.942)"/>
+                <rect id="Rectangle" width="30" height="63" fill="#F26077" fill-rule="evenodd"
+                      transform="translate(9 69)"/>
             </g>
         </g>
     </g>

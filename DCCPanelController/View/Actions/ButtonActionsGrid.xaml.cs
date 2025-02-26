@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DCCPanelController.Model;
-using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
@@ -34,6 +28,7 @@ public partial class ButtonActionsGrid : ContentView {
                 picker.ItemsSource = viewModel.AvailableButtons;
                 picker.SelectedItem = selectedItem;
                 picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.AvailableButtons.IndexOf(selectedItem);
+
                 // viewModel.UpdateSelectableButtons();
             }
         }

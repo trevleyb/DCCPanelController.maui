@@ -8,13 +8,13 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPieceBase : TrackBase {
 
-    [ObservableProperty] 
-    [property: JsonIgnore]
-    private bool _isOccupied;
-
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
     private bool _isHidden;
+
+    [ObservableProperty]
+    [property: JsonIgnore]
+    private bool _isOccupied;
 
     [ObservableProperty]
     [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 2)]

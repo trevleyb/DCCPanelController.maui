@@ -9,7 +9,7 @@ public static class EditableCollector {
         var editableProperties = new List<EditableDetails>();
         var properties = obj.GetType().GetProperties(BindingFlags.Public | BindingFlags.Instance);
         List<string> groups = new();
-        
+
         for (var i = 0; i < properties.Length; i++) {
             var property = properties[i];
             var attribute = property.GetCustomAttribute<EditableAttribute>();
@@ -31,13 +31,12 @@ public static class EditableCollector {
         sorted.Add("", GetEditablePropertiesByGroup(""));
         foreach (var group in groups.Where(grp => grp != "")) {
             sorted.Add(group, GetEditablePropertiesByGroup(group));
-        } 
+        }
+
         return sorted;
-        
+
         List<EditableDetails> GetEditablePropertiesByGroup(string group) {
             return editableProperties.Where(p => p.EditableAttribute.Group == group).ToList();
         }
-
     }
-    
 }

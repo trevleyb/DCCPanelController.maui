@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Base;
@@ -12,9 +11,31 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
+    [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
+    private Color _borderColor = Colors.Transparent;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Radius", Description = "Rounder Corners on the Border", Group = "Border")]
+    private int _borderRadius;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Width", Description = "Border With", Group = "Border")]
+    private int _borderWidth;
+
+    [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
+    private bool _keepAspectRatio = true;
+
     [ObservableProperty]
     private string _name = "Image";
-    
+
+    public TrackImage() : this(null) { }
+
+    [EditableImage(Name = "Image", Group = "Image", Description = "Image to display")]
+    public string TrackImageSource { get; set; } = "";
+
+    public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
+
+    private int MaxGridWidth => Parent is not null ? Width <= Parent.Cols - X ? Width : Parent.Cols - X : Width;
+    private int MaxGridHeight => Parent is not null ? Height <= Parent.Rows - Y ? Height : Parent.Rows - Y : Height;
+
     [property: EditableInt(Name = "Width", Description = "Width of the Image", Group = "Attributes")]
     public new int Width {
         get => base.Width;
@@ -26,28 +47,6 @@ public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrac
         get => base.Height;
         set => base.Height = value;
     }
-
-    [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
-    private bool _keepAspectRatio = true;
-
-    [ObservableProperty] [property: EditableInt(Name = "Border Width", Description = "Border With", Group = "Border")]
-    private int _borderWidth = 0;
-
-    [ObservableProperty] [property: EditableInt(Name = "Border Radius", Description = "Rounder Corners on the Border", Group = "Border")]
-    private int _borderRadius = 0;
-
-    [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
-    private Color _borderColor = Colors.Transparent;
-
-    public TrackImage() : this(null) { }
-
-    [EditableImage(Name = "Image", Group="Image", Description = "Image to display")]
-    public string TrackImageSource { get; set; } = "";
-
-    public ImageSource? Image => ImageHelper.ImageFromBase64(TrackImageSource);
-
-    private int MaxGridWidth => Parent is not null ? Width <= Parent.Cols - X ? Width : Parent.Cols - X : Width;
-    private int MaxGridHeight => Parent is not null ? Height <= Parent.Rows - Y ? Height : Parent.Rows - Y : Height;
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackImage>(parent);
@@ -86,7 +85,7 @@ public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrac
         ActiveImage = imageInfo;
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
-    
+
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
         if (string.IsNullOrEmpty(TrackImageSource)) {
             var defaultImage = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
@@ -105,17 +104,19 @@ public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrac
             HeightRequest = gridSize * MaxGridHeight
         };
 
-        return BorderWidth <= 0 ? image : new Border() {
-            Content = image,
-            InputTransparent = passthrough,
-            RotationX = TrackRotation,
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Start,
-            WidthRequest = gridSize * MaxGridWidth,
-            HeightRequest = gridSize * MaxGridHeight,
-            StrokeThickness = BorderWidth,
-            Stroke = BorderColor,
-            StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(BorderRadius) }
-        };
+        return BorderWidth <= 0
+            ? image
+            : new Border {
+                Content = image,
+                InputTransparent = passthrough,
+                RotationX = TrackRotation,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
+                WidthRequest = gridSize * MaxGridWidth,
+                HeightRequest = gridSize * MaxGridHeight,
+                StrokeThickness = BorderWidth,
+                Stroke = BorderColor,
+                StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(BorderRadius) }
+            };
     }
 }

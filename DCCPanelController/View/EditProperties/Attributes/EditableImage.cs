@@ -24,7 +24,7 @@ public class EditableImageAttribute : EditableAttribute, IEditableAttribute {
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 MaximumHeightRequest = 200,
-                MaximumWidthRequest = 100,
+                MaximumWidthRequest = 100
             };
 
             var horizontal = new StackLayout {

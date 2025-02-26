@@ -7,15 +7,16 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrack {
+
+    [ObservableProperty]
+    private string _name = "Connection Points";
+
     public TrackPoints() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackPoints>(parent);
     }
 
-    [ObservableProperty]
-    private string _name = "Connection Points";
-    
     protected override void Setup() {
         Layer = 2;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));

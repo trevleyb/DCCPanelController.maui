@@ -10,11 +10,11 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
     public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(ButtonStateEnum), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
     public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(ButtonStateControl), true);
     public static readonly BindableProperty CanSetStateUnknownProperty = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(ButtonStateControl), false);
-    public static readonly BindableProperty StateChangedCommandProperty = BindableProperty.Create(nameof(StateChangedCommand), typeof(ICommand), typeof(ButtonStateControl), null);
+    public static readonly BindableProperty StateChangedCommandProperty = BindableProperty.Create(nameof(StateChangedCommand), typeof(ICommand), typeof(ButtonStateControl));
 
-    public static readonly BindableProperty ActiveTextProperty = BindableProperty.Create(nameof(ActiveText), typeof(string), typeof(ButtonStateControl),"On");
-    public static readonly BindableProperty InactiveTextProperty = BindableProperty.Create(nameof(InactiveText), typeof(string), typeof(ButtonStateControl),"Off");
-    public static readonly BindableProperty UnknownTextProperty = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(ButtonStateControl),"Unknown");
+    public static readonly BindableProperty ActiveTextProperty = BindableProperty.Create(nameof(ActiveText), typeof(string), typeof(ButtonStateControl), "On");
+    public static readonly BindableProperty InactiveTextProperty = BindableProperty.Create(nameof(InactiveText), typeof(string), typeof(ButtonStateControl), "Off");
+    public static readonly BindableProperty UnknownTextProperty = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(ButtonStateControl), "Unknown");
 
     public ButtonStateControl() {
         InitializeComponent();
@@ -49,10 +49,12 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
         get => (string)GetValue(ActiveTextProperty);
         set => SetValue(ActiveTextProperty, value);
     }
+
     public string InactiveText {
         get => (string)GetValue(InactiveTextProperty);
         set => SetValue(InactiveTextProperty, value);
     }
+
     public string UnknownText {
         get => (string)GetValue(UnknownTextProperty);
         set => SetValue(UnknownTextProperty, value);
@@ -79,10 +81,11 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
                 };
             }
 
-            if (StateChangedCommand is {} command) {
+            if (StateChangedCommand is { } command) {
                 if (command.CanExecute(Button)) command.Execute(Button);
             }
         }
+
         OnPropertyChanged(nameof(Button));
     }
 }

@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.View.EditProperties.Base;
 
 namespace DCCPanelController.View.EditProperties.Attributes;
@@ -15,6 +14,7 @@ public class EditableStringAttribute : EditableAttribute, IEditableAttribute {
                 WidthRequest = 300,
                 BindingContext = value.Owner
             };
+
             cell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
             return cell;
         } catch (Exception e) {

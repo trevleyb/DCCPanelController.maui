@@ -93,7 +93,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="akgul.Maui.DataGrid" Version="4.0.6" />
+        <PackageReference Include="akgul.Maui.DataGrid" Version="4.0.6"/>
         <PackageReference Include="CommunityToolkit.Maui" Version="9.1.1"/>
         <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0"/>
         <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="4.1.2"/>
@@ -104,14 +104,14 @@
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1"/>
         <PackageReference Include="Svg.Skia" Version="2.0.0.4"/>
-        <PackageReference Include="UraniumUI" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Blurs" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Icons.SegoeFluent" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Material" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.11.0" />
+        <PackageReference Include="UraniumUI" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Blurs" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Icons.SegoeFluent" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Material" Version="2.11.0"/>
+        <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.11.0"/>
     </ItemGroup>
 
     <!--
@@ -210,16 +210,16 @@
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Actions\ButtonActionsGrid.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Components\ButtonStateControl.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Actions\TurnoutActionsGrid.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\EditProperties\DynamicPropertyPage.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
 
@@ -245,20 +245,20 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\Actions\ButtonActionsGrid.xaml.cs">
-          <DependentUpon>ButtonActionsGrid.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ButtonActionsGrid.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\Components\ButtonStateControl.xaml.cs">
-          <DependentUpon>ButtonStateControl.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ButtonStateControl.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\Actions\TurnoutActionsGrid.xaml.cs">
-          <DependentUpon>TurnoutActionsGrid.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>TurnoutActionsGrid.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\EditProperties\DynamicPropertyPage.xaml.cs">
-          <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

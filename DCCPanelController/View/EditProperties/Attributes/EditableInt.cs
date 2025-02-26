@@ -5,7 +5,7 @@ using DCCPanelController.View.EditProperties.Base;
 namespace DCCPanelController.View.EditProperties.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class EditableIntAttribute : EditableAttribute ,IEditableAttribute {
+public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
@@ -20,6 +20,7 @@ public class EditableIntAttribute : EditableAttribute ,IEditableAttribute {
                 Margin = new Thickness(0, 0, 10, 0),
                 Text = value.Info.GetValue(value.Owner)?.ToString() ?? "0"
             };
+
             dataCell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
 
             var attr = value.EditableAttribute as EditableIntAttribute;
@@ -29,15 +30,18 @@ public class EditableIntAttribute : EditableAttribute ,IEditableAttribute {
                 Increment = 1,                  // Increment/decrement step
                 HorizontalOptions = LayoutOptions.End
             };
+
             if (int.TryParse(dataCell.Text, out var initialStepperValue)) {
                 stepperUpDown.Value = initialStepperValue;
             }
+
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
             dataCell.TextChanged += (s, e) => {
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;
                 }
             };
+
             cell.Children.Add(dataCell);
             cell.Children.Add(stepperUpDown);
             return cell;

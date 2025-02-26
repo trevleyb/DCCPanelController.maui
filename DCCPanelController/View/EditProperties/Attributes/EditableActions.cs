@@ -18,7 +18,7 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
                     var owner = value.Owner as ITrack;
                     var turnout = owner as ITrackTurnout;
                     var turnoutID = turnout?.TurnoutID ?? "";
-                    var availableTurnouts = owner?.Parent?.AllNamedTurnouts.Where(t => !string.IsNullOrWhiteSpace(t.TurnoutID) && t.TurnoutID != turnoutID).Select(t => t.TurnoutID).ToList<string>() ?? [];                
+                    var availableTurnouts = owner?.Parent?.AllNamedTurnouts.Where(t => !string.IsNullOrWhiteSpace(t.TurnoutID) && t.TurnoutID != turnoutID).Select(t => t.TurnoutID).ToList<string>() ?? [];
                     return new TurnoutActionsGrid(turnoutActions, attr.ActionsContext, availableTurnouts) {
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill
@@ -29,7 +29,7 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
                     var owner = value.Owner as ITrack;
                     var button = owner as ITrackButton;
                     var buttonID = button?.ButtonID ?? "";
-                    var availableButtons = owner?.Parent?.AllNamedButtons.Where(b => !string.IsNullOrWhiteSpace(b.ButtonID) && b.ButtonID != buttonID).Select(b => b.ButtonID) .ToList<string>() ?? [];
+                    var availableButtons = owner?.Parent?.AllNamedButtons.Where(b => !string.IsNullOrWhiteSpace(b.ButtonID) && b.ButtonID != buttonID).Select(b => b.ButtonID).ToList<string>() ?? [];
                     return new ButtonActionsGrid(buttonActions, attr.ActionsContext, availableButtons) {
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill
@@ -40,6 +40,7 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
                 return null;
             }
         }
+
         Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
     }

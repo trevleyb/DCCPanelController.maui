@@ -8,8 +8,9 @@ namespace DCCPanelController.View.PropertPages;
 
 public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 
-    private ITrack _track;
+    private readonly ITrack _track;
     private DynamicPropertyPageViewModel _viewModel;
+
     public DynamicPropertyPage(ITrack track, string? propertyName = null) {
         _track = track;
         InitializeComponent();

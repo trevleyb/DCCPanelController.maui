@@ -23,7 +23,7 @@ public static class MauiProgram {
                .UseMauiCommunityToolkitMediaElement();
 
         FormHelper.RemoveBorders();
-        
+
 #if DEBUG
         builder.Logging.AddDebug();
         builder.Services.AddLogging(configure => configure.AddDebug());

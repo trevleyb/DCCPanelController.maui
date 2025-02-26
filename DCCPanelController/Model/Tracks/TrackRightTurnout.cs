@@ -6,17 +6,18 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackRightTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnoutBase(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrack {
+
+    [ObservableProperty]
+    private string _name = "Right Turnout";
+
     public TrackRightTurnout() : this(null) { }
 
     public ITrack Clone(Panel parent) {
-        var clone = Clone<TrackRightTurnout>(parent) as TrackRightTurnout;
+        var clone = Clone<TrackRightTurnout>(parent);
         clone.Address = "";
         clone.Name = parent.NextTurnoutID();
         return clone;
     }
-
-    [ObservableProperty]
-    private string _name = "Right Turnout";
 
     protected override void Setup() {
         ShowAboveSymbol = true;

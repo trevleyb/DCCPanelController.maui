@@ -1,7 +1,7 @@
 namespace DCCPanelController.Services;
 
 public static class DisplayAlertHelper {
-    
+
     public static async Task<bool> DisplayOkAlertAsync(string title, string message) {
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
@@ -13,5 +13,4 @@ public static class DisplayAlertHelper {
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
         return await mainPage.DisplayAlert(title, message, accept, cancel);
     }
-
 }

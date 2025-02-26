@@ -3,7 +3,6 @@ using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
-using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -54,7 +53,7 @@ public class SettingsService {
                 try {
                     var jsonString = File.ReadAllText(filePath);
                     var storage = LoadJson(jsonString);
-                    
+
                     // Each panel needs a reference to the collection
                     // of ALL panels. When we load from storage the panels
                     // we need to reset this reference. Creating a new panel
@@ -66,6 +65,7 @@ public class SettingsService {
                     return new Storage();
                 }
             }
+
             Console.WriteLine($"File not found: {filePath}");
             return new Storage();
         } catch (Exception ex) {

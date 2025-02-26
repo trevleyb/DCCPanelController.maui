@@ -1,6 +1,4 @@
-using Microsoft.Maui;
-using System.Drawing;
-
+using Microsoft.Maui.Handlers;
 #if IOS
 using UIKit;
 using Foundation;
@@ -14,7 +12,7 @@ namespace DCCPanelController.Helpers;
 
 public static class FormHelper {
     public static void RemoveBorders() {
-        Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("Borderless", (handler, view) => {
+        EntryHandler.Mapper.AppendToMapping("Borderless", (handler, view) => {
 #if ANDROID
             handler.PlatformView.Background = null;
             handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
@@ -26,7 +24,7 @@ public static class FormHelper {
 #endif
         });
 
-        Microsoft.Maui.Handlers.PickerHandler.Mapper.AppendToMapping("Borderless", (handler, view) => {
+        PickerHandler.Mapper.AppendToMapping("Borderless", (handler, view) => {
 #if ANDROID
             handler.PlatformView.Background = null;
             handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);

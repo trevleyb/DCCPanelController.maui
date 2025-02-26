@@ -1,6 +1,4 @@
 using System.Collections.ObjectModel;
-using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.View;
 
 namespace DCCPanelController.Model;
 
@@ -31,6 +29,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction> {
                 ButtonStateEnum.Inactive => turnout.SetTurnoutState(action.WhenThrownDiverging),
                 _                        => false // Ignore an Unknown State
             };
+
             break;
         case TurnoutStateEnum turnoutStateEnum:
             _ = turnoutStateEnum switch {
@@ -38,9 +37,10 @@ public class TurnoutActions : ObservableCollection<TurnoutAction> {
                 TurnoutStateEnum.Thrown => turnout.SetTurnoutState(action.WhenThrownDiverging),
                 _                       => false // Ignore an Unknown State
             };
+
             break;
         }
-        
+
         // If we have marked this Action as a Cascading Action, and if we have not processed
         // this button or turnout before, then cascade and execute the cascaded actions.
         // ----------------------------------------------------------------------------------

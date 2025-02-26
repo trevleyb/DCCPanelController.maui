@@ -45,6 +45,7 @@ public partial class SvgImage : ObservableObject {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
             }
         }
+
         return this;
     }
 
@@ -73,6 +74,7 @@ public partial class SvgImage : ObservableObject {
         // -----------------------------------------------------------------------------------------
         foreach (var element in ImageManager.FindElements(elementName)) {
             var elementType = ImageManager.ElementType(element);
+
             //Console.WriteLine($"Applying Style to type={elementType} name={elementName}: {attributeName}={attributeValue}");
 
             _ = elementType switch {

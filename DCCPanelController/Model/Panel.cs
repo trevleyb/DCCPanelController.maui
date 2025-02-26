@@ -7,7 +7,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
-using DCCPanelController.Services.SampleData;
 using DCCPanelController.Tracks.Helpers;
 
 namespace DCCPanelController.Model;
@@ -23,17 +22,6 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private int _sortOrder;
 
-    [JsonIgnore] public Panels Panels { get; private set; } = [];
-    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
-    [JsonIgnore] public List<ITrackTurnout> AllNamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
-    [JsonIgnore] public List<ITrackButton> AllNamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
-    [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.TurnoutID)).ToList() ?? [];
-    [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ButtonID)).ToList() ?? [];
-
-    public ITrackTurnout? GetTurnout(string id) => AllNamedTurnouts.FirstOrDefault(t => t.TurnoutID == id);
-    public ITrackButton? GetButton(string id) => AllNamedButtons.FirstOrDefault(t => t.ButtonID == id);
-
     private ObservableCollection<ITrack> _tracks = [];
 
     [JsonConstructor]
@@ -43,9 +31,13 @@ public partial class Panel : ObservableObject {
         SetPanels(panels);
     }
 
-    public void SetPanels(Panels panels) {
-        Panels = panels;
-    }
+    [JsonIgnore] public Panels Panels { get; private set; } = [];
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
+    [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public List<ITrackTurnout> AllNamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
+    [JsonIgnore] public List<ITrackButton> AllNamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
+    [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.TurnoutID)).ToList() ?? [];
+    [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ButtonID)).ToList() ?? [];
 
     public string Title {
         get {
@@ -70,6 +62,18 @@ public partial class Panel : ObservableObject {
             SetParent(_tracks, this);
             OnPropertyChanged();
         }
+    }
+
+    public ITrackTurnout? GetTurnout(string id) {
+        return AllNamedTurnouts.FirstOrDefault(t => t.TurnoutID == id);
+    }
+
+    public ITrackButton? GetButton(string id) {
+        return AllNamedButtons.FirstOrDefault(t => t.ButtonID == id);
+    }
+
+    public void SetPanels(Panels panels) {
+        Panels = panels;
     }
 
     // When we add an item to the collection, make sure the Panels
@@ -129,9 +133,14 @@ public partial class Panel : ObservableObject {
         return panel ?? throw new Exception("Failed to clone panel");
     }
 
-    public string NextTurnoutID() => GetNextName(AllNamedTurnouts, t => t.TurnoutID, "TRN" );
-    public string NextButtonID() => GetNextName(AllNamedButtons, t => t.ButtonID, "BTN" );
-    
+    public string NextTurnoutID() {
+        return GetNextName(AllNamedTurnouts, t => t.TurnoutID, "TRN");
+    }
+
+    public string NextButtonID() {
+        return GetNextName(AllNamedButtons, t => t.ButtonID, "BTN");
+    }
+
     public static string GetNextName<T>(IEnumerable<T> allNamedItems, Func<T, string> idSelector, string defaultPrefix = "UKN") {
         // Step 1: Extract IDs using the provided selector and sort them for pattern detection.
         var ids = allNamedItems
@@ -179,20 +188,19 @@ public partial class Panel : ObservableObject {
 // Helper Method: Increment alphabetical strings (e.g., "A" -> "B", "Z" -> "AA").
     private static string IncrementAlphabeticalString(string input) {
         var chars = input.ToCharArray();
-        for (int i = chars.Length - 1; i >= 0; i--) {
+        for (var i = chars.Length - 1; i >= 0; i--) {
             if (chars[i] < 'Z') {
                 chars[i]++;
                 return new string(chars);
-            } else {
-                chars[i] = 'A';
-                if (i == 0) {
-                    // If we're at the beginning and need to carry over (e.g., "Z" -> "AA").
-                    return 'A' + new string(chars);
-                }
+            }
+
+            chars[i] = 'A';
+            if (i == 0) {
+                // If we're at the beginning and need to carry over (e.g., "Z" -> "AA").
+                return 'A' + new string(chars);
             }
         }
 
         return new string(chars);
     }
-
 }

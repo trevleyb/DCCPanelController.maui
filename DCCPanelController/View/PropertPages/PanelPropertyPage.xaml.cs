@@ -23,7 +23,6 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
         base.OnAppearing();
 
 #if IOS
-
         // Access the native view controller
         var window = App.Current.Windows[0].Page;
         if (window == null) throw new InvalidOperationException("MainPage is not set.");

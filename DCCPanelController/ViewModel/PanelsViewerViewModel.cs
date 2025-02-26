@@ -1,4 +1,3 @@
-using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -139,7 +138,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task AddPanelAsync() {
-        var newPanel =Panels.CreatePanel();
+        var newPanel = Panels.CreatePanel();
         var maxSort = Panels.Count > 0 ? Panels.Max(p => p.SortOrder) + 1 : 1;
         newPanel.Name = "Panel " + maxSort;
         newPanel.SortOrder = maxSort;
@@ -154,6 +153,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
         //var tempPanel = SelectedPanel.Clone();
         var result = await LaunchEditPanelAsync(SelectedPanel);
+
         // if (result) {
         //     var index = Panels.IndexOf(SelectedPanel);
         //     if (index >= 0) Panels[index] = tempPanel;

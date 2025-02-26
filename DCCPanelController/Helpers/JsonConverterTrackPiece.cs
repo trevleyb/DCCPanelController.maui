@@ -1,7 +1,6 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DCCPanelController.Model.Tracks;
-using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Helpers;
@@ -35,6 +34,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
                 "TrackText"                 => JsonSerializer.Deserialize<TrackText>(rawText, options),
                 _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\"")
             };
+
             if (obj == null) throw new JsonException("Unknown type: " + "\"" + typeName + "\"" + ".");
             return obj;
         }

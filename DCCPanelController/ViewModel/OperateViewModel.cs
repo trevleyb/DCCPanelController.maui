@@ -1,19 +1,16 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.ViewModel;
 
 public partial class OperateViewModel : BaseViewModel {
-
-    public Guid id;
-    [ObservableProperty] private bool? _isConnected = null;
+    [ObservableProperty] private bool? _isConnected;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
+
+    public Guid id;
 
     public OperateViewModel() {
         id = Guid.NewGuid();

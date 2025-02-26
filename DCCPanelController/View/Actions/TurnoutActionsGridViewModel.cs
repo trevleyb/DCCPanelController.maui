@@ -11,11 +11,14 @@ namespace DCCPanelController.View.Actions;
 public partial class TurnoutActionsGridViewModel : ObservableObject {
 
     [ObservableProperty]
+    private ActionsContext _actionContext;
+
+    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<TurnoutAction> _turnoutActions;
+    private ObservableCollection<string> _availableTurnouts;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
@@ -29,17 +32,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _availableTurnouts;
-
-    [ObservableProperty]
-    private ActionsContext _actionContext;
-    
-    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
-    public bool IsButtonContext => ActionContext == ActionsContext.Button;
-    
-    public bool IsGridVisible => TurnoutActions.Count > 0;
-    public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
-    public double ControlHeight => 40 + (TurnoutActions.Count * 40);
+    private ObservableCollection<TurnoutAction> _turnoutActions;
 
     public TurnoutActionsGridViewModel(TurnoutActions turnoutActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
@@ -50,6 +43,13 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
     }
+
+    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContext.Button;
+
+    public bool IsGridVisible => TurnoutActions.Count > 0;
+    public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
+    public double ControlHeight => 40 + TurnoutActions.Count * 40;
 
     public string NoDataText {
         get {
@@ -63,8 +63,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [RelayCommand]
     private void AddRow() {
         if (SelectableTurnouts.Count > 0) {
-            TurnoutActions.Add(new TurnoutAction() { Id = SelectableTurnouts[0], WhenClosedStraight = TurnoutStateEnum.Closed, WhenThrownDiverging = TurnoutStateEnum.Thrown, Cascade = false });
+            TurnoutActions.Add(new TurnoutAction { Id = SelectableTurnouts[0], WhenClosedStraight = TurnoutStateEnum.Closed, WhenThrownDiverging = TurnoutStateEnum.Thrown, Cascade = false });
         }
+
         UpdateSelectableTurnouts();
     }
 
@@ -83,7 +84,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     // However, if this control IS A Turnout then we can select this one so exclude it. 
     private ObservableCollection<string> FindAvailableTurnouts(ITrack track) {
         var foundTurnouts = new ObservableCollection<string>();
-        var thisTurnout = track as ITrackTurnout ;
+        var thisTurnout = track as ITrackTurnout;
         if (track is { Parent: { Tracks: { } tracks } }) {
             foreach (var trk in tracks) {
                 if (trk is ITrackTurnout trackTurnout) {
@@ -93,6 +94,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
                 }
             }
         }
+
         return foundTurnouts;
     }
 
@@ -113,6 +115,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
                 }
             }
         }
+
         OnPropertyChanged(nameof(TurnoutActions));
         OnPropertyChanged(nameof(SelectableTurnouts));
         OnPropertyChanged(nameof(AvailableTurnouts));

@@ -16,7 +16,7 @@ public abstract class EditableAttribute : Attribute {
             VerticalOptions = LayoutOptions.Center
         };
     }
-    
+
     protected StackLayout CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum {
         if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
@@ -39,6 +39,7 @@ public abstract class EditableAttribute : Attribute {
             radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(source, fieldName));
             radioGroup.Children.Add(radioButton);
         }
+
         return radioGroup;
     }
 }

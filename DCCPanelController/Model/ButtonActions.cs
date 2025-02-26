@@ -1,12 +1,13 @@
 using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Core.Extensions;
-using DCCPanelController.Model.Tracks.Interfaces;
 
 namespace DCCPanelController.Model;
 
 public class ButtonActions : ObservableCollection<ButtonAction> {
 
-    public void ApplyButtonActionsToPanel<TEnum>(Panel panel, TEnum state) where TEnum : Enum => ApplyButtonActionsToPanel(panel, state, this);
+    public void ApplyButtonActionsToPanel<TEnum>(Panel panel, TEnum state) where TEnum : Enum {
+        ApplyButtonActionsToPanel(panel, state, this);
+    }
+
     public void ApplyButtonActionsToPanel<TEnum>(Panel panel, TEnum state, IEnumerable<ButtonAction> actions) where TEnum : Enum {
         Console.WriteLine($"Applying Button Actions to Panel: {panel.Name}");
         var applied = new List<string>();
@@ -17,7 +18,6 @@ public class ButtonActions : ObservableCollection<ButtonAction> {
     }
 
     private void ProcessButtonAction<TEnum>(Panel panel, ButtonAction action, TEnum state, List<string> applied) where TEnum : Enum {
-
         // Get the button that this action relates to
         // ------------------------------------------------------------
         var button = panel.GetButton(action.Id);

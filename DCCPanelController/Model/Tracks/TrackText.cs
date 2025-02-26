@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -11,17 +10,42 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
+    [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
+    private Color _backgroundColor = Colors.Transparent;
+
+    [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
+    private Color _borderColor = Colors.Transparent;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Radius", Description = "Rounder Corners on the Border", Group = "Border")]
+    private int _borderRadius;
+
+    [ObservableProperty] [property: EditableInt(Name = "Border Width", Description = "Border With", Group = "Border")]
+    private int _borderWidth;
+
+    [ObservableProperty] [property: EditableBool(Name = "Bold", Description = "Bold Text", Group = "Attributes")]
+    private bool _fontBold;
+
+    [ObservableProperty] [property: EditableInt(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
+    private int _fontSize = 12;
+
+    [ObservableProperty] [property: EditableEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
+    private TextAlignment _horizontalJustification = TextAlignment.Center;
+
     [ObservableProperty]
     private string _name = "Text Block";
 
     [ObservableProperty] [property: EditableString(Name = "Text", Description = "Text to Display")]
     private string _text = "";
-    
-    [ObservableProperty] [property: EditableInt(Name = "Font Size", Description = "Font Size", Group = "Attributes")]
-    private int _fontSize = 12;
 
-    [ObservableProperty] [property: EditableBool(Name = "Bold", Description = "Bold Text", Group = "Attributes")]
-    private bool _fontBold;
+    [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
+    private Color _textColor = Colors.Black;
+
+    [ObservableProperty] [property: EditableEnum(Name = "Vertical", Description = "Vertical Justification of the Text", Group = "Attributes")]
+    private TextAlignment _verticalJustification = TextAlignment.Center;
+
+    public TrackText() : this(null) { }
+
+    private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, Width, X, Y, TrackRotation) : Width;
 
     [property: EditableInt(Name = "Width", Description = "Width of the Image", Group = "Attributes")]
     public new int Width {
@@ -29,35 +53,10 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
         set => base.Width = value;
     }
 
-    [ObservableProperty] [property: EditableEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
-    private TextAlignment _horizontalJustification = TextAlignment.Center;
-
-    [ObservableProperty] [property: EditableEnum(Name = "Vertical", Description = "Vertical Justification of the Text", Group = "Attributes")]
-    private TextAlignment _verticalJustification = TextAlignment.Center;
-    
-    [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
-    private Color _textColor = Colors.Black;
-
-    [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
-    private Color _backgroundColor = Colors.Transparent;
-
-    [ObservableProperty] [property: EditableInt(Name = "Border Width", Description = "Border With", Group = "Border")]
-    private int _borderWidth = 0;
-
-    [ObservableProperty] [property: EditableInt(Name = "Border Radius", Description = "Rounder Corners on the Border", Group = "Border")]
-    private int _borderRadius = 0;
-
-    [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
-    private Color _borderColor = Colors.Transparent;
-
-    public TrackText() : this(null) { }
-
-    private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, Width, X, Y, TrackRotation) : Width;
-
     public ITrack Clone(Panel parent) {
         return Clone<TrackText>(parent);
     }
-    
+
     protected override void Setup() {
         Layer = 2;
         Name = "Text";
@@ -75,7 +74,7 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
             var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
             return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
         }
-        
+
         var label = new Label {
             Text = Text,
             FontSize = FontSize,
@@ -97,18 +96,20 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
             //HeightRequest = TextHeightRequest(gridSize)
         };
 
-        return BorderWidth <= 0 ? label : new Border() {
-            Content = label,
-            InputTransparent = passthrough,
-            RotationX = TrackRotation,
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Fill,
-            WidthRequest = gridSize * MaxGridWidth,
-            HeightRequest = gridSize,
-            StrokeThickness = BorderWidth,
-            Stroke = BorderColor,
-            StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(BorderRadius) }
-        };
+        return BorderWidth <= 0
+            ? label
+            : new Border {
+                Content = label,
+                InputTransparent = passthrough,
+                RotationX = TrackRotation,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Fill,
+                WidthRequest = gridSize * MaxGridWidth,
+                HeightRequest = gridSize,
+                StrokeThickness = BorderWidth,
+                Stroke = BorderColor,
+                StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(BorderRadius) }
+            };
     }
 
     private double TextWidthRequest(double gridSize) {

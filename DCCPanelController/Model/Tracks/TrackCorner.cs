@@ -6,14 +6,14 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackCorner(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
+
+    [ObservableProperty] private string _name = "Corner Track";
     public TrackCorner() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackCorner>(parent);
     }
-    
-    [ObservableProperty] private string _name = "Corner Track";
-    
+
     protected override void Setup() {
         ShowAboveSymbol = true;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "CornerR", (0, 0), (90, 0), (180, 0), (270, 0));

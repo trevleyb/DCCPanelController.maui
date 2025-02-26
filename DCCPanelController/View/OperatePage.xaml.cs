@@ -1,9 +1,7 @@
 using System.ComponentModel;
-using System.Reflection;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
-using DCCWithrottleClient.ServiceHelper;
 
 namespace DCCPanelController.View;
 
@@ -19,7 +17,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
         SetTabBarState(true);
     }
-    
+
     protected override void OnAppearing() {
         base.OnAppearing();
         OnPropertyChanged(nameof(OperateViewModel.Panels));
@@ -62,6 +60,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             Shell.SetTabBarIsVisible(this, false);
             HideUnHide.IconImageSource = "minimize_2.png";
         }
+
         _tabBarState = state;
     }
 
@@ -72,7 +71,9 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             false => "circle_red.png",
             null  => "circle_white.png"
         };
+
         ConnectToolbarButton.IconImageSource = icon;
+
         //OnPropertyChanged(nameof(ConnectToolbarButton));
     }
 }

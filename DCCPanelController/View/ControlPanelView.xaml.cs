@@ -1,11 +1,13 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CoreGraphics;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
 using Microsoft.Maui.Layouts;
+using UIKit;
 
 namespace DCCPanelController.View;
 
@@ -80,12 +82,13 @@ public partial class ControlPanelView : IDisposable {
     public event EventHandler<ITrack>? TrackPieceTapped;
     public event EventHandler<ITrack>? TrackPieceChanged;
     public event EventHandler<ITrack>? TrackPieceDoubleTapped;
-    
+
     private void OnTrackPieceChanged(object? sender, PropertyChangedEventArgs e) {
         if (sender is ITrack track) {
             if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }
+
             TrackPieceChanged?.Invoke(this, track);
         }
     }
@@ -323,10 +326,11 @@ public partial class ControlPanelView : IDisposable {
                 var dragGesture = new DragGestureRecognizer();
                 dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
                 view.GestureRecognizers.Add(dragGesture);
-                
+
                 var doubleTapGesture = new TapGestureRecognizer {
-                    NumberOfTapsRequired = 2,
+                    NumberOfTapsRequired = 2
                 };
+
                 doubleTapGesture.Tapped += (sender, args) => TrackPieceDoubleTapped?.Invoke(this, track);
                 view.GestureRecognizers.Add(doubleTapGesture);
             }
@@ -367,15 +371,16 @@ public partial class ControlPanelView : IDisposable {
         args.Data.Properties.Add("Source", "Panel");
         _lastDragCol = 0;
         _lastDragRow = 0;
-        
+
 #if IOS || MACCATALYST
-        Func<UIKit.UIDragPreview> action = () => {
-            var image = UIKit.UIImage.FromFile("move.png");
-            UIKit.UIImageView imageView = new UIKit.UIImageView(image);
-            imageView.ContentMode = UIKit.UIViewContentMode.Center;
-            imageView.Frame = new CoreGraphics.CGRect(0, 0, 0, 0);
-            return new UIKit.UIDragPreview(imageView);
+        Func<UIDragPreview> action = () => {
+            var image = UIImage.FromFile("move.png");
+            var imageView = new UIImageView(image);
+            imageView.ContentMode = UIViewContentMode.Center;
+            imageView.Frame = new CGRect(0, 0, 0, 0);
+            return new UIDragPreview(imageView);
         };
+
         args?.PlatformArgs?.SetPreviewProvider(action);
 #endif
     }
@@ -389,9 +394,8 @@ public partial class ControlPanelView : IDisposable {
     private void DragOverTrackOnPanel(object? sender, DragEventArgs e) {
         var track = e.Data.Properties["Track"] as ITrack ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-        
-        if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
 
+        if (gridPosition is { IsSuccess: true, Value: var position } && track != null) {
             if (EditMode == EditModeEnum.Size) {
                 ResizeTrack(track, position.Col, position.Row);
             } else {
@@ -415,27 +419,26 @@ public partial class ControlPanelView : IDisposable {
             _lastDragCol = 0;
             _lastDragRow = 0;
         }
-        
+
 #if IOS || MACCATALYST
         switch (EditMode) {
         case EditModeEnum.Move:
-            e?.PlatformArgs?.SetDropProposal(new UIKit.UIDropProposal(UIKit.UIDropOperation.Move));
+            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Move));
             break;
         case EditModeEnum.Copy:
-            e?.PlatformArgs?.SetDropProposal(new UIKit.UIDropProposal(UIKit.UIDropOperation.Copy));
+            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
             break;
         default:
-            e?.PlatformArgs?.SetDropProposal(new UIKit.UIDropProposal(UIKit.UIDropOperation.Forbidden));
+            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
             break;
         }
 #endif
-        
+
 #if WINDOWS
     var dragUI = e.PlatformArgs.DragEventArgs.DragUIOverride;
     dragUI.IsCaptionVisible = false;
     dragUI.IsGlyphVisible = false;
 #endif
-        
     }
 
     private void DropTrackOnPanel(object? sender, DropEventArgs e) {
@@ -455,7 +458,7 @@ public partial class ControlPanelView : IDisposable {
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
                 // -----------------------------------------------------------------
-                if (trackPiece.Layer > GetHighestOccupiedLayer(EditMode,track,position.Col, position.Row)) {
+                if (trackPiece.Layer > GetHighestOccupiedLayer(EditMode, track, position.Col, position.Row)) {
                     ClearSelectedTracks();
                     if (Panel is { } panel) {
                         switch (source) {
@@ -478,8 +481,9 @@ public partial class ControlPanelView : IDisposable {
                             case EditModeEnum.Size:
                                 break;
                             }
+
                             break;
-                        
+
                         case "DisplaySymbol":
                             if (Panel is not null && trackPiece.Clone(Panel) is { } newPiece) {
                                 newPiece.X = position.Col;
@@ -495,11 +499,12 @@ public partial class ControlPanelView : IDisposable {
                             break;
                         }
                     }
-                } 
-            } 
+                }
+            }
         } catch (Exception ex) {
             Console.WriteLine("Error dropping item: " + ex.Message);
         }
+
         _lastDragCol = 0;
         _lastDragRow = 0;
     }
@@ -507,9 +512,9 @@ public partial class ControlPanelView : IDisposable {
     private int GetHighestOccupiedLayer(EditModeEnum editMode, ITrack track, int col, int row) {
         var tracksInGrid = Panel?.Tracks
                                  .Where(x =>
-                                            (editMode == EditModeEnum.Copy || x != track) &&     // Include track if Copy mode, exclude if Move
-                                            ((col < x.X + x.Width && col + track.Width > x.X) && // Check X overlap, even if col is before
-                                             (row < x.Y + x.Height && row + track.Height > x.Y)) // Check Y overlap, even if row is before
+                                            (editMode == EditModeEnum.Copy || x != track) &&  // Include track if Copy mode, exclude if Move
+                                            col < x.X + x.Width && col + track.Width > x.X && // Check X overlap, even if col is before
+                                            row < x.Y + x.Height && row + track.Height > x.Y  // Check Y overlap, even if row is before
                                   )
                                  .ToList() ?? [];
 
@@ -519,7 +524,7 @@ public partial class ControlPanelView : IDisposable {
 
     private void ResizeTrack(ITrack? track, int newCol, int newRow) {
         if (track is null) return;
-        
+
         // Original position and size
         var originalX = track.X;
         var originalY = track.Y;
@@ -530,7 +535,7 @@ public partial class ControlPanelView : IDisposable {
         if (newCol > originalX) {
             track.Width = newCol - originalX + 1; // +1 to include the new column
         }
-        
+
         // Resizing left (shifting X and adjusting width)
         else if (newCol < originalX) {
             var deltaX = originalX - newCol;
@@ -542,7 +547,7 @@ public partial class ControlPanelView : IDisposable {
         if (newRow > originalY) {
             track.Height = newRow - originalY + 1; // +1 to include the new row
         }
-        
+
         // Resizing up (shifting Y and adjusting height)
         else if (newRow < originalY) {
             var deltaY = originalY - newRow;
@@ -557,7 +562,7 @@ public partial class ControlPanelView : IDisposable {
         // Refresh Grid and Update
         InvalidateCell(track); // Re-render the grid for the resized component
     }
-    
+
     /// <summary>
     ///     Convert a position in the grid (absolute) to a Grid position within the col/row definitions
     /// </summary>
