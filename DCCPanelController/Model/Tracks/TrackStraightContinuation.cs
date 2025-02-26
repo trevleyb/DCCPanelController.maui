@@ -7,8 +7,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackStraightContinuation(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackContinuationBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
 
-    [ObservableProperty]
-    private string _name = "Straight Track";
+    public string Name => "Straight Track";
 
     public TrackStraightContinuation() : this(null) { }
 

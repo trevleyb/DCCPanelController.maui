@@ -7,7 +7,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackCornerContinuation(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackContinuationBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
 
-    [ObservableProperty] private string _name = "Corner Track";
+    public string Name => "Corner Track";
     public TrackCornerContinuation() : this(null) { }
 
     public ITrack Clone(Panel parent) {

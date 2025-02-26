@@ -7,7 +7,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackCorner(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
 
-    [ObservableProperty] private string _name = "Corner Track";
+    public string Name => "Corner Track";
     public TrackCorner() : this(null) { }
 
     public ITrack Clone(Panel parent) {

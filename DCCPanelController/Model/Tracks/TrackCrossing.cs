@@ -7,8 +7,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackCrossing(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
 
-    [ObservableProperty]
-    private string _name = "Crossing Track";
+    public string Name => "Crossing Track";
 
     public TrackCrossing() : this(null) { }
 

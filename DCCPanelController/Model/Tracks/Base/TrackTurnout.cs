@@ -70,22 +70,6 @@ public abstract partial class TrackTurnoutBase : TrackBase {
             _                             => TurnoutStateEnum.Unknown
         };
 
-    public override void CleanUp() {
-        for (var i = ButtonActions.Count - 1; i >= 0; i--) {
-            var action = ButtonActions[i];
-            if (string.IsNullOrWhiteSpace(action.Id)) {
-                ButtonActions.RemoveAt(i);
-            }
-        }
-
-        for (var i = TurnoutActions.Count - 1; i >= 0; i--) {
-            var action = TurnoutActions[i];
-            if (string.IsNullOrWhiteSpace(action.Id)) {
-                TurnoutActions.RemoveAt(i);
-            }
-        }
-    }
-
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
 
     protected override ImageSource GetViewForSymbol(double gridSize) {

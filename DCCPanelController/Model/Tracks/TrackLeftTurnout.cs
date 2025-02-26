@@ -7,8 +7,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackLeftTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnoutBase(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrack {
 
-    [ObservableProperty]
-    private string _name = "Left Turnout";
+    public string Name => "Left Turnout";
 
     public TrackLeftTurnout() : this(null) { }
 

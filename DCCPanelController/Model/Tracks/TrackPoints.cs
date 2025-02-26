@@ -8,8 +8,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrack {
 
-    [ObservableProperty]
-    private string _name = "Connection Points";
+    public string Name => "Connection Points";
 
     public TrackPoints() : this(null) { }
 

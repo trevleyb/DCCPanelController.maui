@@ -11,6 +11,8 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
+    public string Name => "Image";
+
     [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
     private Color _borderColor = Colors.Transparent;
 
@@ -22,10 +24,7 @@ public partial class TrackImage(Panel? parent = null) : TrackBase(parent), ITrac
 
     [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
     private bool _keepAspectRatio = true;
-
-    [ObservableProperty]
-    private string _name = "Image";
-
+    
     public TrackImage() : this(null) { }
 
     [EditableImage(Name = "Image", Group = "Image", Description = "Image to display")]

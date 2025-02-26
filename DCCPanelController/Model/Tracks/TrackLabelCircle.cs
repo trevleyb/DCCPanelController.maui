@@ -11,7 +11,8 @@ public partial class TrackLabelCircle(Panel? parent = null) : TrackBase(parent),
 
     // TODO: Thoughts, could a Label Circle be a special case that is linked to 
     //       a turnout and shows the ID of the turnout?? And a Line to the Turnout?
-    
+    public string Name => "Circle Image";
+
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Green;
 
@@ -27,9 +28,6 @@ public partial class TrackLabelCircle(Panel? parent = null) : TrackBase(parent),
     [ObservableProperty]
     [property: EditableString(Name = "Circle Label", Description = "Label to display in the Circle")]
     private string _label = string.Empty;
-
-    [ObservableProperty]
-    private string _name = "Circle Image";
 
     [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
     private Color _textColor = Colors.White;

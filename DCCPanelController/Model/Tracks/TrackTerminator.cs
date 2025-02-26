@@ -7,8 +7,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackTerminator(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPieceBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
 
-    [ObservableProperty]
-    private string _name = "Terminator Track";
+    public string Name => "Terminator Track";
 
     public TrackTerminator() : this(null) { }
 

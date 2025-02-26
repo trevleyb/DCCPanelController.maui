@@ -7,15 +7,14 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackRightTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnoutBase(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrack {
 
-    [ObservableProperty]
-    private string _name = "Right Turnout";
+    public string Name => "Right Turnout";
 
     public TrackRightTurnout() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         var clone = Clone<TrackRightTurnout>(parent);
         clone.Address = "";
-        clone.Name = parent.NextTurnoutID();
+        clone.TurnoutID = parent.NextTurnoutID();
         return clone;
     }
 

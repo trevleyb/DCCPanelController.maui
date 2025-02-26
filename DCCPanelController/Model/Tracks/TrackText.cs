@@ -10,6 +10,8 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrackSymbol, ITrack {
 
+    public string Name => "Text Block";
+
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Transparent;
 
@@ -30,10 +32,7 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
 
     [ObservableProperty] [property: EditableEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
-
-    [ObservableProperty]
-    private string _name = "Text Block";
-
+    
     [ObservableProperty] [property: EditableString(Name = "Text", Description = "Text to Display")]
     private string _text = "";
 
@@ -59,7 +58,6 @@ public partial class TrackText(Panel? parent = null) : TrackBase(parent), ITrack
 
     protected override void Setup() {
         Layer = 2;
-        Name = "Text";
         RotationIncrement = 90;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Text", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Text", (0, 0), (90, 90), (180, 180), (270, 270));

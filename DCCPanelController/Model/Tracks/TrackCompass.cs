@@ -8,8 +8,7 @@ namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackCompass(Panel? parent = null) : TrackPieceBase(parent), ITrackSymbol, ITrack {
 
-    [ObservableProperty]
-    private string _name = "Compass";
+    public string Name => "Compass";
 
     public TrackCompass() : this(null) { }
 
