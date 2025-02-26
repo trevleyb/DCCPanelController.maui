@@ -10,7 +10,7 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackTurnoutBase : TrackBase {
+public abstract partial class TrackTurnout : TrackBase {
 
     [ObservableProperty]
     [property: EditableString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
@@ -52,11 +52,11 @@ public abstract partial class TrackTurnoutBase : TrackBase {
 
     private TurnoutsService? _turnoutsService;
 
-    protected TrackTurnoutBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
+    protected TrackTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
         _trackTypeEnum = styleTypeEnum;
     }
 
-    protected TrackTurnoutBase(Panel? parent = null) : base(parent) {
+    protected TrackTurnout(Panel? parent = null) : base(parent) {
         PropertyChanged += OnPropertyChanged;
     }
 

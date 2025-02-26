@@ -6,7 +6,7 @@ using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackPieceBase : TrackBase {
+public abstract partial class TrackPiece : TrackBase {
 
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
@@ -24,11 +24,11 @@ public abstract partial class TrackPieceBase : TrackBase {
     [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
-    protected TrackPieceBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
+    protected TrackPiece(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : base(parent) {
         TrackTypeEnum = styleTypeEnum;
     }
 
-    protected TrackPieceBase(Panel? parent = null) : base(parent) { }
+    protected TrackPiece(Panel? parent = null) : base(parent) { }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;

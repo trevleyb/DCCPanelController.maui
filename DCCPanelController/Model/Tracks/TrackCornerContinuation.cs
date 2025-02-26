@@ -5,7 +5,7 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCornerContinuation(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackContinuationBase(parent, styleTypeEnum), ITrackSymbol, ITrack {
+public partial class TrackCornerContinuation(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackContinuation(parent, styleTypeEnum), ITrackSymbol, ITrack {
 
     public string Name => "Corner Track";
     public TrackCornerContinuation() : this(null) { }
