@@ -53,7 +53,7 @@ public partial class RoutesViewModel : BaseViewModel {
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;
-        OnPropertyChanged(nameof(ViewModel.RoutesViewModel.Routes));
+        OnPropertyChanged(nameof(Routes));
         SetLabels();
     }
 
@@ -63,7 +63,7 @@ public partial class RoutesViewModel : BaseViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
-    [RelayCommand(CanExecute = nameof(ViewModel.RoutesViewModel.CanToggleRoutesState))]
+    [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
     public async Task ToggleRoutesState(Route? route) {
         if (route == null) return;
         route.State = route.State switch {

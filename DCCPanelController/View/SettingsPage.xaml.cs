@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Storage;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 

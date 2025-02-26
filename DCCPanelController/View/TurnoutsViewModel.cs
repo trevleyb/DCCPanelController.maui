@@ -60,20 +60,20 @@ public partial class TurnoutsViewModel : BaseViewModel {
         _isAscending = !_isAscending;
 
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
-        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
+        OnPropertyChanged(nameof(Turnouts));
         SetLabels();
     }
 
     [RelayCommand]
     private async Task EditTurnoutAsync(Turnout? turnout) {
         await NavigationService.NavigateToEditTurnoutAsync(turnout);
-        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     private async Task DeleteTurnoutAsync(Turnout turnout) {
         Turnouts.Remove(turnout);
-        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
@@ -88,14 +88,14 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
         var result = await NavigationService.NavigateToEditTurnoutAsync(turnout);
         if (result is not null) Turnouts.Add(result);
-        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
-        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
@@ -108,6 +108,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
         };
 
         if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
-        OnPropertyChanged(nameof(ViewModel.TurnoutsViewModel.Turnouts));
+        OnPropertyChanged(nameof(Turnouts));
     }
 }

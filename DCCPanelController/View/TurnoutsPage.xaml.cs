@@ -1,4 +1,3 @@
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 

@@ -1,5 +1,4 @@
 using DCCPanelController.Model;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 

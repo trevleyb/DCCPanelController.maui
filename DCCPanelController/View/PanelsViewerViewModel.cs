@@ -18,7 +18,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))]
-    [NotifyPropertyChangedFor(nameof(ViewModel.PanelsViewerViewModel.SidePanelWidth))]
+    [NotifyPropertyChangedFor(nameof(SidePanelWidth))]
     [NotifyPropertyChangedFor(nameof(ShouldShowPanelView))]
     private bool _isSidePanelOpen;
 
@@ -51,8 +51,8 @@ public partial class PanelsViewerViewModel : BaseViewModel {
         SelectedPanel = null;
         SelectedPanel = panel ?? Panels.FirstOrDefault();
         OnPropertyChanged(nameof(IsPanelSelected));
-        OnPropertyChanged(nameof(ViewModel.PanelsViewerViewModel.Panels));
-        OnPropertyChanged(nameof(ViewModel.PanelsViewerViewModel.SelectedPanel));
+        OnPropertyChanged(nameof(Panels));
+        OnPropertyChanged(nameof(SelectedPanel));
     }
 
     public async void Save() {

@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
-using DCCPanelController.ViewModel;
+using DCCPanelController.View.PropertyPages;
 
 namespace DCCPanelController.View;
 

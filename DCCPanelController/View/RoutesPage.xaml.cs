@@ -1,4 +1,3 @@
-using DCCPanelController.ViewModel;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 

@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 

@@ -1,5 +1,4 @@
 using DCCPanelController.Model.Tracks.Interfaces;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View;
 
