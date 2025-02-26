@@ -62,7 +62,7 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
         var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
         ImageRotation = trackInfo.ImageRotation;
         TrackRotation = trackInfo.TrackRotation;
-        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Button, TrackStyleImageEnum.Normal, Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Button, TrackStyleImageEnum.Normal, Parent);
         style = SvgStyles.AddTextToStyle(style, Label);
         style = new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Text).WithTextSize(FontSize)).Build();
         ;

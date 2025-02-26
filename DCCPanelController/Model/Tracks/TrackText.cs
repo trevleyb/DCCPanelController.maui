@@ -125,7 +125,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
         var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
         ImageRotation = trackInfo.ImageRotation;
         TrackRotation = trackInfo.TrackRotation;
-        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Text, TrackStyleImageEnum.Normal, Parent?.Defaults);
+        var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Text, TrackStyleImageEnum.Normal, Parent);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

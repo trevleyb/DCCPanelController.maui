@@ -218,9 +218,6 @@
         <MauiXaml Update="View\Actions\TurnoutActionsGrid.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\EditProperties\DynamicPropertyPage.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\AboutPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
@@ -228,6 +225,9 @@
           <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\WelcomePage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\PropertPages\DynamicPropertyPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -263,10 +263,6 @@
         </Compile>
         <Compile Update="View\Actions\TurnoutActionsGrid.xaml.cs">
             <DependentUpon>TurnoutActionsGrid.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\EditProperties\DynamicPropertyPage.xaml.cs">
-            <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\SettingsViewModel.cs">
@@ -310,6 +306,13 @@
         </Compile>
         <Compile Update="View\AboutViewModel.cs">
           <DependentUpon>AboutPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\PropertPages\DynamicPropertyPage.xaml.cs">
+          <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\PropertyPages\DynamicPropertyPageViewModel.cs">
+          <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 
