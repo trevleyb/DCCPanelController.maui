@@ -7,12 +7,12 @@ public interface ITrack {
 
     Guid Id { get; set; }
     string Name { get; }
+    int Layer { get; }
 
     int X { get; set; }
     int Y { get; set; }
     int Width { get; set; }
     int Height { get; set; }
-    int Layer { get; }
     bool IsSelected { get; set; }
 
     IView? TrackViewRef { get; set; }

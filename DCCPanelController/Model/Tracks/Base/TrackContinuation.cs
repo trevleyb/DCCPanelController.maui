@@ -6,26 +6,15 @@ using DCCPanelController.View.EditProperties.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackContinuationBase : TrackBase {
+public abstract partial class TrackContinuationBase : TrackPieceBase {
 
-    [ObservableProperty]
-    [property: EditableBool(Name = "Hidden Track", Group = "Attributes", Description = "Indicates track hidden such as in a tunnel", Order = 1)]
-    private bool _isHidden;
-
-    [ObservableProperty]
-    [property: JsonIgnore] private bool _isOccupied;
-
-    [ObservableProperty]
-    [property: EditableColor(Name = "Track Color", Group = "Attributes", Description = "Color of the Track or leave None to use defaults.", Order = 2)]
-    private Color? _trackColor;
-
+    // TODO: Make a Track Continuation have a link to another page. I should be able 
+    //       to click on the continuation track and have it go to that new panel 
+    //       or page. 
+    
     [ObservableProperty]
     [property: EditableTrackImage(Name = "Track Style", Group = "Attributes", Description = "Style of this track piece", TrackTypes = new[] { TrackStyleImageEnum.Arrow, TrackStyleImageEnum.Lines }, Order = 5)]
     private TrackStyleImageEnum _trackImageEnum = TrackStyleImageEnum.Arrow;
-
-    [ObservableProperty]
-    [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Order = 6)]
-    private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
     protected TrackContinuationBase(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline, TrackStyleImageEnum style = TrackStyleImageEnum.Arrow) : base(parent) {
         TrackTypeEnum = styleTypeEnum;
@@ -34,36 +23,8 @@ public abstract partial class TrackContinuationBase : TrackBase {
 
     protected TrackContinuationBase(Panel? parent = null) : base(parent) { }
 
-    protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
-    }
-
     protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
         var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough);
         return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
-    }
-
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) { // Find the appropriate image reference for the details we have
-        // ---------------------------------------------------------------------------------------------------
-        var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
-        var imageInfo = SvgImages.GetImage(trackInfo.ImageSource);
-        ImageRotation = trackInfo.ImageRotation;
-        TrackRotation = trackInfo.TrackRotation;
-
-        // Apply the various styles that need to be applied based on the 
-        // details that we have within the context of this track type
-        // --------------------------------------------------------------------------------------------------
-        var style = SvgStyles.GetStyle(TrackTypeEnum, TrackImageEnum, Parent?.Defaults);
-        if (TrackColor is not null) {
-            style = new SvgStyleBuilder()
-                   .AddExistingStyle(style)
-                   .AddElement(e => e.WithName(SvgElementEnum.Track).WithColor(TrackColor))
-                   .Build();
-        }
-
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent?.Defaults);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent?.Defaults);
-        ActiveImage = imageInfo.ApplyStyle(style);
-        return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 }

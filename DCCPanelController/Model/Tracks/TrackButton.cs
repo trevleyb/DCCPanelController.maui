@@ -113,11 +113,6 @@ public partial class TrackButton(Panel? parent = null) : TrackBase(parent), ITra
         };
     }
     
-    
-    
-    
-    
-    
     public ITrack Clone(Panel parent) {
         var cloned = Clone<TrackButton>(parent);
         cloned.ButtonID = cloned?.Parent?.NextButtonID() ?? "";

@@ -27,6 +27,7 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
             var stepperUpDown = new Stepper {
                 Minimum = attr?.MinValue ?? 0,  // Define the stepper min value if needed
                 Maximum = attr?.MaxValue ?? 99, // Define the stepper max value if needed
+                HeightRequest = 20,
                 Increment = 1,                  // Increment/decrement step
                 HorizontalOptions = LayoutOptions.End
             };

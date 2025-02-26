@@ -19,7 +19,6 @@ public partial class TrackRightTurnout(Panel? parent = null, TrackStyleTypeEnum 
     }
 
     protected override void Setup() {
-        ShowAboveSymbol = true;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "TurnoutR1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "TurnoutR1", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Straight, "TurnoutR2", (0, 0), (90, 90), (180, 180), (270, 270));
