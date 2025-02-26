@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.PropertyPages.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 

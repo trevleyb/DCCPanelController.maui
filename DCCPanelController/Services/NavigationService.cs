@@ -1,5 +1,6 @@
 using DCCPanelController.Model;
 using DCCPanelController.View;
+using DCCPanelController.View.PropertyPages;
 
 namespace DCCPanelController.Services;
 

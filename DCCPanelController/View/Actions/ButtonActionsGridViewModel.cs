@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.View.PropertyPages;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
 

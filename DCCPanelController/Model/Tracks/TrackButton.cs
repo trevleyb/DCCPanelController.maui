@@ -5,12 +5,13 @@ using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.ViewModel;
+using DCCPanelController.View.PropertyPages;
+using DCCPanelController.View.PropertyPages.Attributes;
 using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackButton(Panel? parent = null) : Track(parent), ITrack, ITrackButton, ITrackSymbol {
+public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackButton, ITrackSymbol {
 
     public TrackButton() : this(null) {
         PropertyChanged += OnPropertyChanged;
@@ -26,12 +27,10 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrack, 
     [ObservableProperty] [property: EditableBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
     private bool _isEnabled = true;
 
-    [ObservableProperty]
-    [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
+    [ObservableProperty][property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
     private ButtonActions _buttonActions = [];
 
-    [ObservableProperty]
-    [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
+    [ObservableProperty][property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
     private TurnoutActions _turnoutActions = [];
 
     public ButtonStateEnum State = ButtonStateEnum.Unknown;
@@ -114,7 +113,7 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrack, 
     
     public ITrack Clone(Panel parent) {
         var cloned = Clone<TrackButton>(parent);
-        cloned.ButtonID = cloned?.Parent?.NextButtonID() ?? "";
+        cloned.ButtonID = cloned.Parent?.NextButtonID() ?? "";
         Debug.Assert(cloned != null, nameof(cloned) + " != null");
         return cloned;
     }

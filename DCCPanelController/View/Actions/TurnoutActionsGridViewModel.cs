@@ -5,7 +5,6 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.View.PropertyPages;
-using DCCPanelController.ViewModel;
 
 namespace DCCPanelController.View.Actions;
 

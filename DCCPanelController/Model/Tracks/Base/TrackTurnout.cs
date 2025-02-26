@@ -4,7 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.ViewModel;
+using DCCPanelController.View.PropertyPages;
+using DCCPanelController.View.PropertyPages.Attributes;
 using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;

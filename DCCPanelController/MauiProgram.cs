@@ -3,7 +3,6 @@ using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View;
-using DCCPanelController.ViewModel;
 using Microsoft.Extensions.Logging;
 using OperateViewModel = DCCPanelController.View.OperateViewModel;
 using PanelsViewerViewModel = DCCPanelController.View.PanelsViewerViewModel;

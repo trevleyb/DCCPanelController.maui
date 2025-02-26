@@ -1,3 +1,4 @@
+using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.PropertyPages.Base;

@@ -4,6 +4,8 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using Microsoft.Maui.Controls.Shapes;
+using DCCPanelController.View.PropertyPages.Attributes;
+
 
 namespace DCCPanelController.Model.Tracks;
 
