@@ -36,24 +36,10 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
-
-    public bool TracksOutsideBounds => Panel.Tracks.Any(track => track.X < 0 || track.X >= Panel.Cols || track.Y < 0 || track.Y >= Panel.Rows);
-
+    
     public void TrackPieceChanged() {
         OnPropertyChanged(nameof(HasSelectedTracks));
         OnPropertyChanged(nameof(CanUsePropertyPage));
-    }
-
-    public void Validate() {
-        // Make sure that all the Coordinates for the Track Pieces are valid and 
-        // if not, make sure they are within the bounds of the Panel. 
-        if (!Panel.Tracks.Any()) return;
-        for (var idx = Panel.Tracks.Count - 1; idx >= 0; idx--) {
-            var track = Panel.Tracks[idx];
-            if (track.X < 0 || track.X >= Panel.Cols || track.Y < 0 || track.Y >= Panel.Rows) {
-                Panel.Tracks.Remove(track);
-            }
-        }
     }
 
     private static ObservableCollection<ITrackSymbol> BuildTrackSymbols(Panel parent) {
@@ -74,7 +60,9 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackRightTurnout(parent) { TrackRotation = 180 },
             new TrackCrossing(parent),
             new TrackTerminator(parent),
-
+            // TODO: Add a Circle Track Type
+            // TODO: Add a Rectangle Track Type
+            // TODO: Add a Line Track Type
             new TrackStraight(parent, TrackStyleTypeEnum.Branchline),
             new TrackStraight(parent, TrackStyleTypeEnum.Branchline) { TrackRotation = 90 },
             new TrackStraightContinuation(parent, TrackStyleTypeEnum.Branchline),

@@ -11,20 +11,19 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelID = "ID";
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
+
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     private bool _isAscending;
     private string _sortColumn = "";
-
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     public TurnoutsViewModel(TurnoutsService turnoutService, ConnectionService connectionService, NavigationService navigationService) {
         TurnoutService = turnoutService;
         ConnectionService = connectionService;
         NavigationService = navigationService;
-
         Turnouts = TurnoutService.Turnouts ?? [];
         SetLabels();
     }
@@ -57,7 +56,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
                 _       => Turnouts.ToList()
             };
         }
-
         _sortColumn = columnName;
         _isAscending = !_isAscending;
 

@@ -10,7 +10,6 @@ using DCCPanelController.View.PropertPages;
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewerViewModel : BaseViewModel {
-    private readonly NavigationService _navigationService;
     private readonly SettingsService _settingsService;
     [ObservableProperty] private bool _canExpandCollapse = true;
     private Panel? _draggedPanel;
@@ -34,7 +33,6 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     public PanelsViewerViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
-        _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
         Panels = _settingsService.Panels;
         SidePanelWidth = 300;
         IsSidePanelOpen = true;
@@ -44,10 +42,9 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     public bool IsSidePanelClosed => !IsSidePanelOpen;
     public bool IsPanelSelected => SelectedPanel != null;
     public bool NoPanelSelected => SelectedPanel == null;
+    public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
 
     public Panels Panels { get; set; }
-
-    public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
 
     public void SelectPanel(Panel? panel = null) {
         SelectedPanel = null;
@@ -63,15 +60,12 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {
-        Console.WriteLine("Drag Panel: " + panel?.Name);
         _draggedPanel = panel;
     }
 
     [RelayCommand]
     private async Task DropPanelAsync(Panel? panel) {
-        Console.WriteLine("Drop Panel: " + panel?.Name);
         if (_draggedPanel == null) return;
-
         RefreshSortOrder();
         Save();
         _draggedPanel = null;
@@ -79,10 +73,8 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task DragPanelOverAsync(Panel? panel) {
-        Console.WriteLine("Drag Over: " + panel?.Name);
-
         if (_draggedPanel == null) return;
-        if (panel == null || panel == _draggedPanel) return; // Ignore invalid or redundant scenarios
+        if (panel == null || panel == _draggedPanel) return; 
 
         var draggedIndex = Panels.IndexOf(_draggedPanel);
         var targetIndex = Panels.IndexOf(panel);
@@ -97,13 +89,11 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             Panels.Remove(_draggedPanel);
             Panels.Insert(targetIndex, _draggedPanel);
         }
-
-        RefreshSortOrder();
+        //RefreshSortOrder();
     }
 
     [RelayCommand]
     private async Task DragPanelLeaveAsync(Panel? panel) {
-        Console.WriteLine("Drag Leave: " + panel?.Name);
         if (_draggedPanel == null) return;
         RefreshSortOrder();
     }
@@ -116,10 +106,8 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private async Task SelectionChangedAsync() {
-        if (IsThinMode) {
-            await EditPanelAsync(SelectedPanel);
-        }
+    private Task SelectionChangedAsync() {
+        return IsThinMode ? EditPanelAsync(SelectedPanel) : Task.CompletedTask;
     }
 
     [RelayCommand]
@@ -150,16 +138,10 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private async Task EditPanelAsync(Panel? panel = null) {
         if (panel is not null) SelectedPanel = panel;
         if (SelectedPanel is null) return;
-
-        //var tempPanel = SelectedPanel.Clone();
+        
+        // Always Save but we have the option to not as result
+        // will be Save=True, Back=False
         var result = await LaunchEditPanelAsync(SelectedPanel);
-
-        // if (result) {
-        //     var index = Panels.IndexOf(SelectedPanel);
-        //     if (index >= 0) Panels[index] = tempPanel;
-        //     SelectedPanel = Panels[index];
-        //     Save();
-        // } 
         Save();
         SelectPanel(SelectedPanel);
     }
@@ -210,7 +192,6 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
                 return result;
             }
-
             return false;
         }
     }

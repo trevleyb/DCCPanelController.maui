@@ -14,13 +14,12 @@ public partial class SettingsViewModel : BaseViewModel {
 
     private readonly ConnectionService? _connectionService;
     public readonly SettingsService? SettingsService;
-    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-    [ObservableProperty] private Settings _settings;
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
-    private bool _showMessages;
 
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
+    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
+    [ObservableProperty] private Settings _settings;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
+    private bool _showMessages;
 
     public SettingsViewModel(SettingsService settingsService) {
         SettingsService = settingsService;
@@ -30,9 +29,9 @@ public partial class SettingsViewModel : BaseViewModel {
         Settings = SettingsService.Settings;
     }
 
+    public string ConnectLabel => _connectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool ShowWiServers => !ShowMessages;
     public bool IsConnected => _connectionService is { IsConnected   : true } ? true : false;
-    public string ConnectLabel => _connectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool IsLiveMode => !IsDemoMode || !IsConnected;
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 

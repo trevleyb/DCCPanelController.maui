@@ -16,9 +16,9 @@ public partial class RoutesViewModel : BaseViewModel {
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    private bool _isAscending;
+    [ObservableProperty] private ObservableCollection<Route> _routes;
 
-    [ObservableProperty] private ObservableCollection<Route>? _routes;
+    private bool _isAscending;
     private string _sortColumn = "";
 
     public RoutesViewModel(RoutesService? routesService, ConnectionService? connectionService) {
@@ -32,26 +32,24 @@ public partial class RoutesViewModel : BaseViewModel {
 
     [RelayCommand]
     public async Task SortByColumn(string columnName) {
-        List<Route> sortedRoutes = [];
-        if (Routes != null) {
-            if (!_isAscending) {
-                sortedRoutes = columnName.ToLower() switch {
-                    "name"  => Routes.OrderBy(x => x.Name).ToList(),
-                    "id"    => Routes.OrderBy(x => x.Id).ToList(),
-                    "state" => Routes.OrderBy(x => x.State).ToList(),
-                    _       => Routes.ToList()
-                };
-            } else {
-                sortedRoutes = columnName.ToLower() switch {
-                    "name"  => Routes.OrderByDescending(x => x.Name).ToList(),
-                    "id"    => Routes.OrderByDescending(x => x.Id).ToList(),
-                    "state" => Routes.OrderByDescending(x => x.State).ToList(),
-                    _       => Routes.ToList()
-                };
-            }
-
-            Routes = new ObservableCollection<Route>(sortedRoutes);
+        List<Route> sortedRoutes;
+        if (!_isAscending) {
+            sortedRoutes = columnName.ToLower() switch {
+                "name"  => Routes.OrderBy(x => x.Name).ToList(),
+                "id"    => Routes.OrderBy(x => x.Id).ToList(),
+                "state" => Routes.OrderBy(x => x.State).ToList(),
+                _       => Routes.ToList()
+            };
+        } else {
+            sortedRoutes = columnName.ToLower() switch {
+                "name"  => Routes.OrderByDescending(x => x.Name).ToList(),
+                "id"    => Routes.OrderByDescending(x => x.Id).ToList(),
+                "state" => Routes.OrderByDescending(x => x.State).ToList(),
+                _       => Routes.ToList()
+            };
         }
+
+        Routes = new ObservableCollection<Route>(sortedRoutes);
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;

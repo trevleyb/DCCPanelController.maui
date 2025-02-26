@@ -9,11 +9,8 @@ public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private bool? _isConnected;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
-
-    public Guid id;
-
-    public OperateViewModel() {
-        id = Guid.NewGuid();
+    
+    public OperateViewModel() { 
         var settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         Panels = settingsService.Panels;
         if (Panels.Any()) {
@@ -22,7 +19,6 @@ public partial class OperateViewModel : BaseViewModel {
     }
 
     public Color BackgroundColor => SelectedPanel?.Defaults.BackgroundColor ?? Colors.White;
-
     public ObservableCollection<Panel> Panels { get; set; }
 
     public string SetActivePanel(Panel? panelCarouselCurrentItem) {
@@ -31,6 +27,8 @@ public partial class OperateViewModel : BaseViewModel {
         return SelectedPanel?.Name ?? "Control Panel";
     }
 
+    // TODO: Add support for Connecting/Disconnecting
+    // TODO: Add events to change the Icon on Connection Status
     public void Connect() {
         IsConnected = IsConnected switch {
             true  => false,

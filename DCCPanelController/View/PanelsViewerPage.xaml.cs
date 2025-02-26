@@ -2,6 +2,11 @@ using System.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.ViewModel;
+#if IOS || MACCATALYST
+using CoreGraphics;
+using UIKit;
+#endif
+
 
 namespace DCCPanelController.View;
 
@@ -64,6 +69,19 @@ public partial class PanelsViewerPage : ContentPage, INotifyPropertyChanged {
             e.Data.Properties.Add("Panel", panel);
             e.Data.Properties.Add("Source", "Panel");
             e.Data.Properties.Add("Index", _viewModel.Panels.IndexOf(panel));
+            
+#if IOS || MACCATALYST
+            Func<UIDragPreview> action = () => {
+                var image = UIImage.FromFile("move.png");
+                var imageView = new UIImageView(image);
+                imageView.ContentMode = UIViewContentMode.Center;
+                imageView.Frame = new CGRect(0, 0, 0, 0);
+                return new UIDragPreview(imageView);
+            };
+            e?.PlatformArgs?.SetPreviewProvider(action);
+#endif
+
+            
         }
     }
 
