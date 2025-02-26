@@ -1,13 +1,15 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CoreGraphics;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
 using Microsoft.Maui.Layouts;
+#if IOS || MACCATALYST
+using CoreGraphics;
 using UIKit;
+#endif
 
 namespace DCCPanelController.View;
 
