@@ -322,7 +322,7 @@ public partial class ControlPanelView : IDisposable {
         if (displayItem is Microsoft.Maui.Controls.View view) {
             var tapGesture = new TapGestureRecognizer();
             tapGesture.NumberOfTapsRequired = 1;
-            tapGesture.Tapped += (sender, args) => TrackPieceTapped?.Invoke(this, track);
+            tapGesture.Tapped += (_, _) => TrackPieceTapped?.Invoke(this, track);
             view.GestureRecognizers.Add(tapGesture);
 
             // If we are in Design mode, then add support for 
@@ -379,15 +379,14 @@ public partial class ControlPanelView : IDisposable {
         _lastDragRow = 0;
 
 #if IOS || MACCATALYST
-        Func<UIDragPreview> action = () => {
+        UIDragPreview Action() {
             var image = UIImage.FromFile("move.png");
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
             imageView.Frame = new CGRect(0, 0, 0, 0);
             return new UIDragPreview(imageView);
-        };
-
-        args?.PlatformArgs?.SetPreviewProvider(action);
+        }
+        args?.PlatformArgs?.SetPreviewProvider(Action);
 #endif
     }
 

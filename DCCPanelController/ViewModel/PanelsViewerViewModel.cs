@@ -6,13 +6,17 @@ using DCCPanelController.Model.Tracks;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using DCCPanelController.View.PropertPages;
+#if IOS || MACCATALYST
+using CoreGraphics;
+using UIKit;
+#endif
 
 namespace DCCPanelController.ViewModel;
 
 public partial class PanelsViewerViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
     [ObservableProperty] private bool _canExpandCollapse = true;
-    private Panel? _draggedPanel;
+    [ObservableProperty] private Panel? _draggedPanel;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))]
@@ -30,6 +34,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private Panel? _selectedPanel;
 
     [ObservableProperty] private int _sidePanelWidth = 300;
+    [ObservableProperty] private Panels _panels;
 
     public PanelsViewerViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
@@ -43,8 +48,6 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     public bool IsPanelSelected => SelectedPanel != null;
     public bool NoPanelSelected => SelectedPanel == null;
     public bool ShouldShowPanelView => CanExpandCollapse && IsPanelSelected;
-
-    public Panels Panels { get; set; }
 
     public void SelectPanel(Panel? panel = null) {
         SelectedPanel = null;
@@ -60,45 +63,45 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {
-        _draggedPanel = panel;
+        DraggedPanel = panel;
     }
 
     [RelayCommand]
     private async Task DropPanelAsync(Panel? panel) {
-        if (_draggedPanel == null) return;
+        if (DraggedPanel == null) return;
         RefreshSortOrder();
         Save();
-        _draggedPanel = null;
+        DraggedPanel = null;
     }
 
     [RelayCommand]
     private async Task DragPanelOverAsync(Panel? panel) {
-        if (_draggedPanel == null) return;
-        if (panel == null || panel == _draggedPanel) return; 
-
-        var draggedIndex = Panels.IndexOf(_draggedPanel);
+        if (DraggedPanel == null) return;
+        if (panel == null || panel == DraggedPanel) return; 
+    
+        var draggedIndex = Panels.IndexOf(DraggedPanel);
         var targetIndex = Panels.IndexOf(panel);
         if (targetIndex == -1) return;
-
+    
         if (targetIndex == Panels.Count - 1 && draggedIndex != Panels.Count - 1) {
             // If dragging over the last item, simulate dropping at the end of the list
-            Panels.Remove(_draggedPanel);
-            Panels.Add(_draggedPanel);
+                Panels.Remove(DraggedPanel);
+                Panels.Add(DraggedPanel);
         } else if (draggedIndex != targetIndex) {
             // If dragging over a different panel, reorder panels by moving
-            Panels.Remove(_draggedPanel);
-            Panels.Insert(targetIndex, _draggedPanel);
+                Panels.Remove(DraggedPanel);
+                Panels.Insert(targetIndex, DraggedPanel);
         }
         //RefreshSortOrder();
     }
 
     [RelayCommand]
     private async Task DragPanelLeaveAsync(Panel? panel) {
-        if (_draggedPanel == null) return;
+        if (DraggedPanel == null) return;
         RefreshSortOrder();
     }
 
-    private void RefreshSortOrder() {
+    public void RefreshSortOrder() {
         // Update the SortOrder of all panels based on their current position in the collection
         for (var i = 0; i < Panels.Count; i++) {
             Panels[i].SortOrder = i + 1;
