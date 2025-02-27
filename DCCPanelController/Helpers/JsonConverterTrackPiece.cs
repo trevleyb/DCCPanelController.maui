@@ -34,7 +34,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
                 "TrackText"                 => JsonSerializer.Deserialize<TrackText>(rawText, options),
                 "TrackDrawCircle"           => JsonSerializer.Deserialize<TrackDrawCircle>(rawText, options),
                 "TrackDrawRectangle"        => JsonSerializer.Deserialize<TrackDrawRectangle>(rawText, options),
-                
+                "TrackDrawLine"             => JsonSerializer.Deserialize<TrackDrawLine>(rawText, options),
                 _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\"")
             };
 

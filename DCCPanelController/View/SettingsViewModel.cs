@@ -12,7 +12,7 @@ namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
 
-    private readonly ConnectionService? _connectionService;
+    public readonly ConnectionService? ConnectionService;
     public readonly SettingsService? SettingsService;
 
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
@@ -21,17 +21,16 @@ public partial class SettingsViewModel : BaseViewModel {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
 
-    public SettingsViewModel(SettingsService settingsService) {
+    public SettingsViewModel(SettingsService settingsService, ConnectionService? connectionService) {
         SettingsService = settingsService;
-        _connectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
-        if (_connectionService == null) IsDemoMode = true;
-        if (_connectionService != null) _connectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
+        ConnectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
+        ConnectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
         Settings = SettingsService.Settings;
     }
 
-    public string ConnectLabel => _connectionService is { IsConnected: true } ? "Disconnect" : "Connect";
+    public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool ShowWiServers => !ShowMessages;
-    public bool IsConnected => _connectionService is { IsConnected   : true } ? true : false;
+    public bool IsConnected => ConnectionService is { IsConnected   : true } ? true : false;
     public bool IsLiveMode => !IsDemoMode || !IsConnected;
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 
@@ -117,14 +116,14 @@ public partial class SettingsViewModel : BaseViewModel {
             AddMessage("Attempting to connect/disconnect to WiService");
             try {
                 IsBusy = true;
-                if (_connectionService is not null) {
+                if (ConnectionService is not null) {
                     if (IsConnected) {
-                        _connectionService.Disconnect();
-                        _connectionService.MessageRecieved -= ServiceOnMessageRecieved;
+                        ConnectionService.Disconnect();
+                        ConnectionService.MessageRecieved -= ServiceOnMessageRecieved;
                         AddMessage("Disconnected.");
                     } else {
-                        _connectionService.Connect(Settings.WiServer);
-                        _connectionService.MessageRecieved += ServiceOnMessageRecieved;
+                        ConnectionService.Connect(Settings.WiServer);
+                        ConnectionService.MessageRecieved += ServiceOnMessageRecieved;
                         AddMessage("Connected.");
                     }
                 }

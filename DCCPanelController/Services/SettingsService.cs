@@ -47,6 +47,7 @@ public class SettingsService {
     }
 
     public Storage Load(string fileName = StorageFilename) {
+        Console.WriteLine("Loading Settings");
         var filePath = GetStorageFilePath(fileName);
         try {
             if (File.Exists(filePath)) {

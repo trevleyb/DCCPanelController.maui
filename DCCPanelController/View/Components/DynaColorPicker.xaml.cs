@@ -1,12 +1,13 @@
 using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.Input;
 
 namespace DCCPanelController.View.Components;
 
-public partial class ColorPicker : Popup {
+public partial class DynaColorPicker : Popup {
 
     private Color? _selectedColor;
 
-    public ColorPicker(Color color) {
+    public DynaColorPicker(Color color) {
         InitializeComponent();
         SelectedColor = color;
         BindingContext = this;
@@ -20,7 +21,8 @@ public partial class ColorPicker : Popup {
         }
     }
 
-    private async void CloseOnSelected(object? sender, EventArgs e) {
+    [RelayCommand]
+    private async Task CloseOnSelectedAsync() {
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         await CloseAsync(SelectedColor, cts.Token);
     }

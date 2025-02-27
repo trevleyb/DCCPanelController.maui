@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<toolkit:Popup
+    x:Class="DCCPanelController.View.Components.MauiColorPicker"
+    x:DataType="colorPickerControl:MauiColorPicker"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
+    xmlns:controls="clr-namespace:Maui.ColorPicker;assembly=Maui.ColorPicker"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <StackLayout
+        HorizontalOptions="Fill"
+        Margin="0"
+        Padding="0"
+        VerticalOptions="Fill"
+        WidthRequest="388">
+        <Border
+            Background="White"
+            HorizontalOptions="Fill"
+            Stroke="{StaticResource Primary}"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            StrokeThickness="3"
+            VerticalOptions="Fill">
+
+            <StackLayout>
+                <Grid
+                    BackgroundColor="{StaticResource Primary}"
+                    ColumnDefinitions="*,auto"
+                    HeightRequest="30"
+                    VerticalOptions="Center">
+                    <Label
+                        Grid.Column="0"
+                        Margin="10,5,0,5"
+                        Style="{StaticResource LargeLabel}"
+                        Text="Select a Color"
+                        TextColor="White"
+                        VerticalOptions="Center" />
+                </Grid>
+
+                <controls:ColorPicker
+                    ColorFlowDirection="Horizontal"
+                    ColorSpectrumStyle="HueToShadeStyle"
+                    HeightRequest="300"
+                    PickedColor="{Binding Path=SelectedColor, Mode=TwoWay}"
+                    PointerRingBorderUnits="0.3"
+                    PointerRingDiameterUnits="0.7"
+                    TouchActionType="OnTouchUp"
+                    x:Name="ColorPicker">
+
+                    <controls:ColorPicker.BaseColorList>
+                        <x:Array Type="{x:Type x:String}">
+                            <!--  Red  -->
+                            <x:String>#ff0000</x:String>
+                            <!--  Yellow  -->
+                            <x:String>#ffff00</x:String>
+                            <!--  Green (Lime)  -->
+                            <x:String>#00ff00</x:String>
+                            <!--  Aqua  -->
+                            <x:String>#00ffff</x:String>
+                            <!--  Blue  -->
+                            <x:String>#0000ff</x:String>
+                            <!--  Fuchsia  -->
+                            <x:String>#ff00ff</x:String>
+                            <!--  Red  -->
+                            <x:String>#ff0000</x:String>
+                        </x:Array>
+                    </controls:ColorPicker.BaseColorList>
+                </controls:ColorPicker>
+
+                <!--  <colorPicker:ColorPicker  -->
+                <!--  Brightness="1"  -->
+                <!--  IncludeBlack="True"  -->
+                <!--  IncludeGrey="True"  -->
+                <!--  IncludeWhite="True"  -->
+                <!--  IsSorted="False"  -->
+                <!--  Margin="10"  -->
+                <!--  NumberOfColors="96"  -->
+                <!--  Saturation="1"  -->
+                <!--  SelectedColor="{Binding Path=SelectedColor, Mode=TwoWay}"  -->
+                <!--  Wrap="Wrap"  -->
+                <!--  x:Name="DynaPicker" />  -->
+
+                <Button
+                    Command="{Binding CloseOnSelectedCommand}"
+                    HorizontalOptions="Center"
+                    Margin="0,10,0,10"
+                    Style="{StaticResource ButtonOutline}"
+                    Text="Close"
+                    WidthRequest="80" />
+            </StackLayout>
+        </Border>
+    </StackLayout>
+</toolkit:Popup>
