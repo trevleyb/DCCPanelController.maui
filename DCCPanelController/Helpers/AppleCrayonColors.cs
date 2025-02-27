@@ -5,7 +5,9 @@ namespace DCCPanelController.Helpers;
 public static class AppleCrayonColors {
     public record AppleCrayonColor(string Name, Color Color);
 
-    public static string ColorName(Color color) => Crayons.FirstOrDefault(crayon => Equals(crayon.Color, color))?.Name ?? "Unknown";
+    public static string Name(Color color) => Crayons.FirstOrDefault(crayon => Equals(crayon.Color, color))?.Name ?? "Unknown";
+    public static string RGB(string name) => Crayons.FirstOrDefault(crayon => crayon.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Color.ToHex() ?? "000000";
+    
     public static IReadOnlyList<Color> Colors => Crayons.Select(crayon => crayon.Color).ToList();    
     public static IReadOnlyList<AppleCrayonColor> Crayons => new List<AppleCrayonColor>() {
         { new("Licorice", Color.FromArgb("FF000000")) },

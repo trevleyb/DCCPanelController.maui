@@ -138,4 +138,16 @@ public partial class PanelEditorPage : ContentPage {
         GridButton.IconImageSource = PanelView.ShowGrid ? "grid_on.png" : "grid_off.png";
         PanelView.RebuildGrid(true);
     }
+
+    private void ZoomIn_Clicked(object? sender, EventArgs e) {
+        if (LeftPane.Scale < 3.0) LeftPane.Scale += 0.1;
+    }
+
+    private void ZoomOut_Clicked(object? sender, EventArgs e) {
+        if (LeftPane.Scale > 0.5) LeftPane.Scale -= 0.1;
+    }
+
+    private void ZoomReset_Clicked(object? sender, EventArgs e) {
+        LeftPane.Scale = 1.0;
+    }
 }

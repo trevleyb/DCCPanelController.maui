@@ -26,7 +26,7 @@ public partial class GridColorPicker : Popup {
         }
     }
 
-    public string SelectedColorName => (SelectedColor == null ? "Default" :  AppleCrayonColors.ColorName(SelectedColor ?? Colors.White)).ToUpper();
+    public string SelectedColorName => (SelectedColor == null ? "Default" :  AppleCrayonColors.Name(SelectedColor ?? Colors.White)).ToUpper();
     
     [RelayCommand]
     private async Task CloseOnSelectedAsync() {

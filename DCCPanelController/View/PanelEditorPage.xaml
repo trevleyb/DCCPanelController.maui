@@ -15,28 +15,6 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Clicked="ZoomUp"
-            IconImageSource="move.png"
-            Text="Edit Mode"
-            ToolTipProperties.Text="Edit Mode"
-            x:Name="ZoomUp" />
-
-        <ToolbarItem
-            Clicked="ZoomDown"
-            IconImageSource="move.png"
-            Text="Edit Mode"
-            ToolTipProperties.Text="Edit Mode"
-            x:Name="ZoomDown" />
-
-        <ToolbarItem
-            Clicked="ZoomReset"
-            IconImageSource="move.png"
-            Text="Edit Mode"
-            ToolTipProperties.Text="Edit Mode"
-            x:Name="ZoomReset" />
-
-        
-        <ToolbarItem
             Clicked="ChangeEditMode"
             IconImageSource="move.png"
             Text="Edit Mode"
@@ -107,22 +85,20 @@
         </Grid.ColumnDefinitions>
 
         <!--  Left Pane  -->
-        <ContentView
-            Grid.Column="0"
-            Margin="10"
-            x:Name="LeftPane">
-            <view:ControlPanelView
-                DesignMode="True"
-                HorizontalOptions="Fill"
-                Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}}"
-                ShowGrid="True"
-                TrackPieceChanged="PanelView_OnTrackPieceChanged"
-                TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
-                TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                VerticalOptions="Fill"
-                x:Name="PanelView" />
-        </ContentView>
-
+        <ScrollView Grid.Column="0" Orientation="Both">
+            <ContentView Margin="10" x:Name="LeftPane">
+                <view:ControlPanelView
+                    DesignMode="True"
+                    HorizontalOptions="Fill"
+                    Panel="{Binding Panel, Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}}"
+                    ShowGrid="True"
+                    TrackPieceChanged="PanelView_OnTrackPieceChanged"
+                    TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
+                    TrackPieceTapped="PanelView_OnTrackPieceTapped"
+                    VerticalOptions="Fill"
+                    x:Name="PanelView" />
+            </ContentView>
+        </ScrollView>
         <!--  Right Pane  -->
         <ContentView
             BackgroundColor="{StaticResource Primary}"
