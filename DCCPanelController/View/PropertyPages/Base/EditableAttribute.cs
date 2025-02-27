@@ -29,10 +29,12 @@ public abstract class EditableAttribute : Attribute {
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(-5, 0, 0, 0)
         };
-
+        
         foreach (var value in items) {
             var radioButton = new RadioButton {
                 HeightRequest = 30,
+                BorderWidth = 0,
+                FontSize = 12,
                 Content = value.ToString() // Display the value
             };
 

@@ -35,15 +35,15 @@ public partial class RoutesViewModel : BaseViewModel {
         List<Route> sortedRoutes;
         if (!_isAscending) {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Enumerable.OrderBy<Route, string>(Routes, x => x.Name).ToList(),
-                "id"    => Enumerable.OrderBy<Route, string>(Routes, x => x.Id).ToList(),
+                "name"  => Enumerable.OrderBy<Route, string>(Routes, x => x.Name ?? "").ToList(),
+                "id"    => Enumerable.OrderBy<Route, string>(Routes, x => x.Id ?? "").ToList(),
                 "state" => Enumerable.OrderBy<Route, RouteStateEnum>(Routes, x => x.State).ToList(),
                 _       => Enumerable.ToList<Route>(Routes)
             };
         } else {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Name).ToList(),
-                "id"    => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Id).ToList(),
+                "name"  => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Name ?? "").ToList(),
+                "id"    => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Id ?? "").ToList(),
                 "state" => Enumerable.OrderByDescending<Route, RouteStateEnum>(Routes, x => x.State).ToList(),
                 _       => Enumerable.ToList<Route>(Routes)
             };

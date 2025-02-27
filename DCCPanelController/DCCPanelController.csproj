@@ -101,7 +101,6 @@
         <PackageReference Include="Dynamensions.ColorPicker.Maui" Version="1.2.0"/>
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.14"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0"/>
-        <PackageReference Include="nor0x.Maui.ColorPicker" Version="2.0.4" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1"/>
         <PackageReference Include="Svg.Skia" Version="2.0.0.4"/>
@@ -225,7 +224,7 @@
         <MauiXaml Update="View\PropertPages\DynamicPropertyPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\Components\MauiColorPicker.xaml">
+        <MauiXaml Update="View\Components\GridColorPicker.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -307,8 +306,8 @@
         <Compile Update="View\PropertyPages\PanelPropertyViewModel.cs">
           <DependentUpon>PanelPropertyPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\Components\MauiColorPicker.xaml.cs">
-          <DependentUpon>MauiColorPicker.xaml</DependentUpon>
+        <Compile Update="View\Components\GridColorPicker.xaml.cs">
+          <DependentUpon>GridColorPicker.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>

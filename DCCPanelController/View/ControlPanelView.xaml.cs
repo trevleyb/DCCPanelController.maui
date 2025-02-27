@@ -385,7 +385,7 @@ public partial class ControlPanelView : IDisposable {
             var image = UIImage.FromFile("move.png");
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
-            imageView.Frame = new CGRect(0, 0, 0, 0);
+            imageView.Frame = new CGRect(0, 0, GridSize, GridSize);
             return new UIDragPreview(imageView);
         }
         args?.PlatformArgs?.SetPreviewProvider(Action);

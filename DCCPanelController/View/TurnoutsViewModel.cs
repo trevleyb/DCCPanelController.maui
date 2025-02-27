@@ -40,24 +40,25 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
-        List<Turnout> sortedTurnout;
-        if (!_isAscending) {
-            sortedTurnout = columnName.ToLower() switch {
-                "name"  => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Name).ToList(),
-                "id"    => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Id).ToList(),
-                "state" => Enumerable.OrderBy<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
-                _       => Enumerable.ToList<Turnout>(Turnouts)
-            };
-        } else {
-            sortedTurnout = columnName.ToLower() switch {
-                "name"  => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Name).ToList(),
-                "id"    => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Id).ToList(),
-                "state" => Enumerable.OrderByDescending<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
-                _       => Enumerable.ToList<Turnout>(Turnouts)
-            };
-        }
-        _sortColumn = columnName;
-        _isAscending = !_isAscending;
+            List<Turnout> sortedTurnout;
+            if (!_isAscending) {
+                sortedTurnout = columnName.ToLower() switch {
+                    "name"  => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Name ?? "").ToList(),
+                    "id"    => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Id ?? "").ToList(),
+                    "state" => Enumerable.OrderBy<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
+                    _       => Enumerable.ToList<Turnout>(Turnouts)
+                };
+            } else {
+                sortedTurnout = columnName.ToLower() switch {
+                    "name"  => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Name ?? "").ToList(),
+                    "id"    => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Id ?? "").ToList(),
+                    "state" => Enumerable.OrderByDescending<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
+                    _       => Enumerable.ToList<Turnout>(Turnouts)
+                };
+            }
+
+            _sortColumn = columnName;
+            _isAscending = !_isAscending;
 
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
         OnPropertyChanged(nameof(Turnouts));

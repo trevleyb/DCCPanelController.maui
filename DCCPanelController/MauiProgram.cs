@@ -4,7 +4,6 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
-using SkiaSharp.Views.Maui.Controls.Hosting;
 using OperateViewModel = DCCPanelController.View.OperateViewModel;
 using PanelsViewerViewModel = DCCPanelController.View.PanelsViewerViewModel;
 using RoutesViewModel = DCCPanelController.View.RoutesViewModel;
@@ -21,7 +20,6 @@ public static class MauiProgram {
                     //fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 })
-               .UseSkiaSharp()
                .UseMauiCommunityToolkit()
                .ConfigureMauiHandlers(handlers => { })
                .UseMauiCommunityToolkit()

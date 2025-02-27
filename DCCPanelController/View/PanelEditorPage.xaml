@@ -15,6 +15,28 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
+            Clicked="ZoomUp"
+            IconImageSource="move.png"
+            Text="Edit Mode"
+            ToolTipProperties.Text="Edit Mode"
+            x:Name="ZoomUp" />
+
+        <ToolbarItem
+            Clicked="ZoomDown"
+            IconImageSource="move.png"
+            Text="Edit Mode"
+            ToolTipProperties.Text="Edit Mode"
+            x:Name="ZoomDown" />
+
+        <ToolbarItem
+            Clicked="ZoomReset"
+            IconImageSource="move.png"
+            Text="Edit Mode"
+            ToolTipProperties.Text="Edit Mode"
+            x:Name="ZoomReset" />
+
+        
+        <ToolbarItem
             Clicked="ChangeEditMode"
             IconImageSource="move.png"
             Text="Edit Mode"
