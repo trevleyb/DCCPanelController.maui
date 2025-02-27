@@ -19,7 +19,7 @@ public partial class TrackCompass(Panel? parent = null) : TrackPiece(parent), IT
     }
 
     protected override void Setup() {
-        Layer = 2;
+        Layer = 5;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Compass", (0, 0), (90, 0), (180, 0), (270, 0));
     }

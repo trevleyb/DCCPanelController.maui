@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
-    Title="{Binding Panel.Name}"
     x:Class="DCCPanelController.View.PanelEditorPage"
     x:DataType="view:PanelEditorViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -82,7 +81,7 @@
         x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" x:Name="LeftColumn" />
-            <ColumnDefinition Width="60" x:Name="RightColumn" />
+            <ColumnDefinition Width="120" x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
 
         <!--  Left Pane  -->
@@ -107,72 +106,55 @@
             BackgroundColor="{StaticResource Primary}"
             Grid.Column="1"
             x:Name="RightPane">
-            <StackLayout Padding="5">
-                <CollectionView
-                    HorizontalOptions="Center"
-                    ItemsSource="{Binding TrackSymbols}"
-                    Margin="5"
-                    SelectionMode="Single"
-                    VerticalOptions="FillAndExpand"
-                    x:Name="TrackSymbolCollectionView">
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout
-                            HorizontalItemSpacing="5"
-                            Orientation="Vertical"
-                            Span="1"
-                            VerticalItemSpacing="5"
-                            x:Name="ItemsLayout" />
-                    </CollectionView.ItemsLayout>
+            <!-- <StackLayout Padding="5"> -->
+            <CollectionView
+                HorizontalOptions="Center"
+                ItemsSource="{Binding TrackSymbols}"
+                Margin="5"
+                SelectionMode="Single"
+                VerticalOptions="FillAndExpand"
+                x:Name="TrackSymbolCollectionView">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout
+                        HorizontalItemSpacing="5"
+                        Orientation="Vertical"
+                        Span="2"
+                        VerticalItemSpacing="5"
+                        x:Name="ItemsLayout" />
+                </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="interfaces:ITrackSymbol">
-                            <Border
-                                BackgroundColor="Snow"
-                                HorizontalOptions="Center"
-                                Margin="5"
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="interfaces:ITrackSymbol">
+                        <Border
+                            BackgroundColor="Snow"
+                            HorizontalOptions="Center"
+                            Margin="5"
+                            Padding="0"
+                            Stroke="#95000000"
+                            StrokeShape="RoundRectangle 10,10,10,10"
+                            StrokeThickness="2"
+                            ToolTipProperties.Text="{Binding Name}"
+                            VerticalOptions="Center"
+                            WidthRequest="60">
+                            <Grid
+                                HeightRequest="24"
+                                Margin="0"
                                 Padding="0"
-                                Stroke="#95000000"
-                                StrokeShape="RoundRectangle 10,10,10,10"
-                                StrokeThickness="2"
-                                ToolTipProperties.Text="{Binding Name}"
-                                VerticalOptions="Center">
-                                <Grid
-                                    HeightRequest="24"
-                                    Margin="0"
-                                    Padding="0"
-                                    WidthRequest="24">
-                                    <!--  <Label  -->
-                                    <!--  FontSize="7"  -->
-                                    <!--  HorizontalTextAlignment="Center"  -->
-                                    <!--  IsVisible="{Binding ShowAboveSymbol}"  -->
-                                    <!--  LineBreakMode="WordWrap"  -->
-                                    <!--  Margin="0,0,0,0"  -->
-                                    <!--  Text="{Binding Name}"  -->
-                                    <!--  VerticalOptions="Start"  -->
-                                    <!--  WidthRequest="48" />  -->
-                                    <Image
-                                        HorizontalOptions="Center"
-                                        Rotation="{Binding ImageRotation}"
-                                        Source="{Binding SymbolView}"
-                                        VerticalOptions="Center" />
-                                    <!--  <Label  -->
-                                    <!--  FontSize="7"  -->
-                                    <!--  HorizontalTextAlignment="Center"  -->
-                                    <!--  IsVisible="{Binding ShowBelowSymbol}"  -->
-                                    <!--  LineBreakMode="WordWrap"  -->
-                                    <!--  Margin="0,0,0,0"  -->
-                                    <!--  Text="{Binding Name}"  -->
-                                    <!--  VerticalOptions="End"  -->
-                                    <!--  WidthRequest="48" />  -->
-                                </Grid>
-                                <Border.GestureRecognizers>
-                                    <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </StackLayout>
+                                WidthRequest="24">
+                                <Image
+                                    HorizontalOptions="Center"
+                                    Rotation="{Binding ImageRotation}"
+                                    Source="{Binding SymbolView}"
+                                    VerticalOptions="Center" />
+                            </Grid>
+                            <Border.GestureRecognizers>
+                                <DragGestureRecognizer DragStarting="OnSymbolDragStarting" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+            <!-- </StackLayout> -->
         </ContentView>
     </Grid>
 

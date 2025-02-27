@@ -1,3 +1,5 @@
 namespace DCCPanelController.Model.Tracks.Interfaces;
 
-public interface ITrackPiece { }
+public interface ITrackDrawing {
+    
+}

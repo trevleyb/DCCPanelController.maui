@@ -17,7 +17,7 @@ public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleT
     }
 
     protected override void Setup() {
-        Layer = 2;
+        Layer = 5;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
     }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <rect width="48" height="48" />
+        <g id="Tracks" transform="translate(8.5 8.5)">
+            <g id="Track_Unknown">
+                <rect id="Rectangle" width="31" height="31" fill="none" stroke-width="1" stroke="#979797" />
+            </g>
+        </g>
+        <g fill="#90C418" fill-rule="evenodd" transform="translate(11 11)">
+            <rect id="Rectangle" width="26" height="26" />
+            <path d="M26 0L0 0L0 26L26 26L26 0ZM1 25L1 1L25 1L25 25L1 25Z" fill="#000000" fill-rule="evenodd" />
+        </g>
+    </g>
+</svg>

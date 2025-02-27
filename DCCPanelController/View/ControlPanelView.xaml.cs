@@ -320,8 +320,10 @@ public partial class ControlPanelView : IDisposable {
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
         if (displayItem is Microsoft.Maui.Controls.View view) {
-            var tapGesture = new TapGestureRecognizer();
-            tapGesture.NumberOfTapsRequired = 1;
+            var tapGesture = new TapGestureRecognizer {
+                NumberOfTapsRequired = 1
+            };
+
             tapGesture.Tapped += (_, _) => TrackPieceTapped?.Invoke(this, track);
             view.GestureRecognizers.Add(tapGesture);
 
@@ -407,8 +409,9 @@ public partial class ControlPanelView : IDisposable {
                 if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
                     UnHighlightCell(_lastDragCol, _lastDragRow);
                 }
-
-                if (track.Layer > GetHighestOccupiedLayer(EditMode, track, position.Col, position.Row)) {
+                
+                //if (track.Layer > GetHighestOccupiedLayer(EditMode, track, position.Col, position.Row)) {
+                if (!DoesTrackClash(track, position.Col, position.Row)) {                
                     e.AcceptedOperation = DataPackageOperation.Copy;
                     HighlightCell(position.Col, position.Row, track.Width, track.Height, CellHighlightAction.DragValid);
                 } else {
@@ -463,8 +466,7 @@ public partial class ControlPanelView : IDisposable {
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
                 // -----------------------------------------------------------------
-                if (trackPiece.Layer > GetHighestOccupiedLayer(EditMode, track, position.Col, position.Row)) {
-                    ClearSelectedTracks();
+                if (!DoesTrackClash(trackPiece, position.Col, position.Row)) {                    ClearSelectedTracks();
                     if (Panel is { } panel) {
                         switch (source) {
                         case "Panel":
@@ -514,6 +516,21 @@ public partial class ControlPanelView : IDisposable {
         _lastDragRow = 0;
     }
 
+    private bool DoesTrackClash(ITrack track, int col, int row) {
+        if (Panel?.Tracks == null) return false; // No clashes possible if no tracks are present
+        if (track is not ITrackPiece) return false; // No clashes possible if the track is not a track piece
+        var tracksInGrid = Panel.Tracks.Where(existingTrack =>
+            // Exclude the same track we're checking against
+           existingTrack != track && existingTrack is ITrackPiece &&
+           // Check if there's a column overlap between the tracks
+           col < existingTrack.X + existingTrack.Width && col + track.Width > existingTrack.X &&
+           // Check if there's a row overlap between the tracks
+           row < existingTrack.Y + existingTrack.Height && row + track.Height > existingTrack.Y
+        );
+        // If there are any tracks in the clashing list, return true
+        return tracksInGrid.Any();
+    }    
+    
     private int GetHighestOccupiedLayer(EditModeEnum editMode, ITrack track, int col, int row) {
         var tracksInGrid = Panel?.Tracks
                                  .Where(x =>

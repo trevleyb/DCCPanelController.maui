@@ -53,7 +53,7 @@ public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSym
     }
 
     protected override void Setup() {
-        Layer = 0;
+        Layer = 1;
         RotationIncrement = 90;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Image", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Image", (0, 0), (90, 0), (180, 0), (270, 0));

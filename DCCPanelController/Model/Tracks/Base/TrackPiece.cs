@@ -1,12 +1,13 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.PropertyPages.Attributes;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackPiece : Track {
+public abstract partial class TrackPiece : Track, ITrackPiece {
 
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
@@ -20,6 +21,12 @@ public abstract partial class TrackPiece : Track {
     [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 2)]
     private Color? _trackColor;
 
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
+    
     [ObservableProperty]
     [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;

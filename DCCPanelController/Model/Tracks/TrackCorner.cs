@@ -16,8 +16,8 @@ public partial class TrackCorner(Panel? parent = null, TrackStyleTypeEnum styleT
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "CornerR", (0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "CornerL", (0, 0), (90, 0), (180, 0), (270, 0));
-        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "CornerR", (0, 0), (90, 90), (180, 180), (270, 270));
-        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "CornerL", (45, 270), (135, 0), (225, 90), (315, 180));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "CornerL", (45, 0), (135, 90), (225, 180), (315, 270));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "CornerR", (0, 0), (90, 0), (180, 0), (270, 0));
+        AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "CornerL", (45, 0), (135, 90), (225, 180), (315, 270));
     }
 }

@@ -32,10 +32,15 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
                 "TrackStraightContinuation" => JsonSerializer.Deserialize<TrackStraightContinuation>(rawText, options),
                 "TrackTerminator"           => JsonSerializer.Deserialize<TrackTerminator>(rawText, options),
                 "TrackText"                 => JsonSerializer.Deserialize<TrackText>(rawText, options),
+                "TrackDrawCircle"           => JsonSerializer.Deserialize<TrackDrawCircle>(rawText, options),
+                "TrackDrawRectangle"        => JsonSerializer.Deserialize<TrackDrawRectangle>(rawText, options),
+                
                 _                           => throw new JsonException("Unknown type: " + "\"" + typeName + "\"")
             };
 
-            if (obj == null) throw new JsonException("Unknown type: " + "\"" + typeName + "\"" + ".");
+            if (obj == null) {
+                Console.WriteLine("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
+            }
             return obj;
         }
     }

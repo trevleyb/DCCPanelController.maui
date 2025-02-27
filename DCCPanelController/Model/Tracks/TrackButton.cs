@@ -119,7 +119,7 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     }
 
     protected override void Setup() {
-        Layer = 2;
+        Layer = 3;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Button", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Button", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "ButtonCorner", (45, 0), (135, 90), (225, 180), (315, 270));

@@ -58,7 +58,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
     }
 
     protected override void Setup() {
-        Layer = 2;
+        Layer = 3;
         RotationIncrement = 90;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Text", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Text", (0, 0), (90, 90), (180, 180), (270, 270));

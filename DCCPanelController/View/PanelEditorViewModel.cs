@@ -49,11 +49,16 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackText(parent),
             new TrackImage(parent),
             
+            new TrackDrawLine(parent),
+            new TrackDrawLine(parent) {TrackRotation = 90},
+            new TrackDrawCircle(parent),
+            new TrackDrawRectangle(parent),
+            
             new TrackStraight(parent),
             new TrackStraight(parent) { TrackRotation = 90 },
             new TrackStraightContinuation(parent),
+            new TrackStraightContinuation(parent){ TrackRotation = 90 },
             new TrackCorner(parent),
-            new TrackCorner(parent) { TrackRotation = 180 },
             new TrackCornerContinuation(parent),
             new TrackLeftTurnout(parent),
             new TrackLeftTurnout(parent) { TrackRotation = 180 },
@@ -61,9 +66,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackRightTurnout(parent) { TrackRotation = 180 },
             new TrackCrossing(parent),
             new TrackTerminator(parent),
-            // TODO: Add a Circle Track Type
-            // TODO: Add a Rectangle Track Type
-            // TODO: Add a Line Track Type
+            
             new TrackStraight(parent, TrackStyleTypeEnum.Branchline),
             new TrackStraight(parent, TrackStyleTypeEnum.Branchline) { TrackRotation = 90 },
             new TrackStraightContinuation(parent, TrackStyleTypeEnum.Branchline),
@@ -71,7 +74,9 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackCorner(parent, TrackStyleTypeEnum.Branchline),
             new TrackCornerContinuation(parent, TrackStyleTypeEnum.Branchline),
             new TrackLeftTurnout(parent, TrackStyleTypeEnum.Branchline),
+            new TrackLeftTurnout(parent, TrackStyleTypeEnum.Branchline) {TrackRotation = 180},
             new TrackRightTurnout(parent, TrackStyleTypeEnum.Branchline),
+            new TrackRightTurnout(parent, TrackStyleTypeEnum.Branchline) {TrackRotation = 180},
             new TrackCrossing(parent, TrackStyleTypeEnum.Branchline),
             new TrackTerminator(parent, TrackStyleTypeEnum.Branchline)
         ];

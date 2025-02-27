@@ -40,6 +40,12 @@ public abstract partial class TrackTurnout : Track {
     [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
 
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
+    
     [ObservableProperty] private Turnout? _turnout;
 
     [ObservableProperty]
