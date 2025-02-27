@@ -74,7 +74,7 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private async Task ShowEditPropertyPageAsync(object? sender, EventArgs e) {
-        if (ViewModel.HasSelectedTracks && ViewModel.CanUsePropertyPage) {
+        if (ViewModel is { HasSelectedTracks: true, CanUsePropertyPage: true }) {
             var track = ViewModel.Panel.SelectedTracks.First();
             await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
             PanelView.MarkTrackUnSelected(track);

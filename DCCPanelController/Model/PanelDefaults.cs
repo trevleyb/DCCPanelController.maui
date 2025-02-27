@@ -25,6 +25,26 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] private Color _hiddenColor = null!;
     [ObservableProperty] private Color _occupiedColor = null!;
 
+    public void CopyTo(Panel target) {
+        target.BackgroundColor = BackgroundColor;
+        target.BorderColor = BorderColor;
+        target.MainLineColor = MainLineColor;
+        target.BranchLineColor = BranchLineColor;
+        target.DivergingColor = DivergingColor;
+
+        target.ButtonBorder = ButtonBorder;
+        target.ButtonColor = ButtonColor;
+        target.ButtonOffBorder = ButtonOffBorder;
+        target.ButtonOffColor = ButtonOffColor;
+        target.ButtonOnBorder = ButtonOnBorder;
+        target.ButtonOnColor = ButtonOnColor;
+
+        target.ContinuationColor = ContinuationColor;
+        target.TerminatorColor = TerminatorColor;
+        target.HiddenColor = HiddenColor;
+        target.OccupiedColor = OccupiedColor;
+    }
+
     public void ResetToDefaults() {
         BackgroundColor = Colors.White;
         BorderColor = Colors.LightSlateGray;

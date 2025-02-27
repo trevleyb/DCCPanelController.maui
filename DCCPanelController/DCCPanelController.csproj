@@ -314,6 +314,9 @@
         <Compile Update="View\PropertyPages\DynamicPropertyPageViewModel.cs">
           <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
         </Compile>
+        <Compile Update="View\PropertyPages\PanelPropertyViewModel.cs">
+          <DependentUpon>PanelPropertyPage.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

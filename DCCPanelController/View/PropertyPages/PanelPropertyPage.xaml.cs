@@ -1,4 +1,5 @@
 using System.Globalization;
+using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Model;
 using Entry = Microsoft.Maui.Controls.Entry;
 #if IOS
@@ -12,7 +13,7 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
 
     public PanelPropertyPage(Panel panel) {
         InitializeComponent();
-        BindingContext = panel;
+        BindingContext = new PanelPropertyViewModel(panel);
         RowsStepper.Minimum = GetMaxRows(panel);
         ColsStepper.Minimum = GetMaxCols(panel);
     }
@@ -92,12 +93,6 @@ public partial class PanelPropertyPage : ContentPage, IPropertyPage {
     private void ClosePropertyPage(object? sender, EventArgs e) {
         //Navigation.PopModalAsync(true);
         CloseRequested?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void ResetColorsClicked(object? sender, EventArgs e) {
-        if (BindingContext is Panel panel) {
-            panel.ResetToDefaults();
-        }
     }
 
     private static int GetMaxRows(Panel panel) {
