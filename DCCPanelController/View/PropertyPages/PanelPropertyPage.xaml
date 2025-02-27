@@ -49,6 +49,7 @@
                     <!--  Panel Name  -->
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label
+                            FontAttributes="Bold"
                             Text="Panel Name"
                             VerticalOptions="Center"
                             WidthRequest="100" />
@@ -61,6 +62,7 @@
 
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label
+                            FontAttributes="Bold"
                             Text="Description"
                             VerticalOptions="Center"
                             WidthRequest="100" />
@@ -70,6 +72,12 @@
                             Text="{Binding Panel.Description}"
                             WidthRequest="350" />
                     </HorizontalStackLayout>
+
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="2"
+                        HorizontalOptions="Fill"
+                        Margin="0,10,0,10" />
 
                     <HorizontalStackLayout>
 
@@ -86,7 +94,7 @@
                                     Text="{Binding Panel.Cols}"
                                     TextChanged="Cols_OnTextChanged"
                                     VerticalOptions="Center"
-                                    WidthRequest="50" />
+                                    WidthRequest="30" />
                                 <Stepper
                                     HorizontalOptions="FillAndExpand"
                                     Increment="1"
@@ -108,7 +116,7 @@
                                     Text="{Binding Panel.Rows}"
                                     TextChanged="Rows_OnTextChanged"
                                     VerticalOptions="Center"
-                                    WidthRequest="50" />
+                                    WidthRequest="30" />
                                 <Stepper
                                     HorizontalOptions="FillAndExpand"
                                     Increment="1"
@@ -121,7 +129,7 @@
                         </VerticalStackLayout>
 
                         <VerticalStackLayout
-                            Margin="5,5,5,5"
+                            Margin="30,5,5,5"
                             Padding="10"
                             WidthRequest="80">
                             <Label
@@ -133,7 +141,7 @@
                                 HorizontalOptions="Center"
                                 IsEnabled="False"
                                 Margin="0,10,0,0"
-                                Style="{StaticResource LargeLabel}"
+                                Style="{StaticResource Headline}"
                                 Text="{Binding Panel.PanelRatio}"
                                 VerticalOptions="Center" />
                         </VerticalStackLayout>
@@ -144,7 +152,7 @@
                         BackgroundColor="{StaticResource Primary}"
                         HeightRequest="2"
                         HorizontalOptions="Fill"
-                        Margin="0,15,0,15" />
+                        Margin="0,0,0,10" />
 
                     <Grid
                         ColumnDefinitions="*"
@@ -155,25 +163,29 @@
                             <Label
                                 FontAttributes="Bold"
                                 HorizontalOptions="Start"
-                                Margin="0,5,5,5"
+                                Margin="0,5,0,5"
                                 Style="{StaticResource MediumLabel}"
-                                Text="Panel Track Colors"
-                                VerticalOptions="Center" />
+                                Text="Track Colors"
+                                VerticalOptions="Center"
+                                WidthRequest="115" />
                             <Button
                                 Command="{Binding ResetDefaultsClickedCommand}"
                                 FontSize="11"
                                 Margin="5"
-                                Text="Reset Defaults" />
+                                Text="Reset Defaults"
+                                WidthRequest="100" />
                             <Button
                                 Command="{Binding ResetOverridesClickedCommand}"
                                 FontSize="11"
                                 Margin="5"
-                                Text="Reset Overrides" />
+                                Text="Reset Overrides"
+                                WidthRequest="120" />
                             <Button
                                 Command="{Binding ToAllPanelsClickedCommand}"
                                 FontSize="11"
                                 Margin="5"
-                                Text="To All Panels" />
+                                Text="To All Panels"
+                                WidthRequest="100" />
                         </HorizontalStackLayout>
                     </Grid>
 
@@ -192,6 +204,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BackgroundColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -216,6 +229,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.MainLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -227,6 +241,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BranchLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -241,6 +256,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.DivergingColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -252,6 +268,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -266,6 +283,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOnColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -277,6 +295,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOffColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -291,6 +310,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.OccupiedColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -302,6 +322,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.HiddenColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -316,6 +337,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.TerminatorColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
@@ -327,6 +349,7 @@
                                         VerticalOptions="Center"
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
+                                        AllowsNoColor="False"
                                         HeightRequest="30"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ContinuationColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
