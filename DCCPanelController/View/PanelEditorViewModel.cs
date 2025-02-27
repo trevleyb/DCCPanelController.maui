@@ -49,8 +49,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackText(parent),
             new TrackImage(parent),
             
-            new TrackDrawLine(parent),
-            new TrackDrawLine(parent) {TrackRotation = 90},
             new TrackDrawCircle(parent),
             new TrackDrawRectangle(parent),
             
