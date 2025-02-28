@@ -54,9 +54,11 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void SetTabBarState(bool state) {
         if (state) {
             Shell.SetTabBarIsVisible(this, true);
+            IndicatorView.IsVisible = true;
             HideUnHide.IconImageSource = "maximize_2.png";
         } else {
             Shell.SetTabBarIsVisible(this, false);
+            IndicatorView.IsVisible = false;
             HideUnHide.IconImageSource = "minimize_2.png";
         }
 
