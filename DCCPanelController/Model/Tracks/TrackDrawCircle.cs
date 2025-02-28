@@ -78,6 +78,7 @@ public partial class TrackDrawCircle(Panel? parent = null) : TrackDraw(parent), 
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Start,
             ZIndex = Layer,
+            Opacity = Opacity,
             InputTransparent = passthrough,
         };
         return circle;        

@@ -77,6 +77,7 @@ public partial class TrackDrawLine(Panel? parent = null) : TrackDraw(parent), IT
             VerticalOptions = LayoutOptions.Start,
             HorizontalOptions = LayoutOptions.Start,
             ZIndex = Layer,
+            Opacity = Opacity,
             InputTransparent = passthrough,
         };
         return line;        

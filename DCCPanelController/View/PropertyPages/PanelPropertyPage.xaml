@@ -6,12 +6,16 @@
     x:DataType="local:PanelPropertyViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:local="clr-namespace:DCCPanelController.View.PropertyPages"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Resources>
-        <ResourceDictionary />
+        <ResourceDictionary>
+            <converters:DynamicBindingConverter x:Key="DynamicBindingConverter" />
+        </ResourceDictionary>
+
     </ContentPage.Resources>
 
     <ContentPage.Content>
@@ -40,7 +44,7 @@
                     <ImageButton
                         Aspect="Center"
                         Grid.Column="1"
-                        HeightRequest="30"
+                        HeightRequest="25"
                         Source="info.png"
                         WidthRequest="25" />
                 </Grid>
@@ -195,170 +199,225 @@
                         HorizontalOptions="Fill"
                         Margin="0,0,0,5" />
 
-                    <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Always">
-                        <StackLayout>
-                            <HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,20,5">
-                                    <Label
-                                        Text="Background"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BackgroundColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,0,5">
-                                    <Label
-                                        Text="Track Border"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BorderColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
-                            <HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,20,5">
-                                    <Label
-                                        Text="MainLine Track"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.MainLineColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,0,5">
-                                    <Label
-                                        Text="BranchLine Track"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BranchLineColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
+                    <Grid>
+                        <ScrollView
+                            HeightRequest="240"
+                            Orientation="Vertical"
+                            VerticalScrollBarVisibility="Always">
+                            <Grid>
+                                <StackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Background"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BackgroundColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Track Border"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BorderColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="MainLine Track"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.MainLineColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="BranchLine Track"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BranchLineColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Diverging Track"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.DivergingColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Hidden Track"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.HiddenColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Button Border"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonBorder, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Button Base"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Button On Border"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOnBorder, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Button Off Border"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOffBorder, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Button On"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOnColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Button Off"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOffColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Continuation Marker"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ContinuationColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Terminator"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.TerminatorColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
+                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,20,5">
+                                            <Label
+                                                Text="Occupied"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.OccupiedColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Margin="0,5,0,5">
+                                            <Label
+                                                Text="Show Path"
+                                                VerticalOptions="Center"
+                                                WidthRequest="120" />
+                                            <components:ColorPickerButton
+                                                AllowsNoColor="False"
+                                                HeightRequest="25"
+                                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ShowPathColor, Mode=TwoWay}"
+                                                VerticalOptions="Center"
+                                                WidthRequest="100" />
+                                        </HorizontalStackLayout>
+                                    </HorizontalStackLayout>
 
-                            <HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,20,5">
-                                    <Label
-                                        Text="Diverging Track"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.DivergingColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,0,5">
-                                    <Label
-                                        Text="Button Border"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonBorder, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
-
-                            <HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,20,5">
-                                    <Label
-                                        Text="Button(On)"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOnColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,0,5">
-                                    <Label
-                                        Text="Button(off)"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOffColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
-
-                            <HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,20,5">
-                                    <Label
-                                        Text="Occupied Track"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.OccupiedColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,0,5">
-                                    <Label
-                                        Text="Hidden Track"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.HiddenColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
-
-                            <HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,20,5">
-                                    <Label
-                                        Text="Terminator"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.TerminatorColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                                <HorizontalStackLayout Margin="0,5,0,5">
-                                    <Label
-                                        Text="Continuation"
-                                        VerticalOptions="Center"
-                                        WidthRequest="120" />
-                                    <components:ColorPickerButton
-                                        AllowsNoColor="False"
-                                        HeightRequest="30"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ContinuationColor, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        WidthRequest="100" />
-                                </HorizontalStackLayout>
-                            </HorizontalStackLayout>
-                        </StackLayout>
-                    </ScrollView>
-
+                                </StackLayout>
+                            </Grid>
+                        </ScrollView>
+                    </Grid>
                 </VerticalStackLayout>
 
                 <Button
@@ -374,3 +433,26 @@
         </Border>
     </ContentPage.Content>
 </ContentPage>
+
+<!--  I was trying, but could not get the bindings to work  -->
+
+<!-- <CollectionView ItemsSource="{Binding ColorReferences}"> -->
+<!--     <CollectionView.ItemsLayout> -->
+<!--         <GridItemsLayout Orientation="Vertical" Span="2" /> -->
+<!--     </CollectionView.ItemsLayout> -->
+<!--     <CollectionView.ItemTemplate> -->
+<!--         <DataTemplate x:DataType="local:ColorReference"> -->
+<!--             <HorizontalStackLayout Margin="0,5,20,5"> -->
+<!--  <Label  -->
+<!--  Text="{Binding Label}"  -->
+<!--  VerticalOptions="Center"  -->
+<!--  WidthRequest="120" />  -->
+<!--  <components:ColorPickerButton  -->
+<!--  AllowsNoColor="False"  -->
+<!--  HeightRequest="25"  -->
+<!--  SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=ColorReferences.SelectedColor, Mode=TwoWay}"  -->
+<!--  VerticalOptions="Center"  -->
+<!--  WidthRequest="100" />  -->
+<!--             </HorizontalStackLayout> -->
+<!--         </DataTemplate> -->
+<!--     </CollectionView.ItemTemplate> -->

@@ -6,9 +6,9 @@ public static class AppleCrayonColors {
     public record AppleCrayonColor(string Name, Color Color);
 
     public static string Name(Color color) => Crayons.FirstOrDefault(crayon => Equals(crayon.Color, color))?.Name ?? "Unknown";
-    public static string RGB(string name) => Crayons.FirstOrDefault(crayon => crayon.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Color.ToHex() ?? "000000";
-    
+    public static Color Value(string name) => Crayons.FirstOrDefault(crayon => crayon.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Color ?? Microsoft.Maui.Graphics.Colors.White;
     public static IReadOnlyList<Color> Colors => Crayons.Select(crayon => crayon.Color).ToList();    
+
     public static IReadOnlyList<AppleCrayonColor> Crayons => new List<AppleCrayonColor>() {
         { new("Licorice", Color.FromArgb("FF000000")) },
         { new("Lead", Color.FromArgb("FF212121")) },
@@ -30,7 +30,7 @@ public static class AppleCrayonColors {
         { new("Clover", Color.FromArgb("FF008f00")) },
         { new("Moss", Color.FromArgb("FF009051")) },
         { new("Teal", Color.FromArgb("FF009193")) },
-        { new("Ocean", Color.FromArgb("F005493")) },
+        { new("Ocean", Color.FromArgb("FF005493")) },
         { new("Midnight", Color.FromArgb("FF011993")) },
         { new("Eggplant", Color.FromArgb("FF531b93")) },
         { new("Plum", Color.FromArgb("FF942193")) },

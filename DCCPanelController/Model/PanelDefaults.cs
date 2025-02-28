@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 
 namespace DCCPanelController.Model;
 
@@ -24,6 +25,7 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] private Color _terminatorColor = null!;
     [ObservableProperty] private Color _hiddenColor = null!;
     [ObservableProperty] private Color _occupiedColor = null!;
+    [ObservableProperty] private Color _showPathColor = null!;
 
     public void CopyTo(Panel target) {
         target.BackgroundColor = BackgroundColor;
@@ -43,25 +45,28 @@ public partial class Panel : ObservableObject {
         target.TerminatorColor = TerminatorColor;
         target.HiddenColor = HiddenColor;
         target.OccupiedColor = OccupiedColor;
+        target.ShowPathColor = ShowPathColor;
+
     }
 
     public void ResetToDefaults() {
-        BackgroundColor = Colors.White;
-        BorderColor = Colors.LightSlateGray;
-        MainLineColor = Colors.Black;
-        BranchLineColor = Colors.LightGray;
-        DivergingColor = Colors.LightGray;
+        BackgroundColor = AppleCrayonColors.Value("Snow");
+        BorderColor = AppleCrayonColors.Value("Midnight");
+        MainLineColor = AppleCrayonColors.Value("Ocean");
+        BranchLineColor = AppleCrayonColors.Value("Aqua");
+        DivergingColor = AppleCrayonColors.Value("Sky");
 
-        ButtonBorder = Colors.Grey;
-        ButtonColor = Colors.Grey;
-        ButtonOffBorder = Colors.Red;
-        ButtonOffColor = Colors.Red;
-        ButtonOnBorder = Colors.Green;
-        ButtonOnColor = Colors.Green;
+        ButtonBorder = AppleCrayonColors.Value("Steel");
+        ButtonColor = AppleCrayonColors.Value("Aluminum");
+        ButtonOffBorder = AppleCrayonColors.Value("Cayenne");
+        ButtonOffColor = AppleCrayonColors.Value("Maraschino");
+        ButtonOnBorder = AppleCrayonColors.Value("Clover");
+        ButtonOnColor = AppleCrayonColors.Value("Fern");
 
-        ContinuationColor = Colors.DimGray;
-        TerminatorColor = Colors.DimGrey;
-        HiddenColor = Colors.WhiteSmoke;
-        OccupiedColor = Colors.Red;
+        ContinuationColor = AppleCrayonColors.Value("Iron");
+        TerminatorColor = AppleCrayonColors.Value("Iron");;
+        HiddenColor = AppleCrayonColors.Value("Snow");
+        OccupiedColor = AppleCrayonColors.Value("Cayenne");
+        ShowPathColor= AppleCrayonColors.Value("Lemon");
     }
 }
