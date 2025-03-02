@@ -15,7 +15,7 @@ public class Result(bool success, string message = "", Exception? exception = nu
     public string Message { get; protected init; } = message;
     public Exception? Exception { get; protected init; } = exception;
 
-    // Helpers
+    // Actions
     // -----------------------------------------------------------------------
     public static IResult Ok() {
         return new Result();

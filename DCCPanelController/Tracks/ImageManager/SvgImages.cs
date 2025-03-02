@@ -64,12 +64,12 @@ public static class SvgImages {
             Add("ContinuationCL2", "***C**S*", "Track_Corner_Right_Continuation_Lines");
 
             Add("TurnoutL1", "*DS***S*", "Track_Turnout_Left");
-            Add("TurnoutL2", "*DX***S*", "Track_Turnout_Left_Diverging");
-            Add("TurnoutL3", "*XS***S*", "Track_Turnout_Left_Straight");
+            Add("TurnoutL2", "*DX***S*", "Track_Turnout_Left_Straight");
+            Add("TurnoutL3", "*XS***S*", "Track_Turnout_Left_Diverging");
 
             Add("TurnoutR1", "**SD**S*", "Track_Turnout_Right");
-            Add("TurnoutR2", "**XD**S*", "Track_Turnout_Right_Diverging");
-            Add("TurnoutR3", "**SX**S*", "Track_Turnout_Right_Straight");
+            Add("TurnoutR2", "**XD**S*", "Track_Turnout_Right_Straight");
+            Add("TurnoutR3", "**SX**S*", "Track_Turnout_Right_Diverging");
             
             Add("Threeway1", "*DSD**S*", "Track_Threeway");
             Add("Threeway2", "*DXX**S*", "Track_Threeway_Left");

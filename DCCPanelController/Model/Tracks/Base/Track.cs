@@ -10,7 +10,7 @@ namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class Track : ObservableObject {
     
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid UniqueID { get; set; } = Guid.NewGuid();
 
     [JsonIgnore] protected readonly double Scale = 1.5;
     [JsonIgnore] protected readonly StyleTrackImages StyleTrackImages = new();
@@ -107,7 +107,7 @@ public abstract partial class Track : ObservableObject {
         var original = JsonSerializer.Serialize(this, typeof(T), SettingsService.PanelSerializerOptions);
         var copy = JsonSerializer.Deserialize<T>(original, SettingsService.PanelSerializerOptions);
         if (copy is { } clone) {
-            clone.Id = Guid.NewGuid();
+            clone.UniqueID = Guid.NewGuid();
             clone.Parent = parent;
             return clone;
         }
@@ -116,7 +116,7 @@ public abstract partial class Track : ObservableObject {
         // object type ensuring it is part of the current Panel. 
         // ------------------------------------------------------------------------
         return new T {
-            Id = Guid.NewGuid(),
+            UniqueID = Guid.NewGuid(),
             Parent = parent
         };
     }

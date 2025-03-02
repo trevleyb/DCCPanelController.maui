@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
+using DCCPanelController.Model.Tracks.Actions;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
@@ -22,7 +24,7 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     
     [ObservableProperty]
     [property: EditableString(Name = "Button ID", Description = "Unique Identifier for this Button", Order = 1)]
-    private string _buttonID = "";
+    private string _iD = "";
 
     [ObservableProperty] [property: EditableBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
     private bool _isEnabled = true;
@@ -33,16 +35,31 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     [ObservableProperty][property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
     private TurnoutActions _turnoutActions = [];
 
-    public ButtonStateEnum State = ButtonStateEnum.Unknown;
+    [ObservableProperty]
+    public ButtonStateEnum _state = ButtonStateEnum.Unknown;
+    
     protected TrackStyleImageEnum TrackImageEnum = TrackStyleImageEnum.Normal;
     
-    public ButtonStateEnum ToggleButtonState =>
-        State switch {
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
+        }
+        _clickSoundPlayer?.Play();
+
+        // Toggle the state if the button has been pressed
+        // --------------------------------------------------------
+        var state = State switch {
             ButtonStateEnum.Active   => ButtonStateEnum.Inactive,
             ButtonStateEnum.Inactive => ButtonStateEnum.Active,
             _                        => ButtonStateEnum.Active
         };
+        ExecButtonState(state);
+        OnPropertyChanged(nameof(TrackView));
+    }
 
+    // Set the color/or state of the button but no action performed
+    // -------------------------------------------------------------
     public bool SetButtonState(ButtonStateEnum state) {
         if (state == ButtonStateEnum.Unknown) return false;
         State = state;
@@ -50,30 +67,19 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
         return true;
     }
 
-    public bool ExecButtonState() {
-        return ExecButtonState(State);
+    public bool ExecButtonState(ButtonStateEnum state) {
+        // When calling execute from a click, pass an empty collection 
+        // This collection is populated to track what buttons and turnouts we have 
+        // processed, so we don't do one more than once. 
+        return ExecButtonState(state, new ActionList());
     }
 
-    public bool ExecButtonState(ButtonStateEnum state) {
+    public bool ExecButtonState(ButtonStateEnum state, ActionList actioned) {
         SetButtonState(state);
         if (Parent is not null) {
-            ButtonActions.ApplyButtonActionsToPanel(Parent, state);
-            TurnoutActions.ApplyTurnoutActionsToPanel(Parent, state);
+            ActionApplyButton.ApplyButtonActions(Parent, this, actioned);
         }
-
         return true;
-    }
-
-    public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
-        }
-
-        _clickSoundPlayer?.Play();
-        State = ToggleButtonState;
-        ExecButtonState(State);
-        OnPropertyChanged(nameof(TrackView));
     }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
@@ -113,7 +119,7 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     
     public ITrack Clone(Panel parent) {
         var cloned = Clone<TrackButton>(parent);
-        cloned.ButtonID = cloned.Parent?.NextButtonID() ?? "";
+        cloned.ID = cloned.Parent?.NextButtonID() ?? "";
         Debug.Assert(cloned != null, nameof(cloned) + " != null");
         return cloned;
     }

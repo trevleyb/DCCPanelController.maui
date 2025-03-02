@@ -1,6 +1,10 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.Tracks.Actions;
 
 namespace DCCPanelController.Model;
+
+public class TurnoutActions : ObservableCollection<TurnoutAction> { }
 
 public partial class TurnoutAction : ObservableObject {
     [ObservableProperty] private bool _cascade;

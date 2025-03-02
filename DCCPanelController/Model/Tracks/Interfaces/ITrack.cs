@@ -5,7 +5,7 @@ namespace DCCPanelController.Model.Tracks.Interfaces;
 
 public interface ITrack {
 
-    Guid Id { get; set; }
+    Guid UniqueID { get; set; }
     string Name { get; }
     int Layer { get; }
 

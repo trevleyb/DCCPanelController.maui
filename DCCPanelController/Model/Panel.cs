@@ -37,8 +37,8 @@ public partial class Panel : ObservableObject {
     [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
     [JsonIgnore] public List<ITrackTurnout> AllNamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
     [JsonIgnore] public List<ITrackButton> AllNamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
-    [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.TurnoutID)).ToList() ?? [];
-    [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ButtonID)).ToList() ?? [];
+    [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.ID)).ToList() ?? [];
+    [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ID)).ToList() ?? [];
 
     public string Title {
         get {
@@ -66,11 +66,11 @@ public partial class Panel : ObservableObject {
     }
 
     public ITrackTurnout? GetTurnout(string id) {
-        return AllNamedTurnouts.FirstOrDefault(t => t.TurnoutID == id);
+        return AllNamedTurnouts.FirstOrDefault(t => t.ID == id);
     }
 
     public ITrackButton? GetButton(string id) {
-        return AllNamedButtons.FirstOrDefault(t => t.ButtonID == id);
+        return AllNamedButtons.FirstOrDefault(t => t.ID == id);
     }
 
     public void SetPanels(Panels panels) {
@@ -135,11 +135,11 @@ public partial class Panel : ObservableObject {
     }
 
     public string NextTurnoutID() {
-        return GetNextName(AllNamedTurnouts, t => t.TurnoutID, "TRN");
+        return GetNextName(AllNamedTurnouts, t => t.ID, "TRN");
     }
 
     public string NextButtonID() {
-        return GetNextName(AllNamedButtons, t => t.ButtonID, "BTN");
+        return GetNextName(AllNamedButtons, t => t.ID, "BTN");
     }
 
     public static string GetNextName<T>(IEnumerable<T> allNamedItems, Func<T, string> idSelector, string defaultPrefix = "UKN") {

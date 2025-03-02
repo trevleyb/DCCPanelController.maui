@@ -88,9 +88,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         if (track is { Parent: { Tracks: { } tracks } }) {
             foreach (var trk in tracks) {
                 if (trk is ITrackTurnout trackTurnout) {
-                    if (thisTurnout != null && trackTurnout.TurnoutID == thisTurnout.TurnoutID) continue;
-                    if (string.IsNullOrWhiteSpace(trackTurnout.TurnoutID)) continue;
-                    foundTurnouts.Add(trackTurnout.TurnoutID);
+                    if (thisTurnout != null && trackTurnout.ID == thisTurnout.ID) continue;
+                    if (string.IsNullOrWhiteSpace(trackTurnout.ID)) continue;
+                    foundTurnouts.Add(trackTurnout.ID);
                 }
             }
         }
