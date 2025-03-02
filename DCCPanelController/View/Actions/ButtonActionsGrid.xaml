@@ -140,7 +140,6 @@
                                         Unfocused="IDPicker_OnUnfocused"
                                         VerticalOptions="Center"
                                         x:Name="IDPicker" />
-                                    <!--  ItemsSource="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.AvailableButtons}"  -->
 
                                     <components:ButtonStateControl
                                         CanSetStateUnknown="True"

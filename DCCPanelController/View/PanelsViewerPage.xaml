@@ -77,7 +77,7 @@
                             <SwipeView.RightItems>
                                 <SwipeItemView
                                     BackgroundColor="LightGreen"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=EditPanelCommand}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=EditPanelCommand}"
                                     CommandParameter="{Binding}">
                                     <StackLayout Orientation="Horizontal" Padding="10">
                                         <Image
@@ -90,7 +90,7 @@
                                 <!--  Delete SwipeItem  -->
                                 <SwipeItemView
                                     BackgroundColor="LightCoral"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DeletePanelCommand}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DeletePanelCommand}"
                                     CommandParameter="{Binding}">
                                     <StackLayout Orientation="Horizontal" Padding="10">
                                         <Image
@@ -105,13 +105,13 @@
                                 Padding="5"
                                 Spacing="5">
                                 <StackLayout.GestureRecognizers>
-                                    <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
+                                    <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
                                     <DropGestureRecognizer
-                                        DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelLeaveCommand}"
+                                        DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelLeaveCommand}"
                                         DragLeaveCommandParameter="{Binding}"
-                                        DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DragPanelOverCommand}"
+                                        DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelOverCommand}"
                                         DragOverCommandParameter="{Binding}"
-                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=DropPanelCommand}"
+                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DropPanelCommand}"
                                         DropCommandParameter="{Binding}" />
                                 </StackLayout.GestureRecognizers>
                                 <Label
@@ -155,8 +155,8 @@
                     <view:ControlPanelView
                         DesignMode="false"
                         HorizontalOptions="Fill"
-                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=IsPanelSelected}"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=viewModel:PanelsViewerViewModel, Path=SelectedPanel}"
+                        IsVisible="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=IsPanelSelected}"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=SelectedPanel}"
                         ShowGrid="false"
                         ShowTrackErrors="False"
                         TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
