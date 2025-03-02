@@ -11,15 +11,15 @@ using DCCWithrottleClient.ServiceHelper;
 namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
-
     public readonly ConnectionService? ConnectionService;
     public readonly SettingsService? SettingsService;
-
-    [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
     [ObservableProperty] private Settings _settings;
+
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
+
+    [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
 
     public SettingsViewModel(SettingsService settingsService, ConnectionService? connectionService) {
         SettingsService = settingsService;
@@ -30,7 +30,7 @@ public partial class SettingsViewModel : BaseViewModel {
 
     public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool ShowWiServers => !ShowMessages;
-    public bool IsConnected => ConnectionService is { IsConnected   : true } ? true : false;
+    public bool IsConnected => ConnectionService is { IsConnected : true } ? true : false;
     public bool IsLiveMode => !IsDemoMode || !IsConnected;
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 
@@ -114,8 +114,10 @@ public partial class SettingsViewModel : BaseViewModel {
         if (!IsDemoMode) {
             Messages.Clear();
             AddMessage("Attempting to connect/disconnect to WiService");
+
             try {
                 IsBusy = true;
+
                 if (ConnectionService is not null) {
                     if (IsConnected) {
                         ConnectionService.Disconnect();
@@ -156,12 +158,14 @@ public partial class SettingsViewModel : BaseViewModel {
     public async Task RefreshWiServersAsync() {
         if (IsBusy) return;
         AddMessage("Attempting to scan for WiThrottle Servers");
+
         try {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
             WiServers.Clear();
 
             var servers = await ServiceFinder.FindServices("withrottle");
+
             if (servers is { Count: > 0 }) {
                 foreach (var server in servers) {
                     WiServers.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
@@ -213,6 +217,7 @@ public partial class SettingsViewModel : BaseViewModel {
             if (wiServer?.IpAddress == null) return "0";
             if (string.IsNullOrEmpty(value)) return Settings.WiServer.IpAddress;
             var parts = Settings.WiServer?.IpAddress.Split('.');
+
             if (parts?.Length > 0) {
                 if (part == 0) part = 1;
                 if (parts?.Length >= part) parts[part - 1] = value;

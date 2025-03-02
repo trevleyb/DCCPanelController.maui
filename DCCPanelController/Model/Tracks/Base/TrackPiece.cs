@@ -8,7 +8,6 @@ using DCCPanelController.View.PropertyPages.Attributes;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackPiece : Track, ITrackPiece {
-
     [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 1)]
     private bool _isHidden;
@@ -21,12 +20,6 @@ public abstract partial class TrackPiece : Track, ITrackPiece {
     [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 2)]
     private Color? _trackColor;
 
-    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
-    public new int Layer {
-        get => base.Layer;
-        set => base.Layer = value;
-    }
-    
     [ObservableProperty]
     [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
@@ -36,6 +29,12 @@ public abstract partial class TrackPiece : Track, ITrackPiece {
     }
 
     protected TrackPiece(Panel? parent = null) : base(parent) { }
+
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
@@ -58,6 +57,7 @@ public abstract partial class TrackPiece : Track, ITrackPiece {
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackStyleImageEnum.Normal, Parent);
+
         if (TrackColor is not null) {
             style = new SvgStyleBuilder()
                    .AddExistingStyle(style)

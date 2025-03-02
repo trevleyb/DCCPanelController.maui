@@ -7,6 +7,7 @@ public class MsgHardware : ClientMsg, IClientMsg {
 
     public MsgHardware(string commandStr) {
         _commandStr = commandStr;
+
         if (commandStr.Length > 2) {
             _ = commandStr[1] switch {
                 'U' => Add(new MessageEvent("UUID", commandStr[2..])),

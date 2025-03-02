@@ -55,6 +55,7 @@ public class Client(ClientInfo clientInfo) {
             try {
                 if (_stream is { DataAvailable: true } && _client is { Connected: true }) {
                     var bytesRead = 0;
+
                     try {
                         bytesRead = _stream.Read(bytes, 0, bytes.Length);
                     } catch (ObjectDisposedException) {
@@ -89,10 +90,12 @@ public class Client(ClientInfo clientInfo) {
         case MsgQuit quit:
             _running = false;
             break;
+
         case MsgHeartbeat heartbeat:
             StopHeartbeatTimer();
             StartHeartbeatTimer(heartbeat.HeartbeatSeconds);
             break;
+
         default:
             foreach (var clientEvent in clientMsg.FoundEvents) {
                 OnClientEventOccurred(clientEvent);
@@ -129,6 +132,7 @@ public class Client(ClientInfo clientInfo) {
     public void SendMessage(string message) {
         message = message.WithTerminator();
         if (Echo) OnClientEventOccurred(new MessageEvent("Command", message));
+
         try {
             if (_stream is { CanWrite: true }) {
                 var data = Encoding.UTF8.GetBytes(message);

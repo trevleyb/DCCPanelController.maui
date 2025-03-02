@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 namespace DCCPanelController.View.Components;
 
 public partial class DynaColorPicker : Popup {
-
     private Color? _selectedColor;
 
     public DynaColorPicker(Color color) {

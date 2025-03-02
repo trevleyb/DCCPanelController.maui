@@ -5,10 +5,8 @@ using DCCJmriClient.EventArgs;
 namespace DCCJMRIClient.Tests;
 
 public class JmriClienttestsLive {
-
     [TestFixture]
     public class JmriClientIntegrationTests {
-
         [SetUp]
         public void SetUp() {
             // Set up a new JmriClient for each test
@@ -59,6 +57,7 @@ public class JmriClienttestsLive {
         public async Task SendTurnoutCommandAsync_ShouldChangeTurnoutState() {
             // Arrange
             var turnoutState = string.Empty;
+
             _client.TurnoutChanged += (_, e) => {
                 if (e.Identifier == "Turnout1") turnoutState = e.State;
             };
@@ -76,6 +75,7 @@ public class JmriClienttestsLive {
         public async Task SendRouteCommandAsync_ShouldChangeRouteState() {
             // Arrange
             var routeState = string.Empty;
+
             _client.RouteChanged += (_, e) => {
                 if (e.Identifier == "Route1") routeState = e.State;
             };

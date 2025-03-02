@@ -3,16 +3,12 @@ using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using Microsoft.Maui.Controls.Shapes;
 using DCCPanelController.View.PropertyPages.Attributes;
-
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymbol, ITrack {
-
-    public string Name => "Text Block";
-
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Transparent;
 
@@ -33,7 +29,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
 
     [ObservableProperty] [property: EditableEnum(Name = "Horizontal", Description = "Horizontal Justification of the Text", Group = "Attributes")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
-    
+
     [ObservableProperty] [property: EditableString(Name = "Text", Description = "Text to Display")]
     private string _text = "";
 
@@ -56,6 +52,8 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
     public ITrack Clone(Panel parent) {
         return Clone<TrackText>(parent);
     }
+
+    public string Name => "Text Block";
 
     protected override void Setup() {
         Layer = 3;
@@ -133,6 +131,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
 
     private int CalculateMaxGridWidth(int rows, int cols, int textWidth, int x, int y, int rotation) {
         var maxWidth = textWidth;
+
         maxWidth = (rotation % 360) switch {
             // Normalize rotation (handle values >= 360 or < 0)
             0   => Math.Min(maxWidth, cols - x), // Horizontal, to the right

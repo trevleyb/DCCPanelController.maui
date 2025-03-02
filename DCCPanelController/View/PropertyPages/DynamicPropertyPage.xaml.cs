@@ -6,7 +6,6 @@ using UIKit;
 namespace DCCPanelController.View.PropertyPages;
 
 public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
-
     private readonly ITrack _track;
     private DynamicPropertyPageViewModel _viewModel;
 
@@ -22,15 +21,20 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
         base.OnAppearing();
 
 #if IOS
+
         // Access the native view controller
         var window = App.Current.Windows[0].Page;
+
         if (window?.Handler?.PlatformView is UIWindow viewController) {
             var rootController = viewController.RootViewController;
+
             if (rootController?.PresentedViewController != null) {
                 var modalController = rootController.PresentedViewController;
                 modalController.ModalPresentationStyle = UIModalPresentationStyle.PageSheet;
+
                 if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0)) {
                     var sheetController = modalController.SheetPresentationController;
+
                     if (sheetController != null) {
                         sheetController.Detents = [
                             UISheetPresentationControllerDetent.CreateMediumDetent(),

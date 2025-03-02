@@ -1,19 +1,17 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackTerminator(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrackSymbol, ITrack {
-
-    public string Name => "Terminator Track";
-
+public class TrackTerminator(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrackSymbol, ITrack {
     public TrackTerminator() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackTerminator>(parent);
     }
+
+    public string Name => "Terminator Track";
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Terminator1", (0, 0), (90, 90), (180, 180), (270, 270));

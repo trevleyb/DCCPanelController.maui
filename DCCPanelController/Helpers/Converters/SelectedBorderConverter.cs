@@ -1,25 +1,22 @@
 using System.Globalization;
 
-namespace DCCPanelController.Helpers.Converters
-{
-    public class SelectedBorderConverter : IValueConverter {
-        public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            // 'value' is the current item's BackgroundColor.
-            // 'parameter' is the SelectedColor passed from the ConverterParameter.
-            if (value == null || parameter == null)
-                return Colors.Transparent;
+namespace DCCPanelController.Helpers.Converters;
 
-            // Compare the current item's color with the SelectedColor.
-            var currentItemColor = (Color)value;
-            var selectedColor = (Color)parameter;
+public class SelectedBorderConverter : IValueConverter {
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
+        // 'value' is the current item's BackgroundColor.
+        // 'parameter' is the SelectedColor passed from the ConverterParameter.
+        if (value == null || parameter == null)
+            return Colors.Transparent;
 
-            return Equals(currentItemColor, selectedColor) ? Colors.Black : Colors.Transparent;
-        }
+        // Compare the current item's color with the SelectedColor.
+        var currentItemColor = (Color)value;
+        var selectedColor = (Color)parameter;
 
-        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        return Equals(currentItemColor, selectedColor) ? Colors.Black : Colors.Transparent;
+    }
+
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
+        throw new NotImplementedException();
     }
 }

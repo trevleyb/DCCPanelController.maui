@@ -13,6 +13,7 @@ public class SvgStyle {
 
     public void AddElement(SvgStyleElement element) {
         Elements.TryAdd(element.Name, element);
+
         foreach (var attr in element.Attributes) {
             Elements[element.Name].AddOrUpdateAttribute(attr.Key, attr.Value);
         }

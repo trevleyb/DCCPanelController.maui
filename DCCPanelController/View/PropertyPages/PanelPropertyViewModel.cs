@@ -7,13 +7,12 @@ using DCCPanelController.Model;
 namespace DCCPanelController.View.PropertyPages;
 
 public partial class PanelPropertyViewModel : BaseViewModel {
-
     [ObservableProperty] private ObservableCollection<ColorReference> _colorReferences = [];
     [ObservableProperty] private Panel _panel;
 
     public PanelPropertyViewModel(Panel panel) {
         Panel = panel;
-        
+
         // I just could not get the blasted bindings to work correctly so have given up
         // -----------------------------------------------------------------------------------------------------------------
         // ColorReferences.Add(new ColorReference("Background", ()=>panel.BackgroundColor, newColor=>panel.BackgroundColor = newColor));
@@ -48,13 +47,16 @@ public partial class PanelPropertyViewModel : BaseViewModel {
     private async Task ResetOverridesClickedAsync() {
         var result = await AskUserToConfirm("Reset Overriden Colors?", "This will reset all tracks to the panel colors where thay have overriden colors. Do you want to do this?");
         if (!result) return; // Exit if the user cancels the delete operation
+
         foreach (var track in Panel.Tracks) {
             var trackType = track.GetType();
             var property = trackType.GetProperty("TrackColor", BindingFlags.Public | BindingFlags.Instance);
+
             if (property != null && property.PropertyType == typeof(Color) && property.CanWrite) {
                 property.SetValue(track, null);
             }
         }
+
         OnPropertyChanged();
     }
 
@@ -62,9 +64,11 @@ public partial class PanelPropertyViewModel : BaseViewModel {
     private async Task ToAllPanelsClickedAsync() {
         var result = await AskUserToConfirm("Standardize Defaults?", "This will copy these panel colors to all other panels. Do you want to do this?");
         if (!result) return; // Exit if the user cancels the delete operation
+
         foreach (var panel in Panel.Panels) {
             panel.CopyTo(panel);
         }
+
         OnPropertyChanged();
     }
 
@@ -76,27 +80,26 @@ public partial class PanelPropertyViewModel : BaseViewModel {
                 message,
                 "Yes", "No"
             );
+
             return result;
         }
+
         return false;
     }
 }
 
-
 public partial class ColorReference : ObservableObject {
-    
     private readonly Func<Color> _getSelectedColor;
     private readonly Action<Color> _setSelectedColor;
-    
-    public ColorReference(string label, Func<Color> getSelectedColor, Action<Color> setSelectedColor)
-    {
+
+    [ObservableProperty] private string _label;
+
+    public ColorReference(string label, Func<Color> getSelectedColor, Action<Color> setSelectedColor) {
         Label = label;
         _getSelectedColor = getSelectedColor;
         _setSelectedColor = setSelectedColor;
     }
-    
-    [ObservableProperty] private string _label;
-    
+
     public Color SelectedColor {
         get => _getSelectedColor();
         set {

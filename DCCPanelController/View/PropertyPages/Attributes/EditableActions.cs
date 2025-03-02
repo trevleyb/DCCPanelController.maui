@@ -18,6 +18,7 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
                     var turnout = owner as ITrackTurnout;
                     var turnoutID = turnout?.ID ?? "";
                     var availableTurnouts = owner?.Parent?.AllNamedTurnouts.Where(t => !string.IsNullOrWhiteSpace(t.ID) && t.ID != turnoutID).Select(t => t.ID).ToList<string>() ?? [];
+
                     return new TurnoutActionsGrid(turnoutActions, attr.ActionsContext, availableTurnouts) {
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill
@@ -29,6 +30,7 @@ public class EditableActionsAttribute : EditableAttribute, IEditableAttribute {
                     var button = owner as ITrackButton;
                     var buttonID = button?.ID ?? "";
                     var availableButtons = owner?.Parent?.AllNamedButtons.Where(b => !string.IsNullOrWhiteSpace(b.ID) && b.ID != buttonID).Select(b => b.ID).ToList<string>() ?? [];
+
                     return new ButtonActionsGrid(buttonActions, attr.ActionsContext, availableButtons) {
                         HorizontalOptions = LayoutOptions.Fill,
                         VerticalOptions = LayoutOptions.Fill

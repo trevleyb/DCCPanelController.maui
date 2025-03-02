@@ -73,6 +73,7 @@ public partial class ControlPanelView : IDisposable {
     public void Dispose() {
         Console.WriteLine("ControlPanelView.Dispose Started");
         MainGrid.SizeChanged -= OnGridSizeChanged;
+
         if (Panel is { } panel) {
             try {
                 foreach (var track in panel.Tracks) {
@@ -83,6 +84,7 @@ public partial class ControlPanelView : IDisposable {
                 Console.WriteLine($"ControlPanelView.Dispose Error: {ex.Message}");
             }
         }
+
         Console.WriteLine("ControlPanelView.Dispose Finished");
     }
 
@@ -112,6 +114,7 @@ public partial class ControlPanelView : IDisposable {
 
     private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ControlPanelView)bindable;
+
         if (control.DesignMode) {
             var dropRecogniser = new DropGestureRecognizer();
             dropRecogniser.Drop += control.DropTrackOnPanel;
@@ -169,6 +172,7 @@ public partial class ControlPanelView : IDisposable {
         DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
+
         if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
             DynamicGrid.RowDefinitions.Clear();
             DynamicGrid.ColumnDefinitions.Clear();
@@ -191,6 +195,7 @@ public partial class ControlPanelView : IDisposable {
     /// </summary>
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
+
         var border = new Border {
             ClassId = "CellHighlight",
             BackgroundColor = Colors.Transparent,
@@ -224,6 +229,7 @@ public partial class ControlPanelView : IDisposable {
     public void UnHighlightCell(int col, int row) {
         if (!DesignMode) return;
         var children = DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
+
         foreach (var child in children) {
             if (DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col) {
                 DynamicGrid.Remove(child);
@@ -237,6 +243,7 @@ public partial class ControlPanelView : IDisposable {
     private void RemoveOutlineFromGrid() {
         if (ControlPanelLayout.Children.Count >= 1) {
             var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().ToList();
+
             foreach (var view in graphicsViewToRemove) {
                 ControlPanelLayout.Children.Remove(view);
             }
@@ -245,8 +252,10 @@ public partial class ControlPanelView : IDisposable {
 
     private void AddOutlineToGrid() {
         RemoveOutlineFromGrid();
+
         if (ShowGrid) {
             var gridLines = new GridLinesDrawable(Rows, Cols);
+
             var graphicsView = new GraphicsView {
                 InputTransparent = true,
                 Drawable = gridLines,
@@ -388,6 +397,7 @@ public partial class ControlPanelView : IDisposable {
             imageView.Frame = new CGRect(0, 0, GridSize, GridSize);
             return new UIDragPreview(imageView);
         }
+
         args?.PlatformArgs?.SetPreviewProvider(Action);
 #endif
     }
@@ -409,9 +419,9 @@ public partial class ControlPanelView : IDisposable {
                 if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
                     UnHighlightCell(_lastDragCol, _lastDragRow);
                 }
-                
+
                 //if (track.Layer > GetHighestOccupiedLayer(EditMode, track, position.Col, position.Row)) {
-                if (!DoesTrackClash(track, position.Col, position.Row)) {                
+                if (!DoesTrackClash(track, position.Col, position.Row)) {
                     e.AcceptedOperation = DataPackageOperation.Copy;
                     HighlightCell(position.Col, position.Row, track.Width, track.Height, CellHighlightAction.DragValid);
                 } else {
@@ -433,9 +443,11 @@ public partial class ControlPanelView : IDisposable {
         case EditModeEnum.Move:
             e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Move));
             break;
+
         case EditModeEnum.Copy:
             e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
             break;
+
         default:
             e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
             break;
@@ -466,7 +478,9 @@ public partial class ControlPanelView : IDisposable {
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
                 // -----------------------------------------------------------------
-                if (!DoesTrackClash(trackPiece, position.Col, position.Row)) {                    ClearSelectedTracks();
+                if (!DoesTrackClash(trackPiece, position.Col, position.Row)) {
+                    ClearSelectedTracks();
+
                     if (Panel is { } panel) {
                         switch (source) {
                         case "Panel":
@@ -477,6 +491,7 @@ public partial class ControlPanelView : IDisposable {
                                 trackPiece.Y = position.Row;
                                 AddDisplayItemToGrid(trackPiece);
                                 break;
+
                             case EditModeEnum.Copy:
                                 var newTrack = trackPiece.Clone(panel);
                                 newTrack.X = position.Col;
@@ -485,6 +500,7 @@ public partial class ControlPanelView : IDisposable {
                                 AddDisplayItemToGrid(newTrack);
                                 MarkTrackSelected(newTrack);
                                 break;
+
                             case EditModeEnum.Size:
                                 break;
                             }
@@ -501,6 +517,7 @@ public partial class ControlPanelView : IDisposable {
                             }
 
                             break;
+
                         default:
                             Console.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
@@ -517,20 +534,25 @@ public partial class ControlPanelView : IDisposable {
     }
 
     private bool DoesTrackClash(ITrack track, int col, int row) {
-        if (Panel?.Tracks == null) return false; // No clashes possible if no tracks are present
+        if (Panel?.Tracks == null) return false;    // No clashes possible if no tracks are present
         if (track is not ITrackPiece) return false; // No clashes possible if the track is not a track piece
+
         var tracksInGrid = Panel.Tracks.Where(existingTrack =>
-            // Exclude the same track we're checking against
-           existingTrack != track && existingTrack is ITrackPiece &&
-           // Check if there's a column overlap between the tracks
-           col < existingTrack.X + existingTrack.Width && col + track.Width > existingTrack.X &&
-           // Check if there's a row overlap between the tracks
-           row < existingTrack.Y + existingTrack.Height && row + track.Height > existingTrack.Y
+
+                                                  // Exclude the same track we're checking against
+                                                  existingTrack != track && existingTrack is ITrackPiece &&
+
+                                                  // Check if there's a column overlap between the tracks
+                                                  col < existingTrack.X + existingTrack.Width && col + track.Width > existingTrack.X &&
+
+                                                  // Check if there's a row overlap between the tracks
+                                                  row < existingTrack.Y + existingTrack.Height && row + track.Height > existingTrack.Y
         );
+
         // If there are any tracks in the clashing list, return true
         return tracksInGrid.Any();
-    }    
-    
+    }
+
     private int GetHighestOccupiedLayer(EditModeEnum editMode, ITrack track, int col, int row) {
         var tracksInGrid = Panel?.Tracks
                                  .Where(x =>
@@ -599,6 +621,7 @@ public partial class ControlPanelView : IDisposable {
 
             var cellHeight = totalHeight / rowCount;
             var cellWidth = totalWidth / colCount;
+
             if (cellHeight == 0 || cellWidth == 0) {
                 return Result<(int Col, int Row)>.Failure("Cell Width or Height is zero.");
             }
@@ -638,6 +661,7 @@ internal class GridLinesDrawable(int rows, int columns, Color? gridColor = null,
         var cellWidth = dirtyRect.Width / columns;
         var cellHeight = dirtyRect.Height / rows;
         canvas.StrokeColor = GridColor;
+
         for (var i = 0; i <= rows; i++) {
             canvas.StrokeSize = i == 0 || i == rows ? GridWidth : LineWidth;
             canvas.DrawLine(0, i * cellHeight, dirtyRect.Width, i * cellHeight);

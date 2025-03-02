@@ -1,22 +1,18 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using DCCPanelController.View.PropertyPages.Attributes;
-
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCompass(Panel? parent = null) : TrackPiece(parent), ITrackSymbol, ITrack {
-
-    public string Name => "Compass";
-
+public class TrackCompass(Panel? parent = null) : TrackPiece(parent), ITrackSymbol, ITrack {
     public TrackCompass() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackCompass>(parent);
     }
+
+    public string Name => "Compass";
 
     protected override void Setup() {
         Layer = 5;
@@ -44,22 +40,27 @@ public partial class TrackCompass(Panel? parent = null) : TrackPiece(parent), IT
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Yellow.ToRgbaHex());
             svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
+
         case TrackConnectionsEnum.Straight:
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Blue.ToRgbaHex());
             svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
+
         case TrackConnectionsEnum.Closed:
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Green.ToRgbaHex());
             svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
+
         case TrackConnectionsEnum.Diverging:
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Red.ToRgbaHex());
             svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
+
         case TrackConnectionsEnum.Connector:
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Magenta.ToRgbaHex());
             svgImage.ApplyElementStyle(compassId, "Opacity", "100");
             break;
+
         case TrackConnectionsEnum.None:
         default:
             svgImage.ApplyElementStyle(compassId, "Color", Colors.Transparent.ToRgbaHex());

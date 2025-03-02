@@ -10,6 +10,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
         // Use the type discriminator or another property to determine the specific type
         using (var document = JsonDocument.ParseValue(ref reader)) {
             var root = document.RootElement;
+
             if (!root.TryGetProperty("TrackType", out var typeProperty)) {
                 throw new JsonException($"Type property not found: {root.ToString()}");
             }
@@ -17,6 +18,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
             // Switch types based on the `Type` property value
             var rawText = root.GetRawText();
             var typeName = typeProperty.GetString();
+
             ITrack? obj = typeName switch {
                 "TrackButton"               => JsonSerializer.Deserialize<TrackButton>(rawText, options),
                 "TrackCompass"              => JsonSerializer.Deserialize<TrackCompass>(rawText, options),
@@ -41,6 +43,7 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
             if (obj == null) {
                 Console.WriteLine("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
             }
+
             return obj;
         }
     }

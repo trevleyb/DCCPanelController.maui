@@ -16,7 +16,6 @@ public enum ActionsContext {
 }
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
-
     //private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     [ObservableProperty] private string _propertyName;
 
@@ -37,6 +36,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         var propertiesByGroup = EditableCollector.GetEditableProperties(track);
         tableView.Children.Clear();
         var isFirst = true;
+
         foreach (var tableGroup in propertiesByGroup.Select(group => CreateExpanderGroup(group.Key, group.Value, isFirst))) {
             tableView.Children.Add(tableGroup);
             isFirst = false;

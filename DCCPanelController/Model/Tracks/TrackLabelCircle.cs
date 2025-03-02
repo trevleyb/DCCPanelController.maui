@@ -5,15 +5,9 @@ using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.PropertyPages.Attributes;
 
-
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITrackSymbol, ITrack {
-
-    // TODO: Thoughts, could a Label Circle be a special case that is linked to 
-    //       a turnout and shows the ID of the turnout?? And a Line to the Turnout?
-    public string Name => "Circle Image";
-
     [ObservableProperty] [property: EditableColor(Name = "Background", Description = "Background Color", Group = "Colors")]
     private Color _backgroundColor = Colors.Green;
 
@@ -40,6 +34,10 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
         clone.Label = "";
         return clone;
     }
+
+    // TODO: Thoughts, could a Label Circle be a special case that is linked to 
+    //       a turnout and shows the ID of the turnout?? And a Line to the Turnout?
+    public string Name => "Circle Image";
 
     protected override void Setup() {
         Layer = 2;

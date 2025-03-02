@@ -16,9 +16,9 @@ public partial class RoutesViewModel : BaseViewModel {
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    [ObservableProperty] private ObservableCollection<Route> _routes;
 
     private bool _isAscending;
+    [ObservableProperty] private ObservableCollection<Route> _routes;
     private string _sortColumn = "";
 
     public RoutesViewModel(RoutesService? routesService, ConnectionService? connectionService) {
@@ -33,19 +33,20 @@ public partial class RoutesViewModel : BaseViewModel {
     [RelayCommand]
     public async Task SortByColumn(string columnName) {
         List<Route> sortedRoutes;
+
         if (!_isAscending) {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Enumerable.OrderBy<Route, string>(Routes, x => x.Name ?? "").ToList(),
-                "id"    => Enumerable.OrderBy<Route, string>(Routes, x => x.Id ?? "").ToList(),
-                "state" => Enumerable.OrderBy<Route, RouteStateEnum>(Routes, x => x.State).ToList(),
-                _       => Enumerable.ToList<Route>(Routes)
+                "name"  => Routes.OrderBy<Route, string>(x => x.Name ?? "").ToList(),
+                "id"    => Routes.OrderBy<Route, string>(x => x.Id ?? "").ToList(),
+                "state" => Routes.OrderBy<Route, RouteStateEnum>(x => x.State).ToList(),
+                _       => Routes.ToList<Route>()
             };
         } else {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Name ?? "").ToList(),
-                "id"    => Enumerable.OrderByDescending<Route, string>(Routes, x => x.Id ?? "").ToList(),
-                "state" => Enumerable.OrderByDescending<Route, RouteStateEnum>(Routes, x => x.State).ToList(),
-                _       => Enumerable.ToList<Route>(Routes)
+                "name"  => Routes.OrderByDescending<Route, string>(x => x.Name ?? "").ToList(),
+                "id"    => Routes.OrderByDescending<Route, string>(x => x.Id ?? "").ToList(),
+                "state" => Routes.OrderByDescending<Route, RouteStateEnum>(x => x.State).ToList(),
+                _       => Routes.ToList<Route>()
             };
         }
 
@@ -66,6 +67,7 @@ public partial class RoutesViewModel : BaseViewModel {
     [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
     public async Task ToggleRoutesState(Route? route) {
         if (route == null) return;
+
         route.State = route.State switch {
             RouteStateEnum.Active   => RouteStateEnum.Inactive,
             RouteStateEnum.Inactive => RouteStateEnum.Active,

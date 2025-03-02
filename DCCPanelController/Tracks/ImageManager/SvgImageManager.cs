@@ -80,6 +80,7 @@ public class SvgImageManager {
         _imageSource = null;
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(_resourceName);
+
         if (stream == null) {
             Console.WriteLine($"Could not find the image resource: '{_resourceName}'");
             throw new FileNotFoundException("Resource not found.", _resourceName);
@@ -87,6 +88,7 @@ public class SvgImageManager {
 
         using var reader = new StreamReader(stream);
         var svgContent = reader.ReadToEnd();
+
         try {
             var xDocument = XDocument.Parse(svgContent);
             return xDocument;
@@ -128,6 +130,7 @@ public class SvgImageManager {
 
     public List<XElement> FindElements(string elementName) {
         var elements = new List<XElement>();
+
         foreach (var element in _svgDocument.Descendants()) {
             foreach (var attr in element.Attributes()) {
                 if (attr.Name.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(elementName, StringComparison.OrdinalIgnoreCase)) {
@@ -153,6 +156,7 @@ public class SvgImageManager {
     public void SetAttributeValue(XElement element, string attributeName, string attributeValue, bool addIfNotExist = true) {
         ArgumentNullException.ThrowIfNull(element);
         var attribute = (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr).FirstOrDefault();
+
         if (attribute is not null) {
             attribute.Value = attributeValue;
         } else {

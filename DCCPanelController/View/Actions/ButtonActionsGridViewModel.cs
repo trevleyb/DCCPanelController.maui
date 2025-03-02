@@ -8,7 +8,6 @@ using DCCPanelController.View.PropertyPages;
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGridViewModel : ObservableObject {
-
     [ObservableProperty]
     private ActionsContext _actionContext;
 
@@ -107,6 +106,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
             // If we have already used this button, then remove it from the Selectable ones
             // ---------------------------------------------------------------------------
             var found = ButtonActions.Any(btn => btn.Id == button);
+
             if (ButtonActions.Any(btn => btn.Id == button) && button != activeButton) {
                 SelectableButtons.Remove(button);
             } else {

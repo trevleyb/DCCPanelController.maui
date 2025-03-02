@@ -4,7 +4,6 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.Helpers;
@@ -15,11 +14,11 @@ namespace DCCPanelController.Model;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableObject {
-    [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] private string _description = string.Empty;
-    [ObservableProperty] private int _sortOrder;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 24;
+    [ObservableProperty] private string _description = string.Empty;
+    [ObservableProperty] private string _name = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+    [ObservableProperty] private int _sortOrder;
 
     private ObservableCollection<ITrack> _tracks = [];
 
@@ -83,6 +82,7 @@ public partial class Panel : ObservableObject {
     // -------------------------------------------------------------------------------
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         Console.WriteLine($"Collection Changed: {e.Action} {e.NewItems?.Count} {e.OldItems?.Count} {e.NewStartingIndex} {e.OldStartingIndex}");
+
         if (e.NewItems != null) {
             SetParent(e.NewItems as IList<ITrack>, this);
         }
@@ -155,6 +155,7 @@ public partial class Panel : ObservableObject {
         var numericalPattern = ids
                               .Select(id => {
                                    var match = Regex.Match(id, @"^(.*?)(\d+)$"); // Match a prefix and a number (e.g., "Button123").
+
                                    if (match.Success) {
                                        return (Prefix: match.Groups[1].Value, Number: int.Parse(match.Groups[2].Value));
                                    }
@@ -189,6 +190,7 @@ public partial class Panel : ObservableObject {
 // Helper Method: Increment alphabetical strings (e.g., "A" -> "B", "Z" -> "AA").
     private static string IncrementAlphabeticalString(string input) {
         var chars = input.ToCharArray();
+
         for (var i = chars.Length - 1; i >= 0; i--) {
             if (chars[i] < 'Z') {
                 chars[i]++;
@@ -196,6 +198,7 @@ public partial class Panel : ObservableObject {
             }
 
             chars[i] = 'A';
+
             if (i == 0) {
                 // If we're at the beginning and need to carry over (e.g., "Z" -> "AA").
                 return 'A' + new string(chars);

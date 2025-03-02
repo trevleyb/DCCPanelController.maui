@@ -5,7 +5,6 @@ using DCCPanelController.Model.Tracks.Interfaces;
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
-
     private readonly OperateViewModel _viewModel;
     private bool _tabBarState = true;
 
@@ -34,6 +33,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrack e) {
         Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
+
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();
         }
@@ -67,6 +67,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private void ConnectButton_OnClicked(object? sender, EventArgs e) {
         _viewModel.Connect();
+
         var icon = _viewModel.IsConnected switch {
             true  => "circle_green.png",
             false => "circle_red.png",

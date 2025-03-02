@@ -5,7 +5,6 @@ namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableStringAttribute : EditableAttribute, IEditableAttribute {
-
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new Entry {

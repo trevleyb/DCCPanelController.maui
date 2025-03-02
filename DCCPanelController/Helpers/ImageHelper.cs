@@ -1,7 +1,6 @@
 namespace DCCPanelController.Helpers;
 
 public static class ImageHelper {
-
     public static async Task<string> ImageToBase64Async(FileResult result) {
         await using var stream = await result.OpenReadAsync();
         using var memoryStream = new MemoryStream();

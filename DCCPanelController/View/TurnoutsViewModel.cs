@@ -15,10 +15,10 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     private bool _isAscending;
     private string _sortColumn = "";
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     public TurnoutsViewModel(TurnoutsService turnoutService, ConnectionService connectionService, NavigationService navigationService) {
         TurnoutService = turnoutService;
@@ -40,25 +40,26 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
-            List<Turnout> sortedTurnout;
-            if (!_isAscending) {
-                sortedTurnout = columnName.ToLower() switch {
-                    "name"  => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Name ?? "").ToList(),
-                    "id"    => Enumerable.OrderBy<Turnout, string>(Turnouts, x => x.Id ?? "").ToList(),
-                    "state" => Enumerable.OrderBy<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
-                    _       => Enumerable.ToList<Turnout>(Turnouts)
-                };
-            } else {
-                sortedTurnout = columnName.ToLower() switch {
-                    "name"  => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Name ?? "").ToList(),
-                    "id"    => Enumerable.OrderByDescending<Turnout, string>(Turnouts, x => x.Id ?? "").ToList(),
-                    "state" => Enumerable.OrderByDescending<Turnout, TurnoutStateEnum>(Turnouts, x => x.State).ToList(),
-                    _       => Enumerable.ToList<Turnout>(Turnouts)
-                };
-            }
+        List<Turnout> sortedTurnout;
 
-            _sortColumn = columnName;
-            _isAscending = !_isAscending;
+        if (!_isAscending) {
+            sortedTurnout = columnName.ToLower() switch {
+                "name"  => Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList(),
+                "id"    => Turnouts.OrderBy<Turnout, string>(x => x.Id ?? "").ToList(),
+                "state" => Turnouts.OrderBy<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
+                _       => Turnouts.ToList<Turnout>()
+            };
+        } else {
+            sortedTurnout = columnName.ToLower() switch {
+                "name"  => Turnouts.OrderByDescending<Turnout, string>(x => x.Name ?? "").ToList(),
+                "id"    => Turnouts.OrderByDescending<Turnout, string>(x => x.Id ?? "").ToList(),
+                "state" => Turnouts.OrderByDescending<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
+                _       => Turnouts.ToList<Turnout>()
+            };
+        }
+
+        _sortColumn = columnName;
+        _isAscending = !_isAscending;
 
         Turnouts = new ObservableCollection<Turnout>(sortedTurnout);
         OnPropertyChanged(nameof(Turnouts));
@@ -80,7 +81,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [RelayCommand]
     private async Task AddTurnoutAsync() {
         var turnout = new Turnout {
-            Id = TurnoutAnalyzer.GetUniqueID(Enumerable.ToList<Turnout>(Turnouts)),
+            Id = TurnoutAnalyzer.GetUniqueID(Turnouts.ToList<Turnout>()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
             Default = TurnoutStateEnum.Closed,
@@ -102,6 +103,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
+
         turnout.State = turnout.State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,

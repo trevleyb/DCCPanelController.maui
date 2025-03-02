@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using DCCPanelController.Model.Tracks;
 
 namespace DCCPanelController.Model;
 

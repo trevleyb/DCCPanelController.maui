@@ -1,5 +1,3 @@
 namespace DCCPanelController.View;
 
-public class WelcomePageViewModel : BaseViewModel {
-    
-}
+public class WelcomePageViewModel : BaseViewModel { }

@@ -6,7 +6,6 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:interfaces="clr-namespace:DCCPanelController.Model.Tracks.Interfaces"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:viewModel="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Shell.BackButtonBehavior>

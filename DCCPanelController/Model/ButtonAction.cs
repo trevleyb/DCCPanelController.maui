@@ -1,10 +1,9 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Model.Tracks.Actions;
 
 namespace DCCPanelController.Model;
 
-public class ButtonActions : ObservableCollection<ButtonAction> {}
+public class ButtonActions : ObservableCollection<ButtonAction> { }
 
 public partial class ButtonAction : ObservableObject {
     [ObservableProperty] private bool _cascade;

@@ -5,8 +5,10 @@ public class Result<T> {
         switch (isSuccess) {
         case true when value == null:
             throw new ArgumentNullException(nameof(value), "Success result must have a value.");
+
         case true when !string.IsNullOrEmpty(error):
             throw new ArgumentException("Success result cannot have an error message.", nameof(error));
+
         case false when string.IsNullOrEmpty(error):
             throw new ArgumentException("Failure result must have an error message.", nameof(error));
         }

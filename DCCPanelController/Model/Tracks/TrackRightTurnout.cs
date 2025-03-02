@@ -1,15 +1,13 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackRightTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnout(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrack {
+public class TrackRightTurnout(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackTurnout(parent, styleTypeEnum), ITrackTurnout, ITrackSymbol, ITrack {
+    public TrackRightTurnout() : this(null) { }
 
     public override string Name => "Right Turnout";
-
-    public TrackRightTurnout() : this(null) { }
 
     public override ITrack Clone(Panel parent) {
         var clone = Clone<TrackRightTurnout>(parent);

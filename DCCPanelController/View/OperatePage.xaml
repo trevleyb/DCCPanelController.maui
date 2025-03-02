@@ -9,7 +9,6 @@
     xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:model="clr-namespace:DCCPanelController.Model"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:viewModel="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Resources>

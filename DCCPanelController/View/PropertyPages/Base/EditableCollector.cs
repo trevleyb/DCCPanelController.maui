@@ -3,7 +3,6 @@ using System.Reflection;
 namespace DCCPanelController.View.PropertyPages.Base;
 
 public static class EditableCollector {
-
     public static Dictionary<string, List<EditableDetails>> GetEditableProperties(object obj) {
         ArgumentNullException.ThrowIfNull(obj);
         var editableProperties = new List<EditableDetails>();
@@ -13,8 +12,10 @@ public static class EditableCollector {
         for (var i = 0; i < properties.Length; i++) {
             var property = properties[i];
             var attribute = property.GetCustomAttribute<EditableAttribute>();
+
             if (attribute != null) {
                 if (groups.Contains(attribute.Group) == false) groups.Add(attribute.Group);
+
                 editableProperties.Add(new EditableDetails {
                     EditableAttribute = attribute,
                     Info = property,
@@ -29,6 +30,7 @@ public static class EditableCollector {
         // -----------------------------------------------------------------------------------------------------------
         var sorted = new Dictionary<string, List<EditableDetails>>();
         sorted.Add("", GetEditablePropertiesByGroup(""));
+
         foreach (var group in groups.Where(grp => grp != "")) {
             sorted.Add(group, GetEditablePropertiesByGroup(group));
         }

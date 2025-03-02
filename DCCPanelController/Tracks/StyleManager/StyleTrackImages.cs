@@ -3,7 +3,6 @@ namespace DCCPanelController.Tracks.StyleManager;
 public record StyleImageRotation(string ImageSource, int TrackRotation, int ImageRotation);
 
 public class StyleTrackImages {
-
     private readonly List<StyleTrackImage> _supportedImages = [];
 
     public StyleImageRotation GetTrackImageSourceAndRotation(TrackStyleImageEnum imageEnumStyle, int trackRotation) {
@@ -13,6 +12,7 @@ public class StyleTrackImages {
 
         for (var attempt = 0; attempt < maxAttempts; attempt++) {
             var currentRotation = (trackRotation + attempt * rotationIncrement) % 360;
+
             foreach (var supportedImage in _supportedImages) {
                 if (supportedImage.ImageEnumStyle == imageEnumStyle) {
                     foreach (var rotation in supportedImage.Rotations) {
@@ -34,6 +34,7 @@ public class StyleTrackImages {
 
     public void AddImageSourceAndRotation(TrackStyleImageEnum trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {
         var builder = StyleTrackImage.Create(trackType, imageSource);
+
         if (rotations.Length <= 0) builder.AddDefaultRotations();
         else builder.AddRotations(rotations);
 
@@ -48,6 +49,7 @@ public class StyleTrackImages {
 
     public StyleTrackImages Clone() {
         var styleImagesCopy = new StyleTrackImages();
+
         foreach (var image in _supportedImages) {
             var imageCopy = image.Clone();
             styleImagesCopy.AddStyleTrackImage(imageCopy);

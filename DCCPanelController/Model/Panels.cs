@@ -3,7 +3,6 @@ using System.Collections.ObjectModel;
 namespace DCCPanelController.Model;
 
 public class Panels : ObservableCollection<Panel> {
-
     public Panel CreatePanel() {
         var panel = new Panel(this);
         Add(panel);
@@ -12,6 +11,7 @@ public class Panels : ObservableCollection<Panel> {
 
     public void ReOrderPanels() {
         if (Count <= 1) return;
+
         for (var index = 0; index < Count; index++) {
             this[index].SortOrder = index + 1;
         }

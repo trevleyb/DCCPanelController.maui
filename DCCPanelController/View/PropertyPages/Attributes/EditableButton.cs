@@ -7,6 +7,7 @@ public class EditableButtonAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         // TODO: Add support for setting a button state
         return null;
+
         // try {
         //     var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White };
         //     cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });

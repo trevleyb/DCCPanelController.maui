@@ -1,7 +1,6 @@
 using Microsoft.Maui.Handlers;
 #if IOS
 using UIKit;
-using Foundation;
 #endif
 
 #if ANDROID
@@ -18,9 +17,9 @@ public static class FormHelper {
             handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
             handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToAndroid());
 #elif IOS
-            handler.PlatformView.BackgroundColor = UIKit.UIColor.Clear;
+            handler.PlatformView.BackgroundColor = UIColor.Clear;
             handler.PlatformView.Layer.BorderWidth = 0;
-            handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+            handler.PlatformView.BorderStyle = UITextBorderStyle.None;
 #endif
         });
 
@@ -30,9 +29,9 @@ public static class FormHelper {
             handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
             handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToAndroid());
 #elif IOS
-            handler.PlatformView.BackgroundColor = UIKit.UIColor.Clear;
+            handler.PlatformView.BackgroundColor = UIColor.Clear;
             handler.PlatformView.Layer.BorderWidth = 0;
-            handler.PlatformView.BorderStyle = UIKit.UITextBorderStyle.None;
+            handler.PlatformView.BorderStyle = UITextBorderStyle.None;
 #endif
         });
     }

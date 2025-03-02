@@ -2,7 +2,6 @@ using System.Collections.ObjectModel;
 using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Model;
-using DCCPanelController.Model.Tracks;
 using DCCPanelController.Tracks.StyleManager;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
@@ -48,6 +47,7 @@ public class SettingsService {
 
     public Storage Load(string fileName = StorageFilename) {
         var filePath = GetStorageFilePath(fileName);
+
         try {
             if (File.Exists(filePath)) {
                 try {
@@ -86,6 +86,7 @@ public class SettingsService {
 
     public void Delete(string fileName = StorageFilename) {
         var filePath = GetStorageFilePath(fileName);
+
         if (File.Exists(filePath)) {
             File.Delete(filePath);
         }

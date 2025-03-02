@@ -12,6 +12,7 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new HorizontalStackLayout();
+
             var dataCell = new Entry {
                 BindingContext = value.Owner,
                 WidthRequest = 75,
@@ -24,11 +25,12 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
             dataCell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
 
             var attr = value.EditableAttribute as EditableIntAttribute;
+
             var stepperUpDown = new Stepper {
                 Minimum = attr?.MinValue ?? 0,  // Define the stepper min value if needed
                 Maximum = attr?.MaxValue ?? 99, // Define the stepper max value if needed
                 HeightRequest = 20,
-                Increment = 1,                  // Increment/decrement step
+                Increment = 1, // Increment/decrement step
                 HorizontalOptions = LayoutOptions.End
             };
 
@@ -37,6 +39,7 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
             }
 
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
+
             dataCell.TextChanged += (s, e) => {
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;

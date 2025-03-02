@@ -25,11 +25,13 @@ public class ClientTest {
     [Test]
     public async Task RunConnectionTest() {
         Debug.WriteLine("testing Connection to WiThrottle Server");
+
         if (await GetDefaultWiServer() is { } clientInfo) {
             var client = new Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
             client.ConnectionEvent += ClientOnConnectionEvent;
             client.Connect();
+
             for (var i = 0; i < 10; i++) {
                 Debug.WriteLine($"Waiting... {i}");
                 Thread.Sleep(1000);
@@ -45,6 +47,7 @@ public class ClientTest {
     [Test]
     public async Task SendCommandTests() {
         Debug.WriteLine("testing Connection to WiThrottle Server");
+
         if (await GetDefaultWiServer() is { } clientInfo) {
             var client = new Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
@@ -75,6 +78,7 @@ public class ClientTest {
     [Test]
     public async Task TestFastClock() {
         Debug.WriteLine("testing Connection to WiThrottle Server");
+
         if (await GetDefaultWiServer() is { } clientInfo) {
             var client = new Client.Client(clientInfo);
             client.ConnectionError += ClientOnConnectionError;
@@ -102,18 +106,23 @@ public class ClientTest {
         case MessageEvent message:
             Debug.WriteLine($"MESSAGE: {message.Type} => {message.Value}");
             break;
+
         case RosterEvent roster:
             Debug.WriteLine("ROSTER: Message");
             break;
+
         case RouteEvent route:
             Debug.WriteLine($"ROUTE:{route.SystemName} : {route.UserName} => {route.State}");
             break;
+
         case TurnoutEvent turnout:
             Debug.WriteLine($"TURNOUT: {turnout.SystemName} : {turnout.UserName} => {turnout.State}");
             break;
+
         case FastClockEvent clock:
             Debug.WriteLine($"CLOCK: {clock.Time.ToString(CultureInfo.InvariantCulture)}");
             break;
+
         default:
             Debug.WriteLine($"UNKNOWN: {clientevent.ToString()}");
             break;

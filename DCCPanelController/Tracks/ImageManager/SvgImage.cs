@@ -101,12 +101,15 @@ public partial class SvgImage : ObservableObject {
         case "color":
             ImageManager.SetAttributeValue(element, "fill", attributeValue);
             break;
+
         case "opacity":
             ImageManager.SetAttributeValue(element, "fill-opacity", attributeValue);
             break;
+
         case "visible":
             ImageManager.SetAttributeValue(element, "fill-opacity", attributeValue.IsTrue() ? "100" : "0");
             break;
+
         default:
             return false;
         }
@@ -119,15 +122,19 @@ public partial class SvgImage : ObservableObject {
         case "text":
             ImageManager.SetElementValue(element, attributeValue);
             break;
+
         case "font-size":
             ImageManager.SetAttributeValue(element, "font-size", attributeValue);
             break;
+
         case "font-weight":
             ImageManager.SetAttributeValue(element, "font-weight", attributeValue);
             break;
+
         case "font-color":
             ImageManager.SetAttributeValue(element, "fill", attributeValue);
             break;
+
         default:
             return false;
         }
@@ -140,15 +147,19 @@ public partial class SvgImage : ObservableObject {
         case "color":
             ImageManager.SetAttributeValue(element, "stroke", attributeValue);
             break;
+
         case "opacity":
             ImageManager.SetAttributeValue(element, "stroke-opacity", attributeValue);
             break;
+
         case "dashed":
             ImageManager.SetAttributeValue(element, "stroke-dasharray", attributeValue.IsTrue() ? "2,6" : "0,0");
             break;
+
         case "visible":
             ImageManager.SetAttributeValue(element, "stroke-opacity", attributeValue.IsTrue() ? "100" : "0");
             break;
+
         default:
             return false;
         }

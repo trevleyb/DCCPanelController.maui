@@ -65,14 +65,18 @@ public partial class ConnectionService : ObservableObject {
         switch (clientEvent) {
         case MessageEvent message:
             break;
+
         case RosterEvent roster:
             break;
+
         case RouteEvent route:
             UpdateRoute(route);
             break;
+
         case TurnoutEvent turnout:
             UpdateTurnout(turnout);
             break;
+
         case FastClockEvent clock:
             break;
         }
@@ -80,6 +84,7 @@ public partial class ConnectionService : ObservableObject {
 
     private void UpdateTurnout(TurnoutEvent turnout) {
         var found = _turnoutsService?.GetTurnoutByIdAsync(turnout.SystemName).Result;
+
         if (found == null) {
             _turnoutsService?.AddTurnoutAsync(new Turnout {
                 Id = turnout.SystemName,
@@ -94,6 +99,7 @@ public partial class ConnectionService : ObservableObject {
         } else {
             found.Id = turnout.SystemName;
             found.IsEditable = false;
+
             found.State = turnout.StateEnum switch {
                 TurnoutStateEnum.Closed => Model.TurnoutStateEnum.Closed,
                 TurnoutStateEnum.Thrown => Model.TurnoutStateEnum.Thrown,
@@ -108,6 +114,7 @@ public partial class ConnectionService : ObservableObject {
 
     private void UpdateRoute(RouteEvent route) {
         var found = _routesService?.GetRouteByIdAsync(route.SystemName).Result;
+
         if (found == null) {
             _routesService?.AddRouteAsync(new Route {
                 Id = route.SystemName,
@@ -120,6 +127,7 @@ public partial class ConnectionService : ObservableObject {
             });
         } else {
             found.Id = route.SystemName;
+
             found.State = route.StateEnum switch {
                 RouteStateEnum.Active   => Model.RouteStateEnum.Active,
                 RouteStateEnum.Inactive => Model.RouteStateEnum.Inactive,

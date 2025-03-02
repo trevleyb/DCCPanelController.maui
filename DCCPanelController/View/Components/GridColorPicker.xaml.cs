@@ -1,5 +1,3 @@
-using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
@@ -7,16 +5,16 @@ using DCCPanelController.Helpers;
 namespace DCCPanelController.View.Components;
 
 public partial class GridColorPicker : Popup {
-
     private Color? _selectedColor;
-    public IReadOnlyCollection<Color> SelectableColors { get; init; }
-    
+
     public GridColorPicker(Color color) {
         InitializeComponent();
         SelectedColor = color;
         SelectableColors = AppleCrayonColors.Colors;
         BindingContext = this;
     }
+
+    public IReadOnlyCollection<Color> SelectableColors { get; init; }
 
     public Color? SelectedColor {
         get => _selectedColor;
@@ -26,8 +24,8 @@ public partial class GridColorPicker : Popup {
         }
     }
 
-    public string SelectedColorName => (SelectedColor == null ? "Default" :  AppleCrayonColors.Name(SelectedColor ?? Colors.White)).ToUpper();
-    
+    public string SelectedColorName => (SelectedColor == null ? "Default" : AppleCrayonColors.Name(SelectedColor ?? Colors.White)).ToUpper();
+
     [RelayCommand]
     private async Task CloseOnSelectedAsync() {
         var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));

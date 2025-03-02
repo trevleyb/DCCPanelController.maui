@@ -1,4 +1,3 @@
-
 namespace DCCPanelController.View;
 
 public partial class TurnoutsPage : ContentPage {

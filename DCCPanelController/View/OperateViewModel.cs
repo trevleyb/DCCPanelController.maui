@@ -9,10 +9,11 @@ public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private bool? _isConnected;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
-    
-    public OperateViewModel() { 
+
+    public OperateViewModel() {
         var settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
         Panels = settingsService.Panels;
+
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }

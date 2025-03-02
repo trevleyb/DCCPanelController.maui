@@ -21,6 +21,7 @@ public class ColorOption {
     private static bool IsPrimaryColor(Color color, int levels) {
         // Generate the threshold levels (e.g., for 3 levels: 0, 128, 255)
         var step = 255 / (levels - 1) + 1;
+
         if (validLevels == null || validLevels.Count != levels) {
             validLevels = new List<int> { 0, 255 };
             for (var i = 1; i < levels - 1; i++) validLevels.Add(i * step - 1);
@@ -229,6 +230,7 @@ public static class PredefinedColors {
 
     public static List<ColorOption> BuildSelectableColors(ReadOnlyCollection<ColorOption> allColors) {
         var selectedColorOptions = new List<ColorOption>();
+
         foreach (var color in allColors) {
             var alpha = color.Color.GetByteAlpha();
             var green = color.Color.GetByteGreen();

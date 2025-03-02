@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Actions;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
@@ -14,14 +13,11 @@ using Plugin.Maui.Audio;
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackButton, ITrackSymbol {
+    [ObservableProperty] [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
+    private ButtonActions _buttonActions = [];
 
-    public TrackButton() : this(null) {
-        PropertyChanged += OnPropertyChanged;
-    }
-
-    public string Name => "Button";
     private IAudioPlayer? _clickSoundPlayer;
-    
+
     [ObservableProperty]
     [property: EditableString(Name = "Button ID", Description = "Unique Identifier for this Button", Order = 1)]
     private string _iD = "";
@@ -29,22 +25,26 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     [ObservableProperty] [property: EditableBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
     private bool _isEnabled = true;
 
-    [ObservableProperty][property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
-    private ButtonActions _buttonActions = [];
-
-    [ObservableProperty][property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
-    private TurnoutActions _turnoutActions = [];
-
     [ObservableProperty]
     public ButtonStateEnum _state = ButtonStateEnum.Unknown;
-    
+
+    [ObservableProperty] [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Turnouts to change when ths turnout changes", Order = 11)]
+    private TurnoutActions _turnoutActions = [];
+
     protected TrackStyleImageEnum TrackImageEnum = TrackStyleImageEnum.Normal;
-    
+
+    public TrackButton() : this(null) {
+        PropertyChanged += OnPropertyChanged;
+    }
+
+    public string Name => "Button";
+
     public void Clicked() {
         if (_clickSoundPlayer is null) {
             var audioManager = AudioManager.Current;
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
         }
+
         _clickSoundPlayer?.Play();
 
         // Toggle the state if the button has been pressed
@@ -54,6 +54,7 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
             ButtonStateEnum.Inactive => ButtonStateEnum.Active,
             _                        => ButtonStateEnum.Active
         };
+
         ExecButtonState(state);
         OnPropertyChanged(nameof(TrackView));
     }
@@ -67,19 +68,28 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
         return true;
     }
 
+    public bool ExecButtonState(ButtonStateEnum state, ActionList actioned) {
+        SetButtonState(state);
+
+        if (Parent is not null) {
+            ActionApplyButton.ApplyButtonActions(Parent, this, actioned);
+        }
+
+        return true;
+    }
+
+    public ITrack Clone(Panel parent) {
+        var cloned = Clone<TrackButton>(parent);
+        cloned.ID = cloned.Parent?.NextButtonID() ?? "";
+        Debug.Assert(cloned != null, nameof(cloned) + " != null");
+        return cloned;
+    }
+
     public bool ExecButtonState(ButtonStateEnum state) {
         // When calling execute from a click, pass an empty collection 
         // This collection is populated to track what buttons and turnouts we have 
         // processed, so we don't do one more than once. 
         return ExecButtonState(state, new ActionList());
-    }
-
-    public bool ExecButtonState(ButtonStateEnum state, ActionList actioned) {
-        SetButtonState(state);
-        if (Parent is not null) {
-            ActionApplyButton.ApplyButtonActions(Parent, this, actioned);
-        }
-        return true;
     }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
@@ -115,13 +125,6 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
             ButtonStateEnum.Inactive => TrackStyleImageEnum.InActive,
             _                        => TrackStyleImageEnum.Normal
         };
-    }
-    
-    public ITrack Clone(Panel parent) {
-        var cloned = Clone<TrackButton>(parent);
-        cloned.ID = cloned.Parent?.NextButtonID() ?? "";
-        Debug.Assert(cloned != null, nameof(cloned) + " != null");
-        return cloned;
     }
 
     protected override void Setup() {

@@ -1,19 +1,17 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackStraight(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrackSymbol, ITrack {
-
-    public string Name => "Straight Track";
-
+public class TrackStraight(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrackSymbol, ITrack {
     public TrackStraight() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackStraight>(parent);
     }
+
+    public string Name => "Straight Track";
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Straight1", (0, 0), (90, 90), (180, 0), (270, 90));

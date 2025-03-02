@@ -7,12 +7,9 @@ namespace DCCPanelController.Model;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel : ObservableObject {
-
     [ObservableProperty] private Color _backgroundColor = null!;
     [ObservableProperty] private Color _borderColor = null!;
-    [ObservableProperty] private Color _mainLineColor = null!;
     [ObservableProperty] private Color _branchLineColor = null!;
-    [ObservableProperty] private Color _divergingColor = null!;
 
     [ObservableProperty] private Color _buttonBorder = null!;
     [ObservableProperty] private Color _buttonColor = null!;
@@ -22,10 +19,12 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] private Color _buttonOnColor = null!;
 
     [ObservableProperty] private Color _continuationColor = null!;
-    [ObservableProperty] private Color _terminatorColor = null!;
+    [ObservableProperty] private Color _divergingColor = null!;
     [ObservableProperty] private Color _hiddenColor = null!;
+    [ObservableProperty] private Color _mainLineColor = null!;
     [ObservableProperty] private Color _occupiedColor = null!;
     [ObservableProperty] private Color _showPathColor = null!;
+    [ObservableProperty] private Color _terminatorColor = null!;
 
     public void CopyTo(Panel target) {
         target.BackgroundColor = BackgroundColor;
@@ -46,7 +45,6 @@ public partial class Panel : ObservableObject {
         target.HiddenColor = HiddenColor;
         target.OccupiedColor = OccupiedColor;
         target.ShowPathColor = ShowPathColor;
-
     }
 
     public void ResetToDefaults() {
@@ -64,9 +62,10 @@ public partial class Panel : ObservableObject {
         ButtonOnColor = AppleCrayonColors.Value("Fern");
 
         ContinuationColor = AppleCrayonColors.Value("Iron");
-        TerminatorColor = AppleCrayonColors.Value("Iron");;
+        TerminatorColor = AppleCrayonColors.Value("Iron");
+        ;
         HiddenColor = AppleCrayonColors.Value("Snow");
         OccupiedColor = AppleCrayonColors.Value("Cayenne");
-        ShowPathColor= AppleCrayonColors.Value("Lemon");
+        ShowPathColor = AppleCrayonColors.Value("Lemon");
     }
 }

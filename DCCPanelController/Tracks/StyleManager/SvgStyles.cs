@@ -5,17 +5,19 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Tracks.StyleManager;
 
 public static class SvgStyles {
-
-    public static SvgStyle GetStyle(
-        TrackStyleTypeEnum styleTypeEnum, 
-        TrackStyleImageEnum styleImageEnum, 
-        TrackStyleAttributeEnum attributeEnum, Panel panel) {
+    public static SvgStyle GetStyle(TrackStyleTypeEnum styleTypeEnum,
+                                    TrackStyleImageEnum styleImageEnum,
+                                    TrackStyleAttributeEnum attributeEnum, Panel panel) {
         return ApplyStyleAttributes(GetStyle(styleTypeEnum, styleImageEnum, panel), attributeEnum, panel);
     }
 
     // Get a Style based on the Track Type and the DisplayImage Type
     public static SvgStyle GetStyle(TrackStyleTypeEnum styleTypeEnum, TrackStyleImageEnum styleImageEnum, Panel? panel) {
-        if (panel == null) {Console.WriteLine("GetStyle: Panel is null"); return new SvgStyle();}        
+        if (panel == null) {
+            Console.WriteLine("GetStyle: Panel is null");
+            return new SvgStyle();
+        }
+
         var style = new SvgStyleBuilder();
 
         // Unknown, Normal and Default all return the Default Style
@@ -79,7 +81,11 @@ public static class SvgStyles {
     /// <param name="panel">Reference to the Panel that owns this track piece panel</param>
     /// <returns></returns>
     public static SvgStyle ApplyStyleAttributes(SvgStyle style, TrackStyleAttributeEnum attributeEnum, Panel? panel) {
-        if (panel == null) {Console.WriteLine("ApplyStyleAttributes: Panel is null"); return style;}
+        if (panel == null) {
+            Console.WriteLine("ApplyStyleAttributes: Panel is null");
+            return style;
+        }
+
         return attributeEnum switch {
             TrackStyleAttributeEnum.Occupied => new SvgStyleBuilder()
                                                .AddExistingStyle(style)

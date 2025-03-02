@@ -6,12 +6,13 @@ namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableDoubleAttribute : EditableAttribute, IEditableAttribute {
-    public double MinValue { get; set; } = 0;   // used for Int (Minimum Value)
+    public double MinValue { get; set; } = 0;  // used for Int (Minimum Value)
     public double MaxValue { get; set; } = 10; // used for Int (Maximum Value)
 
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new HorizontalStackLayout();
+
             var dataCell = new Entry {
                 BindingContext = value.Owner,
                 WidthRequest = 75,
@@ -24,11 +25,12 @@ public class EditableDoubleAttribute : EditableAttribute, IEditableAttribute {
             dataCell.SetBinding(Entry.TextProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
 
             var attr = value.EditableAttribute as EditableIntAttribute;
+
             var stepperUpDown = new Stepper {
                 Minimum = attr?.MinValue ?? 0,  // Define the stepper min value if needed
                 Maximum = attr?.MaxValue ?? 10, // Define the stepper max value if needed
                 HeightRequest = 20,
-                Increment = 0.25,                  // Increment/decrement step
+                Increment = 0.25, // Increment/decrement step
                 HorizontalOptions = LayoutOptions.End
             };
 
@@ -36,9 +38,8 @@ public class EditableDoubleAttribute : EditableAttribute, IEditableAttribute {
                 stepperUpDown.Value = initialStepperValue;
             }
 
-            stepperUpDown.ValueChanged += (s, e) => {
-                dataCell.Text = e?.NewValue.ToString("00.00",CultureInfo.InvariantCulture) ?? "1.00";
-            };
+            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("00.00", CultureInfo.InvariantCulture) ?? "1.00"; };
+
             dataCell.TextChanged += (s, e) => {
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;

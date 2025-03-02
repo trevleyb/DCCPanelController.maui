@@ -23,9 +23,11 @@ public static class ObjectCloner {
         if (type.IsArray) {
             var elementType = type.GetElementType();
             var sourceArray = (Array)source;
+
             if (elementType != null) {
                 try {
                     var copiedArray = Array.CreateInstance(elementType, sourceArray.Length);
+
                     for (var i = 0; i < sourceArray.Length; i++) {
                         copiedArray.SetValue(CloneObject(sourceArray.GetValue(i)), i);
                     }
@@ -42,6 +44,7 @@ public static class ObjectCloner {
         if (source is IList sourceList) {
             try {
                 var copiedList = (IList)Activator.CreateInstance(source.GetType())!;
+
                 foreach (var item in sourceList) {
                     copiedList.Add(CloneObject(item));
                 }
@@ -56,6 +59,7 @@ public static class ObjectCloner {
         // Handle other reference types
         try {
             var copy = Activator.CreateInstance(type);
+
             foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
                 if (property is { CanWrite: true, CanRead: true } && !Attribute.IsDefined(property, typeof(DoNotCloneAttribute))) {
                     var propertyValue = property.GetValue(source);
@@ -77,13 +81,16 @@ public static class ObjectCloner {
         ArgumentNullException.ThrowIfNull(modified);
         var originalType = original.GetType();
         var modifiedType = modified.GetType();
+
         if (originalType != modifiedType) {
             throw new ArgumentException("Original and modified objects must be of the same type.");
         }
 
         var type = original.GetType();
+
         foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
             Console.Write($"Updating:{property.Name} \t");
+
             if (property is { CanWrite: true, CanRead: true } && !Attribute.IsDefined(property, typeof(DoNotCloneAttribute))) {
                 var propertyType = property.PropertyType;
                 var originalValue = property.GetValue(original);
@@ -94,6 +101,7 @@ public static class ObjectCloner {
                     if (originalValue != null && modifiedValue != null) {
                         var originalArray = (Array)originalValue;
                         var modifiedArray = (Array)modifiedValue;
+
                         if (originalArray.Length == modifiedArray.Length) {
                             for (var i = 0; i < originalArray.Length; i++) {
                                 var originalElement = originalArray.GetValue(i);

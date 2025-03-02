@@ -27,6 +27,7 @@ public class ServiceInfo {
 
     private string ConvertOctalToAscii(string input) {
         if (string.IsNullOrEmpty(input)) return "";
+
         return Regex.Replace(input, @"\\(?<Decimal>[0-9]{1,3})", match => {
             var decimalNumber = match.Groups["Decimal"].Value;
             var number = int.Parse(decimalNumber);

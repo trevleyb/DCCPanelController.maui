@@ -4,7 +4,6 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Model.Tracks.Interfaces;
 
 public interface ITrack {
-
     Guid UniqueID { get; set; }
     string Name { get; }
     int Layer { get; }

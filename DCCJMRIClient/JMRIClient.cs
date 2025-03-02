@@ -32,8 +32,10 @@ public class JmriClient {
     public async Task InitializeAsync() {
         // Fetch initial turnout data and raise events
         var turnoutData = await FetchInitialDataWithRetriesAsync("/json/turnouts");
+
         if (!string.IsNullOrEmpty(turnoutData)) {
             var turnouts = JsonDocument.Parse(turnoutData).RootElement;
+
             foreach (var turnout in turnouts.EnumerateArray()) {
                 var args = ParseTurnoutData(turnout);
                 TurnoutChanged?.Invoke(this, args);
@@ -42,8 +44,10 @@ public class JmriClient {
 
         // Fetch initial route data and raise events
         var routeData = await FetchInitialDataWithRetriesAsync("/json/routes");
+
         if (!string.IsNullOrEmpty(routeData)) {
             var routes = JsonDocument.Parse(routeData).RootElement;
+
             foreach (var route in routes.EnumerateArray()) {
                 var args = ParseRouteData(route);
                 RouteChanged?.Invoke(this, args);
@@ -52,8 +56,10 @@ public class JmriClient {
 
         // Fetch initial occupancy data and raise events
         var occupancyData = await FetchInitialDataWithRetriesAsync("/json/blocks");
+
         if (!string.IsNullOrEmpty(occupancyData)) {
             var blocks = JsonDocument.Parse(occupancyData).RootElement;
+
             foreach (var block in blocks.EnumerateArray()) {
                 var args = ParseOccupancyData(block);
                 OccupancyChanged?.Invoke(this, args);
@@ -88,6 +94,7 @@ public class JmriClient {
         while (!token.IsCancellationRequested) {
             if (_webSocket.State != WebSocketState.Open) {
                 Console.WriteLine("WebSocket connection lost. Attempting to reconnect...");
+
                 try {
                     await ConnectWebSocketAsync();
                     Console.WriteLine("WebSocket reconnected.");
@@ -104,6 +111,7 @@ public class JmriClient {
 
     private async Task ListenForEventsAsync(CancellationToken token) {
         var buffer = new byte[4096];
+
         while (!token.IsCancellationRequested && _webSocket.State == WebSocketState.Open) {
             try {
                 var result = await _webSocket.ReceiveAsync(buffer, token);

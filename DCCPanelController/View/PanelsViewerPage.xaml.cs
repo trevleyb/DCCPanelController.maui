@@ -62,11 +62,13 @@ public partial class PanelsViewerPage {
         if (!expanded) {
             _viewModel.SidePanelWidth = 0;
             _viewModel.IsSidePanelOpen = false;
+
             //SidePanelButton.Text = "Open Panel";
             //SidePanelButton.IconImageSource = "side_panel_open.png";
         } else {
             _viewModel.SidePanelWidth = 300;
             _viewModel.IsSidePanelOpen = true;
+
             //SidePanelButton.Text = "Close panel";
             //SidePanelButton.IconImageSource = "side_panel_close_filled.png";
         }

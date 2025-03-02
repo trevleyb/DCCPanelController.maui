@@ -4,16 +4,12 @@ using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
-using Microsoft.Maui.Controls.Shapes;
 using DCCPanelController.View.PropertyPages.Attributes;
-
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Model.Tracks;
 
 public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSymbol, ITrack {
-
-    public string Name => "Image";
-
     [ObservableProperty] [property: EditableColor(Name = "Border Color", Description = "Border Color", Group = "Border")]
     private Color _borderColor = Colors.Transparent;
 
@@ -25,7 +21,7 @@ public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSym
 
     [ObservableProperty] [property: EditableBool(Name = "Aspect Ratio", Description = "Keep Aspect Ratio", Group = "Attributes")]
     private bool _keepAspectRatio = true;
-    
+
     public TrackImage() : this(null) { }
 
     [EditableImage(Name = "Image", Group = "Image", Description = "Image to display")]
@@ -51,6 +47,8 @@ public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSym
     public ITrack Clone(Panel parent) {
         return Clone<TrackImage>(parent);
     }
+
+    public string Name => "Image";
 
     protected override void Setup() {
         Layer = 1;

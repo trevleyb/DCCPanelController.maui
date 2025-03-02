@@ -5,8 +5,6 @@ using DCCPanelController.Model;
 using DCCPanelController.Services;
 using DCCPanelController.View.PropertyPages;
 #if IOS || MACCATALYST
-using CoreGraphics;
-using UIKit;
 #endif
 
 namespace DCCPanelController.View;
@@ -26,13 +24,14 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     [NotifyPropertyChangedFor(nameof(IsWideMode))]
     private bool _isThinMode;
 
+    [ObservableProperty] private Panels _panels;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
     private Panel? _selectedPanel;
 
     [ObservableProperty] private int _sidePanelWidth = 300;
-    [ObservableProperty] private Panels _panels;
 
     public PanelsViewerViewModel() {
         _settingsService = MauiProgram.ServiceHelper.GetService<SettingsService>();
@@ -75,21 +74,22 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     [RelayCommand]
     private async Task DragPanelOverAsync(Panel? panel) {
         if (DraggedPanel == null) return;
-        if (panel == null || panel == DraggedPanel) return; 
-    
+        if (panel == null || panel == DraggedPanel) return;
+
         var draggedIndex = Panels.IndexOf(DraggedPanel);
         var targetIndex = Panels.IndexOf(panel);
         if (targetIndex == -1) return;
-    
+
         if (targetIndex == Panels.Count - 1 && draggedIndex != Panels.Count - 1) {
             // If dragging over the last item, simulate dropping at the end of the list
-                Panels.Remove(DraggedPanel);
-                Panels.Add(DraggedPanel);
+            Panels.Remove(DraggedPanel);
+            Panels.Add(DraggedPanel);
         } else if (draggedIndex != targetIndex) {
             // If dragging over a different panel, reorder panels by moving
-                Panels.Remove(DraggedPanel);
-                Panels.Insert(targetIndex, DraggedPanel);
+            Panels.Remove(DraggedPanel);
+            Panels.Insert(targetIndex, DraggedPanel);
         }
+
         //RefreshSortOrder();
     }
 
@@ -139,7 +139,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private async Task EditPanelAsync(Panel? panel = null) {
         if (panel is not null) SelectedPanel = panel;
         if (SelectedPanel is null) return;
-        
+
         // Always Save but we have the option to not as result
         // will be Save=True, Back=False
         var result = await LaunchEditPanelAsync(SelectedPanel);
@@ -152,6 +152,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
 
         var tcs = new TaskCompletionSource<bool>();
+
         var panelEditorViewModel = new PanelEditorViewModel(panel, completed => {
             tcs.SetResult(completed); // Return the edited panel;
             mainPage.Navigation.PopAsync();
@@ -166,11 +167,13 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private async Task DeletePanelAsync(Panel? panel = null) {
         if (panel is not null) SelectedPanel = panel;
         if (SelectedPanel is null) return;
+
         try {
             var result = await AskUserToConfirmDelete(SelectedPanel);
             if (!result) return; // Exit if the user cancels the delete operation
 
             Panels.Remove(SelectedPanel);
+
             for (var index = 0; index < Panels.Count; index++) {
                 Panels[index].SortOrder = index + 1;
             }
@@ -193,6 +196,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
 
                 return result;
             }
+
             return false;
         }
     }
@@ -201,6 +205,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private async Task PanelPropertiesAsync(Panel? panel = null) {
         if (panel is not null) SelectedPanel = panel;
         if (SelectedPanel is null) return;
+
         try {
             await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(SelectedPanel));
             Save();

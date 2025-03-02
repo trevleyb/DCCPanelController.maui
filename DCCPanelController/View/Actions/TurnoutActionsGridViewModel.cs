@@ -9,7 +9,6 @@ using DCCPanelController.View.PropertyPages;
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGridViewModel : ObservableObject {
-
     [ObservableProperty]
     private ActionsContext _actionContext;
 
@@ -85,6 +84,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     private ObservableCollection<string> FindAvailableTurnouts(ITrack track) {
         var foundTurnouts = new ObservableCollection<string>();
         var thisTurnout = track as ITrackTurnout;
+
         if (track is { Parent: { Tracks: { } tracks } }) {
             foreach (var trk in tracks) {
                 if (trk is ITrackTurnout trackTurnout) {
@@ -105,6 +105,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
             // If we have already used this button, then remove it from the Selectable ones
             // ---------------------------------------------------------------------------
             var found = TurnoutActions.Any(btn => btn.Id == turnout);
+
             if (TurnoutActions.Any(btn => btn.Id == turnout) && turnout != activeTurnout) {
                 SelectableTurnouts.Remove(turnout);
             } else {

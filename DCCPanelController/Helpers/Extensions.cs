@@ -21,6 +21,7 @@ public static class Extensions {
 
     public static bool IsTrue(this string value) {
         if (string.IsNullOrEmpty(value)) return false;
+
         return value.ToLowerInvariant() switch {
             "true"  => true,
             "false" => false,

@@ -8,7 +8,7 @@ namespace DCCPanelController.View.PropertyPages.Attributes;
 public class EditableColorAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
-            var cell = new ColorPickerButton { WidthRequest = 100, HeightRequest = 30, AllowsNoColor = true};
+            var cell = new ColorPickerButton { WidthRequest = 100, HeightRequest = 30, AllowsNoColor = true };
             cell.SetBinding(ColorPickerButton.SelectedColorProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
             return cell;
         } catch (Exception e) {

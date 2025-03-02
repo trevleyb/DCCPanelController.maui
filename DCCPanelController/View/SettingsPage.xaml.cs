@@ -64,6 +64,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         try {
             // Prompt the user to choose where to save the file
             var fileName = await PromptUserForConfigFile();
+
             if (!string.IsNullOrEmpty(fileName)) {
                 if (_viewModel is { SettingsService: not null } settings) {
                     var loadedJson = await LoadJsonFromFile(fileName);
@@ -82,9 +83,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         try {
             // Prompt the user to choose where to save the file
             var filePath = await PromptUserForSaveLocation();
+
             if (!string.IsNullOrEmpty(filePath)) {
                 if (_viewModel is { Settings: not null } settings) {
                     var saveFile = Path.Combine(filePath, "dccpanel.settings");
+
                     if (settings.SettingsService is { } settingsService) {
                         await SaveJsonToFile(saveFile, settingsService.ToJsonString());
                         await DisplayAlert("Success", $"File saved to {saveFile}.", "OK");
@@ -98,6 +101,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     private static async Task<string> PromptUserForConfigFile() {
         var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
+
         if (result is not null) {
             Console.WriteLine("Uploading: " + result.FullPath);
             return result.FullPath;

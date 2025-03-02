@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
@@ -6,11 +5,10 @@ using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrack {
+public class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrack {
+    public TrackPoints() : this(null) { }
 
     public string Name => "Connection Points";
-
-    public TrackPoints() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackPoints>(parent);

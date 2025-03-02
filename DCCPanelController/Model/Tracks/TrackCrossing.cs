@@ -1,19 +1,17 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.StyleManager;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackCrossing(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrackSymbol, ITrack {
-
-    public string Name => "Crossing Track";
-
+public class TrackCrossing(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum = TrackStyleTypeEnum.Mainline) : TrackPiece(parent, styleTypeEnum), ITrackSymbol, ITrack {
     public TrackCrossing() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         return Clone<TrackCrossing>(parent);
     }
+
+    public string Name => "Crossing Track";
 
     protected override void Setup() {
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Cross1", (0, 0), (90, 90), (180, 180), (270, 270));

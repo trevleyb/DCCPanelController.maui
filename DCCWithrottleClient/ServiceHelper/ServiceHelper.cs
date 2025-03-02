@@ -7,6 +7,7 @@ namespace DCCWithrottleClient.ServiceHelper;
 public static class ServiceHelper {
     public static string GetLocalIPAddress() {
         var host = Dns.GetHostEntry(Dns.GetHostName());
+
         foreach (var ip in host.AddressList) {
             if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != "127.0.0.1") {
                 return ip.ToString();

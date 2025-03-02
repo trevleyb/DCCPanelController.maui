@@ -33,6 +33,7 @@ public static class TurnoutAnalyzer {
 
         // Determine next number in sequence
         var nextNumber = 1;
+
         if (prefixNumbers.TryGetValue(mostCommonPrefix, out var found) && found.Count > 0) {
             nextNumber = found.Max() + 1;
         }
@@ -45,6 +46,7 @@ public static class TurnoutAnalyzer {
     private static (string, int) ExtractPrefixAndNumber(string id) {
         // Match prefix and number using Regex
         var match = Regex.Match(id, @"^([^\d]+)(\d+)$");
+
         if (match.Success) {
             var prefix = match.Groups[1].Value;
             var number = int.Parse(match.Groups[2].Value);

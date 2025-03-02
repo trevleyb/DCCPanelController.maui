@@ -1,4 +1,3 @@
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.PropertyPages.Base;
@@ -29,7 +28,7 @@ public abstract class EditableAttribute : Attribute {
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(-5, 0, 0, 0)
         };
-        
+
         foreach (var value in items) {
             var radioButton = new RadioButton {
                 HeightRequest = 30,

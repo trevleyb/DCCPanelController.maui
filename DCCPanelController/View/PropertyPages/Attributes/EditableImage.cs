@@ -7,7 +7,6 @@ namespace DCCPanelController.View.PropertyPages.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class EditableImageAttribute : EditableAttribute, IEditableAttribute {
-
     public IView? CreateView(EditableDetails value) {
         try {
             var stack = new StackLayout {
@@ -18,6 +17,7 @@ public class EditableImageAttribute : EditableAttribute, IEditableAttribute {
             };
 
             var imageString = PropertyHelper.GetPropertyValue<string>(value.Owner, value.Info.Name) ?? string.Empty;
+
             var image = new Image {
                 Source = string.IsNullOrEmpty(imageString) ? null : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(imageString))) ?? null,
                 Aspect = Aspect.AspectFit,

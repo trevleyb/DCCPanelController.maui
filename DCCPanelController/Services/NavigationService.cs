@@ -40,6 +40,7 @@ public class NavigationService {
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
 
         var tcs = new TaskCompletionSource();
+
         ((IPropertyPage)page).CloseRequested += (sender, e) => {
             tcs.SetResult();
             mainPage.Navigation.PopModalAsync(true);
@@ -57,6 +58,7 @@ public class NavigationService {
 
         var editPage = new TurnoutsEditView(turnout);
         var tcs = new TaskCompletionSource<Turnout?>();
+
         if (editPage.ViewModel != null) {
             editPage.ViewModel.OnSaveCompleted += turnoutResult => {
                 tcs.SetResult(turnoutResult);

@@ -31,11 +31,11 @@ public static class SvgImages {
             Add("Image", "********", "Track_Image");
             Add("Compass", "********", "Track_Compass");
             Add("Points", "********", "Track_Points");
-            
+
             Add("Circle", "********", "draw_circle");
             Add("Rectangle", "********", "draw_rectangle");
             Add("Line", "********", "draw_line");
-            
+
             Add("Button", "********", "Track_Button");
             Add("ButtonCorner", "********", "Track_Button_Corner");
 
@@ -70,7 +70,7 @@ public static class SvgImages {
             Add("TurnoutR1", "**SD**S*", "Track_Turnout_Right");
             Add("TurnoutR2", "**XD**S*", "Track_Turnout_Right_Straight");
             Add("TurnoutR3", "**SX**S*", "Track_Turnout_Right_Diverging");
-            
+
             Add("Threeway1", "*DSD**S*", "Track_Threeway");
             Add("Threeway2", "*DXX**S*", "Track_Threeway_Left");
             Add("Threeway3", "*XXD**S*", "Track_Threeway_Right");

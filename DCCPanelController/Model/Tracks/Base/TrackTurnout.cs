@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
 using DCCPanelController.Model.Tracks.Actions;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
@@ -14,17 +13,9 @@ using Plugin.Maui.Audio;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class TrackTurnout : Track, ITrackTurnout {
-
-    [ObservableProperty]
-    [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
-    private string _iD = string.Empty;
-
     [ObservableProperty]
     [property: EditableString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
     private string _address = string.Empty;
-
-    [ObservableProperty]
-    private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     [ObservableProperty]
     [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
@@ -33,11 +24,18 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
     private IAudioPlayer? _clickSoundPlayer;
 
     [ObservableProperty]
+    [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
+    private string _iD = string.Empty;
+
+    [ObservableProperty]
     [property: EditableBool(Name = "Hidden Track", Description = "Indicates track hidden such as in a tunnel", Group = "Attributes", Order = 3)]
     private bool _isHidden;
 
     [ObservableProperty]
     [property: JsonIgnore] private bool _isOccupied;
+
+    [ObservableProperty]
+    private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     [ObservableProperty]
     [property: EditableColor(Name = "Track Color", Description = "Color of the Track or leave None to use defaults.", Group = "Attributes", Order = 4)]
@@ -49,15 +47,6 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
     [ObservableProperty]
     [property: EditableTrackType(Name = "Track Type", Description = "Track is Mainline or Branchline", TrackTypes = new[] { TrackStyleTypeEnum.Mainline, TrackStyleTypeEnum.Branchline }, Group = "Attributes", Order = 5)]
     private TrackStyleTypeEnum _trackTypeEnum = TrackStyleTypeEnum.Mainline;
-
-    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
-    public new int Layer {
-        get => base.Layer;
-        set => base.Layer = value;
-    }
-
-    public abstract string Name { get; }
-    public abstract ITrack Clone(Panel parent);
 
     [ObservableProperty] private Turnout? _turnout;
 
@@ -76,6 +65,51 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
     }
 
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
+
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
+
+    public abstract string Name { get; }
+    public abstract ITrack Clone(Panel parent);
+
+    public bool SetTurnoutState(TurnoutStateEnum state) {
+        if (state == TurnoutStateEnum.Unknown) return false;
+        State = state;
+        if (Turnout is { } turnout) ThrowTurnout(turnout, state);
+        OnPropertyChanged(nameof(TrackView));
+        return true;
+    }
+
+    public bool ExecTurnoutState(TurnoutStateEnum state, ActionList actioned) {
+        SetTurnoutState(state);
+
+        if (Parent is not null) {
+            ActionApplyTurnout.ApplyTurnoutActions(Parent, this, actioned);
+        }
+
+        return true;
+    }
+
+    public void Clicked() {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
+        }
+
+        _clickSoundPlayer?.Play();
+
+        var state = State switch {
+            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+            _                       => TurnoutStateEnum.Closed
+        };
+
+        ExecTurnoutState(state);
+        OnPropertyChanged(nameof(TrackView));
+    }
 
     protected abstract void ThrowTurnout(Turnout turnout, TurnoutStateEnum state); // ( Turnout turnout)
 
@@ -99,6 +133,7 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackImageEnum, Parent);
+
         if (TrackColor is not null) {
             style = new SvgStyleBuilder()
                    .AddExistingStyle(style)
@@ -119,19 +154,11 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
             TurnoutStateEnum.Thrown  => TrackStyleImageEnum.Diverging,
             _                        => TrackStyleImageEnum.Normal
         };
-        
+
         if (e.PropertyName is nameof(ID) && _turnoutsService is not null) {
             // ???
             //Turnout = TurnoutsService.GetTurnoutById(ID);
         }
-    }
-
-    public bool SetTurnoutState(TurnoutStateEnum state) {
-        if (state == TurnoutStateEnum.Unknown) return false;
-        State = state;
-        if (Turnout is { } turnout) ThrowTurnout(turnout, state);
-        OnPropertyChanged(nameof(TrackView));
-        return true;
     }
 
     public bool ExecTurnoutState(TurnoutStateEnum state) {
@@ -139,31 +166,5 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
         // This collection is populated to track what buttons and turnouts we have 
         // processed, so we don't do one more than once. 
         return ExecTurnoutState(state, new ActionList());
-    }
-
-    public bool ExecTurnoutState(TurnoutStateEnum state, ActionList actioned) {
-        SetTurnoutState(state);
-        if (Parent is not null) {
-            ActionApplyTurnout.ApplyTurnoutActions(Parent, this, actioned);
-        }
-        return true;
-    }
-
-    public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
-        }
-
-        _clickSoundPlayer?.Play();
-
-        var state = State switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed,
-        };
-
-        ExecTurnoutState(state);
-        OnPropertyChanged(nameof(TrackView));
     }
 }

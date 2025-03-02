@@ -9,21 +9,25 @@ public class JsonConverterEnumToString<T> : JsonConverter<T> where T : struct, E
         case JsonTokenType.String: {
             // If it's a string, attempt to parse it as an enum name
             var enumString = reader.GetString();
+
             if (Enum.TryParse(enumString, true, out T value)) {
                 return value;
             }
 
             throw new JsonException($"Unable to convert \"{enumString}\" to Enum \"{typeof(T)}\".");
         }
+
         case JsonTokenType.Number: {
             // If it's a number, convert it to the enum value
             var enumValue = reader.GetInt32();
+
             if (Enum.IsDefined(typeof(T), enumValue)) {
                 return (T)(object)enumValue;
             }
 
             throw new JsonException($"Value \"{enumValue}\" is not valid for Enum \"{typeof(T)}\".");
         }
+
         default:
             throw new JsonException($"Unexpected token {reader.TokenType} when parsing Enum \"{typeof(T)}\".");
         }

@@ -3,7 +3,6 @@ using DCCPanelController.Model.Tracks.Interfaces;
 namespace DCCPanelController.Model.Tracks.Actions;
 
 public static class ActionApplyButton {
-    
     // APPLY ACTIONS: There are two variations - one to change related buttons and one to change turnouts
     //                When we action from here, we are in the context of the state of a BUTTON, and so 
     //                we set the other buttons or turnouts based on the state of this button only. 
@@ -21,6 +20,7 @@ public static class ActionApplyButton {
                 ButtonStateEnum.Inactive => action.WhenInactiveOff,
                 _                        => ButtonStateEnum.Unknown // Ignore an Unknown State
             };
+
             actionButton.SetButtonState(buttonState);
             if (action.Cascade) actionButton.ExecButtonState(buttonState, actionsList);
         }
@@ -37,6 +37,7 @@ public static class ActionApplyButton {
                 ButtonStateEnum.Inactive => action.WhenThrownDiverging,
                 _                        => TurnoutStateEnum.Unknown // Ignore an Unknown State
             };
+
             actionTurnout.SetTurnoutState(turnoutState);
             if (action.Cascade) actionTurnout.ExecTurnoutState(turnoutState, actionsList);
         }

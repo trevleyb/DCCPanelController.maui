@@ -4,18 +4,18 @@ using CommunityToolkit.Mvvm.Input;
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerButton : ContentView {
-    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), null, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty DefaultColorProperty = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
 
-    public Color ActiveColor => SelectedColor ?? DefaultColor ?? Colors.White;
-    public string SelectedColorText => SelectedColor == null ? "Use Default" : "";
-    public bool ShowClearColorButton => SelectedColor != null && AllowsNoColor;
-    
     public ColorPickerButton() {
         InitializeComponent();
         BindingContext = this;
     }
+
+    public Color ActiveColor => SelectedColor ?? DefaultColor ?? Colors.White;
+    public string SelectedColorText => SelectedColor == null ? "Use Default" : "";
+    public bool ShowClearColorButton => SelectedColor != null && AllowsNoColor;
 
     public Color? DefaultColor {
         get => (Color)GetValue(DefaultColorProperty);
@@ -33,6 +33,14 @@ public partial class ColorPickerButton : ContentView {
         }
     }
 
+    public bool AllowsNoColor {
+        get => (bool)GetValue(AllowsNoColorProperty);
+        set {
+            SetValue(AllowsNoColorProperty, value);
+            OnPropertyChanged(nameof(AllowsNoColorProperty)); // Update DisplayText when the color changes
+        }
+    }
+
     private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
         var control = (ColorPickerButton)bindable;
         control.OnPropertyChanged(nameof(ActiveColor));
@@ -40,14 +48,6 @@ public partial class ColorPickerButton : ContentView {
         control.OnPropertyChanged(nameof(ShowClearColorButton));
         control.OnPropertyChanged(nameof(SelectedColorText));
         control.OnPropertyChanged(nameof(AllowsNoColor));
-    }
-
-    public bool AllowsNoColor {
-        get => (bool)GetValue(AllowsNoColorProperty);
-        set {
-            SetValue(AllowsNoColorProperty, value);
-            OnPropertyChanged(nameof(AllowsNoColorProperty)); // Update DisplayText when the color changes
-        }
     }
 
     [RelayCommand]
@@ -59,8 +59,10 @@ public partial class ColorPickerButton : ContentView {
     [RelayCommand]
     private async Task ShowDropdownAsync() {
         var popup = new GridColorPicker(SelectedColor ?? Colors.White);
+
         if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
             var result = await mainpage.ShowPopupAsync(popup);
+
             if (result is Color selectedColor) {
                 SelectedColor = selectedColor;
             }

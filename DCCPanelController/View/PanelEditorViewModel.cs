@@ -10,7 +10,6 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : BaseViewModel {
-
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     [ObservableProperty] private Panel _panel;
 
@@ -36,7 +35,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public ICommand SaveCommand { get; }
     public ICommand CancelCommand { get; }
-    
+
     public void TrackPieceChanged() {
         OnPropertyChanged(nameof(HasSelectedTracks));
         OnPropertyChanged(nameof(CanUsePropertyPage));
@@ -48,14 +47,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackLabelCircle(parent),
             new TrackText(parent),
             new TrackImage(parent),
-            
+
             new TrackDrawCircle(parent),
             new TrackDrawRectangle(parent),
-            
+
             new TrackStraight(parent),
             new TrackStraight(parent) { TrackRotation = 90 },
             new TrackStraightContinuation(parent),
-            new TrackStraightContinuation(parent){ TrackRotation = 90 },
+            new TrackStraightContinuation(parent) { TrackRotation = 90 },
             new TrackCorner(parent),
             new TrackCornerContinuation(parent),
             new TrackLeftTurnout(parent),
@@ -64,7 +63,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackRightTurnout(parent) { TrackRotation = 180 },
             new TrackCrossing(parent),
             new TrackTerminator(parent),
-            
+
             new TrackStraight(parent, TrackStyleTypeEnum.Branchline),
             new TrackStraight(parent, TrackStyleTypeEnum.Branchline) { TrackRotation = 90 },
             new TrackStraightContinuation(parent, TrackStyleTypeEnum.Branchline),
@@ -72,9 +71,9 @@ public partial class PanelEditorViewModel : BaseViewModel {
             new TrackCorner(parent, TrackStyleTypeEnum.Branchline),
             new TrackCornerContinuation(parent, TrackStyleTypeEnum.Branchline),
             new TrackLeftTurnout(parent, TrackStyleTypeEnum.Branchline),
-            new TrackLeftTurnout(parent, TrackStyleTypeEnum.Branchline) {TrackRotation = 180},
+            new TrackLeftTurnout(parent, TrackStyleTypeEnum.Branchline) { TrackRotation = 180 },
             new TrackRightTurnout(parent, TrackStyleTypeEnum.Branchline),
-            new TrackRightTurnout(parent, TrackStyleTypeEnum.Branchline) {TrackRotation = 180},
+            new TrackRightTurnout(parent, TrackStyleTypeEnum.Branchline) { TrackRotation = 180 },
             new TrackCrossing(parent, TrackStyleTypeEnum.Branchline),
             new TrackTerminator(parent, TrackStyleTypeEnum.Branchline)
         ];

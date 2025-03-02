@@ -10,6 +10,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
         _commandStr = commandStr;
 
         var command = commandStr[..3];
+
         switch (command) {
         // Panel Turnout List 
         // eg: PTL]\[LT304}|{Yard Entry}|{2]\[LT305}|{A/D Track}|{4
@@ -17,6 +18,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
         case "PTL":
             try {
                 var entries = commandStr.Split("]\\[");
+
                 foreach (var entry in entries) {
                     if (string.IsNullOrEmpty(entry)) continue;
                     var parts = entry.Split("}|{");
@@ -27,6 +29,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
             }
 
             break;
+
         case "PTA":
             try {
                 var thrownOrClosed = commandStr[3];
@@ -43,6 +46,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
         case "PRL":
             try {
                 var entries = commandStr.Split("]\\[");
+
                 foreach (var entry in entries) {
                     if (string.IsNullOrEmpty(entry)) continue;
                     var parts = entry.Split("}|{");
@@ -53,6 +57,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
             }
 
             break;
+
         case "PRA":
             try {
                 var activeOrInactive = commandStr[3];
@@ -63,6 +68,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
             }
 
             break;
+
         case "PFT":
             var fastClock = GetFastClock(commandStr[3..]);
             Add(new FastClockEvent(fastClock));
@@ -81,6 +87,7 @@ public class MsgPanel : ClientMsg, IClientMsg {
     /// <returns></returns>
     private DateTime GetFastClock(string commandStr) {
         var fastClockNum = 0;
+
         try {
             var fastClockStr = commandStr[3..][..commandStr[3..].IndexOf("<;>", StringComparison.Ordinal)];
             if (!int.TryParse(fastClockStr, out fastClockNum)) fastClockNum = 0;

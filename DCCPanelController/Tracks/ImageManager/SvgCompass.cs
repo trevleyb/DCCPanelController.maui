@@ -54,6 +54,7 @@ public class SvgCompass {
         // for this image.
         // ----------------------------------------------------------------------------------------------
         var result = new TrackConnectionsEnum[CompassPoints];
+
         for (var i = 0; i < CompassPoints; ++i) {
             var newIndex = (i + rotationIndex) % CompassPoints;
             result[newIndex] = ConnectionsArray[i];
