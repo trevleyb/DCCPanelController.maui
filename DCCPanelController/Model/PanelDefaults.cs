@@ -50,15 +50,15 @@ public partial class Panel : ObservableObject {
     public void ResetToDefaults() {
         BackgroundColor = AppleCrayonColors.Value("Snow");
         BorderColor = AppleCrayonColors.Value("Lead");
-        MainLineColor = AppleCrayonColors.Value("Ocean");
-        BranchLineColor = AppleCrayonColors.Value("Aqua");
-        DivergingColor = AppleCrayonColors.Value("Mercury");
+        MainLineColor = AppleCrayonColors.Value("Aqua");
+        BranchLineColor = AppleCrayonColors.Value("Sky");
+        DivergingColor = AppleCrayonColors.Value("Silver");
 
-        ButtonBorder = AppleCrayonColors.Value("Steel");
+        ButtonBorder = AppleCrayonColors.Value("Ocean");
         ButtonColor = AppleCrayonColors.Value("Aluminum");
-        ButtonOffBorder = AppleCrayonColors.Value("Cayenne");
+        ButtonOffBorder = AppleCrayonColors.Value("Ocean");
         ButtonOffColor = AppleCrayonColors.Value("Maraschino");
-        ButtonOnBorder = AppleCrayonColors.Value("Clover");
+        ButtonOnBorder = AppleCrayonColors.Value("Ocean");
         ButtonOnColor = AppleCrayonColors.Value("Fern");
 
         ContinuationColor = AppleCrayonColors.Value("Iron");

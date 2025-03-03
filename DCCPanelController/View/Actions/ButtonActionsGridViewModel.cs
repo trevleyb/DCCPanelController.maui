@@ -40,6 +40,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         UpdateSelectableButtons();
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
+        OnPropertyChanged(nameof(ControlHeight));
     }
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;

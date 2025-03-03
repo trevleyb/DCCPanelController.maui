@@ -62,7 +62,6 @@ public partial class PanelEditorPage : ContentPage {
     private async void ShowPanelPropertyPage(object? sender, EventArgs e) {
         try {
             await ShowPanelPropertyPageAsync();
-            PanelView?.RebuildGrid(true);
         } catch (Exception ex) {
             Trace.WriteLine($"Exception {ex.Message} in Property Pages."); 
         }
@@ -81,6 +80,8 @@ public partial class PanelEditorPage : ContentPage {
                 navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
 #endif
             await mainPage.Navigation.PushModalAsync(navigationPage);
+            Console.WriteLine("AFTER PANEL PAGE");
+            PanelView?.RebuildGrid(true);
         }
         else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                  DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
@@ -89,7 +90,9 @@ public partial class PanelEditorPage : ContentPage {
             if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
                 // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
             }
-            this.ShowPopup(popupPage);
+            await this.ShowPopupAsync(popupPage);
+            Console.WriteLine("AFTER POPUP");
+            PanelView?.RebuildGrid(true);
         }
         else {
             Debug.WriteLine("Unhandled platform, no UI launched.");
@@ -99,7 +102,6 @@ public partial class PanelEditorPage : ContentPage {
     private async void ShowEditPropertyPage(object? sender, EventArgs e) {
         try {
             await ShowEditPropertyPageAsync();
-            PanelView?.RebuildGrid(true);
         } catch (Exception ex) {
             Trace.WriteLine($"Exception {ex.Message} in Property Pages.");
         }
@@ -118,6 +120,8 @@ public partial class PanelEditorPage : ContentPage {
                 #endif
                
                 await Navigation.PushModalAsync(navigationPage, true);
+                Console.WriteLine("AFTER PANEL PAGE");
+                PanelView?.RebuildGrid(true);
             }
             else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                      DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
@@ -126,12 +130,14 @@ public partial class PanelEditorPage : ContentPage {
                 if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
                     // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
                 }
-                this.ShowPopup(popupPage);
+                await this.ShowPopupAsync(popupPage);
+                Console.WriteLine("AFTER POPUP");
+                PanelView?.RebuildGrid(true);
             }
             else {
                 Debug.WriteLine("Unhandled platform, no UI launched.");
             }
-            PanelView.MarkTrackUnSelected(track);
+            PanelView?.MarkTrackUnSelected(track);
         }
     }
 

@@ -57,7 +57,6 @@ public abstract partial class TrackPiece : Track, ITrackPiece {
         // details that we have within the context of this track type
         // --------------------------------------------------------------------------------------------------
         var style = SvgStyles.GetStyle(TrackTypeEnum, TrackStyleImageEnum.Normal, Parent);
-
         if (TrackColor is not null) {
             style = new SvgStyleBuilder()
                    .AddExistingStyle(style)
@@ -65,9 +64,8 @@ public abstract partial class TrackPiece : Track, ITrackPiece {
                    .Build();
         }
 
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent);
-        if (IsPath) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Path, Parent);        
+        style = SvgStyles.ApplyHiddenStyle(style, Parent, IsHidden);
+        style = SvgStyles.ApplyOccupiedOrPathStyle(style,Parent,IsOccupied,IsPath);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

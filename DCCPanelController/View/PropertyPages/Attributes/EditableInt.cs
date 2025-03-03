@@ -16,6 +16,7 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
             var dataCell = new Entry {
                 BindingContext = value.Owner,
                 WidthRequest = 75,
+                HeightRequest = 25,
                 Placeholder = value.EditableAttribute.Description,
                 Keyboard = Keyboard.Numeric,
                 Margin = new Thickness(5, 5, 10, 5),

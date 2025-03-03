@@ -136,9 +136,8 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
                    .Build();
         }
 
-        if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent);
-        if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent);
-        if (IsPath) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Path, Parent);        
+        style = SvgStyles.ApplyHiddenStyle(style, Parent, IsHidden);
+        style = SvgStyles.ApplyOccupiedOrPathStyle(style,Parent,IsOccupied,IsPath);
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

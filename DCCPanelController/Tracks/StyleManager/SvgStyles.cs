@@ -5,11 +5,11 @@ using DCCPanelController.Tracks.ImageManager;
 namespace DCCPanelController.Tracks.StyleManager;
 
 public static class SvgStyles {
-    public static SvgStyle GetStyle(TrackStyleTypeEnum styleTypeEnum,
-                                    TrackStyleImageEnum styleImageEnum,
-                                    TrackStyleAttributeEnum attributeEnum, Panel panel) {
-        return ApplyStyleAttributes(GetStyle(styleTypeEnum, styleImageEnum, panel), attributeEnum, panel);
-    }
+    // public static SvgStyle GetStyle(TrackStyleTypeEnum styleTypeEnum,
+    //                                 TrackStyleImageEnum styleImageEnum,
+    //                                 TrackStyleAttributeEnum attributeEnum, Panel panel) {
+    //     return ApplyStyleAttributes(GetStyle(styleTypeEnum, styleImageEnum, panel), attributeEnum, panel);
+    // }
 
     // Get a Style based on the Track Type and the DisplayImage Type
     public static SvgStyle GetStyle(TrackStyleTypeEnum styleTypeEnum, TrackStyleImageEnum styleImageEnum, Panel? panel) {
@@ -17,7 +17,6 @@ public static class SvgStyles {
             Console.WriteLine("GetStyle: Panel is null");
             return new SvgStyle();
         }
-
         var style = new SvgStyleBuilder();
 
         // Unknown, Normal and Default all return the Default Style
@@ -80,31 +79,51 @@ public static class SvgStyles {
     /// <param name="attributeEnum">The attributeEnum to apply</param>
     /// <param name="panel">Reference to the Panel that owns this track piece panel</param>
     /// <returns></returns>
-    public static SvgStyle ApplyStyleAttributes(SvgStyle style, TrackStyleAttributeEnum attributeEnum, Panel? panel) {
-        if (panel == null) {
-            Console.WriteLine("ApplyStyleAttributes: Panel is null");
-            return style;
-        }
+    // public static SvgStyle ApplyStyleAttributes(SvgStyle style, TrackStyleAttributeEnum attributeEnum, Panel? panel) {
+    //     if (panel == null) {
+    //         Console.WriteLine("ApplyStyleAttributes: Panel is null");
+    //         return style;
+    //     }
+    //
+    //     return attributeEnum switch {
+    //         TrackStyleAttributeEnum.Occupied => new SvgStyleBuilder()
+    //                                            .AddExistingStyle(style)
+    //                                            .AddElement(e => e.WithName(SvgElementEnum.Occupied).Visible().WithColor(panel.OccupiedColor))
+    //                                            .Build(),
+    //         TrackStyleAttributeEnum.Path => new SvgStyleBuilder()
+    //                                        .AddExistingStyle(style)
+    //                                        .AddElement(e => e.WithName(SvgElementEnum.Occupied).Visible().WithColor(panel.ShowPathColor))
+    //                                        .Build(),
+    //         TrackStyleAttributeEnum.Hidden => new SvgStyleBuilder()
+    //                                          .AddExistingStyle(style)
+    //                                          .AddElement(e => e.WithName(SvgElementEnum.Dashline).Visible().WithColor(panel.HiddenColor))
+    //                                          .Build(),
+    //         TrackStyleAttributeEnum.Normal => new SvgStyleBuilder()
+    //                                          .AddExistingStyle(style)
+    //                                          .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden().WithName(SvgElementEnum.Occupied).Hidden())
+    //                                          .Build(),
+    //         _ => style
+    //     };
+    // }
 
-        return attributeEnum switch {
-            TrackStyleAttributeEnum.Occupied => new SvgStyleBuilder()
-                                               .AddExistingStyle(style)
-                                               .AddElement(e => e.WithName(SvgElementEnum.Occupied).Visible().WithColor(panel.OccupiedColor))
-                                               .Build(),
-            TrackStyleAttributeEnum.Hidden => new SvgStyleBuilder()
-                                             .AddExistingStyle(style)
-                                             .AddElement(e => e.WithName(SvgElementEnum.Dashline).Visible().WithColor(panel.HiddenColor))
-                                             .Build(),
-            TrackStyleAttributeEnum.Path => new SvgStyleBuilder()
-                                             .AddExistingStyle(style)
-                                             .AddElement(e => e.WithName(SvgElementEnum.Occupied).Visible().WithColor(panel.ShowPathColor))
-                                             .Build(),
-            TrackStyleAttributeEnum.Normal => new SvgStyleBuilder()
-                                             .AddExistingStyle(style)
-                                             .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden().WithName(SvgElementEnum.Occupied).Hidden())
-                                             .Build(),
-            _ => style
-        };
+    public static SvgStyle ApplyOccupiedOrPathStyle(SvgStyle style, Panel? panel, bool isOccupied, bool isPath) {
+        if (isPath) return ApplyPathStyle(style, panel, isPath);
+        return ApplyOccupiedStyle(style, panel, isOccupied);
+    }
+
+    public static SvgStyle ApplyOccupiedStyle(SvgStyle style, Panel? panel, bool isOccupied) {
+        if (isOccupied && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).WithColor(panel.OccupiedColor)).Build();
+        return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden()).Build();
+    }
+
+    public static SvgStyle ApplyHiddenStyle(SvgStyle style, Panel? panel, bool isHidden) {
+        if (isHidden && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Dashline).WithColor(panel.HiddenColor)).Build();
+        return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden()).Build();
+    }
+
+    public static SvgStyle ApplyPathStyle(SvgStyle style, Panel? panel, bool isPath) {
+        if (isPath && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).WithColor(panel.ShowPathColor)).Build();
+        return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden()).Build();
     }
 
     public static SvgStyle AddTextToStyle(SvgStyle style, string text) {

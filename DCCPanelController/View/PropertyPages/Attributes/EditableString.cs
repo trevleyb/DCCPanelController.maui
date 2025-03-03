@@ -8,9 +8,11 @@ public class EditableStringAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new Entry {
+                Margin = new Thickness(5, 5, 5, 5),
                 Placeholder = Description,
                 Keyboard = Keyboard.Text,
                 WidthRequest = 300,
+                HeightRequest = 25,
                 VerticalOptions = LayoutOptions.Center,
                 BindingContext = value.Owner
             };

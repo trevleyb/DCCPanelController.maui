@@ -93,7 +93,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         return chevron;
     }
 
-    private static StackLayout CreateGroup(string groupKey, List<EditableDetails> groupValue, bool isFirst) {
+    private static ScrollView CreateGroup(string groupKey, List<EditableDetails> groupValue, bool isFirst) {
+        var scrollGroup = new ScrollView();
         var tableGroup = new StackLayout {
             Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
         };
@@ -104,7 +105,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         }
 
         foreach (var value in groupValue) tableGroup.Add(GroupCell(value));
-        return tableGroup;
+        scrollGroup.Content = tableGroup;
+        return scrollGroup;
     }
 
     private static Label GroupHeading(string groupKey) {
@@ -128,18 +130,17 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private static HorizontalStackLayout GroupCell(EditableDetails value) {
         var groupCell = new HorizontalStackLayout {
             Margin = new Thickness(0, 5, 0, 5),
-            HeightRequest = 20,
         };
 
         if (!string.IsNullOrWhiteSpace(value.EditableAttribute.Name)) {
             var label = new Label {
                 Text = value.EditableAttribute.Name,
-                TextColor = Colors.DarkGrey,
+                TextColor = Colors.DimGray,
                 FontSize = 15,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(5, 5, 5, 5),
+                //Margin = new Thickness(5, 5, 5, 5),
                 WidthRequest = 120
             };
             groupCell.Children.Add(label);
