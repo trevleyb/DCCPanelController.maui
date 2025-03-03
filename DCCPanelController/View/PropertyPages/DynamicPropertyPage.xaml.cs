@@ -21,7 +21,6 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
         base.OnAppearing();
 
 #if IOS
-
         // Access the native view controller
         var window = App.Current.Windows[0].Page;
 
@@ -30,7 +29,7 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
 
             if (rootController?.PresentedViewController != null) {
                 var modalController = rootController.PresentedViewController;
-                modalController.ModalPresentationStyle = UIModalPresentationStyle.PageSheet;
+                modalController.ModalPresentationStyle = UIModalPresentationStyle.FormSheet;
 
                 if (UIDevice.CurrentDevice.CheckSystemVersion(15, 0)) {
                     var sheetController = modalController.SheetPresentationController;
@@ -40,7 +39,6 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
                             UISheetPresentationControllerDetent.CreateMediumDetent(),
                             UISheetPresentationControllerDetent.CreateLargeDetent()
                         ];
-
                         sheetController.PrefersGrabberVisible = true;
                     }
                 }
@@ -50,8 +48,6 @@ public partial class DynamicPropertyPage : ContentPage, IPropertyPage {
     }
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {
-        //Navigation.PopModalAsync(true);
-        //if (_track is not null) _track.CleanUp(); 
         CloseRequested?.Invoke(this, EventArgs.Empty);
     }
 }

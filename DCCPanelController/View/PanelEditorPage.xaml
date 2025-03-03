@@ -80,7 +80,8 @@
         x:Name="MainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" x:Name="LeftColumn" />
-            <ColumnDefinition Width="120" x:Name="RightColumn" />
+            <ColumnDefinition Width="2" x:Name="MiddleColumn" />
+            <ColumnDefinition Width="100" x:Name="RightColumn" />
         </Grid.ColumnDefinitions>
 
         <!--  Left Pane  -->
@@ -98,18 +99,24 @@
                     x:Name="PanelView" />
             </ContentView>
         </ScrollView>
+
+        <BoxView
+            Color="{StaticResource Primary}"
+            Grid.Column="1"
+            IsVisible="False" />
+
         <!--  Right Pane  -->
         <ContentView
-            BackgroundColor="{StaticResource Primary}"
-            Grid.Column="1"
+            BackgroundColor="White"
+            Grid.Column="2"
             x:Name="RightPane">
             <!-- <StackLayout Padding="5"> -->
             <CollectionView
                 HorizontalOptions="Center"
                 ItemsSource="{Binding TrackSymbols}"
-                Margin="5"
-                SelectionMode="Single"
-                VerticalOptions="FillAndExpand"
+                Margin="10,5,10,5"
+                SelectionMode="None"
+                VerticalOptions="Fill"
                 x:Name="TrackSymbolCollectionView">
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout
@@ -123,16 +130,15 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="interfaces:ITrackSymbol">
                         <Border
-                            BackgroundColor="Snow"
+                            BackgroundColor="Transparent"
                             HorizontalOptions="Center"
                             Margin="5"
                             Padding="0"
                             Stroke="#95000000"
-                            StrokeShape="RoundRectangle 10,10,10,10"
+                            StrokeShape="RoundRectangle 5,5,5,5"
                             StrokeThickness="2"
                             ToolTipProperties.Text="{Binding Name}"
-                            VerticalOptions="Center"
-                            WidthRequest="60">
+                            VerticalOptions="Center">
                             <Grid
                                 HeightRequest="24"
                                 Margin="0"

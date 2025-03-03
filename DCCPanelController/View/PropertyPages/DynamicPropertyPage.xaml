@@ -10,23 +10,27 @@
 
     <ContentPage.Content>
         <Border
-            Background="White"
+            BackgroundColor="White"
+            HeightRequest="500"
             HorizontalOptions="Center"
             MaximumHeightRequest="500"
-            MaximumWidthRequest="500"
+            MaximumWidthRequest="450"
             Stroke="{StaticResource Primary}"
             StrokeShape="RoundRectangle 10,10,10,10"
             StrokeThickness="3"
-            VerticalOptions="Fill">
+            VerticalOptions="Fill"
+            WidthRequest="450">
 
             <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
-                <Grid
-                    BackgroundColor="{StaticResource Primary}"
-                    ColumnDefinitions="*,40"
-                    VerticalOptions="Center">
+                <Grid BackgroundColor="{StaticResource Primary}" VerticalOptions="Center">
+                    <Button
+                        Clicked="ClosePropertyPage"
+                        Grid.Column="0"
+                        HorizontalOptions="Start"
+                        Text="Close" />
                     <Label
                         Grid.Column="0"
-                        HorizontalOptions="Fill"
+                        HorizontalOptions="Center"
                         Margin="10,0,0,0"
                         Style="{StaticResource LargeLabel}"
                         Text="{Binding PropertyName}"
@@ -34,7 +38,7 @@
                         VerticalOptions="Center" />
                     <ImageButton
                         Aspect="Center"
-                        Grid.Column="1"
+                        Grid.Column="0"
                         HeightRequest="25"
                         HorizontalOptions="End"
                         Source="info.png"
@@ -44,24 +48,18 @@
                         </ImageButton.Behaviors>
                     </ImageButton>
                 </Grid>
-                <ScrollView
-                    HeightRequest="380"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
-                    <VerticalStackLayout
+                <Grid HorizontalOptions="Fill">
+                    <ScrollView
+                        BackgroundColor="Gainsboro"
                         HorizontalOptions="Fill"
-                        Margin="10,20,0,0"
-                        VerticalOptions="Fill"
-                        x:Name="PropertyContainer" />
-                </ScrollView>
-                <Button
-                    Clicked="ClosePropertyPage"
-                    HorizontalOptions="Center"
-                    Margin="10,20,10,20"
-                    Style="{StaticResource ButtonOutline}"
-                    Text="Close"
-                    VerticalOptions="End"
-                    WidthRequest="150" />
+                        VerticalOptions="Fill">
+                        <VerticalStackLayout
+                            HorizontalOptions="Fill"
+                            Margin="10,20,0,0"
+                            VerticalOptions="Fill"
+                            x:Name="PropertyContainer" />
+                    </ScrollView>
+                </Grid>
             </VerticalStackLayout>
         </Border>
     </ContentPage.Content>
