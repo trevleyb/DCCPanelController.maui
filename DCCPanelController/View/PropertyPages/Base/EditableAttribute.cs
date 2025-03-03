@@ -34,6 +34,7 @@ public abstract class EditableAttribute : Attribute {
                 HeightRequest = 30,
                 BorderWidth = 0,
                 FontSize = 12,
+                VerticalOptions = LayoutOptions.Center,
                 Content = value.ToString() // Display the value
             };
 

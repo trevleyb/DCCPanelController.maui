@@ -11,6 +11,7 @@ public class EditableStringAttribute : EditableAttribute, IEditableAttribute {
                 Placeholder = Description,
                 Keyboard = Keyboard.Text,
                 WidthRequest = 300,
+                VerticalOptions = LayoutOptions.Center,
                 BindingContext = value.Owner
             };
 

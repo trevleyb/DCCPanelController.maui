@@ -10,6 +10,7 @@ public class EditableBoolAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White };
+            cell.VerticalOptions = LayoutOptions.Center;            
             cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
             return cell;
         } catch (Exception e) {

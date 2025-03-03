@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using CommunityToolkit.Maui.Views;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.PropertyPages;
@@ -76,7 +77,15 @@ public partial class PanelEditorPage : ContentPage {
     private async Task ShowEditPropertyPageAsync(object? sender, EventArgs e) {
         if (ViewModel is { HasSelectedTracks: true, CanUsePropertyPage: true }) {
             var track = ViewModel.Panel.SelectedTracks.First();
-            await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
+            
+            var popupPage = new DynamicPropertyPage(track);
+            if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst)
+            {
+                // Set specific window properties for iPad and MacCatalyst
+                // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
+            }
+            this.ShowPopup(popupPage);
+            //await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
             PanelView.MarkTrackUnSelected(track);
 
             // foreach (var track in ViewModel.Panel.SelectedTracks) {

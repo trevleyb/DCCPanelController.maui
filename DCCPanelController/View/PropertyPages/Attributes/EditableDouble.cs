@@ -12,7 +12,7 @@ public class EditableDoubleAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new HorizontalStackLayout();
-
+            cell.VerticalOptions = LayoutOptions.Center;
             var dataCell = new Entry {
                 BindingContext = value.Owner,
                 WidthRequest = 75,

@@ -11,6 +11,7 @@ public class EditableDateAttribute : EditableAttribute, IEditableAttribute {
     public IView? CreateView(EditableDetails value) {
         try {
             var cell = new DatePicker { BindingContext = value.Owner, Format = "D" };
+            cell.VerticalOptions = LayoutOptions.Center;
             cell.SetBinding(DatePicker.DateProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
             return cell;
         } catch (Exception e) {

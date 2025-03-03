@@ -18,7 +18,7 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
                 WidthRequest = 75,
                 Placeholder = value.EditableAttribute.Description,
                 Keyboard = Keyboard.Numeric,
-                Margin = new Thickness(0, 0, 10, 0),
+                Margin = new Thickness(5, 5, 10, 5),
                 Text = value.Info.GetValue(value.Owner)?.ToString() ?? "0"
             };
 
@@ -31,6 +31,7 @@ public class EditableIntAttribute : EditableAttribute, IEditableAttribute {
                 Maximum = attr?.MaxValue ?? 99, // Define the stepper max value if needed
                 HeightRequest = 20,
                 Increment = 1, // Increment/decrement step
+                VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.End
             };
 

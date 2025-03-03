@@ -7,6 +7,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.View.PropertyPages.Base;
+using LayoutAlignment = Microsoft.Maui.Primitives.LayoutAlignment;
 
 namespace DCCPanelController.View.PropertyPages;
 
@@ -60,7 +61,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         tableExpander.IsExpanded = true;
 
         var tableGroup = new StackLayout {
-            Margin = new Thickness(0)
+            Margin = new Thickness(0),
+            BackgroundColor = Colors.White,
         };
 
         foreach (var value in groupValue) {
@@ -132,14 +134,13 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             var label = new Label {
                 Text = value.EditableAttribute.Name,
                 TextColor = Colors.Black,
-                FontSize = 12,
+                FontSize = 15,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0, 5, 0, 5),
+                Margin = new Thickness(5, 5, 5, 5),
                 WidthRequest = 120
             };
-
             groupCell.Children.Add(label);
         }
 
@@ -150,7 +151,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     private static IView? CreateDataEntry(EditableDetails value) {
         if (value.EditableAttribute is IEditableAttribute editProperty) {
-            return editProperty.CreateView(value);
+            var propertyEntry = editProperty.CreateView(value);
+            return propertyEntry;
         }
 
         Debug.WriteLine($"Unable to create entry for {value.EditableAttribute.Name}");
