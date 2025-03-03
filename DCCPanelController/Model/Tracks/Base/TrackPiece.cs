@@ -67,6 +67,7 @@ public abstract partial class TrackPiece : Track, ITrackPiece {
 
         if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent);
         if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent);
+        if (IsPath) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Path, Parent);        
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Model.Tracks.Actions;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
+using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
 using DCCPanelController.View.PropertyPages;
@@ -66,12 +67,6 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
 
     protected TurnoutsService TurnoutsService => _turnoutsService ??= MauiProgram.ServiceHelper.GetService<TurnoutsService>() ?? throw new Exception("TurnoutsService is null");
 
-    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
-    public new int Layer {
-        get => base.Layer;
-        set => base.Layer = value;
-    }
-
     public abstract string Name { get; }
     public abstract ITrack Clone(Panel parent);
 
@@ -98,9 +93,9 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
             var audioManager = AudioManager.Current;
             _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
         }
-
         _clickSoundPlayer?.Play();
 
+        TrackPointsValidator.ClearTrackPaths(this?.Parent?.Tracks);
         var state = State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
@@ -143,6 +138,7 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
 
         if (IsHidden) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Hidden, Parent);
         if (IsOccupied) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Occupied, Parent);
+        if (IsPath) style = SvgStyles.ApplyStyleAttributes(style, TrackStyleAttributeEnum.Path, Parent);        
         ActiveImage = imageInfo.ApplyStyle(style);
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }

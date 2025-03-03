@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
+using DCCPanelController.Tracks.Helpers;
 
 namespace DCCPanelController.View;
 
@@ -33,10 +34,24 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrack e) {
         Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
-
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();
         }
+    }
+
+    private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
+        Console.WriteLine($"In Operate Mode: Track {track.Name} was double-tapped");
+        if (track.Parent?.Tracks != null) {
+            var tracks = track.Parent.Tracks;
+            if (track.IsPath) {
+                TrackPointsValidator.ClearTrackPaths(tracks);
+            } else {
+                TrackPointsValidator.MarkTrackPaths(tracks,track);
+            }
+        }
+        //var tempPanel = _viewModel.SelectedPanel;
+        //_viewModel.SelectedPanel = null;
+        //_viewModel.SelectedPanel = tempPanel;
     }
 
     private void ButtonAbout_OnClicked(object? sender, EventArgs e) {
@@ -78,4 +93,5 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
         //OnPropertyChanged(nameof(ConnectToolbarButton));
     }
+
 }

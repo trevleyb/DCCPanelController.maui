@@ -17,7 +17,7 @@ public abstract partial class Track : ObservableObject {
     [ObservableProperty]
     [property: JsonIgnore] private bool _isSelected; // Used in Design Mode. Is this track selected? 
 
-    [ObservableProperty] private int _layer = 2; // What layer is this on? Higher sits on top of lower
+    [ObservableProperty] private int _layer = 2;     // What layer is this on? Higher sits on top of lower
     [ObservableProperty] private int _trackRotation;
     [ObservableProperty] private int _width = 1; // What width is this component?
 
@@ -34,13 +34,21 @@ public abstract partial class Track : ObservableObject {
         if (parent != null) Parent = parent;
     }
 
-    public Guid UniqueID { get; set; } = Guid.NewGuid();
-
-    [JsonIgnore] public TrackConnectionsEnum[] Connections => ActiveImage?.Connections.ConnectionPointsRotated(ImageRotation) ?? SvgCompass.NoConnections();
+    private bool _isPath; 
+    public bool IsPath {
+        get => _isPath;
+        set {
+            _isPath = value;
+            OnPropertyChanged(nameof(TrackView));
+        }
+    } 
+    
     [JsonIgnore] public Panel? Parent { get; set; }
-
     [JsonIgnore] public IView? TrackViewRef { get; set; }
     [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
+    
+    public Guid UniqueID { get; set; } = Guid.NewGuid();
+    public TrackConnectionsEnum  Connection(int direction) => ActiveImage?.Connections.ConnectionPointsRotatedForDirection(direction,ImageRotation) ?? TrackConnectionsEnum.None;
 
     // This is needed for the JSON 
     public virtual string TrackType {

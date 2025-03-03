@@ -22,6 +22,12 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     [property: EditableString(Name = "Button ID", Description = "Unique Identifier for this Button", Order = 1)]
     private string _iD = "";
 
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
+    
     [ObservableProperty] [property: EditableBool(Name = "IsEnabled", Description = "Is this button active and Enabled?", Order = 2)]
     private bool _isEnabled = true;
 

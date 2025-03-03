@@ -17,6 +17,12 @@ public class SelectedBorderConverter : IValueConverter {
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        throw new NotImplementedException();
+        if (value == null || parameter == null) return Colors.Transparent;
+
+        var borderColor = (Color)value;
+        var selectedColor = (Color)parameter;
+
+        // If the border is Black, it represents the selected state, so return the SelectedColor.
+        return Equals(borderColor, Colors.Black) ? selectedColor : Colors.Transparent;
     }
 }

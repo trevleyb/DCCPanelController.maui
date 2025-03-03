@@ -7,11 +7,13 @@ using DCCPanelController.Model;
 namespace DCCPanelController.View.PropertyPages;
 
 public partial class PanelPropertyViewModel : BaseViewModel {
+    [ObservableProperty] private string _propertyName;
     [ObservableProperty] private ObservableCollection<ColorReference> _colorReferences = [];
     [ObservableProperty] private Panel _panel;
 
     public PanelPropertyViewModel(Panel panel) {
         Panel = panel;
+        PropertyName = panel.Name ?? "Panel Properties";
 
         // I just could not get the blasted bindings to work correctly so have given up
         // -----------------------------------------------------------------------------------------------------------------

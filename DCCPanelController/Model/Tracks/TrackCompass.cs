@@ -21,14 +21,14 @@ public class TrackCompass(Panel? parent = null) : TrackPiece(parent), ITrackSymb
     }
 
     public void SetCompassPoints(ITrack track) {
-        SetCompassColor("CompassN", track.Connections[0]);
-        SetCompassColor("CompassNE", track.Connections[1]);
-        SetCompassColor("CompassE", track.Connections[2]);
-        SetCompassColor("CompassSE", track.Connections[3]);
-        SetCompassColor("CompassS", track.Connections[4]);
-        SetCompassColor("CompassSW", track.Connections[5]);
-        SetCompassColor("CompassW", track.Connections[6]);
-        SetCompassColor("CompassNW", track.Connections[7]);
+        SetCompassColor("CompassN", track.Connection(0));
+        SetCompassColor("CompassNE", track.Connection(1));
+        SetCompassColor("CompassE", track.Connection(2));
+        SetCompassColor("CompassSE", track.Connection(3));
+        SetCompassColor("CompassS", track.Connection(4));
+        SetCompassColor("CompassSW", track.Connection(5));
+        SetCompassColor("CompassW", track.Connection(6));
+        SetCompassColor("CompassNW", track.Connection(7));
     }
 
     private void SetCompassColor(string compassId, TrackConnectionsEnum connection) {

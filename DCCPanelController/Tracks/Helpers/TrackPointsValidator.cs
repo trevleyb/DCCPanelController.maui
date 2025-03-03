@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 
@@ -15,6 +17,76 @@ public static class TrackPointsValidator {
         (-1, -1) // North-West
     };
 
+    public static void ClearTrackPaths(ObservableCollection<ITrack>? trackPieces) => ClearTrackPaths(trackPieces?.ToList());
+
+    public static void ClearTrackPaths(IEnumerable<ITrack>? trackPieces) {
+        if (trackPieces == null) return;
+        foreach (var trackPiece in trackPieces) {
+            if (trackPiece.IsPath) trackPiece.IsPath = false;
+        }
+    }
+
+    public static void MarkTrackPaths(ObservableCollection<ITrack> trackPieces, ITrack track) => MarkTrackPaths(trackPieces.ToList(), track);
+
+    public static void MarkTrackPaths(List<ITrack> trackPieces, ITrack track) {
+        ClearTrackPaths(trackPieces);
+
+        var visitedTracks = new HashSet<ITrack>();
+        var queue = new Queue<ITrack>();
+        queue.Enqueue(track);
+
+        while (queue.Count > 0) {
+            var currentTrack = queue.Dequeue();
+            if (visitedTracks.Contains(currentTrack)) continue;
+            visitedTracks.Add(currentTrack);
+            currentTrack.IsPath = true;
+           
+            // Explore all possible connections (directions)
+            // -------------------------------------------------------------
+            for (var direction = 0; direction < 8; direction++) {
+                var connectionType = currentTrack.Connection(direction);
+                if (connectionType == TrackConnectionsEnum.None) continue;
+
+                // Determine the neighbor's position using Directions
+                var (dX, dY) = Directions[direction];
+                var neighborX = currentTrack.X + dX;
+                var neighborY = currentTrack.Y + dY;
+
+                // Find the neighbor track in the collection
+                var neighborTrack = trackPieces.FirstOrDefault(tp => tp.X == neighborX && tp.Y == neighborY);
+                if (neighborTrack == null) continue;
+
+                // Check the opposite direction of the neighbor for a valid reciprocal connection
+                var oppositeDirection = (direction + 4) % 8;
+                var neighborConnection = neighborTrack.Connection(oppositeDirection);
+                
+                // If the neighbor is validly connected, add it to the queue for further processing
+                if (IsConnected(connectionType, neighborConnection)) {
+                    if (currentTrack is ITrackTurnout turnout && connectionType is TrackConnectionsEnum.Diverging or TrackConnectionsEnum.Closed) {
+                        Console.WriteLine($"CHECK: {turnout.Name} {turnout.State}@{direction}={connectionType}={currentTrack.Connection(direction)} : {neighborTrack.Name} at {neighborTrack.X}, {neighborTrack.Y} ");
+                        if (turnout.State == TurnoutStateEnum.Unknown) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                        if (turnout.State == TurnoutStateEnum.Closed && connectionType == TrackConnectionsEnum.Closed) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                        if (turnout.State == TurnoutStateEnum.Thrown && connectionType == TrackConnectionsEnum.Diverging) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                    } else {
+                        if (neighborTrack is ITrackTurnout related && neighborConnection is TrackConnectionsEnum.Diverging or TrackConnectionsEnum.Closed) {
+                            // If we are connected to a Turnout but it is thrown the wrong direction, don't enqueue it.  
+                            if (related.State == TurnoutStateEnum.Unknown) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                            if (related.State == TurnoutStateEnum.Closed && neighborConnection == TrackConnectionsEnum.Closed) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                            if (related.State == TurnoutStateEnum.Thrown && neighborConnection == TrackConnectionsEnum.Diverging) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                        } else {
+                            AddTrackToPathList(queue, currentTrack, neighborTrack);
+                        }
+                    }
+                } 
+            }
+        }
+    }
+
+    private static void AddTrackToPathList(Queue<ITrack> queue, ITrack current, ITrack neighbour) {
+        Console.WriteLine($"{current.Name} at {current.X}, {current.Y}  Enquing: {neighbour.Name} at {neighbour.X}, {neighbour.Y} ");
+        queue.Enqueue(neighbour);
+    }
+    
     public static bool[] GetConnectedTracksStatus(IEnumerable<ITrack> trackPieces, ITrack track, int cols, int rows) {
         var results = new bool[8];
         var enumerable = trackPieces.ToList();
@@ -27,8 +99,7 @@ public static class TrackPointsValidator {
     }
 
     private static bool EvaluateConnection(IEnumerable<ITrack> trackPieces, ITrack track, int direction, int cols, int rows) {
-        var rotatedPoints = track.Connections;
-        if (rotatedPoints[direction] == TrackConnectionsEnum.None) return true;
+        if (track.Connection(direction) == TrackConnectionsEnum.None) return true;
 
         var (dX, dY) = Directions[direction];
         var neighborX = track.X + dX;
@@ -37,7 +108,7 @@ public static class TrackPointsValidator {
         // If the Neighbor was OFF the edge of the page and we have a connection, then this would be an error. 
         // ----------------------------------------------------------------------------------------------------
         if (neighborX >= cols || neighborY >= rows) {
-            return rotatedPoints[direction] == TrackConnectionsEnum.None || rotatedPoints[direction] == TrackConnectionsEnum.Terminator;
+            return track.Connection(direction) == TrackConnectionsEnum.None || track.Connection(direction) == TrackConnectionsEnum.Terminator;
         }
 
         var oppositeDirection = (direction + 4) % 8;
@@ -46,10 +117,10 @@ public static class TrackPointsValidator {
         // If there is no Neighbor track, but we are expecting one, then this is not a valid connection
         // But if this is a Terminator, then the Neighbour is fine to not be there. 
         // ---------------------------------------------------------------------------------------------
-        if (neighborTrack == null) return track.Connections[direction] == TrackConnectionsEnum.Terminator;
+        if (neighborTrack == null) return track.Connection(direction) == TrackConnectionsEnum.Terminator;
 
-        var neighborConnection = neighborTrack.Connections[oppositeDirection];
-        return IsConnected(track.Connections[direction], neighborConnection);
+        var neighborConnection = neighborTrack.Connection(oppositeDirection);
+        return IsConnected(track.Connection(direction), neighborConnection);
     }
 
     private static bool IsConnected(TrackConnectionsEnum source, TrackConnectionsEnum target) {

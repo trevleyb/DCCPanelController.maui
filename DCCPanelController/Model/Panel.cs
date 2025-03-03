@@ -72,6 +72,10 @@ public partial class Panel : ObservableObject {
         return AllNamedButtons.FirstOrDefault(t => t.ID == id);
     }
 
+    public ITrack? GetTrackAtPosition(int x, int y) {
+        return _tracks.FirstOrDefault(trk => trk.X == x && trk.Y == y);
+    }
+
     public void SetPanels(Panels panels) {
         Panels = panels;
     }

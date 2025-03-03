@@ -332,9 +332,14 @@ public partial class ControlPanelView : IDisposable {
             var tapGesture = new TapGestureRecognizer {
                 NumberOfTapsRequired = 1
             };
-
             tapGesture.Tapped += (_, _) => TrackPieceTapped?.Invoke(this, track);
             view.GestureRecognizers.Add(tapGesture);
+
+            var doubleTapGesture = new TapGestureRecognizer {
+                NumberOfTapsRequired = 2
+            };
+            doubleTapGesture.Tapped += (sender, args) => TrackPieceDoubleTapped?.Invoke(this, track);
+            view.GestureRecognizers.Add(doubleTapGesture);
 
             // If we are in Design mode, then add support for 
             // dragging and dropping of the items on the page
@@ -343,13 +348,6 @@ public partial class ControlPanelView : IDisposable {
                 var dragGesture = new DragGestureRecognizer();
                 dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
                 view.GestureRecognizers.Add(dragGesture);
-
-                var doubleTapGesture = new TapGestureRecognizer {
-                    NumberOfTapsRequired = 2
-                };
-
-                doubleTapGesture.Tapped += (sender, args) => TrackPieceDoubleTapped?.Invoke(this, track);
-                view.GestureRecognizers.Add(doubleTapGesture);
             }
         }
 

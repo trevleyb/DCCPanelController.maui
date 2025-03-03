@@ -13,11 +13,13 @@ public interface ITrack {
     int Width { get; set; }
     int Height { get; set; }
     bool IsSelected { get; set; }
+    bool IsPath { get; set; }
 
     IView? TrackViewRef { get; set; }
     Panel? Parent { get; set; }
-    TrackConnectionsEnum[] Connections { get; }
 
+    TrackConnectionsEnum Connection(int direction);
+    
     void RotateLeft();
     void RotateRight();
     IView TrackView(double gridSize, bool passthrough = false);

@@ -1,6 +1,13 @@
+using System.Diagnostics;
+using CommunityToolkit.Maui.Views;
 using DCCPanelController.Model;
+using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.View;
 using DCCPanelController.View.PropertyPages;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
+using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
+using UIModalPresentationStyle = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.UIModalPresentationStyle;
 
 namespace DCCPanelController.Services;
 
@@ -35,20 +42,20 @@ public class NavigationService {
     //     return await tcs.Task;
     // }
 
-    public static async Task NavigateToPopupWindow(ContentPage page) {
-        var mainPage = App.Current.Windows[0].Page;
-        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
-
-        var tcs = new TaskCompletionSource();
-
-        ((IPropertyPage)page).CloseRequested += (sender, e) => {
-            tcs.SetResult();
-            mainPage.Navigation.PopModalAsync(true);
-        };
-
-        await mainPage.Navigation.PushModalAsync(page, true);
-        await tcs.Task;
-    }
+    // public static async Task NavigateToPopupWindow(ContentPage page) {
+    //     var mainPage = App.Current.Windows[0].Page;
+    //     if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+    //
+    //     var tcs = new TaskCompletionSource();
+    //
+    //     ((IPropertyPage)page).CloseRequested += (sender, e) => {
+    //         tcs.SetResult();
+    //         mainPage.Navigation.PopModalAsync(true);
+    //     };
+    //
+    //     await mainPage.Navigation.PushModalAsync(page, true);
+    //     await tcs.Task;
+    // }
 
     public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
         if (turnout is null) return null;

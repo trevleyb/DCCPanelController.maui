@@ -10,6 +10,8 @@ public class ColorFallbackConverter : IValueConverter {
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        throw new NotImplementedException();
+        var fallbackValue = parameter as Color ?? Colors.White;
+        var color = value as Color;
+        return color ?? fallbackValue;
     }
 }

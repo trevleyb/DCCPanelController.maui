@@ -127,13 +127,14 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     private static HorizontalStackLayout GroupCell(EditableDetails value) {
         var groupCell = new HorizontalStackLayout {
-            Margin = new Thickness(0, 5, 0, 5)
+            Margin = new Thickness(0, 5, 0, 5),
+            HeightRequest = 20,
         };
 
         if (!string.IsNullOrWhiteSpace(value.EditableAttribute.Name)) {
             var label = new Label {
                 Text = value.EditableAttribute.Name,
-                TextColor = Colors.Black,
+                TextColor = Colors.DarkGrey,
                 FontSize = 15,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,

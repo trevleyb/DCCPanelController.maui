@@ -13,6 +13,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
     private readonly SettingsService _settingsService;
     [ObservableProperty] private bool _canExpandCollapse = true;
     [ObservableProperty] private Panel? _draggedPanel;
+    [ObservableProperty] private bool _showPath;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsSidePanelClosed))]
@@ -198,19 +199,6 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             }
 
             return false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task PanelPropertiesAsync(Panel? panel = null) {
-        if (panel is not null) SelectedPanel = panel;
-        if (SelectedPanel is null) return;
-
-        try {
-            await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(SelectedPanel));
-            Save();
-        } catch {
-            Console.WriteLine($"Failed to return from Properies {SelectedPanel.Name}");
         }
     }
 

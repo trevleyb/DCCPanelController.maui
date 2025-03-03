@@ -31,7 +31,8 @@ public enum TrackStyleTypeEnum {
 public enum TrackStyleAttributeEnum {
     Hidden,
     Normal,
-    Occupied
+    Occupied,
+    Path
 }
 
 public enum TextFontWeightEnum {

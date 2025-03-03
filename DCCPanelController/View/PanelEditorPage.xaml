@@ -59,7 +59,7 @@
             x:Name="GridButton" />
 
         <ToolbarItem
-            Clicked="ShowPropertyPage"
+            Clicked="ShowPanelPropertyPage"
             IconImageSource="settings.png"
             Text="Properties"
             ToolTipProperties.Text="Panel Properties"

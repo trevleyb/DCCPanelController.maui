@@ -2,6 +2,7 @@ using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using DCCPanelController.View.PropertyPages.Attributes;
 
 namespace DCCPanelController.Model.Tracks;
 
@@ -14,6 +15,12 @@ public class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum 
         return Clone<TrackPoints>(parent);
     }
 
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
+    
     protected override void Setup() {
         Layer = 5;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));

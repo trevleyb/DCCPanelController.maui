@@ -95,6 +95,10 @@ public static class SvgStyles {
                                              .AddExistingStyle(style)
                                              .AddElement(e => e.WithName(SvgElementEnum.Dashline).Visible().WithColor(panel.HiddenColor))
                                              .Build(),
+            TrackStyleAttributeEnum.Path => new SvgStyleBuilder()
+                                             .AddExistingStyle(style)
+                                             .AddElement(e => e.WithName(SvgElementEnum.Occupied).Visible().WithColor(panel.ShowPathColor))
+                                             .Build(),
             TrackStyleAttributeEnum.Normal => new SvgStyleBuilder()
                                              .AddExistingStyle(style)
                                              .AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden().WithName(SvgElementEnum.Occupied).Hidden())

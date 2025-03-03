@@ -27,6 +27,12 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
     [ObservableProperty] [property: EditableColor(Name = "Font Color", Description = "Font Color", Group = "Colors")]
     private Color _textColor = Colors.White;
 
+    [property: EditableInt(Name = "Layer", Group = "Attributes", Description = "What Layer does this peice sit on?", MinValue = 1, MaxValue = 5, Order = 5)]
+    public new int Layer {
+        get => base.Layer;
+        set => base.Layer = value;
+    }
+    
     public TrackLabelCircle() : this(null) { }
 
     public ITrack Clone(Panel parent) {

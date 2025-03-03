@@ -2,7 +2,12 @@ using System.Diagnostics;
 using CommunityToolkit.Maui.Views;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
+using DCCPanelController.Tracks.Helpers;
 using DCCPanelController.View.PropertyPages;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
+using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
+using UIModalPresentationStyle = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.UIModalPresentationStyle;
 
 namespace DCCPanelController.View;
 
@@ -14,7 +19,9 @@ public partial class PanelEditorPage : ContentPage {
         ViewModel = viewModel;
         BindingContext = ViewModel;
         InitializeComponent();
-
+        
+        // Clear any marked paths
+        TrackPointsValidator.ClearTrackPaths(viewModel?.Panel?.Tracks ?? null);
         SetEditModeIcon(EditModeEnum.Move);
         SetGridIcon(true);
     }
@@ -52,46 +59,79 @@ public partial class PanelEditorPage : ContentPage {
         PanelView.RebuildGrid(true);
     }
 
-    private async void ShowPropertyPage(object? sender, EventArgs e) {
+    private async void ShowPanelPropertyPage(object? sender, EventArgs e) {
         try {
-            await ShowPropertyPageAsync(sender, e);
+            await ShowPanelPropertyPageAsync();
             PanelView?.RebuildGrid(true);
         } catch (Exception ex) {
-            Trace.WriteLine($"Exception {ex.Message} in Property Pages."); // TODO handle exception
+            Trace.WriteLine($"Exception {ex.Message} in Property Pages."); 
         }
     }
 
-    private async Task ShowPropertyPageAsync(object? sender, EventArgs e) {
-        await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
+    private async Task ShowPanelPropertyPageAsync() {
+        var mainPage = App.Current.Windows[0].Page;
+        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+        
+        //await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
+        // If this is a iPhone, then use a FULL SIZED screen control
+        // -------------------------------------------------------------------------------
+        if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
+            var navigationPage = new NavigationPage(new PanelPropertyPage(ViewModel.Panel));
+#if IOS
+                navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+#endif
+            await mainPage.Navigation.PushModalAsync(navigationPage);
+        }
+        else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
+                 DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+
+            var popupPage = new PanelPropertyPopup(ViewModel.Panel);
+            if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+                // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
+            }
+            this.ShowPopup(popupPage);
+        }
+        else {
+            Debug.WriteLine("Unhandled platform, no UI launched.");
+        }
     }
 
     private async void ShowEditPropertyPage(object? sender, EventArgs e) {
         try {
-            await ShowEditPropertyPageAsync(sender, e);
+            await ShowEditPropertyPageAsync();
             PanelView?.RebuildGrid(true);
         } catch (Exception ex) {
             Trace.WriteLine($"Exception {ex.Message} in Property Pages.");
         }
     }
 
-    private async Task ShowEditPropertyPageAsync(object? sender, EventArgs e) {
+    private async Task ShowEditPropertyPageAsync() {
         if (ViewModel is { HasSelectedTracks: true, CanUsePropertyPage: true }) {
             var track = ViewModel.Panel.SelectedTracks.First();
-            
-            var popupPage = new DynamicPropertyPage(track);
-            if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst)
-            {
-                // Set specific window properties for iPad and MacCatalyst
-                // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
-            }
-            this.ShowPopup(popupPage);
-            //await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
-            PanelView.MarkTrackUnSelected(track);
 
-            // foreach (var track in ViewModel.Panel.SelectedTracks) {
-            //     await NavigationService.NavigateToPopupWindow(new DynamicPropertyPage(track));
-            //     PanelView.MarkTrackUnSelected(track);
-            // }
+            // If this is a iPhone, then use a FULL SIZED screen control
+            // -------------------------------------------------------------------------------
+            if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
+                var navigationPage = new NavigationPage(new DynamicPropertyPage(track));
+                #if IOS
+                navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+                #endif
+               
+                await Navigation.PushModalAsync(navigationPage, true);
+            }
+            else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
+                     DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+
+                var popupPage = new DynamicPropertyPopup(track);
+                if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+                    // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
+                }
+                this.ShowPopup(popupPage);
+            }
+            else {
+                Debug.WriteLine("Unhandled platform, no UI launched.");
+            }
+            PanelView.MarkTrackUnSelected(track);
         }
     }
 

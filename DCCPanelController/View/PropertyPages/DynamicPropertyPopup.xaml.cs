@@ -7,13 +7,13 @@ using UIKit;
 namespace DCCPanelController.View.PropertyPages;
 
 /// <summary>
-/// Dynamic Property Page is used for iOS iPhone sizes and is full screen
+///  Popup Page is used for iPad and MacCatalst
 /// </summary>
-public partial class DynamicPropertyPage : ContentPage {
+public partial class DynamicPropertyPopup : Popup {
     private readonly ITrack _track;
     private DynamicPropertyPageViewModel _viewModel;
 
-    public DynamicPropertyPage(ITrack track, string? propertyName = null) {
+    public DynamicPropertyPopup(ITrack track, string? propertyName = null) {
         InitializeComponent();
         _track = track;
         _viewModel = new DynamicPropertyPageViewModel(_track, propertyName, PropertyContainer);
@@ -21,6 +21,6 @@ public partial class DynamicPropertyPage : ContentPage {
     }
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {
-        Navigation.PopModalAsync(true);
+        this.Close();
     }
 }

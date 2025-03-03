@@ -227,6 +227,9 @@
         <MauiXaml Update="View\Components\GridColorPicker.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\PropertyPages\DynamicPropertyPopup.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -300,15 +303,13 @@
             <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\PropertyPages\DynamicPropertyPageViewModel.cs">
-            <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\PropertyPages\PanelPropertyViewModel.cs">
-            <DependentUpon>PanelPropertyPage.xaml</DependentUpon>
-        </Compile>
         <Compile Update="View\Components\GridColorPicker.xaml.cs">
             <DependentUpon>GridColorPicker.xaml</DependentUpon>
             <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\PropertyPages\DynamicPropertyPopup.xaml.cs">
+          <DependentUpon>DynamicPropertyPopup.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

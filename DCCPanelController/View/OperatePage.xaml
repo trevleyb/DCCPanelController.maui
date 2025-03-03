@@ -92,6 +92,7 @@
                                     HorizontalOptions="Fill"
                                     Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"
                                     TrackPieceChanged="PanelView_OnTrackPieceChanged"
+                                    TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
                                     TrackPieceTapped="PanelView_OnTrackPieceTapped"
                                     VerticalOptions="Fill"
                                     x:DataType="model:Panel"

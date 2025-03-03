@@ -49,10 +49,10 @@ public partial class Panel : ObservableObject {
 
     public void ResetToDefaults() {
         BackgroundColor = AppleCrayonColors.Value("Snow");
-        BorderColor = AppleCrayonColors.Value("Midnight");
+        BorderColor = AppleCrayonColors.Value("Lead");
         MainLineColor = AppleCrayonColors.Value("Ocean");
         BranchLineColor = AppleCrayonColors.Value("Aqua");
-        DivergingColor = AppleCrayonColors.Value("Sky");
+        DivergingColor = AppleCrayonColors.Value("Mercury");
 
         ButtonBorder = AppleCrayonColors.Value("Steel");
         ButtonColor = AppleCrayonColors.Value("Aluminum");
@@ -63,9 +63,9 @@ public partial class Panel : ObservableObject {
 
         ContinuationColor = AppleCrayonColors.Value("Iron");
         TerminatorColor = AppleCrayonColors.Value("Iron");
-        ;
+        
         HiddenColor = AppleCrayonColors.Value("Snow");
         OccupiedColor = AppleCrayonColors.Value("Cayenne");
-        ShowPathColor = AppleCrayonColors.Value("Lemon");
+        ShowPathColor = AppleCrayonColors.Value("Cayenne");
     }
 }

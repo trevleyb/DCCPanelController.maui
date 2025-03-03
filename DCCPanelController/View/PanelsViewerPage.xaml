@@ -152,6 +152,7 @@
                         HorizontalOptions="Center"
                         IsRunning="{Binding IsBusy}"
                         VerticalOptions="Center" />
+
                     <view:ControlPanelView
                         DesignMode="false"
                         HorizontalOptions="Fill"
@@ -159,6 +160,7 @@
                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=SelectedPanel}"
                         ShowGrid="false"
                         ShowTrackErrors="False"
+                        TrackPieceDoubleTapped="ControlPanelView_OnTrackPieceDoubleTapped"
                         TrackPieceTapped="ControlPanelView_OnTrackPieceTapped"
                         VerticalOptions="Fill"
                         x:Name="ControlPanelView" />
