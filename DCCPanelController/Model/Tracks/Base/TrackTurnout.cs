@@ -112,9 +112,9 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout {
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough);
-        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
+        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough ?? Passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough ?? Passthrough);
     }
 
     protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) { // Find the appropriate image reference for the details we have

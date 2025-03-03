@@ -102,9 +102,9 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough);
-        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
+        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough ?? Passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough ?? Passthrough);
     }
 
     protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
@@ -134,7 +134,7 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     }
 
     protected override void Setup() {
-        Layer = 3;
+        Layer = 4;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Button", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Button", (0, 0), (90, 0), (180, 0), (270, 0));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "ButtonCorner", (45, 0), (135, 90), (225, 180), (315, 270));

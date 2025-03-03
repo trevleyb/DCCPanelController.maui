@@ -74,17 +74,17 @@ public static class SvgStyles {
     }
 
     public static SvgStyle ApplyOccupiedStyle(SvgStyle style, Panel? panel, bool isOccupied) {
-        if (isOccupied && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).WithColor(panel.OccupiedColor)).Build();
+        if (isOccupied && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).WithColor(panel.OccupiedColor).Visible() ).Build();
         return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden()).Build();
     }
 
     public static SvgStyle ApplyHiddenStyle(SvgStyle style, Panel? panel, bool isHidden) {
-        if (isHidden && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Dashline).WithColor(panel.HiddenColor)).Build();
+        if (isHidden && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Dashline).WithColor(panel.HiddenColor).Visible()).Build();
         return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Dashline).Hidden()).Build();
     }
 
     public static SvgStyle ApplyPathStyle(SvgStyle style, Panel? panel, bool isPath) {
-        if (isPath && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).WithColor(panel.ShowPathColor)).Build();
+        if (isPath && panel is not null) return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).WithColor(panel.ShowPathColor).Visible()).Build();
         return new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Occupied).Hidden()).Build();
     }
 

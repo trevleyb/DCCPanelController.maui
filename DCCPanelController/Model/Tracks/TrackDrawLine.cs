@@ -63,7 +63,7 @@ public partial class TrackDrawLine(Panel? parent = null) : TrackDraw(parent), IT
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
         var line = new Line {
             X1 = 0,
             Y1 = 0,
@@ -76,7 +76,7 @@ public partial class TrackDrawLine(Panel? parent = null) : TrackDraw(parent), IT
             HorizontalOptions = LayoutOptions.Start,
             ZIndex = Layer,
             Opacity = Opacity,
-            InputTransparent = passthrough
+            InputTransparent = passthrough ?? Passthrough
         };
 
         return line;

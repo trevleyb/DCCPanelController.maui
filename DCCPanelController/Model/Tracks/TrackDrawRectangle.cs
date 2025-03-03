@@ -72,7 +72,7 @@ public partial class TrackDrawRectangle(Panel? parent = null) : TrackDraw(parent
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
         var rectangle = new Rectangle {
             Fill = BackgroundColor ?? Colors.Transparent,
             Stroke = BorderColor ?? Colors.Transparent,
@@ -83,7 +83,7 @@ public partial class TrackDrawRectangle(Panel? parent = null) : TrackDraw(parent
             VerticalOptions = LayoutOptions.Start,
             ZIndex = Layer,
             Opacity = Opacity,
-            InputTransparent = passthrough
+            InputTransparent = passthrough ?? Passthrough
         };
 
         return rectangle;

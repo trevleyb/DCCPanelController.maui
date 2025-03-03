@@ -9,7 +9,9 @@ using DCCPanelController.Tracks.StyleManager;
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class Track : ObservableObject {
-    [JsonIgnore] protected readonly double Scale = 1.5;
+    [JsonIgnore] protected double Scale = 1.5;
+    [JsonIgnore] protected bool Passthrough = false;
+
     [JsonIgnore] protected readonly StyleTrackImages StyleTrackImages = new();
     [ObservableProperty] private int _height = 1; // What Height is this component? 
     [ObservableProperty] private int _imageRotation;
@@ -62,8 +64,8 @@ public abstract partial class Track : ObservableObject {
 
     protected abstract void Setup();
 
-    public IView TrackView(double gridSize, bool passthrough = false) {
-        TrackViewRef = GetViewForTrack(gridSize, passthrough);
+    public IView TrackView(double gridSize, bool? passthrough) {
+        TrackViewRef = GetViewForTrack(gridSize, passthrough ?? Passthrough);
         return TrackViewRef;
     }
 
@@ -71,7 +73,7 @@ public abstract partial class Track : ObservableObject {
     // piece should be displayed and then to create a common IView that can be shown on the screen. Most
     // track pieces are images, but some may not be such as a Text Block.
     // ---------------------------------------------------------------------------------------------------------
-    protected abstract IView GetViewForTrack(double gridSize, bool passthrough = false);
+    protected abstract IView GetViewForTrack(double gridSize, bool? passthrough);
     protected abstract ImageSource GetViewForSymbol(double gridSize);
 
     //  This is a helper function as most track pieces need to create a View from an Image
@@ -91,16 +93,18 @@ public abstract partial class Track : ObservableObject {
         };
     }
 
+    public void TrackChanged() => OnPropertyChanged(nameof(TrackView));
+    
     public void RotateLeft() {
         TrackRotation -= RotationIncrement;
         if (TrackRotation < 0) TrackRotation += 360;
-        OnPropertyChanged(nameof(TrackView));
+        TrackChanged();
     }
 
     public void RotateRight() {
         TrackRotation += RotationIncrement;
         if (TrackRotation > 360) TrackRotation -= 360;
-        OnPropertyChanged(nameof(TrackView));
+        TrackChanged();
     }
 
     protected void AddImageSourceAndRotation(TrackStyleImageEnum trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {

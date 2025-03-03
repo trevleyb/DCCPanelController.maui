@@ -17,8 +17,8 @@ public abstract partial class TrackContinuation : TrackPiece, ITrackPiece {
 
     protected TrackContinuation(Panel? parent = null) : base(parent) { }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough);
-        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
+        var image = CreateImageView(TrackImageEnum, TrackRotation, gridSize, passthrough ?? Passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough ?? Passthrough);
     }
 }

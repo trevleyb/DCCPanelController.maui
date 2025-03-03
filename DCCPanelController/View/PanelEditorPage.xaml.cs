@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using CommunityToolkit.Maui.Views;
+using DCCPanelController.Model.Tracks.Base;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.Helpers;
@@ -118,7 +119,8 @@ public partial class PanelEditorPage : ContentPage {
                 #endif
                
                 await Navigation.PushModalAsync(navigationPage, true);
-                PanelView?.RebuildGrid(true);
+                //PanelView?.RebuildGrid(true);
+                track.TrackChanged();
             }
             else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                      DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
@@ -128,7 +130,7 @@ public partial class PanelEditorPage : ContentPage {
                     // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
                 }
                 await this.ShowPopupAsync(popupPage);
-                PanelView?.RebuildGrid(true);
+                track.TrackChanged();
             }
             else {
                 Debug.WriteLine("Unhandled platform, no UI launched.");

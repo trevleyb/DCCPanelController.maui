@@ -32,12 +32,17 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
         get => base.Layer;
         set => base.Layer = value;
     }
-    
+
+   [property: EditableDouble(Name = "Size", Group = "Attributes", Description = "What Size should this label be?", MinValue = 1, MaxValue = 3, Order = 5)]
+        public new double Scale {
+            get => base.Scale;
+            set => base.Scale = value;
+        }
+
     public TrackLabelCircle() : this(null) { }
 
     public ITrack Clone(Panel parent) {
         var clone = Clone<TrackLabelCircle>(parent);
-        clone.Label = "";
         return clone;
     }
 
@@ -46,21 +51,23 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
     public string Name => "Circle Image";
 
     protected override void Setup() {
-        Layer = 2;
+        Layer = 4;
+        Scale = 2;
+        Passthrough = true; // Don't accept clicks on this item
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Label", (0, 0), (45, 45), (90, 90), (135, 135), (180, 180), (225, 225), (270, 270), (315, 315));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Label", (0, 0), (45, 45), (90, 90), (135, 135), (180, 180), (225, 225), (270, 270), (315, 315));
     }
 
     protected override ImageSource GetViewForSymbol(double gridSize) {
-        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
+        return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize, Passthrough).Image;
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
-        var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
-        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
+        var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough ?? Passthrough);
+        return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough ?? Passthrough);
     }
 
-    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough = false) {
+    protected (ImageSource Image, int Rotation) CreateImageView(TrackStyleImageEnum trackStyle, int rotation, double gridSize, bool passthrough) {
         // Find the appropriate image reference for the details we have
         // ---------------------------------------------------------------------------------------------------
         var trackInfo = StyleTrackImages.GetTrackImageSourceAndRotation(trackStyle, rotation);
@@ -70,7 +77,7 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
         var style = SvgStyles.GetStyle(TrackStyleTypeEnum.Button, TrackStyleImageEnum.Normal, Parent);
         style = SvgStyles.AddTextToStyle(style, Label);
         style = new SvgStyleBuilder().AddExistingStyle(style).AddElement(e => e.WithName(SvgElementEnum.Text).WithTextSize(FontSize)).Build();
-        ;
+        
         if (!TextColor.Equals(Colors.Transparent)) style = SvgStyles.SetTextToColor(style, TextColor);
         if (!BackgroundColor.Equals(Colors.Transparent)) style = SvgStyles.SetButtonColor(style, BackgroundColor);
         if (!BorderColor.Equals(Colors.Transparent)) style = SvgStyles.SetButtonOutlineColor(style, BorderColor);

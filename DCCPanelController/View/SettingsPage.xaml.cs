@@ -90,7 +90,8 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
                     if (settings.SettingsService is { } settingsService) {
                         await SaveJsonToFile(saveFile, settingsService.ToJsonString());
-                        await DisplayAlert("Success", $"File saved to {saveFile}.", "OK");
+                        await DisplayAlert("Success", "File Downloaded.", "OK");
+                        Console.WriteLine(saveFile);
                     }
                 }
             }

@@ -6,6 +6,7 @@
     x:DataType="view:PanelsViewerViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:model="clr-namespace:DCCPanelController.Model"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
@@ -34,21 +35,12 @@
             IconImageSource="trash_2.png"
             IsEnabled="{Binding IsPanelSelected}"
             Text="Delete" />
-        <!--  <ToolbarItem Command="{Binding PanelPropertiesCommand}" Text="Properties" IconImageSource="settings.png"  -->
-        <!--  IsEnabled="{Binding IsPanelSelected}" />  -->
-        <!-- <ToolbarItem /> -->
-        <!--  <ToolbarItem  -->
-        <!--  Clicked="SidePanelExpander_OnClicked"  -->
-        <!--  IconImageSource="side_panel_close_filled.png"  -->
-        <!--  IsEnabled="{Binding CanExpandCollapse}"  -->
-        <!--  Text="Expand"  -->
-        <!--  x:Name="SidePanelButton" />  -->
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="{Binding SidePanelWidth}" x:Name="LeftPanelColumn" />
+                <ColumnDefinition Width="250" x:Name="LeftPanelColumn" />
                 <ColumnDefinition Width="2" x:Name="PanelEdge" />
                 <ColumnDefinition Width="*" x:Name="RightPanelColumn" />
             </Grid.ColumnDefinitions>
@@ -64,78 +56,63 @@
 
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
-                        <StackLayout HorizontalOptions="Fill" VerticalOptions="Fill">
+                        <StackLayout HorizontalOptions="Fill" VerticalOptions="Center">
                             <Label HorizontalOptions="Center" Text="No Panels were found." />
-                            <Label HorizontalOptions="Center" Text="Please use + to add a new Panel." />
+                            <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0">
+                                <Label Text="Please use" VerticalOptions="Center" />
+                                <ImageButton
+                                    Command="{Binding AddPanelCommand}"
+                                    Margin="-5,0,-5,0"
+                                    Scale="0.50"
+                                    Source="plus_circle.png">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                                    </Image.Behaviors>
+                                </ImageButton>
+                                <Label Text="to add a new Panel." VerticalOptions="Center" />
+                            </HorizontalStackLayout>
                         </StackLayout>
                     </Grid>
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="model:Panel">
-                        <SwipeView>
-                            <SwipeView.RightItems>
-                                <SwipeItemView
-                                    BackgroundColor="LightGreen"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=EditPanelCommand}"
-                                    CommandParameter="{Binding}">
-                                    <StackLayout Orientation="Horizontal" Padding="10">
-                                        <Image
-                                            HeightRequest="24"
-                                            Source="edit.png"
-                                            WidthRequest="24" />
-                                    </StackLayout>
-                                </SwipeItemView>
-
-                                <!--  Delete SwipeItem  -->
-                                <SwipeItemView
-                                    BackgroundColor="LightCoral"
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DeletePanelCommand}"
-                                    CommandParameter="{Binding}">
-                                    <StackLayout Orientation="Horizontal" Padding="10">
-                                        <Image
-                                            HeightRequest="24"
-                                            Source="trash_2.png"
-                                            WidthRequest="24" />
-                                    </StackLayout>
-                                </SwipeItemView>
-                            </SwipeView.RightItems>
-                            <StackLayout
-                                Margin="5"
-                                Padding="5"
-                                Spacing="5">
-                                <StackLayout.GestureRecognizers>
-                                    <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
-                                    <DropGestureRecognizer
-                                        DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelLeaveCommand}"
-                                        DragLeaveCommandParameter="{Binding}"
-                                        DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelOverCommand}"
-                                        DragOverCommandParameter="{Binding}"
-                                        DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DropPanelCommand}"
-                                        DropCommandParameter="{Binding}" />
-                                </StackLayout.GestureRecognizers>
-                                <Label
-                                    Style="{StaticResource LargeLabel}"
-                                    Text="{Binding Name}"
-                                    TextColor="{StaticResource Primary}" />
-                                <Label Style="{StaticResource SmallLabel}" Text="{Binding Description}" />
-                            </StackLayout>
-                        </SwipeView>
+                        <StackLayout
+                            HeightRequest="35"
+                            Margin="10"
+                            Padding="10"
+                            Spacing="10">
+                            <StackLayout.GestureRecognizers>
+                                <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
+                                <DropGestureRecognizer
+                                    DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelLeaveCommand}"
+                                    DragLeaveCommandParameter="{Binding}"
+                                    DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DragPanelOverCommand}"
+                                    DragOverCommandParameter="{Binding}"
+                                    DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelsViewerViewModel}}, x:DataType=view:PanelsViewerViewModel, Path=DropPanelCommand}"
+                                    DropCommandParameter="{Binding}" />
+                            </StackLayout.GestureRecognizers>
+                            <Label
+                                FontSize="15"
+                                Text="{Binding Name}"
+                                TextColor="{StaticResource Primary}"
+                                VerticalOptions="Center" />
+                            <Label
+                                FontSize="10"
+                                Text="{Binding Description}"
+                                TextColor="{StaticResource PrimaryDisabled}"
+                                VerticalOptions="Center" />
+                        </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <!--  Draggable Separator  -->
             <BoxView
                 BackgroundColor="{StaticResource PrimaryDisabled}"
                 Grid.Column="1"
                 HorizontalOptions="Fill"
                 IsVisible="{Binding IsWideMode}"
-                VerticalOptions="Fill">
-                <BoxView.GestureRecognizers>
-                    <PanGestureRecognizer PanUpdated="OnSeparatorDrag" />
-                </BoxView.GestureRecognizers>
-            </BoxView>
+                VerticalOptions="Fill" />
 
             <Grid
                 Grid.Column="2"

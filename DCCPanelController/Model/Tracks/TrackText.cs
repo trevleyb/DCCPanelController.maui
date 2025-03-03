@@ -43,10 +43,16 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
 
     private int MaxGridWidth => Parent is not null ? CalculateMaxGridWidth(Parent.Rows, Parent.Cols, Width, X, Y, TrackRotation) : Width;
 
-    [property: EditableInt(Name = "Width", Description = "Width of the Image", Group = "Attributes")]
+    [property: EditableInt(Name = "Width", Description = "Width of the Text Block", Group = "Attributes")]
     public new int Width {
         get => base.Width;
         set => base.Width = value;
+    }
+
+    [property: EditableInt(Name = "Height", Description = "Height of the Text Block", Group = "Attributes")]
+    public new int Height {
+        get => base.Height;
+        set => base.Height = value;
     }
 
     public ITrack Clone(Panel parent) {
@@ -58,6 +64,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
     protected override void Setup() {
         Layer = 3;
         RotationIncrement = 90;
+        Passthrough = true;
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Text", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Text", (0, 0), (90, 90), (180, 180), (270, 270));
     }
@@ -66,10 +73,10 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
         return CreateImageView(TrackStyleImageEnum.Symbol, TrackRotation, gridSize).Image;
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
         if (string.IsNullOrEmpty(Text)) {
-            var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
-            return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough);
+            var image = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough ?? Passthrough);
+            return CreateViewFromImage(image.Image, image.Rotation, gridSize, passthrough ?? Passthrough);
         }
 
         var label = new Label {
@@ -85,7 +92,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
             ZIndex = Layer,
             RotationX = TrackRotation,
             LineBreakMode = LineBreakMode.TailTruncation,
-            InputTransparent = passthrough,
+            InputTransparent = passthrough ?? Passthrough,
             WidthRequest = gridSize * MaxGridWidth,
             HeightRequest = gridSize
 
@@ -97,7 +104,7 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
             ? label
             : new Border {
                 Content = label,
-                InputTransparent = passthrough,
+                InputTransparent = passthrough ?? Passthrough,
                 RotationX = TrackRotation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Fill,

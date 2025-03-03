@@ -31,91 +31,177 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
-            <Grid
-                ColumnDefinitions="*"
-                Margin="10"
-                RowDefinitions="*,20">
-                <ActivityIndicator
-                    Grid.Column="0"
-                    Grid.Row="0"
-                    HorizontalOptions="Center"
-                    IsRunning="{Binding IsBusy}"
-                    VerticalOptions="Center" />
-                <Grid Grid.Column="0" Grid.Row="0">
-                    <CarouselView
-                        BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-                        CurrentItem="{Binding SelectedPanel}"
-                        IndicatorView="IndicatorView"
-                        x:Name="PanelCarousel">
+        <Grid RowDefinitions="*,Auto">
+            <CarouselView
+                BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
+                CurrentItem="{Binding SelectedPanel}"
+                Grid.Column="0"
+                Grid.Row="0"
+                IndicatorView="IndicatorView"
+                x:Name="PanelCarousel">
 
-                        <CarouselView.ItemsSource>
-                            <Binding Path="Panels" />
-                        </CarouselView.ItemsSource>
+                <CarouselView.ItemsSource>
+                    <Binding Path="Panels" />
+                </CarouselView.ItemsSource>
 
-                        <CarouselView.EmptyView>
-                            <VerticalStackLayout
+                <CarouselView.EmptyView>
+                    <ContentView>
+                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                            <Label
+                                FontAttributes="Bold"
+                                HorizontalOptions="Center"
+                                Margin="0,20,0,20"
+                                Text="Welcome to the DCC Model Layout Panel Controller"
+                                VerticalOptions="Center" />
+                            <HorizontalStackLayout
                                 HorizontalOptions="Center"
                                 Margin="20"
-                                VerticalOptions="Center">
-                                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="Center">
-                                    <Label
-                                        FontAttributes="Bold"
-                                        HorizontalOptions="Center"
-                                        Margin="0,0,0,20"
-                                        Text="Welcome to the DCC Model Layout Panel Controller" />
-                                </StackLayout>
+                                Padding="20"
+                                VerticalOptions="End">
+                                <Button
+                                    Clicked="ButtonInstructions_OnClicked"
+                                    Margin="10,10,10,10"
+                                    Style="{StaticResource ButtonOutline}"
+                                    Text="Instructions" />
+                                <Button
+                                    Clicked="ButtonAbout_OnClicked"
+                                    Margin="10,10,10,10"
+                                    Style="{StaticResource ButtonOutline}"
+                                    Text="About" />
+                            </HorizontalStackLayout>
+                        </StackLayout>
+                    </ContentView>
+                </CarouselView.EmptyView>
 
-                                <HorizontalStackLayout
-                                    HorizontalOptions="Center"
-                                    Margin="20"
-                                    Padding="20"
-                                    VerticalOptions="End">
-                                    <Button
-                                        Clicked="ButtonInstructions_OnClicked"
-                                        Margin="10,10,10,10"
-                                        Style="{StaticResource ButtonOutline}"
-                                        Text="Instructions" />
-                                    <Button
-                                        Clicked="ButtonAbout_OnClicked"
-                                        Margin="10,10,10,10"
-                                        Style="{StaticResource ButtonOutline}"
-                                        Text="About" />
-                                </HorizontalStackLayout>
-                            </VerticalStackLayout>
-                        </CarouselView.EmptyView>
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <view:ControlPanelView
+                            BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=BackgroundColor}"
+                            HorizontalOptions="Fill"
+                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"
+                            TrackPieceChanged="PanelView_OnTrackPieceChanged"
+                            TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
+                            TrackPieceTapped="PanelView_OnTrackPieceTapped"
+                            VerticalOptions="Fill"
+                            x:DataType="model:Panel"
+                            x:Name="PanelView" />
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
 
-                        <CarouselView.ItemTemplate>
-                            <DataTemplate>
-                                <view:ControlPanelView
-                                    BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=BackgroundColor}"
-                                    HorizontalOptions="Fill"
-                                    Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"
-                                    TrackPieceChanged="PanelView_OnTrackPieceChanged"
-                                    TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
-                                    TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                                    VerticalOptions="Fill"
-                                    x:DataType="model:Panel"
-                                    x:Name="PanelView" />
-                            </DataTemplate>
-                        </CarouselView.ItemTemplate>
-                    </CarouselView>
-                </Grid>
+            <IndicatorView
+                Grid.Column="0"
+                Grid.Row="1"
+                HorizontalOptions="Center"
+                IndicatorColor="DarkGrey"
+                IndicatorSize="10"
+                Margin="0,5,0,0"
+                SelectedIndicatorColor="{StaticResource Primary}"
+                VerticalOptions="Start"
+                x:Name="IndicatorView" />
 
-                <IndicatorView
-                    Grid.Column="0"
-                    Grid.Row="1"
-                    HorizontalOptions="Center"
-                    IndicatorColor="DarkGrey"
-                    IndicatorSize="10"
-                    Margin="0,5,0,0"
-                    SelectedIndicatorColor="{StaticResource Primary}"
-                    VerticalOptions="Start"
-                    x:Name="IndicatorView" />
-            </Grid>
         </Grid>
     </ContentPage.Content>
 </ContentPage>
 
 
 <!--  Panel="{Binding Path=.}"  -->
+
+
+<!--     <ContentPage.Content> -->
+<!--         <Grid HorizontalOptions="Fill" VerticalOptions="Fill"> -->
+<!--  <Grid  -->
+<!--  ColumnDefinitions="*"  -->
+<!--  Margin="10"  -->
+<!--  RowDefinitions="*,20">  -->
+<!--  <ActivityIndicator  -->
+<!--  Grid.Column="0"  -->
+<!--  Grid.Row="0"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  IsRunning="{Binding IsBusy}"  -->
+<!--  VerticalOptions="Center" />  -->
+<!--    -->
+<!--                 <Grid Grid.Column="0" Grid.Row="0"> -->
+<!--  <CarouselView  -->
+<!--  BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"  -->
+<!--  CurrentItem="{Binding SelectedPanel}"  -->
+<!--  IndicatorView="IndicatorView"  -->
+<!--  x:Name="PanelCarousel">  -->
+<!--    -->
+<!--                         <CarouselView.ItemsSource> -->
+<!--                             <Binding Path="Panels" /> -->
+<!--                         </CarouselView.ItemsSource> -->
+<!--    -->
+<!--                         <CarouselView.EmptyView> -->
+<!--  <StackLayout  -->
+<!--  HorizontalOptions="Fill"  -->
+<!--  Margin="20"  -->
+<!--  VerticalOptions="Fill">  -->
+<!--  <BoxView  -->
+<!--  BackgroundColor="{StaticResource Primary}"  -->
+<!--  HeightRequest="2"  -->
+<!--  HorizontalOptions="FillAndExpand" />  -->
+<!--  <Label  -->
+<!--  FontAttributes="Bold"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Margin="0,20,0,20"  -->
+<!--  Text="Welcome to the DCC Model Layout Panel Controller"  -->
+<!--  VerticalOptions="Center" />  -->
+<!--  <BoxView  -->
+<!--  BackgroundColor="{StaticResource Primary}"  -->
+<!--  HeightRequest="2"  -->
+<!--  HorizontalOptions="FillAndExpand" />  -->
+<!--  <HorizontalStackLayout  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Margin="20"  -->
+<!--  Padding="20"  -->
+<!--  VerticalOptions="End">  -->
+<!--  <Button  -->
+<!--  Clicked="ButtonInstructions_OnClicked"  -->
+<!--  Margin="10,10,10,10"  -->
+<!--  Style="{StaticResource ButtonOutline}"  -->
+<!--  Text="Instructions" />  -->
+<!--  <Button  -->
+<!--  Clicked="ButtonAbout_OnClicked"  -->
+<!--  Margin="10,10,10,10"  -->
+<!--  Style="{StaticResource ButtonOutline}"  -->
+<!--  Text="About" />  -->
+<!--                                 </HorizontalStackLayout> -->
+<!--  <BoxView  -->
+<!--  BackgroundColor="{StaticResource Primary}"  -->
+<!--  HeightRequest="2"  -->
+<!--  HorizontalOptions="FillAndExpand" />  -->
+<!--                             </StackLayout> -->
+<!--                         </CarouselView.EmptyView> -->
+<!--    -->
+<!--                         <CarouselView.ItemTemplate> -->
+<!--                             <DataTemplate> -->
+<!--  <view:ControlPanelView  -->
+<!--  BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=BackgroundColor}"  -->
+<!--  HorizontalOptions="Fill"  -->
+<!--  Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"  -->
+<!--  TrackPieceChanged="PanelView_OnTrackPieceChanged"  -->
+<!--  TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"  -->
+<!--  TrackPieceTapped="PanelView_OnTrackPieceTapped"  -->
+<!--  VerticalOptions="Fill"  -->
+<!--  x:DataType="model:Panel"  -->
+<!--  x:Name="PanelView" />  -->
+<!--                             </DataTemplate> -->
+<!--                         </CarouselView.ItemTemplate> -->
+<!--                     </CarouselView> -->
+<!--                 </Grid> -->
+<!--    -->
+<!--  <IndicatorView  -->
+<!--  Grid.Column="0"  -->
+<!--  Grid.Row="1"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  IndicatorColor="DarkGrey"  -->
+<!--  IndicatorSize="10"  -->
+<!--  Margin="0,5,0,0"  -->
+<!--  SelectedIndicatorColor="{StaticResource Primary}"  -->
+<!--  VerticalOptions="Start"  -->
+<!--  x:Name="IndicatorView" />  -->
+<!--             </Grid> -->
+<!--         </Grid> -->
+<!--     </ContentPage.Content> -->
+<!-- </ContentPage> -->

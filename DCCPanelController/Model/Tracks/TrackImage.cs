@@ -90,10 +90,10 @@ public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSym
         return (ActiveImage.Image, trackInfo.ImageRotation);
     }
 
-    protected override IView GetViewForTrack(double gridSize, bool passthrough = false) {
+    protected override IView GetViewForTrack(double gridSize, bool? passthrough) {
         if (string.IsNullOrEmpty(TrackImageSource)) {
-            var defaultImage = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough);
-            return CreateViewFromImage(defaultImage.Image, defaultImage.Rotation, gridSize, passthrough);
+            var defaultImage = CreateImageView(TrackStyleImageEnum.Normal, TrackRotation, gridSize, passthrough ?? Passthrough);
+            return CreateViewFromImage(defaultImage.Image, defaultImage.Rotation, gridSize, passthrough ?? Passthrough);
         }
 
         var image = new Image {
@@ -103,7 +103,7 @@ public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSym
             ZIndex = Layer,
             Aspect = KeepAspectRatio ? Aspect.AspectFit : Aspect.Fill,
             RotationX = TrackRotation,
-            InputTransparent = passthrough,
+            InputTransparent = passthrough ?? Passthrough,
             WidthRequest = gridSize * MaxGridWidth,
             HeightRequest = gridSize * MaxGridHeight
         };
@@ -112,7 +112,7 @@ public partial class TrackImage(Panel? parent = null) : Track(parent), ITrackSym
             ? image
             : new Border {
                 Content = image,
-                InputTransparent = passthrough,
+                InputTransparent = passthrough ?? Passthrough,
                 RotationX = TrackRotation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
