@@ -94,7 +94,6 @@ public static class MauiProgram {
         // Remove the suffix (Page or View) from the name of the View
         var routeName = typeof(TView).Name.Replace("Page", "").Replace("View", "");
         Routing.RegisterRoute(routeName, typeof(TView));
-        Console.WriteLine($"Registered Route: '{routeName}' to '{typeof(TView).Name}'");
     }
 
     public static class ServiceHelper {

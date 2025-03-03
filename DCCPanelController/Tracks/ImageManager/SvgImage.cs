@@ -75,8 +75,6 @@ public partial class SvgImage : ObservableObject {
         foreach (var element in ImageManager.FindElements(elementName)) {
             var elementType = ImageManager.ElementType(element);
 
-            //Console.WriteLine($"Applying Style to type={elementType} name={elementName}: {attributeName}={attributeValue}");
-
             _ = elementType switch {
                 "rect"    => SetFillType(element, attributeName, attributeValue),
                 "polygon" => SetFillType(element, attributeName, attributeValue),

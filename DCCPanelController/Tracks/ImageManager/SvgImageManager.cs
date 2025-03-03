@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
@@ -82,7 +83,7 @@ public class SvgImageManager {
         using var stream = assembly.GetManifestResourceStream(_resourceName);
 
         if (stream == null) {
-            Console.WriteLine($"Could not find the image resource: '{_resourceName}'");
+            Debug.WriteLine($"Could not find the image resource: '{_resourceName}'");
             throw new FileNotFoundException("Resource not found.", _resourceName);
         }
 
@@ -93,7 +94,7 @@ public class SvgImageManager {
             var xDocument = XDocument.Parse(svgContent);
             return xDocument;
         } catch (Exception ex) {
-            Console.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
+            Debug.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
             throw new FileLoadException("Failed to load the SVG image.", ex);
         }
     }

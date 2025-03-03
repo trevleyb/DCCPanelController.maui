@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Model;
@@ -71,7 +72,6 @@ public partial class ControlPanelView : IDisposable {
     ///     which cause other issues if not cleared. Clearing makes it regenerate.
     /// </summary>
     public void Dispose() {
-        Console.WriteLine("ControlPanelView.Dispose Started");
         MainGrid.SizeChanged -= OnGridSizeChanged;
 
         if (Panel is { } panel) {
@@ -81,11 +81,9 @@ public partial class ControlPanelView : IDisposable {
                     track.TrackViewRef = null;
                 }
             } catch (Exception ex) {
-                Console.WriteLine($"ControlPanelView.Dispose Error: {ex.Message}");
+                Debug.WriteLine($"ControlPanelView.Dispose Error: {ex.Message}");
             }
         }
-
-        Console.WriteLine("ControlPanelView.Dispose Finished");
     }
 
     public event EventHandler<ITrack>? TrackPieceTapped;
@@ -517,14 +515,14 @@ public partial class ControlPanelView : IDisposable {
                             break;
 
                         default:
-                            Console.WriteLine($"ERROR: Invalid source: '{source}'");
+                            Debug.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
                         }
                     }
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine("ERROR: Error dropping item: " + ex.Message);
+            Debug.WriteLine("ERROR: Error dropping item: " + ex.Message);
         }
 
         _lastDragCol = 0;

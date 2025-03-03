@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 namespace DCCPanelController.Tracks.StyleManager;
 
 public record StyleImageRotation(string ImageSource, int TrackRotation, int ImageRotation);
@@ -24,7 +26,7 @@ public class StyleTrackImages {
             }
         }
 
-        Console.WriteLine($"Unable to find image for {imageEnumStyle} at {trackRotation}");
+        Debug.WriteLine($"Unable to find image for {imageEnumStyle} at {trackRotation}");
         return new StyleImageRotation("Unknown", 0, 0);
     }
 

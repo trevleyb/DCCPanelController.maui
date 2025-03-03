@@ -63,28 +63,22 @@ public static class TrackPointsValidator {
                 // If the neighbor is validly connected, add it to the queue for further processing
                 if (IsConnected(connectionType, neighborConnection)) {
                     if (currentTrack is ITrackTurnout turnout && connectionType is TrackConnectionsEnum.Diverging or TrackConnectionsEnum.Closed) {
-                        Console.WriteLine($"CHECK: {turnout.Name} {turnout.State}@{direction}={connectionType}={currentTrack.Connection(direction)} : {neighborTrack.Name} at {neighborTrack.X}, {neighborTrack.Y} ");
-                        if (turnout.State == TurnoutStateEnum.Unknown) AddTrackToPathList(queue,currentTrack,neighborTrack);
-                        if (turnout.State == TurnoutStateEnum.Closed && connectionType == TrackConnectionsEnum.Closed) AddTrackToPathList(queue,currentTrack,neighborTrack);
-                        if (turnout.State == TurnoutStateEnum.Thrown && connectionType == TrackConnectionsEnum.Diverging) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                        if (turnout.State == TurnoutStateEnum.Unknown) queue.Enqueue(neighborTrack);
+                        if (turnout.State == TurnoutStateEnum.Closed && connectionType == TrackConnectionsEnum.Closed) queue.Enqueue(neighborTrack);
+                        if (turnout.State == TurnoutStateEnum.Thrown && connectionType == TrackConnectionsEnum.Diverging) queue.Enqueue(neighborTrack);
                     } else {
                         if (neighborTrack is ITrackTurnout related && neighborConnection is TrackConnectionsEnum.Diverging or TrackConnectionsEnum.Closed) {
                             // If we are connected to a Turnout but it is thrown the wrong direction, don't enqueue it.  
-                            if (related.State == TurnoutStateEnum.Unknown) AddTrackToPathList(queue,currentTrack,neighborTrack);
-                            if (related.State == TurnoutStateEnum.Closed && neighborConnection == TrackConnectionsEnum.Closed) AddTrackToPathList(queue,currentTrack,neighborTrack);
-                            if (related.State == TurnoutStateEnum.Thrown && neighborConnection == TrackConnectionsEnum.Diverging) AddTrackToPathList(queue,currentTrack,neighborTrack);
+                            if (related.State == TurnoutStateEnum.Unknown) queue.Enqueue(neighborTrack);
+                            if (related.State == TurnoutStateEnum.Closed && neighborConnection == TrackConnectionsEnum.Closed) queue.Enqueue(neighborTrack);
+                            if (related.State == TurnoutStateEnum.Thrown && neighborConnection == TrackConnectionsEnum.Diverging) queue.Enqueue(neighborTrack);
                         } else {
-                            AddTrackToPathList(queue, currentTrack, neighborTrack);
+                            queue.Enqueue(neighborTrack);
                         }
                     }
                 } 
             }
         }
-    }
-
-    private static void AddTrackToPathList(Queue<ITrack> queue, ITrack current, ITrack neighbour) {
-        Console.WriteLine($"{current.Name} at {current.X}, {current.Y}  Enquing: {neighbour.Name} at {neighbour.X}, {neighbour.Y} ");
-        queue.Enqueue(neighbour);
     }
     
     public static bool[] GetConnectedTracksStatus(IEnumerable<ITrack> trackPieces, ITrack track, int cols, int rows) {

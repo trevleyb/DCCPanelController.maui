@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -56,7 +57,8 @@ public partial class Panel : ObservableObject {
             try {
                 _tracks = value;
             } catch (Exception ex) {
-                Console.WriteLine("Failed to set Tracks: " + ex.Message);
+                Debug.WriteLine("Failed to set Tracks on Panel.: " + ex.Message);
+                _tracks = new ObservableCollection<ITrack>();
             }
 
             SetParent(_tracks, this);
@@ -85,8 +87,6 @@ public partial class Panel : ObservableObject {
     // to be able to get the references to things like colors. 
     // -------------------------------------------------------------------------------
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        Console.WriteLine($"Collection Changed: {e.Action} {e.NewItems?.Count} {e.OldItems?.Count} {e.NewStartingIndex} {e.OldStartingIndex}");
-
         if (e.NewItems != null) {
             SetParent(e.NewItems as IList<ITrack>, this);
         }

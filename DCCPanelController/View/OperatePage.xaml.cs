@@ -33,14 +33,12 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void PanelView_OnTrackPieceChanged(object? sender, ITrack track) { }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrack e) {
-        Console.WriteLine($"In Operate Mode: Track {e.Name} was tapped");
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();
         }
     }
 
     private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
-        Console.WriteLine($"In Operate Mode: Track {track.Name} was double-tapped");
         if (track.Parent?.Tracks != null) {
             var tracks = track.Parent.Tracks;
             if (track.IsPath) {

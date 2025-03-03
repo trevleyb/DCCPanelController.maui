@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -182,7 +183,7 @@ public partial class PanelsViewerViewModel : BaseViewModel {
             Save();
             SelectPanel();
         } catch (Exception ex) {
-            Console.WriteLine($"Failed to delete panel {SelectedPanel.Name} due to: {ex.Message}");
+            Debug.WriteLine($"Failed to delete panel {SelectedPanel.Name} due to: {ex.Message}");
         }
 
         async Task<bool> AskUserToConfirmDelete(Panel panel) {

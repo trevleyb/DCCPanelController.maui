@@ -82,7 +82,6 @@ public partial class PanelsViewerPage {
     }
 
     private void ControlPanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
-        Console.WriteLine($"In Operate Mode: Track {track.Name} was double-tapped");
         if (track.Parent?.Tracks != null) {
             var tracks = track.Parent.Tracks;
             if (track.IsPath) {

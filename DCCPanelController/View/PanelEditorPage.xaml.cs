@@ -80,7 +80,6 @@ public partial class PanelEditorPage : ContentPage {
                 navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
 #endif
             await mainPage.Navigation.PushModalAsync(navigationPage);
-            Console.WriteLine("AFTER PANEL PAGE");
             PanelView?.RebuildGrid(true);
         }
         else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
@@ -91,7 +90,6 @@ public partial class PanelEditorPage : ContentPage {
                 // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
             }
             await this.ShowPopupAsync(popupPage);
-            Console.WriteLine("AFTER POPUP");
             PanelView?.RebuildGrid(true);
         }
         else {
@@ -120,7 +118,6 @@ public partial class PanelEditorPage : ContentPage {
                 #endif
                
                 await Navigation.PushModalAsync(navigationPage, true);
-                Console.WriteLine("AFTER PANEL PAGE");
                 PanelView?.RebuildGrid(true);
             }
             else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
@@ -131,7 +128,6 @@ public partial class PanelEditorPage : ContentPage {
                     // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
                 }
                 await this.ShowPopupAsync(popupPage);
-                Console.WriteLine("AFTER POPUP");
                 PanelView?.RebuildGrid(true);
             }
             else {

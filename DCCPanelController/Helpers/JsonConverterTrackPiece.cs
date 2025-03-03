@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DCCPanelController.Model.Tracks;
@@ -41,9 +42,8 @@ public class JsonConverterTrackPiece : JsonConverter<ITrack> {
             };
 
             if (obj == null) {
-                Console.WriteLine("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
+                Debug.WriteLine("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
             }
-
             return obj;
         }
     }

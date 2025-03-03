@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Helpers.Attributes;
 
@@ -34,7 +35,7 @@ public static class ObjectCloner {
 
                     return copiedArray;
                 } catch (Exception e) {
-                    Console.WriteLine($"Unable to clone '{type}': {e.Message}");
+                    Debug.WriteLine($"Unable to clone '{type}': {e.Message}");
                     throw;
                 }
             }
@@ -51,7 +52,7 @@ public static class ObjectCloner {
 
                 return copiedList;
             } catch (Exception e) {
-                Console.WriteLine($"Unable to clone '{type}': {e.Message}");
+                Debug.WriteLine($"Unable to clone '{type}': {e.Message}");
                 throw;
             }
         }
@@ -69,7 +70,7 @@ public static class ObjectCloner {
 
             return copy;
         } catch (Exception e) {
-            Console.WriteLine($"Unable to clone '{type}': {e.Message}");
+            Debug.WriteLine($"Unable to clone '{type}': {e.Message}");
             throw;
         }
     }
@@ -89,13 +90,10 @@ public static class ObjectCloner {
         var type = original.GetType();
 
         foreach (var property in type.GetProperties(BindingFlags.Public | BindingFlags.Instance)) {
-            Console.Write($"Updating:{property.Name} \t");
-
             if (property is { CanWrite: true, CanRead: true } && !Attribute.IsDefined(property, typeof(DoNotCloneAttribute))) {
                 var propertyType = property.PropertyType;
                 var originalValue = property.GetValue(original);
                 var modifiedValue = property.GetValue(modified);
-                Console.WriteLine($"Original: {originalValue} Modified: {modifiedValue}");
 
                 if (propertyType.IsArray) {
                     if (originalValue != null && modifiedValue != null) {
@@ -151,7 +149,7 @@ public static class ObjectCloner {
                     property.SetValue(original, modifiedValue);
                 }
             } else {
-                Console.WriteLine("Not a property");
+                Debug.WriteLine("Not a property");
             }
         }
     }

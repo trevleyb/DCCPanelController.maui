@@ -93,7 +93,6 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public void SaveSettings() {
-        Console.WriteLine("Saving... in viewModel");
         SettingsService?.Save();
     }
 

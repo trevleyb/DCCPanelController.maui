@@ -140,11 +140,6 @@ public partial class TrackText(Panel? parent = null) : Track(parent), ITrackSymb
             270 => Math.Min(maxWidth, y + 1),    // Vertical, upward
             _   => throw new ArgumentException("Rotation not supported. Must be 0, 90, 180, or 270 degrees.")
         };
-
-        if (cols - x < 0 || rows - y < 0) {
-            Console.WriteLine("Text too wide for grid");
-        }
-
         return maxWidth;
     }
 }

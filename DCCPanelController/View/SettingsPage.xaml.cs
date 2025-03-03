@@ -103,7 +103,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
 
         if (result is not null) {
-            Console.WriteLine("Uploading: " + result.FullPath);
             return result.FullPath;
         }
 

@@ -5,14 +5,11 @@ namespace DCCPanelController.Helpers.Converters;
 
 public class DynamicBindingConverter : IValueConverter {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        Console.WriteLine("Converting Binding");
-
         if (value is PanelPropertyViewModel viewModel && parameter is Binding bindingParam && !string.IsNullOrEmpty(bindingParam.Path)) {
             var bindingPath = bindingParam.Path;
             var property = viewModel.GetType().GetProperty(bindingPath);
             return property?.GetValue(viewModel) ?? "";
         }
-
         return "";
     }
 
