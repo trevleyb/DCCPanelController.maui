@@ -23,6 +23,7 @@ public class TrackPoints(Panel? parent = null, TrackStyleTypeEnum styleTypeEnum 
     
     protected override void Setup() {
         Layer = 5;
+        Passthrough = true; // Don't accept clicks on this item'
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Points", (0, 0), (90, 90), (180, 180), (270, 270));
     }

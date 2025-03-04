@@ -64,8 +64,8 @@ public abstract partial class Track : ObservableObject {
 
     protected abstract void Setup();
 
-    public IView TrackView(double gridSize, bool? passthrough) {
-        TrackViewRef = GetViewForTrack(gridSize, passthrough ?? Passthrough);
+    public IView TrackView(double gridSize) {
+        TrackViewRef = GetViewForTrack(gridSize, Passthrough);
         return TrackViewRef;
     }
 

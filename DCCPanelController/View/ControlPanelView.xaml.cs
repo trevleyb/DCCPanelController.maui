@@ -297,7 +297,7 @@ public partial class ControlPanelView : IDisposable {
                         var pointImage = new TrackPoints { X = track.X, Y = track.Y };
                         var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
                         pointImage.SetPoints(validPoints);
-                        AddDisplayItemToGrid(pointImage, true);
+                        AddDisplayItemToGrid(pointImage);
                     }
 
                     if (track.IsSelected) MarkTrackSelected(track);
@@ -319,8 +319,8 @@ public partial class ControlPanelView : IDisposable {
         }
     }
 
-    private void AddDisplayItemToGrid(ITrack track, bool transparentInput = false) {
-        var displayItem = track.TrackView(GridSize, transparentInput);
+    private void AddDisplayItemToGrid(ITrack track) {
+        var displayItem = track.TrackView(GridSize);
         track.PropertyChanged += OnTrackPieceChanged;
 
         // Setup trigger control to trap if we click on or select the track item
