@@ -63,9 +63,8 @@ public abstract partial class Track : ObservableObject {
     }
 
     protected abstract void Setup();
-
-    public IView TrackView(double gridSize) {
-        TrackViewRef = GetViewForTrack(gridSize, Passthrough);
+    public IView TrackView(double gridSize, bool? passthrough) {
+        TrackViewRef = GetViewForTrack(gridSize, passthrough ?? Passthrough);
         return TrackViewRef;
     }
 
@@ -93,8 +92,12 @@ public abstract partial class Track : ObservableObject {
         };
     }
 
-    public void TrackChanged() => OnPropertyChanged(nameof(TrackView));
-    
+    public void TrackChanged() {
+        TrackViewRef = null;    // Should cause it to redraw this item
+        Console.WriteLine($"Track Changed {GetType().Name}");
+        OnPropertyChanged(nameof(TrackView));
+    }
+
     public void RotateLeft() {
         TrackRotation -= RotationIncrement;
         if (TrackRotation < 0) TrackRotation += 360;

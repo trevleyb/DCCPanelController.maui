@@ -12,7 +12,7 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks;
 
-public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackButton, ITrackSymbol {
+public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackButton, ITrackSymbol, ITrackID {
     [ObservableProperty] [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
     private ButtonActions _buttonActions = [];
 

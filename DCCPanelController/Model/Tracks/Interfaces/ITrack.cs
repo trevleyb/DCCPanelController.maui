@@ -15,7 +15,7 @@ public interface ITrack {
     bool IsSelected { get; set; }
     bool IsPath { get; set; }
 
-    IView TrackView(double gridSize);
+    IView TrackView(double gridSize, bool? passthrough);
     IView? TrackViewRef { get; set; }
     Panel? Parent { get; set; }
 

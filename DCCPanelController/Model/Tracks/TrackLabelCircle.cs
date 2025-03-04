@@ -52,7 +52,6 @@ public partial class TrackLabelCircle(Panel? parent = null) : Track(parent), ITr
 
     protected override void Setup() {
         Layer = 4;
-        Scale = 2;
         Passthrough = true; // Don't accept clicks on this item
         AddImageSourceAndRotation(TrackStyleImageEnum.Symbol, "Label", (0, 0), (45, 45), (90, 90), (135, 135), (180, 180), (225, 225), (270, 270), (315, 315));
         AddImageSourceAndRotation(TrackStyleImageEnum.Normal, "Label", (0, 0), (45, 45), (90, 90), (135, 135), (180, 180), (225, 225), (270, 270), (315, 315));

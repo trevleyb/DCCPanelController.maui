@@ -12,7 +12,8 @@ namespace DCCPanelController.View;
 public partial class PanelEditorViewModel : BaseViewModel {
     private readonly NavigationService _navigationService = MauiProgram.ServiceHelper.GetService<NavigationService>();
     [ObservableProperty] private Panel _panel;
-
+    [ObservableProperty] private string _selectedTrackSymbol = "";
+    
     public PanelEditorViewModel(Panel panel, Action<bool> onCompleted) {
         Panel = panel;
         TrackSymbols = BuildTrackSymbols(Panel);

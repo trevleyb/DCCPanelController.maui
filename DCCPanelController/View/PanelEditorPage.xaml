@@ -13,6 +13,9 @@
     </Shell.BackButtonBehavior>
 
     <ContentPage.ToolbarItems>
+
+        <ToolbarItem Text="{Binding SelectedTrackSymbol}" x:Name="SelectedObjectName" />
+
         <ToolbarItem
             Clicked="ChangeEditMode"
             IconImageSource="move.png"

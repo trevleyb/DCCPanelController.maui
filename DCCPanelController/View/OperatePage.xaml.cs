@@ -19,8 +19,8 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     protected override void OnAppearing() {
         base.OnAppearing();
-        OnPropertyChanged(nameof(OperateViewModel.Panels));
-        OnPropertyChanged(nameof(OperateViewModel.SelectedPanel));
+        PanelCarousel.ItemsSource = null;
+        PanelCarousel.ItemsSource = _viewModel.Panels;
     }
 
     private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {

@@ -13,7 +13,7 @@ using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
-public abstract partial class TrackTurnout : Track, ITrackTurnout {
+public abstract partial class TrackTurnout : Track, ITrackTurnout, ITrackID {
     [ObservableProperty]
     [property: EditableString(Name = "DCC Address", Description = "Address or Turnout Reference", Order = 2)]
     private string _address = string.Empty;

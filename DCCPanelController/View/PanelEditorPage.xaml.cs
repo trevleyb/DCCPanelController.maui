@@ -13,6 +13,7 @@ using UIModalPresentationStyle = Microsoft.Maui.Controls.PlatformConfiguration.i
 namespace DCCPanelController.View;
 
 public partial class PanelEditorPage : ContentPage {
+    private const bool AllowMultipleSelection = false;
     private const double MinRightPaneWidth = 75;  // Minimum width constraint for the right pane
     private const double MaxRightPaneWidth = 250; // Maximum width constraint for the right pane
 
@@ -35,10 +36,40 @@ public partial class PanelEditorPage : ContentPage {
     }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrack track) {
-        if (track.IsSelected) {
-            PanelView.MarkTrackUnSelected(track);
-        } else {
+        if (AllowMultipleSelection == false && ViewModel.Panel.SelectedTracks.Count > 1) {
+            PanelView.ClearSelectedTracks();
             PanelView.MarkTrackSelected(track);
+        } else {
+            if (track.IsSelected) {
+                PanelView.MarkTrackUnSelected(track);
+            } else {
+                PanelView.MarkTrackSelected(track);
+            }
+        }
+
+        try {
+            switch (ViewModel.Panel.SelectedTracks.Count) {
+            case > 1: 
+                ViewModel.SelectedTrackSymbol = "Multiple Tracks";
+                break;
+            case  1: 
+                var id = "";
+                var selected = ViewModel.Panel.SelectedTracks.First();
+                if (selected is ITrackID selectedID) id = $" [{selectedID.ID}]";
+                ViewModel.SelectedTrackSymbol = $"{selected.Name}{id}";
+                break;
+            default: 
+                ViewModel.SelectedTrackSymbol = "";
+                break;
+            }
+            // ;
+            // >
+            // 1 => ViewModel.SelectedTrackSymbol"Multiple Tracks",
+            //     1   => $"{ViewModel.Panel.SelectedTracks[0].Name}",
+            //     _   => ""
+            // };
+        } catch {
+            ViewModel.SelectedTrackSymbol = "";
         }
     }
 

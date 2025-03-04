@@ -320,7 +320,10 @@ public partial class ControlPanelView : IDisposable {
     }
 
     private void AddDisplayItemToGrid(ITrack track) {
-        var displayItem = track.TrackView(GridSize);
+        // If we are in DesignMode, ensure transparency mode is OFF otherwise
+        // allow the system to use the passthrough/transparency mode of the object. 
+        // -----------------------------------------------------------------------
+        var displayItem = track.TrackView(GridSize, DesignMode ? false : null);
         track.PropertyChanged += OnTrackPieceChanged;
 
         // Setup trigger control to trap if we click on or select the track item
@@ -368,6 +371,7 @@ public partial class ControlPanelView : IDisposable {
         track.IsSelected = true;
     }
 
+
     public void MarkTrackUnSelected(ITrack track) {
         UnHighlightCell(track.X, track.Y);
         track.IsSelected = false;
@@ -390,7 +394,7 @@ public partial class ControlPanelView : IDisposable {
             var image = UIImage.FromFile("move.png");
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
-            imageView.Frame = new CGRect(0, 0, GridSize, GridSize);
+            imageView.Frame = new CGRect(0, 0, 0.5, 0.5);
             return new UIDragPreview(imageView);
         }
 
@@ -518,8 +522,12 @@ public partial class ControlPanelView : IDisposable {
                             Debug.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
                         }
-                    }
+                    } 
+                } else {
+                    Debug.WriteLine("ERROR: Item clashes with existing track");
                 }
+            } else {
+                Debug.WriteLine("ERROR: Invalid grid position");
             }
         } catch (Exception ex) {
             Debug.WriteLine("ERROR: Error dropping item: " + ex.Message);
