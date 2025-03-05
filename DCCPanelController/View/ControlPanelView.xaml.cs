@@ -6,6 +6,7 @@ using DCCPanelController.Model;
 using DCCPanelController.Model.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Tracks.Helpers;
+using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
 using CoreGraphics;
@@ -43,6 +44,8 @@ public partial class ControlPanelView : IDisposable {
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
 
+    #region 
+    
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
@@ -78,7 +81,7 @@ public partial class ControlPanelView : IDisposable {
             try {
                 foreach (var track in panel.Tracks) {
                     track.PropertyChanged -= OnTrackPieceChanged;
-                    track.TrackViewRef = null;
+                    //track.TrackViewRef = null;
                 }
             } catch (Exception ex) {
                 Debug.WriteLine($"ControlPanelView.Dispose Error: {ex.Message}");
@@ -95,7 +98,6 @@ public partial class ControlPanelView : IDisposable {
             if (e.PropertyName == nameof(track.TrackView)) {
                 InvalidateCell(track);
             }
-
             TrackPieceChanged?.Invoke(this, track);
         }
     }
@@ -164,6 +166,8 @@ public partial class ControlPanelView : IDisposable {
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
+        var stopwatch = Stopwatch.StartNew();
+
         SetScreenSize(MainGrid.Width, MainGrid.Height);
         DynamicGrid.WidthRequest = ViewWidth;
         DynamicGrid.HeightRequest = ViewHeight;
@@ -186,8 +190,12 @@ public partial class ControlPanelView : IDisposable {
 
         AddOutlineToGrid();
         AddTrackPiecesToGrid();
+        
+        stopwatch.Stop();
+        Console.WriteLine($"ControlPanelView.RebuildGrid: {stopwatch.ElapsedMilliseconds}ms");
     }
-
+#endregion
+    
     /// <summary>
     ///     Only highlight a cell if we are in Design Mode
     /// </summary>
@@ -307,15 +315,21 @@ public partial class ControlPanelView : IDisposable {
     }
 
     public void InvalidateCell(ITrack track) {
-        RemoveDisplayItemFromGrid(track);
-        AddDisplayItemToGrid(track);
+        // TODO: We should not need to do this if the image has not actually 
+        //       changed. This is slow...
+        track.InvalidateView();
+                
+        //RemoveDisplayItemFromGrid(track);
+        //AddDisplayItemToGrid(track);
     }
 
     private void RemoveDisplayItemFromGrid(ITrack track) {
-        if (track.TrackViewRef is { } view) {
+        Console.WriteLine($"Looking to Remove Track: {track.UniqueID}");
+        var tracks = DynamicGrid.Children.Where(child => (child as Microsoft.Maui.Controls.View)?.ClassId == track.UniqueID.ToString()).ToList();
+        foreach (var view in tracks) {
+            Console.WriteLine($"Removing Track: {track.UniqueID}");
             DynamicGrid.Children.Remove(view);
             track.PropertyChanged -= OnTrackPieceChanged;
-            track.TrackViewRef = null;
         }
     }
 
@@ -326,10 +340,13 @@ public partial class ControlPanelView : IDisposable {
         var displayItem = track.TrackView(GridSize, DesignMode ? false : null);
         track.PropertyChanged += OnTrackPieceChanged;
 
+        Console.WriteLine($"Adding Track: {track.UniqueID}");
+
         // Setup trigger control to trap if we click on or select the track item
         // -------------------------------------------------------------------------------------------
         // Create TapGestureRecognizer
         if (displayItem is Microsoft.Maui.Controls.View view) {
+            view.ClassId = track.UniqueID.ToString();
             var tapGesture = new TapGestureRecognizer {
                 NumberOfTapsRequired = 1
             };
@@ -350,6 +367,8 @@ public partial class ControlPanelView : IDisposable {
                 dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
                 view.GestureRecognizers.Add(dragGesture);
             }
+        } else {
+            Console.WriteLine("ERROR: DisplayItem is not a View but is of type: " + displayItem.GetType().Name);
         }
 
         // Add the Track DisplayImage to the appropriate grid position
@@ -363,6 +382,7 @@ public partial class ControlPanelView : IDisposable {
     // then clear all the selected tracks.
     // -------------------------------------------------------------------------
     private void TapGestureRecognizer_OnTapped(object? sender, TappedEventArgs e) {
+        Console.WriteLine("ControlPanelView.TapGestureRecognizer_OnTapped");
         if (DesignMode) ClearSelectedTracks();
     }
 
@@ -649,31 +669,4 @@ public enum EditModeEnum {
     Move,
     Copy,
     Size
-}
-
-/// <summary>
-///     This is a helper class that draws the Grid Lines on the Page.
-/// </summary>
-/// <param name="rows">Number of rows to Draw</param>
-/// <param name="columns">Number of cols to Draw</param>
-internal class GridLinesDrawable(int rows, int columns, Color? gridColor = null, float? lineWidth = null, float? gridWidth = null) : IDrawable {
-    private Color GridColor { get; } = gridColor ?? Colors.DarkGrey;
-    private float LineWidth { get; } = lineWidth ?? 0.5f;
-    private float GridWidth { get; } = gridWidth ?? 5.0f;
-
-    public void Draw(ICanvas canvas, RectF dirtyRect) {
-        var cellWidth = dirtyRect.Width / columns;
-        var cellHeight = dirtyRect.Height / rows;
-        canvas.StrokeColor = GridColor;
-
-        for (var i = 0; i <= rows; i++) {
-            canvas.StrokeSize = i == 0 || i == rows ? GridWidth : LineWidth;
-            canvas.DrawLine(0, i * cellHeight, dirtyRect.Width, i * cellHeight);
-        }
-
-        for (var j = 0; j <= columns; j++) {
-            canvas.StrokeSize = j == 0 || j == columns ? GridWidth : LineWidth;
-            canvas.DrawLine(j * cellWidth, 0, j * cellWidth, dirtyRect.Height);
-        }
-    }
 }

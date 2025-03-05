@@ -22,8 +22,6 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout, ITrackID {
     [property: EditableActions(ActionsContext = ActionsContext.Turnout, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 11)]
     private ButtonActions _buttonActions = [];
 
-    private IAudioPlayer? _clickSoundPlayer;
-
     [ObservableProperty]
     [property: EditableString(Name = "Turnout ID", Description = "Turnout ID", Order = 1)]
     private string _iD = string.Empty;
@@ -89,12 +87,7 @@ public abstract partial class TrackTurnout : Track, ITrackTurnout, ITrackID {
     }
 
     public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result);
-        }
-        _clickSoundPlayer?.Play();
-
+        ClickSound(ClickSoundTypeEnum.Turnout);
         TrackPointsValidator.ClearTrackPaths(this?.Parent?.Tracks);
         var state = State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,

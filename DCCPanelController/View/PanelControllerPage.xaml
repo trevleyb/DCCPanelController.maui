@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8" ?>
 
 <ContentPage
-    BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-    Title="{Binding SelectedPanel.Title, FallbackValue='DCC Panel Controller'}"
-    x:Class="DCCPanelController.View.OperatePage"
-    x:DataType="view:OperateViewModel"
+    Title="DCC Panel Controller"
+    x:Class="DCCPanelController.View.PanelControllerPage"
+    x:DataType="view:PanelControllerPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:model="clr-namespace:DCCPanelController.Model"
@@ -18,95 +17,74 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="IncZoom" IconImageSource="zoom_in.png" />
+        <ToolbarItem Clicked="DecZoom" IconImageSource="zoom_out.png" />
+        <ToolbarItem Text="{Binding ZoomFactor}" />
+        <ToolbarItem Clicked="Refresh" IconImageSource="repeat.png" />
         <ToolbarItem
-            Clicked="ToggleGrid"
-            IconImageSource="grid_on.png"
-            x:Name="ToggleGridToolbar" />
-
-        <ToolbarItem
-            Clicked="HideUnHideTabBar"
+            Clicked="ShowGrid"
             IconImageSource="maximize_2.png"
             Text="Hide"
             ToolTipProperties.Text="Hide Bottom Tab Bar"
             x:Name="HideUnHide" />
-        <ToolbarItem
-            Clicked="ConnectButton_OnClicked"
-            IconImageSource="circle_white.png"
-            x:Name="ConnectToolbarButton" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid RowDefinitions="*,Auto">
-            <CarouselView
-                BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-                CurrentItem="{Binding SelectedPanel}"
-                Grid.Column="0"
-                Grid.Row="0"
-                IndicatorView="IndicatorView"
-                x:Name="PanelCarousel">
-
-                <CarouselView.ItemsSource>
-                    <Binding Path="Panels" />
-                </CarouselView.ItemsSource>
-
-                <CarouselView.EmptyView>
-                    <ContentView>
-                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                            <Label
-                                FontAttributes="Bold"
-                                HorizontalOptions="Center"
-                                Margin="0,20,0,20"
-                                Text="Welcome to the DCC Model Layout Panel Controller"
-                                VerticalOptions="Center" />
-                            <HorizontalStackLayout
-                                HorizontalOptions="Center"
-                                Margin="20"
-                                Padding="20"
-                                VerticalOptions="End">
-                                <Button
-                                    Clicked="ButtonInstructions_OnClicked"
-                                    Margin="10,10,10,10"
-                                    Style="{StaticResource ButtonOutline}"
-                                    Text="Instructions" />
-                                <Button
-                                    Clicked="ButtonAbout_OnClicked"
-                                    Margin="10,10,10,10"
-                                    Style="{StaticResource ButtonOutline}"
-                                    Text="About" />
-                            </HorizontalStackLayout>
-                        </StackLayout>
-                    </ContentView>
-                </CarouselView.EmptyView>
-
-                <CarouselView.ItemTemplate>
-                    <DataTemplate>
-                        <view:ControlPanelView
-                            BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=BackgroundColor}"
-                            HorizontalOptions="Fill"
-                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"
-                            ShowGrid="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=ShowGrid}"
-                            TrackPieceChanged="PanelView_OnTrackPieceChanged"
-                            TrackPieceDoubleTapped="PanelView_OnTrackPieceDoubleTapped"
-                            TrackPieceTapped="PanelView_OnTrackPieceTapped"
-                            VerticalOptions="Fill"
-                            x:DataType="model:Panel"
-                            x:Name="PanelView" />
-                    </DataTemplate>
-                </CarouselView.ItemTemplate>
-            </CarouselView>
-
-            <IndicatorView
-                Grid.Column="0"
-                Grid.Row="1"
-                HorizontalOptions="Center"
-                IndicatorColor="DarkGrey"
-                IndicatorSize="10"
-                Margin="0,5,0,0"
-                SelectedIndicatorColor="{StaticResource Primary}"
-                VerticalOptions="Start"
-                x:Name="IndicatorView" />
-
+        <Grid>
+            <view:PanelControllerView
+                HorizontalOptions="Fill"
+                Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelControllerPageViewModel}}, x:DataType=view:PanelControllerPageViewModel, Path=SelectedPanel}"
+                ShowGrid="{Binding Source={RelativeSource AncestorType={x:Type view:PanelControllerPageViewModel}}, x:DataType=view:PanelControllerPageViewModel, Path=ShowGrid}"
+                TrackPieceDoubleTapped="TrackPieceDoubleTapped"
+                TrackPieceTapped="TrackPieceTapped"
+                VerticalOptions="Fill"
+                ZoomFactor="{Binding Source={RelativeSource AncestorType={x:Type view:PanelControllerPageViewModel}}, x:DataType=view:PanelControllerPageViewModel, Path=ZoomFactor}"
+                x:DataType="model:Panel"
+                x:Name="PanelView" />
         </Grid>
+
+
+
+        <!-- <Grid RowDefinitions="*,Auto"> -->
+        <!--  <CarouselView  -->
+        <!--  CurrentItem="{Binding SelectedPanel}"  -->
+        <!--  Grid.Column="0"  -->
+        <!--  Grid.Row="0"  -->
+        <!--  IndicatorView="IndicatorView"  -->
+        <!--  IsBounceEnabled="False"  -->
+        <!--  IsScrollAnimated="False"  -->
+        <!--  x:Name="PanelCarousel">  -->
+        <!--    -->
+        <!--         <CarouselView.ItemsSource> -->
+        <!--             <Binding Path="Panels" /> -->
+        <!--         </CarouselView.ItemsSource> -->
+        <!--    -->
+        <!--         <CarouselView.ItemTemplate> -->
+        <!--             <DataTemplate> -->
+        <!--  <view:PanelControllerView  -->
+        <!--  HorizontalOptions="Fill"  -->
+        <!--  Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelControllerPageViewModel}}, x:DataType=view:PanelControllerPageViewModel, Path=SelectedPanel}"  -->
+        <!--  ShowGrid="{Binding Source={RelativeSource AncestorType={x:Type view:PanelControllerPageViewModel}}, x:DataType=view:PanelControllerPageViewModel, Path=ShowGrid}"  -->
+        <!--  VerticalOptions="Fill"  -->
+        <!--  ZoomFactor="{Binding Source={RelativeSource AncestorType={x:Type view:PanelControllerPageViewModel}}, x:DataType=view:PanelControllerPageViewModel, Path=ZoomFactor}"  -->
+        <!--  x:DataType="model:Panel"  -->
+        <!--  x:Name="PanelView" />  -->
+        <!--             </DataTemplate> -->
+        <!--         </CarouselView.ItemTemplate> -->
+        <!--     </CarouselView> -->
+        <!--    -->
+        <!--  <IndicatorView  -->
+        <!--  Grid.Column="0"  -->
+        <!--  Grid.Row="1"  -->
+        <!--  HorizontalOptions="Center"  -->
+        <!--  IndicatorColor="DarkGrey"  -->
+        <!--  IndicatorSize="10"  -->
+        <!--  Margin="0,5,0,0"  -->
+        <!--  SelectedIndicatorColor="{StaticResource Primary}"  -->
+        <!--  VerticalOptions="Start"  -->
+        <!--  x:Name="IndicatorView" />  -->
+        <!--    -->
+        <!-- </Grid> -->
     </ContentPage.Content>
 </ContentPage>
 

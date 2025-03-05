@@ -16,8 +16,6 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     [ObservableProperty] [property: EditableActions(ActionsContext = ActionsContext.Button, Group = "Actions", Description = "Buttons to set when this turnout changes", Order = 10)]
     private ButtonActions _buttonActions = [];
 
-    private IAudioPlayer? _clickSoundPlayer;
-
     [ObservableProperty]
     [property: EditableString(Name = "Button ID", Description = "Unique Identifier for this Button", Order = 1)]
     private string _iD = "";
@@ -46,13 +44,8 @@ public partial class TrackButton(Panel? parent = null) : Track(parent), ITrackBu
     public string Name => "Button";
 
     public void Clicked() {
-        if (_clickSoundPlayer is null) {
-            var audioManager = AudioManager.Current;
-            _clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result);
-        }
-
-        _clickSoundPlayer?.Play();
-
+        ClickSound(ClickSoundTypeEnum.Button);
+        
         // Toggle the state if the button has been pressed
         // --------------------------------------------------------
         var state = State switch {

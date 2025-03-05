@@ -42,7 +42,7 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-        <LangVersion>13</LangVersion>
+        <LangVersion>preview</LangVersion>
         <Title>DCC Panel Controller</Title>
         <Authors>Trevor Leybourne</Authors>
         <Company>trevleyb</Company>
@@ -230,6 +230,9 @@
         <MauiXaml Update="View\PropertyPages\DynamicPropertyPopup.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\PanelControllerPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -311,6 +314,18 @@
           <DependentUpon>DynamicPropertyPopup.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\PanelControllerPage.xaml.cs">
+          <DependentUpon>PanelControllerPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\PanelControllerPageViewModel.cs">
+          <DependentUpon>PanelControllerPage.xaml</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Model\DataModel\" />
+      <Folder Include="Model\ViewModel\" />
     </ItemGroup>
 
 </Project>

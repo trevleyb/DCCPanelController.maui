@@ -30,15 +30,19 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         }
     }
 
-    private void PanelView_OnTrackPieceChanged(object? sender, ITrack track) { }
+    private void PanelView_OnTrackPieceChanged(object? sender, ITrack track) {
+        Console.WriteLine($"OperatePage: Track Piece Changed: {track.Name}");
+    }
 
     private void PanelView_OnTrackPieceTapped(object? sender, ITrack e) {
+        Console.WriteLine($"OperatePage: Track Piece Tapped: {e.Name}");
         if (e is ITrackInteractive trackPieceTapped) {
             trackPieceTapped.Clicked();
         }
     }
 
     private void PanelView_OnTrackPieceDoubleTapped(object? sender, ITrack track) {
+        Console.WriteLine($"OperatePage: Track Piece Double-Tapped: {track.Name}");
         if (track.Parent?.Tracks != null) {
             var tracks = track.Parent.Tracks;
             if (track.IsPath) {
@@ -92,4 +96,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         //OnPropertyChanged(nameof(ConnectToolbarButton));
     }
 
+    private void ToggleGrid(object? sender, EventArgs e) {
+        _viewModel.ShowGrid = !_viewModel.ShowGrid;
+    }
 }

@@ -16,6 +16,10 @@
             Icon="control.png"
             Title="Operate" />
         <ShellContent
+            ContentTemplate="{DataTemplate view:PanelControllerPage}"
+            Icon="control.png"
+            Title="Operate" />
+        <ShellContent
             ContentTemplate="{DataTemplate view:PanelsViewerPage}"
             Icon="panels.png"
             Title="Panels" />

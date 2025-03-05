@@ -151,7 +151,7 @@ public partial class PanelEditorPage : ContentPage {
                
                 await Navigation.PushModalAsync(navigationPage, true);
                 //PanelView?.RebuildGrid(true);
-                track.TrackChanged();
+                track.InvalidateView();
             }
             else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                      DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
@@ -161,7 +161,7 @@ public partial class PanelEditorPage : ContentPage {
                     // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
                 }
                 await this.ShowPopupAsync(popupPage);
-                track.TrackChanged();
+                track.InvalidateView();
             }
             else {
                 Debug.WriteLine("Unhandled platform, no UI launched.");

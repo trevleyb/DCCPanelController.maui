@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -5,52 +6,43 @@ using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.ImageManager;
 using DCCPanelController.Tracks.StyleManager;
+using Microsoft.Maui.Controls.Shapes;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.Model.Tracks.Base;
 
 public abstract partial class Track : ObservableObject {
+
+    public Guid UniqueID { get; set; } = Guid.NewGuid();
+    public TrackConnectionsEnum Connection(int direction) => ActiveImage?.Connections.ConnectionPointsRotatedForDirection(direction,ImageRotation) ?? TrackConnectionsEnum.None;
+    private IView? _trackViewRef;
+
+    [JsonIgnore] public Panel? Parent { get; set; }
     [JsonIgnore] protected double Scale = 1.5;
     [JsonIgnore] protected bool Passthrough = false;
-
     [JsonIgnore] protected readonly StyleTrackImages StyleTrackImages = new();
+
+    [ObservableProperty] [property: JsonIgnore] private bool _isSelected;                      // Used in Design Mode. Is this track selected? 
+    [ObservableProperty] [property: JsonIgnore] private bool _isPath;     // Used in Design Mode. Is this track selected? 
+    [ObservableProperty] [property: JsonIgnore] private bool _isOccupied; // Used in Design Mode. Is this track selected? 
+
+    [ObservableProperty] private int _x;          // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _y;          // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _z = 1;      // What position (layer) should this exist at 
+    [ObservableProperty] private int _layer = 2;  // What layer is this on? Higher sits on top of lower
+    [ObservableProperty] private int _width = 1;  // What width is this component?
     [ObservableProperty] private int _height = 1; // What Height is this component? 
     [ObservableProperty] private int _imageRotation;
-
-    [ObservableProperty]
-    [property: JsonIgnore] private bool _isSelected; // Used in Design Mode. Is this track selected? 
-
-    [ObservableProperty] private int _layer = 2;     // What layer is this on? Higher sits on top of lower
     [ObservableProperty] private int _trackRotation;
-    [ObservableProperty] private int _width = 1; // What width is this component?
-
-    [ObservableProperty] private int _x;     // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _y;     // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _z = 1; // What position (layer) should this exist at 
 
     [JsonIgnore] protected SvgImage? ActiveImage = null;
     [JsonIgnore] protected int RotationIncrement = 45;
+    [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
 
     protected Track(Panel? parent = null) {
         Initialise();
-        OnPropertyChanged(nameof(TrackView));
         if (parent != null) Parent = parent;
     }
-
-    private bool _isPath; 
-    public bool IsPath {
-        get => _isPath;
-        set {
-            _isPath = value;
-            OnPropertyChanged(nameof(TrackView));
-        }
-    } 
-    
-    [JsonIgnore] public Panel? Parent { get; set; }
-    [JsonIgnore] public IView? TrackViewRef { get; set; }
-    [JsonIgnore] public ImageSource SymbolView => GetViewForSymbol(48) ?? throw new ApplicationException("Unable to set the symbol");
-    
-    public Guid UniqueID { get; set; } = Guid.NewGuid();
-    public TrackConnectionsEnum  Connection(int direction) => ActiveImage?.Connections.ConnectionPointsRotatedForDirection(direction,ImageRotation) ?? TrackConnectionsEnum.None;
 
     // This is needed for the JSON 
     public virtual string TrackType {
@@ -63,15 +55,15 @@ public abstract partial class Track : ObservableObject {
     }
 
     protected abstract void Setup();
-    public IView TrackView(double gridSize, bool? passthrough) {
-        TrackViewRef = GetViewForTrack(gridSize, passthrough ?? Passthrough);
-        return TrackViewRef;
-    }
 
-    // This routine can be overriden by other routines up the chain. It is to work out how the track
-    // piece should be displayed and then to create a common IView that can be shown on the screen. Most
-    // track pieces are images, but some may not be such as a Text Block.
-    // ---------------------------------------------------------------------------------------------------------
+    public void InvalidateView() {
+        Console.WriteLine($"Track InvalidateView: {GetType().Name}");
+        _trackViewRef = null;   
+    }
+    
+    public IView TrackView(double gridSize, bool? passthrough) {
+        return _trackViewRef ??= GetViewForTrack(gridSize, passthrough ?? Passthrough);
+    }
     protected abstract IView GetViewForTrack(double gridSize, bool? passthrough);
     protected abstract ImageSource GetViewForSymbol(double gridSize);
 
@@ -92,22 +84,30 @@ public abstract partial class Track : ObservableObject {
         };
     }
 
-    public void TrackChanged() {
-        TrackViewRef = null;    // Should cause it to redraw this item
-        Console.WriteLine($"Track Changed {GetType().Name}");
-        OnPropertyChanged(nameof(TrackView));
+    private IAudioPlayer? _clickSoundPlayer;
+    protected void ClickSound(ClickSoundTypeEnum clickSoundType = ClickSoundTypeEnum.Turnout) {
+        if (_clickSoundPlayer is null) {
+            var audioManager = AudioManager.Current;
+            _clickSoundPlayer = clickSoundType switch {
+                ClickSoundTypeEnum.Turnout => audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Fast.m4a").Result),
+                ClickSoundTypeEnum.Button  => audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result),
+                _                          => audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync("Button_Click_Mouse.m4a").Result),
+            };
+            _clickSoundPlayer?.Play();
+            _clickSoundPlayer = null;
+        }
     }
 
     public void RotateLeft() {
         TrackRotation -= RotationIncrement;
         if (TrackRotation < 0) TrackRotation += 360;
-        TrackChanged();
+        InvalidateView();
     }
 
     public void RotateRight() {
         TrackRotation += RotationIncrement;
         if (TrackRotation > 360) TrackRotation -= 360;
-        TrackChanged();
+        InvalidateView();
     }
 
     protected void AddImageSourceAndRotation(TrackStyleImageEnum trackType, string imageSource, params (int TrackRotation, int ImageRotation)[] rotations) {
@@ -136,4 +136,19 @@ public abstract partial class Track : ObservableObject {
             Parent = parent
         };
     }
+}
+
+public enum TrackHighlightFlag  {
+    None,
+    Selected,
+    Error,
+    Path,
+    Occupied,
+    DragInvalid,
+    DropValid
+}
+
+public enum ClickSoundTypeEnum {
+    Turnout,
+    Button
 }
