@@ -1,8 +1,10 @@
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCWithrottleClient.ServiceHelper;
 
-namespace DCCPanelController.Model;
+namespace DCCPanelController.Model.DataModel;
 
+[JsonSerializable(typeof(WiServer))]
 public partial class WiServer(string? name = null, string? ipAddress = null, int? port = 12090) : ObservableObject {
     [ObservableProperty] private string _ipAddress = ipAddress ?? ServiceHelper.GetLocalIPAddress();
     [ObservableProperty] private string _name = name ?? "WiThrottle";
@@ -10,6 +12,3 @@ public partial class WiServer(string? name = null, string? ipAddress = null, int
 
     public WiServer() : this(string.Empty, string.Empty) { }
 }
-
-//[JsonSerializable(typeof(WiServer))]
-//internal sealed partial class WiServerStateContext : JsonSerializerContext { }

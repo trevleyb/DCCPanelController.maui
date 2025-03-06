@@ -1,7 +1,10 @@
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.DataModel.Tracks;
 
-namespace DCCPanelController.Model;
+namespace DCCPanelController.Model.DataModel;
 
+[JsonSerializable(typeof(Route))]
 public partial class Route : ObservableObject {
     [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
@@ -13,15 +16,3 @@ public partial class Route : ObservableObject {
     /// </summary>
     public Route() { }
 }
-
-public enum RouteStateEnum {
-    Active,
-    Inactive,
-    Unknown
-}
-
-//[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
-//[JsonSerializable(typeof(List<Route>))]
-//internal sealed partial class RouteContext : JsonSerializerContext { }
-//
-//[JsonConverter(typeof(JsonStringEnumConverter<RouteStateEnum>))]

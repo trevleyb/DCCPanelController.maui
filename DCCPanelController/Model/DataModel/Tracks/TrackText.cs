@@ -19,4 +19,20 @@ public partial class TrackText : Track {
     [ObservableProperty] private FontWeight _fontWeight = FontWeight.Regular;
     [ObservableProperty] private TextAlignment _horizontalJustification = TextAlignment.Center;
     [ObservableProperty] private TextAlignment _verticalJustification = TextAlignment.Center;
+    
+    public TrackText() {}
+
+    public TrackText(TrackText track) : base(track) {
+        BorderRadius = track.BorderRadius;
+        BorderWidth = track.BorderWidth;
+        TextColor = track.TextColor;
+        BorderColor = track.BorderColor;
+        BackgroundColor = track.BackgroundColor;
+        FontSize = track.FontSize;
+        FontWeight = track.FontWeight;
+        Label = track.Label;
+        HorizontalJustification = track.HorizontalJustification;
+        VerticalJustification = track.VerticalJustification;
+
+    }
 }

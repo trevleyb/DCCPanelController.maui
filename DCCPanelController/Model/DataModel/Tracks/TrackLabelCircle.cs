@@ -17,4 +17,17 @@ public partial class TrackLabelCircle : Track {
     [ObservableProperty] private Color _backgroundColor = Colors.Transparent;
     [ObservableProperty] private FontWeight _fontWeight = FontWeight.Regular;
     [ObservableProperty] private double _opacity = 1;
+    
+    public TrackLabelCircle() {}
+    public TrackLabelCircle(TrackLabelCircle track) : base( track) {
+        BorderRadius = track.BorderRadius;
+        BorderWidth = track.BorderWidth;
+        BorderColor = track.BorderColor;
+        BackgroundColor = track.BackgroundColor;
+        FontSize = track.FontSize;
+        FontWeight = track.FontWeight;
+        Label = track.Label;
+        TextColor = track.TextColor;
+        Opacity = track.Opacity;
+    }
 }

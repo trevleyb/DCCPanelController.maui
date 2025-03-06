@@ -9,5 +9,14 @@ public partial class TrackImage : Track {
     [ObservableProperty] private Color _borderColor = Colors.Transparent;
     [ObservableProperty] private Aspect _aspectRatio = Aspect.AspectFit;
     [ObservableProperty] private string _image = string.Empty;
+
+    public TrackImage() {}
+    public TrackImage(TrackImage track) : base(track) {
+        BorderRadius = track.BorderRadius;
+        BorderWidth = track.BorderWidth;
+        BorderColor = track.BorderColor;
+        AspectRatio = track.AspectRatio;
+        Image = track.Image;
+    }
 }
  

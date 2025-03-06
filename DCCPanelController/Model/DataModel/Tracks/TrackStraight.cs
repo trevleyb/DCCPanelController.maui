@@ -6,4 +6,6 @@ namespace DCCPanelController.Model.DataModel.Tracks;
 
 public partial class TrackStraight : Track {
     public override string Name => "Straight Track";
+    public TrackStraight() {}
+    public TrackStraight(TrackStraight track) : base(track) {}
 }

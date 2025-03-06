@@ -5,40 +5,44 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.DataModel.Helpers;
+using DCCPanelController.Model.DataModel.Tracks;
 using DCCPanelController.Model.Tracks.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Tracks.Helpers;
 
-namespace DCCPanelController.Model;
+namespace DCCPanelController.Model.DataModel;
 
 /// <summary>
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
+[JsonSerializable(typeof(Panel))]
 public partial class Panel : ObservableObject {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
-    [ObservableProperty] private string _description = string.Empty;
-    [ObservableProperty] private string _name = string.Empty;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
-    [ObservableProperty] private int _sortOrder;
-
-    private ObservableCollection<ITrack> _tracks = [];
+    public string PanelID { get; init; } = Guid.NewGuid().ToString();
 
     [JsonConstructor]
     private Panel() {
         ResetToDefaults();
+        Tracks.CollectionChanged += TracksOnCollectionChanged;
     }
+    public Panel(Panels panels) : this() { Panels = panels; }
 
-    public Panel(Panels panels) : this() {
-        SetPanels(panels);
-    }
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _name = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+    [ObservableProperty] private int _sortOrder;
+    [ObservableProperty] private ObservableCollection<Track> _tracks = [];
 
-    [JsonIgnore] public Panels Panels { get; private set; } = [];
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public List<ITrack> SelectedTracks => _tracks.Where(t => t.IsSelected).ToList() ?? [];
-    [JsonIgnore] public List<ITrackTurnout> AllNamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
-    [JsonIgnore] public List<ITrackButton> AllNamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
-    [JsonIgnore] public List<ITrackTurnout> NamedTurnouts => Tracks.OfType<ITrackTurnout>().Where(trk => !string.IsNullOrWhiteSpace(trk.ID)).ToList() ?? [];
-    [JsonIgnore] public List<ITrackButton> NamedButtons => Tracks.OfType<ITrackButton>().Where(trk => !string.IsNullOrWhiteSpace(trk.ID)).ToList() ?? [];
+    [JsonIgnore] public List<Track> SelectedTracks => Tracks.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public List<TrackTurnout>  NamedTurnouts => Panels?.SelectMany(p => p.NamedTurnouts).ToList() ?? [];
+    [JsonIgnore] public List<TrackButton>   NamedButtons => Panels?.SelectMany(p => p.NamedButtons).ToList() ?? [];
+    [JsonIgnore] public Panels Panels { get; set; } = [];
+
+    public TrackTurnout? GetTurnout(string id) => NamedTurnouts.FirstOrDefault(t => t.Id == id);
+    public TrackButton? GetButton(string id) => NamedButtons.FirstOrDefault(t => t.Id == id);
+    public Track? GetTrackAtPosition(int x, int y) => Tracks.FirstOrDefault(trk => trk.X == x && trk.Y == y);
 
     public string Title {
         get {
@@ -49,63 +53,17 @@ public partial class Panel : ObservableObject {
         }
     }
 
-    public string Id { get; init; } = Guid.NewGuid().ToString();
-
-    public ObservableCollection<ITrack> Tracks {
-        get => _tracks;
-        init {
-            try {
-                _tracks = value;
-            } catch (Exception ex) {
-                Debug.WriteLine("Failed to set Tracks on Panel.: " + ex.Message);
-                _tracks = new ObservableCollection<ITrack>();
-            }
-
-            SetParent(_tracks, this);
-            OnPropertyChanged();
-        }
-    }
-
-    public ITrackTurnout? GetTurnout(string id) {
-        return AllNamedTurnouts.FirstOrDefault(t => t.ID == id);
-    }
-
-    public ITrackButton? GetButton(string id) {
-        return AllNamedButtons.FirstOrDefault(t => t.ID == id);
-    }
-
-    public ITrack? GetTrackAtPosition(int x, int y) {
-        return _tracks.FirstOrDefault(trk => trk.X == x && trk.Y == y);
-    }
-
-    public void SetPanels(Panels panels) {
-        Panels = panels;
-    }
-
     // When we add an item to the collection, make sure the Panels
     // property is set so we know where this item lives. We need this
     // to be able to get the references to things like colors. 
     // -------------------------------------------------------------------------------
     private void TracksOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        if (e.NewItems != null) {
-            SetParent(e.NewItems as IList<ITrack>, this);
-        }
-    }
-
-    public ITrack AddTrack(ITrack track) {
-        track.Parent = this;
-        Tracks.Add(track);
-        return track;
-    }
-
-    public static void SetParent(IList<ITrack>? tracks, Panel parent) {
-        if (tracks is null) return;
-        foreach (var track in tracks) track.Parent = parent;
+        if (e.NewItems is {} items) foreach (Track track in items) track.Parent = this;
     }
 
     public bool HasChanged(Panel original, Panel modified) {
-        var originalJson = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
-        var modifiedJson = JsonSerializer.Serialize(this, SettingsService.PanelSerializerOptions);
+        var originalJson = JsonSerializer.Serialize(this, JsonOptions.Options);
+        var modifiedJson = JsonSerializer.Serialize(this, JsonOptions.Options);
         var originalHash = originalJson.GetHashCode();
         var modifiedHash = modifiedJson.GetHashCode();
         return originalJson.GetHashCode() != modifiedJson.GetHashCode();
@@ -127,7 +85,6 @@ public partial class Panel : ObservableObject {
                 b = a % b;
                 a = temp;
             }
-
             return a;
         }
     }
@@ -138,36 +95,21 @@ public partial class Panel : ObservableObject {
         return panel ?? throw new Exception("Failed to clone panel");
     }
 
-    public string NextTurnoutID() {
-        return GetNextName(AllNamedTurnouts, t => t.ID, "TRN");
-    }
-
-    public string NextButtonID() {
-        return GetNextName(AllNamedButtons, t => t.ID, "BTN");
-    }
-
+    #region ID Increment Helper
+    public string NextTurnoutID() => GetNextName(NamedTurnouts, t => t.Id, "TRN");
+    public string NextButtonID() => GetNextName(NamedButtons, t => t.Id, "BTN");
     public static string GetNextName<T>(IEnumerable<T> allNamedItems, Func<T, string> idSelector, string defaultPrefix = "UKN") {
-        // Step 1: Extract IDs using the provided selector and sort them for pattern detection.
-        var ids = allNamedItems
-                 .Select(idSelector)
-                 .OrderBy(id => id)
-                 .ToList();
-
-        if (!ids.Any()) return $"{defaultPrefix}1"; // Default name if the list is empty.
-
-        // Step 2: Look for numerical patterns (Prefix + Number)
-        var numericalPattern = ids
-                              .Select(id => {
-                                   var match = Regex.Match(id, @"^(.*?)(\d+)$"); // Match a prefix and a number (e.g., "Button123").
-
-                                   if (match.Success) {
-                                       return (Prefix: match.Groups[1].Value, Number: int.Parse(match.Groups[2].Value));
-                                   }
-
-                                   return (Prefix: id, Number: 0); // No numerical suffix, treat as 0.
-                               })
-                              .OrderBy(item => item.Number)
-                              .ToList();
+        var ids = allNamedItems.Select(idSelector).OrderBy(id => id).ToList();
+        if (ids.Count == 0) return $"{defaultPrefix}1"; // Default name if the list is empty.
+        var numericalPattern = ids.Select(id => {
+                                       var match = Regex.Match(id, @"^(.*?)(\d+)$"); // Match a prefix and a number (e.g., "Button123").
+                                       if (match.Success) {
+                                           return (Prefix: match.Groups[1].Value, Number: int.Parse(match.Groups[2].Value));
+                                       }
+                                       return (Prefix: id, Number: 0); // No numerical suffix, treat as 0.
+                                   })
+                                  .OrderBy(item => item.Number)
+                                  .ToList();
 
         if (numericalPattern.Count > 0) {
             var latestItem = numericalPattern.Last(); // Get the last item in the sequence.
@@ -208,7 +150,7 @@ public partial class Panel : ObservableObject {
                 return 'A' + new string(chars);
             }
         }
-
         return new string(chars);
     }
+    #endregion
 }

@@ -1,13 +1,16 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Model.DataModel.Tracks;
 
-namespace DCCPanelController.Model;
+namespace DCCPanelController.Model.DataModel;
 
 /// <summary>
 ///     Represents a Turnout with its current state.
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
+[JsonSerializable(typeof(Turnout))]
 public partial class Turnout : ObservableObject {
     [ObservableProperty] private int? _dccAddress;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;

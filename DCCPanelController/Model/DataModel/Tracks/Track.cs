@@ -9,7 +9,6 @@ namespace DCCPanelController.Model.DataModel.Tracks;
 public abstract partial class Track : ObservableObject {
 
     public abstract string Name { get; }
-    public string TrackID { get; set; } = Guid.NewGuid().ToString();
     public virtual string TrackClass => GetType().Name;
     
     [ObservableProperty] private int _x;                    // What Grid Position (Horizontal) is this component?
@@ -24,23 +23,26 @@ public abstract partial class Track : ObservableObject {
     
     [JsonIgnore] public Panel? Parent { get; set; }
     
-    protected T Clone<T>(DataModel.Panel parent) where T : Track, new() {
-        var original = JsonSerializer.Serialize(this, typeof(T), JsonOptions.Options);
-        var copy = JsonSerializer.Deserialize<T>(original, JsonOptions.Options);
-        if (copy is { } clone) {
-            clone.TrackID = Guid.NewGuid().ToString();
-            clone.Parent = parent;
-            return clone;
-        }
+    [JsonConstructor]
+    protected Track() { }
 
-        // If we could not clone the object, then just return a new instance of the 
-        // object type ensuring it is part of the current Panel. 
-        // ------------------------------------------------------------------------
-        return new T {
-            TrackID = Guid.NewGuid().ToString(),
-            Parent = parent
-        };
+    /// <summary> 
+    /// Use to create a new instance of a Track by making a copy of another track (Clone)
+    /// </summary>
+    /// <param name="track">A new instance of a Track Object</param>
+    protected Track(Track track) {
+        X = track.X;
+        Y = track.Y;
+        Z = track.Z;
+        Width = track.Width;
+        Height = track.Height;
+        Rotation = track.Rotation;
+        IsEnabled = track.IsEnabled;
+        IsSelected = false;
+        TrackType = track.TrackType;
+        Parent = track.Parent;
     }
+    
 }
 
 public enum ButtonStateEnum { Unknown, On, Off  }

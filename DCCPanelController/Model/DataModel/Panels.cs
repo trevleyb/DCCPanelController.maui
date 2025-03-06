@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace DCCPanelController.Model;
+namespace DCCPanelController.Model.DataModel;
 
 public class Panels : ObservableCollection<Panel> {
     public Panel CreatePanel() {

@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 
-namespace DCCPanelController.Model;
+namespace DCCPanelController.Model.DataModel;
 
 /// <summary>
 ///     Represents a Panel or Schematic that we can display on the app to control
