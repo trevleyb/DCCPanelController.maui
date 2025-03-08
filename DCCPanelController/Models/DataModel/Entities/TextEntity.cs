@@ -18,7 +18,7 @@ public partial class TextEntity : Entity {
     [ObservableProperty] private TextAlignment _verticalJustification = TextAlignment.Center;
     
     [JsonConstructor]
-    private TextEntity() {}
+    public TextEntity() {}
     public TextEntity(Panel panel) : this() {
         Parent = panel;
     }

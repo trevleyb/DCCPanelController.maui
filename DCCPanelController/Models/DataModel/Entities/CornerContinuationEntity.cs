@@ -3,12 +3,12 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
-public partial class CornerContinuationEntity : Entity {
+public partial class CornerContinuationEntity : Entity, ITrackEntity {
     public override string Name => "Corner Track";
     [ObservableProperty] private TerminatorStyleEnum _continuationStyle = TerminatorStyleEnum.Arrow;
     
     [JsonConstructor]
-    private CornerContinuationEntity() {}
+    public CornerContinuationEntity() {}
     public CornerContinuationEntity(Panel panel) : this() {
         Parent = panel;
     }

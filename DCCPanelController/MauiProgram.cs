@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
-using DCCPanelController.Services;
-using DCCPanelController.Tests;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
 

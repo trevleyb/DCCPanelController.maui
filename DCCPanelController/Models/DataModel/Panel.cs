@@ -12,7 +12,7 @@ namespace DCCPanelController.Models.DataModel;
 /// <summary>
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
-[DebuggerDisplay("Panel: {Id},{Title}")]
+[DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityID {
 
     [JsonConstructor]
@@ -37,7 +37,7 @@ public partial class Panel : ObservableObject, IEntityID {
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public List<Entity> SelectedTracks => Entities.Where(t => t.IsSelected).ToList() ?? [];
 
-    public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.X == x && trk.Y == y);
+    public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
     public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
     public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(p => p.Entities.OfType<T>()).Union(Entities.OfType<T>()).ToList() ?? [];
@@ -54,7 +54,7 @@ public partial class Panel : ObservableObject, IEntityID {
 
     public string GenerateID() => EntityID.NextPanelID(Panels ?? []);
 
-    public T AddNew<T>() where T : Entity {
+    public T CreateEntity<T>() where T : Entity {
         var entity = (T)Activator.CreateInstance(typeof(T), this)! ?? throw new InvalidOperationException();
         Entities.Add(entity);
         entity.Parent = this;
@@ -62,7 +62,7 @@ public partial class Panel : ObservableObject, IEntityID {
         return entity ?? throw new InvalidOperationException();
     }
     
-    public T AddFrom<T>(T entity) where T : Entity {
+    public T CreateEntityFrom<T>(T entity) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
         cloned.Parent = this;
         if (cloned is IEntityID entityID) entityID.Id = entityID.GenerateID();
@@ -78,7 +78,7 @@ public partial class Panel : ObservableObject, IEntityID {
             Cols = this.Cols,
             Rows = this.Rows
         };
-        foreach (var entity in this.Entities) clone.AddFrom(entity);
+        foreach (var entity in this.Entities) clone.CreateEntityFrom(entity);
         return clone;
     }
 

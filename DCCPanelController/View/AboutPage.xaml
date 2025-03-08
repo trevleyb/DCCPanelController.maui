@@ -10,12 +10,51 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="ToggleDesignMode" IconImageSource="edit.png" />
+    </ContentPage.ToolbarItems>
+
     <ContentPage.Content>
-        <ScrollView>
-            <StackLayout>
-                <Label>About Page</Label>
-                <Button Clicked="Button_OnClicked" Text="Test" />
+        <Grid
+            BackgroundColor="Coral"
+            HorizontalOptions="Fill"
+            RowDefinitions="auto,*"
+            VerticalOptions="Fill">
+
+            <StackLayout
+                Grid.Row="0"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+                <Label HorizontalOptions="Center" Margin="10">About Page</Label>
+                <!--  <Slider  -->
+                <!--  Maximum="100"  -->
+                <!--  Minimum="10"  -->
+                <!--  Value="{Binding Zoom}"  -->
+                <!--  ValueChanged="Slider_OnValueChanged" />  -->
+
+                <Button
+                    Clicked="Button_OnClicked"
+                    HorizontalOptions="Center"
+                    Margin="10"
+                    Text="Test"
+                    WidthRequest="100" />
             </StackLayout>
-        </ScrollView>
+            <Grid
+                BackgroundColor="Transparent"
+                Grid.Row="1"
+                HorizontalOptions="Fill"
+                Margin="10"
+                VerticalOptions="Fill">
+                <view:ControlPanelView
+                    BackgroundColor="Transparent"
+                    DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:AboutViewModel}}, x:DataType=view:AboutViewModel, Path=DesignMode}"
+                    HorizontalOptions="Fill"
+                    Panel="{Binding Source={RelativeSource AncestorType={x:Type view:AboutViewModel}}, x:DataType=view:AboutViewModel, Path=Panel}"
+                    VerticalOptions="Fill"
+                    x:Name="PanelView" />
+            </Grid>
+
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

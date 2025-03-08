@@ -4,7 +4,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class CompassEntity : Entity {
     public override string Name => "Compass";
 
-    private CompassEntity() {}
+    public CompassEntity() {}
     public CompassEntity(Panel panel) : this() {
         Parent = panel;
     }

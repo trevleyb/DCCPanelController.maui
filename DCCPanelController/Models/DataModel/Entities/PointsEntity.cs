@@ -8,7 +8,7 @@ public partial class PointsEntity : Entity {
     public override string Name => "Connection Points";
     
     [JsonConstructor]
-    private PointsEntity() {}
+    public PointsEntity() {}
     public PointsEntity(Panel panel) : this() {
         Parent = panel;
     }

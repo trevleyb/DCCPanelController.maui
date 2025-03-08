@@ -4,11 +4,11 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class StraightEntity : Entity{
+public partial class StraightEntity : Entity, ITrackEntity {
     public override string Name => "Straight Track";
     
     [JsonConstructor]
-    private StraightEntity() {}
+    public StraightEntity() {}
     public StraightEntity(Panel panel) : this() {
         Parent = panel;
     }

@@ -12,8 +12,7 @@ public partial class CircleEntity : Entity {
     [ObservableProperty] private double _opacity = 1;
     
     [JsonConstructor]
-    private CircleEntity() {}
-
+    public CircleEntity() {}
     public CircleEntity(Panel panel) : this() {
         Parent = panel;
     }

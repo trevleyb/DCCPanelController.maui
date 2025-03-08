@@ -13,7 +13,7 @@ public partial class ImageEntity : Entity {
     [ObservableProperty] private string _image = string.Empty;
 
     [JsonConstructor]
-    private ImageEntity() {}
+    public ImageEntity() {}
     public ImageEntity(Panel panel) : this() {
         Parent = panel;
     }

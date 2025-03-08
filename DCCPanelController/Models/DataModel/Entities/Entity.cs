@@ -5,15 +5,15 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-[DebuggerDisplay("{Name}:{TrackClass}: {X},{Y}")]
+[DebuggerDisplay("{Name}:{TrackClass}: {Col},{Row}")]
 public abstract partial class Entity : ObservableObject {
 
     public abstract string Name { get; }
     public virtual string TrackClass => GetType().Name;
     
-    [ObservableProperty] private int _x;                    // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _y;                    // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _z = 1;                // What position (layer) should this exist at 
+    [ObservableProperty] private int _col;                  // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _row;                  // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _layer = 1;            // What position (layer) should this exist at 
     [ObservableProperty] private int _width  = 1;           // What width is this component?
     [ObservableProperty] private int _height = 1;           // What Height is this component? 
     [ObservableProperty] private int _rotation = 0;         // Is the track rotated?
@@ -25,18 +25,14 @@ public abstract partial class Entity : ObservableObject {
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid(); 
 
     [JsonConstructor]
-    protected Entity() { 
-        Parent = null;
-    }
-
+    protected Entity() { Parent = null; }
     protected Entity(Panel panel) : this() { 
         Parent = panel;
     }
-    
     protected Entity(Entity entity) : this() {
-        X = entity.X;
-        Y = entity.Y;
-        Z = entity.Z;
+        Col = entity.Col;
+        Row = entity.Row;
+        Layer = entity.Layer;
         Width = entity.Width;
         Height = entity.Height;
         Rotation = entity.Rotation;

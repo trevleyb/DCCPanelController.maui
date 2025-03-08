@@ -4,12 +4,12 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TerminatorEntity : Entity {
+public partial class TerminatorEntity : Entity, ITrackEntity {
     public override string Name => "Terminator Track";
     [ObservableProperty] private TerminatorStyleEnum _terminatorStyle = TerminatorStyleEnum.Arrow;
 
     [JsonConstructor]
-    private TerminatorEntity() { }
+    public TerminatorEntity() { }
     public TerminatorEntity(Panel panel) : this() {
         Parent = panel;
     }

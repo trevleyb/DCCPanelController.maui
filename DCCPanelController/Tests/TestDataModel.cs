@@ -19,7 +19,7 @@ public class TestDataModel {
 
     private void BuildTestDataModel(Storage storage) {
         var original = CreatePanel(storage.Panels);
-        var clone = storage.Panels.AddFrom(original);
+        var clone = storage.Panels.CreatePanelFrom(original);
         Debug.Assert(clone.Id != original.Id, "clone.Id != original.Id");
         Debug.Assert(clone.GetHashCode() != original.GetHashCode(), "clone.GetHashCode() != original.GetHashCode()");
     }
@@ -45,7 +45,7 @@ public class TestDataModel {
     }
 
     private Panel CreatePanel(Panels panels) {
-        var panel = panels.AddNew();
+        var panel = panels.CreatePanel();
         CreateEntity<ButtonEntity>(panel);
         CreateEntity<CompassEntity>(panel);
         CreateEntity<CornerEntity>(panel);
@@ -68,11 +68,11 @@ public class TestDataModel {
 
     private void CreateEntity<T>(Panel panel) where T : Entity {
 
-        var entity = panel.AddNew<T>();
+        var entity = panel.CreateEntity<T>();
         entity.Height = 1;
         entity.Width = 1;
-        entity.X = new Random().Next(0, panel.Cols);
-        entity.Y = new Random().Next(0, panel.Rows);
+        entity.Col = new Random().Next(0, panel.Cols);
+        entity.Row = new Random().Next(0, panel.Rows);
         entity.Rotation = 0;
         entity.IsEnabled = true;
         entity.TrackType = TrackTypeEnum.Normal;
@@ -87,6 +87,6 @@ public class TestDataModel {
             break;
         }
 
-        var cloned = panel.AddFrom(entity);
+        var cloned = panel.CreateEntityFrom(entity);
     }
 }

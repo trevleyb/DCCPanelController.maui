@@ -6,7 +6,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public abstract partial class TurnoutEntity : Entity, IEntityID {
+public abstract partial class TurnoutEntity : Entity, IEntityID, IInteractiveEntity, ITrackEntity {
     [ObservableProperty] private string _id = string.Empty;
     [ObservableProperty] private string _address = string.Empty;
     [ObservableProperty] private Actions<ButtonStateEnum> _buttonActions = [];
@@ -16,7 +16,6 @@ public abstract partial class TurnoutEntity : Entity, IEntityID {
     
     [JsonConstructor]
     protected TurnoutEntity() {}
-
     protected TurnoutEntity(Panel panel) : base(panel) { }
     protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
         Address = string.Empty;

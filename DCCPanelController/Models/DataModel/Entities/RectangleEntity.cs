@@ -11,7 +11,7 @@ public partial class RectangleEntity : Entity {
     [ObservableProperty] private double _opacity = 1;
     
     [JsonConstructor]
-    private RectangleEntity() {}
+    public RectangleEntity() {}
     public RectangleEntity(Panel panel) : this() {
         Parent = panel;
     }

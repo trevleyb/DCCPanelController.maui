@@ -10,7 +10,7 @@ public partial class LineEntity : Entity {
     [ObservableProperty] private double _opacity = 1;
 
     [JsonConstructor]
-    private LineEntity() { }
+    public LineEntity() { }
     public LineEntity(Panel panel) : this() {
         Parent = panel;
     }

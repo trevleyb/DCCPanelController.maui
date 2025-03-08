@@ -17,7 +17,7 @@ public partial class CircleLabelEntity : Entity {
     [ObservableProperty] private double _opacity = 1;
     
     [JsonConstructor]
-    private CircleLabelEntity() {}
+    public CircleLabelEntity() {}
     public CircleLabelEntity(Panel panel) : this() {
         Parent = panel;
     }
