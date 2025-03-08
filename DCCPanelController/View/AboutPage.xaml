@@ -12,7 +12,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
         <ScrollView>
-            <Label>About Page</Label>
+            <StackLayout>
+                <Label>About Page</Label>
+                <Button Clicked="Button_OnClicked" Text="Test" />
+            </StackLayout>
         </ScrollView>
     </ContentPage.Content>
 </ContentPage>

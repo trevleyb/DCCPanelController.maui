@@ -194,9 +194,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <MauiXaml Update="View\PanelsViewerPage.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\Components\DynaColorPicker.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -230,16 +227,9 @@
         <MauiXaml Update="View\PropertyPages\DynamicPropertyPopup.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\PanelControllerPage.xaml">
-          <SubType>Designer</SubType>
-        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="View\PanelsViewerPage.xaml.cs">
-            <DependentUpon>PanelsViewerPage.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="View\Components\DynaColorPicker.xaml.cs">
             <DependentUpon>ColorPicker.xaml</DependentUpon>
             <SubType>Code</SubType>
@@ -259,27 +249,6 @@
         <Compile Update="View\Actions\TurnoutActionsGrid.xaml.cs">
             <DependentUpon>TurnoutActionsGrid.xaml</DependentUpon>
             <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\SettingsViewModel.cs">
-            <DependentUpon>SettingsPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\TurnoutsEditViewModel.cs">
-            <DependentUpon>TurnoutsEditView.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\TurnoutsViewModel.cs">
-            <DependentUpon>TurnoutsPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\RoutesViewModel.cs">
-            <DependentUpon>RoutesPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\PanelsViewerViewModel.cs">
-            <DependentUpon>PanelsViewerPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\PanelEditorViewModel.cs">
-            <DependentUpon>PanelEditorPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\OperateViewModel.cs">
-            <DependentUpon>OperatePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\AboutPage.xaml.cs">
             <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -314,18 +283,11 @@
           <DependentUpon>DynamicPropertyPopup.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\PanelControllerPage.xaml.cs">
-          <DependentUpon>PanelControllerPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\PanelControllerPageViewModel.cs">
-          <DependentUpon>PanelControllerPage.xaml</DependentUpon>
-        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Model\DataModel\" />
-      <Folder Include="Model\ViewModel\" />
+      <Folder Include="View\Pages\" />
+      <Folder Include="View\ViewModels\" />
     </ItemGroup>
 
 </Project>

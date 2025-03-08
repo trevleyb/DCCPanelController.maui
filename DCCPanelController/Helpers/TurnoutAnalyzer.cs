@@ -1,5 +1,5 @@
 using System.Text.RegularExpressions;
-using DCCPanelController.Model;
+using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Helpers;
 

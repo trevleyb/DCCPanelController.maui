@@ -2,13 +2,9 @@
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
+using DCCPanelController.Tests;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
-using OperateViewModel = DCCPanelController.View.OperateViewModel;
-using PanelsViewerViewModel = DCCPanelController.View.PanelsViewerViewModel;
-using RoutesViewModel = DCCPanelController.View.RoutesViewModel;
-using SettingsViewModel = DCCPanelController.View.SettingsViewModel;
-using TurnoutsViewModel = DCCPanelController.View.TurnoutsViewModel;
 
 namespace DCCPanelController;
 
@@ -39,28 +35,22 @@ public static class MauiProgram {
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageTabbed>();
-        services.AddTransient<NavigationService>();
 
         // Add dependant Services
         // --------------------------------------------------------------------------
-        services.AddSingleton<SettingsService>();
-        services.AddSingleton<ConnectionService>();
-        services.AddTransient<RoutesService>();
-        services.AddTransient<TurnoutsService>();
+        //services.AddSingleton<ConnectionService>();
+        //services.AddTransient<RoutesService>();
+        //services.AddTransient<TurnoutsService>();
 
-        // Add dependant views with associated view models
+        // Add dependent views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
         services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
-        services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
-        services.AddSingletonViewAndModel<PanelsViewerPage, PanelsViewerViewModel>();
-        services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
-        services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
-        services.AddSingletonViewAndModel<SettingsPage, SettingsViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
+        
         return app;
     }
 

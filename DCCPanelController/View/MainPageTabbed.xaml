@@ -12,27 +12,7 @@
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent
-            ContentTemplate="{DataTemplate view:OperatePage}"
-            Icon="control.png"
-            Title="Operate" />
-        <ShellContent
-            ContentTemplate="{DataTemplate view:PanelControllerPage}"
-            Icon="control.png"
-            Title="Operate" />
-        <ShellContent
-            ContentTemplate="{DataTemplate view:PanelsViewerPage}"
-            Icon="panels.png"
-            Title="Panels" />
-        <ShellContent
-            ContentTemplate="{DataTemplate view:TurnoutsPage}"
-            Icon="turnouts.png"
-            Title="Turnouts" />
-        <ShellContent
-            ContentTemplate="{DataTemplate view:RoutesPage}"
-            Icon="routes.png"
-            Title="Routes" />
-        <ShellContent
-            ContentTemplate="{DataTemplate view:SettingsPage}"
+            ContentTemplate="{DataTemplate view:AboutPage}"
             Icon="properties.png"
             Title="Settings" />
     </FlyoutItem>

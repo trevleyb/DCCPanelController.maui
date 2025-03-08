@@ -1,5 +1,5 @@
 using System.Globalization;
-using DCCPanelController.Model;
+using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Helpers.Converters;
 

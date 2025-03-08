@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using DCCPanelController.Model;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Tracks.ImageManager;
 
 namespace DCCPanelController.Tracks.StyleManager;
