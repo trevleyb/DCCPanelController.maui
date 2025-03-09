@@ -198,9 +198,15 @@ public partial class ControlPanelView  {
             // so that when tapped, or double tapped, we can interact with it.
             // --------------------------------------------------------------------
             if (tile is ITileInteractive interactiveTile) {
-                var tapGesture = new TapGestureRecognizer();
-                tapGesture.Tapped += (_, _) => interactiveTile.Interact();
-                view.GestureRecognizers.Add(tapGesture);
+                var primaryTapGesture = new TapGestureRecognizer();
+                primaryTapGesture.Buttons = ButtonsMask.Primary;
+                primaryTapGesture.Tapped += (_, _) => interactiveTile.PrimaryInteract();
+                view.GestureRecognizers.Add(primaryTapGesture);
+                
+                var secondaryTapGesture = new TapGestureRecognizer();
+                secondaryTapGesture.Buttons = ButtonsMask.Secondary;
+                secondaryTapGesture.Tapped += (_, _) => interactiveTile.SecondaryInteract();
+                view.GestureRecognizers.Add(secondaryTapGesture);
             }
             
             // If we are in Design mode, then add support for 

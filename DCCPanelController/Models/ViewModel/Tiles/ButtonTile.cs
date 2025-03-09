@@ -9,21 +9,26 @@ public partial class ButtonTile(Entity entity, double gridSize) : Tile(entity, g
     private ButtonStateEnum State { get; set => SetField(ref field, value); }= ButtonStateEnum.Unknown;
     public override void CreateTile() {
         if (Entity is ButtonEntity button) {
-            var svgImage = SvgImages.GetImage("button");
-            var switchColor = State switch {
-                ButtonStateEnum.On  => Colors.Green,
-                ButtonStateEnum.Off => Colors.Red,
-                _                   => Colors.Gray
-            };
-            svgImage.SetAttribute(SvgElementType.Button, switchColor);
-            
+            var svgImage = SvgImages.GetImage("button", button.Rotation);
+            svgImage.SetAttribute(SvgElementType.Button, State switch {
+                ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,
+                _                   => button.Parent?.ButtonColor ?? Colors.Gray
+            });
+            svgImage.SetAttribute(SvgElementType.ButtonOutline, State switch {
+                ButtonStateEnum.On  => button.Parent?.ButtonOnBorder ?? Colors.Black,
+                ButtonStateEnum.Off => button.Parent?.ButtonOffBorder ?? Colors.Black,
+                _                   => button.Parent?.ButtonBorder ?? Colors.Black
+            });
+
             var image = new Image();
             image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
             SetContent(image);
         }
     }
 
-    public void Interact() {
+    public void PrimaryInteract() {
+        Console.WriteLine("PrimaryInteract");
         State = State switch {
             ButtonStateEnum.Unknown => ButtonStateEnum.On,
             ButtonStateEnum.On      => ButtonStateEnum.Off,
@@ -34,4 +39,9 @@ public partial class ButtonTile(Entity entity, double gridSize) : Tile(entity, g
         OnPropertyChanged(nameof(ImageSource));
     }
     
+    public void SecondaryInteract() {
+        Console.WriteLine("SecondaryInteract");
+        Entity.IsEnabled = !Entity.IsEnabled;
+        OnPropertyChanged(nameof(IsEnabled));
+    }
 }

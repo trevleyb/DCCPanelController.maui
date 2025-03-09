@@ -21,6 +21,7 @@ public abstract partial class Tile : ContentView, ITile
         Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
         Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
         Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
+        Content.SetBinding(IsVisibleProperty, new Binding(nameof(IsEnabled), source: Entity));
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
