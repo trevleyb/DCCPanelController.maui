@@ -16,6 +16,13 @@ public abstract partial class Tile : ContentView, ITile
         entity.PropertyChanged += EntityOnPropertyChanged;
     }
 
+    protected void SetContent(Microsoft.Maui.Controls.View content) {
+        Content = content;
+        Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
+        Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
+        Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
+    }
+
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         Console.WriteLine($"Tile Property Changed: {e.PropertyName}");
         switch (e.PropertyName) {

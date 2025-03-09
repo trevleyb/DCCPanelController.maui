@@ -1,35 +1,37 @@
 using CommunityToolkit.Maui.Converters;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public partial class ButtonTile : Tile, ITileInteractive  {
-    
-    public ButtonTile(Entity entity, double gridSize) : base(entity, gridSize) { }
-
-    private int lastColor = 0;
-    private Color[] colors = [Colors.Blue, Colors.Red, Colors.Green, Colors.Yellow];
-    
-    public Grid? TileContent { get; set => SetField(ref field, value); }
-    public Color Color { get; set => SetField(ref field, value); }
-    
+public partial class ButtonTile(Entity entity, double gridSize) : Tile(entity, gridSize), ITileInteractive {
+    private ButtonStateEnum State { get; set => SetField(ref field, value); }= ButtonStateEnum.Unknown;
     public override void CreateTile() {
-        Color = colors[lastColor];
-        TileContent = new Grid() {
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
-        };
-        TileContent.SetBinding(BackgroundColorProperty, new Binding(nameof(Color), source: this));
-        Content = TileContent;
-        Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
-        Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
-        Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
+        if (Entity is ButtonEntity button) {
+            var svgImage = SvgImages.GetImage("button");
+            var switchColor = State switch {
+                ButtonStateEnum.On  => Colors.Green,
+                ButtonStateEnum.Off => Colors.Red,
+                _                   => Colors.Gray
+            };
+            svgImage.SetAttribute(SvgElementType.Button, switchColor);
+            
+            var image = new Image();
+            image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
+            SetContent(image);
+        }
     }
 
     public void Interact() {
-        lastColor = (lastColor + 1) % colors.Length;
-        Color = colors[lastColor];
+        State = State switch {
+            ButtonStateEnum.Unknown => ButtonStateEnum.On,
+            ButtonStateEnum.On      => ButtonStateEnum.Off,
+            ButtonStateEnum.Off     => ButtonStateEnum.On,
+            _                       => ButtonStateEnum.Unknown
+        };
+        CreateTile();
+        OnPropertyChanged(nameof(ImageSource));
     }
     
 }

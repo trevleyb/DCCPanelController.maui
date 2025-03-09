@@ -1,5 +1,4 @@
 using DCCPanelController.Tests;
-using UIKit;
 
 namespace DCCPanelController.View;
 

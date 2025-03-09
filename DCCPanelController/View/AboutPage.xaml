@@ -27,12 +27,6 @@
                 HorizontalOptions="Fill"
                 VerticalOptions="Fill">
                 <Label HorizontalOptions="Center" Margin="10">About Page</Label>
-                <!--  <Slider  -->
-                <!--  Maximum="100"  -->
-                <!--  Minimum="10"  -->
-                <!--  Value="{Binding Zoom}"  -->
-                <!--  ValueChanged="Slider_OnValueChanged" />  -->
-
                 <Button
                     Clicked="Button_OnClicked"
                     HorizontalOptions="Center"
