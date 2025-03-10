@@ -9,22 +9,23 @@ public static class TileFactory {
     public static ITile? CreateTile(Entity entity, double gridSize) {
         ITile? tile = entity switch {
             ButtonEntity               => new ButtonTile(entity, gridSize),
-            CircleEntity               => null,
-            CircleLabelEntity          => null,
-            CompassEntity              => null,
+            CompassEntity              => new CompassTile(entity, gridSize),
+            CornerButtonEntity         => new CornerButtonTile(entity, gridSize),
             CornerEntity               => new CornerTile(entity, gridSize),
             CornerContinuationEntity   => new CornerContinueTile(entity, gridSize),
-            CrossingEntity             => null,
-            ImageEntity                => null,
+            CrossingEntity             => new CrossingTile(entity, gridSize),
             LeftTurnoutEntity          => null,
-            LineEntity                 => null,
-            PointsEntity               => null,
-            RectangleEntity            => null,
             RightTurnoutEntity         => null,
             StraightContinuationEntity => new StraightContinuationTile(entity, gridSize),
             StraightEntity             => new StraightTile(entity, gridSize),
             TerminatorEntity           => new TerminatorTile(entity, gridSize),
+            PointsEntity               => null,
+            ImageEntity                => null,
             TextEntity                 => null,
+            RectangleEntity            => null,
+            LineEntity                 => null,
+            CircleEntity               => null,
+            CircleLabelEntity          => null,
             _                          => null
         };
         if (tile is null) {

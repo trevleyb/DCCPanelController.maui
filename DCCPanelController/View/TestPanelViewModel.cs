@@ -12,24 +12,44 @@ public partial class TestPanelPageModel : BaseViewModel {
     [ObservableProperty] private int _zoom = 10;
 
     public TestPanelPageModel() {
-
         var panels = new Panels();
         var panel = panels.CreatePanel();
         panel.Rows = 10;
-        panel.Cols = 15;
+        panel.Cols = 16;
 
-        for (var i = 0; i < 10; i++) {
-            Entity? entity = null;
-            if (i % 2 == 0) entity = panel.CreateEntity<ButtonEntity>();
-            if (i % 2 == 1) entity = panel.CreateEntity<StraightEntity>();
-            if (entity is not null) {
-                entity.Col = i;
-                entity.Row = i;
-                entity.Width = 1;
-                entity.Height = 1;
+        var buttonEntity = panel.CreateEntity<ButtonEntity>();
+        var cornerButtonEntity = panel.CreateEntity<CornerButtonEntity>();
+        var cornerEntity = panel.CreateEntity<CornerEntity>();
+        var cornerContinuationEntity = panel.CreateEntity<CornerContinuationEntity>();
+        var crossingEntity = panel.CreateEntity<CrossingEntity>();
+        var straightContinuationEntity = panel.CreateEntity<StraightContinuationEntity>();
+        var straightEntity = panel.CreateEntity<StraightEntity>();
+        var terminatorEntity = panel.CreateEntity<TerminatorEntity>();
+        var compassEntity = panel.CreateEntity<CompassEntity>();
+
+        var circleEntity = panel.CreateEntity<CircleEntity>();
+        var circleLabelEntity = panel.CreateEntity<CircleLabelEntity>();
+        var imageEntity = panel.CreateEntity<ImageEntity>();
+        var leftTurnoutEntity = panel.CreateEntity<LeftTurnoutEntity>();
+        var lineEntity = panel.CreateEntity<LineEntity>();
+        var pointsEntity = panel.CreateEntity<PointsEntity>();
+        var rectangleEntity = panel.CreateEntity<RectangleEntity>();
+        var rightTurnoutEntity = panel.CreateEntity<RightTurnoutEntity>();
+
+        var col = 1;
+        var row = 1;
+        foreach (var entity in panel.Entities) {
+            entity.Col = col;
+            entity.Row = row;
+            entity.Width = 1;
+            entity.Height = 1;
+            col+= 2;
+            if (col > panel.Cols) {
+                col = col - panel.Cols;
+                row+= 2;
             }
         }
-
+       
         Panel = panel;
     }
 }

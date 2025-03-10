@@ -10,13 +10,14 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public partial class CornerButtonTile : Tile, ITileInteractive {
     public CornerButtonTile(Entity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(State));
+        RotationFactor = 90;
     }
     
     private ButtonStateEnum State { get; set => SetField(ref field, value); }= ButtonStateEnum.Unknown;
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is ButtonEntity button) {
-            var svgImage = SvgImages.GetImage("button", button.Rotation);
+        if (Entity is CornerButtonEntity button) {
+            var svgImage = SvgImages.GetImage("cornerbutton", button.Rotation);
             svgImage.SetAttribute(SvgElementType.Button, State switch {
                 ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,
@@ -29,6 +30,7 @@ public partial class CornerButtonTile : Tile, ITileInteractive {
             });
 
             var image = new Image();
+            image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
             image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
             return image;
         }

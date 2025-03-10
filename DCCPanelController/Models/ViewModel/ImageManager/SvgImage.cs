@@ -12,8 +12,6 @@ public partial class SvgImage : ObservableObject {
     [ObservableProperty] private int _rotation = 0;
     [ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
 
-    //public ConnectionType GetConnection(int index) => Connections[index];
-    
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     public ImageSource ImageSource => ImageManager.ImageSource;
     public SvgDirection Direction { get; set; } = SvgDirection.North;

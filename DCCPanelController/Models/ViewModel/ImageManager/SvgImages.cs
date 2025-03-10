@@ -17,7 +17,7 @@ public static class SvgImages {
     private static void BuildAvailableImages() {
         Console.WriteLine("Building Available Images");
         AddImage("Unknown", "Track_Unknown");
-        
+
         AddImage("Text", "Track_Text");
         AddImage("Label", "Track_Label");
         AddImage("Image", "Track_Image");
@@ -26,39 +26,39 @@ public static class SvgImages {
         AddImage("Circle", "draw_circle");
         AddImage("Rectangle", "draw_rectangle");
         AddImage("Line", "draw_line");
-        
+
         AddImage("Button", "Track_Button");
-        AddImage("ButtonCorner", "Track_Button_Corner");
+        AddImagePoints("CornerButton", "Track_Button_Corner", "********", SvgDirection.North);
 
-        AddImageFromNorth("Straight", "Track_Straight", "**S***S*");
-        AddImageFromNorthEast("Straight", "Track_Angle", "*S***S**");
-        
-        AddImageFromNorth("Cross", "Track_Straight_Cross", "S*S*S*S*");
-        AddImageFromNorthEast("Cross", "Track_Angle_Cross", "*S*S*S*S");
-        
-        AddImageFromNorth("Corner", "Track_Corner_Left", "*S****S*");
-        AddImageFromNorthEast("Corner", "Track_Corner_Right", "***S**S*");
-        
-        AddImageFromNorth("Terminator", "Track_Straight_Terminator", "**T***S*");
-        AddImageFromNorthEast("Terminator", "Track_Angle_Terminator", "*T***S**");
+        AddImagePoints("Straight", "Track_Straight", "**S***S*", SvgDirection.East);   // Image starts EAST at 0 degrees
+        AddImagePoints("Straight", "Track_Angle", "*S***S**", SvgDirection.NorthEast); // Image starts NORTH EAST at 45 degrees;
 
-        AddImageFromNorth("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*");
-        AddImageFromNorthEast("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**");
-        AddImageFromNorth("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*");
-        AddImageFromNorthEast("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**");
+        AddImagePoints("Cross", "Track_Straight_Cross", "S*S*S*S*", SvgDirection.East);
+        AddImagePoints("Cross", "Track_Angle_Cross", "*S*S*S*S", SvgDirection.NorthEast);
 
-        AddImageFromNorth("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*");
-        AddImageFromNorthEast("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*");
-        AddImageFromNorth("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*");
-        AddImageFromNorthEast("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*");
+        AddImagePoints("Corner", "Track_Corner_Left", "*S****S*", SvgDirection.East);
+        AddImagePoints("Corner", "Track_Corner_Right", "***S**S*", SvgDirection.NorthEast);
 
-        AddImageFromNorth("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*");
-        AddImageFromNorth("LeftTurnoutStraight", "Track_Turnout_Left_Straight", "*DX***S*");
-        AddImageFromNorth("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging", "*DX***S*");
+        AddImagePoints("Terminator", "Track_Straight_Terminator", "**T***S*", SvgDirection.East);
+        AddImagePoints("Terminator", "Track_Angle_Terminator", "*T***S**", SvgDirection.NorthEast);
 
-        AddImageFromNorth("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*");
-        AddImageFromNorth("RightTurnoutStraight", "Track_Turnout_Right_Straight", "**XD**S*");
-        AddImageFromNorth("RightTurnoutDiverging", "Track_Turnout_Right_Diverging", "**XD**S*");
+        AddImagePoints("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*", SvgDirection.East);
+        AddImagePoints("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**", SvgDirection.NorthEast);
+        AddImagePoints("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*", SvgDirection.East);
+        AddImagePoints("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**", SvgDirection.NorthEast);
+
+        AddImagePoints("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*", SvgDirection.East);
+        AddImagePoints("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*", SvgDirection.NorthEast);
+        AddImagePoints("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*", SvgDirection.East);
+        AddImagePoints("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*", SvgDirection.NorthEast);
+
+        AddImagePoints("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*", SvgDirection.East);
+        AddImagePoints("LeftTurnoutStraight", "Track_Turnout_Left_Straight", "*DX***S*", SvgDirection.East);
+        AddImagePoints("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging", "*DX***S*", SvgDirection.East);
+
+        AddImagePoints("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*", SvgDirection.East);
+        AddImagePoints("RightTurnoutStraight", "Track_Turnout_Right_Straight", "**XD**S*", SvgDirection.East);
+        AddImagePoints("RightTurnoutDiverging", "Track_Turnout_Right_Diverging", "**XD**S*", SvgDirection.East);
 
         Console.WriteLine($"Done Building Available Images with count={Images.Count}");
     }
@@ -77,10 +77,12 @@ public static class SvgImages {
             Console.WriteLine($"Image {name} has only one directional image. Returning first image.");
             return imageBase.Values.First();
         }
+
         if (imageBase.TryGetValue(direction, out var image)) {
             Console.WriteLine($"Image {name} has directional image for {direction}.");
             return image;
         }
+
         Console.WriteLine($"Could not find directional image for {name} in {direction}. Returning first image in list:");
         return imageBase.Values.First();
     }
@@ -115,11 +117,14 @@ public static class SvgImages {
     /// <summary>
     /// Special Case always add 4 Points from a starting point, either North or NorthEast 
     /// </summary>
-    private static void AddImageFromNorth(string name, string filename, string connections) => AddImagePoints(name, filename, connections, SvgDirection.North, 0);
 
-    private static void AddImageFromNorthEast(string name, string filename, string connections) => AddImagePoints(name, filename, connections, SvgDirection.NorthEast, 45);
+    // private static void AddImageFromNorth(string name, string filename) => AddImagePoints(name, filename, SvgConnections.NoConnections, SvgDirection.North, 0);
+    // private static void AddImageFromNorth(string name, string filename, string connections) => AddImagePoints(name, filename, connections, SvgDirection.North, 0);
+    // private static void AddImageFromNorthEast(string name, string filename) => AddImagePoints(name, filename, SvgConnections.NoConnections, SvgDirection.NorthEast, 45);
+    // private static void AddImageFromNorthEast(string name, string filename, string connections) => AddImagePoints(name, filename, connections, SvgDirection.NorthEast, 45);
+    private static void AddImagePoints(string name, string filename, string connections, SvgDirection start, int rotation = 0) => AddImagePoints(name, filename, new SvgConnections(connections, rotation), start, rotation);
 
-    private static void AddImagePoints(string name, string filename, string connections, SvgDirection start, int rotation) {
+    private static void AddImagePoints(string name, string filename, SvgConnections connections, SvgDirection start, int rotation = 0) {
         for (var i = 0; i < 4; i++) {
             var rotationVal = rotation + (i * 90);
             var directionVal = (SvgDirection)(((int)start + (i * 90)) % 360);

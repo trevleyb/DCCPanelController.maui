@@ -335,6 +335,9 @@
           <DependentUpon>TestPanelPage.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\TestPanelViewModel.cs">
+          <DependentUpon>TestPanelPage.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

@@ -16,7 +16,8 @@ public abstract partial class Tile : ContentView, ITile {
     private Dictionary<string, object?> _propertyCache = [];
     private CancellationTokenSource? _debounceRebuildCts;
     protected HashSet<string> VisualProperties { get; } = [];
-
+    protected int RotationFactor = 45;
+    
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
 
@@ -45,8 +46,8 @@ public abstract partial class Tile : ContentView, ITile {
     
     protected abstract Microsoft.Maui.Controls.View? CreateTile();
 
-    public void RotateLeft() => Entity.Rotation = (Entity.Rotation - 45 + 360) % 360;
-    public void RotateRight() => Entity.Rotation = (Entity.Rotation + 45) % 360;
+    public void RotateLeft() => Entity.Rotation = (Entity.Rotation - RotationFactor + 360) % 360;
+    public void RotateRight() => Entity.Rotation = (Entity.Rotation + RotationFactor) % 360;
 
     /// <summary>
     /// Sets the content of the tile with bindings to manage its size, layer, visibility, and order properties.
