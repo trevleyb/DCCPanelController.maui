@@ -24,6 +24,8 @@ public partial class TestPanelPageModel : BaseViewModel {
         var crossingEntity = panel.CreateEntity<CrossingEntity>();
         var straightContinuationEntity = panel.CreateEntity<StraightContinuationEntity>();
         var straightEntity = panel.CreateEntity<StraightEntity>();
+        straightEntity.Width = 2;
+        straightEntity.Height = 2;
         var terminatorEntity = panel.CreateEntity<TerminatorEntity>();
         var compassEntity = panel.CreateEntity<CompassEntity>();
 

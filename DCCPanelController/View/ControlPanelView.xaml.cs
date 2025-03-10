@@ -28,7 +28,6 @@ public partial class ControlPanelView  {
         DragValid
     }
 
-    public ObservableCollection<ITile> Tiles = [];
     public Color GridColor = Colors.DarkGrey;
     public double GridSize;
     public double ViewHeight;
@@ -116,7 +115,6 @@ public partial class ControlPanelView  {
     /// </summary>
     private void AddTilesToGrid(Panel? panel) {
         if (panel is null) return;
-        Tiles.Clear(); 
         foreach (var entity in panel.Entities) {
             AddTileToGrid(entity);    
         }
@@ -171,7 +169,6 @@ public partial class ControlPanelView  {
     private async void OnTileTappedInDesign(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
-        Console.WriteLine($"ControlPanelView.OnTileTappedInDesign for {sender?.GetType()} with {_tapCount}");
         if (sender is ITile tile) {
             if (_tapCount == 1) ToggleMarkTile(tile);
             if (_tapCount == 2) tile.RotateRight();
@@ -182,7 +179,6 @@ public partial class ControlPanelView  {
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
-        Console.WriteLine($"ControlPanelView.OnTileTapped for {sender?.GetType()} with {_tapCount}");
         if (sender is ITileInteractive interactiveTile) {
             if (_tapCount == 1) interactiveTile.Interact();
             if (_tapCount == 2) interactiveTile.Secondary();
@@ -191,8 +187,11 @@ public partial class ControlPanelView  {
     }
     
     private void RemoveTileFromGrid(ITile tile) {
+        var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId.Equals(tile.Entity.Guid.ToString())).ToList();
+        foreach (var child in children) {
+                DynamicGrid.Remove(child);
+        }    
         Panel?.Entities.Remove(tile.Entity);
-        Tiles.Remove(tile);
     }
 
     private void SetTileGridPosition(ITile tile) {
@@ -206,7 +205,6 @@ public partial class ControlPanelView  {
     // then clear all the selected tracks.
     // -------------------------------------------------------------------------
     private void DynamicGridTapped(object? sender, TappedEventArgs e) {
-        Console.WriteLine("ControlPanelView.TapGestureRecognizer_OnTapped");
         if (DesignMode) ClearSelectedTiles();
     }
 
@@ -272,9 +270,8 @@ public partial class ControlPanelView  {
     }
 
     public void ClearSelectedTiles() {
-        if (Panel is not null) {
-            foreach (var tile in Tiles.Where(x => x.IsSelected)) MarkTileUnSelected(tile);
-        }
+        var tiles = DynamicGrid.Children.OfType<ITile>().Where(x => x.IsSelected).ToList();
+        foreach (var tile in tiles) MarkTileUnSelected(tile);
     }
     
     /// <summary>
@@ -356,7 +353,7 @@ public partial class ControlPanelView  {
             };
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
-            imageView.Frame = new CGRect(0, 0, 10, 10);
+            imageView.Frame = new CGRect(0, 0, 32, 32);
             return new UIDragPreview(imageView);
         }
         args?.PlatformArgs?.SetPreviewProvider(Action);
@@ -498,10 +495,8 @@ public partial class ControlPanelView  {
     }
 
     private bool DoesTrackClash(ITile tile, int col, int row) {
-        if (Tiles.Count == 0) return false;                 // No clashes possible if no tiles are present
         if (tile.Entity is not ITrackEntity) return false;  // No clashes possible if the track is not a track piece
-        
-        var tilesInGrid = Tiles.Where(eTile =>              
+        var tilesInGrid = DynamicGrid.OfType<ITile>().Where(eTile =>              
                 // Exclude the same track we're checking against
                 eTile != tile && eTile.Entity is ITrackEntity &&
 

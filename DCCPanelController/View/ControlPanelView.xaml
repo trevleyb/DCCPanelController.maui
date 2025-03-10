@@ -23,11 +23,7 @@
                 BackgroundColor="Transparent"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"
-                x:Name="DynamicGrid">
-                <!-- <Grid.GestureRecognizers> -->
-                <!--     <TapGestureRecognizer Tapped="DynamicGridTapped" /> -->
-                <!-- </Grid.GestureRecognizers> -->
-            </Grid>
+                x:Name="DynamicGrid" />
         </AbsoluteLayout>
     </Grid>
 </ContentView>

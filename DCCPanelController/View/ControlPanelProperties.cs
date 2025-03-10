@@ -44,11 +44,20 @@ public partial class ControlPanelView {
         control.ShowGrid = control.DesignMode;
         control.DynamicGrid.GestureRecognizers.Clear();
         if (control.DesignMode) {
+            
+            // In design mode we need to support drag and drop for the tiles on the screen.
+            // ----------------------------------------------------------------------------
             var dropRecogniser = new DropGestureRecognizer();
             dropRecogniser.Drop += control.DropTileOnPanel;
             dropRecogniser.DragOver += control.DragOverTileOnPanel;
             dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
             control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
+
+            // In design mode, also support tapping anywhere that is not a tile so we clear selections.
+            // ----------------------------------------------------------------------------
+            var tapRecogniser = new TapGestureRecognizer();
+            tapRecogniser.Tapped += control.DynamicGridTapped;
+            control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
             
             // We need to redraw the panel so that we have the drag gestures for the tiles. 
             // ---------------------------------------------------------------------------

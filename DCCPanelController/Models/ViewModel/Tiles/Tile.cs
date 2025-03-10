@@ -3,14 +3,14 @@ using System.Runtime.CompilerServices;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
-
+    
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 using System.ComponentModel;
 
 public abstract partial class Tile : ContentView, ITile {
     public Entity Entity { get; init; }
-
+    
     private const int DebounceDelay = 10;
     private bool _visualPropertiesChanged = false;
     private Dictionary<string, object?> _propertyCache = [];
@@ -21,6 +21,11 @@ public abstract partial class Tile : ContentView, ITile {
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
 
+    public Microsoft.Maui.Controls.View? TileView {
+        get;
+        set => SetField(ref field, value);
+    }
+    
     public bool IsSelected {
         get;
         set => SetField(ref field, value);
@@ -42,27 +47,32 @@ public abstract partial class Tile : ContentView, ITile {
         VisualProperties.Add(nameof(Entity.IsEnabled));
         VisualProperties.Add(nameof(Entity.Height));
         VisualProperties.Add(nameof(Entity.Width));
+
+        SetContent();
     }
     
-    protected abstract Microsoft.Maui.Controls.View? CreateTile();
-
     public void RotateLeft() => Entity.Rotation = (Entity.Rotation - RotationFactor + 360) % 360;
     public void RotateRight() => Entity.Rotation = (Entity.Rotation + RotationFactor) % 360;
 
+    protected abstract Microsoft.Maui.Controls.View? CreateTile();
+    
     /// <summary>
-    /// Sets the content of the tile with bindings to manage its size, layer, visibility, and order properties.
+    /// Sets up the bindings for this control. If a Tile has not been created, it will re-create it at this point. 
     /// </summary>
-    /// <param name="content">The visual element to be displayed as the content of the tile. If null, no content will be set, and an error will be logged.</param>
-    private void SetContent(Microsoft.Maui.Controls.View? content) {
-        if (content is not null) {
-            content.ZIndex = Entity.Layer;
-            Content = content;
-            Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
-            Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
-            Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
-            Content.SetBinding(IsVisibleProperty, new Binding(nameof(IsEnabled), source: Entity));
-        } else {
-            Console.WriteLine("No content was provided so invalid Tile operation.");
+    private void SetContent() {
+        BindingContext = this;
+        if (Content is not null) {
+            Console.WriteLine($"We should not be here as the content is already set.");
+            return;
+        }
+        Content = CreateTile();
+        if (Content != null) {
+            ClassId = Entity.Guid.ToString();
+            SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this ));
+            SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
+            SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
+            SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), source: Entity));
+            Console.WriteLine($"Tile created: {Entity.Name}");
         }
     }
 
@@ -90,7 +100,7 @@ public abstract partial class Tile : ContentView, ITile {
             .ContinueWith((t) => {
                  if (t.IsCanceled) return;
                  if (_visualPropertiesChanged) {
-                     SetContent(CreateTile());
+                     Content = CreateTile();
                      _visualPropertiesChanged = false; // Reset flag
                  }
              }, TaskScheduler.FromCurrentSynchronizationContext());
