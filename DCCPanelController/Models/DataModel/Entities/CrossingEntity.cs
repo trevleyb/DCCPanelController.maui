@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
-public partial class CrossingEntity : Entity, ITrackEntity {
+public partial class CrossingEntity : TrackEntity, ITrackEntity {
     public override string Name => "Crossing Track";
 
     [JsonConstructor]

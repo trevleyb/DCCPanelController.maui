@@ -13,8 +13,10 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<TextAlignment>(),
             new JsonEnumToStringConverter<ButtonStateEnum>(),
             new JsonEnumToStringConverter<TurnoutStateEnum>(),
+            new JsonEnumToStringConverter<RouteStateEnum>(),
             new JsonEnumToStringConverter<TrackTypeEnum>(),
-            new JsonEnumToStringConverter<TerminatorStyleEnum>(),
+            new JsonEnumToStringConverter<TrackAttributeEnum>(),
+            new JsonEnumToStringConverter<TrackTerminatorEnum>(),
         }
     };
 }

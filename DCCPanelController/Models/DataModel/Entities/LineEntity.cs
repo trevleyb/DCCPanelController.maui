@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
-public partial class LineEntity : Entity {
+public partial class LineEntity : Entity, IDrawingEntity {
     public override string Name => "Line";
     [ObservableProperty] private Color _lineColor = Colors.Black;
     [ObservableProperty] private int _lineWidth = 3;

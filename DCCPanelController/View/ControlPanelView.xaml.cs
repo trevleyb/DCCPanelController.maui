@@ -2,16 +2,17 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Http.Headers;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers.Result;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Helpers;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Layouts;
-using Entity = DCCPanelController.Models.DataModel.Entities.Entity;
 #if IOS || MACCATALYST
 using CoreGraphics;
 using UIKit;
@@ -35,11 +36,13 @@ public partial class ControlPanelView  {
     [ObservableProperty] private ObservableCollection<ITile> _tiles = [];
     [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
     [ObservableProperty] private double _gridSize;
+    [ObservableProperty] private double _viewHeight;
+    [ObservableProperty] private double _viewWidth;
 
     private int _lastDragCol;
     private int _lastDragRow;
-    [ObservableProperty] private double _viewHeight;
-    [ObservableProperty] private double _viewWidth;
+    private int _tapCount = 0;
+    private const int DoubleTapTime = 200;  
 
     public EditModeEnum EditMode = EditModeEnum.Move;
 
@@ -197,18 +200,24 @@ public partial class ControlPanelView  {
             // If this tile is an interactive tile, then add a guesture recogniser
             // so that when tapped, or double tapped, we can interact with it.
             // --------------------------------------------------------------------
-            if (tile is ITileInteractive interactiveTile) {
-                var primaryTapGesture = new TapGestureRecognizer();
-                primaryTapGesture.Buttons = ButtonsMask.Primary;
-                primaryTapGesture.Tapped += (_, _) => interactiveTile.PrimaryInteract();
-                view.GestureRecognizers.Add(primaryTapGesture);
-                
-                var secondaryTapGesture = new TapGestureRecognizer();
-                secondaryTapGesture.Buttons = ButtonsMask.Secondary;
-                secondaryTapGesture.Tapped += (_, _) => interactiveTile.SecondaryInteract();
-                view.GestureRecognizers.Add(secondaryTapGesture);
+            view.Behaviors.Clear();
+            view.GestureRecognizers.Clear();
+            if (DesignMode) {
+                var tapGesture = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
+                tapGesture.Tapped += (_, args) => OnTileTappedInDesign(tile, args);
+                view.GestureRecognizers.Add(tapGesture);
+
+                var touchBehavior = new CommunityToolkit.Maui.Behaviors.TouchBehavior();
+                touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
+                view.Behaviors.Add(touchBehavior);
+            } else {
+                if (tile is ITileInteractive interactiveTile) {
+                    var tapGesture = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
+                    tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
+                    view.GestureRecognizers.Add(tapGesture);
+                }
             }
-            
+
             // If we are in Design mode, then add support for 
             // dragging and dropping of the items on the page
             // ---------------------------------------------------------------------------------------
@@ -221,6 +230,31 @@ public partial class ControlPanelView  {
         return tile;
     }
 
+    private void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
+        Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
+        // Add support for the Property Page to be shown
+    }
+
+    private async void OnTileTappedInDesign(object? sender, TappedEventArgs e) {
+        _tapCount++;
+        await Task.Delay(DoubleTapTime);
+        if (sender is ITile tile) {
+            if (_tapCount == 1) ToggleMarkTile(tile);
+            if (_tapCount == 2) tile.RotateRight();
+        }
+        _tapCount = 0;
+    }
+    
+    private async void OnTileTapped(object? sender, TappedEventArgs e) {
+        _tapCount++;
+        await Task.Delay(DoubleTapTime);
+        if (sender is ITileInteractive interactiveTile) {
+            if (_tapCount == 1) interactiveTile.Interact();
+            if (_tapCount == 2) interactiveTile.Secondary();
+        }
+        _tapCount = 0;
+    }
+    
     private void RemoveTileFromGrid(ITile tile) {
         Panel?.Entities.Remove(tile.Entity);
         Tiles.Remove(tile);
@@ -286,97 +320,12 @@ public partial class ControlPanelView  {
     //     }
     // }
 
-    /// <summary>
-    ///     Add the tracks from the view model onto the Grid
-    /// </summary>
-    // private void AddTrackPiecesToGrid() {
-    //     if (Panel is { Tracks: { } tracks } panel) {
-    //         foreach (var track in tracks) {
-    //             if (track.Parent != Panel) track.Parent = panel;
-    //
-    //             if (DynamicGrid.ColumnDefinitions.Count >= Cols && DynamicGrid.RowDefinitions.Count >= Rows && track.X < Cols && track.Y < Rows) {
-    //                 AddDisplayItemToGrid(track);
-    //
-    //                 // If we need to overlay Valid/Invalid Options. Work out the points and draw error boxes
-    //                 // -------------------------------------------------------------------------------------
-    //                 if (ShowTrackErrors) {
-    //                     var pointImage = new TrackPoints { X = track.X, Y = track.Y };
-    //                     var validPoints = TrackPointsValidator.GetConnectedTracksStatus(tracks, track, panel.Cols, panel.Rows);
-    //                     pointImage.SetPoints(validPoints);
-    //                     AddDisplayItemToGrid(pointImage);
-    //                 }
-    //
-    //                 if (track.IsSelected) MarkTrackSelected(track);
-    //             }
-    //         }
-    //     }
-    // }
-
-    // public void InvalidateCell(ITrack track) {
-    //     // TODO: We should not need to do this if the image has not actually 
-    //     //       changed. This is slow...
-    //     track.InvalidateView();
-    //             
-    //     //RemoveDisplayItemFromGrid(track);
-    //     //AddDisplayItemToGrid(track);
-    // }
-
-    // private void RemoveDisplayItemFromGrid(ITrack track) {
-    //     Console.WriteLine($"Looking to Remove Track: {track.UniqueID}");
-    //     var tracks = DynamicGrid.Children.Where(child => (child as Microsoft.Maui.Controls.View)?.ClassId == track.UniqueID.ToString()).ToList();
-    //     foreach (var view in tracks) {
-    //         Console.WriteLine($"Removing Track: {track.UniqueID}");
-    //         DynamicGrid.Children.Remove(view);
-    //         track.PropertyChanged -= OnTrackPieceChanged;
-    //     }
-    // }
-
-    // private void AddDisplayItemToGrid(ITrack track) {
-    //     // If we are in DesignMode, ensure transparency mode is OFF otherwise
-    //     // allow the system to use the passthrough/transparency mode of the object. 
-    //     // -----------------------------------------------------------------------
-    //     var displayItem = track.TrackView(GridSize, DesignMode ? false : null);
-    //     track.PropertyChanged += OnTrackPieceChanged;
-    //
-    //     Console.WriteLine($"Adding Track: {track.UniqueID}");
-    //
-    //     // Setup trigger control to trap if we click on or select the track item
-    //     // -------------------------------------------------------------------------------------------
-    //     // Create TapGestureRecognizer
-    //     if (displayItem is Microsoft.Maui.Controls.View view) {
-    //         view.ClassId = track.UniqueID.ToString();
-    //         var tapGesture = new TapGestureRecognizer {
-    //             NumberOfTapsRequired = 1
-    //         };
-    //         tapGesture.Tapped += (_, _) => TrackPieceTapped?.Invoke(this, track);
-    //         view.GestureRecognizers.Add(tapGesture);
-    //
-    //         var doubleTapGesture = new TapGestureRecognizer {
-    //             NumberOfTapsRequired = 2
-    //         };
-    //         doubleTapGesture.Tapped += (sender, args) => TrackPieceDoubleTapped?.Invoke(this, track);
-    //         view.GestureRecognizers.Add(doubleTapGesture);
-    //
-    //         // If we are in Design mode, then add support for 
-    //         // dragging and dropping of the items on the page
-    //         // ---------------------------------------------------------------------------------------
-    //         if (DesignMode) {
-    //             var dragGesture = new DragGestureRecognizer();
-    //             dragGesture.DragStarting += (sender, args) => DragTrackStarting(args, track);
-    //             view.GestureRecognizers.Add(dragGesture);
-    //         }
-    //     } else {
-    //         Console.WriteLine("ERROR: DisplayItem is not a View but is of type: " + displayItem.GetType().Name);
-    //     }
-    //
-    //     // Add the Track DisplayImage to the appropriate grid position
-    //     // ------------------------------------------------------
-    //     DynamicGrid.SetRow(displayItem, track.Y);
-    //     DynamicGrid.SetColumn(displayItem, track.X);
-    //     DynamicGrid.Children.Add(displayItem);
-    // }
-    
     #region Support Marking and UnMarking Tiles on the Panel
+    public void ToggleMarkTile(ITile tile) {
+        if (tile.IsSelected) MarkTileUnSelected(tile); 
+        else MarkTileSelected(tile);
+    }
+
     public void MarkTileSelected(ITile tile) {
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
@@ -399,22 +348,31 @@ public partial class ControlPanelView  {
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
 
+        UnHighlightCell(col, row);
+        var borderColor = action switch {
+            CellHighlightAction.Selected    => Colors.CornflowerBlue,
+            CellHighlightAction.DragValid   => Colors.Green,
+            CellHighlightAction.DragInvalid => Colors.Red,
+            _                               => Colors.Red
+        };
+
+        var backgroundColor = action switch {
+            CellHighlightAction.Selected    => Colors.CornflowerBlue.WithAlpha(0.25f),
+            CellHighlightAction.DragValid   => Colors.Transparent,
+            CellHighlightAction.DragInvalid => Colors.Transparent,
+            _                               => Colors.Transparent
+        };
+
         var border = new Border {
             ClassId = "CellHighlight",
-            BackgroundColor = Colors.Transparent,
-            Stroke = action switch {
-                CellHighlightAction.Selected    => Colors.Blue,
-                CellHighlightAction.DragValid   => Colors.Green,
-                CellHighlightAction.DragInvalid => Colors.Red,
-                _                               => Colors.Red
-            },
+            Stroke = borderColor,
+            StrokeThickness = 3,
+            BackgroundColor = backgroundColor.WithAlpha(0.25f),
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Start,
             WidthRequest = width * GridSize,
             HeightRequest = height * GridSize,
-            StrokeThickness = 4,
-            Opacity = 0.5,
-            ZIndex = 10,
+            ZIndex = EntityPresets.Highlight,
             InputTransparent = true
         };
 

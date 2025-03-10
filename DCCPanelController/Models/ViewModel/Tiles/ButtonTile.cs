@@ -1,12 +1,15 @@
 using CommunityToolkit.Maui.Converters;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public partial class ButtonTile(Entity entity, double gridSize) : Tile(entity, gridSize), ITileInteractive {
     private ButtonStateEnum State { get; set => SetField(ref field, value); }= ButtonStateEnum.Unknown;
+
     public override void CreateTile() {
         if (Entity is ButtonEntity button) {
             var svgImage = SvgImages.GetImage("button", button.Rotation);
@@ -27,7 +30,7 @@ public partial class ButtonTile(Entity entity, double gridSize) : Tile(entity, g
         }
     }
 
-    public void PrimaryInteract() {
+    public void Interact() {
         Console.WriteLine("PrimaryInteract");
         State = State switch {
             ButtonStateEnum.Unknown => ButtonStateEnum.On,
@@ -35,13 +38,10 @@ public partial class ButtonTile(Entity entity, double gridSize) : Tile(entity, g
             ButtonStateEnum.Off     => ButtonStateEnum.On,
             _                       => ButtonStateEnum.Unknown
         };
-        CreateTile();
-        OnPropertyChanged(nameof(ImageSource));
     }
     
-    public void SecondaryInteract() {
+    public void Secondary() {
         Console.WriteLine("SecondaryInteract");
         Entity.IsEnabled = !Entity.IsEnabled;
-        OnPropertyChanged(nameof(IsEnabled));
     }
 }

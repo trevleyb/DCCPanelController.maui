@@ -1,6 +1,6 @@
 namespace DCCPanelController.Models.ViewModel.Interfaces;
 
 public interface ITileInteractive {
-    public void PrimaryInteract();
-    public void SecondaryInteract();
+    public void Interact();
+    public void Secondary();
 }

@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class CircleEntity : Entity {
+public partial class CircleEntity : Entity, IDrawingEntity {
     public override string Name => "Circle";
     [ObservableProperty] private Color _backgroundColor = Colors.Transparent;
     [ObservableProperty] private Color _borderColor = Colors.Black;

@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TextEntity : Entity {
+public partial class TextEntity : Entity, ITextEntity {
     public override string Name => "Text Block";
     [ObservableProperty] private int _borderRadius = 0;
     [ObservableProperty] private int _borderWidth  = 0;

@@ -1,0 +1,17 @@
+namespace DCCPanelController.Models.ViewModel.StyleManager;
+
+public static class SvgElementTypes {
+    public static string GetElement(SvgElementType elementType) => elementType switch {
+        SvgElementType.Track          => "Track", 
+        SvgElementType.TrackDiverging => "TrackDiverging",
+        SvgElementType.Dashline       => "Dashline",
+        SvgElementType.Border         => "Border", 
+        SvgElementType.Occupied       => "Occupied", 
+        SvgElementType.Terminator     => "Terminator",
+        SvgElementType.Continuation   => "Continuation",
+        SvgElementType.Button         => "Button", 
+        SvgElementType.ButtonOutline  => "ButtonOutline",
+        SvgElementType.Text           => "Text",
+        _                             => ""
+    };
+}

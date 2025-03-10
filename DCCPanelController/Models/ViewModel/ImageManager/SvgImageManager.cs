@@ -2,6 +2,8 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
+using DCCPanelController.Models.ViewModel.Helpers;
+using DCCPanelController.Models.ViewModel.StyleManager;
 using SkiaSharp;
 using SKSvg = Svg.Skia.SKSvg;
 
@@ -11,7 +13,6 @@ public class SvgImageManager {
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
     private readonly XDocument _svgDocument;
-    private ImageSource? _imageSource;
     private string? _resourceName;
 
     /// <summary>
@@ -70,7 +71,6 @@ public class SvgImageManager {
 
     private XDocument LoadSvg(string resourceName) {
         _resourceName = resourceName;
-        _imageSource = null;
         var assembly = Assembly.GetExecutingAssembly();
         using var stream = assembly.GetManifestResourceStream(_resourceName);
 
@@ -94,11 +94,7 @@ public class SvgImageManager {
     /// <summary>
     ///     Forces a set of any attributes defined in the element to the value. Does not add the attribute if it does not exist
     /// </summary>
-    public void SetAllAttributeValues(SvgElementType svgElement, string attributeValue) {
-        var elements = SvgElementTypes.GetElement(svgElement);
-        SetAllAttributeValues(elements.Element, elements.Attribute, attributeValue);
-    } 
-    
+    public void SetAllAttributeValues(SvgElementType svgElement, string attributeName, string attributeValue) => SetAllAttributeValues(SvgElementTypes.GetElement(svgElement), attributeName, attributeValue);
     public void SetAllAttributeValues(string svgElement, string attributeName, string attributeValue) {
         foreach (var element in FindElements(svgElement)) {
             SetAttributeValue(element, attributeName, attributeValue, false);
@@ -111,22 +107,22 @@ public class SvgImageManager {
     ///     <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="24" cy="24" r="7"></circle>
     ///     Then a search for 'Border' will match on this ID, and the 'circle' element will be returned.
     /// </summary>
-    private List<XElement> FindElements(string elementName) {
+    public List<XElement> FindElements(string elementName) {
         return (from element in _svgDocument.Descendants() from attr in element.Attributes() where attr.Name.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(elementName, StringComparison.OrdinalIgnoreCase) select element).ToList();
     }
 
-    private string ElementType(XElement element) {
+    public string ElementType(XElement element) {
         return element.Name.LocalName.ToLowerInvariant();
     }
 
-    private bool IsElementOfType(XElement element, string type) {
+    public bool IsElementOfType(XElement element, string type) {
         return element.Name.LocalName.Equals(type, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
     ///     Given an element, set the attribute property to the value provided
     /// </summary>
-    private void SetAttributeValue(XElement element, string attributeName, string attributeValue, bool addIfNotExist = true) {
+    public void SetAttributeValue(XElement element, string attributeName, string attributeValue, bool addIfNotExist = true) {
         ArgumentNullException.ThrowIfNull(element);
         var attribute = (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr).FirstOrDefault();
 
@@ -139,7 +135,7 @@ public class SvgImageManager {
         }
     }
 
-    private void SetElementValue(XElement element, string attributeValue) {
+    public void SetElementValue(XElement element, string attributeValue) {
         ArgumentNullException.ThrowIfNull(element);
         element.SetValue(attributeValue);
     }

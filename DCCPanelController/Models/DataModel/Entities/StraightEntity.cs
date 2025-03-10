@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class StraightEntity : Entity, ITrackEntity {
+public partial class StraightEntity : TrackEntity, ITrackEntity {
     public override string Name => "Straight Track";
     
     [JsonConstructor]

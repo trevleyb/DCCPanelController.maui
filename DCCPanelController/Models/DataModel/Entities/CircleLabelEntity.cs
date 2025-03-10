@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class CircleLabelEntity : Entity {
+public partial class CircleLabelEntity : Entity, ITextEntity {
     public override string Name => "Circle Image";
     [ObservableProperty] private int _borderRadius = 0;
     [ObservableProperty] private int _borderWidth  = 0;

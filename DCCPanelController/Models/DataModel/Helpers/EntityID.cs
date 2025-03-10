@@ -8,8 +8,8 @@ public static class EntityID {
     
     // TODO: Make it so that generating IDs includes the Panel Name as part of the ID
     public static string NextPanelID(IEnumerable<Panel> panels) => Next(panels, "Panel ");
-    public static string NextTurnoutID(IEnumerable<TurnoutEntity> entities) => Next(entities, "T");
-    public static string NextButtonID(IEnumerable<ButtonEntity> entities) => Next(entities, "B");
+    public static string NextTurnoutID(IEnumerable<IEntityID> entities) => Next(entities, "T");
+    public static string NextButtonID(IEnumerable<IEntityID> entities) => Next(entities, "B");
 
     public static string Next(IEnumerable<IEntityID> entities, string prefix) {
         return GetNextID(entities, t => t.Id, prefix);

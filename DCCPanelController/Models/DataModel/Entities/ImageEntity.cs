@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ImageEntity : Entity {
+public partial class ImageEntity : Entity, IDrawingEntity {
     public override string Name => "Image";
     [ObservableProperty] private int _borderRadius = 0;
     [ObservableProperty] private int _borderWidth = 0;

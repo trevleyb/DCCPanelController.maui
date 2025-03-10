@@ -75,43 +75,78 @@
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
-
-        <!-- Track Images -->
-        <EmbeddedResource Include="Resources\TrackPieces\*.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_circle.svg" />
+        <EmbeddedResource Include="Models\TileImages\draw_line.svg" />
+        <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg" />
+        <EmbeddedResource Include="Models\TileImages\sample.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_arrow.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_button.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_button_corner.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_compass.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_corner_left.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_arrow.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_lines.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_corner_right.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_arrow.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_lines.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_image.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_label.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_points.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg" />
+        <EmbeddedResource Include="Models\TileImages\Track_Text.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_threeway.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_threeway_right.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_threeway_straight.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_unknown.svg" />
 
         <!-- Images -->
-        <MauiImage Include="Resources\Images\*"/>
-        <MauiImage Include="Resources\Icons\*"/>
+        <MauiImage Include="Resources\Images\*" />
+        <MauiImage Include="Resources\Icons\*" />
 
         <!-- Custom Fonts -->
-        <MauiFont Include="Resources\Fonts\*"/>
+        <MauiFont Include="Resources\Fonts\*" />
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
-        <None Remove="Resources\AppIcon\appiconfg.svg"/>
-        <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+        <None Remove="Resources\AppIcon\appiconfg.svg" />
+        <MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="akgul.Maui.DataGrid" Version="4.0.6"/>
+        <PackageReference Include="akgul.Maui.DataGrid" Version="4.0.6" />
         <PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0"/>
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />
         <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.0.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="Dynamensions.ColorPicker.Maui" Version="1.2.0"/>
+        <PackageReference Include="Dynamensions.ColorPicker.Maui" Version="1.2.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
-        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
-        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1"/>
-        <PackageReference Include="Svg.Skia" Version="2.0.0.4"/>
-        <PackageReference Include="UraniumUI" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Blurs" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Icons.SegoeFluent" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Material" Version="2.11.0"/>
-        <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.11.0"/>
+        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
+        <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />
+        <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
+        <PackageReference Include="UraniumUI" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Blurs" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Icons.SegoeFluent" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Material" Version="2.11.0" />
+        <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.11.0" />
     </ItemGroup>
 
     <!--
@@ -190,7 +225,7 @@
 -->
 
     <ItemGroup>
-        <ProjectReference Include="..\DCCWithrottleClient\DCCWithrottleClient.csproj"/>
+        <ProjectReference Include="..\DCCWithrottleClient\DCCWithrottleClient.csproj" />
     </ItemGroup>
 
     <ItemGroup>

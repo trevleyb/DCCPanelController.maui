@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
-public partial class RectangleEntity : Entity {
+public partial class RectangleEntity : Entity, IDrawingEntity {
     public override string Name => "Rectangle";
     [ObservableProperty] private Color _backgroundColor = Colors.Transparent;
     [ObservableProperty] private Color _borderColor = Colors.Black;

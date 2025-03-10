@@ -18,11 +18,15 @@ public partial class AboutViewModel : BaseViewModel {
         panel.Cols = 15;
 
         for (var i = 0; i < 10; i++) {
-            var entity = panel.CreateEntity<ButtonEntity>();
-            entity.Col = i;
-            entity.Row = i;
-            entity.Width = 1;
-            entity.Height = 1;
+            Entity? entity = null;
+            if (i % 2 == 0) entity = panel.CreateEntity<ButtonEntity>();
+            if (i % 2 == 1) entity = panel.CreateEntity<StraightEntity>();
+            if (entity is not null) {
+                entity.Col = i;
+                entity.Row = i;
+                entity.Width = 1;
+                entity.Height = 1;
+            }
         }
 
         Panel = panel;

@@ -75,7 +75,10 @@ public class TestDataModel {
         entity.Row = new Random().Next(0, panel.Rows);
         entity.Rotation = 0;
         entity.IsEnabled = true;
-        entity.TrackType = TrackTypeEnum.Normal;
+        if (entity is TrackEntity trackEntity) {
+            trackEntity.TrackType = TrackTypeEnum.MainLine;
+            trackEntity.TrackAttribute = TrackAttributeEnum.Normal;
+        }
         
         switch (entity) {
         case ButtonEntity buttonEntity:

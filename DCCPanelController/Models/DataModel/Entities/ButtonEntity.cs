@@ -6,7 +6,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity {
+public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButtonEntity {
     public override string Name => "Button";
     [ObservableProperty] private string _id = string.Empty;
     [ObservableProperty] private Actions<ButtonStateEnum> _buttonActions = [];

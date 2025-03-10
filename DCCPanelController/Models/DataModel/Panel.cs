@@ -3,9 +3,9 @@ using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
-using Entity = DCCPanelController.Models.DataModel.Entities.Entity;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -40,7 +40,7 @@ public partial class Panel : ObservableObject, IEntityID {
     public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
     public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
-    public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(p => p.Entities.OfType<T>()).Union(Entities.OfType<T>()).ToList() ?? [];
+    public List<T> GetAllEntitiesByType<T>() => Panels?.SelectMany(p => p.Entities.OfType<T>()).Union(Entities.OfType<T>()).ToList() ?? [];
     public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(p => p.Entities.OfType<T>().Union(Entities.OfType<T>()).Where(e => !string.IsNullOrEmpty(e.Id))).ToList() ?? [];
 
     public string Title {
