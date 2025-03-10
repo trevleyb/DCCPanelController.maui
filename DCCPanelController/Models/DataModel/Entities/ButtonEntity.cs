@@ -6,21 +6,12 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButtonEntity {
+public partial class ButtonEntity : ToggleButtonEntity, IEntityID, IInteractiveEntity, IButtonEntity {
     public override string Name => "Button";
-    [ObservableProperty] private string _id = string.Empty;
-    [ObservableProperty] private Actions<ButtonStateEnum> _buttonActions = [];
-    [ObservableProperty] private Actions<TurnoutStateEnum> _turnoutActions = [];
-    [ObservableProperty] private ButtonStateEnum _buttonState  = ButtonStateEnum.Unknown;
-    
+
     [JsonConstructor]
-    public ButtonEntity() { }
+    public ButtonEntity() {}
     public ButtonEntity(Panel panel) : base(panel) { }
-    public ButtonEntity(ButtonEntity entity) : base(entity) {
-        ButtonActions = new Actions<ButtonStateEnum>(entity.ButtonActions);
-        TurnoutActions = new Actions<TurnoutStateEnum>(entity.TurnoutActions);
-        ButtonState = ButtonStateEnum.Unknown;
-    }
-    public string GenerateID() => EntityID.NextButtonID(Parent?.GetAllEntitiesByType<ButtonEntity>() ??[]);
+    public ButtonEntity(ButtonEntity entity) : base(entity) {}
     public override Entity Clone() => new ButtonEntity(this);
 }

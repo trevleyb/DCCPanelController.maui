@@ -1,8 +1,35 @@
+using Math = System.Math;
+
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
-public static class SvgConnections {
+public class SvgConnections {
     public const int CompassPoints = 8;
-    public static ConnectionType[] Connections(string directions, int rotation = 0) {
+    public ConnectionType[] Connections;
+
+    public SvgConnections(string directions, int rotation = 0) {
+        Connections = BuildConnections(directions, rotation);
+    }
+
+    public SvgConnections(SvgConnections connections, int rotation = 0) {
+        Connections = RotateConnections(connections.Connections, rotation);
+    }
+
+    public override string ToString() {
+        var result = string.Empty;
+        for (var i = 0; i < CompassPoints; ++i) {
+            result += Connections[i] switch {
+                ConnectionType.Terminator => 'T',
+                ConnectionType.Straight   => 'S',
+                ConnectionType.Diverging  => 'D',
+                ConnectionType.Connector  => 'C',
+                ConnectionType.Closed     => 'X',
+                _                         => '*'
+            };
+        }
+        return result ?? "UNKNOWN";
+    }
+
+    private ConnectionType[] BuildConnections(string directions, int rotation = 0) {
         var connectionTypes = new ConnectionType[CompassPoints];
         for (var i = 0; i < Math.Min(directions.Length, 8); ++i) {
             connectionTypes[i] = char.ToLower(directions[i]) switch {
@@ -17,7 +44,7 @@ public static class SvgConnections {
         return RotateConnections(connectionTypes, rotation);
     }
 
-    public static  ConnectionType[] NoConnections => Enumerable.Repeat(ConnectionType.None, CompassPoints).ToArray();
+    public static SvgConnections NoConnections => new SvgConnections("********");
     private static ConnectionType[] RotateConnections(ConnectionType[] connections, SvgDirection direction) => RotateConnections(connections, (int)direction);
     private static ConnectionType[] RotateConnections(ConnectionType[] connections, int rotation = 0) {
         // Fix the rotation. If it is < 0 then inverse it (-90 = +270) and then work out what index 

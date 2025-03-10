@@ -10,9 +10,9 @@ public partial class SvgImage : ObservableObject {
     private SvgImageManager? _imageManager;
     [ObservableProperty] private string _filename = string.Empty;
     [ObservableProperty] private int _rotation = 0;
-    [ObservableProperty] private ConnectionType[] _connections = SvgConnections.NoConnections;
+    [ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
 
-    public ConnectionType GetConnection(int index) => Connections[index];
+    //public ConnectionType GetConnection(int index) => Connections[index];
     
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     public ImageSource ImageSource => ImageManager.ImageSource;

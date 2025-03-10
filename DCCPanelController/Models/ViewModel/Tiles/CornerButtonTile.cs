@@ -7,8 +7,8 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public partial class ButtonTile : Tile, ITileInteractive {
-    public ButtonTile(Entity entity, double gridSize) : base(entity, gridSize) {
+public partial class CornerButtonTile : Tile, ITileInteractive {
+    public CornerButtonTile(Entity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(State));
     }
     

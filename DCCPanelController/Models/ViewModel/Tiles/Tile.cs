@@ -1,4 +1,6 @@
+using System.Reflection;
 using System.Runtime.CompilerServices;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
@@ -9,70 +11,102 @@ using System.ComponentModel;
 public abstract partial class Tile : ContentView, ITile {
     public Entity Entity { get; init; }
 
-    public bool IsSelected { get; set => SetField(ref field, value); }
-    public double GridSize { get; set => SetField(ref field, value); }
+    private const int DebounceDelay = 10;
+    private bool _visualPropertiesChanged = false;
+    private Dictionary<string, object?> _propertyCache = [];
+    private CancellationTokenSource? _debounceRebuildCts;
+    protected HashSet<string> VisualProperties { get; } = [];
 
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
+
+    public bool IsSelected {
+        get;
+        set => SetField(ref field, value);
+    }
+
+    public double GridSize {
+        get;
+        set => SetField(ref field, value);
+    }
 
     protected Tile(Entity entity, double gridSize) {
         Entity = entity;
         GridSize = gridSize;
         PropertyChanged += OnPropertyChanged;
-        entity.PropertyChanged += EntityOnPropertyChanged;
+        entity.PropertyChanged += OnPropertyChanged;
+
+        VisualProperties.Add(nameof(GridSize));
+        VisualProperties.Add(nameof(Entity.Rotation));
+        VisualProperties.Add(nameof(Entity.IsEnabled));
+        VisualProperties.Add(nameof(Entity.Height));
+        VisualProperties.Add(nameof(Entity.Width));
     }
+    
+    protected abstract Microsoft.Maui.Controls.View? CreateTile();
 
-    public abstract void CreateTile();
-    public void RotateLeft() => Rotation = (Rotation - 45 + 360) % 360;
-    public void RotateRight() => Rotation = (Rotation + 45) % 360;
+    public void RotateLeft() => Entity.Rotation = (Entity.Rotation - 45 + 360) % 360;
+    public void RotateRight() => Entity.Rotation = (Entity.Rotation + 45) % 360;
 
-    protected void SetContent(Microsoft.Maui.Controls.View content) {
-        content.ZIndex = Entity.Layer;
-        Content = content;
-        Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
-        Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
-        Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
-        Content.SetBinding(IsVisibleProperty, new Binding(nameof(IsEnabled), source: Entity));
-    }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Tile Property Changed: {e.PropertyName}");
-        switch (e.PropertyName) {
-        case nameof(GridSize):
-            OnPropertyChanged(nameof(TileWidth));
-            OnPropertyChanged(nameof(TileHeight));
-            break;
-        case nameof(ImageSource) or nameof(Content):
-            break;
-        default:
-            // If any properties of the Tile such as states or sizes have changed,
-            // then we need to rebuild the tile. 
-            // -------------------------------------------------------------------------
-            CreateTile();
-            break;
+    /// <summary>
+    /// Sets the content of the tile with bindings to manage its size, layer, visibility, and order properties.
+    /// </summary>
+    /// <param name="content">The visual element to be displayed as the content of the tile. If null, no content will be set, and an error will be logged.</param>
+    private void SetContent(Microsoft.Maui.Controls.View? content) {
+        if (content is not null) {
+            content.ZIndex = Entity.Layer;
+            Content = content;
+            Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
+            Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
+            Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
+            Content.SetBinding(IsVisibleProperty, new Binding(nameof(IsEnabled), source: Entity));
+        } else {
+            Console.WriteLine("No content was provided so invalid Tile operation.");
         }
     }
 
-    private void EntityOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Entity Property Changed: {e.PropertyName}");
-        CreateTile();
-
-        // switch (e.PropertyName) {
-        //     case nameof(Entity.Width): 
-        //         OnPropertyChanged(nameof(TileWidth)) ;
-        //         break;
-        //     case nameof(Entity.Height): 
-        //         OnPropertyChanged(nameof(TileHeight)) ;
-        //         break;
-        //     default:
-        //         break;
-        // }
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
+            _visualPropertiesChanged = true;
+        }
+        RebuildIfNecessary();
     }
 
+    /// <summary>
+    /// Rebuilds the tile's content if visual properties have changed, using a debounce mechanism to minimize redundant updates.
+    /// </summary>
+    /// <remarks>
+    /// This method listens for changes in visual properties and schedules a delayed execution to rebuild the tile content if necessary.
+    /// The debouncing mechanism ensures that multiple rapid changes are processed efficiently. The content is only updated if the
+    /// visual properties have changed.
+    /// </remarks>
+    private void RebuildIfNecessary() {
+        _debounceRebuildCts?.Cancel();
+        _debounceRebuildCts = new CancellationTokenSource();
+        var token = _debounceRebuildCts.Token;
+
+        Task.Delay(DebounceDelay, token)
+            .ContinueWith((t) => {
+                 if (t.IsCanceled) return;
+                 if (_visualPropertiesChanged) {
+                     SetContent(CreateTile());
+                     _visualPropertiesChanged = false; // Reset flag
+                 }
+             }, TaskScheduler.FromCurrentSynchronizationContext());
+    }
+
+    /// <summary>
+    /// Sets the value of a field and raises property changing and changed notifications.
+    /// </summary>
+    /// <typeparam name="T">The type of the field.</typeparam>
+    /// <param name="field">The field to be updated.</param>
+    /// <param name="value">The new value to set.</param>
+    /// <param name="propertyName">The name of the property that changed. This parameter is optional and automatically supplied by the compiler.</param>
+    /// <returns>
+    /// True if the value of the field was changed, otherwise false.
+    /// </returns>
     protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = "") {
         if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-        Console.WriteLine($"{propertyName} changed");
-
         OnPropertyChanging(propertyName);
         field = value;
         OnPropertyChanged(propertyName);

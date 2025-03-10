@@ -12,7 +12,7 @@
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent
-            ContentTemplate="{DataTemplate view:AboutPage}"
+            ContentTemplate="{DataTemplate view:TestPanelPage}"
             Icon="properties.png"
             Title="Settings" />
     </FlyoutItem>

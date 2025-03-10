@@ -1,25 +1,54 @@
+using System.Text;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public abstract partial class TrackTile(Entity entity, double gridSize) : Tile(entity, gridSize) {
+public abstract partial class TrackTile : Tile {
+    protected TrackTile(Entity entity, double gridSize) : base(entity, gridSize) {
+        VisualProperties.Add(nameof(TrackEntity.TrackType));
+        VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
+        VisualProperties.Add(nameof(TrackEntity.TrackColor));
+        VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
+    }
+
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
+        var svgImage = SvgImages.GetImage(trackName, trackRotation);
+        var style = SetDefaultStyles();
+        svgImage.ApplyStyle(style.Build());
+            
+        var image = new Image {
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            Scale = 1.5
+        };
+        image.SetBinding(Image.RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
+        image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
+        return image;
+    }
+
+    /// <summary>
+    /// Most Track types follow the same principles, which is that the track is either
+    /// a MainLine or BranchLine and is either Hidden (in a tunnel) or Normal. 
+    /// </summary>
+    /// <returns>A style for a standard piece of Track</returns>
     protected SvgStyleBuilder SetDefaultStyles() {
         var style = new SvgStyleBuilder();
 
         if (Entity is TrackEntity trackEntity) {
-
             switch (trackEntity.TrackType) {
-            case TrackTypeEnum.MainLine:
-                style.Add(e => e.WithName(SvgElementType.Border).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.BorderColor ?? Colors.Black).Visible())
-                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible())
-                     .Add(e => e.WithName(SvgElementType.Occupied).Hidden());
-                break;
-
             case TrackTypeEnum.BranchLine:
                 style.Add(e => e.WithName(SvgElementType.Border).Hidden())
                      .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.BranchLineColor ?? Colors.Gray).Visible())
+                     .Add(e => e.WithName(SvgElementType.Occupied).Hidden());
+                break;
+
+            case TrackTypeEnum.MainLine:
+            default: 
+                style.Add(e => e.WithName(SvgElementType.Border).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.BorderColor ?? Colors.Black).Visible())
+                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible())
                      .Add(e => e.WithName(SvgElementType.Occupied).Hidden());
                 break;
             }
@@ -27,9 +56,10 @@ public abstract partial class TrackTile(Entity entity, double gridSize) : Tile(e
             switch (trackEntity.TrackAttribute) {
             case TrackAttributeEnum.Hidden:
                 style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
-                break;
-
+                break; 
+                
             case TrackAttributeEnum.Normal:
+            default:
                 style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
                 break;
             }

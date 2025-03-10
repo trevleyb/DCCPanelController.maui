@@ -8,6 +8,5 @@ public interface ITile {
     void RotateLeft();
     void RotateRight();
     
-    void CreateTile();
     bool IsSelected { get; set; }
 }

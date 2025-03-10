@@ -28,23 +28,16 @@ public partial class ControlPanelView  {
         DragValid
     }
 
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), propertyChanged: OnPanelChanged);
-    public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
-    public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
-    public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
-
-    [ObservableProperty] private ObservableCollection<ITile> _tiles = [];
-    [ObservableProperty] private Color _gridColor = Colors.DarkGrey;
-    [ObservableProperty] private double _gridSize;
-    [ObservableProperty] private double _viewHeight;
-    [ObservableProperty] private double _viewWidth;
+    public ObservableCollection<ITile> Tiles = [];
+    public Color GridColor = Colors.DarkGrey;
+    public double GridSize;
+    public double ViewHeight;
+    public double ViewWidth;
 
     private int _lastDragCol;
     private int _lastDragRow;
     private int _tapCount = 0;
     private const int DoubleTapTime = 200;  
-
-    public EditModeEnum EditMode = EditModeEnum.Move;
 
     public ControlPanelView() {
         InitializeComponent();
@@ -54,63 +47,6 @@ public partial class ControlPanelView  {
 
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
-
-    public Panel? Panel {
-        get => (Panel)GetValue(PanelProperty);
-        set => SetValue(PanelProperty, value);
-    }
-
-    public bool DesignMode {
-        get => (bool)GetValue(DesignModeProperty);
-        set => SetValue(DesignModeProperty, value);
-    }
-
-    public bool ShowGrid {
-        get => (bool)GetValue(ShowGridProperty);
-        set => SetValue(ShowGridProperty, value);
-    }
-
-    public bool ShowTrackErrors {
-        get => (bool)GetValue(ShowTrackErrorsProperty);
-        set => SetValue(ShowTrackErrorsProperty, value);
-    }
-    
-    private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
-        var control = (ControlPanelView)bindable;
-        control.ShowGrid = control.DesignMode;
-        control.DynamicGrid.GestureRecognizers.Clear();
-        if (control.DesignMode) {
-            var dropRecogniser = new DropGestureRecognizer();
-            dropRecogniser.Drop += control.DropTileOnPanel;
-            dropRecogniser.DragOver += control.DragOverTileOnPanel;
-            dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
-            control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
-            
-            // We need to redraw the panel so that we have the drag gestures for the tiles. 
-            // ---------------------------------------------------------------------------
-            control.DrawPanel(true);
-        } 
-    }
-
-    /// <summary>
-    /// If the Panel object is changed, then we need to clear and rebuild the whole Panel
-    /// </summary>
-    private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        var control = (ControlPanelView)bindable;
-        control.ClearSelectedTiles();
-        control.DrawPanel(true);
-    }
-    
-    private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ControlPanelView)bindable;
-        Console.WriteLine($"ControlPanelView.OnShowTrackErrorsChanged: {newvalue}");
-    }
-
-    private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ControlPanelView)bindable;
-        control.DrawGrid();
-        Console.WriteLine($"ControlPanelView.OnShowGridChanged: {newvalue}");
-    }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
@@ -193,12 +129,8 @@ public partial class ControlPanelView  {
     private ITile? AddTileToGrid(Entity entity) {
         var tile = TileFactory.CreateTile(entity, GridSize);
         if (tile is ContentView view) {
-            DynamicGrid.SetColumn(view, tile.Entity.Col);
-            DynamicGrid.SetRow(view, tile.Entity.Row);
-            DynamicGrid.Children.Add(view);
-        
             // If this tile is an interactive tile, then add a guesture recogniser
-            // so that when tapped, or double tapped, we can interact with it.
+            // so that when tapped, or double-tapped, we can interact with it.
             // --------------------------------------------------------------------
             view.Behaviors.Clear();
             view.GestureRecognizers.Clear();
@@ -210,6 +142,11 @@ public partial class ControlPanelView  {
                 var touchBehavior = new CommunityToolkit.Maui.Behaviors.TouchBehavior();
                 touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
                 view.Behaviors.Add(touchBehavior);
+                
+                var dragGesture = new DragGestureRecognizer();
+                dragGesture.DragStarting += (sender, args) => DragTileStarting(args, tile);
+                view.GestureRecognizers.Add(dragGesture);
+
             } else {
                 if (tile is ITileInteractive interactiveTile) {
                     var tapGesture = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
@@ -218,14 +155,10 @@ public partial class ControlPanelView  {
                 }
             }
 
-            // If we are in Design mode, then add support for 
-            // dragging and dropping of the items on the page
-            // ---------------------------------------------------------------------------------------
-            if (DesignMode) {
-                var dragGesture = new DragGestureRecognizer();
-                dragGesture.DragStarting += (sender, args) => DragTileStarting(args, tile);
-                view.GestureRecognizers.Add(dragGesture);
-            }
+            DynamicGrid.SetColumn(view, tile.Entity.Col);
+            DynamicGrid.SetRow(view, tile.Entity.Row);
+            DynamicGrid.Children.Add(view);
+
         }
         return tile;
     }
@@ -238,6 +171,7 @@ public partial class ControlPanelView  {
     private async void OnTileTappedInDesign(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
+        Console.WriteLine($"ControlPanelView.OnTileTappedInDesign for {sender?.GetType()} with {_tapCount}");
         if (sender is ITile tile) {
             if (_tapCount == 1) ToggleMarkTile(tile);
             if (_tapCount == 2) tile.RotateRight();
@@ -248,6 +182,7 @@ public partial class ControlPanelView  {
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
+        Console.WriteLine($"ControlPanelView.OnTileTapped for {sender?.GetType()} with {_tapCount}");
         if (sender is ITileInteractive interactiveTile) {
             if (_tapCount == 1) interactiveTile.Interact();
             if (_tapCount == 2) interactiveTile.Secondary();
@@ -413,10 +348,15 @@ public partial class ControlPanelView  {
 
         #if IOS || MACCATALYST
         UIDragPreview Action() {
-            var image = UIImage.FromFile("move.png");
+            var image = EditMode switch {
+                EditModeEnum.Copy => UIImage.FromFile("copy.png"),
+                EditModeEnum.Move => UIImage.FromFile("move.png"),
+                EditModeEnum.Size => UIImage.FromFile("crop.png"),
+                _ => UIImage.FromFile("move.png"),
+            };
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
-            imageView.Frame = new CGRect(0, 0, 0.5, 0.5);
+            imageView.Frame = new CGRect(0, 0, 10, 10);
             return new UIDragPreview(imageView);
         }
         args?.PlatformArgs?.SetPreviewProvider(Action);
@@ -560,6 +500,7 @@ public partial class ControlPanelView  {
     private bool DoesTrackClash(ITile tile, int col, int row) {
         if (Tiles.Count == 0) return false;                 // No clashes possible if no tiles are present
         if (tile.Entity is not ITrackEntity) return false;  // No clashes possible if the track is not a track piece
+        
         var tilesInGrid = Tiles.Where(eTile =>              
                 // Exclude the same track we're checking against
                 eTile != tile && eTile.Entity is ITrackEntity &&

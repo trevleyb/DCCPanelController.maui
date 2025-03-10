@@ -17,6 +17,7 @@ public static class SvgImages {
     private static void BuildAvailableImages() {
         Console.WriteLine("Building Available Images");
         AddImage("Unknown", "Track_Unknown");
+        
         AddImage("Text", "Track_Text");
         AddImage("Label", "Track_Label");
         AddImage("Image", "Track_Image");
@@ -25,26 +26,31 @@ public static class SvgImages {
         AddImage("Circle", "draw_circle");
         AddImage("Rectangle", "draw_rectangle");
         AddImage("Line", "draw_line");
+        
         AddImage("Button", "Track_Button");
         AddImage("ButtonCorner", "Track_Button_Corner");
 
         AddImageFromNorth("Straight", "Track_Straight", "**S***S*");
         AddImageFromNorthEast("Straight", "Track_Angle", "*S***S**");
+        
         AddImageFromNorth("Cross", "Track_Straight_Cross", "S*S*S*S*");
         AddImageFromNorthEast("Cross", "Track_Angle_Cross", "*S*S*S*S");
+        
         AddImageFromNorth("Corner", "Track_Corner_Left", "*S****S*");
         AddImageFromNorthEast("Corner", "Track_Corner_Right", "***S**S*");
+        
         AddImageFromNorth("Terminator", "Track_Straight_Terminator", "**T***S*");
         AddImageFromNorthEast("Terminator", "Track_Angle_Terminator", "*T***S**");
 
-        AddImageFromNorth("ContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*");
-        AddImageFromNorthEast("ContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**");
-        AddImageFromNorth("ContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*");
-        AddImageFromNorthEast("ContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**");
-        AddImageFromNorth("ContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*");
-        AddImageFromNorthEast("ContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*");
-        AddImageFromNorth("ContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*");
-        AddImageFromNorthEast("ContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*");
+        AddImageFromNorth("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*");
+        AddImageFromNorthEast("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**");
+        AddImageFromNorth("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*");
+        AddImageFromNorthEast("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**");
+
+        AddImageFromNorth("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*");
+        AddImageFromNorthEast("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*");
+        AddImageFromNorth("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*");
+        AddImageFromNorthEast("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*");
 
         AddImageFromNorth("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*");
         AddImageFromNorth("LeftTurnoutStraight", "Track_Turnout_Left_Straight", "*DX***S*");
@@ -87,9 +93,9 @@ public static class SvgImages {
     /// <param name="connections">What are the available connections (specific string format)</param>
     /// <param name="direction">What direction(s) does this image work in</param>
     /// <param name="rotation">What is the rotation that this image should be for the direction</param>
-    private static void AddImage(string name, string filename, string connections, SvgDirection direction, int rotation) => AddImage(name, filename, SvgConnections.Connections(connections, rotation), direction, rotation);
+    private static void AddImage(string name, string filename, string connections, SvgDirection direction, int rotation) => AddImage(name, filename, new SvgConnections(connections, rotation), direction, rotation);
 
-    private static void AddImage(string name, string filename, ConnectionType[] connections, SvgDirection direction, int rotation) {
+    private static void AddImage(string name, string filename, SvgConnections connections, SvgDirection direction, int rotation) {
         var imageRef = GetSvgImageForDirection(name.ToLower(), direction);
         imageRef.Filename = GetFullPathImage(filename);
         imageRef.Rotation = rotation;
@@ -117,8 +123,8 @@ public static class SvgImages {
         for (var i = 0; i < 4; i++) {
             var rotationVal = rotation + (i * 90);
             var directionVal = (SvgDirection)(((int)start + (i * 90)) % 360);
-            var connectionsVal = SvgConnections.Connections(connections, rotationVal);
-            AddImage(name.ToLower(), filename, connectionsVal, directionVal, rotationVal);
+            var connectionsVal = new SvgConnections(connections, rotationVal);
+            AddImage(name.ToLower(), filename, connectionsVal, directionVal, (rotationVal - rotation));
         }
     }
 

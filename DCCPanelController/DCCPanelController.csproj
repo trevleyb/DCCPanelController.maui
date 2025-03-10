@@ -262,6 +262,12 @@
         <MauiXaml Update="View\PropertyPages\DynamicPropertyPopup.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\LayoutPanel\LayoutPanelView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\TestPanelPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -316,6 +322,17 @@
         </Compile>
         <Compile Update="View\PropertyPages\DynamicPropertyPopup.xaml.cs">
           <DependentUpon>DynamicPropertyPopup.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\LayoutPanel\LayoutPanelView.xaml.cs">
+          <DependentUpon>ControlPanelView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\ControlPanelProperties.cs">
+          <DependentUpon>ControlPanelView.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\TestPanelPage.xaml.cs">
+          <DependentUpon>TestPanelPage.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
