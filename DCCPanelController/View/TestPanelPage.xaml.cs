@@ -6,6 +6,7 @@ public partial class TestPanelPage : ContentPage {
     public TestPanelPage() {
         InitializeComponent();
         BindingContext = new TestPanelPageModel();
+        PropertyChanged += (sender, args) => { Console.WriteLine(args.PropertyName); };
     }
 
     protected override void OnBindingContextChanged() {
@@ -14,6 +15,7 @@ public partial class TestPanelPage : ContentPage {
             DesignModeToolbar.IconImageSource = vm.DesignMode ? "play.png" : "edit.png";
             EditModeToolbar.IconImageSource = vm.EditMode == EditModeEnum.Move ? "move.png" : "copy.png";
             EditModeToolbar.IsEnabled = vm.DesignMode;
+            OnPropertyChanged();
         }
     }
 
@@ -27,6 +29,7 @@ public partial class TestPanelPage : ContentPage {
             vm.DesignMode = !vm.DesignMode;
             DesignModeToolbar.IconImageSource = vm.DesignMode ? "play.png" : "edit.png";
             EditModeToolbar.IsEnabled = vm.DesignMode;
+            OnPropertyChanged(nameof(DesignMode));
         }
     }
 
@@ -35,20 +38,15 @@ public partial class TestPanelPage : ContentPage {
             vm.EditMode = vm.EditMode == EditModeEnum.Move ? EditModeEnum.Copy : EditModeEnum.Move;
             EditModeToolbar.IconImageSource = vm.EditMode == EditModeEnum.Move ? "move.png" : "copy.png";
             EditModeToolbar.IsEnabled = vm.DesignMode;
+            OnPropertyChanged(nameof(DesignMode));
         }
     }
 
-    private void ToggleShowGrid(object? sender, EventArgs e) {
-        if (BindingContext is TestPanelPageModel vm) {
-            vm.ShowGrid = !vm.ShowGrid;
-        }
+    private void PanGestureRecognizer_OnPanUpdated(object? sender, PanUpdatedEventArgs e) {
+        Console.WriteLine($"PanUpdated: {e.StatusType}");
     }
 
-    private void Slider_OnValueChanged(object? sender, ValueChangedEventArgs e) {
-        if (BindingContext is AboutViewModel vm) {
-            var panelSize = vm.Zoom * 10;
-            PanelView.HeightRequest = panelSize;
-            PanelView.WidthRequest = panelSize;
-        }
+    private void PinchGestureRecognizer_OnPinchUpdated(object? sender, PinchGestureUpdatedEventArgs e) {
+        Console.WriteLine($"PinchUpdated: {e.Status}");
     }
 }

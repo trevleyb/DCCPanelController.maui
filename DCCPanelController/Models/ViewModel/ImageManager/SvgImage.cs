@@ -14,7 +14,6 @@ public partial class SvgImage : ObservableObject {
 
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     public ImageSource ImageSource => ImageManager.ImageSource;
-    public SvgDirection Direction { get; set; } = SvgDirection.North;
 
     public void SetAttribute(SvgElementType elementType, Color color) {
         ImageManager.SetAllAttributeValues(elementType, "fill", color.ToArgbHex());

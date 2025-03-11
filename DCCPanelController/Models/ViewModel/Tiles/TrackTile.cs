@@ -25,7 +25,6 @@ public abstract partial class TrackTile : Tile {
             Scale = 1.5
         };
         
-        Console.WriteLine($"{trackName}: TrackRotation={trackRotation}, EntityRotation={Entity.Rotation}, SVGRotation={svgImage.Rotation}");
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
         image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
         return image;

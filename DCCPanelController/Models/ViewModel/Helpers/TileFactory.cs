@@ -10,7 +10,6 @@ public static class TileFactory {
         ITile? tile = entity switch {
             ButtonEntity               => new ButtonTile(entity, gridSize),
             CompassEntity              => new CompassTile(entity, gridSize),
-            CornerButtonEntity         => new CornerButtonTile(entity, gridSize),
             CornerEntity               => new CornerTile(entity, gridSize),
             CornerContinuationEntity   => new CornerContinueTile(entity, gridSize),
             CrossingEntity             => new CrossingTile(entity, gridSize),

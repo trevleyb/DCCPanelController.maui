@@ -4,7 +4,10 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
+
 public static class SvgImages {
+    private record SvgReference (string Filename, int Rotation, SvgConnections Connections);
+    
     static SvgImages() {
         AvailableSymbols = BuildAvailableSymbols();
         BuildAvailableImages();
@@ -12,7 +15,7 @@ public static class SvgImages {
 
     private static readonly Lock LockObject = new();
     private static readonly List<string> AvailableSymbols;
-    private static readonly Dictionary<string, Dictionary<SvgDirection, SvgImage>> Images = new();
+    private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new ();
 
     private static void BuildAvailableImages() {
         Console.WriteLine("Building Available Images");
@@ -27,134 +30,95 @@ public static class SvgImages {
         AddImage("Rectangle", "draw_rectangle");
         AddImage("Line", "draw_line");
 
-        AddImage("Button", "Track_Button");
-        AddImagePoints("CornerButton", "Track_Button_Corner", "********", SvgDirection.North);
+        AddImage("Button", "Track_Button", 4);                                  // Add Buttons at N,E,S,W
+        AddImage("Button", "Track_Button_Corner", "********", 4, 45);     // Add Buttons at NE,SE,SW,NW
 
-        AddImagePoints("Straight", "Track_Straight", "**S***S*", SvgDirection.East);   // Image starts EAST at 0 degrees
-        AddImagePoints("Straight", "Track_Angle", "*S***S**", SvgDirection.NorthEast); // Image starts NORTH EAST at 45 degrees;
+        AddImage("Straight", "Track_Straight", "**S***S*", 4);   
+        AddImage("Straight", "Track_Angle", "*S***S**", 4,45); 
 
-        AddImagePoints("Cross", "Track_Straight_Cross", "S*S*S*S*", SvgDirection.East);
-        AddImagePoints("Cross", "Track_Angle_Cross", "*S*S*S*S", SvgDirection.NorthEast);
+        AddImage("Cross", "Track_Straight_Cross", "S*S*S*S*",4);
+        AddImage("Cross", "Track_Angle_Cross", "*S*S*S*S",4,45);
 
-        AddImagePoints("Corner", "Track_Corner_Left", "*S****S*", SvgDirection.East);
-        AddImagePoints("Corner", "Track_Corner_Right", "***S**S*", SvgDirection.NorthEast);
+        AddImage("Corner", "Track_Corner_Left", "*S****S*",4);
+        AddImage("Corner", "Track_Corner_Right", "***S**S*",4,45);
 
-        AddImagePoints("Terminator", "Track_Straight_Terminator", "**T***S*", SvgDirection.East);
-        AddImagePoints("Terminator", "Track_Angle_Terminator", "*T***S**", SvgDirection.NorthEast);
+        AddImage("Terminator", "Track_Straight_Terminator", "**T***S*",4);
+        AddImage("Terminator", "Track_Angle_Terminator", "*T***S**",4,45);
 
-        AddImagePoints("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*", SvgDirection.East);
-        AddImagePoints("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**", SvgDirection.NorthEast);
-        AddImagePoints("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*", SvgDirection.East);
-        AddImagePoints("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**", SvgDirection.NorthEast);
+        AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*",4);
+        AddImage("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**",4,45);
+        AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*",4);
+        AddImage("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**",4,45);
 
-        AddImagePoints("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*", SvgDirection.East);
-        AddImagePoints("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*", SvgDirection.NorthEast);
-        AddImagePoints("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*", SvgDirection.East);
-        AddImagePoints("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*", SvgDirection.NorthEast);
+        AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*",4);
+        AddImage("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*",4,45);
+        AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*",4);
+        AddImage("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*",4,45);
 
-        AddImagePoints("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*", SvgDirection.East);
-        AddImagePoints("LeftTurnoutStraight", "Track_Turnout_Left_Straight", "*DX***S*", SvgDirection.East);
-        AddImagePoints("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging", "*DX***S*", SvgDirection.East);
+        AddImage("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*");               // Support all 8 rotations
+        AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight", "*DX***S*");
+        AddImage("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging", "*DX***S*");
 
-        AddImagePoints("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*", SvgDirection.East);
-        AddImagePoints("RightTurnoutStraight", "Track_Turnout_Right_Straight", "**XD**S*", SvgDirection.East);
-        AddImagePoints("RightTurnoutDiverging", "Track_Turnout_Right_Diverging", "**XD**S*", SvgDirection.East);
+        AddImage("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*");             // Support all 8 rotations
+        AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight", "**XD**S*");
+        AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging", "**XD**S*");
 
         Console.WriteLine($"Done Building Available Images with count={Images.Count}");
     }
 
-    /// <summary>
-    /// Find the SVGImage object based on the item we want and the direct we need to be in
-    /// </summary>
-    public static SvgImage GetImage(string name) => GetImage(name, 0);
+    public static SvgImage GetImage(string name, int direction = 0) {
+        var reference = GetImageReference(name, direction);
+        if (reference is null) throw new SvgImageException($"Image {name} not found");
+        return new SvgImage() {
+            Filename = reference.Filename,
+            Rotation = reference.Rotation,
+            Connections = reference.Connections
+        };
+    }
 
-    public static SvgImage GetImage(string name, int direction) => GetImage(name, (SvgDirection)direction);
-
-    public static SvgImage GetImage(string name, SvgDirection direction) {
-        if (!Images.TryGetValue(name.ToLower(), out var imageBase)) throw new SvgImageException($"Image {name} not found");
-        if (imageBase.Values.Count == 0) throw new SvgImageException($"Image {name} has no directional images.");
-        if (imageBase.Values.Count == 1) {
-            Console.WriteLine($"Image {name} has only one directional image. Returning first image.");
-            return imageBase.Values.First();
-        }
-
-        if (imageBase.TryGetValue(direction, out var image)) {
-            Console.WriteLine($"Image {name} has directional image for {direction}.");
-            return image;
-        }
-
-        Console.WriteLine($"Could not find directional image for {name} in {direction}. Returning first image in list:");
-        return imageBase.Values.First();
+    private static SvgReference GetImageReference(string name, int rotation) {
+        if (!Images.TryGetValue(name.ToLower(), out var imageRoot)) throw new SvgImageException($"Image {name} not found");
+        return imageRoot.Values.Count switch {
+            0 => throw new SvgImageException($"Image {name} has no directional images."),
+            1 => imageRoot[0],
+            _ => imageRoot.TryGetValue(rotation, out var reference) ? reference : imageRoot[0]
+        };
     }
 
     /// <summary>
-    /// Create an instance of a record that knows about an Image for a given direction and rotation
+    /// Add a non-repeating Image (Button, Image, Circle) etc. These are more used as Icons. 
     /// </summary>
-    /// <param name="name">What do we call this image (eg: Straight)</param>
-    /// <param name="filename">Where do we find this image</param>
-    /// <param name="connections">What are the available connections (specific string format)</param>
-    /// <param name="direction">What direction(s) does this image work in</param>
-    /// <param name="rotation">What is the rotation that this image should be for the direction</param>
-    private static void AddImage(string name, string filename, string connections, SvgDirection direction, int rotation) => AddImage(name, filename, new SvgConnections(connections, rotation), direction, rotation);
-
-    private static void AddImage(string name, string filename, SvgConnections connections, SvgDirection direction, int rotation) {
-        var imageRef = GetSvgImageForDirection(name.ToLower(), direction);
-        imageRef.Filename = GetFullPathImage(filename);
-        imageRef.Rotation = rotation;
-        imageRef.Connections = connections;
-    }
-
-    /// <summary>
-    /// Helper to add simple track image pieces to the collection. The get logic will find only a single image reference
-    /// and no matter the rotation or direction will return this item.  
-    /// </summary>
-    /// <param name="name">The name to add under</param>
-    /// <param name="filename">The filename</param>
     private static void AddImage(string name, string filename) {
-        AddImage(name.ToLower(), filename, SvgConnections.NoConnections, SvgDirection.North, 0);
-    }
-
-    /// <summary>
-    /// Special Case always add 4 Points from a starting point, either North or NorthEast 
-    /// </summary>
-
-    // private static void AddImageFromNorth(string name, string filename) => AddImagePoints(name, filename, SvgConnections.NoConnections, SvgDirection.North, 0);
-    // private static void AddImageFromNorth(string name, string filename, string connections) => AddImagePoints(name, filename, connections, SvgDirection.North, 0);
-    // private static void AddImageFromNorthEast(string name, string filename) => AddImagePoints(name, filename, SvgConnections.NoConnections, SvgDirection.NorthEast, 45);
-    // private static void AddImageFromNorthEast(string name, string filename, string connections) => AddImagePoints(name, filename, connections, SvgDirection.NorthEast, 45);
-    private static void AddImagePoints(string name, string filename, string connections, SvgDirection start, int rotation = 0) => AddImagePoints(name, filename, new SvgConnections(connections, rotation), start, rotation);
-
-    private static void AddImagePoints(string name, string filename, SvgConnections connections, SvgDirection start, int rotation = 0) {
-        for (var i = 0; i < 4; i++) {
-            var rotationVal = rotation + (i * 90);
-            var directionVal = (SvgDirection)(((int)start + (i * 90)) % 360);
-            var connectionsVal = new SvgConnections(connections, rotationVal);
-            AddImage(name.ToLower(), filename, connectionsVal, directionVal, (rotationVal - rotation));
+        if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
+        var imageRoot = Images[name.ToLower()];
+        if (!imageRoot.ContainsKey(0)) {
+            imageRoot.Add(0, new SvgReference(GetFullPathImage(filename), 0, new SvgConnections("********", 0)));
         }
     }
 
+    private static void AddImage(string name, string filename, int points, int start = 0) => AddImage(name, filename, "********", points, start);
+
     /// <summary>
-    /// If we call this with a set of rotations only, assume that these are compass points based on the number.
-    /// So if 4 then it is every 4th, if 2, then it is every 2nd,  
+    /// Add a repeating image to the list. Ideally we build up so that every Image has 8 points that we can get
+    /// a display image for. 
     /// </summary>
-    private static void AddImage(string name, string filename, ConnectionType[] connections, SvgDirection start, params int[] rotation) {
-        var startPos = SvgDirections.GetDirectionIndex(start);
-        if (startPos < 0 || startPos >= rotation.Length) throw new ArgumentOutOfRangeException(nameof(start), "Direction must match a valid compass direction.");
-        var skip = rotation.Length / SvgConnections.CompassPoints;
-        for (var i = 0; i < rotation.Length; i++) {
-            var index = startPos + (skip * i);
-            if (index >= SvgConnections.CompassPoints) index -= SvgConnections.CompassPoints;
-            AddImage(name.ToLower(), filename, connections, (SvgDirection)(index), rotation[i]);
+    /// <param name="name">Name for the root of this Image</param>
+    /// <param name="filename">Filename for the rotated image</param>
+    /// <param name="connections">What are the base connection points (from 0)</param>
+    /// <param name="points">How many points to add? 4 or 8 normally</param>
+    /// <param name="start">Where do we start adding? Normally 0 or 45</param>
+    private static void AddImage(string name, string filename, string connections, int points = 8, int start = 0) {
+        if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
+        var imageRoot = Images[name.ToLower()];
+        for (var direction = 0; direction < 8; direction += (8 / points)) {
+            var key = start + (direction * 45);
+            var rotation = (direction * 45);
+            if (!imageRoot.ContainsKey(key)) {
+                imageRoot.Add(key, new SvgReference(GetFullPathImage(filename), rotation, new SvgConnections(connections, rotation)));
+            }
         }
     }
-
-    private static SvgImage GetSvgImageForDirection(string name, SvgDirection direction) {
-        if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<SvgDirection, SvgImage>());
-        var imageBase = Images[name];
-        if (!imageBase.ContainsKey(direction)) imageBase.Add(direction, new SvgImage());
-        return imageBase[direction];
-    }
-
+    
     private static string GetFullPathImage(string filename) {
         if (!filename.EndsWith(".svg")) filename += ".svg";
         return AvailableSymbols.FirstOrDefault(x => !string.IsNullOrEmpty(x) && x.EndsWith(filename, StringComparison.InvariantCultureIgnoreCase)) ?? throw new FileNotFoundException($"File not found: {filename}");

@@ -12,13 +12,15 @@ public partial class TestPanelPageModel : BaseViewModel {
     [ObservableProperty] private int _zoom = 10;
 
     public TestPanelPageModel() {
+        IsRefreshing = true;
+        IsBusy = true;
+        
         var panels = new Panels();
         var panel = panels.CreatePanel();
-        panel.Rows = 10;
-        panel.Cols = 16;
-
+        panel.Rows = 18;
+        panel.Cols = 27;
+        
         var buttonEntity = panel.CreateEntity<ButtonEntity>();
-        var cornerButtonEntity = panel.CreateEntity<CornerButtonEntity>();
         var cornerEntity = panel.CreateEntity<CornerEntity>();
         var cornerContinuationEntity = panel.CreateEntity<CornerContinuationEntity>();
         var crossingEntity = panel.CreateEntity<CrossingEntity>();
@@ -53,5 +55,9 @@ public partial class TestPanelPageModel : BaseViewModel {
         }
        
         Panel = panel;
+        
+        IsRefreshing = false;
+        IsBusy = false;
+
     }
 }

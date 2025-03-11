@@ -7,10 +7,12 @@
     x:DataType="view:TestPanelPageModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="Button_OnClicked" IconImageSource="triangle.png" />
         <ToolbarItem
             Clicked="ToggleDesignMode"
             IconImageSource="edit.png"
@@ -22,40 +24,31 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid
-            BackgroundColor="Coral"
-            HorizontalOptions="Fill"
-            RowDefinitions="auto,*"
-            VerticalOptions="Fill">
-
-            <StackLayout
-                Grid.Row="0"
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
-                <Label HorizontalOptions="Center" Margin="10">Test Panel Page</Label>
-                <Button
-                    Clicked="Button_OnClicked"
-                    HorizontalOptions="Center"
-                    Margin="10"
-                    Text="Test"
-                    WidthRequest="100" />
-            </StackLayout>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}">
             <Grid
-                BackgroundColor="Transparent"
-                Grid.Row="1"
+                BackgroundColor="White"
+                ColumnDefinitions="*,auto"
                 HorizontalOptions="Fill"
-                Margin="10"
                 VerticalOptions="Fill">
-                <view:ControlPanelView
-                    BackgroundColor="Transparent"
-                    DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=DesignMode}"
-                    EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=EditMode}"
-                    HorizontalOptions="Fill"
-                    Panel="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=Panel}"
-                    VerticalOptions="Fill"
-                    x:Name="PanelView" />
-            </Grid>
 
-        </Grid>
+                <Grid
+                    BackgroundColor="White"
+                    Grid.Column="0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+                    <view:ControlPanelView
+                        BackgroundColor="Transparent"
+                        DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=DesignMode}"
+                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=EditMode}"
+                        HorizontalOptions="Fill"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=Panel}"
+                        VerticalOptions="Fill"
+                        x:Name="PanelView" />
+                </Grid>
+                <Grid Grid.Column="1" IsVisible="{Binding DesignMode, Mode=TwoWay}">
+                    <view:VerticalTileSelector HorizontalOptions="Center" />
+                </Grid>
+            </Grid>
+        </RefreshView>
     </ContentPage.Content>
 </ContentPage>

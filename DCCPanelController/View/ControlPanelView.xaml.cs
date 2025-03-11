@@ -22,16 +22,18 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView  {
+    
+    [ObservableProperty] private bool _isRefreshing = false;
+    
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
         DragValid
     }
 
-    public Color GridColor = Colors.DarkGrey;
-    public double GridSize;
-    public double ViewHeight;
-    public double ViewWidth;
+    private double _gridSize;
+    private double _viewHeight;
+    private double _viewWidth;
 
     private int _lastDragCol;
     private int _lastDragRow;
@@ -41,7 +43,11 @@ public partial class ControlPanelView  {
     public ControlPanelView() {
         InitializeComponent();
         BindingContext = this;
+        SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
+        PropertyChanged += (sender, args) => {
+            Console.WriteLine($"Control Panel View: Property Changed: {args.PropertyName}");
+        };
     }
 
     public int Rows => Panel?.Rows ?? 1;
@@ -53,7 +59,7 @@ public partial class ControlPanelView  {
 
     public bool HasGridSizeChanged(double width, double height) {
         if (width < 1.0 || height < 1.0) return false;
-        var difference = Math.Abs(CalculateGridSize(width, height) - GridSize);
+        var difference = Math.Abs(CalculateGridSize(width, height) - _gridSize);
         return difference > 1;
     }
 
@@ -67,9 +73,9 @@ public partial class ControlPanelView  {
     }
 
     public void SetScreenSize(double width, double height) {
-        GridSize = CalculateGridSize(width, height);
-        ViewWidth = GridSize * Cols;
-        ViewHeight = GridSize * Rows;
+        _gridSize = CalculateGridSize(width, height);
+        _viewWidth = _gridSize * Cols;
+        _viewHeight = _gridSize * Rows;
     }
 
     public void DrawPanel(bool forceRefresh = false) {
@@ -81,11 +87,12 @@ public partial class ControlPanelView  {
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
+        IsRefreshing = true;
         var stopwatch = Stopwatch.StartNew();
 
         SetScreenSize(MainGrid.Width, MainGrid.Height);
-        DynamicGrid.WidthRequest = ViewWidth;
-        DynamicGrid.HeightRequest = ViewHeight;
+        DynamicGrid.WidthRequest = _viewWidth;
+        DynamicGrid.HeightRequest = _viewHeight;
         DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
@@ -107,6 +114,7 @@ public partial class ControlPanelView  {
         AddTilesToGrid(Panel);
         
         stopwatch.Stop();
+        IsRefreshing = false;
         Console.WriteLine($"ControlPanelView.RebuildGrid: {stopwatch.ElapsedMilliseconds}ms");
     }
 
@@ -125,7 +133,7 @@ public partial class ControlPanelView  {
     /// </summary>
     /// <returns>Returns a instance of the created tile or null if it could not create one. </returns>
     private ITile? AddTileToGrid(Entity entity) {
-        var tile = TileFactory.CreateTile(entity, GridSize);
+        var tile = TileFactory.CreateTile(entity, _gridSize);
         if (tile is ContentView view) {
             // If this tile is an interactive tile, then add a guesture recogniser
             // so that when tapped, or double-tapped, we can interact with it.
@@ -156,7 +164,6 @@ public partial class ControlPanelView  {
             DynamicGrid.SetColumn(view, tile.Entity.Col);
             DynamicGrid.SetRow(view, tile.Entity.Row);
             DynamicGrid.Children.Add(view);
-
         }
         return tile;
     }
@@ -222,7 +229,7 @@ public partial class ControlPanelView  {
             };
 
             // Add the GraphicsView directly to the AbsoluteLayout
-            AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, ViewWidth, ViewHeight));
+            AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
             AbsoluteLayout.SetLayoutFlags(graphicsView, AbsoluteLayoutFlags.PositionProportional);
             ControlPanelLayout.Children.Add(graphicsView);
             graphicsView.Invalidate();
@@ -241,18 +248,7 @@ public partial class ControlPanelView  {
         }
     }
     #endregion
-
-    // public void RemoveTrackPiece(ITrack track) {
-    //     if (Panel is { Tracks: { } tracks } panel) {
-    //         if (track.Parent == panel) {
-    //             track.Parent = null;
-    //             MarkTrackUnSelected(track);
-    //             RemoveDisplayItemFromGrid(track);
-    //             Panel.Tracks.Remove(track);
-    //         }
-    //     }
-    // }
-
+    
     #region Support Marking and UnMarking Tiles on the Panel
     public void ToggleMarkTile(ITile tile) {
         if (tile.IsSelected) MarkTileUnSelected(tile); 
@@ -275,25 +271,21 @@ public partial class ControlPanelView  {
     }
     
     /// <summary>
-    ///     Only highlight a cell if we are in Design Mode
+    /// Only highlight a cell if we are in Design Mode
     /// </summary>
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
 
         UnHighlightCell(col, row);
-        var borderColor = action switch {
+        var color = action switch {
             CellHighlightAction.Selected    => Colors.CornflowerBlue,
             CellHighlightAction.DragValid   => Colors.Green,
             CellHighlightAction.DragInvalid => Colors.Red,
             _                               => Colors.Red
         };
 
-        var backgroundColor = action switch {
-            CellHighlightAction.Selected    => Colors.CornflowerBlue.WithAlpha(0.25f),
-            CellHighlightAction.DragValid   => Colors.Transparent,
-            CellHighlightAction.DragInvalid => Colors.Transparent,
-            _                               => Colors.Transparent
-        };
+        var borderColor = color;
+        var backgroundColor = color.WithAlpha(0.25f);
 
         var border = new Border {
             ClassId = "CellHighlight",
@@ -302,8 +294,8 @@ public partial class ControlPanelView  {
             BackgroundColor = backgroundColor.WithAlpha(0.25f),
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Start,
-            WidthRequest = width * GridSize,
-            HeightRequest = height * GridSize,
+            WidthRequest = width * _gridSize,
+            HeightRequest = height * _gridSize,
             ZIndex = EntityPresets.Highlight,
             InputTransparent = true
         };
@@ -375,6 +367,13 @@ public partial class ControlPanelView  {
     /// you could have a non-track on top of a track or a track on top of an image. 
     /// </summary>
     private void DragOverTileOnPanel(object? sender, DragEventArgs e) {
+        if (!DesignMode) {
+            #if IOS || MACCATALYST
+            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
+            #endif
+            return;
+        }
+        
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
         
@@ -446,6 +445,7 @@ public partial class ControlPanelView  {
                         case "Panel":
                             switch (EditMode) {
                             case EditModeEnum.Move:
+                                Console.WriteLine($"Moving {tile.Entity.Guid} to {position.Col},{position.Row}");
                                 tile.Entity.Col = position.Col;
                                 tile.Entity.Row = position.Row;
                                 SetTileGridPosition(tile);
@@ -464,17 +464,14 @@ public partial class ControlPanelView  {
                             }
                             break;
 
-                        case "DisplaySymbol":
-                            //if (Panel is not null && trackPiece.Clone(Panel) is { } newPiece) {
-                            //    newPiece.X = position.Col;
-                            //    newPiece.Y = position.Row;
-                            //    Panel?.AddTrack(newPiece);
-                            //    AddDisplayItemToGrid(newPiece);
-                            //    MarkTileSelected(newPiece);
-                            //}
-
+                        case "Symbol":
+                            var dropEntity = panel.CreateEntityFrom(tile.Entity);
+                            dropEntity.Col = position.Col;
+                            dropEntity.Row = position.Row;
+                            var dropTile = AddTileToGrid(dropEntity);
+                            if (dropTile is not null) MarkTileSelected(dropTile);
                             break;
-
+                        
                         default:
                             Debug.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
@@ -496,6 +493,7 @@ public partial class ControlPanelView  {
 
     private bool DoesTrackClash(ITile tile, int col, int row) {
         if (tile.Entity is not ITrackEntity) return false;  // No clashes possible if the track is not a track piece
+        if (tile.Entity.Col == col && tile.Entity.Row == row) return true; // Can't drop onto yourself. 
         var tilesInGrid = DynamicGrid.OfType<ITile>().Where(eTile =>              
                 // Exclude the same track we're checking against
                 eTile != tile && eTile.Entity is ITrackEntity &&

@@ -64,10 +64,11 @@ public partial class Panel : ObservableObject, IEntityID {
     
     public T CreateEntityFrom<T>(T entity) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
+        Debug.Assert(cloned.Guid != entity.Guid,"Guids should be different");
         cloned.Parent = this;
         if (cloned is IEntityID entityID) entityID.Id = entityID.GenerateID();
         Entities.Add(cloned);
-        return entity ?? throw new InvalidOperationException();
+        return cloned ?? throw new InvalidOperationException();
     }
     
     public Panel Clone() {

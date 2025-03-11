@@ -7,7 +7,6 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 namespace DCCPanelController.View;
 
 public partial class ControlPanelView {
-
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
@@ -44,7 +43,6 @@ public partial class ControlPanelView {
         control.ShowGrid = control.DesignMode;
         control.DynamicGrid.GestureRecognizers.Clear();
         if (control.DesignMode) {
-            
             // In design mode we need to support drag and drop for the tiles on the screen.
             // ----------------------------------------------------------------------------
             var dropRecogniser = new DropGestureRecognizer();
@@ -58,13 +56,10 @@ public partial class ControlPanelView {
             var tapRecogniser = new TapGestureRecognizer();
             tapRecogniser.Tapped += control.DynamicGridTapped;
             control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
-            
-            // We need to redraw the panel so that we have the drag gestures for the tiles. 
-            // ---------------------------------------------------------------------------
-            control.DrawPanel(true);
-        } 
+        }
+        control.DrawPanel(true);
     }
-
+    
     /// <summary>
     /// If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>

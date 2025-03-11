@@ -268,6 +268,9 @@
         <MauiXaml Update="View\TestPanelPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\VerticalTileSelector.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -338,11 +341,16 @@
         <Compile Update="View\TestPanelViewModel.cs">
           <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="View\Pages\" />
-      <Folder Include="View\ViewModels\" />
+        <Compile Update="View\TileSelectorViewModel.cs">
+          <DependentUpon>TileSelector.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\VerticalTileSelector.xaml.cs">
+          <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\VerticalTileSelectorViewModel.cs">
+          <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

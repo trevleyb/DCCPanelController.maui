@@ -29,6 +29,7 @@ public partial class ButtonTile : Tile, ITileInteractive {
             });
 
             var image = new Image();
+            image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
             image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
             return image;
         }
