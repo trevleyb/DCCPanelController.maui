@@ -23,6 +23,7 @@
                 AbsoluteLayout.LayoutFlags="PositionProportional"
                 BackgroundColor="{Binding Panel.BackgroundColor, FallbackValue=#FFFFFF}"
                 HorizontalOptions="Center"
+                Margin="5"
                 VerticalOptions="Center"
                 x:Name="DynamicGrid" />
         </AbsoluteLayout>

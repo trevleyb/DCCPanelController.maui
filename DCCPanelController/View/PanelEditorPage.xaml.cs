@@ -28,6 +28,7 @@ public partial class PanelEditorPage : ContentPage {
     private ToolbarItem exitEditModeToolbar = new ToolbarItem { Text = "Exit Edit Mode", IconImageSource = iconExitEdit};
     private ToolbarItem toggleFullscreenToolbar = new ToolbarItem { Text = "Toggle Fullscreen"};
     private ToolbarItem addPanelToolbar = new ToolbarItem { Text = "Add Panel", IconImageSource = iconAdd };
+    private ToolbarItem duplicatePanelToolbar = new ToolbarItem { Text = "Duplicate Panel", IconImageSource = iconCopy };
     private ToolbarItem deletePanelToolbar = new ToolbarItem { Text = "Delete Panel", IconImageSource = iconDelete};
     private ToolbarItem editPanelToolbar = new ToolbarItem { Text = "Edit Panel", IconImageSource = iconEdit};
     private ToolbarItem spacerToolbar = new ToolbarItem { Text = "", IsEnabled = false};
@@ -56,6 +57,7 @@ public partial class PanelEditorPage : ContentPage {
         addPanelToolbar.Command = new Command(vm.AddPanel);
         deletePanelToolbar.Command = new Command(vm.DeletePanel);
         editPanelToolbar.Command = new Command(vm.EditPanel);
+        duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
     }
 
     private void ConfigureToolbarItems() {
@@ -70,10 +72,10 @@ public partial class PanelEditorPage : ContentPage {
             };
             showModeToolbar.Text = vm.EditMode.ToString();
             deleteTileToolbar.IsEnabled = vm.SelectedPanel?.SelectedTiles?.Count > 0;
-            deleteTileToolbar.IconImageSource = vm.SelectedPanel?.SelectedTiles?.Count > 0 ? iconTileDelete : iconDelete;
             propertiesToolbar.IconImageSource = vm.SelectedPanel?.SelectedTiles?.Count == 0 ? iconEditPanelProperties : iconEditTileProperties;
 
             addPanelToolbar.IsEnabled = true;
+            duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             deletePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             editPanelToolbar.IsEnabled = vm.SelectedPanel != null;
 
@@ -109,6 +111,7 @@ public partial class PanelEditorPage : ContentPage {
                 // In View mode so we need a toolbar that supports the panels.
                 // --------------------------------------------------------------------------------------------------
                 ToolbarItems.Add(addPanelToolbar);
+                ToolbarItems.Add(duplicatePanelToolbar);
                 ToolbarItems.Add(deletePanelToolbar);
                 ToolbarItems.Add(editPanelToolbar);
                 ToolbarItems.Add(spacerToolbar);
