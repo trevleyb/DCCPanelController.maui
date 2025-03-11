@@ -27,10 +27,6 @@ public static class TileFactory {
             CircleLabelEntity          => null,
             _                          => null
         };
-        if (tile is null) {
-            Console.WriteLine($"Unknown entity type: {entity.GetType()}");
-            return null;
-        }
         return tile;
     }
 }

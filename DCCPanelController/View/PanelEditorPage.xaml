@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentPage
+    x:Class="DCCPanelController.View.PanelEditorPage"
+    x:DataType="view:PanelEditorViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentPage.ToolbarItems />
+
+    <ContentPage.Content>
+        <RefreshView IsRefreshing="{Binding IsRefreshing}">
+            <Grid
+                BackgroundColor="White"
+                ColumnDefinitions="*,auto"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
+                <Grid
+                    BackgroundColor="White"
+                    Grid.Column="0"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+                    <view:ControlPanelView
+                        BackgroundColor="Transparent"
+                        DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=DesignMode}"
+                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=EditMode}"
+                        HorizontalOptions="Fill"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
+                        VerticalOptions="Fill"
+                        x:Name="PanelView" />
+                </Grid>
+                <Grid Grid.Column="1" IsVisible="{Binding DesignMode, Mode=TwoWay}">
+                    <view:VerticalTileSelector HorizontalOptions="Center" />
+                </Grid>
+            </Grid>
+        </RefreshView>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,4 +1,5 @@
 using DCCPanelController.Tests;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
@@ -6,7 +7,6 @@ public partial class TestPanelPage : ContentPage {
     public TestPanelPage() {
         InitializeComponent();
         BindingContext = new TestPanelPageModel();
-        PropertyChanged += (sender, args) => { Console.WriteLine(args.PropertyName); };
     }
 
     protected override void OnBindingContextChanged() {
@@ -40,13 +40,5 @@ public partial class TestPanelPage : ContentPage {
             EditModeToolbar.IsEnabled = vm.DesignMode;
             OnPropertyChanged(nameof(DesignMode));
         }
-    }
-
-    private void PanGestureRecognizer_OnPanUpdated(object? sender, PanUpdatedEventArgs e) {
-        Console.WriteLine($"PanUpdated: {e.StatusType}");
-    }
-
-    private void PinchGestureRecognizer_OnPinchUpdated(object? sender, PinchGestureUpdatedEventArgs e) {
-        Console.WriteLine($"PinchUpdated: {e.Status}");
     }
 }

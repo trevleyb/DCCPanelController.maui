@@ -35,7 +35,7 @@ public partial class Panel : ObservableObject, IEntityID {
     [JsonIgnore] public List<Entity> Entities { get; } = [];
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public List<Entity> SelectedTracks => Entities.Where(t => t.IsSelected).ToList() ?? [];
+    [JsonIgnore] public List<Entity> SelectedTiles => Entities.Where(t => t.IsSelected).ToList() ?? [];
 
     public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];

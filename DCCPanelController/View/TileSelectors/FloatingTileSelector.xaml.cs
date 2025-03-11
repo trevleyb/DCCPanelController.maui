@@ -2,10 +2,10 @@ using DCCPanelController.Models.ViewModel.Tiles;
 
 namespace DCCPanelController.View;
 
-public partial class TileSelector {
-    public TileSelector() {
+public partial class FloatingTileSelector {
+    public FloatingTileSelector() {
         InitializeComponent();
-        BindingContext = new TileSelectorViewModel();
+        BindingContext = new FloatingTileSelectorViewModel();
     }
 
     private void SymbolDragStarting(object? sender, DragStartingEventArgs e) {
@@ -24,7 +24,7 @@ public partial class TileSelector {
 
     private void DropGestureRecognizer_OnDragOver(object? sender, DragEventArgs e) {
         Console.WriteLine($"Drag Over: {sender?.GetType().Name}");
-        if (sender is DropGestureRecognizer { BindingContext: TileSelectorViewModel { } vm }) {
+        if (sender is DropGestureRecognizer { BindingContext: FloatingTileSelectorViewModel { } vm }) {
             var position = e.GetPosition(this);
             if (position is { } pos) {
                 Console.WriteLine($"Drag Over: {sender?.GetType().Name} @ {pos.X}, {pos.Y}");
@@ -39,10 +39,9 @@ public partial class TileSelector {
 
     private void DropGestureRecognizer_OnDrop(object? sender, DropEventArgs e) {
         Console.WriteLine($"DROPPED: {sender?.GetType().Name}");
-        if (sender is DropGestureRecognizer { BindingContext: TileSelectorViewModel { } vm }) {
+        if (sender is DropGestureRecognizer { BindingContext: FloatingTileSelectorViewModel { } vm }) {
             var position = e.GetPosition(this);
             if (position is { } pos) {
-                Console.WriteLine($"DROPPED: {sender?.GetType().Name} @ {pos.X}, {pos.Y}");
                 vm.X = pos.X;
                 vm.Y = pos.Y;
                 vm.Width = this.Width;

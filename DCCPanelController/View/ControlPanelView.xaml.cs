@@ -45,9 +45,6 @@ public partial class ControlPanelView  {
         BindingContext = this;
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
-        PropertyChanged += (sender, args) => {
-            Console.WriteLine($"Control Panel View: Property Changed: {args.PropertyName}");
-        };
     }
 
     public int Rows => Panel?.Rows ?? 1;
@@ -585,10 +582,4 @@ public partial class ControlPanelView  {
         Console.WriteLine($"Could not determine the Grid Position from the point provided: {point.ToString()}");
         return null;
     }
-}
-
-public enum EditModeEnum {
-    Move,
-    Copy,
-    Size
 }

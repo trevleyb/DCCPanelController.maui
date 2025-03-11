@@ -72,7 +72,6 @@ public abstract partial class Tile : ContentView, ITile {
             SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
             SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
             SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), source: Entity));
-            Console.WriteLine($"Tile created: {Entity.Name}");
         }
     }
 

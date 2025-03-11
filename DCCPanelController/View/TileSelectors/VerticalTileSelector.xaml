@@ -41,7 +41,7 @@
                         </CollectionView.ItemsLayout>
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="view:TileSelectorViewModel">
+                            <DataTemplate x:DataType="view:VerticalTileSelectorViewModel">
                                 <ContentView HeightRequest="{Binding GridSize}" WidthRequest="{Binding GridSize}">
                                     <Border
                                         BackgroundColor="White"

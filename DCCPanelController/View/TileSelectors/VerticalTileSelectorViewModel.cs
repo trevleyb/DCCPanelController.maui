@@ -10,33 +10,15 @@ using DCCPanelController.Models.ViewModel.Tiles;
 
 namespace DCCPanelController.View;
 
-public partial class TileSelectorViewModel : BaseViewModel {
+public partial class VerticalTileSelectorViewModel : BaseViewModel {
     
-    [ObservableProperty] private double _x = 0;
-    [ObservableProperty] private double _y = 0;
-    [ObservableProperty] private double _width = 0;
-    [ObservableProperty] private double _height = 0;
-    [ObservableProperty] private double _lastX = 0;
-    [ObservableProperty] private double _lastY = 0;
-    [ObservableProperty] private string _layoutBounds = "0.5,0.5,autosize,autosize";
     [ObservableProperty] private double _gridSize = 32; 
     [ObservableProperty] private ObservableCollection<Tile> _tiles = new();
 
-    public TileSelectorViewModel() {
+    public VerticalTileSelectorViewModel() {
         BuildTileList();
-        PropertyChanged += OnPropertyChanged;
     }
-
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"TileSelector: {e.PropertyName}");
-        if (Width > 0 && Height > 0) {
-            var posX = X / Width;
-            var posY = Y / Height;
-            LayoutBounds = $"{posX},{posY},autosize,autosize";
-            Console.WriteLine($"Bounds={LayoutBounds}");
-        }
-    }
-
+    
     private void BuildTileList() {
         var tilesPanels = new Panels();
         var panel = tilesPanels.CreatePanel();
@@ -65,8 +47,6 @@ public partial class TileSelectorViewModel : BaseViewModel {
         var tile = TileFactory.CreateTile(entity, GridSize);
         if (tile is Tile view) {
             Tiles.Add(view);
-        } else {
-            Console.WriteLine($"Unable to create tile: {tile?.Entity.Name ?? "Unknown"}");
-        }
+        } 
     }
 }

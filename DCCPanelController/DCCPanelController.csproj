@@ -268,7 +268,10 @@
         <MauiXaml Update="View\TestPanelPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\VerticalTileSelector.xaml">
+        <MauiXaml Update="View\TileSelectors\FloatingTileSelector.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\TileSelectors\VerticalTileSelector.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -341,15 +344,16 @@
         <Compile Update="View\TestPanelViewModel.cs">
           <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\TileSelectorViewModel.cs">
-          <DependentUpon>TileSelector.xaml</DependentUpon>
+        <Compile Update="View\PanelEditorViewModel.cs">
+          <DependentUpon>PanelEditorPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\VerticalTileSelector.xaml.cs">
-          <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
+        <Compile Update="View\TileSelectors\FloatingTileSelector.xaml.cs">
+          <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\VerticalTileSelectorViewModel.cs">
+        <Compile Update="View\TileSelectors\VerticalTileSelector.xaml.cs">
           <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

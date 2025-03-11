@@ -15,6 +15,10 @@
             ContentTemplate="{DataTemplate view:TestPanelPage}"
             Icon="properties.png"
             Title="Settings" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:PanelEditorPage}"
+            Icon="properties.png"
+            Title="Settings" />
     </FlyoutItem>
 
 </Shell>
