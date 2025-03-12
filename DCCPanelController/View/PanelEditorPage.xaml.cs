@@ -8,16 +8,22 @@ public partial class PanelEditorPage : ContentPage {
     PanelEditorViewModel? ViewModel;
 
     public PanelEditorPage() {
+        Console.WriteLine($"PanelEditorPage.ctor");
         InitializeComponent();
-        ViewModel = new PanelEditorViewModel(new Panels());
-        BindingContext = ViewModel;
-        AssignToolbarCommands(ViewModel);
-        UpdateToolbarItems();
-        ViewModel.PropertyChanged += (sender, args) => {
-            Console.WriteLine($"PanelEditorPage.PropertyChanged: {args.PropertyName}");
-            if (args.PropertyName == nameof(DesignMode)) UpdateToolbarItems();
-            ConfigureToolbarItems();
-        };
+    }
+
+    protected override void OnBindingContextChanged() {
+        base.OnBindingContextChanged();
+        if (BindingContext is PanelEditorViewModel { } vm) {
+            ViewModel = vm;
+            vm.PropertyChanged += (sender, args) => {
+                Console.WriteLine($"PanelEditorPage.PropertyChanged: {args.PropertyName}");
+                if (args.PropertyName == nameof(DesignMode)) UpdateToolbarItems();
+                ConfigureToolbarItems();
+            };
+            AssignToolbarCommands();
+            UpdateToolbarItems();
+        }
     }
 
     // ------------------------------------------------------------------------------------------------
@@ -28,7 +34,7 @@ public partial class PanelEditorPage : ContentPage {
     private ToolbarItem exitEditModeToolbar = new ToolbarItem { Text = "Exit Edit Mode", IconImageSource = iconExitEdit};
     private ToolbarItem toggleFullscreenToolbar = new ToolbarItem { Text = "Toggle Fullscreen"};
     private ToolbarItem addPanelToolbar = new ToolbarItem { Text = "Add Panel", IconImageSource = iconAdd };
-    private ToolbarItem duplicatePanelToolbar = new ToolbarItem { Text = "Duplicate Panel", IconImageSource = iconCopy };
+    private ToolbarItem duplicatePanelToolbar = new ToolbarItem { Text = "Duplicate Panel", IconImageSource = iconDuplicate };
     private ToolbarItem deletePanelToolbar = new ToolbarItem { Text = "Delete Panel", IconImageSource = iconDelete};
     private ToolbarItem editPanelToolbar = new ToolbarItem { Text = "Edit Panel", IconImageSource = iconEdit};
     private ToolbarItem spacerToolbar = new ToolbarItem { Text = "", IsEnabled = false};
@@ -39,30 +45,33 @@ public partial class PanelEditorPage : ContentPage {
     private const string iconRotate = "rotate_cw.png";
     private const string iconTileDelete = "trash_2.png";
     private const string iconExitEdit = "log_out.png";
-    private const string iconAdd = "file_plus.png";
-    private const string iconDelete = "file_minus.png";
-    private const string iconEdit = "file_text";
+    private const string iconAdd = "plus_circle.png";
+    private const string iconDelete = "trash_2.png";
+    private const string iconEdit = "edit.png";
+    private const string iconDuplicate = "copy.png";
     private const string iconEditTileProperties = "edit_3.png";
-    private const string iconEditPanelProperties = "edit.png";
+    private const string iconEditPanelProperties = "settings.png";
     private const string iconFullscreenLarge = "maximize_2.png";
     private const string iconFullscreenSmall = "minimize_2.png";
     private const string iconSpacer = "blank.png";
     
-    private void AssignToolbarCommands(PanelEditorViewModel vm) {
-        selectModeToolbar.Command = new Command(vm.ToggleMode);
-        deleteTileToolbar.Command = new Command(vm.DeleteTile);
-        propertiesToolbar.Command = new Command(vm.EditProperties);
-        exitEditModeToolbar.Command = new Command(vm.ExitEditMode);
-        toggleFullscreenToolbar.Command = new Command(vm.ToggleFullscreen);
-        addPanelToolbar.Command = new Command(vm.AddPanel);
-        deletePanelToolbar.Command = new Command(vm.DeletePanel);
-        editPanelToolbar.Command = new Command(vm.EditPanel);
-        duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
+    private void AssignToolbarCommands() {
+        if (ViewModel is PanelEditorViewModel { } vm) {
+            selectModeToolbar.Command = new Command(vm.ToggleMode);
+            deleteTileToolbar.Command = new Command(vm.DeleteTile);
+            propertiesToolbar.Command = new Command(vm.EditProperties);
+            exitEditModeToolbar.Command = new Command(vm.ExitEditMode);
+            toggleFullscreenToolbar.Command = new Command(vm.ToggleFullscreen);
+            addPanelToolbar.Command = new Command(vm.AddPanel);
+            deletePanelToolbar.Command = new Command(vm.DeletePanel);
+            editPanelToolbar.Command = new Command(vm.EditPanel);
+            duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
+        }
     }
 
     private void ConfigureToolbarItems() {
         Console.WriteLine($"ConfigureToolbarItems: ");
-        if (ViewModel is { } vm) {
+        if (ViewModel is PanelEditorViewModel { } vm) {
             selectModeToolbar.IconImageSource = vm.EditMode switch {
                 EditModeEnum.Copy   => iconCopy,
                 EditModeEnum.Move   => iconMove,

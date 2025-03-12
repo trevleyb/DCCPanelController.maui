@@ -10,7 +10,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public abstract partial class Entity() : ObservableObject {
 
     public abstract string Name { get; }
-    public virtual string TrackClass => GetType().Name;
+    public virtual string Type => GetType().Name;
     
     [ObservableProperty] private int _col;                 // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _row;                 // What Grid Position (Vertical) is this component?
@@ -19,7 +19,10 @@ public abstract partial class Entity() : ObservableObject {
     [ObservableProperty] private int _height = 1;          // What Height is this component? 
     [ObservableProperty] private int _rotation = 0;        // Is the track rotated?
     [ObservableProperty] private bool _isEnabled = true;   // Is this item actually in use?
-    [ObservableProperty] private bool _isSelected = false; // Is this item actually in use?
+    
+    [ObservableProperty]
+    [property:JsonIgnore]
+    private bool _isSelected = false; // Is this item actually in use?
     
     [JsonIgnore] public Panel? Parent { get; set; } = null;
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();

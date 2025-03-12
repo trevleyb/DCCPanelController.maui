@@ -8,67 +8,59 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Grid WidthRequest="52">
-        <Border
-            BackgroundColor="WhiteSmoke"
-            Padding="5"
-            Stroke="#FFF5F5F5"
-            StrokeShape="RoundRectangle 0,0,0,0"
-            StrokeThickness="1">
+        <ScrollView Orientation="Vertical">
+            <VerticalStackLayout>
+                <Grid>
+                    <Border
+                        BackgroundColor="Gainsboro"
+                        HeightRequest="12"
+                        HorizontalOptions="Center"
+                        Margin="0,10,0,10"
+                        Stroke="{StaticResource Black}"
+                        VerticalOptions="Center"
+                        WidthRequest="12" />
+                </Grid>
+                <CollectionView
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemsSource="{Binding Tiles}"
+                    SelectionMode="None">
 
-            <ScrollView Orientation="Vertical">
-                <VerticalStackLayout>
-                    <Grid>
-                        <Border
-                            BackgroundColor="Gainsboro"
-                            HeightRequest="12"
-                            HorizontalOptions="Center"
-                            Margin="0,10,0,10"
-                            Stroke="{StaticResource Black}"
-                            VerticalOptions="Center"
-                            WidthRequest="12" />
-                    </Grid>
-                    <CollectionView
-                        ItemSizingStrategy="MeasureAllItems"
-                        ItemsSource="{Binding Tiles}"
-                        SelectionMode="None">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout
+                            Orientation="Vertical"
+                            SnapPointsType="MandatorySingle"
+                            Span="1"
+                            VerticalItemSpacing="2" />
+                    </CollectionView.ItemsLayout>
 
-                        <CollectionView.ItemsLayout>
-                            <GridItemsLayout
-                                Orientation="Vertical"
-                                SnapPointsType="MandatorySingle"
-                                Span="1"
-                                VerticalItemSpacing="2" />
-                        </CollectionView.ItemsLayout>
-
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="view:VerticalTileSelectorViewModel">
-                                <ContentView HeightRequest="{Binding GridSize}" WidthRequest="{Binding GridSize}">
-                                    <Border
-                                        BackgroundColor="White"
-                                        HeightRequest="{Binding GridSize}"
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="view:VerticalTileSelectorViewModel">
+                            <ContentView HeightRequest="{Binding GridSize}" WidthRequest="{Binding GridSize}">
+                                <Border
+                                    BackgroundColor="White"
+                                    HeightRequest="{Binding GridSize}"
+                                    HorizontalOptions="Fill"
+                                    Padding="5"
+                                    Stroke="{StaticResource Gray500}"
+                                    StrokeShape="RoundRectangle 10,10,10,10"
+                                    StrokeThickness="1"
+                                    VerticalOptions="Fill"
+                                    WidthRequest="{Binding GridSize}">
+                                    <ContentView
+                                        Content="{Binding .}"
                                         HorizontalOptions="Fill"
-                                        Padding="5"
-                                        Stroke="{StaticResource Gray500}"
-                                        StrokeShape="RoundRectangle 10,10,10,10"
-                                        StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        WidthRequest="{Binding GridSize}">
-                                        <ContentView
-                                            Content="{Binding .}"
-                                            HorizontalOptions="Fill"
-                                            VerticalOptions="Fill"
-                                            x:DataType="View">
-                                            <ContentView.GestureRecognizers>
-                                                <DragGestureRecognizer DragStarting="SymbolDragStarting" />
-                                            </ContentView.GestureRecognizers>
-                                        </ContentView>
-                                    </Border>
-                                </ContentView>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </VerticalStackLayout>
-            </ScrollView>
-        </Border>
+                                        x:DataType="View">
+                                        <ContentView.GestureRecognizers>
+                                            <DragGestureRecognizer DragStarting="SymbolDragStarting" />
+                                        </ContentView.GestureRecognizers>
+                                    </ContentView>
+                                </Border>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
     </Grid>
 </ContentView>

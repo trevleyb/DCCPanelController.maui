@@ -30,9 +30,9 @@ public partial class Panel : ObservableObject, IEntityID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+    [ObservableProperty] private ObservableCollection<Entity> _entities = [];
     
     [JsonIgnore] public Panels? Panels { get; set; }
-    [JsonIgnore] public List<Entity> Entities { get; } = [];
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
     [JsonIgnore] public List<Entity> SelectedTiles => Entities.Where(t => t.IsSelected).ToList() ?? [];
@@ -43,6 +43,7 @@ public partial class Panel : ObservableObject, IEntityID {
     public List<T> GetAllEntitiesByType<T>() => Panels?.SelectMany(p => p.Entities.OfType<T>()).Union(Entities.OfType<T>()).ToList() ?? [];
     public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(p => p.Entities.OfType<T>().Union(Entities.OfType<T>()).Where(e => !string.IsNullOrEmpty(e.Id))).ToList() ?? [];
 
+    [JsonIgnore]
     public string Title {
         get {
             if (string.IsNullOrEmpty(Id) && string.IsNullOrEmpty(Description)) return "DCC Panel Controller";

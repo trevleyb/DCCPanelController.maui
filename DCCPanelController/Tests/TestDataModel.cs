@@ -9,22 +9,22 @@ namespace DCCPanelController.Tests;
 
 public class TestDataModel {
     public void LoadAndSaveDataModel() {
-        var storage = new Storage();
-        BuildTestDataModel(storage);
-        ValidateTestDataModel(storage);
-        JsonRepository.Save(storage);
+        var profile = new Profile("testProfile");
+        BuildTestDataModel(profile);
+        ValidateTestDataModel(profile);
+        profile.Save();
         var loadedStorage = JsonRepository.Load();
         ValidateTestDataModel(loadedStorage);
     }
 
-    private void BuildTestDataModel(Storage storage) {
+    private void BuildTestDataModel(Profile storage) {
         var original = CreatePanel(storage.Panels);
         var clone = storage.Panels.CreatePanelFrom(original);
         Debug.Assert(clone.Id != original.Id, "clone.Id != original.Id");
         Debug.Assert(clone.GetHashCode() != original.GetHashCode(), "clone.GetHashCode() != original.GetHashCode()");
     }
 
-    private void ValidateTestDataModel(Storage storage) {
+    private void ValidateTestDataModel(Profile storage) {
         var panelIDs = new List<string>();
         var entityIDs = new List<string>();
         foreach (var panel in storage.Panels) {
