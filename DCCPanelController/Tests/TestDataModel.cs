@@ -82,7 +82,7 @@ public class TestDataModel {
         
         switch (entity) {
         case ButtonEntity buttonEntity:
-            buttonEntity.ButtonState = ButtonStateEnum.Off;
+            buttonEntity.State = ButtonStateEnum.Off;
             break;
 
         case CircleLabelEntity circleLabelEntity:

@@ -81,5 +81,28 @@ public partial class ControlPanelView {
 
     private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
         var control = (ControlPanelView)bindable;
+        switch (control.EditMode) {
+            case EditModeEnum.Move:
+                Console.WriteLine("EditMode=>Move");
+                control._canDragTiles = true;
+                break;
+            case EditModeEnum.Rotate:
+                Console.WriteLine("EditMode=>Rotate");
+                control._canDragTiles = false;
+                break;
+            case EditModeEnum.Copy:
+                Console.WriteLine("EditMode=>Copy");
+                control._canDragTiles = true;
+                break;
+            case EditModeEnum.Size:
+                Console.WriteLine("EditMode=>Size");
+                control._canDragTiles = false;
+                break;
+            case EditModeEnum.Select:
+                Console.WriteLine("EditMode=>Select");
+                control._canDragTiles = false;
+                break;
+        }
+        
     }
 }

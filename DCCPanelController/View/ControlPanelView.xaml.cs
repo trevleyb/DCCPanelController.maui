@@ -21,10 +21,7 @@ using UIKit;
 namespace DCCPanelController.View;
 
 [ObservableObject]
-public partial class ControlPanelView  {
-    
-    [ObservableProperty] private bool _isRefreshing = false;
-    
+public partial class ControlPanelView {
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
@@ -38,7 +35,8 @@ public partial class ControlPanelView  {
     private int _lastDragCol;
     private int _lastDragRow;
     private int _tapCount = 0;
-    private const int DoubleTapTime = 200;  
+    private const int DoubleTapTime = 200;
+    private bool _canDragTiles = true;
 
     public ControlPanelView() {
         InitializeComponent();
@@ -84,7 +82,6 @@ public partial class ControlPanelView  {
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
-        IsRefreshing = true;
         var stopwatch = Stopwatch.StartNew();
 
         SetScreenSize(MainGrid.Width, MainGrid.Height);
@@ -93,7 +90,6 @@ public partial class ControlPanelView  {
         DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
 
         DynamicGrid.Children.Clear();
-
         if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
             DynamicGrid.RowDefinitions.Clear();
             DynamicGrid.ColumnDefinitions.Clear();
@@ -109,9 +105,8 @@ public partial class ControlPanelView  {
 
         DrawGrid();
         AddTilesToGrid(Panel);
-        
+
         stopwatch.Stop();
-        IsRefreshing = false;
         Console.WriteLine($"ControlPanelView.RebuildGrid: {stopwatch.ElapsedMilliseconds}ms");
     }
 
@@ -121,7 +116,7 @@ public partial class ControlPanelView  {
     private void AddTilesToGrid(Panel? panel) {
         if (panel is null) return;
         foreach (var entity in panel.Entities) {
-            AddTileToGrid(entity);    
+            AddTileToGrid(entity);
         }
     }
 
@@ -137,27 +132,20 @@ public partial class ControlPanelView  {
             // --------------------------------------------------------------------
             view.Behaviors.Clear();
             view.GestureRecognizers.Clear();
-            if (DesignMode) {
-                var tapGesture = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-                tapGesture.Tapped += (_, args) => OnTileTappedInDesign(tile, args);
-                view.GestureRecognizers.Add(tapGesture);
 
+            var tapGesture = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
+            tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
+            view.GestureRecognizers.Add(tapGesture);
+
+            if (DesignMode) {
                 var touchBehavior = new CommunityToolkit.Maui.Behaviors.TouchBehavior();
                 touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
                 view.Behaviors.Add(touchBehavior);
-                
+
                 var dragGesture = new DragGestureRecognizer();
                 dragGesture.DragStarting += (sender, args) => DragTileStarting(args, tile);
                 view.GestureRecognizers.Add(dragGesture);
-
-            } else {
-                if (tile is ITileInteractive interactiveTile) {
-                    var tapGesture = new TapGestureRecognizer() { NumberOfTapsRequired = 1 };
-                    tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
-                    view.GestureRecognizers.Add(tapGesture);
-                }
             }
-
             DynamicGrid.SetColumn(view, tile.Entity.Col);
             DynamicGrid.SetRow(view, tile.Entity.Row);
             DynamicGrid.Children.Add(view);
@@ -167,34 +155,58 @@ public partial class ControlPanelView  {
 
     private void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
+
         // Add support for the Property Page to be shown
     }
 
-    private async void OnTileTappedInDesign(object? sender, TappedEventArgs e) {
-        _tapCount++;
-        await Task.Delay(DoubleTapTime);
-        if (sender is ITile tile) {
-            if (_tapCount == 1) ToggleMarkTile(tile);
-            if (_tapCount == 2) tile.RotateRight();
-        }
-        _tapCount = 0;
-    }
-    
+    /// <summary>
+    /// Handles the tile tap interaction, including single tap and optionally double-tap,
+    /// to perform actions such as interaction, selection, rotation, or other context-specific operations.
+    /// </summary>
+    /// <param name="sender">
+    /// The tile object that triggered the tap event. It can be an interactive or non-interactive tile.
+    /// </param>
+    /// <param name="e">
+    /// The event arguments related to the tap event, providing details about the interaction.
+    /// </param>
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
-        if (sender is ITileInteractive interactiveTile) {
+        if (sender is ITileInteractive interactiveTile && !DesignMode) {
             if (_tapCount == 1) interactiveTile.Interact();
             if (_tapCount == 2) interactiveTile.Secondary();
+        } else if (sender is ITile tile) {
+            if (_tapCount == 1) {
+                switch (EditMode) {
+                case EditModeEnum.Move:break;
+                case EditModeEnum.Copy:break;
+                case EditModeEnum.Size:break;
+                case EditModeEnum.Rotate:
+                    tile.RotateRight();
+                    break;
+                case EditModeEnum.Select:
+                    if (tile.IsSelected) {
+                        MarkTileUnSelected(tile);
+                    } else {
+                        ClearSelectedTiles();
+                        ToggleMarkTile(tile);
+                    }
+                    break;
+                }
+            }
+
+            // TODO:
+            // Currently do nothing but should bring up the properties page.
+            if (_tapCount == 2) ;
         }
         _tapCount = 0;
     }
-    
+
     private void RemoveTileFromGrid(ITile tile) {
         var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId.Equals(tile.Entity.Guid.ToString())).ToList();
         foreach (var child in children) {
-                DynamicGrid.Remove(child);
-        }    
+            DynamicGrid.Remove(child);
+        }
         Panel?.Entities.Remove(tile.Entity);
     }
 
@@ -204,7 +216,7 @@ public partial class ControlPanelView  {
             DynamicGrid.SetRow(view, tile.Entity.Row);
         }
     }
-    
+
     // If we click on a grid that is NOT a track piece and in design mode, 
     // then clear all the selected tracks.
     // -------------------------------------------------------------------------
@@ -232,7 +244,7 @@ public partial class ControlPanelView  {
             graphicsView.Invalidate();
         }
     }
-    
+
     /// <summary>
     ///     Draw the Grid Outline
     /// </summary>
@@ -245,10 +257,10 @@ public partial class ControlPanelView  {
         }
     }
     #endregion
-    
+
     #region Support Marking and UnMarking Tiles on the Panel
     public void ToggleMarkTile(ITile tile) {
-        if (tile.IsSelected) MarkTileUnSelected(tile); 
+        if (tile.IsSelected) MarkTileUnSelected(tile);
         else MarkTileSelected(tile);
     }
 
@@ -256,7 +268,7 @@ public partial class ControlPanelView  {
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
     }
-    
+
     public void MarkTileUnSelected(ITile tile) {
         UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
         tile.IsSelected = false;
@@ -266,7 +278,7 @@ public partial class ControlPanelView  {
         var tiles = DynamicGrid.Children.OfType<ITile>().Where(x => x.IsSelected).ToList();
         foreach (var tile in tiles) MarkTileUnSelected(tile);
     }
-    
+
     /// <summary>
     /// Only highlight a cell if we are in Design Mode
     /// </summary>
@@ -318,35 +330,40 @@ public partial class ControlPanelView  {
         }
     }
     #endregion
-    
+
     #region Drag and Drop Support for the Tiles
-    
     /// <summary>
     /// If we have started a Drag and it is a Tile then store the tile we are dragging in the drag properties
     /// and also that the source is a Tile. We use this along with the mode to either move the tile or add
     /// a new tile to the panel. 
     /// </summary>
     private void DragTileStarting(DragStartingEventArgs args, ITile tile) {
+        if (_canDragTiles == false) {
+            args.Cancel = true;
+            return;
+        }
+
         args.Data.Properties.Add("Tile", tile);
         args.Data.Properties.Add("Source", "Panel");
         _lastDragCol = 0;
         _lastDragRow = 0;
 
-        #if IOS || MACCATALYST
+#if IOS || MACCATALYST
         UIDragPreview Action() {
             var image = EditMode switch {
                 EditModeEnum.Copy => UIImage.FromFile("copy.png"),
                 EditModeEnum.Move => UIImage.FromFile("move.png"),
                 EditModeEnum.Size => UIImage.FromFile("crop.png"),
-                _ => UIImage.FromFile("move.png"),
+                _                 => UIImage.FromFile("move.png"),
             };
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
             imageView.Frame = new CGRect(0, 0, 32, 32);
             return new UIDragPreview(imageView);
         }
+
         args?.PlatformArgs?.SetPreviewProvider(Action);
-        #endif
+#endif
     }
 
     /// <summary>
@@ -365,16 +382,16 @@ public partial class ControlPanelView  {
     /// </summary>
     private void DragOverTileOnPanel(object? sender, DragEventArgs e) {
         if (!DesignMode) {
-            #if IOS || MACCATALYST
+#if IOS || MACCATALYST
             e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
-            #endif
+#endif
             return;
         }
-        
+
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-        
-        if (gridPosition is {} position && tile is not null) { 
+
+        if (gridPosition is { } position && tile is not null) {
             if (EditMode == EditModeEnum.Size) {
                 //ResizeTrack(track, position.Col, position.Row);
             } else {
@@ -398,19 +415,19 @@ public partial class ControlPanelView  {
             _lastDragRow = 0;
         }
 
-        #if IOS || MACCATALYST
+#if IOS || MACCATALYST
         e?.PlatformArgs?.SetDropProposal(EditMode switch {
             EditModeEnum.Copy => new UIDropProposal(UIDropOperation.Copy),
             EditModeEnum.Move => new UIDropProposal(UIDropOperation.Move),
             _                 => new UIDropProposal(UIDropOperation.Forbidden),
-            });
-        #endif
+        });
+#endif
 
-        #if WINDOWS
+#if WINDOWS
         var dragUI = e.PlatformArgs.DragEventArgs.DragUIOverride;
         dragUI.IsCaptionVisible = false;
         dragUI.IsGlyphVisible = false;
-        #endif
+#endif
     }
 
     /// <summary>
@@ -468,12 +485,12 @@ public partial class ControlPanelView  {
                             var dropTile = AddTileToGrid(dropEntity);
                             if (dropTile is not null) MarkTileSelected(dropTile);
                             break;
-                        
+
                         default:
                             Debug.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
                         }
-                    } 
+                    }
                 } else {
                     Debug.WriteLine("ERROR: Item clashes with existing track");
                 }
@@ -489,24 +506,26 @@ public partial class ControlPanelView  {
     }
 
     private bool DoesTrackClash(ITile tile, int col, int row) {
-        if (tile.Entity is not ITrackEntity) return false;  // No clashes possible if the track is not a track piece
+        if (tile.Entity is not ITrackEntity) return false;                 // No clashes possible if the track is not a track piece
         if (tile.Entity.Col == col && tile.Entity.Row == row) return true; // Can't drop onto yourself. 
-        var tilesInGrid = DynamicGrid.OfType<ITile>().Where(eTile =>              
-                // Exclude the same track we're checking against
-                eTile != tile && eTile.Entity is ITrackEntity &&
+        var tilesInGrid = DynamicGrid.OfType<ITile>()
+                                     .Where(eTile =>
 
-                // Check if there's a column overlap between the tracks
-                col < eTile.Entity.Col + eTile.Entity.Width && col + eTile.Entity.Width > eTile.Entity.Col &&
+                                                // Exclude the same track we're checking against
+                                                eTile != tile && eTile.Entity is ITrackEntity &&
 
-                // Check if there's a row overlap between the tracks
-                row < eTile.Entity.Row + eTile.Entity.Height && row + eTile.Entity.Height > eTile.Entity.Row
-        );
+                                                // Check if there's a column overlap between the tracks
+                                                col < eTile.Entity.Col + eTile.Entity.Width && col + eTile.Entity.Width > eTile.Entity.Col &&
+
+                                                // Check if there's a row overlap between the tracks
+                                                row < eTile.Entity.Row + eTile.Entity.Height && row + eTile.Entity.Height > eTile.Entity.Row
+                                      );
 
         // If there are any tracks in the clashing list, return true
         return tilesInGrid.Any();
     }
     #endregion
-    
+
 //
 //     private void ResizeTrack(ITrack? track, int newCol, int newRow) {
 //         if (track is null) return;

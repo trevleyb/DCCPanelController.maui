@@ -18,6 +18,7 @@ public partial class PanelEditorPage {
             vm.PropertyChanged += (_, args) => {
                 Console.WriteLine($"PanelEditorPage.PropertyChanged: {args.PropertyName}");
                 if (args.PropertyName == nameof(DesignMode)) UpdateToolbarItems();
+                if (args.PropertyName == nameof(vm.EditMode)) PanelView.EditMode = vm.EditMode;
                 ConfigureToolbarItems();
             };
             AssignToolbarCommands();
@@ -42,6 +43,7 @@ public partial class PanelEditorPage {
     private const string IconCopy = "copy.png";
     private const string IconResize = "crop.png";
     private const string IconRotate = "rotate_cw.png";
+    private const string IconSelect = "maximize.png";
     private const string IconTileDelete = "trash_2.png";
     private const string IconExitEdit = "log_out.png";
     private const string IconAdd = "plus_circle.png";
@@ -75,6 +77,7 @@ public partial class PanelEditorPage {
                 EditModeEnum.Move   => IconMove,
                 EditModeEnum.Rotate => IconRotate,
                 EditModeEnum.Size   => IconResize,
+                EditModeEnum.Select => IconSelect,
                 _                   => IconMove
             };
             _showModeToolbar.Text = vm.EditMode.ToString();
