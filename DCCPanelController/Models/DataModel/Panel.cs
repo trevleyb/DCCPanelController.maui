@@ -42,7 +42,9 @@ public partial class Panel : ObservableObject, IEntityID {
     public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
     public List<T> GetAllEntitiesByType<T>() => Panels?.SelectMany(p => p.Entities.OfType<T>()).Union(Entities.OfType<T>()).ToList() ?? [];
     public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(p => p.Entities.OfType<T>().Union(Entities.OfType<T>()).Where(e => !string.IsNullOrEmpty(e.Id))).ToList() ?? [];
-
+    public ButtonEntity? GetButton(string id) => GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    public TurnoutEntity? GetTurnout(string id) => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    
     [JsonIgnore]
     public string Title {
         get {

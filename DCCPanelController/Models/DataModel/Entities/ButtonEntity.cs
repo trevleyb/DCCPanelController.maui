@@ -12,7 +12,7 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButt
     [ObservableProperty] private string _id = string.Empty;
     [ObservableProperty] private Actions<ButtonStateEnum> _buttonActions = [];
     [ObservableProperty] private Actions<TurnoutStateEnum> _turnoutActions = [];
-    [ObservableProperty] private ButtonStateEnum _buttonState  = ButtonStateEnum.Unknown;
+    [ObservableProperty] private ButtonStateEnum _state  = ButtonStateEnum.Unknown;
     
     [JsonConstructor]
     public ButtonEntity() {}
