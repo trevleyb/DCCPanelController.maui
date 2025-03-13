@@ -18,6 +18,7 @@
     <ContentPage.ToolbarItems />
 
     <ContentPage.Content>
+
         <Grid
             BackgroundColor="White"
             ColumnDefinitions="auto,*,auto"
@@ -35,11 +36,12 @@
                     Stroke="#FFF5F5F5"
                     StrokeThickness="1">
                     <CollectionView
-                        BackgroundColor="Gainsboro"
+                        BackgroundColor="WhiteSmoke"
                         ItemsSource="{Binding Panels}"
                         SelectedItem="{Binding SelectedPanel, Mode=TwoWay}"
                         SelectionChangedCommand="{Binding SelectionChangedCommand}"
-                        SelectionMode="Single">
+                        SelectionMode="Single"
+                        x:Name="PanelListView">
 
                         <CollectionView.EmptyView>
                             <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
@@ -74,7 +76,7 @@
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="dataModel:Panel">
-                                <Grid ColumnDefinitions="20,*,20">
+                                <Grid ColumnDefinitions="20,*,20" HeightRequest="75">
                                     <Grid Grid.Column="0">
                                         <Image
                                             HorizontalOptions="End"
@@ -84,60 +86,56 @@
                                                 <toolkit:IconTintColorBehavior TintColor="WhiteSmoke" />
                                             </Image.Behaviors>
                                         </Image>
-                                        <Grid.GestureRecognizers>
-                                            <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
-                                            <DropGestureRecognizer
-                                                DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelLeaveCommand}"
-                                                DragLeaveCommandParameter="{Binding}"
-                                                DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelOverCommand}"
-                                                DragOverCommandParameter="{Binding}"
-                                                DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DropPanelCommand}"
-                                                DropCommandParameter="{Binding}" />
-                                        </Grid.GestureRecognizers>
-
                                     </Grid>
                                     <StackLayout
                                         Grid.Column="1"
                                         HorizontalOptions="Fill"
                                         Orientation="Vertical"
                                         Padding="10"
-                                        VerticalOptions="Center">
+                                        VerticalOptions="Center"
+                                        x:DataType="dataModel:Panel">
                                         <Label
                                             FontAttributes="Bold"
                                             FontSize="16"
-                                            Text="{Binding Id}"
-                                            x:DataType="dataModel:Panel" />
+                                            Text="{Binding Id}" />
                                         <Label
                                             FontSize="12"
                                             Text="{Binding Description}"
-                                            TextColor="Gray"
-                                            x:DataType="dataModel:Panel" />
+                                            TextColor="Gray" />
                                     </StackLayout>
                                     <Grid Grid.Column="2">
                                         <Image
                                             HorizontalOptions="End"
-                                            Source="chevron_right.png"
-                                            VerticalOptions="Center">
+                                            Source="chevrons_right.png"
+                                            VerticalOptions="Center"
+                                            x:DataType="view:PanelEditorViewModel">
                                             <Image.Behaviors>
                                                 <toolkit:IconTintColorBehavior TintColor="WhiteSmoke" />
                                             </Image.Behaviors>
+                                            <!--  =========================================================================  -->
+                                            <!--  Turn this back on once we can get the bindings to actually work correctly  -->
+                                            <!--  =========================================================================  -->
+                                            <Image.IsVisible>
+                                                <MultiBinding Converter="{StaticResource SelectedItemConverter}">
+                                                    <Binding Path="." x:DataType="dataModel:Panel" />
+                                                    <Binding Path="SelectedPanel" Source="{RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}" />
+                                                </MultiBinding>
+                                            </Image.IsVisible>
+
                                         </Image>
-
-                                        <!--  =========================================================================  -->
-                                        <!--  Turn this back on once we can get the bindings to actually work correctly  -->
-                                        <!--  =========================================================================  -->
-                                        <!-- <Image.IsVisible> -->
-                                        <!--     <MultiBinding Converter="{StaticResource SelectedItemConverter}"> -->
-                                        <!--         <Binding Path="." /> -->
-                                        <!--  <Binding  -->
-                                        <!--  Path="SelectedPanel"  -->
-                                        <!--  Source="{RelativeSource AncestorType={x:Type view:PanelEditorViewModel},  -->
-                                        <!--  x:DataType='dataModel:Panel'}"  -->
-                                        <!--  x:DataType="dataModel:Panel" />  -->
-                                        <!--     </MultiBinding> -->
-                                        <!-- </Image.IsVisible> -->
-
                                     </Grid>
+
+                                    <Grid.GestureRecognizers>
+                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
+                                        <DropGestureRecognizer
+                                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelLeaveCommand}"
+                                            DragLeaveCommandParameter="{Binding}"
+                                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelOverCommand}"
+                                            DragOverCommandParameter="{Binding}"
+                                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DropPanelCommand}"
+                                            DropCommandParameter="{Binding}" />
+                                    </Grid.GestureRecognizers>
+
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
@@ -203,3 +201,186 @@
         </Grid>
     </ContentPage.Content>
 </ContentPage>
+
+
+
+<!-- <ContentPage.Content> -->
+<!--  <Grid  -->
+<!--  BackgroundColor="White"  -->
+<!--  ColumnDefinitions="auto,*,auto"  -->
+<!--  HorizontalOptions="Fill"  -->
+<!--  VerticalOptions="Fill">  -->
+<!--    -->
+<!--  <Grid  -->
+<!--  Grid.Column="0"  -->
+<!--  IsVisible="{Binding IsNotFullScreen}"  -->
+<!--  Margin="0,0,5,0"  -->
+<!--  WidthRequest="250">  -->
+<!--    -->
+<!--  <Border  -->
+<!--  BackgroundColor="WhiteSmoke"  -->
+<!--  Stroke="#FFF5F5F5"  -->
+<!--  StrokeThickness="1">  -->
+<!--  <CollectionView  -->
+<!--  BackgroundColor="WhiteSmoke"  -->
+<!--  ItemsSource="{Binding Panels}"  -->
+<!--  SelectedItem="{Binding SelectedPanel, Mode=TwoWay}"  -->
+<!--  SelectionChangedCommand="{Binding SelectionChangedCommand}"  -->
+<!--  SelectionMode="Single">  -->
+<!--    -->
+<!--                     <CollectionView.EmptyView> -->
+<!--                         <Grid HorizontalOptions="Fill" VerticalOptions="Fill"> -->
+<!--                             <StackLayout HorizontalOptions="Fill" VerticalOptions="Center"> -->
+<!--  <Label  -->
+<!--  FontAttributes="Bold"  -->
+<!--  FontSize="12"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Text="No Panels were found." />  -->
+<!--                                 <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0"> -->
+<!--  <Label  -->
+<!--  FontSize="12"  -->
+<!--  Text="Please use"  -->
+<!--  VerticalOptions="Center" />  -->
+<!--  <ImageButton  -->
+<!--  Command="{Binding AddNewPanelCommand}"  -->
+<!--  Margin="-5,0,-5,0"  -->
+<!--  Scale="0.50"  -->
+<!--  Source="plus_circle.png">  -->
+<!--                                         <Image.Behaviors> -->
+<!--                                             <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" /> -->
+<!--                                         </Image.Behaviors> -->
+<!--                                     </ImageButton> -->
+<!--  <Label  -->
+<!--  FontSize="12"  -->
+<!--  Text="to add a new Panel."  -->
+<!--  VerticalOptions="Center" />  -->
+<!--                                 </HorizontalStackLayout> -->
+<!--                             </StackLayout> -->
+<!--                         </Grid> -->
+<!--                     </CollectionView.EmptyView> -->
+<!--    -->
+<!--                     <CollectionView.ItemTemplate> -->
+<!--                         <DataTemplate x:DataType="dataModel:Panel"> -->
+<!--                             <Grid ColumnDefinitions="20,*,20"> -->
+<!--                                 <Grid Grid.Column="0"> -->
+<!--  <Image  -->
+<!--  HorizontalOptions="End"  -->
+<!--  Source="more_vertical.png"  -->
+<!--  VerticalOptions="Center">  -->
+<!--                                         <Image.Behaviors> -->
+<!--                                             <toolkit:IconTintColorBehavior TintColor="WhiteSmoke" /> -->
+<!--                                         </Image.Behaviors> -->
+<!--                                     </Image> -->
+<!--                                     <Grid.GestureRecognizers> -->
+<!--                                         <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" /> -->
+<!--  <DropGestureRecognizer  -->
+<!--  DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelLeaveCommand}"  -->
+<!--  DragLeaveCommandParameter="{Binding}"  -->
+<!--  DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelOverCommand}"  -->
+<!--  DragOverCommandParameter="{Binding}"  -->
+<!--  DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DropPanelCommand}"  -->
+<!--  DropCommandParameter="{Binding}" />  -->
+<!--                                     </Grid.GestureRecognizers> -->
+<!--    -->
+<!--                                 </Grid> -->
+<!--  <StackLayout  -->
+<!--  Grid.Column="1"  -->
+<!--  HorizontalOptions="Fill"  -->
+<!--  Orientation="Vertical"  -->
+<!--  Padding="10"  -->
+<!--  VerticalOptions="Center"  -->
+<!--  x:DataType="dataModel:Panel">  -->
+<!--  <Label  -->
+<!--  FontAttributes="Bold"  -->
+<!--  FontSize="16"  -->
+<!--  Text="{Binding Id}" />  -->
+<!--  <Label  -->
+<!--  FontSize="12"  -->
+<!--  Text="{Binding Description}"  -->
+<!--  TextColor="Gray" />  -->
+<!--                                 </StackLayout> -->
+<!--                                 <Grid Grid.Column="2"> -->
+<!--  <Image  -->
+<!--  HorizontalOptions="End"  -->
+<!--  Source="chevrons_right.png"  -->
+<!--  VerticalOptions="Center"  -->
+<!--  x:DataType="view:PanelEditorViewModel">  -->
+<!--                                         <Image.Behaviors> -->
+<!--                                             <toolkit:IconTintColorBehavior TintColor="WhiteSmoke" /> -->
+<!--                                         </Image.Behaviors> -->
+<!--  ~1~  =========================================================================  @1@  -->
+<!--  ~1~  Turn this back on once we can get the bindings to actually work correctly  @1@  -->
+<!--  ~1~  =========================================================================  @1@  -->
+<!--                                         <Image.IsVisible> -->
+<!--                                             <MultiBinding Converter="{StaticResource SelectedItemConverter}"> -->
+<!--                                                 <Binding Path="." x:DataType="dataModel:Panel" /> -->
+<!--                                                 <Binding Path="SelectedPanel" Source="{RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}" /> -->
+<!--                                             </MultiBinding> -->
+<!--                                         </Image.IsVisible> -->
+<!--    -->
+<!--                                     </Image> -->
+<!--                                 </Grid> -->
+<!--                             </Grid> -->
+<!--                         </DataTemplate> -->
+<!--                     </CollectionView.ItemTemplate> -->
+<!--                 </CollectionView> -->
+<!--             </Border> -->
+<!--         </Grid> -->
+<!--    -->
+<!--  <Border  -->
+<!--  BackgroundColor="WhiteSmoke"  -->
+<!--  Grid.Column="1"  -->
+<!--  Stroke="#FFF5F5F5"  -->
+<!--  StrokeThickness="0">  -->
+<!--  <Grid  -->
+<!--  BackgroundColor="White"  -->
+<!--  HorizontalOptions="Fill"  -->
+<!--  VerticalOptions="Fill">  -->
+<!--    -->
+<!--  <StackLayout  -->
+<!--  Grid.Column="0"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  IsVisible="{Binding NoPanelSelected}"  -->
+<!--  VerticalOptions="Center">  -->
+<!--  <Label  -->
+<!--  FontAttributes="Bold"  -->
+<!--  FontSize="15"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Margin="0,0,0,20"  -->
+<!--  Text="No Panel Selected."  -->
+<!--  TextColor="{StaticResource Primary}" />  -->
+<!--  <Label  -->
+<!--  FontSize="12"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Text="Please select a Panel from the Panels selection." />  -->
+<!--  <Label  -->
+<!--  FontSize="12"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Text="or add a new panel." />  -->
+<!--                 </StackLayout> -->
+<!--    -->
+<!--  <view:ControlPanelView  -->
+<!--  BackgroundColor="Transparent"  -->
+<!--  DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=DesignMode}"  -->
+<!--  EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=EditMode}"  -->
+<!--  Grid.Column="0"  -->
+<!--  HorizontalOptions="Fill"  -->
+<!--  IsVisible="{Binding IsPanelSelected}"  -->
+<!--  Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=SelectedPanel}"  -->
+<!--  VerticalOptions="Fill"  -->
+<!--  x:Name="PanelView" />  -->
+<!--             </Grid> -->
+<!--         </Border> -->
+<!--  <Grid  -->
+<!--  Grid.Column="2"  -->
+<!--  IsVisible="{Binding DesignMode, Mode=TwoWay}"  -->
+<!--  Margin="5,0,0,0">  -->
+<!--  <Border  -->
+<!--  BackgroundColor="WhiteSmoke"  -->
+<!--  Stroke="#FFF5F5F5"  -->
+<!--  StrokeThickness="1">  -->
+<!--                 <view:VerticalTileSelector HorizontalOptions="Center" /> -->
+<!--             </Border> -->
+<!--         </Grid> -->
+<!--     </Grid> -->
+<!-- </ContentPage.Content> -->

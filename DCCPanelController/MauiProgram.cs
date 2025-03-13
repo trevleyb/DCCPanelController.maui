@@ -37,15 +37,15 @@ public static class MauiProgram {
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<Profile>(sp => Profile.NewOrLoad("Sample"));
-       
-        //services.AddTransient<RoutesService>();
-        //services.AddTransient<TurnoutsService>();
 
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
         services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
+        services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelEditorPage, PanelEditorViewModel>();
+        services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
+        services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);

@@ -136,6 +136,7 @@
         <PackageReference Include="Dynamensions.ColorPicker.Maui" Version="1.2.0" />
         <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
+        <PackageReference Include="Microsoft.Maui.Controls.Foldable" Version="9.0.40" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />
         <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
@@ -355,6 +356,22 @@
           <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\OperateViewModel.cs">
+          <DependentUpon>OperatePage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\RoutesViewModel.cs">
+          <DependentUpon>RoutesPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\TurnoutsEditViewModel.cs">
+          <DependentUpon>TurnoutsEditView.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\TurnoutsViewModel.cs">
+          <DependentUpon>TurnoutsPage.xaml</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="View\Components\" />
     </ItemGroup>
 
 </Project>

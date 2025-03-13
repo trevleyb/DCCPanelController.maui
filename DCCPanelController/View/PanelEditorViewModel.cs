@@ -32,6 +32,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         ArgumentNullException.ThrowIfNull(profile, "Profile Service should be provided by the DI.");
         Profile = profile;
         Panels = Profile.Panels;
+        SelectedPanel = Panels.First();
         IsFullScreen = false;
     }
 

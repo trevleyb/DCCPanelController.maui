@@ -12,13 +12,21 @@
 
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent
-            ContentTemplate="{DataTemplate view:TestPanelPage}"
-            Icon="properties.png"
-            Title="Settings" />
+            ContentTemplate="{DataTemplate view:OperatePage}"
+            Icon="control.png"
+            Title="Operate" />
         <ShellContent
             ContentTemplate="{DataTemplate view:PanelEditorPage}"
-            Icon="properties.png"
-            Title="Settings" />
+            Icon="panels.png"
+            Title="Panels" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:TurnoutsPage}"
+            Icon="turnouts.png"
+            Title="Turnouts" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:RoutesPage}"
+            Icon="routes.png"
+            Title="Routes" />
     </FlyoutItem>
 
 </Shell>

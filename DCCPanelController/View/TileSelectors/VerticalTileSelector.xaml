@@ -4,21 +4,24 @@
     x:Class="DCCPanelController.View.VerticalTileSelector"
     x:DataType="view:VerticalTileSelectorViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Grid WidthRequest="52">
+    <Grid WidthRequest="48">
         <ScrollView Orientation="Vertical">
             <VerticalStackLayout>
                 <Grid>
-                    <Border
-                        BackgroundColor="Gainsboro"
-                        HeightRequest="12"
-                        HorizontalOptions="Center"
-                        Margin="0,10,0,10"
-                        Stroke="{StaticResource Black}"
-                        VerticalOptions="Center"
-                        WidthRequest="12" />
+                    <HorizontalStackLayout HorizontalOptions="Center" Margin="5,15,5,15">
+                        <Border
+                            BackgroundColor="Gainsboro"
+                            HeightRequest="12"
+                            HorizontalOptions="Center"
+                            Margin="0,0,2,0"
+                            Stroke="{StaticResource Gray500}"
+                            VerticalOptions="Center"
+                            WidthRequest="12" />
+                    </HorizontalStackLayout>
                 </Grid>
                 <CollectionView
                     ItemSizingStrategy="MeasureAllItems"
@@ -34,18 +37,19 @@
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="view:VerticalTileSelectorViewModel">
-                            <ContentView HeightRequest="{Binding GridSize}" WidthRequest="{Binding GridSize}">
+                        <DataTemplate x:DataType="entities:Entity">
+                            <ContentView HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type view:VerticalTileSelectorViewModel}}, x:DataType=view:VerticalTileSelectorViewModel, Path=GridSize}" WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type view:VerticalTileSelectorViewModel}}, x:DataType=view:VerticalTileSelectorViewModel, Path=GridSize}">
                                 <Border
                                     BackgroundColor="White"
-                                    HeightRequest="{Binding GridSize}"
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type view:VerticalTileSelectorViewModel}}, x:DataType=view:VerticalTileSelectorViewModel, Path=GridSize}"
                                     HorizontalOptions="Fill"
+                                    Margin="2"
                                     Padding="5"
                                     Stroke="{StaticResource Gray500}"
                                     StrokeShape="RoundRectangle 10,10,10,10"
                                     StrokeThickness="1"
                                     VerticalOptions="Fill"
-                                    WidthRequest="{Binding GridSize}">
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type view:VerticalTileSelectorViewModel}}, x:DataType=view:VerticalTileSelectorViewModel, Path=GridSize}">
                                     <ContentView
                                         Content="{Binding .}"
                                         HorizontalOptions="Fill"
