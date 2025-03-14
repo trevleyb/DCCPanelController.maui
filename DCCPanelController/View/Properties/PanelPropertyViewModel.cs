@@ -19,7 +19,7 @@ public partial class PanelPropertyViewModel : BaseViewModel {
     private async Task ResetDefaultsClickedAsync() {
         var result = await AskUserToConfirm("Reset Default Colors?", "Are you sure you want to reset all Panels colors to the Default?");
         if (!result) return; // Exit if the user cancels the delete operation
-        Panel.ResetToDefaults();
+        Panel.ResetColorsToDefaults();
         OnPropertyChanged(nameof(Panel));
     }
 
@@ -44,7 +44,7 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         if (!result) return; // Exit if the user cancels the delete operation
 
         if (Panel.Panels is { } panels) {
-            foreach (var panel in panels) panel.CopyTo(panel);
+            foreach (var panel in panels) panel.CopyColorsTo(panel);
         }
         OnPropertyChanged(nameof(Panel));
     }

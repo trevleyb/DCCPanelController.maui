@@ -13,6 +13,20 @@
 
     <ContentPage.Resources>
         <helpers:SelectedItemConverter x:Key="SelectedItemConverter" />
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="LightGray" />
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems />
@@ -38,6 +52,7 @@
                     <CollectionView
                         BackgroundColor="WhiteSmoke"
                         ItemsSource="{Binding Panels}"
+                        ItemsUpdatingScrollMode="KeepItemsInView"
                         SelectedItem="{Binding SelectedPanel, Mode=TwoWay}"
                         SelectionChangedCommand="{Binding SelectionChangedCommand}"
                         SelectionMode="Single"
@@ -194,8 +209,12 @@
                 <Border
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"
-                    StrokeThickness="1">
-                    <view:VerticalTileSelector HorizontalOptions="Center" />
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <view:VerticalTileSelector
+                        HorizontalOptions="Center"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=SelectedPanel}"
+                        x:Name="TileSelector" />
                 </Border>
             </Grid>
         </Grid>

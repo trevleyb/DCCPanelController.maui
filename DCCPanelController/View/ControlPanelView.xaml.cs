@@ -25,9 +25,12 @@ public partial class ControlPanelView {
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
-        DragValid
+        DragValid,
+        Resize
     }
 
+    public event EventHandler<TileSelectedEventArgs>? TileSelected;
+    
     private double _gridSize;
     private double _viewHeight;
     private double _viewWidth;
@@ -48,9 +51,8 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    private void OnGridSizeChanged(object? sender, EventArgs e) {
-        DrawPanel();
-    }
+    protected virtual void OnTileSelected(ITile tile) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile));
+    private void OnGridSizeChanged(object? sender, EventArgs e) => DrawPanel();
 
     public bool HasGridSizeChanged(double width, double height) {
         if (width < 1.0 || height < 1.0) return false;
@@ -73,7 +75,9 @@ public partial class ControlPanelView {
         _viewHeight = _gridSize * Rows;
     }
 
-    public void DrawPanel(bool forceRefresh = false) {
+    public void ForceRefresh() => DrawPanel(true);
+    
+    private void DrawPanel(bool forceRefresh = false) {
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -173,31 +177,29 @@ public partial class ControlPanelView {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
         if (sender is ITileInteractive interactiveTile && !DesignMode) {
+            Console.WriteLine($"ControlPanelView.OnTileTapped for {sender?.GetType()} with {_tapCount}");
             if (_tapCount == 1) interactiveTile.Interact();
             if (_tapCount == 2) interactiveTile.Secondary();
         } else if (sender is ITile tile) {
             if (_tapCount == 1) {
                 switch (EditMode) {
-                case EditModeEnum.Move:break;
-                case EditModeEnum.Copy:break;
-                case EditModeEnum.Size:break;
+                case EditModeEnum.Move: break;
+                case EditModeEnum.Copy: break;
+                case EditModeEnum.Size: break;
+                case EditModeEnum.Delete:
+                    RemoveTileFromGrid(tile);
+                    break;
                 case EditModeEnum.Rotate:
                     tile.RotateRight();
                     break;
                 case EditModeEnum.Select:
-                    if (tile.IsSelected) {
-                        MarkTileUnSelected(tile);
-                    } else {
-                        ClearSelectedTiles();
-                        ToggleMarkTile(tile);
-                    }
+                    OnTileSelected(tile);
                     break;
                 }
             }
-
             // TODO:
             // Currently do nothing but should bring up the properties page.
-            if (_tapCount == 2) ;
+            // if (_tapCount == 2) ;
         }
         _tapCount = 0;
     }
@@ -288,6 +290,7 @@ public partial class ControlPanelView {
         UnHighlightCell(col, row);
         var color = action switch {
             CellHighlightAction.Selected    => Colors.CornflowerBlue,
+            CellHighlightAction.Resize      => Colors.MidnightBlue,
             CellHighlightAction.DragValid   => Colors.Green,
             CellHighlightAction.DragInvalid => Colors.Red,
             _                               => Colors.Red
@@ -338,15 +341,20 @@ public partial class ControlPanelView {
     /// a new tile to the panel. 
     /// </summary>
     private void DragTileStarting(DragStartingEventArgs args, ITile tile) {
-        if (_canDragTiles == false) {
+
+        // Some edit modes do not support drag and drop and also if the mode is Resize and
+        // the tile does not support resizing then we can't allow it to resize. 
+        // -------------------------------------------------------------------------------------------------
+        if (_canDragTiles == false || (EditMode == EditModeEnum.Size && tile.Entity is not IDrawingEntity)) {
             args.Cancel = true;
             return;
         }
 
         args.Data.Properties.Add("Tile", tile);
         args.Data.Properties.Add("Source", "Panel");
-        _lastDragCol = 0;
-        _lastDragRow = 0;
+
+        _lastDragCol = EditMode == EditModeEnum.Size ? tile.Entity.Col : 0;
+        _lastDragRow = EditMode == EditModeEnum.Size ? tile.Entity.Row : 0;
 
 #if IOS || MACCATALYST
         UIDragPreview Action() {
@@ -388,17 +396,34 @@ public partial class ControlPanelView {
             return;
         }
 
+        var source = e.Data.Properties["Source"] as string ?? null;
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
 
         if (gridPosition is { } position && tile is not null) {
-            if (EditMode == EditModeEnum.Size) {
-                //ResizeTrack(track, position.Col, position.Row);
+            if (EditMode == EditModeEnum.Size && source == "Panel") {
+                // Assume _lastDrag represents the starting position for the resize
+                // and that the current position is the end position.
+                var startCol = _lastDragCol;
+                var startRow = _lastDragRow;
+                var width = position.Col - _lastDragCol;
+                var height = position.Row - _lastDragRow;
+                
+                if (width < 1) {
+                    width = Math.Abs(width);
+                    startCol = _lastDragCol - width;
+                    if (startCol < 0) startCol = 0;
+                }
+                if (height < 1) {
+                    height = Math.Abs(height);
+                    startRow = _lastDragCol - height;
+                    if (startRow < 0) startRow = 0;
+                }
+                HighlightCell(startCol, startRow, width, height, CellHighlightAction.DragValid);
             } else {
                 if (_lastDragCol != position.Col || _lastDragRow != position.Row) {
                     UnHighlightCell(_lastDragCol, _lastDragRow);
                 }
-
                 if (!DoesTrackClash(tile, position.Col, position.Row)) {
                     e.AcceptedOperation = DataPackageOperation.Copy;
                     HighlightCell(position.Col, position.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragValid);
@@ -416,11 +441,16 @@ public partial class ControlPanelView {
         }
 
 #if IOS || MACCATALYST
-        e?.PlatformArgs?.SetDropProposal(EditMode switch {
-            EditModeEnum.Copy => new UIDropProposal(UIDropOperation.Copy),
-            EditModeEnum.Move => new UIDropProposal(UIDropOperation.Move),
-            _                 => new UIDropProposal(UIDropOperation.Forbidden),
-        });
+
+        if (source == "Symbol") {
+            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
+        } else {
+            e?.PlatformArgs?.SetDropProposal(EditMode switch {
+                EditModeEnum.Copy => new UIDropProposal(UIDropOperation.Copy),
+                EditModeEnum.Move => new UIDropProposal(UIDropOperation.Move),
+                _                 => new UIDropProposal(UIDropOperation.Forbidden),
+            });
+        }
 #endif
 
 #if WINDOWS
@@ -474,6 +504,24 @@ public partial class ControlPanelView {
                                 break;
 
                             case EditModeEnum.Size:
+                                var width = position.Col - _lastDragCol;
+                                var height = position.Row - _lastDragRow;
+                                var startCol = _lastDragCol;
+                                var startRow = _lastDragRow;
+                                if (width < 1) {
+                                    width = Math.Abs(width);
+                                    startCol = _lastDragCol - width;
+                                    if (startCol < 0) startCol = 0;
+                                }
+                                if (height < 1) {
+                                    height = Math.Abs(height);
+                                    startRow = _lastDragCol - height;
+                                    if (startRow < 0) startRow = 0;
+                                }
+                                tile.Entity.Width = width;
+                                tile.Entity.Height = height;
+                                tile.Entity.Col = startCol;
+                                tile.Entity.Row = startRow;
                                 break;
                             }
                             break;
@@ -506,8 +554,8 @@ public partial class ControlPanelView {
     }
 
     private bool DoesTrackClash(ITile tile, int col, int row) {
-        if (tile.Entity is not ITrackEntity) return false;                 // No clashes possible if the track is not a track piece
-        if (tile.Entity.Col == col && tile.Entity.Row == row) return true; // Can't drop onto yourself. 
+        if (tile.Entity is not ITrackEntity) return false;                                                  // No clashes possible if the track is not a track piece
+        if (tile.Entity.Col == col && tile.Entity.Row == row && EditMode != EditModeEnum.Move) return true; // Can't drop onto yourself. 
         var tilesInGrid = DynamicGrid.OfType<ITile>()
                                      .Where(eTile =>
 
@@ -601,4 +649,8 @@ public partial class ControlPanelView {
         Console.WriteLine($"Could not determine the Grid Position from the point provided: {point.ToString()}");
         return null;
     }
+}
+
+public class TileSelectedEventArgs(ITile tile): EventArgs {
+    public ITile Tile { get; set; } = tile;
 }

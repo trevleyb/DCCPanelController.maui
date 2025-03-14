@@ -17,7 +17,7 @@ public partial class Panel : ObservableObject, IEntityID {
 
     [JsonConstructor]
     private Panel() {
-        ResetToDefaults();
+        ResetColorsToDefaults();
     }
 
     public Panel(Panels panels) : this() {
@@ -82,6 +82,7 @@ public partial class Panel : ObservableObject, IEntityID {
             Cols = this.Cols,
             Rows = this.Rows
         };
+        CopyColorsTo(clone);
         foreach (var entity in this.Entities) clone.CreateEntityFrom(entity);
         return clone;
     }

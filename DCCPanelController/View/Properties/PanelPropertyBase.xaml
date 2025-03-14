@@ -21,7 +21,7 @@
                 <Entry
                     HorizontalOptions="FillAndExpand"
                     Placeholder="Enter Panel Name"
-                    Text="{Binding Panel.Name}"
+                    Text="{Binding Panel.Id}"
                     WidthRequest="150" />
             </HorizontalStackLayout>
 

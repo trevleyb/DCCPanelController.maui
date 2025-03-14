@@ -13,19 +13,17 @@ namespace DCCPanelController.View.Properties;
 public static class PropertyPageLauncher {
  
     public static async Task ShowPanelPropertyPageAsync(Panel panel) {
-        //await NavigationService.NavigateToPopupWindow(new PanelPropertyPage(ViewModel.Panel));
-        // If this is a iPhone, then use a FULL SIZED screen control
         // -------------------------------------------------------------------------------
         if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
-            LaunchNavigationPage(new PanelPropertyPage(panel));
+            await LaunchNavigationPage(new PanelPropertyPage(panel));
         }
         else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                  DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
-            LaunchPopupPage(new PanelPropertyPopup(panel));
+            await LaunchPopupPage(new PanelPropertyPopup(panel));
         }
     }
 
-    private static async void LaunchNavigationPage(ContentPage page) {
+    private static async Task LaunchNavigationPage(ContentPage page) {
         if (App.Current.Windows[0].Page is { } mainPage) {
             var navigationPage = new NavigationPage(page);
 #if IOS
@@ -35,7 +33,7 @@ public static class PropertyPageLauncher {
         }
     }
 
-    private static async void LaunchPopupPage(Popup page) {
+    private static async Task LaunchPopupPage(Popup page) {
         if (App.Current.Windows[0].Page is { } mainPage) {
             if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
                 // popupPage.SetPopupSize(400, 600); // Example width/height in pixels

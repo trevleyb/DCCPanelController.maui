@@ -16,12 +16,14 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<Tile> _tiles = new();
 
     public VerticalTileSelectorViewModel() {
-        BuildTileList();
+        //BuildTileList(panel);
     }
     
-    private void BuildTileList() {
+    public void BuildTileList(Panel? source = null) {
+        Tiles.Clear();
         var tilesPanels = new Panels();
-        var panel = tilesPanels.CreatePanel();
+        var panel = (source == null) ? tilesPanels.CreatePanel() : tilesPanels.CreatePanelFrom(source);
+        
         AddTile(new ButtonEntity(panel));
         AddTile(new CompassEntity(panel));
         AddTile(new CornerEntity(panel));

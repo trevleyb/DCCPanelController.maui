@@ -7,6 +7,5 @@ public interface ITile {
 
     void RotateLeft();
     void RotateRight();
-    
     bool IsSelected { get; set; }
 }

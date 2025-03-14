@@ -26,7 +26,7 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] private Color _showPathColor = null!;
     [ObservableProperty] private Color _terminatorColor = null!;
 
-    public void CopyTo(Panel target) {
+    public void CopyColorsTo(Panel target) {
         target.BackgroundColor = BackgroundColor;
         target.BorderColor = BorderColor;
         target.MainLineColor = MainLineColor;
@@ -47,7 +47,7 @@ public partial class Panel : ObservableObject {
         target.ShowPathColor = ShowPathColor;
     }
 
-    public void ResetToDefaults() {
+    public void ResetColorsToDefaults() {
         BackgroundColor = AppleCrayonColors.Value("Snow");
         BorderColor = AppleCrayonColors.Value("Lead");
         MainLineColor = AppleCrayonColors.Value("Aqua");

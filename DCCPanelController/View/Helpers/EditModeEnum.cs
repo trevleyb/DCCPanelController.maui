@@ -5,5 +5,6 @@ public enum EditModeEnum {
     Copy,
     Size,
     Rotate,
+    Delete,
     Select
 }

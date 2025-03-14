@@ -96,7 +96,7 @@ public partial class ControlPanelView {
                 break;
             case EditModeEnum.Size:
                 Console.WriteLine("EditMode=>Size");
-                control._canDragTiles = false;
+                control._canDragTiles = true;
                 break;
             case EditModeEnum.Select:
                 Console.WriteLine("EditMode=>Select");

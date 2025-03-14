@@ -26,7 +26,7 @@ public abstract partial class Entity() : ObservableObject {
     
     [JsonIgnore] public Panel? Parent { get; set; } = null;
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-
+    
     protected Entity(Panel panel) : this() { 
         Parent = panel;
         Layer = EntityPresets.DefaultLayer(this);   // Setup the default layer for this item but can be changed later. 

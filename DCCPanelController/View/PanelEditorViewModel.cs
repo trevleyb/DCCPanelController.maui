@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
@@ -19,6 +20,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
 
     [ObservableProperty] private bool _designMode = false;
+    [ObservableProperty] private bool _propertiesChanged = false;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
@@ -99,41 +101,37 @@ public partial class PanelEditorViewModel : BaseViewModel {
             EditModeEnum.Copy   => EditModeEnum.Move,
             EditModeEnum.Move   => EditModeEnum.Size,
             EditModeEnum.Size   => EditModeEnum.Rotate,
-            EditModeEnum.Rotate => EditModeEnum.Select,
+            EditModeEnum.Rotate => EditModeEnum.Delete,
+            EditModeEnum.Delete => EditModeEnum.Select,
             EditModeEnum.Select => EditModeEnum.Copy,
             _                   => EditModeEnum.Copy
         };
         OnPropertyChanged(nameof(EditMode));
     }
 
-    /// <summary>
-    /// Deletes the currently selected tile(s) from the selected panel.
-    /// Removes all tiles marked as selected from the panel's collection of entities
-    /// and updates the UI to reflect the changes.
-    /// </summary>
-    public void DeleteTile() {
-        if (SelectedPanel is { SelectedTiles.Count: >= 1 } panel) {
-            foreach (var tile in panel.SelectedTiles) {
-                panel.Entities.Remove(tile);
-            }
-        }
-        OnPropertyChanged(nameof(Panel));
-    }
+    public void EditTileProperties(ITile tile) => EditTilePropertiesAsync(tile);
+    public async Task EditTilePropertiesAsync(ITile tile) {
+        Console.WriteLine($"Launching the Properties page for '{tile.Entity.Name}'");
 
-    public void EditProperties() {
-        if (SelectedPanel is { } panel) {
-            if (panel.SelectedTiles.Count >= 1) {
-                var tile = panel.SelectedTiles.First();
-                Console.WriteLine($"Launching the Properties page for '{tile.Name}'");
-                // TODO: Launch the Properties Page            
-            } else {
-                Console.WriteLine($"Launching the Properties page for the Panel '{panel.Id}");
-                PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
-            }
+        var editableProperties = EditableExtractor.GetEditableProperties(tile.Entity);
+        foreach (var property in editableProperties) {
+            Console.WriteLine($"PROPERTY={property.Property.Name} is {property.Metadata.Type}");
         }
+        
         Profile.Save();
     }
 
+    public void EditPanelProperties() => EditPanelPropertiesAsync();    
+    public async Task EditPanelPropertiesAsync() {
+        if (SelectedPanel is { } panel) {
+            Console.WriteLine($"Launching the Properties page for the Panel '{panel.Id}");
+            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
+            Console.WriteLine($"Properties page closed");
+            Profile.Save();
+            PropertiesChanged = true;
+        }
+    }
+    
     [RelayCommand]
     private async Task AddNewPanel() {
         AddPanel();
