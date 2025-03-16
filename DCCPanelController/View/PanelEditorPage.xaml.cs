@@ -29,11 +29,14 @@ public partial class PanelEditorPage {
         case nameof(DesignMode):
             UpdateToolbarItems();
             break;
-
+        
+        case nameof(_viewModel.SelectedPanel):
+            PanelView.Panel = _viewModel?.SelectedPanel;
+            break; 
+        
         case nameof(_viewModel.PropertiesChanged):
             if (_viewModel is { PropertiesChanged: true }) {
                 PanelView.ForceRefresh();
-                TileSelector.ForceRefresh();
                 _viewModel.PropertiesChanged = false;
             }
             break;
