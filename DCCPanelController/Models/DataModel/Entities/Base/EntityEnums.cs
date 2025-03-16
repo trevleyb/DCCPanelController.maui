@@ -10,4 +10,4 @@ public enum RouteStateEnum      { Unknown, Active, Inactive, }
 
 public enum TrackTypeEnum       { MainLine, BranchLine }
 public enum TrackTerminatorEnum { Normal, Arrow, Lines }
-public enum TrackAttributeEnum  { Normal, Hidden }
+public enum TrackAttributeEnum  { Normal, Dashed, Opaque }

@@ -68,7 +68,7 @@ public static class SvgImages {
 
     public static SvgImage GetImage(string name, int direction = 0) {
         var reference = GetImageReference(name, direction);
-        if (reference is null) throw new SvgImageException($"Image {name} not found");
+        if (reference is null) throw new SvgImageException($"***** Image '{name}' not found");
         return new SvgImage() {
             Filename = reference.Filename,
             Rotation = reference.Rotation,

@@ -11,5 +11,6 @@ public enum SvgElementType {
     Button,         // A Button
     ButtonOutline,  // The outline of a button
     Text,           // Text
+    Tracks,         // This is actuallyu the root element
     Unknown
 }

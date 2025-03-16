@@ -14,9 +14,12 @@ public partial class SvgImage : ObservableObject {
 
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     public ImageSource ImageSource => ImageManager.ImageSource;
+    
+    public Image AsImage(double scale) => new Image { Source = ImageSource, Scale = scale };
+    public Image AsImage() => new Image { Source = ImageSource, Scale = 0.50 };
 
     public void SetAttribute(SvgElementType elementType, Color color) {
-        ImageManager.SetAllAttributeValues(elementType, "fill", color.ToArgbHex());
+        ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());
     }
     
     public void SetLabel(string label) {

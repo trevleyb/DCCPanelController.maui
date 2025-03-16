@@ -126,6 +126,9 @@ public class SvgImageManager {
         ArgumentNullException.ThrowIfNull(element);
         var attribute = (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr).FirstOrDefault();
 
+        if (attributeValue == "#00000000") {
+            Console.WriteLine("Setting to black");
+        }
         if (attribute is not null) {
             attribute.Value = attributeValue;
         } else {

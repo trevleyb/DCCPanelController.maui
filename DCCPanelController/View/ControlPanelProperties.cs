@@ -65,9 +65,12 @@ public partial class ControlPanelView {
     /// If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        var control = (ControlPanelView)bindable;
-        control.ClearSelectedTiles();
-        control.DrawPanel(true);
+        if (oldValue != newValue) {
+            var control = (ControlPanelView)bindable;
+            control.Panel = (Panel)newValue;
+            control.ClearSelectedTiles();
+            control.DrawPanel(true);
+        }
     }
     
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
@@ -81,28 +84,14 @@ public partial class ControlPanelView {
 
     private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
         var control = (ControlPanelView)bindable;
-        switch (control.EditMode) {
-            case EditModeEnum.Move:
-                Console.WriteLine("EditMode=>Move");
-                control._canDragTiles = true;
-                break;
-            case EditModeEnum.Rotate:
-                Console.WriteLine("EditMode=>Rotate");
-                control._canDragTiles = false;
-                break;
-            case EditModeEnum.Copy:
-                Console.WriteLine("EditMode=>Copy");
-                control._canDragTiles = true;
-                break;
-            case EditModeEnum.Size:
-                Console.WriteLine("EditMode=>Size");
-                control._canDragTiles = true;
-                break;
-            case EditModeEnum.Select:
-                Console.WriteLine("EditMode=>Select");
-                control._canDragTiles = false;
-                break;
-        }
-        
+        control._canDragTiles = control.EditMode switch {
+            EditModeEnum.Move   => true,
+            EditModeEnum.Rotate => false,
+            EditModeEnum.Copy   => true,
+            EditModeEnum.Size   => true,
+            EditModeEnum.Select => false,
+            EditModeEnum.Delete => false,
+            _                   => false
+        };
     }
 }

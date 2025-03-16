@@ -1,10 +1,18 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public partial class CornerTile(Entity entity, double gridSize) : TrackTile(entity, gridSize) {
+public partial class CornerTile : TrackTile {
+    public CornerTile(CornerEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         return CreateTrackTile("corner", Entity.Rotation);
     }
+    
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
+        return SvgImages.GetImage("corner").AsImage();
+    }
+
 }

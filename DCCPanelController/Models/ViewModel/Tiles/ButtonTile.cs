@@ -8,7 +8,7 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public partial class ButtonTile : Tile, ITileInteractive {
-    public ButtonTile(Entity entity, double gridSize) : base(entity, gridSize) {
+    public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(State));
     }
     
@@ -28,13 +28,18 @@ public partial class ButtonTile : Tile, ITileInteractive {
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black
             });
 
-            var image = new Image();
-            image.Scale = 1.5;
+            var image = new Image {
+                Scale = 1.5
+            };
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
             image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
             return image;
         }
-        return null;
+        return CreateSymbol();
+    }
+
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
+        return SvgImages.GetImage("button").AsImage();
     }
 
     public void Interact() {

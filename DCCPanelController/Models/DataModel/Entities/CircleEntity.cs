@@ -9,7 +9,7 @@ public partial class CircleEntity : Entity, IDrawingEntity {
     public override string Name => "Circle";
 
     [ObservableProperty] [property: Editable("Background", EditableType.Color)] 
-    private Color _backgroundColor = Colors.Transparent;
+    private Color _backgroundColor = Colors.Gray;
     
     [ObservableProperty] [property: Editable("Border", EditableType.Color)]
     private Color _borderColor = Colors.Black;
@@ -18,7 +18,7 @@ public partial class CircleEntity : Entity, IDrawingEntity {
     private int _borderWidth = 1;
     
     [ObservableProperty] [property: Editable("Opacity", EditableType.Double )]
-    private double _opacity = 1;
+    private double _opacity = 0.5;
     
     [JsonConstructor]
     public CircleEntity() {}

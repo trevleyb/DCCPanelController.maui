@@ -7,7 +7,7 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract partial class TrackTile : Tile {
-    protected TrackTile(Entity entity, double gridSize) : base(entity, gridSize) {
+    protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TrackEntity.TrackType));
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
         VisualProperties.Add(nameof(TrackEntity.TrackColor));
@@ -55,13 +55,20 @@ public abstract partial class TrackTile : Tile {
             }
 
             switch (trackEntity.TrackAttribute) {
-            case TrackAttributeEnum.Hidden:
+            case TrackAttributeEnum.Opaque:
+                style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
+                style.Add(e => e.WithName(SvgElementType.Tracks).WithOpacity("0.50"));
+                break; 
+
+            case TrackAttributeEnum.Dashed:
                 style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
+                style.Add(e => e.WithName(SvgElementType.Tracks).WithOpacity("1.0"));
                 break; 
                 
             case TrackAttributeEnum.Normal:
             default:
                 style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
+                style.Add(e => e.WithName(SvgElementType.Tracks).WithOpacity("1.0"));
                 break;
             }
         }

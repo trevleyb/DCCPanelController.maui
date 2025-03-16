@@ -26,6 +26,7 @@
                 HorizontalOptions="Center"
                 Margin="5"
                 VerticalOptions="Center"
+                x:DataType="dataModel:Panel"
                 x:Name="DynamicGrid" />
         </AbsoluteLayout>
     </Grid>

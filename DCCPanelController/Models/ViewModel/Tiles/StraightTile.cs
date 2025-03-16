@@ -7,10 +7,17 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public partial class StraightTile(Entity entity, double gridSize) : TrackTile(entity, gridSize), ITileInteractive {
+public partial class StraightTile : TrackTile, ITileInteractive {
+    public StraightTile(StraightEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         return CreateTrackTile("straight", Entity.Rotation);
     }
+    
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
+        return SvgImages.GetImage("straight").AsImage();
+    }
+
 
     public void Interact() {
         if (Entity is StraightEntity straight) {
@@ -20,7 +27,11 @@ public partial class StraightTile(Entity entity, double gridSize) : TrackTile(en
 
     public void Secondary() {
         if (Entity is StraightEntity straight) {
-            straight.TrackAttribute = straight.TrackAttribute == TrackAttributeEnum.Normal ? TrackAttributeEnum.Hidden : TrackAttributeEnum.Normal;
+            straight.TrackAttribute = straight.TrackAttribute switch {
+                TrackAttributeEnum.Normal => TrackAttributeEnum.Dashed,
+                TrackAttributeEnum.Dashed => TrackAttributeEnum.Opaque,
+                TrackAttributeEnum.Opaque => TrackAttributeEnum.Normal,
+            };
         }
     }
 }

@@ -101,7 +101,7 @@
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg" />
-        <EmbeddedResource Include="Models\TileImages\Track_Text.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_text.svg" />
         <EmbeddedResource Include="Models\TileImages\track_threeway.svg" />
         <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg" />
         <EmbeddedResource Include="Models\TileImages\track_threeway_right.svg" />

@@ -2,73 +2,61 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
-    
+using ExCSS;
+using ShimSkiaSharp;
+
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 using System.ComponentModel;
 
 public abstract partial class Tile : ContentView, ITile {
     public Entity Entity { get; init; }
-    
+
     private const int DebounceDelay = 10;
     private bool _visualPropertiesChanged = false;
     private Dictionary<string, object?> _propertyCache = [];
     private CancellationTokenSource? _debounceRebuildCts;
     protected HashSet<string> VisualProperties { get; } = [];
-    protected int RotationFactor = 45;
+    protected readonly int RotationFactor = 45;
+    private TileDisplayMode _displayMode;
     
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
 
-    public Microsoft.Maui.Controls.View? TileView {
-        get;
-        set => SetField(ref field, value);
-    }
-    
-    public bool IsSelected {
-        get;
-        set => SetField(ref field, value);
-    }
+    // @formatter:off
+    public Microsoft.Maui.Controls.View? TileView { get; set => SetField(ref field, value); }
+    public bool IsSelected {get; set => SetField(ref field, value); }
+    public double GridSize {get; set => SetField(ref field, value); }
+    // @formatter:on
 
-    public double GridSize {
-        get;
-        set => SetField(ref field, value);
-    }
-
-    protected Tile(Entity entity, double gridSize) {
+    protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
         GridSize = gridSize;
         PropertyChanged += OnPropertyChanged;
         entity.PropertyChanged += OnPropertyChanged;
 
+        _displayMode = displayMode;
         VisualProperties.Add(nameof(GridSize));
         VisualProperties.Add(nameof(Entity.Rotation));
         VisualProperties.Add(nameof(Entity.IsEnabled));
         VisualProperties.Add(nameof(Entity.Height));
         VisualProperties.Add(nameof(Entity.Width));
-
         SetContent();
     }
-    
+
     public void RotateLeft() => Entity.Rotation = (Entity.Rotation - RotationFactor + 360) % 360;
     public void RotateRight() => Entity.Rotation = (Entity.Rotation + RotationFactor) % 360;
 
     protected abstract Microsoft.Maui.Controls.View? CreateTile();
-    
-    /// <summary>
-    /// Sets up the bindings for this control. If a Tile has not been created, it will re-create it at this point. 
-    /// </summary>
+    protected abstract Microsoft.Maui.Controls.View? CreateSymbol();
     private void SetContent() {
         BindingContext = this;
-        if (Content is not null) {
-            Console.WriteLine($"We should not be here as the content is already set.");
-            return;
-        }
         Content = CreateTile();
         if (Content != null) {
             ClassId = Entity.Guid.ToString();
-            SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this ));
+            SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
             SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
             SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
             SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), source: Entity));
@@ -122,4 +110,8 @@ public abstract partial class Tile : ContentView, ITile {
         OnPropertyChanged(propertyName);
         return true;
     }
+}
+
+public enum TileDisplayMode {
+    Normal, Symbol
 }
