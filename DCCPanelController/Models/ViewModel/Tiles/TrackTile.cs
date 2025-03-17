@@ -22,8 +22,10 @@ public abstract partial class TrackTile : Tile {
         var image = new Image {
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-            Scale = 1.5
+            Scale = 1.5,
         };
+        
+        if (Entity is TrackEntity { TrackAttribute: TrackAttributeEnum.Opaque } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
         
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
         image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
@@ -55,20 +57,14 @@ public abstract partial class TrackTile : Tile {
             }
 
             switch (trackEntity.TrackAttribute) {
-            case TrackAttributeEnum.Opaque:
-                style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
-                style.Add(e => e.WithName(SvgElementType.Tracks).WithOpacity("0.50"));
-                break; 
-
             case TrackAttributeEnum.Dashed:
                 style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
-                style.Add(e => e.WithName(SvgElementType.Tracks).WithOpacity("1.0"));
                 break; 
                 
             case TrackAttributeEnum.Normal:
+            case TrackAttributeEnum.Opaque:
             default:
                 style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
-                style.Add(e => e.WithName(SvgElementType.Tracks).WithOpacity("1.0"));
                 break;
             }
         }

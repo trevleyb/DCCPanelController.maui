@@ -43,7 +43,6 @@
                                     BackgroundColor="White"
                                     HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type view:VerticalTileSelectorViewModel}}, x:DataType=view:VerticalTileSelectorViewModel, Path=GridSize}"
                                     HorizontalOptions="Fill"
-                                    Margin="2"
                                     Padding="5"
                                     Stroke="{StaticResource Gray500}"
                                     StrokeShape="RoundRectangle 5,5,5,5"
