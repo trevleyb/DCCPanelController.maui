@@ -31,7 +31,7 @@ public partial class ControlPanelView {
     }
 
     public event EventHandler<TileSelectedEventArgs>? TileSelected;
-    
+
     private double _gridSize;
     private double _viewHeight;
     private double _viewWidth;
@@ -53,15 +53,15 @@ public partial class ControlPanelView {
     public int Cols => Panel?.Cols ?? 1;
 
     protected virtual void OnTileSelected(ITile tile) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile));
+
     private void OnGridSizeChanged(object? sender, EventArgs e) {
-        Console.WriteLine($"Calling DrawPanel: OnGridSizeChanged");
         DrawPanel();
     }
 
     public bool HasGridSizeChanged(double width, double height) {
         if (width < 1.0 || height < 1.0) return false;
-        var roundWidth = ((int)(width *100))/100;
-        var roundHeight = ((int)(height*100))/100;
+        var roundWidth = ((int)(width * 100)) / 100;
+        var roundHeight = ((int)(height * 100)) / 100;
         var difference = Math.Abs(CalculateGridSize(roundWidth, roundHeight) - _gridSize);
         return difference > 1;
     }
@@ -69,8 +69,6 @@ public partial class ControlPanelView {
     public double CalculateGridSize(double width, double height) {
         if (width <= 0 || height <= 0) return 1;
         var gridSize = Math.Min(width / Cols, height / Rows);
-
-        // Round down to the nearest 0.01
         gridSize = Math.Floor(gridSize * 100) / 100.0;
         return gridSize;
     }
@@ -89,11 +87,9 @@ public partial class ControlPanelView {
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
         using (new CodeTimer("Control Panel : Draw Panel")) {
-
-        _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
-        _viewWidth = _gridSize * Cols;
-        _viewHeight = _gridSize * Rows;
-
+            _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
+            _viewWidth = _gridSize * Cols;
+            _viewHeight = _gridSize * Rows;
 
             DynamicGrid.WidthRequest = _viewWidth;
             DynamicGrid.HeightRequest = _viewHeight;
@@ -162,6 +158,7 @@ public partial class ControlPanelView {
 
     private void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
+
         // TODO: Maybe this code draws the current path???
     }
 
@@ -188,12 +185,15 @@ public partial class ControlPanelView {
                 case EditModeEnum.Move: break;
                 case EditModeEnum.Copy: break;
                 case EditModeEnum.Size: break;
+
                 case EditModeEnum.Delete:
                     RemoveTileFromGrid(tile);
                     break;
+
                 case EditModeEnum.Rotate:
                     tile.RotateRight();
                     break;
+
                 case EditModeEnum.Select:
                     OnTileSelected(tile);
                     break;
@@ -283,8 +283,8 @@ public partial class ControlPanelView {
     /// <summary>
     /// Only highlight a cell if we are in Design Mode
     /// </summary>
-
     public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, action);
+
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
 
@@ -342,7 +342,6 @@ public partial class ControlPanelView {
     /// a new tile to the panel. 
     /// </summary>
     private void DragTileStarting(DragStartingEventArgs args, ITile tile) {
-
         // Some edit modes do not support drag and drop, and also if the mode is Resize and
         // the tile does not support resizing, then we can't allow it to resize. 
         // -------------------------------------------------------------------------------------------------
@@ -407,7 +406,6 @@ public partial class ControlPanelView {
                 ResizeTrack(tile, position.Col, position.Row);
                 HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Resize);
             } else {
-               
                 if (!DoesTrackClash(tile, position.Col, position.Row)) {
                     e.AcceptedOperation = DataPackageOperation.Copy;
                     HighlightCell(position.Col, position.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragValid);
@@ -425,7 +423,6 @@ public partial class ControlPanelView {
         }
 
 #if IOS || MACCATALYST
-
         if (source == "Symbol") {
             e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
         } else {
@@ -540,44 +537,43 @@ public partial class ControlPanelView {
     }
     #endregion
 
+    private void ResizeTrack(ITile? tile, int newCol, int newRow) {
+        if (tile is null) return;
 
-     private void ResizeTrack(ITile? tile, int newCol, int newRow) {
-         if (tile is null) return;
+        // Original position and size
+        var originalX = tile.Entity.Col;
+        var originalY = tile.Entity.Row;
+        var originalWidth = tile.Entity.Width;
+        var originalHeight = tile.Entity.Height;
 
-         // Original position and size
-         var originalX = tile.Entity.Col;
-         var originalY = tile.Entity.Row;
-         var originalWidth = tile.Entity.Width;
-         var originalHeight = tile.Entity.Height;
+        // Resizing right (increasing width)
+        if (newCol > originalX) {
+            tile.Entity.Width = newCol - originalX + 1; // +1 to include the new column
+        }
 
-         // Resizing right (increasing width)
-         if (newCol > originalX) {
-             tile.Entity.Width = newCol - originalX + 1; // +1 to include the new column
-         }
+        // Resizing left (shifting X and adjusting width)
+        else if (newCol < originalX) {
+            var deltaX = originalX - newCol;
+            tile.Entity.Col -= deltaX;   // Shift left
+            tile.Entity.Width += deltaX; // Increase width
+        }
 
-         // Resizing left (shifting X and adjusting width)
-         else if (newCol < originalX) {
-             var deltaX = originalX - newCol;
-             tile.Entity.Col -= deltaX;   // Shift left
-             tile.Entity.Width += deltaX; // Increase width
-         }
+        // Resizing down (increasing height)
+        if (newRow > originalY) {
+            tile.Entity.Height = newRow - originalY + 1; // +1 to include the new row
+        }
 
-         // Resizing down (increasing height)
-         if (newRow > originalY) {
-             tile.Entity.Height = newRow - originalY + 1; // +1 to include the new row
-         }
+        // Resizing up (shifting Y and adjusting height)
+        else if (newRow < originalY) {
+            var deltaY = originalY - newRow;
+            tile.Entity.Row -= deltaY;    // Shift up
+            tile.Entity.Height += deltaY; // Increase height
+        }
 
-         // Resizing up (shifting Y and adjusting height)
-         else if (newRow < originalY) {
-             var deltaY = originalY - newRow;
-             tile.Entity.Row -= deltaY;    // Shift up
-             tile.Entity.Height += deltaY; // Increase height
-         }
-
-         // Ensure minimum size limits
-         tile.Entity.Width = Math.Max(1, tile.Entity.Width);
-         tile.Entity.Height = Math.Max(1, tile.Entity.Height);
-     }
+        // Ensure minimum size limits
+        tile.Entity.Width = Math.Max(1, tile.Entity.Width);
+        tile.Entity.Height = Math.Max(1, tile.Entity.Height);
+    }
 
     /// <summary>
     ///     Convert a position in the grid (absolute) to a Grid position within the col/row definitions
@@ -614,6 +610,6 @@ public partial class ControlPanelView {
     }
 }
 
-public class TileSelectedEventArgs(ITile tile): EventArgs {
+public class TileSelectedEventArgs(ITile tile) : EventArgs {
     public ITile Tile { get; set; } = tile;
 }

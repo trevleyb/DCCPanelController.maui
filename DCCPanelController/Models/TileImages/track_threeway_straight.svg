@@ -11,10 +11,8 @@
                      points="29.4948253 50.505201 29.494825 45.5052403 45.494825 29.494791 45.494833 39.5051813 34.4948707 50.505201"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(24, 19) rotate(180) translate(-24, -19)"
                      points="6.999901 17.999924 40.999778 18.0001224 41.000001 20.0001224 6.999901 20.0001224"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="41 16 41 18 7 18 7 16"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(24, 28.9999) rotate(180) translate(-24, -28.9999)"
                      points="41 27.999878 41 29.999878 6.999996 29.9997788 6.999996 27.9999009"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="41 30 41 32 7 32 7 30"></polygon>
             <polygon id="Border" fill="#000000"
                      transform="translate(33.5001, 7.9999) rotate(180) translate(-33.5001, -7.9999)"
                      points="24 15.9999714 40.0014042 -0.00011062622 40.0001224 -0.00011062622 43.000122 -0.00011062622 27.0000077 15.9999714 25.9475167 15.9999714"></polygon>

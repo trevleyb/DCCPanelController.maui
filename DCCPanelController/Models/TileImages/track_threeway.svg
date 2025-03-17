@@ -33,23 +33,6 @@
                   stroke-linecap="square" stroke-dasharray="2,6"></line>
             <line x1="43.9999997" y1="44" x2="28" y2="28" id="Dashline" stroke="#686868" stroke-width="4"
                   stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(14.5, 31) scale(1, -1) translate(-14.5, -31)"
-                     points="22 30 22 32 7 32 7 30"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(31, 39) scale(1, -1) translate(-31, -39)"
-                     points="37.9999991 30 40 29.999998 22 47.9999982 22 45.9999984"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(14.5, 17) scale(1, -1) translate(-14.5, -17)"
-                     points="22 16 22 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(31, 9) scale(1, -1) translate(-31, -9)"
-                     points="40 18 37.9999991 18.0001116 22 1.99999998 22 0"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(40.5, 31) scale(1, -1) translate(-40.5, -31)"
-                     points="41 30 41 32 40 32 40 30"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(40.5, 17) scale(1, -1) translate(-40.5, -17)"
-                     points="41 16 41 18 40 18 40 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     transform="translate(43, 35.0035) scale(1, -1) translate(-43, -35.0035)"
-                     points="48.000033 30 48 31.9944883 40.0000006 40.007033 38 40.007033"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(43, 13) scale(1, -1) translate(-43, -13)"
-                     points="48 16.0000305 48 17.999995 38 8 40.0000006 8.000076"></polygon>
         </g>
     </g>
 </svg>

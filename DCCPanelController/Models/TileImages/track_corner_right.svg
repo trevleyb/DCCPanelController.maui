@@ -6,16 +6,10 @@
                      points="7 20 26 20 26 28 7 27.9999008 8.00012932 20"></polygon>
             <polygon id="Track" fill="#BDBDBD" transform="translate(35.5, 14) rotate(180) translate(-35.5, -14)"
                      points="22.9999983 27.9999997 22.999998 22.9999944 46.0001273 -3.4332275e-05 48.0000025 7.9999657 28.0000257 27.9999997"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="22 16 22 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     points="38.0866702 -0.000120162964 40 -2.11892801e-12 22 17.9999998 22 15.9999993"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(15, 19) rotate(180) translate(-15, -19)"
                      points="7 18 22.999895 18.0001983 23 20 7 20"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(16.5, 29) rotate(180) translate(-16.5, -29)"
                      points="7 28 26 28.0000992 26 30 7 29.9999008"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="26 30 26 32 7 32 7 30"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     points="48.000023 8.000002 47.7843018 9.99987928 26 32.0000006 26 30.0000004"></polygon>
             <polygon id="Border" fill="#000000"
                      transform="translate(32.5002, 9.9999) rotate(180) translate(-32.5002, -9.9999)"
                      points="22.000303 19.9998778 42.0003227 -0.000120162964 43.000122 2.00868024 25.0003008 19.9998778 23.9478128 19.9998778"></polygon>

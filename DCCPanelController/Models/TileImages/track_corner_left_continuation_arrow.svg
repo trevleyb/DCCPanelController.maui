@@ -18,9 +18,6 @@
             <polygon id="Border" fill="#000000"
                      transform="translate(26.5001, 15.5179) rotate(180) translate(-26.5001, -15.5179)"
                      points="30.0002009 11.035885 31.000001 13.0446865 24.0414357 19.999878 22.000298 19.0357629"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="22 16 22 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     points="26.8445424 10.809265 28.000182 12.0208564 21.9999991 17.999924 21.45465 15.9999997"></polygon>
             <line x1="10.9999999" y1="24" x2="24.0000001" y2="24" id="Dashline" stroke="#686868" stroke-width="4"
                   stroke-linecap="square" stroke-dasharray="2,6"></line>
             <line x1="32.0000001" y1="16" x2="26" y2="22.0000002" id="Dashline" stroke="#686868" stroke-width="4"
@@ -28,11 +25,6 @@
             <polygon id="Continuation" fill="#000000"
                      transform="translate(35.9852, 12.0209) rotate(45) translate(-35.9852, -12.0209)"
                      points="35.9808023 6.3388333 47.303196 17.7028803 24.667204 17.6525876"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     points="26.0000001 29.9999992 27.227783 31.9999496 7 32 7 30"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     transform="translate(31.1859, 26.2041) rotate(-45) translate(-31.1859, -26.2041)"
-                     points="38.9497868 24.904602 38.9511659 27.2656239 24.2887934 27.5036067 23.420584 25.221255"></polygon>
         </g>
     </g>
 </svg>

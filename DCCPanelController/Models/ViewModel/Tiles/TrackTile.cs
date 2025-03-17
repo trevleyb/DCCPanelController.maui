@@ -7,6 +7,13 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract partial class TrackTile : Tile {
+    
+    // @formatter:off
+    public bool IsOccupied {get; set => SetField(ref field, value); }
+    public bool IsPath {get; set => SetField(ref field, value); }
+    // @formatter:on
+
+    
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TrackEntity.TrackType));
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
@@ -24,8 +31,10 @@ public abstract partial class TrackTile : Tile {
             VerticalOptions = LayoutOptions.Fill,
             Scale = 1.5,
         };
-        
-        if (Entity is TrackEntity { TrackAttribute: TrackAttributeEnum.Opaque } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
+
+        if (Entity is TrackEntity {TrackAttribute : TrackAttributeEnum.Opaque } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
+        if (IsPath) image.BackgroundColor = Colors.CornflowerBlue;
+        if (IsOccupied) image.BackgroundColor = Colors.Tomato;
         
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
         image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
@@ -44,15 +53,13 @@ public abstract partial class TrackTile : Tile {
             switch (trackEntity.TrackType) {
             case TrackTypeEnum.BranchLine:
                 style.Add(e => e.WithName(SvgElementType.Border).Hidden())
-                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.BranchLineColor ?? Colors.Gray).Visible())
-                     .Add(e => e.WithName(SvgElementType.Occupied).Hidden());
+                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.BranchLineColor ?? Colors.Gray).Visible());
                 break;
 
             case TrackTypeEnum.MainLine:
-            default: 
+            default:
                 style.Add(e => e.WithName(SvgElementType.Border).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.BorderColor ?? Colors.Black).Visible())
-                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible())
-                     .Add(e => e.WithName(SvgElementType.Occupied).Hidden());
+                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible());
                 break;
             }
 

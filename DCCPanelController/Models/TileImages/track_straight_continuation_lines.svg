@@ -9,8 +9,6 @@
             <polygon id="Track" fill="#BDBDBD" points="7 20 32 20 32 28 7 28"></polygon>
             <line x1="11" y1="24" x2="30.9999996" y2="24" id="Dashline" stroke="#686868" stroke-width="4"
                   stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <polygon id="Occupied" fill="#FF0000" points="32 16 32 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="32 30 32 32 7 32 7 30"></polygon>
         </g>
     </g>
 </svg>

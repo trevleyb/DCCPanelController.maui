@@ -9,17 +9,10 @@
             <polygon id="TrackDiverging" fill="#BDBDBD"
                      transform="translate(37.5, 37.5) rotate(-90) translate(-37.5, -37.5)"
                      points="27.0000003 48 27 43.0025166 43.0000008 27 48 32.0078939 32.0000444 48"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="22 16 22 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     transform="translate(30.2234, 8.2766) rotate(-45) translate(-30.2234, -8.2766)"
-                     points="40.8676279 7.2159624 42.989029 9.33720321 17.5331105 9.33728 17.457726 7.27662257"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(16, 19) rotate(180) translate(-16, -19)"
                      points="7 18 24.9998819 18.0001983 25 20 7 20 8.99999998 18.0001983"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(17.5, 29) rotate(180) translate(-17.5, -29)"
                      points="28 28.000122 28 30 7 29.9998779 9.09999895 28"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="26 30 27 32 7 32 7 30"></polygon>
-            <polygon id="Occupied" fill="#FF0000" transform="translate(37.5, 20) rotate(-45) translate(-37.5, -20)"
-                     points="53.409973 18.939365 51.3627097 20.9866278 21.590109 21.0606297 22.2931585 18.9433665"></polygon>
             <polygon id="Border" fill="#000000" transform="translate(32.5001, 10) rotate(180) translate(-32.5001, -10)"
                      points="38.0014739 3.99991437 42.0001225 -8.58306901e-05 43.0001241 1.99991397 25.0000155 20.0000002 23.9475204 20.0000002 22.000002 20.0000002"></polygon>
             <polygon id="Border" fill="#000000"

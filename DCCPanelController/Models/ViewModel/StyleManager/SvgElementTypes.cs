@@ -6,7 +6,6 @@ public static class SvgElementTypes {
         SvgElementType.TrackDiverging => "TrackDiverging",
         SvgElementType.Dashline       => "Dashline",
         SvgElementType.Border         => "Border", 
-        SvgElementType.Occupied       => "Occupied", 
         SvgElementType.Terminator     => "Terminator",
         SvgElementType.Continuation   => "Continuation",
         SvgElementType.Button         => "Button", 

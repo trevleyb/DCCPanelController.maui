@@ -1,13 +1,13 @@
 using System.Reflection;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
-
 public static class SvgImages {
-    private record SvgReference (string Filename, int Rotation, SvgConnections Connections);
-    
+    private record SvgReference(string Filename, int Rotation, SvgConnections Connections);
+
     static SvgImages() {
         AvailableSymbols = BuildAvailableSymbols();
         BuildAvailableImages();
@@ -15,7 +15,7 @@ public static class SvgImages {
 
     private static readonly Lock LockObject = new();
     private static readonly List<string> AvailableSymbols;
-    private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new ();
+    private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new();
 
     private static void BuildAvailableImages() {
         Console.WriteLine("Building Available Images");
@@ -30,36 +30,36 @@ public static class SvgImages {
         AddImage("Rectangle", "draw_rectangle");
         AddImage("Line", "draw_line");
 
-        AddImage("Button", "Track_Button", 4);                                  // Add Buttons at N,E,S,W
-        AddImage("Button", "Track_Button_Corner", "********", 4, 45);     // Add Buttons at NE,SE,SW,NW
+        AddImage("Button", "Track_Button", 4);                        // Add Buttons at N,E,S,W
+        AddImage("Button", "Track_Button_Corner", "********", 4, 45); // Add Buttons at NE,SE,SW,NW
 
-        AddImage("Straight", "Track_Straight", "**S***S*", 4);   
-        AddImage("Straight", "Track_Angle", "*S***S**", 4,45); 
+        AddImage("Straight", "Track_Straight", "**S***S*", 4);
+        AddImage("Straight", "Track_Angle", "*S***S**", 4, 45);
 
-        AddImage("Cross", "Track_Straight_Cross", "S*S*S*S*",4);
-        AddImage("Cross", "Track_Angle_Cross", "*S*S*S*S",4,45);
+        AddImage("Cross", "Track_Straight_Cross", "S*S*S*S*", 4);
+        AddImage("Cross", "Track_Angle_Cross", "*S*S*S*S", 4, 45);
 
-        AddImage("Corner", "Track_Corner_Left", "*S****S*",4);
-        AddImage("Corner", "Track_Corner_Right", "***S**S*",4,45);
+        AddImage("Corner", "Track_Corner_Left", "*S****S*", 4);
+        AddImage("Corner", "Track_Corner_Right", "***S**S*", 4, 45);
 
-        AddImage("Terminator", "Track_Straight_Terminator", "**T***S*",4);
-        AddImage("Terminator", "Track_Angle_Terminator", "*T***S**",4,45);
+        AddImage("Terminator", "Track_Straight_Terminator", "**T***S*", 4);
+        AddImage("Terminator", "Track_Angle_Terminator", "*T***S**", 4, 45);
 
-        AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*",4);
-        AddImage("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**",4,45);
-        AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*",4);
-        AddImage("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**",4,45);
+        AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "**C***S*", 4);
+        AddImage("StraightContinuationArrow", "Track_Angle_Continuation_Arrow", "*C***S**", 4, 45);
+        AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "**C***S*", 4);
+        AddImage("StraightContinuationLines", "Track_Angle_Continuation_Lines", "*C***S**", 4, 45);
 
-        AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*",4);
-        AddImage("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*",4,45);
-        AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*",4);
-        AddImage("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*",4,45);
+        AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "*C****S*", 4);
+        AddImage("CornerContinuationArrow", "Track_Corner_Right_Continuation_Arrow", "***C**S*", 4, 45);
+        AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "*C****S*", 4);
+        AddImage("CornerContinuationLines", "Track_Corner_Right_Continuation_Lines", "***C**S*", 4, 45);
 
-        AddImage("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*");               // Support all 8 rotations
+        AddImage("LeftTurnoutUnknown", "Track_Turnout_Left", "*DX***S*"); // Support all 8 rotations
         AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight", "*DX***S*");
         AddImage("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging", "*DX***S*");
 
-        AddImage("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*");             // Support all 8 rotations
+        AddImage("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*"); // Support all 8 rotations
         AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight", "**XD**S*");
         AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging", "**XD**S*");
 
@@ -118,7 +118,7 @@ public static class SvgImages {
             }
         }
     }
-    
+
     private static string GetFullPathImage(string filename) {
         if (!filename.EndsWith(".svg")) filename += ".svg";
         return AvailableSymbols.FirstOrDefault(x => !string.IsNullOrEmpty(x) && x.EndsWith(filename, StringComparison.InvariantCultureIgnoreCase)) ?? throw new FileNotFoundException($"File not found: {filename}");

@@ -15,13 +15,6 @@
             <polygon id="Border" fill="#000000"
                      transform="translate(40.5, 12.5) scale(-1, 1) rotate(90) translate(-40.5, -12.5)"
                      points="33.00003 20.000022 48.000029 4.999979 48.000029 7.9999789 36.0000355 20.000022"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="41 30 41 32 7 32 7 30"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="22 16 22 18 7 18 7 16"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     points="37.9999991 -3.09752226e-14 40 -3.09752226e-14 22 18 22 16.0000002"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     points="48.0000515 8.000007 48.0000005 9.999963 40.0000008 18.0000004 38 17.999878"></polygon>
-            <polygon id="Occupied" fill="#FF0000" points="41 16 41 18 40 18 40 16"></polygon>
             <polygon id="Border" fill="#000000" points="41 18 41 20 33 20 35 18"></polygon>
             <line x1="11" y1="24" x2="37.9999992" y2="24" id="Dashline" stroke="#686868" stroke-width="4"
                   stroke-linecap="square" stroke-dasharray="2,6"></line>

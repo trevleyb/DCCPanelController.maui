@@ -11,12 +11,6 @@
                      points="-1.5258789e-05 42.9999878 43.0000028 -1.1444092e-05 47.9999997 -1.1444092e-05 47.9999997 4.99999504 4.99998474 47.9999986 -1.5258789e-05 47.999987"></polygon>
             <line x1="4.00000005" y1="44.0000007" x2="44" y2="4.00000001" id="Dashline" stroke="#686868"
                   stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
-            <polygon id="Occupied" fill="#FF0000"
-                     transform="translate(19.144, 19.4385) rotate(-45) translate(-19.144, -19.4385)"
-                     points="48.0636957 18.380157 48.224368 20.496923 -9.92635993 20.4359833 -9.936302 18.380157"></polygon>
-            <polygon id="Occupied" fill="#FF0000"
-                     transform="translate(28.4222, 28.7435) scale(1, -1) rotate(45) translate(-28.4222, -28.7435)"
-                     points="56.508371 27.715538 58.3360682 29.5432347 -1.48168373 29.7713644 -1.4916258 27.715538"></polygon>
         </g>
     </g>
 </svg>

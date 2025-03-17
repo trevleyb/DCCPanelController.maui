@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Converters;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -11,8 +12,11 @@ public partial class ButtonTile : Tile, ITileInteractive {
     public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(State));
     }
-    
-    private ButtonStateEnum State { get; set => SetField(ref field, value); }= ButtonStateEnum.Unknown;
+
+    private ButtonStateEnum State {
+        get;
+        set => SetField(ref field, value);
+    } = ButtonStateEnum.Unknown;
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {
@@ -51,6 +55,6 @@ public partial class ButtonTile : Tile, ITileInteractive {
             _                       => ButtonStateEnum.Unknown
         };
     }
-    
+
     public void Secondary() { }
 }
