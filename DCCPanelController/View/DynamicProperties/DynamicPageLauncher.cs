@@ -1,0 +1,46 @@
+using System.Diagnostics;
+using CommunityToolkit.Maui.Views;
+using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
+using DCCPanelController.View.PropertyPages;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
+using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
+using Page = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page;
+using UIModalPresentationStyle = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.UIModalPresentationStyle;
+
+namespace DCCPanelController.View.Properties;
+
+public static class DynamicPageLauncher {
+ 
+    public static async Task ShowDynamicPropertyPageAsync(ITile tile) {
+        // -------------------------------------------------------------------------------
+        if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
+            await LaunchNavigationPage(new DynamicPropertyPage(tile));
+        }
+        else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
+                 DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+            await LaunchPopupPage(new DynamicPropertyPopup(tile));
+        }
+    }
+
+    private static async Task LaunchNavigationPage(ContentPage page) {
+        if (App.Current.Windows[0].Page is { } mainPage) {
+            var navigationPage = new NavigationPage(page);
+#if IOS
+            navigationPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+#endif
+            await mainPage.Navigation.PushModalAsync(navigationPage);
+        }
+    }
+
+    private static async Task LaunchPopupPage(Popup page) {
+        if (App.Current.Windows[0].Page is { } mainPage) {
+            if (DeviceInfo.Idiom == DeviceIdiom.Tablet || DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+                // popupPage.SetPopupSize(400, 600); // Example width/height in pixels
+            }
+            await mainPage.ShowPopupAsync(page);
+        }
+    }
+}

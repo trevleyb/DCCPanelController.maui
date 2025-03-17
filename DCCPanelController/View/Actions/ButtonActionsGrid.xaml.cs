@@ -1,12 +1,13 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGrid : ContentView {
     
     ButtonActionsGridViewModel _viewModel;
-    public ButtonActionsGrid(Actions<ButtonStateEnum> buttonActions, ActionsContext context, List<string> availableButtons) {
+    public ButtonActionsGrid(Actions<ButtonStateEnum> buttonActions, ActionsContextEnum context, List<string> availableButtons) {
         InitializeComponent();
         _viewModel = new ButtonActionsGridViewModel(buttonActions, context, availableButtons);
         BindingContext = _viewModel;

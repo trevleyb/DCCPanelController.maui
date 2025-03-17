@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.View.Actions;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -12,10 +13,10 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButt
     [ObservableProperty] [property: Editable("Button ID", EditableType.Id)]
     private string _id = string.Empty;
     
-    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 0, "Actions")] 
+    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 0, "Actions", ActionsContext.Button)] 
     private Actions<ButtonStateEnum> _buttonActions = [];
     
-    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 0, "Actions")]
+    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 0, "Actions", ActionsContext.Button)]
     private Actions<TurnoutStateEnum> _turnoutActions = [];
     
     [ObservableProperty] private ButtonStateEnum _state  = ButtonStateEnum.Unknown;

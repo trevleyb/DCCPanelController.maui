@@ -112,12 +112,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public void EditTileProperties(ITile tile) => EditTilePropertiesAsync(tile);
     public async Task EditTilePropertiesAsync(ITile tile) {
         Console.WriteLine($"Launching the Properties page for '{tile.Entity.Name}'");
-
-        var editableProperties = EditableExtractor.GetEditableProperties(tile.Entity);
-        foreach (var property in editableProperties) {
-            Console.WriteLine($"PROPERTY={property.Property.Name} is {property.Metadata.Type}");
-        }
-        
+        DynamicPageLauncher.ShowDynamicPropertyPageAsync(tile);
         Profile.Save();
     }
 

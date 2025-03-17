@@ -3,12 +3,13 @@ using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGridViewModel : ObservableObject {
     [ObservableProperty]
-    private ActionsContext _actionContext;
+    private ActionsContextEnum _actionContext;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
@@ -31,7 +32,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(NoDataText))]
     private ObservableCollection<string> _selectableButtons;
 
-    public ButtonActionsGridViewModel( Models.DataModel.Actions<ButtonStateEnum> buttonActions, ActionsContext context, List<string> availableButtons) {
+    public ButtonActionsGridViewModel(Models.DataModel.Actions<ButtonStateEnum> buttonActions, ActionsContextEnum context, List<string> availableButtons) {
         ActionContext = context;
         AvailableButtons = availableButtons.ToObservableCollection();
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
@@ -42,8 +43,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(ControlHeight));
     }
 
-    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
-    public bool IsButtonContext => ActionContext == ActionsContext.Button;
+    public bool IsTurnoutContext => ActionContext == ActionsContextEnum.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContextEnum.Button;
 
     public bool IsGridVisible => ButtonActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;

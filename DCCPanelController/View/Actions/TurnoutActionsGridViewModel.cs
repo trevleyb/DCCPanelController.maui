@@ -3,12 +3,13 @@ using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty]
-    private ActionsContext _actionContext;
+    private ActionsContextEnum _actionContext;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
@@ -31,7 +32,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(NoDataText))]
     private Models.DataModel.Actions<TurnoutStateEnum> _turnoutActions;
 
-    public TurnoutActionsGridViewModel(Models.DataModel.Actions<TurnoutStateEnum> turnoutActions, ActionsContext context, List<string> availableTurnouts) {
+    public TurnoutActionsGridViewModel(Models.DataModel.Actions<TurnoutStateEnum> turnoutActions, ActionsContextEnum context, List<string> availableTurnouts) {
         ActionContext = context;
         AvailableTurnouts = availableTurnouts.ToObservableCollection();
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
@@ -42,8 +43,8 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(ControlHeight));
     }
 
-    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
-    public bool IsButtonContext => ActionContext == ActionsContext.Button;
+    public bool IsTurnoutContext => ActionContext == ActionsContextEnum.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContextEnum.Button;
 
     public bool IsGridVisible => TurnoutActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
