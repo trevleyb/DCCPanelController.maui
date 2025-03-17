@@ -17,7 +17,6 @@ public class TextTile : Tile {
             var label = new Label {
                 Text = entity.Label,
                 FontSize = entity.FontSize,
-                FontFamily = entity.FontWeight == FontWeight.Bold ? "OpenSansSemibold" : "OpenSansRegular",
                 HorizontalTextAlignment = entity.HorizontalJustification,
                 VerticalTextAlignment = entity.VerticalJustification,
                 HorizontalOptions = LayoutOptions.Start,

@@ -8,6 +8,13 @@ public class EditableAttribute : Attribute
     public EditableType Type { get; }               // What type of property is this?
     public int Order { get; } = 0;                  // Order within the group
 
+    public EditableAttribute(string label, EditableType type, string group) {
+        Label = label;
+        Type = type;
+        Order = 0;
+        Group = group;
+    }
+
     public EditableAttribute(string label, EditableType type, int order = 0, string group = "") {
         Label = label;
         Type = type;
@@ -25,6 +32,11 @@ public enum EditableType {
     Id,
     ButtonActions,
     TurnoutActions,
-    
-    
+    TrackType,
+    TrackTerminator, 
+    TrackAttributes,
+    AspectRatio,
+    Image,
+    Opacity,
+    Alignment
 }

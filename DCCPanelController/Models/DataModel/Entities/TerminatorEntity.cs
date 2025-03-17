@@ -1,12 +1,15 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TerminatorEntity : TrackEntity, ITrackEntity {
     public override string Name => "Terminator Track";
-    [ObservableProperty] private TrackTerminatorEnum _terminatorStyle = TrackTerminatorEnum.Arrow;
+
+    [ObservableProperty] [property: Editable("Terminator", EditableType.TrackTerminator)] 
+    private TrackTerminatorEnum _terminatorStyle = TrackTerminatorEnum.Arrow;
 
     [JsonConstructor]
     public TerminatorEntity() { }

@@ -7,10 +7,18 @@ using DCCPanelController.Models.DataModel.Interfaces;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity {
-    [ObservableProperty] private string _id = string.Empty;
-    [ObservableProperty] private string _address = string.Empty;
-    [ObservableProperty] private Actions<ButtonStateEnum> _buttonActions = [];
-    [ObservableProperty] private Actions<TurnoutStateEnum> _turnoutActions = [];
+    [ObservableProperty] [property: Editable("ID", EditableType.Id)] 
+    private string _id = string.Empty;
+    
+    [ObservableProperty] [property: Editable("DCC Address", EditableType.String)]
+    private string _address = string.Empty;
+    
+    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 0, "Actions")] 
+    private Actions<ButtonStateEnum> _buttonActions = [];
+    
+    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 0, "Actions")]
+    private Actions<TurnoutStateEnum> _turnoutActions = [];
+    
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
     
     [JsonConstructor]
