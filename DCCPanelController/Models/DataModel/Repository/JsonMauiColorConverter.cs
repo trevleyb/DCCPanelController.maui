@@ -2,7 +2,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using Color = Microsoft.Maui.Graphics.Color;
 
-namespace DCCPanelController.Models.DataModel.Helpers;
+namespace DCCPanelController.Models.DataModel.Repository;
 
 public class MauiColorJsonConverter : JsonConverter<Color> {
     public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {

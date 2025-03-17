@@ -1,12 +1,10 @@
-using System.Globalization;
 using DCCPanelController.Models.DataModel;
-using Entry = Microsoft.Maui.Controls.Entry;
 #if IOS
 using UIKit;
 using UIModalPresentationStyle = UIKit.UIModalPresentationStyle;
 #endif
 
-namespace DCCPanelController.View.PropertyPages;
+namespace DCCPanelController.View.PanelProperties;
 
 public partial class PanelPropertyPage : ContentPage {
     public PanelPropertyPage(Panel panel) {

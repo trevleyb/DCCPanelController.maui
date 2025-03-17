@@ -1,10 +1,9 @@
-using System.Collections.ObjectModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 
-namespace DCCPanelController.View.PropertyPages;
+namespace DCCPanelController.View.PanelProperties;
 
 public partial class PanelPropertyViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;

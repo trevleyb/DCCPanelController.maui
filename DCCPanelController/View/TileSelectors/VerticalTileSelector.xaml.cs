@@ -1,12 +1,11 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
-using DCCPanelController.View.Helpers;
 #if IOS || MACCATALYST
 using UIKit;
 using CoreGraphics;
 #endif
 
-namespace DCCPanelController.View;
+namespace DCCPanelController.View.TileSelectors;
 
 public partial class VerticalTileSelector {
 

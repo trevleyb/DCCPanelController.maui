@@ -1,6 +1,6 @@
 using DCCPanelController.Models.ViewModel.Tiles;
 
-namespace DCCPanelController.View;
+namespace DCCPanelController.View.TileSelectors;
 
 public partial class FloatingTileSelector {
     public FloatingTileSelector() {

@@ -1,6 +1,6 @@
 using DCCPanelController.Models.DataModel.Entities;
 
-namespace DCCPanelController.Models.DataModel.Helpers;
+namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonOptions {
     public static readonly System.Text.Json.JsonSerializerOptions? Options = new() {

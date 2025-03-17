@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DCCPanelController.Models.DataModel;
 
-namespace DCCPanelController.View.PropertyPages;
+namespace DCCPanelController.View.PanelProperties;
 
 public partial class PanelPropertyBase : ContentView {
     public PanelPropertyBase(Panel panel) {

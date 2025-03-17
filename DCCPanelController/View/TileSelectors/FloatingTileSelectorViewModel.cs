@@ -1,14 +1,12 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
-using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
 
-namespace DCCPanelController.View;
+namespace DCCPanelController.View.TileSelectors;
 
 public partial class FloatingTileSelectorViewModel : BaseViewModel {
     

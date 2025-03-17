@@ -5,8 +5,9 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
-using DCCPanelController.View.Properties;
+using DCCPanelController.View.PanelProperties;
 
 namespace DCCPanelController.View;
 

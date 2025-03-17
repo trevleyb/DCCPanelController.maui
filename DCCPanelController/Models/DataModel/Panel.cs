@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.Models.DataModel.Repository;
 
 namespace DCCPanelController.Models.DataModel;
 

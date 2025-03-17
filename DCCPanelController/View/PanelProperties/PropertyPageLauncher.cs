@@ -1,14 +1,10 @@
-using System.Diagnostics;
 using CommunityToolkit.Maui.Views;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.View.PropertyPages;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
-using Page = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.Page;
-using UIModalPresentationStyle = Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific.UIModalPresentationStyle;
 
-namespace DCCPanelController.View.Properties;
+namespace DCCPanelController.View.PanelProperties;
 
 public static class PropertyPageLauncher {
  

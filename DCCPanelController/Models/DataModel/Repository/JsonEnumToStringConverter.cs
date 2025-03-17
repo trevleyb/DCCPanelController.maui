@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace DCCPanelController.Models.DataModel.Helpers;
+namespace DCCPanelController.Models.DataModel.Repository;
 
 public class JsonEnumToStringConverter<T> : JsonConverter<T> where T : struct, Enum {
     public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {

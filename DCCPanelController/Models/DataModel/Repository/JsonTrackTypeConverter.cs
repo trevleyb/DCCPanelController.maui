@@ -1,9 +1,8 @@
-using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Entities;
 
-namespace DCCPanelController.Models.DataModel.Helpers;
+namespace DCCPanelController.Models.DataModel.Repository;
 
 public class JsonTrackTypeConverter : JsonConverter<Entity> {
     public override Entity Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {

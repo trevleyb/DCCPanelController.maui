@@ -2,11 +2,12 @@
 
 <ContentView
     BackgroundColor="Transparent"
-    x:Class="DCCPanelController.View.PropertyPages.PanelPropertyBase"
-    x:DataType="local:PanelPropertyViewModel"
+    x:Class="DCCPanelController.View.PanelProperties.PanelPropertyBase"
+    x:DataType="panelProperties:PanelPropertyViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
-    xmlns:local="clr-namespace:DCCPanelController.View.PropertyPages"
+    xmlns:local="clr-namespace:DCCPanelController.View.PanelProperties"
+    xmlns:panelProperties="clr-namespace:DCCPanelController.View.PanelProperties"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.Content>
@@ -176,7 +177,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BackgroundColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.BackgroundColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -187,7 +188,7 @@
                                         WidthRequest="120" />
                                     <components:ColorPickerButton
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BorderColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.BorderColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -201,7 +202,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.MainLineColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.MainLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -213,7 +214,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.BranchLineColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.BranchLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -227,7 +228,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.DivergingColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.DivergingColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -239,7 +240,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.HiddenColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.HiddenColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -253,7 +254,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonBorder, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -265,7 +266,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -279,7 +280,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOnBorder, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOnBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -291,7 +292,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOffBorder, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOffBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -305,7 +306,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOnColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOnColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -317,7 +318,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ButtonOffColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOffColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -331,7 +332,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ContinuationColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ContinuationColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -343,7 +344,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.TerminatorColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.TerminatorColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -357,7 +358,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.OccupiedColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.OccupiedColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
@@ -369,7 +370,7 @@
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
-                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type local:PanelPropertyViewModel}}, Path=Panel.ShowPathColor, Mode=TwoWay}"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ShowPathColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         WidthRequest="100" />
                                 </HorizontalStackLayout>
