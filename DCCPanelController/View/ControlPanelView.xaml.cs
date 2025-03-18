@@ -199,6 +199,7 @@ public partial class ControlPanelView {
                     break;
                 }
             }
+            if (_tapCount == 2) OnTileSelected(tile);
         }
         _tapCount = 0;
     }

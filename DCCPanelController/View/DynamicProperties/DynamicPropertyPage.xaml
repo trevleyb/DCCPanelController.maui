@@ -15,41 +15,6 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-
-        <!--  <Border  -->
-        <!--  BackgroundColor="White"  -->
-        <!--  HorizontalOptions="Center"  -->
-        <!--  Stroke="{StaticResource Primary}"  -->
-        <!--  StrokeThickness="3"  -->
-        <!--  VerticalOptions="Fill">  -->
-        <!--    -->
-        <!--     <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill"> -->
-        <!--         <Grid BackgroundColor="{StaticResource Primary}" VerticalOptions="Center"> -->
-        <!--  <Button  -->
-        <!--  Clicked="ClosePropertyPage"  -->
-        <!--  Grid.Column="0"  -->
-        <!--  HorizontalOptions="Start"  -->
-        <!--  Text="Close" />  -->
-        <!--  <Label  -->
-        <!--  Grid.Column="0"  -->
-        <!--  HorizontalOptions="Center"  -->
-        <!--  Margin="10,0,0,0"  -->
-        <!--  Style="{StaticResource LargeLabel}"  -->
-        <!--  Text="{Binding PropertyName}"  -->
-        <!--  TextColor="White"  -->
-        <!--  VerticalOptions="Center" />  -->
-        <!--  <ImageButton  -->
-        <!--  Aspect="Center"  -->
-        <!--  Grid.Column="0"  -->
-        <!--  HeightRequest="25"  -->
-        <!--  HorizontalOptions="End"  -->
-        <!--  Source="info.png"  -->
-        <!--  WidthRequest="25">  -->
-        <!--                 <ImageButton.Behaviors> -->
-        <!--                     <toolkit:IconTintColorBehavior TintColor="White" /> -->
-        <!--                 </ImageButton.Behaviors> -->
-        <!--             </ImageButton> -->
-        <!--         </Grid> -->
         <Grid HorizontalOptions="Fill" Margin="5">
             <ScrollView
                 BackgroundColor="White"
@@ -57,7 +22,7 @@
                 VerticalOptions="Fill">
                 <VerticalStackLayout
                     HorizontalOptions="Fill"
-                    Margin="10,20,0,0"
+                    Margin="5,0,5,0"
                     VerticalOptions="Fill"
                     x:Name="PropertyContainer" />
             </ScrollView>
@@ -66,3 +31,46 @@
         <!-- </Border> -->
     </ContentPage.Content>
 </ContentPage>
+
+
+
+
+
+
+
+
+
+<!--  <Border  -->
+<!--  BackgroundColor="White"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Stroke="{StaticResource Primary}"  -->
+<!--  StrokeThickness="3"  -->
+<!--  VerticalOptions="Fill">  -->
+<!--    -->
+<!--     <VerticalStackLayout HorizontalOptions="Fill" VerticalOptions="Fill"> -->
+<!--         <Grid BackgroundColor="{StaticResource Primary}" VerticalOptions="Center"> -->
+<!--  <Button  -->
+<!--  Clicked="ClosePropertyPage"  -->
+<!--  Grid.Column="0"  -->
+<!--  HorizontalOptions="Start"  -->
+<!--  Text="Close" />  -->
+<!--  <Label  -->
+<!--  Grid.Column="0"  -->
+<!--  HorizontalOptions="Center"  -->
+<!--  Margin="10,0,0,0"  -->
+<!--  Style="{StaticResource LargeLabel}"  -->
+<!--  Text="{Binding PropertyName}"  -->
+<!--  TextColor="White"  -->
+<!--  VerticalOptions="Center" />  -->
+<!--  <ImageButton  -->
+<!--  Aspect="Center"  -->
+<!--  Grid.Column="0"  -->
+<!--  HeightRequest="25"  -->
+<!--  HorizontalOptions="End"  -->
+<!--  Source="info.png"  -->
+<!--  WidthRequest="25">  -->
+<!--                 <ImageButton.Behaviors> -->
+<!--                     <toolkit:IconTintColorBehavior TintColor="White" /> -->
+<!--                 </ImageButton.Behaviors> -->
+<!--             </ImageButton> -->
+<!--         </Grid> -->

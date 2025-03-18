@@ -7,16 +7,19 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class RectangleEntity : Entity, IDrawingEntity {
     public override string Name => "Rectangle";
     
+    [ObservableProperty][property: Editable("Border Width", EditableType.Integer, group: "Rectangle")] 
+    private int _borderWidth  = 1;
+
+    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, group: "Border")] 
+    private int _borderRadius = 0;
+    
     [ObservableProperty] [property: Editable("Background Color", EditableType.Color, group: "Rectangle")]
     private Color _backgroundColor = Colors.Transparent;
     
     [ObservableProperty] [property: Editable("Border Color", EditableType.Color, group: "Rectangle")]
     private Color _borderColor = Colors.Black;
-    
-    [ObservableProperty][property: Editable("Border Width", EditableType.Integer, group: "Rectangle")] 
-    private int _borderWidth  = 1;
-    
-    [ObservableProperty][property: Editable("Line Color", EditableType.Opacity, group: "Rectangle")] 
+   
+    [ObservableProperty][property: Editable("Opacity", EditableType.Opacity, group: "Rectangle")] 
     private double _opacity = 1;
     
     [JsonConstructor]

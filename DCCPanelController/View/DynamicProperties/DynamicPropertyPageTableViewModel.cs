@@ -30,20 +30,33 @@ public partial class DynamicPropertyPageTableViewModel : BaseViewModel {
         var properties = EditableExtractor.GetEditableProperties(entity);
         var tableView = new TableView();
         var tableRoot = new TableRoot();
-
+        var tableSection = new TableSection();
+        
         var isFirst = true;
         var lastGroup = "*";
-        TableSection? lastSection = null;
         foreach (var property in properties) {
             // If we have changed our group value, or this is the first property we are processing
             // then we need to create a Group header and expander for the group and get a reference to 
             // where we will add the child elements. 
             // ----------------------------------------------------------------------------------------
             if (property.Metadata.Group != lastGroup) {
+                if (!isFirst) {
+                    // Add the existing Table to the container
+                    // -------------------------------------------------
+                    tableView.Root = tableRoot;
+                    tableView.Intent = TableIntent.Settings;
+                    view.Children.Add(tableView);
+                    
+                    // Create a new Table - need to do this so there is a break between the sections
+                    // -----------------------------------------------------------------------------
+                    tableView = new TableView();
+                    tableView.Root = tableRoot;
+                    tableRoot = new TableRoot();
+                    tableSection = new TableSection();
+                    tableRoot.Add(tableSection);
+                    if (!string.IsNullOrWhiteSpace(property.Metadata.Group)) tableSection.Title = property.Metadata.Group;
+                }
                 lastGroup = property.Metadata.Group;
-                lastSection = new TableSection();
-                if (!string.IsNullOrWhiteSpace(property.Metadata.Group)) lastSection.Title = property.Metadata.Group;
-                tableRoot.Add(lastSection);
                 isFirst = false;
             }
 
@@ -71,7 +84,7 @@ public partial class DynamicPropertyPageTableViewModel : BaseViewModel {
             var cell = editableComponent.CreateCell(property.Entity, property.Property, property.Metadata);
             try {
                 if (cell is ViewCell { View: not null }) {
-                    lastSection?.Add(cell);
+                    tableSection?.Add(cell);
                 } else {
                     Console.WriteLine($"Unable to add cell to table for '{property.Property.Name}'");
                 }

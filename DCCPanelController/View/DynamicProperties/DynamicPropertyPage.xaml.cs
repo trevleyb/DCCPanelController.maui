@@ -11,7 +11,7 @@ namespace DCCPanelController.View.DynamicProperties;
 public partial class DynamicPropertyPage : ContentPage {
     public DynamicPropertyPage(ITile tile, string? propertyName = null) {
         InitializeComponent();
-        BindingContext = new DynamicPropertyPageTableViewModel(tile, propertyName, PropertyContainer);
+        BindingContext = new DynamicPropertyPageViewModel(tile, propertyName, PropertyContainer);
     }
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {

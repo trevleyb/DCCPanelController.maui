@@ -13,7 +13,6 @@ public abstract partial class TrackTile : Tile {
     public bool IsPath {get; set => SetField(ref field, value); }
     // @formatter:on
 
-    
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TrackEntity.TrackType));
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));

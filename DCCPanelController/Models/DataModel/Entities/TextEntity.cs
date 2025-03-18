@@ -2,39 +2,41 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using UIKit;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TextEntity : Entity, ITextEntity {
+public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     public override string Name => "Text Block";
     
-    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, group: "Border")] 
-    private int _borderRadius = 0;
-    
-    [ObservableProperty] [property: Editable("Border Width", EditableType.Integer, group: "Border")]
-    private int _borderWidth  = 0;
-    
-    [ObservableProperty] [property: Editable("Font Size", EditableType.Integer, group: "Text")]
-    private int _fontSize = 8;
-    
-    [ObservableProperty] [property: Editable("Label", EditableType.Integer)]
+    [ObservableProperty] [property: Editable("Label", EditableType.String, 0, "Text")]
     private string _label = string.Empty;
     
-    [ObservableProperty] [property: Editable("Text Color", EditableType.Color, group: "Text")]
-    private Color _textColor = Colors.White;
-    
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, group: "Border")]
-    private Color _borderColor = Colors.Transparent;
-    
-    [ObservableProperty] [property: Editable("background Color", EditableType.Color, group: "Border")]
-    private Color _backgroundColor = Colors.Transparent;
-    
-    [ObservableProperty] [property: Editable("Horizontal Alignment", EditableType.Alignment, group: "Text")]
+    [ObservableProperty] [property: Editable("Text Color", EditableType.Color, 0, group: "Text")]
+    private Color _textColor = Colors.Black;
+
+    [ObservableProperty] [property: Editable("Horizontal", EditableType.Alignment, 0, group: "Text")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
     
-    [ObservableProperty] [property: Editable("Vertical Alignment", EditableType.Alignment, group: "Text")]
+    [ObservableProperty] [property: Editable("Vertical", EditableType.Alignment, 0, group: "Text")]
     private TextAlignment _verticalJustification = TextAlignment.Center;
+
+    [ObservableProperty] [property: Editable("Font Size", EditableType.Integer, 0, group: "Text")]
+    private int _fontSize = 8;
+
+    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, 5, group: "Border")]
+    private Color _borderColor = Colors.Transparent;
+
+    [ObservableProperty] [property: Editable("Background Color", EditableType.Color, 5, group: "Border")]
+    private Color _backgroundColor = Colors.Transparent;
+
+    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, 5, group: "Border")] 
+    private int _borderRadius = 0;
     
+    [ObservableProperty] [property: Editable("Border Width", EditableType.Integer, 5, group: "Border")]
+    private int _borderWidth  = 0;
+    
+   
     [JsonConstructor]
     public TextEntity() {}
     public TextEntity(Panel panel) : this() {

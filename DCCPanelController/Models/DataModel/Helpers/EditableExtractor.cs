@@ -10,11 +10,11 @@ public static class EditableExtractor {
         var properties = entity.GetType()
                                .GetProperties(BindingFlags.Public | BindingFlags.Instance)
                                .Where(p => p.GetCustomAttribute<EditableAttribute>() != null);
-
-        return properties
+        var props  = properties
               .Select(p => (entity, p, p.GetCustomAttribute<EditableAttribute>()!))
-              .OrderBy(p => p.Item3.Group) // Group by Group Name
-              .ThenBy(p => p.Item3.Order)  // Then sort by Order
+              .OrderBy(p => p.Item3.Order) // Then sort by Order
+              .ThenBy(p => p.Item3.Group)  // Group by Group Name
               .ToList();
+        return props;
     }
 }

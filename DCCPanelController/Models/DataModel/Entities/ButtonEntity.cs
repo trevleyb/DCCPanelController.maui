@@ -13,10 +13,10 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButt
     [ObservableProperty] [property: Editable("Button ID", EditableType.Id)]
     private string _id = string.Empty;
     
-    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 0, "Actions", ActionsContext.Button)] 
+    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 10, "Actions", ActionsContext.Button)] 
     private Actions<ButtonStateEnum> _buttonActions = [];
     
-    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 0, "Actions", ActionsContext.Button)]
+    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 10, "Actions", ActionsContext.Button)]
     private Actions<TurnoutStateEnum> _turnoutActions = [];
     
     [ObservableProperty] private ButtonStateEnum _state  = ButtonStateEnum.Unknown;

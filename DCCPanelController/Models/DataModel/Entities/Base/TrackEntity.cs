@@ -6,18 +6,18 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TrackEntity : Entity {
     
-    [ObservableProperty] [property: Editable("Track Color", EditableType.Color)]
-    private Color? _trackColor;
-    
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color)]
-    private Color? _trackBorderColor;
-    
-    [ObservableProperty] [property: Editable("Track Type", EditableType.TrackType)]
+    [ObservableProperty] [property: Editable("Track Type", EditableType.TrackType, 5, group: "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
     
-    [ObservableProperty][property: Editable("Attributes", EditableType.TrackAttributes)] 
+    [ObservableProperty][property: Editable("Attributes", EditableType.TrackAttributes, 5, group: "Track")] 
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
+    [ObservableProperty] [property: Editable("Track Color", EditableType.Color, 5, group: "Track")]
+    private Color? _trackColor;
+    
+    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, 5, group: "Track")]
+    private Color? _trackBorderColor;
+    
     protected TrackEntity() { }
     protected TrackEntity(Panel panel) : base(panel) { }
 

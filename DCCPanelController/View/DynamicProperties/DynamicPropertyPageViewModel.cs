@@ -9,6 +9,7 @@ using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using Dynamensions.ColorPalleteGenerator;
 
 namespace DCCPanelController.View.DynamicProperties;
 
@@ -73,7 +74,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     EditableType.TrackTerminator => new EditableTrackTerminator(),
                     _                            => new EditableUndefined() // Default to undefined
                 };
-                groupContainer.Container.Add(GroupCell(editableComponent, property.Entity, property.Property, property.Metadata));
+                var cell = editableComponent.CreateView(property.Entity, property.Property, property.Metadata);
+                if (cell is not null) groupContainer.Container.Add(cell);
             }
         }
     }
@@ -89,16 +91,14 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private static (IView?, IList<IView>?) CreateExpanderGroup(string groupKey, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey, isFirst);
 
-        var tableExpander = new Expander {
-            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
-        };
-
+        var tableExpander = new Expander();
         var expanderHeading = new StackLayout();
         var expanderTitle = new HorizontalStackLayout();
         expanderTitle.Children.Add(GroupChevrons(tableExpander));
         expanderTitle.Children.Add(GroupHeading(groupKey));
         expanderHeading.Children.Add(expanderTitle);
         expanderHeading.Children.Add(GroupDivider());
+        tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 0, 0);
         tableExpander.Header = expanderHeading;
         tableExpander.IsExpanded = true;
 
@@ -179,69 +179,12 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     /// Creates a visual divider element to separate groups or sections within the property views.
     /// </summary>
     /// <returns>A BoxView element styled as a horizontal divider with specific dimensions and margins.</returns>
-    private static BoxView GroupDivider() {
+    private static BoxView GroupDivider(Color? color = null) {
+        color ??= StyleColor.Get("Primary");
         return new BoxView {
-            BackgroundColor = StyleColor.Get("Primary"),
+            BackgroundColor = color,
             HeightRequest = 1,
             HorizontalOptions = LayoutOptions.Fill,
-            Margin = new Thickness(0, 0, 10, 15)
         };
     }
-    
-    private static HorizontalStackLayout GroupCell(IEditableProperty property, object owner, PropertyInfo info, EditableAttribute attribute) {
-        var groupCell = new HorizontalStackLayout {
-            Margin = new Thickness(0, 5, 0, 5),
-        };
-
-        if (!string.IsNullOrWhiteSpace(attribute.Label)) {
-            var label = new Label {
-                Text = attribute.Label,
-                TextColor = Colors.DimGray,
-                FontSize = 15,
-                LineBreakMode = LineBreakMode.MiddleTruncation,
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Center,
-                //Margin = new Thickness(5, 5, 5, 5),
-                WidthRequest = 120
-            };
-            groupCell.Children.Add(label);
-        }
-
-        groupCell.Children.Add(property.CreateView(owner, info, attribute) ?? new Label { Text = "Undefined Property" });
-        return groupCell;
-    }
-
-    // private static HorizontalStackLayout GroupCell(EditableDetails value) {
-    //     var groupCell = new HorizontalStackLayout {
-    //         Margin = new Thickness(0, 5, 0, 5),
-    //     };
-    //
-    //     if (!string.IsNullOrWhiteSpace(value.EditableAttribute.Name)) {
-    //         var label = new Label {
-    //             Text = value.EditableAttribute.Name,
-    //             TextColor = Colors.DimGray,
-    //             FontSize = 15,
-    //             LineBreakMode = LineBreakMode.MiddleTruncation,
-    //             HorizontalOptions = LayoutOptions.Start,
-    //             VerticalOptions = LayoutOptions.Center,
-    //             //Margin = new Thickness(5, 5, 5, 5),
-    //             WidthRequest = 120
-    //         };
-    //         groupCell.Children.Add(label);
-    //     }
-    //
-    //     var cell = CreateDataEntry(value);
-    //     if (cell is not null) groupCell.Children.Add(cell);
-    //     return groupCell;
-    // }
-
-    // private static IView? CreateDataEntry(EditableDetails value) {
-    //     if (value.EditableAttribute is IEditableAttribute editProperty) {
-    //         var propertyEntry = editProperty.CreateView(value);
-    //         return propertyEntry;
-    //     }
-    //
-    //     Debug.WriteLine($"Unable to create entry for {value.EditableAttribute.Name}");
-    //     return null;
-    // }
 }

@@ -7,6 +7,9 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public class TextTile : Tile {
     public TextTile(TextEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TextEntity.Label));
+        VisualProperties.Add(nameof(entity.Label));
+        VisualProperties.Add(nameof(entity.FontSize));
+        VisualProperties.Add(nameof(entity.TextColor));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {

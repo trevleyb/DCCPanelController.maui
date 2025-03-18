@@ -13,6 +13,7 @@ public class EditableString : EditableProperty, IEditableProperty {
                 Keyboard = Keyboard.Text,
                 WidthRequest = 300,
                 HeightRequest = 25,
+                HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 BindingContext = owner
             };

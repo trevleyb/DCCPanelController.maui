@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-[DebuggerDisplay("{Name}:{TrackClass}: {Col},{Row}")]
+[DebuggerDisplay("{Name} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject {
 

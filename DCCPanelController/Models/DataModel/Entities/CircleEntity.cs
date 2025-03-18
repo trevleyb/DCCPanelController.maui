@@ -17,7 +17,7 @@ public partial class CircleEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Border", EditableType.Color, group: "Circle")]
     private Color _borderColor = Colors.Black;
     
-    [ObservableProperty] [property: Editable("Opacity", EditableType.Double, group: "Circle" )]
+    [ObservableProperty] [property: Editable("Opacity", EditableType.Opacity, group: "Circle" )]
     private double _opacity = 0.5;
     
     [JsonConstructor]

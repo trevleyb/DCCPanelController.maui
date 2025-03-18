@@ -10,7 +10,7 @@ public class EditableAlignment : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var items = new[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End };
-            return CreateRadioGroupForEnums("Alignment", items, owner, info.Name);
+            return CreateRadioGroupForEnums("Alignment", items, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Alignment Enum:  {e.Message}");
             return null;
@@ -25,7 +25,7 @@ public class EditableAspectRatio : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var items = new[] { Aspect.Center, Aspect.AspectFit, Aspect.AspectFill};
-            return CreateRadioGroupForEnums("Aspect Ratio", items, owner, info.Name);
+            return CreateRadioGroupForEnums("Aspect Ratio", items, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Aspect Ratio Enum:  {e.Message}");
             return null;
@@ -40,7 +40,7 @@ public class EditableTrackType : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var items = new[] { TrackTypeEnum.MainLine, TrackTypeEnum.BranchLine };
-            return CreateRadioGroupForEnums("Track Type", items, owner, info.Name);
+            return CreateRadioGroupForEnums("Track Type", items, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Track Type Enum:  {e.Message}");
             return null;
@@ -55,7 +55,7 @@ public class EditableTrackAttribute : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var items = new[] { TrackAttributeEnum.Normal, TrackAttributeEnum.Dashed, TrackAttributeEnum.Opaque };
-            return CreateRadioGroupForEnums("Track Attribute", items, owner, info.Name);
+            return CreateRadioGroupForEnums("Track Attribute", items, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Track Attribute Enum:  {e.Message}");
             return null;
@@ -70,7 +70,7 @@ public class EditableTrackTerminator : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var items = new[] { TrackTerminatorEnum.Arrow, TrackTerminatorEnum.Lines };
-            return CreateRadioGroupForEnums("Terminator", items, owner, info.Name);
+            return CreateRadioGroupForEnums("Terminator", items, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Track Terminator Enum:  {e.Message}");
             return null;
@@ -82,9 +82,9 @@ public class EditableTrackTerminator : EditableEnum, IEditableProperty {
 }
 
 public abstract class EditableEnum : EditableProperty  {
-    protected IView? CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum {
-        if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
-        if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
+    protected IView? CreateRadioGroupForEnums<T>(string name, T[] items, object owner, PropertyInfo info, EditableAttribute attribute) where T : struct, Enum {
+        if (owner == null) throw new ArgumentNullException(nameof(owner), "Binding source cannot be null.");
+        if (string.IsNullOrWhiteSpace(info.Name)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(info.Name));
 
         var radioGroup = new StackLayout {
             HeightRequest = 30,
@@ -103,11 +103,10 @@ public abstract class EditableEnum : EditableProperty  {
                 Content = value.ToString() // Display the value
             };
 
-            radioButton.CheckedChanged += (sender, args) => { PropertyHelper.SetEnumPropertyValue(source, fieldName, value); };
-            radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(source, fieldName));
+            radioButton.CheckedChanged += (sender, args) => { PropertyHelper.SetEnumPropertyValue(owner, info.Name, value); };
+            radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(owner, info.Name));
             radioGroup.Children.Add(radioButton);
         }
-
-        return radioGroup;
+        return CreateGroupCell(radioGroup, owner, info, attribute);
     }
 }

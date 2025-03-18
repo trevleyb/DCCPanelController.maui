@@ -5,7 +5,11 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class LineTile : Tile {
-    public LineTile(LineEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public LineTile(LineEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(entity.LineColor));
+        VisualProperties.Add(nameof(entity.LineWidth));
+
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
 

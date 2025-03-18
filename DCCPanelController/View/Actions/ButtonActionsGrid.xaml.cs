@@ -6,11 +6,9 @@ namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGrid : ContentView {
     
-    ButtonActionsGridViewModel _viewModel;
     public ButtonActionsGrid(Actions<ButtonStateEnum> buttonActions, ActionsContextEnum context, List<string> availableButtons) {
         InitializeComponent();
-        _viewModel = new ButtonActionsGridViewModel(buttonActions, context, availableButtons);
-        BindingContext = _viewModel;
+        BindingContext = new ButtonActionsGridViewModel(buttonActions, context, availableButtons);
     }
 
     // protected override void OnSizeAllocated(double width, double height) {
