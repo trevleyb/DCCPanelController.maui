@@ -5,7 +5,7 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableInt : IEditableProperty {
+public class EditableInt : EditableProperty, IEditableProperty {
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
@@ -47,10 +47,13 @@ public class EditableInt : IEditableProperty {
 
             cell.Children.Add(dataCell);
             cell.Children.Add(stepperUpDown);
-            return cell;
+            return CreateGroupCell(cell, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Int: {e.Message}");
             return null;
         }
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

@@ -13,7 +13,7 @@
         <ToolbarItem Clicked="ClosePropertyPage" Text="Close" />
     </ContentPage.ToolbarItems>
 
-    <ContentPage.Content>
+    <ContentPage>
         <Grid HorizontalOptions="Fill" Margin="5">
             <ScrollView
                 BackgroundColor="White"
@@ -27,5 +27,5 @@
         </Grid>
         <!--     </VerticalStackLayout> -->
         <!-- </Border> -->
-    </ContentPage.Content>
+    </ContentPage>
 </ContentPage>

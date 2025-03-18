@@ -8,7 +8,7 @@ using DCCPanelController.View.Actions;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableButtonActions : IEditableProperty {
+public class EditableButtonActions : EditableProperty, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var button = owner as IEntityID;
@@ -17,8 +17,8 @@ public class EditableButtonActions : IEditableProperty {
             var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != buttonID).Select(b => b.Id).ToList<string>() ?? [];
             var contextEnum = attribute.GetOption<ActionsContextEnum>(0);
 
-            if (owner is Actions<ButtonStateEnum> actions) {
-                return new ButtonActionsGrid(actions, contextEnum, availableButtons) {
+            if (entity is not null) {
+                return new ButtonActionsGrid(entity.ButtonActions, contextEnum, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -29,6 +29,10 @@ public class EditableButtonActions : IEditableProperty {
         }
         Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
+    }
+
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }
 
@@ -41,8 +45,8 @@ public class EditableTurnoutActions : IEditableProperty {
             var availableButtons = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != turnoutID).Select(b => b.Id).ToList<string>() ?? [];
             var contextEnum = attribute.GetOption<ActionsContextEnum>(0);
 
-            if (owner is Actions<TurnoutStateEnum> actions) {
-                return new TurnoutActionsGrid(actions, contextEnum, availableButtons) {
+            if (entity is not null) {
+                return new TurnoutActionsGrid(entity.TurnoutActions, contextEnum, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -54,5 +58,8 @@ public class EditableTurnoutActions : IEditableProperty {
 
         Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

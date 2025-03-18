@@ -16,6 +16,9 @@ public class EditableAlignment : EditableEnum, IEditableProperty {
             return null;
         }
     }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
+    }
 }
 
 public class EditableAspectRatio : EditableEnum, IEditableProperty {
@@ -27,6 +30,9 @@ public class EditableAspectRatio : EditableEnum, IEditableProperty {
             Debug.WriteLine($"Unable to create a Aspect Ratio Enum:  {e.Message}");
             return null;
         }
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }
 
@@ -40,6 +46,9 @@ public class EditableTrackType : EditableEnum, IEditableProperty {
             return null;
         }
     }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
+    }
 }
 
 public class EditableTrackAttribute : EditableEnum, IEditableProperty {
@@ -51,6 +60,9 @@ public class EditableTrackAttribute : EditableEnum, IEditableProperty {
             Debug.WriteLine($"Unable to create a Track Attribute Enum:  {e.Message}");
             return null;
         }
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }
 
@@ -64,10 +76,13 @@ public class EditableTrackTerminator : EditableEnum, IEditableProperty {
             return null;
         }
     }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
+    }
 }
 
-public abstract class EditableEnum  {
-    protected StackLayout CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum {
+public abstract class EditableEnum : EditableProperty  {
+    protected IView? CreateRadioGroupForEnums<T>(string name, T[] items, object source, string fieldName) where T : struct, Enum {
         if (source == null) throw new ArgumentNullException(nameof(source), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(fieldName)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(fieldName));
 

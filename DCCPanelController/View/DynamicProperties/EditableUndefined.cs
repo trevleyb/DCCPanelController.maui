@@ -6,7 +6,7 @@ using Switch = Microsoft.Maui.Controls.Switch;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableUndefined : IEditableProperty {
+public class EditableUndefined : EditableProperty, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             return new Label {
@@ -18,5 +18,10 @@ public class EditableUndefined : IEditableProperty {
             Debug.WriteLine($"Unable to create a Bool switch {e.Message}");
             return null;
         }
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() {
+            View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View
+        };
     }
 }

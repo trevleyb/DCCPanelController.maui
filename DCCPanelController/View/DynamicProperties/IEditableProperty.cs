@@ -5,4 +5,5 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public interface IEditableProperty { 
     IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute);
+    Cell?  CreateCell(object owner, PropertyInfo info, EditableAttribute attribute);
 }

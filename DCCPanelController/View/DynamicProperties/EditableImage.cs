@@ -6,7 +6,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableImage : IEditableProperty {
+public class EditableImage : EditableProperty, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var stack = new StackLayout {
@@ -57,11 +57,15 @@ public class EditableImage : IEditableProperty {
             horizontal.Children.Add(photoButton);
             stack.Children.Add(image);
             stack.Children.Add(horizontal);
-            return stack;
+            return CreateGroupCell(stack, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create an Image: {e.Message}");
             return null;
         }
+    }
+    
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 
     private async Task SelectPhotoAsync(Image image, object owner, PropertyInfo info) {

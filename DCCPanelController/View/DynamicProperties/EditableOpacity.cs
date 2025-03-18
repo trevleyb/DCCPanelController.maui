@@ -5,7 +5,7 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableOpacity : IEditableProperty {
+public class EditableOpacity : EditableProperty, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
             var cell = new HorizontalStackLayout();
@@ -42,10 +42,13 @@ public class EditableOpacity : IEditableProperty {
 
             cell.Children.Add(dataCell);
             cell.Children.Add(stepperUpDown);
-            return cell;
+            return CreateGroupCell(cell, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Int: {e.Message}");
             return null;
         }
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

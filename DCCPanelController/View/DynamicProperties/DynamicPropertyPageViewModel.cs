@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
@@ -72,8 +73,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     EditableType.TrackTerminator => new EditableTrackTerminator(),
                     _                            => new EditableUndefined() // Default to undefined
                 };
-                var component = editableComponent?.CreateView(property.Entity, property.Property, property.Metadata);
-                if (component != null) groupContainer.Container.Add(component);
+                groupContainer.Container.Add(GroupCell(editableComponent, property.Entity, property.Property, property.Metadata));
             }
         }
     }
@@ -186,6 +186,29 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             HorizontalOptions = LayoutOptions.Fill,
             Margin = new Thickness(0, 0, 10, 15)
         };
+    }
+    
+    private static HorizontalStackLayout GroupCell(IEditableProperty property, object owner, PropertyInfo info, EditableAttribute attribute) {
+        var groupCell = new HorizontalStackLayout {
+            Margin = new Thickness(0, 5, 0, 5),
+        };
+
+        if (!string.IsNullOrWhiteSpace(attribute.Label)) {
+            var label = new Label {
+                Text = attribute.Label,
+                TextColor = Colors.DimGray,
+                FontSize = 15,
+                LineBreakMode = LineBreakMode.MiddleTruncation,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Center,
+                //Margin = new Thickness(5, 5, 5, 5),
+                WidthRequest = 120
+            };
+            groupCell.Children.Add(label);
+        }
+
+        groupCell.Children.Add(property.CreateView(owner, info, attribute) ?? new Label { Text = "Undefined Property" });
+        return groupCell;
     }
 
     // private static HorizontalStackLayout GroupCell(EditableDetails value) {

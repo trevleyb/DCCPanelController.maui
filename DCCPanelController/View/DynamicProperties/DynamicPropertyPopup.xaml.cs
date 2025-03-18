@@ -10,11 +10,9 @@ namespace DCCPanelController.View.DynamicProperties;
 ///  Popup Page is used for iPad and MacCatalst
 /// </summary>
 public partial class DynamicPropertyPopup : Popup {
-    private DynamicPropertyPageViewModel _viewModel;
     public DynamicPropertyPopup(ITile tile,string? propertyName = null) {
         InitializeComponent();
-        _viewModel = new DynamicPropertyPageViewModel(tile, propertyName, PropertyContainer);
-        BindingContext = _viewModel;
+        BindingContext = new DynamicPropertyPageTableViewModel(tile, propertyName, PropertyContainer);
     }
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {
