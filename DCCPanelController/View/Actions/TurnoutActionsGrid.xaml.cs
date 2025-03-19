@@ -1,12 +1,13 @@
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGrid : ContentView {
-    public TurnoutActionsGrid(Models.DataModel.Actions<TurnoutStateEnum> turnoutActions, ActionsContextEnum context, List<string> availableTurnouts) {
+    public TurnoutActionsGrid(TurnoutActions turnoutPanelActions, ActionsContextEnum context, List<string> availableTurnouts) {
         InitializeComponent();
-        BindingContext = new TurnoutActionsGridViewModel(turnoutActions, context, availableTurnouts);
+        BindingContext = new TurnoutActionsGridViewModel(turnoutPanelActions, context, availableTurnouts);
     }
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {

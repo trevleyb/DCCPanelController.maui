@@ -9,7 +9,7 @@ public static class ActionApplyButton {
     //                we set the other buttons or turnouts based on the state of this button only. 
 
     public static void ApplyButtonActions(Panel panel, ButtonEntity button, ActionList actionsList) {
-        foreach (var action in button.ButtonActions) {
+        foreach (var action in button.ButtonPanelActions) {
             var actionButton = panel.GetButton(action.Id);
             if (actionButton is null) continue;
             if (actionsList.IsActioned(ActionType.Button, actionButton.Id)) continue;
@@ -17,8 +17,8 @@ public static class ActionApplyButton {
             // Get what state we should be setting the related button to
             // -----------------------------------------------------------------
             var buttonState = button.State switch {
-                ButtonStateEnum.On   => action.WhenOnOrClosed,
-                ButtonStateEnum.Off => action.WhenOffOrThrown,
+                ButtonStateEnum.On   => action.WhenOn,
+                ButtonStateEnum.Off => action.WhenOff,
                 _                        => ButtonStateEnum.Unknown // Ignore an Unknown State
             };
 
@@ -27,7 +27,7 @@ public static class ActionApplyButton {
             // if (action.Cascade) actionButton.ExecButtonState(buttonState, actionsList);
         }
 
-        foreach (var action in button.TurnoutActions) {
+        foreach (var action in button.TurnoutPanelActions) {
             var actionTurnout = panel.GetTurnout(action.Id);
             if (actionTurnout is null) continue;
             if (actionsList.IsActioned(ActionType.Turnout, actionTurnout.Id)) continue;
@@ -35,8 +35,8 @@ public static class ActionApplyButton {
             // Get what state we should be setting the related button to
             // -----------------------------------------------------------------
             var turnoutState = button.State switch {
-                ButtonStateEnum.On  => action.WhenOnOrClosed,
-                ButtonStateEnum.Off => action.WhenOffOrThrown,
+                ButtonStateEnum.On  => action.WhenClosed,
+                ButtonStateEnum.Off => action.WhenThrown,
                 _                        => TurnoutStateEnum.Unknown // Ignore an Unknown State
             };
 

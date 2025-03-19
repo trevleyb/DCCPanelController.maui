@@ -140,9 +140,13 @@ public partial class PanelEditorViewModel : BaseViewModel {
     
     public void EditTileProperties() => EditTileProperties(SelectedEntity);
 
-    public void EditTileProperties(Entity? entity) {
-        entity ??= SelectedEntity;
-        if (entity is not null) EditTilePropertiesAsync(entity);
+    public async void EditTileProperties(Entity? entity) {
+        try {
+            entity ??= SelectedEntity;
+            if (entity is not null) await EditTilePropertiesAsync(entity);
+        } catch (Exception e) {
+            Console.WriteLine("Unable to launch the edit tile panel: " + e.Message);
+        }
     }
 
     public async Task EditTilePropertiesAsync(Entity entity) {
@@ -151,7 +155,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
         Profile.Save();
     }
 
-    public void EditPanelProperties() => EditPanelPropertiesAsync();
+    public async void EditPanelProperties() {
+        try {
+            await EditPanelPropertiesAsync();
+        } catch (Exception e) {
+            Console.WriteLine("Unable to launch the edit panel: " + e.Message);
+        }
+    }
+
     public async Task EditPanelPropertiesAsync() {
         if (SelectedPanel is { } panel) {
             await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);

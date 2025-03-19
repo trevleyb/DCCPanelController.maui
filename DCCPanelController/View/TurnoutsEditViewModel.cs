@@ -16,6 +16,8 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
 
+    //private IConnectionService ConnectionService { get; }
+
     public TurnoutsEditViewModel(Turnout turnout) {
         Turnout = turnout;
         SystemName = Turnout.Id ?? "NT001";
@@ -28,8 +30,6 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         // TODO: Move this to constructor and DI
         //ConnectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
     }
-
-    private IConnectionService ConnectionService { get; }
 
     public event Action<Turnout?>? OnSaveCompleted;
     public event EventHandler? CloseRequested;

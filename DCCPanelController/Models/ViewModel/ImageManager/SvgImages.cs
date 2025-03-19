@@ -19,7 +19,7 @@ public static class SvgImages {
     private static readonly Lock LockObject = new();
     private static readonly List<string> AvailableSymbols;
     private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new();
-
+    
     private static void BuildAvailableImages() {
         Console.WriteLine("Building Available Images");
         AddImage("Unknown", "Track_Unknown");

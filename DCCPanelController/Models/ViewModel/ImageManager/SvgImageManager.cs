@@ -13,7 +13,6 @@ public class SvgImageManager {
     private const int DefaultWidth = 192;
     private const int DefaultHeight = 192;
     private readonly XDocument _svgDocument;
-    private string? _resourceName;
 
     /// <summary>
     ///     Creates an instance of the DisplayImage Manager with the given name of the
@@ -45,26 +44,24 @@ public class SvgImageManager {
     /// </summary>
     /// <returns>A PNG DisplayImage of the SVG</returns>
     private ImageSource GetSvgAsImage() {
-        using (new CodeTimer("Get SVGIMAGE")) {
-            using (var svg = new SKSvg()) {
-                svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
-                if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
+        using (var svg = new SKSvg()) {
+            svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
+            if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
 
-                // Safe retrieval of dimensions
-                var width = svg.Picture.CullRect.Width;
-                var height = svg.Picture.CullRect.Height;
-                if (width <= 0 || height <= 0) throw new ApplicationException("Invalid SVG picture dimensions.");
+            // Safe retrieval of dimensions
+            var width = svg.Picture.CullRect.Width;
+            var height = svg.Picture.CullRect.Height;
+            if (width <= 0 || height <= 0) throw new ApplicationException("Invalid SVG picture dimensions.");
 
-                // Maintain aspect-ratio when scaling
-                const int quality = 100;
-                var scaleX = DefaultWidth / width;
-                var scaleY = DefaultHeight / height;
+            // Maintain aspect-ratio when scaling
+            const int quality = 100;
+            var scaleX = DefaultWidth / width;
+            var scaleY = DefaultHeight / height;
 
-                var stream = new MemoryStream();
-                svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
-                stream.Seek(0, SeekOrigin.Begin);
-                return ImageSource.FromStream(() => stream);
-            }
+            var stream = new MemoryStream();
+            svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
+            stream.Seek(0, SeekOrigin.Begin);
+            return ImageSource.FromStream(() => stream);
         }
     }
 
@@ -80,16 +77,15 @@ public class SvgImageManager {
     }
 
     private XDocument LoadSvg(string resourceName) {
-        using var stream = SvgImages.ExecutingAssembly.GetManifestResourceStream(resourceName);
-        if (stream == null) {
-            Debug.WriteLine($"Could not find the image resource: '{resourceName}'");
-            throw new FileNotFoundException("Resource not found.", resourceName);
-        }
-
         try {
+            using var stream = SvgImages.ExecutingAssembly.GetManifestResourceStream(resourceName);
+            if (stream == null) {
+                Debug.WriteLine($"Could not find the image resource: '{resourceName}'");
+                throw new FileNotFoundException("Resource not found.", resourceName);
+            }
             return XDocument.Load(stream);
         } catch (Exception ex) {
-            Debug.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
+            Debug.WriteLine($"Failed to load the SVG image: '{resourceName}' with {ex.Message}");
             throw new FileLoadException("Failed to load the SVG image.", ex);
         }
     }

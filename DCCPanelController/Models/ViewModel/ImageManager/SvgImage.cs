@@ -21,7 +21,7 @@ public partial class SvgImage : ObservableObject {
         _imageManager = new SvgImageManager(filename);
     }
 
-    private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(_filename);
+    private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     public ImageSource ImageSource => ImageManager.ImageSource;
     
     public Image AsImage(double scale) => new Image { Source = ImageSource, Scale = scale };

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.DynamicProperties;
 
@@ -23,7 +24,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private Models.DataModel.Actions<ButtonStateEnum> _buttonActions;
+    private ButtonActions _buttonPanelActions;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
@@ -32,11 +33,11 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(NoDataText))]
     private ObservableCollection<string> _selectableButtons;
 
-    public ButtonActionsGridViewModel(Models.DataModel.Actions<ButtonStateEnum> buttonActions, ActionsContextEnum context, List<string> availableButtons) {
+    public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContextEnum context, List<string> availableButtons) {
         ActionContext = context;
         AvailableButtons = availableButtons.ToObservableCollection();
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
-        ButtonActions = buttonActions;
+        ButtonPanelActions = buttonPanelActions;
         UpdateSelectableButtons();
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
@@ -45,15 +46,14 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
 
     public bool IsTurnoutContext => ActionContext == ActionsContextEnum.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContextEnum.Button;
-
-    public bool IsGridVisible => ButtonActions.Count > 0;
+    public bool IsGridVisible => ButtonPanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
-    public double ControlHeight => 40 + ButtonActions.Count * 40;
+    public double ControlHeight => 40 + ButtonPanelActions.Count * 40;
 
     public string NoDataText {
         get {
             if (AvailableButtons.Count == 0) return "No Buttons have been defined. ";
-            if (ButtonActions.Count == 0) return "Use the + key to add a button action.";
+            if (ButtonPanelActions.Count == 0) return "Use the + key to add a button action.";
             if (SelectableButtons.Count == 0) return "All defined buttons have been assigned.";
             return "";
         }
@@ -62,15 +62,15 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [RelayCommand]
     private void AddRow() {
         if (SelectableButtons.Count > 0) {
-            ButtonActions.Add(new Models.DataModel.Action<ButtonStateEnum> { Id = SelectableButtons[0], WhenOnOrClosed = ButtonStateEnum.On, WhenOffOrThrown = ButtonStateEnum.Off, Cascade = false });
+            ButtonPanelActions.Add(new ButtonAction { Id = SelectableButtons[0], WhenOn = ButtonStateEnum.On, WhenOff = ButtonStateEnum.Off, Cascade = false });
         }
 
         UpdateSelectableButtons();
     }
 
     [RelayCommand]
-    private void RemoveRow( Models.DataModel.Action<ButtonStateEnum> action) {
-        ButtonActions.Remove(action);
+    private void RemoveRow( ButtonAction panelAction) {
+        ButtonPanelActions.Remove(panelAction);
         UpdateSelectableButtons();
     }
 
@@ -107,9 +107,9 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
 
             // If we have already used this button, then remove it from the Selectable ones
             // ---------------------------------------------------------------------------
-            var found = ButtonActions.Any(btn => btn.Id == button);
+            var found = ButtonPanelActions.Any(btn => btn.Id == button);
 
-            if (ButtonActions.Any(btn => btn.Id == button) && button != activeButton) {
+            if (ButtonPanelActions.Any(btn => btn.Id == button) && button != activeButton) {
                 SelectableButtons.Remove(button);
             } else {
                 // Otherwise add it to the Selectable ones as it may have been removed
@@ -120,7 +120,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
             }
         }
 
-        OnPropertyChanged(nameof(ButtonActions));
+        OnPropertyChanged(nameof(ButtonPanelActions));
         OnPropertyChanged(nameof(SelectableButtons));
         OnPropertyChanged(nameof(AvailableButtons));
         OnPropertyChanged(nameof(ControlHeight));

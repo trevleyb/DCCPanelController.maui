@@ -18,7 +18,7 @@ public class EditableButtonActions : EditableProperty, IEditableProperty {
             var contextEnum = attribute.GetOption<ActionsContextEnum>(0);
 
             if (entity is not null) {
-                return new ButtonActionsGrid(entity.ButtonActions, contextEnum, availableButtons) {
+                return new ButtonActionsGrid(entity.ButtonPanelActions, contextEnum, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -46,7 +46,7 @@ public class EditableTurnoutActions : IEditableProperty {
             var contextEnum = attribute.GetOption<ActionsContextEnum>(0);
 
             if (entity is not null) {
-                return new TurnoutActionsGrid(entity.TurnoutActions, contextEnum, availableButtons) {
+                return new TurnoutActionsGrid(entity.TurnoutPanelActions, contextEnum, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };

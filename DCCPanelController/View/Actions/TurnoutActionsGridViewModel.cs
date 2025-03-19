@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.DynamicProperties;
 
@@ -30,13 +31,13 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
     [NotifyPropertyChangedFor(nameof(IsGridVisible))]
     [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private Models.DataModel.Actions<TurnoutStateEnum> _turnoutActions;
+    private TurnoutActions _turnoutPanelActions;
 
-    public TurnoutActionsGridViewModel(Models.DataModel.Actions<TurnoutStateEnum> turnoutActions, ActionsContextEnum context, List<string> availableTurnouts) {
+    public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContextEnum context, List<string> availableTurnouts) {
         ActionContext = context;
         AvailableTurnouts = availableTurnouts.ToObservableCollection();
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
-        TurnoutActions = turnoutActions;
+        TurnoutPanelActions = turnoutPanelActions;
         UpdateSelectableTurnouts();
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
@@ -46,14 +47,14 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     public bool IsTurnoutContext => ActionContext == ActionsContextEnum.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContextEnum.Button;
 
-    public bool IsGridVisible => TurnoutActions.Count > 0;
+    public bool IsGridVisible => TurnoutPanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
-    public double ControlHeight => 40 + TurnoutActions.Count * 40;
+    public double ControlHeight => 40 + TurnoutPanelActions.Count * 40;
 
     public string NoDataText {
         get {
             if (AvailableTurnouts.Count == 0) return "No Turnouts have been defined. ";
-            if (TurnoutActions.Count == 0) return "Use the + key to add a turnout action.";
+            if (TurnoutPanelActions.Count == 0) return "Use the + key to add a turnout action.";
             if (SelectableTurnouts.Count == 0) return "All defined turnouts have been assigned.";
             return "";
         }
@@ -62,15 +63,15 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [RelayCommand]
     private void AddRow() {
         if (SelectableTurnouts.Count > 0) {
-            TurnoutActions.Add(new Models.DataModel.Action<TurnoutStateEnum> { Id = SelectableTurnouts[0], WhenOnOrClosed = TurnoutStateEnum.Closed, WhenOffOrThrown = TurnoutStateEnum.Thrown, Cascade = false });
+            TurnoutPanelActions.Add(new TurnoutAction { Id = SelectableTurnouts[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
         }
 
         UpdateSelectableTurnouts();
     }
 
     [RelayCommand]
-    private void RemoveRow(Models.DataModel.Action<TurnoutStateEnum> action) {
-        TurnoutActions.Remove(action);
+    private void RemoveRow(TurnoutAction panelAction) {
+        TurnoutPanelActions.Remove(panelAction);
         UpdateSelectableTurnouts();
     }
 
@@ -101,9 +102,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
 
             // If we have already used this button, then remove it from the Selectable ones
             // ---------------------------------------------------------------------------
-            var found = TurnoutActions.Any(btn => btn.Id == turnout);
+            var found = TurnoutPanelActions.Any(btn => btn.Id == turnout);
 
-            if (TurnoutActions.Any(btn => btn.Id == turnout) && turnout != activeTurnout) {
+            if (TurnoutPanelActions.Any(btn => btn.Id == turnout) && turnout != activeTurnout) {
                 SelectableTurnouts.Remove(turnout);
             } else {
                 // Otherwise add it to the Selectable ones as it may have been removed
@@ -114,7 +115,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
             }
         }
 
-        OnPropertyChanged(nameof(TurnoutActions));
+        OnPropertyChanged(nameof(TurnoutPanelActions));
         OnPropertyChanged(nameof(SelectableTurnouts));
         OnPropertyChanged(nameof(AvailableTurnouts));
         OnPropertyChanged(nameof(ControlHeight));

@@ -7,6 +7,8 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
@@ -47,7 +49,7 @@
             <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}">
                 <ListView
                     HorizontalOptions="Fill"
-                    ItemsSource="{Binding ButtonActions}"
+                    ItemsSource="{Binding ButtonPanelActions}"
                     VerticalOptions="Fill"
                     WidthRequest="440">
 
@@ -128,16 +130,18 @@
                                     ColumnDefinitions="3*,4*,4*,3*,1*"
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
-                                    VerticalOptions="Center">
+                                    VerticalOptions="Center"
+                                    x:DataType="local:ButtonActionsGridViewModel">
                                     <Picker
                                         Focused="IDPicker_OnFocused"
                                         Grid.Column="0"
-                                        ItemsSource="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.AvailableButtons}"
+                                        ItemsSource="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType='local:ButtonActionsGridViewModel', Path=AvailableButtons}"
                                         Margin="2,0,0,0"
                                         SelectedItem="{Binding Id}"
                                         TextColor="Black"
                                         Unfocused="IDPicker_OnUnfocused"
                                         VerticalOptions="Center"
+                                        x:DataType="dataModel:ButtonAction"
                                         x:Name="IDPicker" />
 
                                     <components:ButtonStateControl
@@ -146,8 +150,9 @@
                                         Grid.Column="1"
                                         HorizontalOptions="Start"
                                         Margin="2,0,0,0"
-                                        State="{Binding WhenActiveOn, Mode=TwoWay}"
-                                        UnknownText="Leave-AsIs" />
+                                        State="{Binding WhenOn, Mode=TwoWay}"
+                                        UnknownText="Leave-AsIs"
+                                        x:DataType="dataModel:ButtonAction" />
 
                                     <components:ButtonStateControl
                                         CanSetStateUnknown="True"
@@ -155,18 +160,20 @@
                                         Grid.Column="2"
                                         HorizontalOptions="Start"
                                         Margin="2,0,0,0"
-                                        State="{Binding WhenInactiveOff, Mode=TwoWay}"
-                                        UnknownText="Leave-AsIs" />
+                                        State="{Binding WhenOff, Mode=TwoWay}"
+                                        UnknownText="Leave-AsIs"
+                                        x:DataType="dataModel:ButtonAction" />
 
                                     <CheckBox
                                         Grid.Column="3"
                                         IsChecked="{Binding Cascade}"
                                         Margin="2,0,0,0"
-                                        VerticalOptions="Center" />
+                                        VerticalOptions="Center"
+                                        x:DataType="dataModel:ButtonAction" />
 
                                     <ImageButton
                                         Aspect="Center"
-                                        Command="{Binding Source={x:Reference ButtonActionsGridView}, x:DataType=local:ButtonActionsGrid, Path=BindingContext.RemoveRowCommand}"
+                                        Command="{Binding Source={x:Reference ButtonActionsGridView}, Path=RemoveRowCommand}"
                                         CommandParameter="{Binding .}"
                                         Grid.Column="4"
                                         HeightRequest="10"
