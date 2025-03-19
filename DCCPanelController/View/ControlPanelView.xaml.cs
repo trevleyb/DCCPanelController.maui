@@ -52,7 +52,7 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    protected virtual void OnTileSelected(ITile tile) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile));
+    protected virtual void OnTileSelected(ITile? tile) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile));
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
@@ -151,6 +151,8 @@ public partial class ControlPanelView {
             }
             DynamicGrid.SetColumn(view, tile.Entity.Col);
             DynamicGrid.SetRow(view, tile.Entity.Row);
+            DynamicGrid.SetColumnSpan(view, tile.Entity.Width);
+            DynamicGrid.SetRowSpan(view, tile.Entity.Height);
             DynamicGrid.Children.Add(view);
         }
         return tile;
@@ -175,29 +177,38 @@ public partial class ControlPanelView {
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
+        
         if (sender is ITileInteractive interactiveTile && !DesignMode) {
             if (_tapCount == 1) interactiveTile.Interact();
             if (_tapCount == 2) interactiveTile.Secondary();
-        } else if (sender is ITile tile) {
-            ClearSelectedTiles();
+        } 
+        else if (sender is ITile tile) {
+            ClearSelectedTiles();            
             if (_tapCount == 1) {
-                switch (EditMode) {
-                case EditModeEnum.Move: break;
-                case EditModeEnum.Copy: break;
-                case EditModeEnum.Size: break;
-
-                case EditModeEnum.Delete:
-                    RemoveTileFromGrid(tile);
-                    break;
-
-                case EditModeEnum.Rotate:
-                    tile.RotateRight();
-                    break;
-
-                case EditModeEnum.Select:
+                if (!tile.IsSelected) {
+                    MarkTileSelected(tile);
                     OnTileSelected(tile);
-                    break;
+                } else {
+                    OnTileSelected(null);
                 }
+                
+                // switch (EditMode) {
+                // case EditModeEnum.Move: break;
+                // case EditModeEnum.Copy: break;
+                // case EditModeEnum.Size: break;
+                //
+                // case EditModeEnum.Delete:
+                //     RemoveTileFromGrid(tile);
+                //     break;
+                //
+                // case EditModeEnum.Rotate:
+                //     tile.RotateRight();
+                //     break;
+                //
+                // case EditModeEnum.Select:
+                //     OnTileSelected(tile);
+                //     break;
+                // }
             }
             if (_tapCount == 2) OnTileSelected(tile);
         }
@@ -611,6 +622,6 @@ public partial class ControlPanelView {
     }
 }
 
-public class TileSelectedEventArgs(ITile tile) : EventArgs {
-    public ITile Tile { get; set; } = tile;
+public class TileSelectedEventArgs(ITile? tile) : EventArgs {
+    public ITile? Tile { get; set; } = tile;
 }

@@ -1,4 +1,5 @@
 using CommunityToolkit.Maui.Views;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -8,14 +9,14 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public static class DynamicPageLauncher {
  
-    public static async Task ShowDynamicPropertyPageAsync(ITile tile) {
+    public static async Task ShowDynamicPropertyPageAsync(Entity entity) {
         // -------------------------------------------------------------------------------
         if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
-            await LaunchNavigationPage(new DynamicPropertyPage(tile));
+            await LaunchNavigationPage(new DynamicPropertyPage(entity));
         }
         else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                  DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
-            await LaunchPopupPage(new DynamicPropertyPopup(tile));
+            await LaunchPopupPage(new DynamicPropertyPopup(entity));
         }
     }
 

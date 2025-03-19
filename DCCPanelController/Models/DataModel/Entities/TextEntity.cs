@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
-using UIKit;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 

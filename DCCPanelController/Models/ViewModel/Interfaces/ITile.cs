@@ -4,8 +4,5 @@ namespace DCCPanelController.Models.ViewModel.Interfaces;
 
 public interface ITile {
     Entity Entity { get; }
-
-    void RotateLeft();
-    void RotateRight();
     bool IsSelected { get; set; }
 }

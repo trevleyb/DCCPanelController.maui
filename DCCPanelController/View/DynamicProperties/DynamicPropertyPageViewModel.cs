@@ -21,9 +21,9 @@ public enum ActionsContextEnum {
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;
 
-    public DynamicPropertyPageViewModel(ITile tile, string? propertyName, StackBase propertyContainer) {
-        PropertyName = propertyName ?? (string.IsNullOrEmpty(tile.Entity.Name) ? "Track" : $"{tile.Entity.Name}");
-        BuildProperties(propertyContainer, tile.Entity);
+    public DynamicPropertyPageViewModel(Entity entity, string? propertyName, StackBase propertyContainer) {
+        PropertyName = propertyName ?? (string.IsNullOrEmpty(entity.Name) ? "Track" : $"{entity.Name}");
+        BuildProperties(propertyContainer, entity);
     }
 
     /// <summary>

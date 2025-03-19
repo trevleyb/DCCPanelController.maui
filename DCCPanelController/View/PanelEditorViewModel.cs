@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.DynamicProperties;
@@ -43,12 +44,15 @@ public partial class PanelEditorViewModel : BaseViewModel {
         IsFullScreen = false;
     }
 
-    public bool IsTileSelected => SelectedPanel?.SelectedTiles.Count > 0;
+    public bool IsEntitySelected => SelectedEntity is not null;
+    public Entity? SelectedEntity;
 
     /// <summary>
     /// Adds a new panel to the collection. The newly created panel becomes the selected panel.
     /// Updates the profile to persist the changes.
     /// </summary>
+    [RelayCommand] private async Task AddPanelAsync() => AddPanel();
+
     public void AddPanel() {
         SelectedPanel = Panels?.CreatePanel();
         Profile.Save();
@@ -60,6 +64,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// updates the panel order, selects the next available panel, and saves the updated profile.
     /// Logs any errors encountered during the operation.
     /// </summary>
+    [RelayCommand] private async Task DeletePanelAsync() => DeletePanel();
+
     public async void DeletePanel() {
         try {
             Console.WriteLine($"DeletePanel:");
@@ -82,6 +88,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     /// operation is not performed. After duplication, notifies the system of the
     /// updated panel collection.
     /// </summary>
+    [RelayCommand] private async Task DuplicatePanelAsync() => DuplicatePanel();
+
     public void DuplicatePanel() {
         if (SelectedPanel != null) {
             Panels.CreatePanelFrom(SelectedPanel);
@@ -99,25 +107,52 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public void ToggleMode() {
         EditMode = EditMode switch {
-            EditModeEnum.Copy   => EditModeEnum.Move,
-            EditModeEnum.Move   => EditModeEnum.Size,
-            EditModeEnum.Size   => EditModeEnum.Rotate,
-            EditModeEnum.Rotate => EditModeEnum.Delete,
-            EditModeEnum.Delete => EditModeEnum.Select,
-            EditModeEnum.Select => EditModeEnum.Copy,
-            _                   => EditModeEnum.Copy
+            EditModeEnum.Copy => EditModeEnum.Move,
+            EditModeEnum.Move => EditModeEnum.Size,
+            EditModeEnum.Size => EditModeEnum.Move,
+            _                 => EditModeEnum.Move
         };
         OnPropertyChanged(nameof(EditMode));
     }
 
-    public void EditTileProperties(ITile tile) => EditTilePropertiesAsync(tile);
-    public async Task EditTilePropertiesAsync(ITile tile) {
-        Console.WriteLine($"Launching the Properties page for '{tile.Entity.Name}'");
-        DynamicPageLauncher.ShowDynamicPropertyPageAsync(tile);
+    public void DeleteSelectedTile() {
+        if (SelectedEntity is not null && SelectedPanel is not null) {
+            SelectedPanel.Entities.Remove(SelectedEntity);
+            SelectedEntity = null;
+            OnPropertyChanged(nameof(Panels));
+        }
+    }
+    public void RotateSelectedTile() {
+        if (SelectedEntity is not null) {
+            SelectedEntity.RotateRight();
+        }
+    }
+    
+    public void EditProperties() {
+        if (SelectedPanel is not null) {
+            if (SelectedEntity is not null) {
+                EditTileProperties(SelectedEntity);
+            } else {
+                EditPanelProperties();
+            }
+        }
+    }
+    
+    public void EditTileProperties() => EditTileProperties(SelectedEntity);
+
+    public void EditTileProperties(Entity? entity) {
+        entity ??= SelectedEntity;
+        if (entity is not null) EditTilePropertiesAsync(entity);
+    }
+
+    public async Task EditTilePropertiesAsync(Entity entity) {
+        Console.WriteLine($"Launching the Properties page for '{entity.Name}'");
+        DynamicPageLauncher.ShowDynamicPropertyPageAsync(entity);
         Profile.Save();
     }
 
-    public void EditPanelProperties() => EditPanelPropertiesAsync();    
+    public void EditPanelProperties() => EditPanelPropertiesAsync();
+
     public async Task EditPanelPropertiesAsync() {
         if (SelectedPanel is { } panel) {
             Console.WriteLine($"Launching the Properties page for the Panel '{panel.Id}");
@@ -127,12 +162,28 @@ public partial class PanelEditorViewModel : BaseViewModel {
             PropertiesChanged = true;
         }
     }
-    
+
     [RelayCommand]
-    private async Task AddNewPanel() {
-        AddPanel();
+    private async Task SelectionChangedAsync() {
+        Console.WriteLine($"SelectionChangedAsync: {SelectedPanel?.Id ?? "NONE"}");
+        OnPropertyChanged(nameof(DesignMode));
+        OnPropertyChanged(nameof(PanelTitle));
     }
 
+    private async Task<bool> AskUserToConfirm(string title, string message) {
+        if (App.Current.Windows[0].Page is { } window) {
+            var result = await window.DisplayAlert(
+                title,
+                message,
+                "Yes",
+                "No"
+            );
+            return result;
+        }
+        return false;
+    }
+
+    #region Drag and Drop Support for Panels
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {
         _draggedPanel = panel;
@@ -182,27 +233,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
         OnPropertyChanged(nameof(Panels));
         OnPropertyChanged(nameof(PanelTitle));
     }
-
-    [RelayCommand]
-    private async Task SelectionChangedAsync() {
-        Console.WriteLine($"SelectionChangedAsync: {SelectedPanel?.Id ?? "NONE"}");
-        OnPropertyChanged(nameof(DesignMode));
-        OnPropertyChanged(nameof(PanelTitle));
-    }
-
-    private async Task<bool> AskUserToConfirm(string title, string message) {
-        if (App.Current.Windows[0].Page is { } window) {
-            var result = await window.DisplayAlert(
-                title,
-                message,
-                "Yes",
-                "No"
-            );
-            return result;
-        }
-        return false;
-    }
-    
-
+    #endregion
     
 }

@@ -9,6 +9,8 @@ namespace DCCPanelController.Models.DataModel.Entities;
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject {
 
+    protected readonly int RotationFactor = 45;
+
     public abstract string Name { get; }
     public virtual string Type => GetType().Name;
     
@@ -27,6 +29,9 @@ public abstract partial class Entity() : ObservableObject {
     [JsonIgnore] public Panel? Parent { get; set; } = null;
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     
+    public void RotateLeft() => Rotation = (Rotation - RotationFactor + 360) % 360;
+    public void RotateRight() => Rotation = (Rotation + RotationFactor) % 360;
+
     protected Entity(Panel panel) : this() { 
         Parent = panel;
         Layer = EntityPresets.DefaultLayer(this);   // Setup the default layer for this item but can be changed later. 
