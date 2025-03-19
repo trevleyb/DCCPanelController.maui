@@ -1,4 +1,5 @@
 using System.Text;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -17,22 +18,22 @@ public abstract partial class TurnoutTile : TrackTile, ITileInteractive {
     }
 
     new protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
-
-        var svgImage = State switch {
-            TurnoutStateEnum.Unknown => SvgImages.GetImage(trackName+"Unknown", trackRotation),
-            TurnoutStateEnum.Closed  => SvgImages.GetImage(trackName+"Straight", trackRotation),
-            TurnoutStateEnum.Thrown  => SvgImages.GetImage(trackName+"Diverging", trackRotation),
+        SvgImage? svgImage;
+        Image? image;
+        svgImage = State switch {
+            TurnoutStateEnum.Unknown => SvgImages.GetImage(trackName + "Unknown", trackRotation),
+            TurnoutStateEnum.Closed  => SvgImages.GetImage(trackName + "Straight", trackRotation),
+            TurnoutStateEnum.Thrown  => SvgImages.GetImage(trackName + "Diverging", trackRotation),
             _                        => null
         };
 
         if (svgImage is null) return null;
-        var style = SetDefaultStyles();
-        svgImage.ApplyStyle(style.Build());
-        
-        var image = new Image {
+        svgImage.ApplyStyle(GetDefaultStyle().Build());
+
+        image = new Image {
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
-            Scale = 1.5
+            Scale = 1.5,
         };
 
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));

@@ -16,10 +16,10 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
 
     public VerticalTileSelectorViewModel() {
         _symbolPanels = new Panels();
-        BuildTileList();
+        Task.Run(()=>BuildTileList());
     }
     
-    public void BuildTileList(Panel? source = null) {
+    public async void BuildTileList(Panel? source = null) {
         using (new CodeTimer("BuildTileList")) {
             Tiles.Clear();
             var panel = (source == null) ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);

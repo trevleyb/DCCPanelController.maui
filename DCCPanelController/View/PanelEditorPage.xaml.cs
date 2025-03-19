@@ -17,9 +17,12 @@ public partial class PanelEditorPage {
         if (BindingContext is PanelEditorViewModel { } vm) {
             _viewModel = vm;
             PanelListView.SelectedItem = vm.SelectedPanel;
-            PanelView.TileSelected += (sender, args) => {
-                vm.SelectedEntity = args.Tile.Entity;
-                UpdateToolbarItems();
+            PanelView.TileSelected += (sender, e) => {
+                if (e is {} args) {
+                    vm.SelectedEntity = args.Tile?.Entity ?? null;
+                    UpdateToolbarItems();
+                    if (args.IsDoubleTap) vm.EditTileProperties();
+                }
             };
             vm.PropertyChanged += ViewModelPropertyChanged;
             AssignToolbarCommands();

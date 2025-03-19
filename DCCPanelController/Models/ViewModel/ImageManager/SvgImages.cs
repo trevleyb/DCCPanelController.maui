@@ -6,11 +6,14 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public static class SvgImages {
+    public static readonly Assembly ExecutingAssembly = Assembly.GetExecutingAssembly();
     private record SvgReference(string Filename, int Rotation, SvgConnections Connections);
 
     static SvgImages() {
         AvailableSymbols = BuildAvailableSymbols();
-        BuildAvailableImages();
+        using (new CodeTimer("Building Image Cache")) {
+            BuildAvailableImages();
+        }
     }
 
     private static readonly Lock LockObject = new();
@@ -69,11 +72,10 @@ public static class SvgImages {
     public static SvgImage GetImage(string name, int direction = 0) {
         var reference = GetImageReference(name, direction);
         if (reference is null) throw new SvgImageException($"***** Image '{name}' not found");
-        return new SvgImage() {
-            Filename = reference.Filename,
-            Rotation = reference.Rotation,
-            Connections = reference.Connections
-        };
+        return new SvgImage(filename: reference.Filename,
+                            rotation: reference.Rotation,
+                            connections: reference.Connections
+        );
     }
 
     private static SvgReference GetImageReference(string name, int rotation) {

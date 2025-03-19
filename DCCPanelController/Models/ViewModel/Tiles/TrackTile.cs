@@ -1,4 +1,5 @@
 using System.Text;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -7,7 +8,6 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract partial class TrackTile : Tile {
-    
     // @formatter:off
     public bool IsOccupied {get; set => SetField(ref field, value); }
     public bool IsPath {get; set => SetField(ref field, value); }
@@ -22,19 +22,19 @@ public abstract partial class TrackTile : Tile {
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
         var svgImage = SvgImages.GetImage(trackName, trackRotation);
-        var style = SetDefaultStyles();
+        var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
-            
+
         var image = new Image {
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
             Scale = 1.5,
         };
 
-        if (Entity is TrackEntity {TrackAttribute : TrackAttributeEnum.Opaque } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
+        if (Entity is TrackEntity { TrackAttribute : TrackAttributeEnum.Opaque } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
         if (IsPath) image.BackgroundColor = Colors.CornflowerBlue;
         if (IsOccupied) image.BackgroundColor = Colors.Tomato;
-        
+
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
         image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
         return image;
@@ -45,9 +45,8 @@ public abstract partial class TrackTile : Tile {
     /// a MainLine or BranchLine and is either Hidden (in a tunnel) or Normal. 
     /// </summary>
     /// <returns>A style for a standard piece of Track</returns>
-    protected SvgStyleBuilder SetDefaultStyles() {
+    protected SvgStyleBuilder GetDefaultStyle() {
         var style = new SvgStyleBuilder();
-
         if (Entity is TrackEntity trackEntity) {
             switch (trackEntity.TrackType) {
             case TrackTypeEnum.BranchLine:
@@ -65,8 +64,8 @@ public abstract partial class TrackTile : Tile {
             switch (trackEntity.TrackAttribute) {
             case TrackAttributeEnum.Dashed:
                 style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
-                break; 
-                
+                break;
+
             case TrackAttributeEnum.Normal:
             case TrackAttributeEnum.Opaque:
             default:
@@ -75,5 +74,5 @@ public abstract partial class TrackTile : Tile {
             }
         }
         return style;
-    } 
+    }
 }

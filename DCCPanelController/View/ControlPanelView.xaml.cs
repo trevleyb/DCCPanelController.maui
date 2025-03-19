@@ -52,7 +52,7 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    protected virtual void OnTileSelected(ITile? tile) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile));
+    protected virtual void OnTileSelected(ITile? tile, int tapCount) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile, tapCount));
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
@@ -86,7 +86,7 @@ public partial class ControlPanelView {
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
-        using (new CodeTimer("Control Panel : Draw Panel")) {
+        using (new CodeTimer($"Draw Panel: {Panel.Title}/{Panel.Id}")) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
             _viewHeight = _gridSize * Rows;
@@ -177,40 +177,30 @@ public partial class ControlPanelView {
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
         _tapCount++;
         await Task.Delay(DoubleTapTime);
-        
-        if (sender is ITileInteractive interactiveTile && !DesignMode) {
-            if (_tapCount == 1) interactiveTile.Interact();
-            if (_tapCount == 2) interactiveTile.Secondary();
-        } 
-        else if (sender is ITile tile) {
-            ClearSelectedTiles();            
-            if (_tapCount == 1) {
-                if (!tile.IsSelected) {
-                    MarkTileSelected(tile);
-                    OnTileSelected(tile);
-                } else {
-                    OnTileSelected(null);
+
+        if (DesignMode) {
+            if (sender is ITile tile) {
+                if (_tapCount == 1) {
+                    if (tile.IsSelected) {
+                        ClearSelectedTiles();
+                        OnTileSelected(tile,1);
+                    } else {
+                        ClearSelectedTiles();
+                        MarkTileSelected(tile);
+                        OnTileSelected(null,1);
+                    }
                 }
-                
-                // switch (EditMode) {
-                // case EditModeEnum.Move: break;
-                // case EditModeEnum.Copy: break;
-                // case EditModeEnum.Size: break;
-                //
-                // case EditModeEnum.Delete:
-                //     RemoveTileFromGrid(tile);
-                //     break;
-                //
-                // case EditModeEnum.Rotate:
-                //     tile.RotateRight();
-                //     break;
-                //
-                // case EditModeEnum.Select:
-                //     OnTileSelected(tile);
-                //     break;
-                // }
+                if (_tapCount == 2) {
+                    ClearSelectedTiles();
+                    MarkTileSelected(tile);
+                    OnTileSelected(tile,2);
+                }
             }
-            if (_tapCount == 2) OnTileSelected(tile);
+        } else {
+            if (sender is ITileInteractive interactiveTile) {
+                if (_tapCount == 1) interactiveTile.Interact();
+                if (_tapCount == 2) interactiveTile.Secondary();
+            }
         }
         _tapCount = 0;
     }
@@ -622,6 +612,9 @@ public partial class ControlPanelView {
     }
 }
 
-public class TileSelectedEventArgs(ITile? tile) : EventArgs {
+public class TileSelectedEventArgs(ITile? tile, int tapCount) : EventArgs {
     public ITile? Tile { get; set; } = tile;
+    public int TapCount { get; set; } = tapCount;
+    public bool IsSingleTap => TapCount == 1;
+    public bool IsDoubleTap => TapCount == 2;
 }

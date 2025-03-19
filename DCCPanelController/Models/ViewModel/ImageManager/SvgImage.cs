@@ -1,3 +1,5 @@
+using System.Diagnostics;
+using System.Reflection;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
@@ -12,7 +14,14 @@ public partial class SvgImage : ObservableObject {
     [ObservableProperty] private int _rotation = 0;
     [ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
 
-    private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
+    public SvgImage(string filename, int rotation, SvgConnections connections) {
+        Filename = filename;
+        Rotation = rotation;
+        Connections = connections;
+        _imageManager = new SvgImageManager(filename);
+    }
+
+    private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(_filename);
     public ImageSource ImageSource => ImageManager.ImageSource;
     
     public Image AsImage(double scale) => new Image { Source = ImageSource, Scale = scale };
@@ -33,10 +42,9 @@ public partial class SvgImage : ObservableObject {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
             }
         }
-
         return this;
     }
-
+   
     // Element Types Supported Include
     // ---------------------------------------------------------------------------
     // <rect>       - fill, fill-opacity

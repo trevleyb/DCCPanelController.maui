@@ -31,6 +31,7 @@ public partial class StraightTile : TrackTile, ITileInteractive {
                 TrackAttributeEnum.Normal => TrackAttributeEnum.Dashed,
                 TrackAttributeEnum.Dashed => TrackAttributeEnum.Opaque,
                 TrackAttributeEnum.Opaque => TrackAttributeEnum.Normal,
+                _ => straight.TrackAttribute,
             };
         }
     }

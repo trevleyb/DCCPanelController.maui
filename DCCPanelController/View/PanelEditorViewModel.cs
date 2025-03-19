@@ -147,17 +147,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public async Task EditTilePropertiesAsync(Entity entity) {
         Console.WriteLine($"Launching the Properties page for '{entity.Name}'");
-        DynamicPageLauncher.ShowDynamicPropertyPageAsync(entity);
+        await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entity);
         Profile.Save();
     }
 
     public void EditPanelProperties() => EditPanelPropertiesAsync();
-
     public async Task EditPanelPropertiesAsync() {
         if (SelectedPanel is { } panel) {
-            Console.WriteLine($"Launching the Properties page for the Panel '{panel.Id}");
             await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
-            Console.WriteLine($"Properties page closed");
             Profile.Save();
             PropertiesChanged = true;
         }

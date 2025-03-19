@@ -2,7 +2,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
-using DCCPanelController.Models.ViewModel.Helpers;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
 using SkiaSharp;
 using SKSvg = Svg.Skia.SKSvg;
@@ -37,25 +37,35 @@ public class SvgImageManager {
     ///     cause a call to the image function to re-calculate/re-draw the image itself.
     /// </summary>
     public ImageSource ImageSource => GetSvgAsImage();
+
     public List<string> SupportedElements => _svgDocument.Descendants().SelectMany(element => element.Attributes().Where(attribute => attribute.Name.LocalName == "id").Select(attribute => attribute.Value)).Distinct().ToList();
-    
+
     /// <summary>
     ///     Converts the SVG DisplayImage into a PNG. Up-scales it to the default size as part of the process.
     /// </summary>
     /// <returns>A PNG DisplayImage of the SVG</returns>
     private ImageSource GetSvgAsImage() {
-        var svg = new SKSvg();
-        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
-        if (svg is null) throw new ApplicationException("Unable to load svg");
+        using (new CodeTimer("Get SVGIMAGE")) {
+            using (var svg = new SKSvg()) {
+                svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
+                if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
 
-        const int quality = 100;
-        var scaleX = DefaultWidth / svg.Picture?.CullRect.Width ?? DefaultWidth;
-        var scaleY = DefaultHeight / svg.Picture?.CullRect.Height ?? DefaultHeight;
+                // Safe retrieval of dimensions
+                var width = svg.Picture.CullRect.Width;
+                var height = svg.Picture.CullRect.Height;
+                if (width <= 0 || height <= 0) throw new ApplicationException("Invalid SVG picture dimensions.");
 
-        var stream = new MemoryStream();
-        svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
-        stream.Seek(0, SeekOrigin.Begin);
-        return ImageSource.FromStream(() => stream);
+                // Maintain aspect-ratio when scaling
+                const int quality = 100;
+                var scaleX = DefaultWidth / width;
+                var scaleY = DefaultHeight / height;
+
+                var stream = new MemoryStream();
+                svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
+                stream.Seek(0, SeekOrigin.Begin);
+                return ImageSource.FromStream(() => stream);
+            }
+        }
     }
 
     /// <summary>
@@ -70,21 +80,14 @@ public class SvgImageManager {
     }
 
     private XDocument LoadSvg(string resourceName) {
-        _resourceName = resourceName;
-        var assembly = Assembly.GetExecutingAssembly();
-        using var stream = assembly.GetManifestResourceStream(_resourceName);
-
+        using var stream = SvgImages.ExecutingAssembly.GetManifestResourceStream(resourceName);
         if (stream == null) {
-            Debug.WriteLine($"Could not find the image resource: '{_resourceName}'");
-            throw new FileNotFoundException("Resource not found.", _resourceName);
+            Debug.WriteLine($"Could not find the image resource: '{resourceName}'");
+            throw new FileNotFoundException("Resource not found.", resourceName);
         }
 
-        using var reader = new StreamReader(stream);
-        var svgContent = reader.ReadToEnd();
-
         try {
-            var xDocument = XDocument.Parse(svgContent);
-            return xDocument;
+            return XDocument.Load(stream);
         } catch (Exception ex) {
             Debug.WriteLine($"Failed to load the SVG image: '{_resourceName}' with {ex.Message}");
             throw new FileLoadException("Failed to load the SVG image.", ex);
@@ -95,6 +98,7 @@ public class SvgImageManager {
     ///     Forces a set of any attributes defined in the element to the value. Does not add the attribute if it does not exist
     /// </summary>
     public void SetAllAttributeValues(SvgElementType svgElement, string attributeName, string attributeValue) => SetAllAttributeValues(SvgElementTypes.GetElement(svgElement), attributeName, attributeValue);
+
     public void SetAllAttributeValues(string svgElement, string attributeName, string attributeValue) {
         foreach (var element in FindElements(svgElement)) {
             SetAttributeValue(element, attributeName, attributeValue, false);

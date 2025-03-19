@@ -73,7 +73,7 @@
                                             Text="Please use"
                                             VerticalOptions="Center" />
                                         <ImageButton
-                                            Command="{Binding AddNewPanelCommand}"
+                                            Command="{Binding AddPanelCommand}"
                                             Margin="-5,0,-5,0"
                                             Scale="0.50"
                                             Source="plus_circle.png">
