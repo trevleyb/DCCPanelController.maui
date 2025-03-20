@@ -6,12 +6,9 @@ using DCCPanelController.View.Actions;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButtonEntity {
-    public override string Name => "Button";
+public partial class RouteEntity : Entity, IInteractiveEntity, IButtonEntity {
+    public override string Name => "Route";
 
-    [ObservableProperty] [property: Editable("Button ID", EditableType.Id)]
-    private string _id = string.Empty;
-    
     [ObservableProperty] [property: Editable("Button Size", EditableType.ButtonSize)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
@@ -21,13 +18,11 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButt
     [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 10, "Actions", ActionsContext.Button)]
     private TurnoutActions _turnoutPanelActions = [];
     
-
     [ObservableProperty] private ButtonStateEnum _state  = ButtonStateEnum.Unknown;
     
     [JsonConstructor]
-    public ButtonEntity() {}
-    public ButtonEntity(Panel panel) : base(panel) { }
-    public ButtonEntity(ButtonEntity entity) : base(entity) {}
-    public override Entity Clone() => new ButtonEntity(this);
-    public string GenerateID() => EntityID.NextButtonID(Parent?.GetAllEntitiesByType<ButtonEntity>() ??[]);
+    public RouteEntity() {}
+    public RouteEntity(Panel panel) : base(panel) { }
+    public RouteEntity(RouteEntity entity) : base(entity) {}
+    public override Entity Clone() => new RouteEntity(this);
 }

@@ -20,6 +20,7 @@ public class TestDataModel {
     private void BuildTestDataModel(Profile storage) {
         var original = CreatePanel(storage.Panels);
         var clone = storage.Panels.CreatePanelFrom(original);
+        storage.Panels.Add(clone);
         Debug.Assert(clone.Id != original.Id, "clone.Id != original.Id");
         Debug.Assert(clone.GetHashCode() != original.GetHashCode(), "clone.GetHashCode() != original.GetHashCode()");
     }
@@ -46,6 +47,7 @@ public class TestDataModel {
 
     private Panel CreatePanel(Panels panels) {
         var panel = panels.CreatePanel();
+        panels.Add(panel);
         CreateEntity<ButtonEntity>(panel);
         CreateEntity<CompassEntity>(panel);
         CreateEntity<CornerEntity>(panel);
@@ -89,7 +91,8 @@ public class TestDataModel {
             circleLabelEntity.Label = "Test";
             break;
         }
-
+        panel.AddEntity(entity);
         var cloned = panel.CreateEntityFrom(entity);
+        panel.AddEntity(cloned);
     }
 }

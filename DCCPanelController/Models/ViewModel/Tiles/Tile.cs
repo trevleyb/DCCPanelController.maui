@@ -1,25 +1,19 @@
-using System.Reflection;
 using System.Runtime.CompilerServices;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using ExCSS;
-using ShimSkiaSharp;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 using System.ComponentModel;
 
-public abstract partial class Tile : ContentView, ITile {
+public abstract class Tile : ContentView, ITile {
     public Entity Entity { get; init; }
 
     private const int DebounceDelay = 10;
-    private bool _visualPropertiesChanged = false;
+    private bool _visualPropertiesChanged;
     private Dictionary<string, object?> _propertyCache = [];
     private CancellationTokenSource? _debounceRebuildCts;
     protected HashSet<string> VisualProperties { get; } = [];
-    private TileDisplayMode _displayMode;
     
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
@@ -35,8 +29,7 @@ public abstract partial class Tile : ContentView, ITile {
         GridSize = gridSize;
         PropertyChanged += OnPropertyChanged;
         entity.PropertyChanged += OnPropertyChanged;
-
-        _displayMode = displayMode;
+        
         VisualProperties.Add(nameof(GridSize));
         VisualProperties.Add(nameof(Entity.Rotation));
         VisualProperties.Add(nameof(Entity.IsEnabled));
@@ -67,7 +60,8 @@ public abstract partial class Tile : ContentView, ITile {
     }
 
     /// <summary>
-    /// Rebuilds the tile's content if visual properties have changed, using a debounce mechanism to minimize redundant updates.
+    /// Rebuilds the tile's content if visual properties have changed,
+    /// using debounce mechanisms to minimize redundant updates.
     /// </summary>
     /// <remarks>
     /// This method listens for changes in visual properties and schedules a delayed execution to rebuild the tile content if necessary.
@@ -90,7 +84,7 @@ public abstract partial class Tile : ContentView, ITile {
     }
 
     /// <summary>
-    /// Sets the value of a field and raises property changing and changed notifications.
+    /// Sets the value of a field and raises property-changing and changed notifications.
     /// </summary>
     /// <typeparam name="T">The type of the field.</typeparam>
     /// <param name="field">The field to be updated.</param>

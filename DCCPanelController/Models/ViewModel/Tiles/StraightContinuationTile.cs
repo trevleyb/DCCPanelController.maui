@@ -4,7 +4,9 @@ using DCCPanelController.Models.ViewModel.ImageManager;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public partial class StraightContinuationTile : TrackTile {
-    public StraightContinuationTile(StraightContinuationEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public StraightContinuationTile(StraightContinuationEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(StraightContinuationEntity.ContinuationStyle));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         return ((StraightContinuationEntity)Entity).ContinuationStyle switch {

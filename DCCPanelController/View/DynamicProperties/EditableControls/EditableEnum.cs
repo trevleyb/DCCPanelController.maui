@@ -6,6 +6,21 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
+public class EditableButtonSize : EditableEnum, IEditableProperty {
+    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
+        try {
+            var items = new[] { ButtonSizeEnum.Normal, ButtonSizeEnum.Large};
+            return CreateRadioGroupForEnums("Button Size", items, owner, info, attribute);
+        } catch (Exception e) {
+            Debug.WriteLine($"Unable to create a Button Size Enum:  {e.Message}");
+            return null;
+        }
+    }
+    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
+        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
+    }
+}
+
 public class EditableAlignment : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
@@ -54,7 +69,7 @@ public class EditableTrackType : EditableEnum, IEditableProperty {
 public class EditableTrackAttribute : EditableEnum, IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
         try {
-            var items = new[] { TrackAttributeEnum.Normal, TrackAttributeEnum.Dashed, TrackAttributeEnum.Opaque };
+            var items = new[] { TrackAttributeEnum.Normal, TrackAttributeEnum.Dashed };
             return CreateRadioGroupForEnums("Track Attribute", items, owner, info, attribute);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Track Attribute Enum:  {e.Message}");
@@ -98,11 +113,12 @@ public abstract class EditableEnum : EditableProperty  {
             var radioButton = new RadioButton {
                 HeightRequest = 30,
                 BorderWidth = 0,
-                FontSize = 12,
+                FontSize = 10,
+                WidthRequest = 120,
+                HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 Content = value.ToString() // Display the value
             };
-
             radioButton.CheckedChanged += (sender, args) => { PropertyHelper.SetEnumPropertyValue(owner, info.Name, value); };
             radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(owner, info.Name));
             radioGroup.Children.Add(radioButton);

@@ -36,7 +36,6 @@ public partial class Panel : ObservableObject, IEntityID {
     [JsonIgnore] public Panels? Panels { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public List<Entity> SelectedTiles => Entities.Where(t => t.IsSelected).ToList() ?? [];
 
     public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
@@ -46,9 +45,6 @@ public partial class Panel : ObservableObject, IEntityID {
     public ButtonEntity? GetButton(string id) => GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
     public TurnoutEntity? GetTurnout(string id) => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
 
-    //public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(p => p.Entities.OfType<T>()).Union(Entities.OfType<T>()).ToList() ?? [];
-    //public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(p => p.Entities.OfType<T>().Union(Entities.OfType<T>()).Where(e => !string.IsNullOrEmpty(e.Id))).ToList() ?? [];
-    
     [JsonIgnore]
     public string Title {
         get {
@@ -61,20 +57,21 @@ public partial class Panel : ObservableObject, IEntityID {
 
     public string GenerateID() => EntityID.NextPanelID(Panels ?? []);
 
+    public Entity AddEntity(Entity entity) {
+        entity.Parent = this;
+        Entities.Add(entity);
+        return entity;
+    }
+
     public T CreateEntity<T>() where T : Entity {
         var entity = (T)Activator.CreateInstance(typeof(T), this)! ?? throw new InvalidOperationException();
-        Entities.Add(entity);
-        entity.Parent = this;
         if (entity is IEntityID entityID) entityID.Id = entityID.GenerateID();
         return entity ?? throw new InvalidOperationException();
     }
     
     public T CreateEntityFrom<T>(T entity) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
-        Debug.Assert(cloned.Guid != entity.Guid,"Guids should be different");
-        cloned.Parent = this;
         if (cloned is IEntityID entityID) entityID.Id = entityID.GenerateID();
-        Entities.Add(cloned);
         return cloned ?? throw new InvalidOperationException();
     }
     
@@ -87,7 +84,10 @@ public partial class Panel : ObservableObject, IEntityID {
             Rows = this.Rows
         };
         CopyColorsTo(clone);
-        foreach (var entity in this.Entities) clone.CreateEntityFrom(entity);
+        foreach (var entity in this.Entities) {
+            var entityClone = clone.CreateEntityFrom(entity);
+            clone.AddEntity(entityClone);
+        }
         return clone;
     }
 

@@ -9,27 +9,35 @@ public class RectangleTile : Tile {
         VisualProperties.Add(nameof(entity.BackgroundColor));
         VisualProperties.Add(nameof(entity.BorderColor));
         VisualProperties.Add(nameof(entity.BorderWidth));
+        VisualProperties.Add(nameof(entity.BorderRadius));
         VisualProperties.Add(nameof(entity.Opacity));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
 
         if (Entity is RectangleEntity entity) {
-            var square = new Rectangle() {
-                Fill = entity.BackgroundColor,
-                Stroke = entity.BorderColor,
-                StrokeThickness = entity.BorderWidth,
-                WidthRequest = TileWidth,
-                HeightRequest = TileHeight,
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-                ZIndex = entity.Layer,
-                Opacity = entity.Opacity,
-                InputTransparent = true,
-                Scale = 1,
-            };
-            square.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
-            return square;
+
+            Shape shape;
+            if (entity.BorderRadius > 0) {
+                shape = new RoundRectangle() {
+                    CornerRadius = entity.BorderRadius,
+                };
+            } else {
+                shape = new Rectangle();
+            }
+            shape.Fill = entity.BackgroundColor;
+            shape.Stroke = entity.BorderColor;
+            shape.StrokeThickness = entity.BorderWidth;
+            shape.WidthRequest = TileWidth;
+            shape.HeightRequest = TileHeight;
+            shape.HorizontalOptions = LayoutOptions.Start;
+            shape.VerticalOptions = LayoutOptions.Start;
+            shape.ZIndex = entity.Layer;
+            shape.Opacity = entity.Opacity;
+            shape.InputTransparent = true;
+            shape.Scale = 1;
+            shape.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
+            return shape;
         } 
         return CreateSymbol();
     }   

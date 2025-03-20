@@ -6,7 +6,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleLabelEntity : Entity, ITextEntity {
-    public override string Name => "Circle Image";
+    public override string Name => "Circle Label";
 
     [ObservableProperty] [property: Editable("Label", EditableType.String, 0, group: "Text")]
     private string _label = string.Empty;
@@ -17,17 +17,28 @@ public partial class CircleLabelEntity : Entity, ITextEntity {
     [ObservableProperty] [property: Editable("Font Size", EditableType.Integer, 0, group: "Text")]
     private int _fontSize = 8;
     
-    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, 5, group: "Circle")]
-    private int _borderRadius = 0;
+    [ObservableProperty] [property: Editable("Scale Factor", EditableType.Double, 0, group: "Text")]
+    private double _scaleFactor = 1.00;
 
     [ObservableProperty] [property: Editable("Border Width", EditableType.Integer, 5, group: "Circle")]
-    private int _borderWidth = 0;
+    private int _borderWidth = 2;
     
     [ObservableProperty] [property: Editable("Border Color", EditableType.Color, 5, group: "Circle")]
-    private Color _borderColor = Colors.Transparent;
+    private Color _borderColor = Colors.Black;
+
+    [ObservableProperty] [property: Editable("Inner Border Width", EditableType.Integer, 5, group: "Circle")]
+    private int _borderInnerWidth = 2;
+
+    [ObservableProperty] [property: Editable("Inner Border Color", EditableType.Color, 5, group: "Circle")]
+    private Color _borderInnerColor = Colors.White;
+
+    [ObservableProperty] [property: Editable("Inner Border Gap", EditableType.Integer, 5, group: "Circle")]
+    private int _borderInnerGap = 2;
+
+
     
     [ObservableProperty] [property: Editable("Background Color", EditableType.Color, 5, group: "Circle")]
-    private Color _backgroundColor = Colors.Transparent;
+    private Color _backgroundColor = Colors.DarkGray;
     
     [ObservableProperty][property: Editable("Opacity", EditableType.Opacity, 5, group: "Circle")] 
     private double _opacity = 1;
@@ -40,7 +51,6 @@ public partial class CircleLabelEntity : Entity, ITextEntity {
     }
 
     public CircleLabelEntity(CircleLabelEntity entity) : base(entity) {
-        BorderRadius = entity.BorderRadius;
         BorderWidth = entity.BorderWidth;
         BorderColor = entity.BorderColor;
         BackgroundColor = entity.BackgroundColor;

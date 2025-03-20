@@ -22,10 +22,6 @@ public abstract partial class Entity() : ObservableObject {
     [ObservableProperty] private int _rotation = 0;        // Is the track rotated?
     [ObservableProperty] private bool _isEnabled = true;   // Is this item actually in use?
     
-    [ObservableProperty]
-    [property:JsonIgnore]
-    private bool _isSelected = false; // Is this item actually in use?
-    
     [JsonIgnore] public Panel? Parent { get; set; } = null;
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     
@@ -44,7 +40,6 @@ public abstract partial class Entity() : ObservableObject {
         Height = entity.Height;
         Rotation = entity.Rotation;
         IsEnabled = entity.IsEnabled;
-        IsSelected = false;
     }
     public abstract Entity Clone();
 }

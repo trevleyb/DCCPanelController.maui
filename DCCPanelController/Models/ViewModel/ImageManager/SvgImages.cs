@@ -35,7 +35,9 @@ public static class SvgImages {
 
         AddImage("Button", "Track_Button", 4);                        // Add Buttons at N,E,S,W
         AddImage("Button", "Track_Button_Corner", "********", 4, 45); // Add Buttons at NE,SE,SW,NW
+        AddImage("ButtonLarge", "Track_Large_Button", 4);             // Add Buttons at N,E,S,W
 
+        AddImage("Platform", "Track_Platform", "**S***S*", 4);
         AddImage("Straight", "Track_Straight", "**S***S*", 4);
         AddImage("Straight", "Track_Angle", "*S***S**", 4, 45);
 

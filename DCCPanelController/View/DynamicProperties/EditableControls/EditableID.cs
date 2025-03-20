@@ -22,6 +22,7 @@ public class EditableID : EditableProperty, IEditableProperty {
                 BindingContext = owner
             };
             cell.TextChanged += CellOnTextChanged;
+            cell.Completed += CellOnCompleted;
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             return CreateGroupCell(cell, owner, info, attribute);
         } catch (Exception e) {
@@ -30,13 +31,26 @@ public class EditableID : EditableProperty, IEditableProperty {
         }
     }
 
+    private void CellOnCompleted(object? sender, EventArgs e) {
+        if (_entity is ButtonEntity { Parent: not null } button) {
+            if (!IsIDValid(button.Id)) button.Id = button.Parent.GenerateID();
+        }
+        if (_entity is TurnoutEntity { Parent: not null } turnout) {
+            if (!IsIDValid(turnout.Id)) turnout.Id = turnout.Parent.GenerateID();
+        }
+    }
+
     public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
         return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
     
     private void CellOnTextChanged(object? sender, TextChangedEventArgs e) {
+        var isValid = IsIDValid(e.NewTextValue);
+        if (sender is Entry entry) entry.TextColor = isValid ? Colors.Black : Colors.Red;
+    }
+
+    private bool IsIDValid(string value) {
         var isValid = true;
-        var value = e.NewTextValue;
         if (_entity is ButtonEntity { Parent: not null } button) {
             var buttons = button.Parent?.GetAllEntitiesWithID<ButtonEntity>();
             var conflictingButtons = buttons?.Where(b => b.Id == value).ToArray() ?? null;
@@ -47,6 +61,6 @@ public class EditableID : EditableProperty, IEditableProperty {
             var conflictingTurnouts = turnouts?.Where(b => b.Id == value).ToArray() ?? null;
             isValid = conflictingTurnouts == null || (conflictingTurnouts.Length == 1 && conflictingTurnouts[0].Equals(turnout));
         }
-        if (sender is Entry entry) entry.TextColor = isValid ? Colors.Black : Colors.Red;
+        return isValid;
     }
 }

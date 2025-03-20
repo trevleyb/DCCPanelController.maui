@@ -8,7 +8,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
     public override string Name => "Straight Track";
     
-    [ObservableProperty]  [property: Editable("Terminator", EditableType.TrackTerminator)]
+    [ObservableProperty]  [property: Editable("Terminator", EditableType.TrackTerminator, group: "Track")]
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;
 
     [JsonConstructor]

@@ -32,9 +32,10 @@ public class EditableOpacity : EditableProperty, IEditableProperty {
 
             if (int.TryParse(dataCell.Text, out var initialStepperValue)) {
                 stepperUpDown.Value = initialStepperValue;
+                dataCell.Text = initialStepperValue.ToString("00%", CultureInfo.InvariantCulture) ?? "100%";
             }
 
-            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("_00%", CultureInfo.InvariantCulture) ?? "100%"; };
+            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("00%", CultureInfo.InvariantCulture) ?? "100%"; };
             dataCell.TextChanged += (s, e) => {
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;

@@ -38,6 +38,9 @@ public partial class ControlPanelView {
 
     private int _lastDragCol;
     private int _lastDragRow;
+    private int _lastDragWidth;
+    private int _lastDragHeight;
+
     private int _tapCount = 0;
     private const int DoubleTapTime = 200;
     private bool _canDragTiles = true;
@@ -48,7 +51,7 @@ public partial class ControlPanelView {
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
-
+    
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
@@ -183,11 +186,11 @@ public partial class ControlPanelView {
                 if (_tapCount == 1) {
                     if (tile.IsSelected) {
                         ClearSelectedTiles();
-                        OnTileSelected(tile,1);
+                        OnTileSelected(null,1);
                     } else {
                         ClearSelectedTiles();
                         MarkTileSelected(tile);
-                        OnTileSelected(null,1);
+                        OnTileSelected(tile,1);
                     }
                 }
                 if (_tapCount == 2) {
@@ -205,14 +208,14 @@ public partial class ControlPanelView {
         _tapCount = 0;
     }
 
-    private void RemoveTileFromGrid(ITile tile) {
-        var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId.Equals(tile.Entity.Guid.ToString())).ToList();
+    private void RemoveTileFromGrid(ITile tile) => RemoveEntityFromGrid(tile.Entity);
+    private void RemoveEntityFromGrid(Entity entity) {
+        var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId.Equals(entity.Guid.ToString())).ToList();
         foreach (var child in children) {
             DynamicGrid.Remove(child);
         }
-        Panel?.Entities.Remove(tile.Entity);
     }
-
+    
     private void SetTileGridPosition(ITile tile) {
         if (tile is ContentView view) {
             DynamicGrid.SetColumn(view, tile.Entity.Col);
@@ -270,11 +273,13 @@ public partial class ControlPanelView {
     public void MarkTileSelected(ITile tile) {
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
+        OnTileSelected(tile, 1);        
     }
 
     public void MarkTileUnSelected(ITile tile) {
         UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
         tile.IsSelected = false;
+        OnTileSelected(null, 0);
     }
 
     public void ClearSelectedTiles() {
@@ -285,8 +290,8 @@ public partial class ControlPanelView {
     /// <summary>
     /// Only highlight a cell if we are in Design Mode
     /// </summary>
-    public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, action);
-
+    public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity, action);
+    public void HighlightCell(Entity entity, CellHighlightAction action) => HighlightCell(entity.Col, entity.Row, entity.Width, entity.Height, action);
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
 
@@ -326,6 +331,8 @@ public partial class ControlPanelView {
     ///     Only UnHighlight a cell if we are operating in Design mode
     ///     If we are in Operate mode, then we do not highlight cells so this has no function.
     /// </summary>
+    public void UnHighlightCell(ITile tile) => UnHighlightCell(tile.Entity);
+    public void UnHighlightCell(Entity entity) => UnHighlightCell(entity.Col, entity.Row);
     public void UnHighlightCell(int col, int row) {
         if (!DesignMode) return;
         var children = DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
@@ -481,8 +488,9 @@ public partial class ControlPanelView {
                                 var newEntity = panel.CreateEntityFrom(tile.Entity);
                                 newEntity.Col = position.Col;
                                 newEntity.Row = position.Row;
-                                var newTile = AddTileToGrid(newEntity);
-                                if (newTile is not null) MarkTileSelected(newTile);
+                                panel.AddEntity(newEntity);
+                                //var newTile = AddTileToGrid(newEntity);
+                                //if (newTile is not null) MarkTileSelected(newTile);
                                 break;
 
                             case EditModeEnum.Size:
@@ -495,8 +503,9 @@ public partial class ControlPanelView {
                             var dropEntity = panel.CreateEntityFrom(tile.Entity);
                             dropEntity.Col = position.Col;
                             dropEntity.Row = position.Row;
-                            var dropTile = AddTileToGrid(dropEntity);
-                            if (dropTile is not null) MarkTileSelected(dropTile);
+                            panel.AddEntity(dropEntity);
+                            //var dropTile = AddTileToGrid(dropEntity);
+                            //if (dropTile is not null) MarkTileSelected(dropTile);
                             break;
 
                         default:

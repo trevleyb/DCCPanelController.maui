@@ -20,7 +20,7 @@ public partial class PanelEditorPage {
             PanelView.TileSelected += (sender, e) => {
                 if (e is {} args) {
                     vm.SelectedEntity = args.Tile?.Entity ?? null;
-                    UpdateToolbarItems();
+                    ConfigureToolbarItems();
                     if (args.IsDoubleTap) vm.EditTileProperties();
                 }
             };
@@ -68,7 +68,7 @@ public partial class PanelEditorPage {
     private readonly ToolbarItem _duplicatePanelToolbar = new ToolbarItem { Text = "Duplicate Panel", IconImageSource = "copy.png" };
     private readonly ToolbarItem _deletePanelToolbar = new ToolbarItem { Text = "Delete Panel", IconImageSource = "trash_2.png" };
     private readonly ToolbarItem _editPanelToolbar = new ToolbarItem { Text = "Edit Panel", IconImageSource = "edit.png" };
-    private readonly ToolbarItem _panelPropertiesToolbar = new ToolbarItem { Text = "Properties", IconImageSource = "edit_3.png" };
+    private readonly ToolbarItem _panelPropertiesToolbar = new ToolbarItem { Text = "Properties", IconImageSource = "settings.png" };
     private readonly ToolbarItem _spacerToolbar = new ToolbarItem { Text = "", IsEnabled = false };
 
     //private const string IconFullscreenLarge = "maximize_2.png";
@@ -80,13 +80,14 @@ public partial class PanelEditorPage {
             _editMoveCopyResizeToolbar.Command = new Command(vm.ToggleMode);
             _editDeleteToolbar.Command = new Command(vm.DeleteSelectedTile);
             _editRotateToolbar.Command = new Command(vm.RotateSelectedTile);
-            _panelPropertiesToolbar.Command = new Command(vm.EditProperties);
+            _editPropertiesToolbar.Command = new Command(vm.EditTileProperties);
             _exitEditModeToolbar.Command = new Command(vm.ExitEditMode);
             _toggleFullscreenToolbar.Command = new Command(vm.ToggleFullscreen);
             _addPanelToolbar.Command = new Command(vm.AddPanel);
             _deletePanelToolbar.Command = new Command(vm.DeletePanel);
             _editPanelToolbar.Command = new Command(vm.EditPanel);
             _duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
+            _panelPropertiesToolbar.Command = new Command(vm.EditPanelProperties);
         }
     }
 
@@ -133,8 +134,11 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_editMoveCopyResizeToolbar);
                 ToolbarItems.Add(_editRotateToolbar);
                 ToolbarItems.Add(_editDeleteToolbar);
+                ToolbarItems.Add(_editPropertiesToolbar);
+                ToolbarItems.Add(_spacerToolbar);
                 ToolbarItems.Add(_panelPropertiesToolbar);
                 ToolbarItems.Add(_exitEditModeToolbar);
+                ToolbarItems.Add(_toggleFullscreenToolbar);
             } else {
                 // In View mode so we need a toolbar that supports the panels.
                 // --------------------------------------------------------------------------------------------------
@@ -142,8 +146,8 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_duplicatePanelToolbar);
                 ToolbarItems.Add(_deletePanelToolbar);
                 ToolbarItems.Add(_editPanelToolbar);
+                ToolbarItems.Add(_toggleFullscreenToolbar);
             }
-            ToolbarItems.Add(_toggleFullscreenToolbar);
             ConfigureToolbarItems();
         }
     }

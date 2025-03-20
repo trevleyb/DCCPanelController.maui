@@ -72,6 +72,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     EditableType.TrackType       => new EditableTrackType(),
                     EditableType.TrackAttributes => new EditableTrackAttribute(),
                     EditableType.TrackTerminator => new EditableTrackTerminator(),
+                    EditableType.ButtonSize      => new EditableButtonSize(),
                     _                            => new EditableUndefined() // Default to undefined
                 };
                 var cell = editableComponent.CreateView(property.Entity, property.Property, property.Metadata);

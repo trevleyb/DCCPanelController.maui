@@ -8,7 +8,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class TerminatorEntity : TrackEntity, ITrackEntity {
     public override string Name => "Terminator Track";
 
-    [ObservableProperty] [property: Editable("Terminator", EditableType.TrackTerminator)] 
+    [ObservableProperty] [property: Editable("Terminator", EditableType.TrackTerminator, group: "Track")] 
     private TrackTerminatorEnum _terminatorStyle = TrackTerminatorEnum.Arrow;
 
     [JsonConstructor]

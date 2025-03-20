@@ -29,8 +29,7 @@ public partial class StraightTile : TrackTile, ITileInteractive {
         if (Entity is StraightEntity straight) {
             straight.TrackAttribute = straight.TrackAttribute switch {
                 TrackAttributeEnum.Normal => TrackAttributeEnum.Dashed,
-                TrackAttributeEnum.Dashed => TrackAttributeEnum.Opaque,
-                TrackAttributeEnum.Opaque => TrackAttributeEnum.Normal,
+                TrackAttributeEnum.Dashed => TrackAttributeEnum.Normal,
                 _ => straight.TrackAttribute,
             };
         }

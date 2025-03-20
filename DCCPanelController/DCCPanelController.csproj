@@ -95,7 +95,11 @@
         <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_lines.svg" />
         <EmbeddedResource Include="Models\TileImages\track_image.svg" />
         <EmbeddedResource Include="Models\TileImages\track_label.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_large_button.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_large_route.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_platform.svg" />
         <EmbeddedResource Include="Models\TileImages\track_points.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_route.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg" />

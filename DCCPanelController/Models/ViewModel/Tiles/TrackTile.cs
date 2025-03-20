@@ -1,8 +1,5 @@
-using System.Text;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
-using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
@@ -18,6 +15,7 @@ public abstract partial class TrackTile : Tile {
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
         VisualProperties.Add(nameof(TrackEntity.TrackColor));
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
+        VisualProperties.Add(nameof(TrackEntity.IsOpaque));
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
@@ -31,7 +29,7 @@ public abstract partial class TrackTile : Tile {
             Scale = 1.5,
         };
 
-        if (Entity is TrackEntity { TrackAttribute : TrackAttributeEnum.Opaque } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
+        if (Entity is TrackEntity { IsOpaque : true } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
         if (IsPath) image.BackgroundColor = Colors.CornflowerBlue;
         if (IsOccupied) image.BackgroundColor = Colors.Tomato;
 
@@ -67,7 +65,6 @@ public abstract partial class TrackTile : Tile {
                 break;
 
             case TrackAttributeEnum.Normal:
-            case TrackAttributeEnum.Opaque:
             default:
                 style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
                 break;

@@ -10,7 +10,7 @@ public partial class RectangleEntity : Entity, IDrawingEntity {
     [ObservableProperty][property: Editable("Border Width", EditableType.Integer, group: "Rectangle")] 
     private int _borderWidth  = 1;
 
-    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, group: "Border")] 
+    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, group: "Rectangle")] 
     private int _borderRadius = 0;
     
     [ObservableProperty] [property: Editable("Background Color", EditableType.Color, group: "Rectangle")]

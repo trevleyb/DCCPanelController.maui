@@ -54,7 +54,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [RelayCommand] private async Task AddPanelAsync() => AddPanel();
 
     public void AddPanel() {
-        SelectedPanel = Panels?.CreatePanel();
+        SelectedPanel = Panels.CreatePanel();
+        Panels.Add(SelectedPanel);
         Profile.Save();
     }
 
@@ -92,7 +93,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     public void DuplicatePanel() {
         if (SelectedPanel != null) {
-            Panels.CreatePanelFrom(SelectedPanel);
+            var cloned = Panels.CreatePanelFrom(SelectedPanel);
+            Panels.Add(cloned);
             OnPropertyChanged(nameof(Panels));
         }
     }
@@ -109,7 +111,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         EditMode = EditMode switch {
             EditModeEnum.Copy => EditModeEnum.Move,
             EditModeEnum.Move => EditModeEnum.Size,
-            EditModeEnum.Size => EditModeEnum.Move,
+            EditModeEnum.Size => EditModeEnum.Copy,
             _                 => EditModeEnum.Move
         };
         OnPropertyChanged(nameof(EditMode));

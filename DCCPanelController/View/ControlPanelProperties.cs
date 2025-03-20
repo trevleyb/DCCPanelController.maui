@@ -1,8 +1,11 @@
+using System.Collections.Specialized;
+using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
@@ -40,58 +43,100 @@ public partial class ControlPanelView {
     }
     
     private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
-        var control = (ControlPanelView)bindable;
-        control.ShowGrid = control.DesignMode;
-        control.DynamicGrid.GestureRecognizers.Clear();
-        if (control.DesignMode) {
-            // In design mode we need to support drag and drop for the tiles on the screen.
-            // ----------------------------------------------------------------------------
-            var dropRecogniser = new DropGestureRecognizer();
-            dropRecogniser.Drop += control.DropTileOnPanel;
-            dropRecogniser.DragOver += control.DragOverTileOnPanel;
-            dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
-            control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
+        if (bindable is ControlPanelView control) {
+            control.ShowGrid = control.DesignMode;
+            control.DynamicGrid.GestureRecognizers.Clear();
+            if (control.DesignMode) {
+                // In design mode we need to support drag and drop for the tiles on the screen.
+                // ----------------------------------------------------------------------------
+                var dropRecogniser = new DropGestureRecognizer();
+                dropRecogniser.Drop += control.DropTileOnPanel;
+                dropRecogniser.DragOver += control.DragOverTileOnPanel;
+                dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
+                control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
 
-            // In design mode, also support tapping anywhere that is not a tile so we clear selections.
-            // ----------------------------------------------------------------------------
-            var tapRecogniser = new TapGestureRecognizer();
-            tapRecogniser.Tapped += control.DynamicGridTapped;
-            control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
+                // In design mode, also support tapping anywhere that is not a tile so we clear selections.
+                // ----------------------------------------------------------------------------
+                var tapRecogniser = new TapGestureRecognizer();
+                tapRecogniser.Tapped += control.DynamicGridTapped;
+                control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
+            }
+            control.DrawPanel(true);
         }
-        control.DrawPanel(true);
     }
     
     /// <summary>
     /// If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (oldValue != newValue) {
-            var control = (ControlPanelView)bindable;
-            control.Panel = (Panel)newValue;
+        if (bindable is ControlPanelView control) {
+            if (oldValue != newValue) {
+                if (oldValue is Panel oldPanel) {
+                    oldPanel.Entities.CollectionChanged -= EntitiesOnCollectionChanged; 
+                }
+                if (newValue is Panel newPanel) {
+                    newPanel.Entities.CollectionChanged += (_, args) =>EntitiesOnCollectionChanged(control, args); 
+                    control.Panel = newPanel;
+                    control.ClearSelectedTiles();
+                    control.DrawPanel(true);
+                }
+            }
+        }
+    }
+
+    private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        if (sender is ControlPanelView control) {
             control.ClearSelectedTiles();
-            control.DrawPanel(true);
+            
+            // Any items that have been removed from the collection need to be
+            // removed from the display panel. 
+            // -------------------------------------------------------------------------
+            var oldEntities = e.OldItems?.Cast<Entity>().ToList() ?? new List<Entity>();
+            foreach (var oldEntity in oldEntities) {
+                Console.WriteLine($"Removing {oldEntity.Name} from the grid");
+                control.RemoveEntityFromGrid(oldEntity);
+            }
+
+            // Any new items added to the Panel.Entities collection need to be drawn
+            // on the display panel. This will iterate and add the items
+            // -------------------------------------------------------------------------
+            var newEntities = e.NewItems?.Cast<Entity>().ToList() ?? new List<Entity>();
+            ITile? lastTile = null;
+            foreach (var newEntity in newEntities) {
+                Console.WriteLine($"Adding {newEntity.Name} to the grid");
+                lastTile = control.AddTileToGrid(newEntity);
+            }
+
+            // Highlight the last item added to the collection. Normally there would 
+            // only be one anyway, but just in case we have a mass-add function.
+            // ----------------------------------------------------------------------
+            if (lastTile is { } ITile) {
+                control.MarkTileSelected(lastTile);
+            }
         }
     }
     
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ControlPanelView)bindable;
+        if (bindable is ControlPanelView control) { }
     }
 
     private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ControlPanelView)bindable;
-        control.DrawGrid();
+        if (bindable is ControlPanelView control) {
+            control.DrawGrid();    
+        }
     }
 
     private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        var control = (ControlPanelView)bindable;
-        control._canDragTiles = control.EditMode switch {
-            EditModeEnum.Move   => true,
-            EditModeEnum.Rotate => false,
-            EditModeEnum.Copy   => true,
-            EditModeEnum.Size   => true,
-            EditModeEnum.Select => false,
-            EditModeEnum.Delete => false,
-            _                   => false
-        };
+        if (bindable is ControlPanelView control) {
+            control._canDragTiles = control.EditMode switch {
+                EditModeEnum.Move   => true,
+                EditModeEnum.Rotate => false,
+                EditModeEnum.Copy   => true,
+                EditModeEnum.Size   => true,
+                EditModeEnum.Select => false,
+                EditModeEnum.Delete => false,
+                _                   => false
+            };
+        }
     }
 }

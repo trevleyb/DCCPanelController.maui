@@ -28,7 +28,7 @@ public partial class VerticalTileSelector {
     
     public void ForceRefresh() {
         if (BindingContext is VerticalTileSelectorViewModel { } vm) {
-            //vm.BuildTileList(Panel);
+            vm.BuildTileList(Panel);
         }
     }
     

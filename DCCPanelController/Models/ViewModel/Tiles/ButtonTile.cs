@@ -20,7 +20,10 @@ public partial class ButtonTile : Tile, ITileInteractive {
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {
-            var svgImage = SvgImages.GetImage("button", Entity.Rotation);
+            var svgImage = button.ButtonSize switch {
+                ButtonSizeEnum.Large => SvgImages.GetImage("button_large", Entity.Rotation),
+                _                    => SvgImages.GetImage("button", Entity.Rotation)
+            };
             svgImage.SetAttribute(SvgElementType.Button, State switch {
                 ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,

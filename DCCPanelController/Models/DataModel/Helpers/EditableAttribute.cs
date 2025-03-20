@@ -43,5 +43,6 @@ public enum EditableType {
     AspectRatio,
     Image,
     Opacity,
-    Alignment
+    Alignment,
+    ButtonSize
 }
