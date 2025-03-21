@@ -24,16 +24,16 @@ public class TextTile : Tile {
                 FontSize = entity.FontSize,
                 HorizontalTextAlignment = entity.HorizontalJustification,
                 VerticalTextAlignment = entity.VerticalJustification,
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Start,
                 TextColor = entity.TextColor,
                 BackgroundColor = BackgroundColor,
                 ZIndex = entity.Layer,
                 RotationX = entity.Rotation,
                 LineBreakMode = LineBreakMode.TailTruncation,
                 InputTransparent = true,
-                //WidthRequest = TileWidth,
-                //HeightRequest = TileHeight
+                WidthRequest = TileWidth,
+                HeightRequest = TileHeight
             };
 
             if (entity.BorderWidth > 0) {
@@ -41,8 +41,8 @@ public class TextTile : Tile {
                     Content = label,
                     InputTransparent = true,
                     RotationX = entity.Rotation,
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill,
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = LayoutOptions.Start,
                     WidthRequest = TileWidth,
                     HeightRequest = TileHeight,
                     StrokeThickness = entity.BorderWidth,

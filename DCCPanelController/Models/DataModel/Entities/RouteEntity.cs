@@ -8,7 +8,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class RouteEntity : Entity, IInteractiveEntity, IButtonEntity {
+public partial class RouteEntity : Entity, IInteractiveEntity, IActionEntity {
     public override string Name => "Route";
 
     [ObservableProperty] [property: EditableButtonSize("Button Size")]

@@ -10,17 +10,13 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public class EditableButtonActions(string label, string description = "", int order = 0, string? group = null, ActionsContext context = ActionsContext.Button)
     : EditableProperty(label, description, order, group), IEditableProperty {
-
-    private readonly ActionsContext _context = context;
-    
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var button = owner as IEntityID;
-            var buttonID = button?.Id ?? "";
-            var entity = owner as ButtonEntity;
-            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != buttonID).Select(b => b.Id).ToList<string>() ?? [];
+            var entity = owner as Entity;
+            var entityID = (owner as IEntityID)?.Id ?? "";
+            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
             if (entity is not null) {
-                return new ButtonActionsGrid(entity.ButtonPanelActions, _context, availableButtons) {
+                return new ButtonActionsGrid(((IActionEntity)entity).ButtonPanelActions, context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -36,18 +32,13 @@ public class EditableButtonActions(string label, string description = "", int or
 
 public class EditableTurnoutActions(string label, string description = "", int order = 0, string? group = null, ActionsContext context = ActionsContext.Button)
     : EditableProperty(label, description, order, group), IEditableProperty {
-
-    private readonly ActionsContext _context = context;
-    
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var turnout = owner as IEntityID;
-            var turnoutID = turnout?.Id ?? "";
-            var entity = owner as TurnoutEntity;
-            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != turnoutID).Select(b => b.Id).ToList<string>() ?? [];
-            
+            var entity = owner as Entity;
+            var entityID = (owner as IEntityID)?.Id ?? "";
+            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
             if (entity is not null) {
-                return new TurnoutActionsGrid(entity.TurnoutPanelActions, _context, availableButtons) {
+                return new TurnoutActionsGrid(((IActionEntity)entity).TurnoutPanelActions, context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };

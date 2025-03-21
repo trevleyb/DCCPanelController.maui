@@ -9,7 +9,7 @@ using DCCPanelController.View.DynamicProperties;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity {
+public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
     [ObservableProperty] [property: EditableID("ID", "", 0, group: "Turnout")] 
     private string _id = string.Empty;
     

@@ -8,7 +8,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButtonEntity {
+public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
     public override string Name => "Button";
 
     [ObservableProperty] [property: EditableID("Button ID")]
@@ -23,7 +23,6 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButt
     [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions", ActionsContext.Button)]
     private TurnoutActions _turnoutPanelActions = [];
     
-
     [ObservableProperty] private ButtonStateEnum _state  = ButtonStateEnum.Unknown;
     
     [JsonConstructor]

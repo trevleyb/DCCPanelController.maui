@@ -22,13 +22,13 @@
                 <DataTrigger
                     Binding="{Binding Source={x:Reference ButtonControl}, Path=State}"
                     TargetType="Image"
-                    Value="Active">
+                    Value="On">
                     <Setter Property="Source" Value="button_active.png" />
                 </DataTrigger>
                 <DataTrigger
                     Binding="{Binding Source={x:Reference ButtonControl}, Path=State}"
                     TargetType="Image"
-                    Value="Inactive">
+                    Value="Off">
                     <Setter Property="Source" Value="button_inactive.png" />
                 </DataTrigger>
                 <DataTrigger
@@ -46,14 +46,14 @@
                 <DataTrigger
                     Binding="{Binding Source={x:Reference ButtonControl}, Path=State}"
                     TargetType="Label"
-                    Value="Active">
+                    Value="On">
                     <Setter Property="TextColor" Value="Green" />
                     <Setter Property="Text" Value="{Binding Source={x:Reference ButtonControl}, Path=ActiveText}" />
                 </DataTrigger>
                 <DataTrigger
                     Binding="{Binding Source={x:Reference ButtonControl}, Path=State}"
                     TargetType="Label"
-                    Value="Inactive">
+                    Value="Off">
                     <Setter Property="TextColor" Value="Red" />
                     <Setter Property="Text" Value="{Binding Source={x:Reference ButtonControl}, Path=InactiveText}" />
                 </DataTrigger>

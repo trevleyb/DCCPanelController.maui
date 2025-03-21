@@ -11,6 +11,7 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public partial class ButtonTile : Tile, ITileInteractive {
     public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(State));
+        VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
     }
 
     private ButtonStateEnum State {
@@ -21,7 +22,7 @@ public partial class ButtonTile : Tile, ITileInteractive {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {
             var svgImage = button.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("button_large", Entity.Rotation),
+                ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("button", Entity.Rotation)
             };
             svgImage.SetAttribute(SvgElementType.Button, State switch {
