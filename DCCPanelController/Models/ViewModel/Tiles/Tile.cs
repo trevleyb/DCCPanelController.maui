@@ -14,7 +14,6 @@ public abstract class Tile : ContentView, ITile {
     private Dictionary<string, object?> _propertyCache = [];
     private CancellationTokenSource? _debounceRebuildCts;
     protected HashSet<string> VisualProperties { get; } = [];
-    protected List<string> ChangedProperties = [];
     
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
@@ -57,7 +56,6 @@ public abstract class Tile : ContentView, ITile {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
-            ChangedProperties.Add(property);
             _visualPropertiesChanged = true;
         }
         RebuildIfNecessary();
@@ -81,8 +79,6 @@ public abstract class Tile : ContentView, ITile {
             .ContinueWith((t) => {
                  if (t.IsCanceled) return;
                  if (_visualPropertiesChanged) {
-                     Console.WriteLine($"Rebuilding content for {Entity.Name} [{Entity.Guid}] due to: {string.Join(", ", ChangedProperties)}");
-                     ChangedProperties.Clear();
                      Content = CreateTile();
                      _visualPropertiesChanged = false; // Reset flag
                  }

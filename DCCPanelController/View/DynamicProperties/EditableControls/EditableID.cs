@@ -6,9 +6,10 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableID : EditableProperty, IEditableProperty {
+public class EditableID(string label, string description = "", int order = 0, string? group = null)
+    : EditableProperty(label, description, order, group), IEditableProperty {
     private IEntityID? _entity;
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             _entity = owner as IEntityID;
             var cell = new Entry {
@@ -24,7 +25,7 @@ public class EditableID : EditableProperty, IEditableProperty {
             cell.TextChanged += CellOnTextChanged;
             cell.Completed += CellOnCompleted;
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            return CreateGroupCell(cell, owner, info, attribute);
+            return CreateGroupCell(cell, owner, info);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a String:  {e.Message}");
             return null;
@@ -40,10 +41,6 @@ public class EditableID : EditableProperty, IEditableProperty {
         }
     }
 
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
-    }
-    
     private void CellOnTextChanged(object? sender, TextChangedEventArgs e) {
         var isValid = IsIDValid(e.NewTextValue);
         if (sender is Entry entry) entry.TextColor = isValid ? Colors.Black : Colors.Red;

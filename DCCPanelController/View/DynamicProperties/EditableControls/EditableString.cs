@@ -4,12 +4,13 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableString : EditableProperty, IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
+public class EditableString(string label, string description = "", int order = 0, string? group = null)
+    : EditableProperty(label, description, order, group), IEditableProperty {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var cell = new Entry {
                 Margin = new Thickness(5, 5, 5, 5),
-                Placeholder = attribute.Label,
+                Placeholder = Label,
                 Keyboard = Keyboard.Text,
                 WidthRequest = 300,
                 HeightRequest = 25,
@@ -19,14 +20,10 @@ public class EditableString : EditableProperty, IEditableProperty {
             };
 
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            return CreateGroupCell(cell, owner, info, attribute);
+            return CreateGroupCell(cell, owner, info);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a String:  {e.Message}");
             return null;
         }
-    }
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new  EntryCell { Text = attribute.Label, BindingContext = new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay } };
-
     }
 }

@@ -2,45 +2,44 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleLabelEntity : Entity, ITextEntity {
     public override string Name => "Circle Label";
 
-    [ObservableProperty] [property: Editable("Label", EditableType.String, 0, group: "Text")]
+    [ObservableProperty] [property: EditableString("Label", "", 0, group: "Text")]
     private string _label = string.Empty;
 
-    [ObservableProperty] [property: Editable("Text Color", EditableType.Color, 0, group: "Text")]
+    [ObservableProperty] [property: EditableColor("Text Color", "", 0, group: "Text")]
     private Color _textColor = Colors.White;
 
-    [ObservableProperty] [property: Editable("Font Size", EditableType.Integer, 0, group: "Text")]
+    [ObservableProperty] [property: EditableInt("Font Size", "", 0, group: "Text")]
     private int _fontSize = 8;
     
-    [ObservableProperty] [property: Editable("Scale Factor", EditableType.Double, 0, group: "Text")]
+    [ObservableProperty] [property: EditableDouble("Scale Factor", "", 0, group: "Text")]
     private double _scaleFactor = 1.00;
 
-    [ObservableProperty] [property: Editable("Border Width", EditableType.Integer, 5, group: "Circle")]
+    [ObservableProperty] [property: EditableInt("Border Width", "", 5, group: "Circle")]
     private int _borderWidth = 2;
     
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, 5, group: "Circle")]
+    [ObservableProperty] [property: EditableColor("Border Color", "", 5, group: "Circle")]
     private Color _borderColor = Colors.Black;
 
-    [ObservableProperty] [property: Editable("Inner Border Width", EditableType.Integer, 5, group: "Circle")]
+    [ObservableProperty] [property: EditableInt("Inner Border Width", "", 5, group: "Circle")]
     private int _borderInnerWidth = 2;
 
-    [ObservableProperty] [property: Editable("Inner Border Color", EditableType.Color, 5, group: "Circle")]
+    [ObservableProperty] [property: EditableColor("Inner Border Color", "", 5, group: "Circle")]
     private Color _borderInnerColor = Colors.White;
 
-    [ObservableProperty] [property: Editable("Inner Border Gap", EditableType.Integer, 5, group: "Circle")]
+    [ObservableProperty] [property: EditableInt("Inner Border Gap", "", 5, group: "Circle")]
     private int _borderInnerGap = 2;
-
-
     
-    [ObservableProperty] [property: Editable("Background Color", EditableType.Color, 5, group: "Circle")]
+    [ObservableProperty] [property: EditableColor("Background Color", "", 5, group: "Circle")]
     private Color _backgroundColor = Colors.DarkGray;
     
-    [ObservableProperty][property: Editable("Opacity", EditableType.Opacity, 5, group: "Circle")] 
+    [ObservableProperty][property: EditableOpacity("Opacity", "", 5, group: "Circle")] 
     private double _opacity = 1;
 
     [JsonConstructor]

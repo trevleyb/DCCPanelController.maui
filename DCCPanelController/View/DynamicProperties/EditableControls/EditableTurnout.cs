@@ -3,9 +3,10 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableTurnoutAttribute : EditableProperty, IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {        // TODO: Add support so we can set a Turnout State
-        return new EditableUndefined().CreateView(owner, info, attribute);
+public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null)
+    : EditableProperty(label, description, order, group), IEditableProperty {
+    public IView? CreateView(object owner, PropertyInfo info) {        // TODO: Add support so we can set a Turnout State
+        return new EditableUndefined("undefined").CreateView(owner, info);
 
         // try {
         //     //var cell = new Switch { BindingContext = value.Owner };
@@ -16,8 +17,5 @@ public class EditableTurnoutAttribute : EditableProperty, IEditableProperty {
         //     Debug.WriteLine($"Unable to create a Turnout: {e.Message}");
         // return null;
         //}
-    }
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

@@ -1,23 +1,25 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.View.Actions;
+using DCCPanelController.View.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity {
-    [ObservableProperty] [property: Editable("ID", EditableType.Id, 0, group: "Turnout")] 
+    [ObservableProperty] [property: EditableID("ID", "", 0, group: "Turnout")] 
     private string _id = string.Empty;
     
-    [ObservableProperty] [property: Editable("DCC Address", EditableType.String, 0, group: "Turnout")]
+    [ObservableProperty] [property: EditableString("DCC Address", "", 0, group: "Turnout")]
     private string _address = string.Empty;
     
-    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 10, "Actions", ActionsContext.Turnout)] 
+    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)] 
     private ButtonActions _buttonPanelActions = [];
     
-    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 10, "Actions", ActionsContext.Turnout)]
+    [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions", ActionsContext.Turnout)]
     private TurnoutActions _turnoutPanelActions = [];
     
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;

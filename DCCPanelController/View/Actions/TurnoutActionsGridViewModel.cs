@@ -10,7 +10,7 @@ namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty]
-    private ActionsContextEnum _actionContext;
+    private ActionsContext _actionContext;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
@@ -33,7 +33,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(NoDataText))]
     private TurnoutActions _turnoutPanelActions;
 
-    public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContextEnum context, List<string> availableTurnouts) {
+    public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
         AvailableTurnouts = availableTurnouts.ToObservableCollection();
         SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
@@ -44,8 +44,8 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(ControlHeight));
     }
 
-    public bool IsTurnoutContext => ActionContext == ActionsContextEnum.Turnout;
-    public bool IsButtonContext => ActionContext == ActionsContextEnum.Button;
+    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContext.Button;
 
     public bool IsGridVisible => TurnoutPanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;

@@ -7,8 +7,9 @@ using DCCPanelController.View.Components;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableColor : EditableProperty, IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
+public class EditableColor(string label, string description = "", int order = 0, string? group = null)
+    : EditableProperty(label, description, order, group), IEditableProperty {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var cell = new ColorPickerButton {
                 WidthRequest = 100, HeightRequest = 30, AllowsNoColor = true, 
@@ -18,14 +19,10 @@ public class EditableColor : EditableProperty, IEditableProperty {
             if (owner is ITrackEntity && info.Name == nameof(TrackEntity.TrackBorderColor)) {
                 cell.SetBinding(VisualElement.IsEnabledProperty, new Binding(nameof(TrackEntity.IsMainLine)) { Source = owner, Mode = BindingMode.TwoWay });
             }
-            return CreateGroupCell(cell, owner, info, attribute);
+            return CreateGroupCell(cell, owner, info);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Color: {e.Message}");
             return null;
         }
-    }
-
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

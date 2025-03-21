@@ -13,11 +13,6 @@ using Dynamensions.ColorPalleteGenerator;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public enum ActionsContextEnum {
-    Button,
-    Turnout
-}
-
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;
 
@@ -56,26 +51,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             // create the views that will manage this property and add it to the children collection. 
             // ---------------------------------------------------------------------------------------------
             if (groupContainer.Container is not null) {
-                IEditableProperty? editableComponent = property.Metadata.Type switch {
-                    EditableType.Id              => new EditableID(),
-                    EditableType.Color           => new EditableColor(),
-                    EditableType.Image           => new EditableImage(),
-                    EditableType.Double          => new EditableDouble(),
-                    EditableType.Integer         => new EditableInt(),
-                    EditableType.Opacity         => new EditableOpacity(),
-                    EditableType.String          => new EditableString(),
-                    EditableType.Switch          => new EditableBool(),
-                    EditableType.ButtonActions   => new EditableButtonActions(),
-                    EditableType.TurnoutActions  => new EditableTurnoutActions(),
-                    EditableType.Alignment       => new EditableAlignment(),
-                    EditableType.AspectRatio     => new EditableAspectRatio(),
-                    EditableType.TrackType       => new EditableTrackType(),
-                    EditableType.TrackAttributes => new EditableTrackAttribute(),
-                    EditableType.TrackTerminator => new EditableTrackTerminator(),
-                    EditableType.ButtonSize      => new EditableButtonSize(),
-                    _                            => new EditableUndefined() // Default to undefined
-                };
-                var cell = editableComponent.CreateView(property.Entity, property.Property, property.Metadata);
+                var cell = property.Metadata.CreateView(entity, property.Property);
                 if (cell is not null) groupContainer.Container.Add(cell);
             }
         }

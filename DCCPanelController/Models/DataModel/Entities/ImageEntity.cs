@@ -1,26 +1,26 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ImageEntity : Entity, IDrawingEntity {
     public override string Name => "Image";
     
-    [ObservableProperty][property: Editable("Border Radius", EditableType.Integer, group: "Image")] 
+    [ObservableProperty][property: EditableInt("Border Radius", group: "Image")] 
     private int _borderRadius = 0;
     
-    [ObservableProperty] [property: Editable("Border Width", EditableType.Integer, group: "Image")]
+    [ObservableProperty] [property: EditableInt("Border Width", group: "Image")]
     private int _borderWidth = 0;
     
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, group: "Image")]
+    [ObservableProperty] [property: EditableColor("Border Color",  group: "Image")]
     private Color _borderColor = Colors.Transparent;
     
-    [ObservableProperty] [property: Editable("Aspect Ratio", EditableType.AspectRatio, group: "Image")]
+    [ObservableProperty] [property: EditableAspectRatio ("Aspect Ratio",group: "Image")]
     private Aspect _aspectRatio = Aspect.AspectFit;
     
-    [ObservableProperty] [property: Editable("Image", EditableType.Image)]
+    [ObservableProperty] [property: EditableImage("Image", group: "Image")]
     private string _image = string.Empty;
 
     [JsonConstructor]

@@ -5,11 +5,12 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableInt : EditableProperty, IEditableProperty {
+public class EditableInt(string label, string description = "", int order = 0, string? group = null)
+    : EditableProperty(label, description, order, group), IEditableProperty {
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {        try {
+    public IView? CreateView(object owner, PropertyInfo info) {        try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
             cell.HorizontalOptions = LayoutOptions.Start;
@@ -17,7 +18,7 @@ public class EditableInt : EditableProperty, IEditableProperty {
                 BindingContext = owner,
                 WidthRequest = 75,
                 HeightRequest = 30,
-                Placeholder = attribute.Label,
+                Placeholder = Label,
                 Keyboard = Keyboard.Numeric,
                 Margin = new Thickness(10, 5, 10, 5),
                 Text = info.GetValue(owner)?.ToString() ?? "0"
@@ -48,13 +49,10 @@ public class EditableInt : EditableProperty, IEditableProperty {
 
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
-            return CreateGroupCell(cell, owner, info, attribute);
+            return CreateGroupCell(cell, owner, info);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Int: {e.Message}");
             return null;
         }
-    }
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

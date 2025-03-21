@@ -1,5 +1,7 @@
+using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
+using DCCPanelController.View.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -8,19 +10,19 @@ public abstract partial class TrackEntity : Entity {
     
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMainLine))]
-    [property: Editable("Track Type", EditableType.TrackType, 5, group: "Track")]
+    [property: EditableTrackType("Track Type", "", 5, group: "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
     
-    [ObservableProperty][property: Editable("Attributes", EditableType.TrackAttributes, 5, group: "Track")] 
+    [ObservableProperty][property: EditableTrackAttribute("Attributes", "", 5, group: "Track")] 
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Track Color", EditableType.Color, 5, group: "Track")]
+    [ObservableProperty] [property: EditableColor("Track Color", "", 5, group: "Track")]
     private Color? _trackColor;
     
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, 5, group: "Track")]
+    [ObservableProperty] [property: EditableColor("Border Color", "", 5, group: "Track")]
     private Color? _trackBorderColor;
     
-    [ObservableProperty] [property: Editable("Is Opaque", EditableType.Switch, 5, group: "Track")]
+    [ObservableProperty] [property: EditableBool("Is Opaque", "", 5, group: "Track")]
     private bool _isOpaque;
 
     public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;

@@ -3,10 +3,15 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public abstract class EditableProperty {
+[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+public abstract class EditableProperty(string label, string description = "", int order = 0, string? group = null) : Attribute {
     
-    protected IView CreateGroupCell(IView view, object owner, PropertyInfo info, EditableAttribute attribute) {
-        
+    public string Label { get; } = label;               // Label/Prompt for the property
+    public string Description { get; } = description;   // Description of the property
+    public string Group { get; } = group ?? "General";  // Group to which this property belongs
+    public int Order { get; } = order;                  // Order within the group
+
+    protected IView CreateGroupCell(IView view, object owner, PropertyInfo info) {
         var grid = new Grid();
         grid.HeightRequest = 43;
         grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = 150 });
@@ -14,12 +19,12 @@ public abstract class EditableProperty {
         grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
         grid.RowDefinitions.Add(new RowDefinition() { Height = 3 });
         grid.BackgroundColor = Colors.White;
-        
+
         // If there is a Label, then add the label to the first column. 
         // -----------------------------------------------------------------------------
-        if (!string.IsNullOrWhiteSpace(attribute.Label)) {
+        if (!string.IsNullOrWhiteSpace(Label)) {
             var label = new Label {
-                Text = attribute.Label,
+                Text = Label,
                 TextColor = Colors.DimGray,
                 FontSize = 15,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
@@ -37,7 +42,7 @@ public abstract class EditableProperty {
         grid.Children.Add(view);
         grid.SetColumn(view, 1);
         grid.SetRow(view, 0);
-        
+
         // Add a divider line into the 2nd row and span across both columns
         // -----------------------------------------------------------------------------
         var boxView = new BoxView {

@@ -6,7 +6,7 @@ namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGrid : ContentView {
     
-    public ButtonActionsGrid(ButtonActions buttonPanelActions, ActionsContextEnum context, List<string> availableButtons) {
+    public ButtonActionsGrid(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
         InitializeComponent();
         BindingContext = new ButtonActionsGridViewModel(buttonPanelActions, context, availableButtons);
     }

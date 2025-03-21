@@ -8,17 +8,19 @@ using DCCPanelController.View.Actions;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableButtonActions : EditableProperty, IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
+public class EditableButtonActions(string label, string description = "", int order = 0, string? group = null, ActionsContext context = ActionsContext.Button)
+    : EditableProperty(label, description, order, group), IEditableProperty {
+
+    private readonly ActionsContext _context = context;
+    
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var button = owner as IEntityID;
             var buttonID = button?.Id ?? "";
             var entity = owner as ButtonEntity;
             var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != buttonID).Select(b => b.Id).ToList<string>() ?? [];
-            var contextEnum = attribute.GetOption<ActionsContextEnum>(0);
-
             if (entity is not null) {
-                return new ButtonActionsGrid(entity.ButtonPanelActions, contextEnum, availableButtons) {
+                return new ButtonActionsGrid(entity.ButtonPanelActions, _context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -30,23 +32,22 @@ public class EditableButtonActions : EditableProperty, IEditableProperty {
         Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
     }
-
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
-    }
 }
 
-public class EditableTurnoutActions : IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
+public class EditableTurnoutActions(string label, string description = "", int order = 0, string? group = null, ActionsContext context = ActionsContext.Button)
+    : EditableProperty(label, description, order, group), IEditableProperty {
+
+    private readonly ActionsContext _context = context;
+    
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var turnout = owner as IEntityID;
             var turnoutID = turnout?.Id ?? "";
             var entity = owner as TurnoutEntity;
             var availableButtons = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != turnoutID).Select(b => b.Id).ToList<string>() ?? [];
-            var contextEnum = attribute.GetOption<ActionsContextEnum>(0);
-
+            
             if (entity is not null) {
-                return new TurnoutActionsGrid(entity.TurnoutPanelActions, contextEnum, availableButtons) {
+                return new TurnoutActionsGrid(entity.TurnoutPanelActions, _context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };
@@ -58,8 +59,5 @@ public class EditableTurnoutActions : IEditableProperty {
 
         Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
-    }
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

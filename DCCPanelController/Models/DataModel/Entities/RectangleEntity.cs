@@ -2,24 +2,25 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class RectangleEntity : Entity, IDrawingEntity {
     public override string Name => "Rectangle";
     
-    [ObservableProperty][property: Editable("Border Width", EditableType.Integer, group: "Rectangle")] 
+    [ObservableProperty][property: EditableInt("Border Width", group: "Rectangle")] 
     private int _borderWidth  = 1;
 
-    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, group: "Rectangle")] 
+    [ObservableProperty] [property: EditableInt("Border Radius", group: "Rectangle")] 
     private int _borderRadius = 0;
     
-    [ObservableProperty] [property: Editable("Background Color", EditableType.Color, group: "Rectangle")]
+    [ObservableProperty] [property: EditableColor("Background Color", group: "Rectangle")]
     private Color _backgroundColor = Colors.Transparent;
     
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, group: "Rectangle")]
+    [ObservableProperty] [property: EditableColor("Border Color", group: "Rectangle")]
     private Color _borderColor = Colors.Black;
    
-    [ObservableProperty][property: Editable("Opacity", EditableType.Opacity, group: "Rectangle")] 
+    [ObservableProperty][property: EditableOpacity("Opacity", group: "Rectangle")] 
     private double _opacity = 1;
     
     [JsonConstructor]

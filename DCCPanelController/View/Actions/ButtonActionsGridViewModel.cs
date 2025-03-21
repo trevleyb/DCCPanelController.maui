@@ -10,7 +10,7 @@ namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGridViewModel : ObservableObject {
     [ObservableProperty]
-    private ActionsContextEnum _actionContext;
+    private ActionsContext _actionContext;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ControlHeight))]
@@ -33,7 +33,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(NoDataText))]
     private ObservableCollection<string> _selectableButtons;
 
-    public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContextEnum context, List<string> availableButtons) {
+    public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
         ActionContext = context;
         AvailableButtons = availableButtons.ToObservableCollection();
         SelectableButtons = new ObservableCollection<string>(AvailableButtons);
@@ -44,8 +44,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(ControlHeight));
     }
 
-    public bool IsTurnoutContext => ActionContext == ActionsContextEnum.Turnout;
-    public bool IsButtonContext => ActionContext == ActionsContextEnum.Button;
+    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContext.Button;
     public bool IsGridVisible => ButtonPanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
     public double ControlHeight => 40 + ButtonPanelActions.Count * 40;

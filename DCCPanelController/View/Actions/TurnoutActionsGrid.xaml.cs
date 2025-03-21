@@ -5,7 +5,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGrid : ContentView {
-    public TurnoutActionsGrid(TurnoutActions turnoutPanelActions, ActionsContextEnum context, List<string> availableTurnouts) {
+    public TurnoutActionsGrid(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         InitializeComponent();
         BindingContext = new TurnoutActionsGridViewModel(turnoutPanelActions, context, availableTurnouts);
     }

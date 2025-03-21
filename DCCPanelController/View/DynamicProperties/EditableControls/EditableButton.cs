@@ -3,9 +3,10 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableButton : EditableProperty, IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new EditableUndefined().CreateView(owner, info, attribute);
+public class EditableButton(string label, string description = "", int order = 0, string? group = null)
+    : EditableProperty(label, description, order, group), IEditableProperty {
+    public IView? CreateView(object owner, PropertyInfo info) {
+        return new EditableUndefined("Undefined").CreateView(owner, info);
         
         // try {
         //     var cell = new Switch { BindingContext = value.Owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White };
@@ -15,8 +16,5 @@ public class EditableButton : EditableProperty, IEditableProperty {
         //     Debug.WriteLine($"Unable to create a Bool switch {e.Message}");
         //     return null;
         // }
-    }
-    public Cell? CreateCell(object owner, PropertyInfo info, EditableAttribute attribute) {
-        return new ViewCell() { View = CreateView(owner, info, attribute) as Microsoft.Maui.Controls.View };
     }
 }

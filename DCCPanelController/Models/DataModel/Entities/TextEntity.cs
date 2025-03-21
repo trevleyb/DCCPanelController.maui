@@ -2,37 +2,38 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     public override string Name => "Text Block";
     
-    [ObservableProperty] [property: Editable("Label", EditableType.String, 0, "Text")]
+    [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;
     
-    [ObservableProperty] [property: Editable("Text Color", EditableType.Color, 0, group: "Text")]
+    [ObservableProperty] [property: EditableColor("Text Color", "", 0, group: "Text")]
     private Color _textColor = Colors.Black;
 
-    [ObservableProperty] [property: Editable("Horizontal", EditableType.Alignment, 0, group: "Text")]
+    [ObservableProperty] [property: EditableAlignment("Horizontal", "", 0, group: "Text")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
     
-    [ObservableProperty] [property: Editable("Vertical", EditableType.Alignment, 0, group: "Text")]
+    [ObservableProperty] [property: EditableAlignment("Vertical", "", 0, group: "Text")]
     private TextAlignment _verticalJustification = TextAlignment.Center;
 
-    [ObservableProperty] [property: Editable("Font Size", EditableType.Integer, 0, group: "Text")]
+    [ObservableProperty] [property: EditableInt("Font Size", "", 0, group: "Text")]
     private int _fontSize = 8;
 
-    [ObservableProperty] [property: Editable("Border Color", EditableType.Color, 5, group: "Border")]
+    [ObservableProperty] [property: EditableColor("Border Color", "", 5, group: "Border")]
     private Color _borderColor = Colors.Transparent;
 
-    [ObservableProperty] [property: Editable("Background Color", EditableType.Color, 5, group: "Border")]
+    [ObservableProperty] [property: EditableColor("Background Color", "", 5, group: "Border")]
     private Color _backgroundColor = Colors.Transparent;
 
-    [ObservableProperty] [property: Editable("Border Radius", EditableType.Integer, 5, group: "Border")] 
+    [ObservableProperty] [property: EditableInt("Border Radius", "", 5, group: "Border")] 
     private int _borderRadius = 0;
     
-    [ObservableProperty] [property: Editable("Border Width", EditableType.Integer, 5, group: "Border")]
+    [ObservableProperty] [property: EditableInt("Border Width", "", 5, group: "Border")]
     private int _borderWidth  = 0;
     
    

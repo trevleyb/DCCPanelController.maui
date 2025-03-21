@@ -4,6 +4,9 @@ using DCCPanelController.Models.DataModel.Helpers;
 namespace DCCPanelController.View.DynamicProperties;
 
 public interface IEditableProperty { 
-    IView? CreateView(object owner, PropertyInfo info, EditableAttribute attribute);
-    Cell?  CreateCell(object owner, PropertyInfo info, EditableAttribute attribute);
+    string Label { get; }       
+    string Description { get; } 
+    string Group { get; }       
+    int Order { get; }  
+    IView? CreateView(object owner, PropertyInfo info);
 }

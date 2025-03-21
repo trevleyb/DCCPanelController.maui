@@ -2,18 +2,19 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class LineEntity : Entity, IDrawingEntity {
     public override string Name => "Line";
     
-    [ObservableProperty][property: Editable("Line Color", EditableType.Color, group: "Line")] 
+    [ObservableProperty][property: EditableColor("Line Color", group: "Line")] 
     private Color _lineColor = Colors.Black;
     
-    [ObservableProperty] [property: Editable("Line Width", EditableType.Integer, group: "Line")]
+    [ObservableProperty] [property: EditableInt("Line Width", group: "Line")]
     private int _lineWidth = 3;
     
-    [ObservableProperty] [property: Editable("Opacity", EditableType.Opacity, group: "Image")]
+    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Line")]
     private double _opacity = 1;
 
     [JsonConstructor]

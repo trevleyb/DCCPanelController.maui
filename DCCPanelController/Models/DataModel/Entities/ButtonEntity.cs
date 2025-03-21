@@ -1,24 +1,26 @@
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.View.Actions;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IButtonEntity {
     public override string Name => "Button";
 
-    [ObservableProperty] [property: Editable("Button ID", EditableType.Id)]
+    [ObservableProperty] [property: EditableID("Button ID")]
     private string _id = string.Empty;
     
-    [ObservableProperty] [property: Editable("Button Size", EditableType.ButtonSize)]
+    [ObservableProperty] [property: EditableButtonSize("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Button Actions", EditableType.ButtonActions, 10, "Actions", ActionsContext.Button)] 
+    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, group: "Actions", ActionsContext.Button)] 
     private ButtonActions _buttonPanelActions = [];
     
-    [ObservableProperty] [property: Editable("Turnout Actions", EditableType.TurnoutActions, 10, "Actions", ActionsContext.Button)]
+    [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions", ActionsContext.Button)]
     private TurnoutActions _turnoutPanelActions = [];
     
 
