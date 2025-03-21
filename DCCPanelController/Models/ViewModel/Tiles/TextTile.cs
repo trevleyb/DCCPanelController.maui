@@ -10,6 +10,8 @@ public class TextTile : Tile {
         VisualProperties.Add(nameof(entity.Label));
         VisualProperties.Add(nameof(entity.FontSize));
         VisualProperties.Add(nameof(entity.TextColor));
+        VisualProperties.Add(nameof(entity.HorizontalJustification));
+        VisualProperties.Add(nameof(entity.VerticalJustification));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
@@ -22,7 +24,7 @@ public class TextTile : Tile {
                 FontSize = entity.FontSize,
                 HorizontalTextAlignment = entity.HorizontalJustification,
                 VerticalTextAlignment = entity.VerticalJustification,
-                HorizontalOptions = LayoutOptions.Start,
+                HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 TextColor = entity.TextColor,
                 BackgroundColor = BackgroundColor,
@@ -30,8 +32,8 @@ public class TextTile : Tile {
                 RotationX = entity.Rotation,
                 LineBreakMode = LineBreakMode.TailTruncation,
                 InputTransparent = true,
-                WidthRequest = TileWidth,
-                HeightRequest = TileHeight
+                //WidthRequest = TileWidth,
+                //HeightRequest = TileHeight
             };
 
             if (entity.BorderWidth > 0) {
@@ -39,7 +41,7 @@ public class TextTile : Tile {
                     Content = label,
                     InputTransparent = true,
                     RotationX = entity.Rotation,
-                    HorizontalOptions = LayoutOptions.Start,
+                    HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill,
                     WidthRequest = TileWidth,
                     HeightRequest = TileHeight,

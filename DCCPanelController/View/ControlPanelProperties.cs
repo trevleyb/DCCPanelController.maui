@@ -77,7 +77,7 @@ public partial class ControlPanelView {
                 if (newValue is Panel newPanel) {
                     newPanel.Entities.CollectionChanged += (_, args) =>EntitiesOnCollectionChanged(control, args); 
                     control.Panel = newPanel;
-                    control.ClearSelectedTiles();
+                    control.ClearAllSelectedTiles();
                     control.DrawPanel(true);
                 }
             }
@@ -86,7 +86,7 @@ public partial class ControlPanelView {
 
     private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         if (sender is ControlPanelView control) {
-            control.ClearSelectedTiles();
+            control.ClearAllSelectedTiles();
             
             // Any items that have been removed from the collection need to be
             // removed from the display panel. 
@@ -127,16 +127,5 @@ public partial class ControlPanelView {
     }
 
     private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        if (bindable is ControlPanelView control) {
-            control._canDragTiles = control.EditMode switch {
-                EditModeEnum.Move   => true,
-                EditModeEnum.Rotate => false,
-                EditModeEnum.Copy   => true,
-                EditModeEnum.Size   => true,
-                EditModeEnum.Select => false,
-                EditModeEnum.Delete => false,
-                _                   => false
-            };
-        }
     }
 }
