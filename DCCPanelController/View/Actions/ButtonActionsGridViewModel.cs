@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
@@ -9,34 +10,17 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGridViewModel : ObservableObject {
-    [ObservableProperty]
-    private ActionsContext _actionContext;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ControlHeight))]
-    [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsGridVisible))]
-    [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _availableButtons;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ControlHeight))]
-    [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsGridVisible))]
-    [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ButtonActions _buttonPanelActions;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ControlHeight))]
-    [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsGridVisible))]
-    [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _selectableButtons;
+    
+    [ObservableProperty] private ActionsContext _actionContext;
+    [ObservableProperty] private ButtonActions _buttonPanelActions;
+    
+    [ObservableProperty] public List<string> _availableButtons;
+    [ObservableProperty] public List<string> _selectableButtons;
 
     public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
         ActionContext = context;
-        AvailableButtons = availableButtons.ToObservableCollection();
-        SelectableButtons = new ObservableCollection<string>(AvailableButtons);
+        AvailableButtons = availableButtons;
+        SelectableButtons = new List<string>(availableButtons);
         ButtonPanelActions = buttonPanelActions;
         UpdateSelectableButtons();
         OnPropertyChanged(nameof(IsTurnoutContext));
@@ -64,50 +48,26 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         if (SelectableButtons.Count > 0) {
             ButtonPanelActions.Add(new ButtonAction { Id = SelectableButtons[0], WhenOn = ButtonStateEnum.On, WhenOff = ButtonStateEnum.Off, Cascade = false });
         }
-
         UpdateSelectableButtons();
     }
 
     [RelayCommand]
-    private void RemoveRow( ButtonAction panelAction) {
-        ButtonPanelActions.Remove(panelAction);
-        UpdateSelectableButtons();
+    private void RemoveRow(ButtonAction? buttonAction) {
+        if (buttonAction is not null) {
+            ButtonPanelActions.Remove(buttonAction);
+            UpdateSelectableButtons();
+        }
     }
 
     [RelayCommand]
     private void IdValueChanged(string id) {
         UpdateSelectableButtons();
+        
     }
 
-    /// <summary>
-    ///     using the current track piece, look at the parent panel collection and
-    ///     iterate over ALL track pieces. If any are a button, and if the name of that
-    ///     button is different from the current button, then add that button name
-    ///     to a collection of available buttons.
-    /// </summary>
-
-    // private ObservableCollection<string> FindAvailableButtons(ITrack track) {
-    //     var foundButtons = new ObservableCollection<string>();
-    //     var thisButton = track as ITrackButton ;
-    //     if (track is { Parent: { Tracks: { } tracks } }) {
-    //         foreach (var trk in tracks) {
-    //             if (trk is ITrackButton trackButton) {
-    //                 if (thisButton != null && thisButton.ButtonID == trackButton.ButtonID) continue;
-    //                 if (string.IsNullOrWhiteSpace(trackButton.ButtonID)) continue;
-    //                 foundButtons.Add(trackButton.ButtonID);
-    //             }
-    //         }
-    //     }
-    //     return foundButtons;
-    // }
-    
     public void UpdateSelectableButtons(string? activeButton = "") {
         for (var i = AvailableButtons.Count - 1; i >= 0; i--) {
             var button = AvailableButtons[i];
-
-            // If we have already used this button, then remove it from the Selectable ones
-            // ---------------------------------------------------------------------------
-            var found = ButtonPanelActions.Any(btn => btn.Id == button);
 
             if (ButtonPanelActions.Any(btn => btn.Id == button) && button != activeButton) {
                 SelectableButtons.Remove(button);

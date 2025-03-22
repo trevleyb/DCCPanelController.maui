@@ -132,26 +132,17 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="akgul.Maui.DataGrid" Version="4.0.6" />
+        <PackageReference Include="FreakyControls" Version="0.5.1" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
         <PackageReference Include="CommunityToolkit.Maui" Version="11.1.0" />
         <PackageReference Include="CommunityToolkit.Maui.Markup" Version="5.1.0" />
         <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.0.1" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="Dynamensions.ColorPicker.Maui" Version="1.2.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.40" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.2" />
-        <PackageReference Include="Microsoft.Maui.Controls.Foldable" Version="9.0.40" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.3" />
+        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.50" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
         <PackageReference Include="Plugin.Maui.Audio" Version="3.0.1" />
         <PackageReference Include="Svg.Skia" Version="2.0.0.4" />
-        <PackageReference Include="UraniumUI" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Blurs" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Dialogs.CommunityToolkit" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Icons.FontAwesome" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Icons.MaterialSymbols" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Icons.SegoeFluent" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Material" Version="2.11.0" />
-        <PackageReference Include="UraniumUI.Validations.DataAnnotations" Version="2.11.0" />
     </ItemGroup>
 
     <!--
@@ -234,9 +225,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <MauiXaml Update="View\Components\DynaColorPicker.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\Components\ColorPickerButton.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -282,10 +270,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="View\Components\DynaColorPicker.xaml.cs">
-            <DependentUpon>ColorPicker.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="View\Components\ColorPickerButton.xaml.cs">
             <DependentUpon>ColorPickerButton.xaml</DependentUpon>
             <SubType>Code</SubType>

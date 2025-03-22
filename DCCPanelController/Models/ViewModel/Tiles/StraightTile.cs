@@ -17,8 +17,7 @@ public partial class StraightTile : TrackTile, ITileInteractive {
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("straight").AsImage();
     }
-
-
+    
     public void Interact() {
         if (Entity is StraightEntity straight) {
             straight.TrackType = straight.TrackType == TrackTypeEnum.MainLine ? TrackTypeEnum.BranchLine : TrackTypeEnum.MainLine;

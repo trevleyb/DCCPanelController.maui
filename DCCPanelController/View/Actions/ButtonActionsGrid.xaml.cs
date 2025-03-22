@@ -5,16 +5,13 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGrid : ContentView {
-    
-    public ButtonActionsGrid(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
-        InitializeComponent();
-        BindingContext = new ButtonActionsGridViewModel(buttonPanelActions, context, availableButtons);
-    }
 
-    // protected override void OnSizeAllocated(double width, double height) {
-    //     base.OnSizeAllocated(width, height);
-    //     if (width > 0 && height > 0) { base.OnSizeAllocated(width, _viewModel.ControlHeight);}
-    // }
+    private ButtonActionsGridViewModel _viewModel;
+    public ButtonActionsGrid(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
+        _viewModel = new ButtonActionsGridViewModel(buttonPanelActions, context, availableButtons);
+        InitializeComponent();
+        BindingContext = _viewModel;
+    }
 
     private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {
         if (sender is Picker picker) {
@@ -38,4 +35,8 @@ public partial class ButtonActionsGrid : ContentView {
             }
         }
     }
+
+    private void Cell_OnAppearing(object? sender, EventArgs e) { }
+
+    private void IdPicker_OnSelectedIndexChanged(object? sender, EventArgs e) { }
 }

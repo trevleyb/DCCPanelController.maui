@@ -1,9 +1,6 @@
-using System.Diagnostics;
-using System.Reflection;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
@@ -23,10 +20,9 @@ public partial class SvgImage : ObservableObject {
 
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     public ImageSource ImageSource => ImageManager.ImageSource;
+    public Image AsImage(double scale) => new Image { Source = ImageSource, Scale = scale, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill};
+    public Image AsImage() => AsImage(0.75);
     
-    public Image AsImage(double scale) => new Image { Source = ImageSource, Scale = scale };
-    public Image AsImage() => new Image { Source = ImageSource, Scale = 0.50 };
-
     public void SetAttribute(SvgElementType elementType, Color color) {
         ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());
     }

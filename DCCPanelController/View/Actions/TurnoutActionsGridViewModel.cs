@@ -9,34 +9,16 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGridViewModel : ObservableObject {
-    [ObservableProperty]
-    private ActionsContext _actionContext;
+    [ObservableProperty] private ActionsContext _actionContext;
+    [ObservableProperty] private TurnoutActions _turnoutPanelActions;
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ControlHeight))]
-    [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsGridVisible))]
-    [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _availableTurnouts;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ControlHeight))]
-    [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsGridVisible))]
-    [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private ObservableCollection<string> _selectableTurnouts;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ControlHeight))]
-    [NotifyPropertyChangedFor(nameof(IsAddButtonEnabled))]
-    [NotifyPropertyChangedFor(nameof(IsGridVisible))]
-    [NotifyPropertyChangedFor(nameof(NoDataText))]
-    private TurnoutActions _turnoutPanelActions;
+    [ObservableProperty] List<string> _availableTurnouts;
+    [ObservableProperty] List<string> _selectableTurnouts;
 
     public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
-        AvailableTurnouts = availableTurnouts.ToObservableCollection();
-        SelectableTurnouts = new ObservableCollection<string>(AvailableTurnouts);
+        AvailableTurnouts = availableTurnouts;
+        SelectableTurnouts = new List<string>(availableTurnouts);
         TurnoutPanelActions = turnoutPanelActions;
         UpdateSelectableTurnouts();
         OnPropertyChanged(nameof(IsTurnoutContext));
@@ -99,10 +81,6 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     public void UpdateSelectableTurnouts(string? activeTurnout = "") {
         for (var i = AvailableTurnouts.Count - 1; i >= 0; i--) {
             var turnout = AvailableTurnouts[i];
-
-            // If we have already used this button, then remove it from the Selectable ones
-            // ---------------------------------------------------------------------------
-            var found = TurnoutPanelActions.Any(btn => btn.Id == turnout);
 
             if (TurnoutPanelActions.Any(btn => btn.Id == turnout) && turnout != activeTurnout) {
                 SelectableTurnouts.Remove(turnout);

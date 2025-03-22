@@ -1,3 +1,5 @@
+using System.Text;
+using System.Xml;
 using System.Xml.Linq;
 
 namespace DCCPanelController.Helpers;
@@ -35,4 +37,14 @@ public static class Extensions {
             _       => false
         };
     }
+    
+    public static byte[] ToByteArray(this XDocument document) {
+        using (var memoryStream = new MemoryStream()) {
+            using (var writer = XmlWriter.Create(memoryStream, new XmlWriterSettings { Encoding = Encoding.UTF8, Indent = false })) {
+                document.WriteTo(writer);
+            }
+            return memoryStream.ToArray();
+        }
+    }
+
 }

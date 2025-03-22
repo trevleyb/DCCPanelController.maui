@@ -15,7 +15,6 @@ public static class FormHelper {
 #if ANDROID
             handler.PlatformView.Background = null;
             handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
-            handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToAndroid());
 #elif IOS
             handler.PlatformView.BackgroundColor = UIColor.Clear;
             handler.PlatformView.Layer.BorderWidth = 0;
@@ -27,7 +26,6 @@ public static class FormHelper {
 #if ANDROID
             handler.PlatformView.Background = null;
             handler.PlatformView.SetBackgroundColor(Android.Graphics.Color.Transparent);
-            handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToAndroid());
 #elif IOS
             handler.PlatformView.BackgroundColor = UIColor.Clear;
             handler.PlatformView.Layer.BorderWidth = 0;

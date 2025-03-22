@@ -8,15 +8,14 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.Models.ViewModel.Interfaces;
-using Dynamensions.ColorPalleteGenerator;
 
 namespace DCCPanelController.View.DynamicProperties;
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;
-
+    [ObservableProperty] private Entity _entity;
     public DynamicPropertyPageViewModel(Entity entity, string? propertyName, StackBase propertyContainer) {
+        Entity = entity;
         PropertyName = propertyName ?? (string.IsNullOrEmpty(entity.Name) ? "Track" : $"{entity.Name}");
         BuildProperties(propertyContainer, entity);
     }

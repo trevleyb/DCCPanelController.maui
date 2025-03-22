@@ -43,7 +43,7 @@ public partial class ButtonAction : ObservableObject {
 
 public partial class TurnoutAction : ObservableObject {
     [ObservableProperty] private string _id = string.Empty;
-    [ObservableProperty] private TurnoutStateEnum  _whenClosed = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private TurnoutStateEnum _whenClosed = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _whenThrown = TurnoutStateEnum.Unknown;
     [ObservableProperty] private bool _cascade = false;
 

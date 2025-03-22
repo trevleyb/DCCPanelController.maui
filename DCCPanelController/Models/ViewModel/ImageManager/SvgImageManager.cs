@@ -1,18 +1,17 @@
 using System.Diagnostics;
-using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
 using SkiaSharp;
-using SKSvg = Svg.Skia.SKSvg;
+using Svg.Skia;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public class SvgImageManager {
-    private const int DefaultWidth = 192;
-    private const int DefaultHeight = 192;
+    private const int DefaultWidth = 48;
+    private const int DefaultHeight = 48;
     private readonly XDocument _svgDocument;
+    private string _imageSource;
 
     /// <summary>
     ///     Creates an instance of the DisplayImage Manager with the given name of the
@@ -24,6 +23,7 @@ public class SvgImageManager {
     /// <exception cref="Exception">Will throw FileNot Found if it cannot find the file. </exception>
     public SvgImageManager(string imageName) {
         try {
+            _imageSource = imageName;
             _svgDocument = LoadSvg(imageName);
         } catch (Exception e) {
             throw new FileNotFoundException($"Unable to load image {imageName}: {e.Message}");
@@ -35,15 +35,13 @@ public class SvgImageManager {
     ///     change to any of the elements. The change functions will set _imageSource to null which will
     ///     cause a call to the image function to re-calculate/re-draw the image itself.
     /// </summary>
-    public ImageSource ImageSource => GetSvgAsImage();
-
-    public List<string> SupportedElements => _svgDocument.Descendants().SelectMany(element => element.Attributes().Where(attribute => attribute.Name.LocalName == "id").Select(attribute => attribute.Value)).Distinct().ToList();
+    public ImageSource ImageSource => GetSvgAsImageSource();
 
     /// <summary>
     ///     Converts the SVG DisplayImage into a PNG. Up-scales it to the default size as part of the process.
     /// </summary>
     /// <returns>A PNG DisplayImage of the SVG</returns>
-    private ImageSource GetSvgAsImage() {
+    private ImageSource GetSvgAsImageSource() {
         using (var svg = new SKSvg()) {
             svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
             if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");

@@ -1,6 +1,7 @@
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using SkiaSharp;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
@@ -17,24 +18,20 @@ public abstract partial class TrackTile : Tile {
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
         VisualProperties.Add(nameof(TrackEntity.IsOpaque));
     }
-
+    
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
         var svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
-
-        var image = new Image {
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
-            Scale = 1.5,
-        };
-
+        
+        var image = svgImage.AsImage(1.5);
+        
         if (Entity is TrackEntity { IsOpaque : true } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
         if (IsPath) image.BackgroundColor = Colors.CornflowerBlue;
         if (IsOccupied) image.BackgroundColor = Colors.Tomato;
 
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
-        image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
+        //image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
         return image;
     }
 
