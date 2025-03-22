@@ -1,5 +1,7 @@
+using CommunityToolkit.Maui.Views;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.View.Components;
 using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
@@ -11,32 +13,33 @@ public partial class ButtonActionsGrid : ContentView {
         _viewModel = new ButtonActionsGridViewModel(buttonPanelActions, context, availableButtons);
         InitializeComponent();
         BindingContext = _viewModel;
-    }
-
-    private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {
-        if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem?.ToString() ?? "";
-            if (BindingContext is ButtonActionsGridViewModel viewModel) {
-                viewModel.UpdateSelectableButtons(selectedItem);
-                picker.ItemsSource = viewModel.SelectableButtons;
-                picker.SelectedItem = selectedItem;
-                picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.SelectableButtons.IndexOf(selectedItem);
-            }
+        foreach (var item in buttonPanelActions) {
+            Console.WriteLine($"Buttons: {item.Id}");
         }
     }
 
-    private void IDPicker_OnUnfocused(object? sender, FocusEventArgs e) {
-        if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem?.ToString() ?? "";
-            if (BindingContext is ButtonActionsGridViewModel viewModel) {
-                picker.ItemsSource = viewModel.AvailableButtons;
-                picker.SelectedItem = selectedItem;
-                picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.AvailableButtons.IndexOf(selectedItem);
+    /// <summary>
+    /// Ideally we would use a Picker, but there is a bug in the picker and it is clearing the Selected Item
+    /// and buggered if I could solve it so I wrote a popup selector. 
+    /// </summary>
+    private async void IdLabel_OnClicked(object? sender, EventArgs e) {
+        try {
+            if (sender is Button picker) {
+                var selectedItem = picker.Text ?? "";
+                if (BindingContext is ButtonActionsGridViewModel viewModel) {
+                    viewModel.UpdateSelectableButtons(selectedItem);
+                    var popup = new IDPicker("Button", selectedItem, viewModel.SelectableButtons);
+                    if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
+                        var result = await mainpage.ShowPopupAsync(popup);
+                        if (result is string resultItem) {
+                            picker.Text = resultItem;
+                        }
+                    }
+                }
             }
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);  
         }
+        
     }
-
-    private void Cell_OnAppearing(object? sender, EventArgs e) { }
-
-    private void IdPicker_OnSelectedIndexChanged(object? sender, EventArgs e) { }
 }
