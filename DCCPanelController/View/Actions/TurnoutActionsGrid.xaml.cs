@@ -1,5 +1,7 @@
+using CommunityToolkit.Maui.Views;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.View.Components;
 using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
@@ -10,30 +12,27 @@ public partial class TurnoutActionsGrid : ContentView {
         BindingContext = new TurnoutActionsGridViewModel(turnoutPanelActions, context, availableTurnouts);
     }
 
-    private void IDPicker_OnFocused(object? sender, FocusEventArgs e) {
-        if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem?.ToString() ?? "";
-
-            if (BindingContext is TurnoutActionsGridViewModel viewModel) {
-                viewModel.UpdateSelectableTurnouts(selectedItem);
-                picker.ItemsSource = viewModel.SelectableTurnouts;
-                picker.SelectedItem = selectedItem;
-                picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.SelectableTurnouts.IndexOf(selectedItem);
+    /// <summary>
+    /// Ideally we would use a Picker, but there is a bug in the picker and it is clearing the Selected Item
+    /// and buggered if I could solve it so I wrote a popup selector. 
+    /// </summary>
+    private async void IdLabel_OnClicked(object? sender, EventArgs e) {
+        try {
+            if (sender is Button picker) {
+                var selectedItem = picker.Text ?? "";
+                if (BindingContext is TurnoutActionsGridViewModel viewModel) {
+                    viewModel.UpdateSelectableTurnouts(selectedItem);
+                    var popup = new IDPicker("Turnout", selectedItem, viewModel.SelectableTurnouts);
+                    if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
+                        var result = await mainpage.ShowPopupAsync(popup);
+                        if (result is string resultItem) {
+                            picker.Text = resultItem;
+                        }
+                    }
+                }
             }
-        }
-    }
-
-    private void IDPicker_OnUnfocused(object? sender, FocusEventArgs e) {
-        if (sender is Picker picker) {
-            var selectedItem = picker.SelectedItem?.ToString() ?? "";
-
-            if (BindingContext is TurnoutActionsGridViewModel viewModel) {
-                picker.ItemsSource = viewModel.AvailableTurnouts;
-                picker.SelectedItem = selectedItem;
-                picker.SelectedIndex = string.IsNullOrEmpty(selectedItem) ? -1 : viewModel.AvailableTurnouts.IndexOf(selectedItem);
-
-                //viewModel.UpdateSelectableTurnouts();
-            }
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);  
         }
     }
 }
