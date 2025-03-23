@@ -14,7 +14,7 @@ public class EditableDate(string label, string description = "", int order = 0, 
             var cell = new DatePicker { BindingContext = owner, Format = "D" };
             cell.VerticalOptions = LayoutOptions.Center;
             cell.SetBinding(DatePicker.DateProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            return CreateGroupCell(cell, owner, info);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Date: {e.Message}");
             return null;

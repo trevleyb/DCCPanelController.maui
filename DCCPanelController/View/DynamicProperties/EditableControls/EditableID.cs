@@ -25,7 +25,7 @@ public class EditableID(string label, string description = "", int order = 0, st
             cell.TextChanged += CellOnTextChanged;
             cell.Completed += CellOnCompleted;
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            return CreateGroupCell(cell, owner, info);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a String:  {e.Message}");
             return null;

@@ -46,11 +46,11 @@ public abstract class Tile : ContentView, ITile {
         BindingContext = this;
         Content = CreateTile();
         if (Content != null) {
-            ClassId = Entity.Guid.ToString();
-            SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
-            SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
-            SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
-            SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), source: Entity));
+            Content.ClassId = Entity.Guid.ToString();
+            Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
+            Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
+            Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
+            Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), source: Entity));
         }
     }
 
@@ -79,7 +79,7 @@ public abstract class Tile : ContentView, ITile {
             .ContinueWith((t) => {
                  if (t.IsCanceled) return;
                  if (_visualPropertiesChanged) {
-                     Content = CreateTile();
+                     SetContent();
                      _visualPropertiesChanged = false; // Reset flag
                  }
              }, TaskScheduler.FromCurrentSynchronizationContext());

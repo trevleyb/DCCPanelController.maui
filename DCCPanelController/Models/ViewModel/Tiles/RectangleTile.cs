@@ -16,12 +16,9 @@ public class RectangleTile : Tile {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
 
         if (Entity is RectangleEntity entity) {
-
             Shape shape;
             if (entity.BorderRadius > 0) {
-                shape = new RoundRectangle() {
-                    CornerRadius = entity.BorderRadius,
-                };
+                shape = new RoundRectangle() { CornerRadius = entity.BorderRadius, };
             } else {
                 shape = new Rectangle();
             }
@@ -30,13 +27,13 @@ public class RectangleTile : Tile {
             shape.StrokeThickness = entity.BorderWidth;
             shape.WidthRequest = TileWidth;
             shape.HeightRequest = TileHeight;
-            shape.HorizontalOptions = LayoutOptions.Start;
-            shape.VerticalOptions = LayoutOptions.Start;
+            shape.HorizontalOptions = LayoutOptions.Fill;
+            shape.VerticalOptions = LayoutOptions.Fill;
             shape.ZIndex = entity.Layer;
             shape.Opacity = entity.Opacity;
             shape.InputTransparent = true;
             shape.Scale = 1;
-            shape.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
+            shape.Rotation = Rotation;
             return shape;
         } 
         return CreateSymbol();

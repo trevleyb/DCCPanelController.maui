@@ -27,8 +27,7 @@ public partial class ButtonActionsGrid : ContentView {
             if (sender is Button picker) {
                 var selectedItem = picker.Text ?? "";
                 if (BindingContext is ButtonActionsGridViewModel viewModel) {
-                    viewModel.UpdateSelectableButtons(selectedItem);
-                    var popup = new IDPicker("Button", selectedItem, viewModel.SelectableButtons);
+                    var popup = new IDPicker("Button", selectedItem, viewModel.SelectableButtons());
                     if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
                         var result = await mainpage.ShowPopupAsync(popup);
                         if (result is string resultItem) {

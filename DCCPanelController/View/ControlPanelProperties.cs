@@ -104,7 +104,7 @@ public partial class ControlPanelView {
             ITile? lastTile = null;
             foreach (var newEntity in newEntities) {
                 Console.WriteLine($"Adding {newEntity.Name} to the grid");
-                lastTile = control.AddTileToGrid(newEntity);
+                lastTile = control.AddEntityToGrid(newEntity);
             }
 
             // Highlight the last item added to the collection. Normally there would 

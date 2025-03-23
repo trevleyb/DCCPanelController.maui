@@ -18,14 +18,12 @@ public class EditableImage(string label, string description = "", int order = 0,
             };
 
             var imageString = PropertyHelper.GetPropertyValue<string>(owner, info.Name) ?? string.Empty;
-
             var image = new Image {
                 Source = string.IsNullOrEmpty(imageString) ? null : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(imageString))) ?? null,
                 Aspect = Aspect.AspectFit,
+                Margin = new Thickness(10, 10, 10, 10),
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                MaximumHeightRequest = 200,
-                MaximumWidthRequest = 100
             };
 
             var horizontal = new StackLayout {
@@ -39,10 +37,10 @@ public class EditableImage(string label, string description = "", int order = 0,
                 Text = "Select Image",
                 BackgroundColor = StyleColor.Get("Primary"),
                 TextColor = Colors.White,
+                HeightRequest = 30,
                 FontSize = 15,
                 Margin = new Thickness(10, 10, 10, 10)
             };
-
             fileButton.Clicked += async (_, _) => await SelectImageAsync(image, owner, info);
 
             var photoButton = new Button {
@@ -50,15 +48,15 @@ public class EditableImage(string label, string description = "", int order = 0,
                 BackgroundColor = StyleColor.Get("Primary"),
                 TextColor = Colors.White,
                 FontSize = 15,
+                HeightRequest = 30,
                 Margin = new Thickness(10, 10, 10, 10)
             };
-
             photoButton.Clicked += async (_, _) => await SelectPhotoAsync(image, owner, info);
             horizontal.Children.Add(fileButton);
             horizontal.Children.Add(photoButton);
             stack.Children.Add(image);
             stack.Children.Add(horizontal);
-            return CreateGroupCell(stack, owner, info);
+            return CreateGroupCell(stack, 150);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create an Image: {e.Message}");
             return null;

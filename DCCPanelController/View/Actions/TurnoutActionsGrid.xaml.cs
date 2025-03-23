@@ -21,8 +21,7 @@ public partial class TurnoutActionsGrid : ContentView {
             if (sender is Button picker) {
                 var selectedItem = picker.Text ?? "";
                 if (BindingContext is TurnoutActionsGridViewModel viewModel) {
-                    viewModel.UpdateSelectableTurnouts(selectedItem);
-                    var popup = new IDPicker("Turnout", selectedItem, viewModel.SelectableTurnouts);
+                    var popup = new IDPicker("Turnout", selectedItem, viewModel.SelectableTurnouts(selectedItem));
                     if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
                         var result = await mainpage.ShowPopupAsync(popup);
                         if (result is string resultItem) {

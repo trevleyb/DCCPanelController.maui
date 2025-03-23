@@ -45,7 +45,7 @@ public class EditableOpacity(string label, string description = "", int order = 
 
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
-            return CreateGroupCell(cell, owner, info);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Int: {e.Message}");
             return null;

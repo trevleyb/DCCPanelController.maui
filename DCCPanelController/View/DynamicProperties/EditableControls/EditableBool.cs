@@ -14,7 +14,7 @@ public class EditableBool(string label, string description = "", int order = 0, 
             var cell = new Switch { BindingContext = owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White };
             cell.VerticalOptions = LayoutOptions.Center;            
             cell.SetBinding(Switch.IsToggledProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            return CreateGroupCell(cell, owner, info);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Bool switch {e.Message}");
             return null;

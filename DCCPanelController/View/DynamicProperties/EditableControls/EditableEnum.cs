@@ -103,7 +103,6 @@ public abstract class EditableEnum(string label, string description = "", int or
                 HeightRequest = 30,
                 BorderWidth = 0,
                 FontSize = 10,
-                WidthRequest = 120,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 Content = value.ToString() // Display the value
@@ -112,6 +111,6 @@ public abstract class EditableEnum(string label, string description = "", int or
             radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(owner, info.Name));
             radioGroup.Children.Add(radioButton);
         }
-        return CreateGroupCell(radioGroup, owner, info);
+        return CreateGroupCell(radioGroup);
     }
 }

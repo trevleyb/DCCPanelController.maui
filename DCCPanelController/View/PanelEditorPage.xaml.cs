@@ -110,7 +110,6 @@ public partial class PanelEditorPage {
             };
 
             _editPropertiesToolbar.IsEnabled = vm.IsEntitySelected;
-            _editMoveCopyResizeToolbar.IsEnabled = vm.IsEntitySelected;
             _editCopyToolbar.IsEnabled = vm.IsEntitySelected;
             _editDeleteToolbar.IsEnabled = vm.IsEntitySelected;
             _editRotateToolbar.IsEnabled = vm.IsEntitySelected;
@@ -147,9 +146,8 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_editPropertiesToolbar);
                 ToolbarItems.Add(_spacerToolbar);
                 ToolbarItems.Add(_panelPropertiesToolbar);
-                ToolbarItems.Add(_editToggleGridToolbar);
+                //ToolbarItems.Add(_editToggleGridToolbar);
                 ToolbarItems.Add(_exitEditModeToolbar);
-                ToolbarItems.Add(_toggleFullscreenToolbar);
             } else {
                 // In View mode so we need a toolbar that supports the panels.
                 // --------------------------------------------------------------------------------------------------
@@ -157,8 +155,8 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_duplicatePanelToolbar);
                 ToolbarItems.Add(_deletePanelToolbar);
                 ToolbarItems.Add(_editPanelToolbar);
-                ToolbarItems.Add(_toggleFullscreenToolbar);
             }
+            ToolbarItems.Add(_toggleFullscreenToolbar);
             ConfigureToolbarItems();
         }
     }

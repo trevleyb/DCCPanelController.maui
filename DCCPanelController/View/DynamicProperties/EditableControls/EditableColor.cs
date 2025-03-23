@@ -19,7 +19,7 @@ public class EditableColor(string label, string description = "", int order = 0,
             if (owner is ITrackEntity && info.Name == nameof(TrackEntity.TrackBorderColor)) {
                 cell.SetBinding(VisualElement.IsEnabledProperty, new Binding(nameof(TrackEntity.IsMainLine)) { Source = owner, Mode = BindingMode.TwoWay });
             }
-            return CreateGroupCell(cell, owner, info);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Color: {e.Message}");
             return null;

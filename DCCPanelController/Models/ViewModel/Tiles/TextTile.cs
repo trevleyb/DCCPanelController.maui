@@ -41,8 +41,8 @@ public class TextTile : Tile {
                     Content = label,
                     InputTransparent = true,
                     RotationX = entity.Rotation,
-                    HorizontalOptions = LayoutOptions.Start,
-                    VerticalOptions = LayoutOptions.Start,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
                     WidthRequest = TileWidth,
                     HeightRequest = TileHeight,
                     StrokeThickness = entity.BorderWidth,
@@ -50,7 +50,7 @@ public class TextTile : Tile {
                     StrokeShape = new RoundRectangle { CornerRadius = new CornerRadius(entity.BorderRadius) }
                 };
             } else view = label;
-            view.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
+            view.Rotation = Rotation;
             return view;
         } 
         return CreateSymbol();

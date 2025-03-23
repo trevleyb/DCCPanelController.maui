@@ -47,6 +47,7 @@
 
             <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}">
                 <ListView
+                    SelectionMode="None"
                     HorizontalOptions="Fill"
                     ItemsSource="{Binding TurnoutPanelActions}"
                     VerticalOptions="Fill"

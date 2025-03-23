@@ -11,9 +11,9 @@ public abstract class EditableProperty(string label, string description = "", in
     public string Group { get; } = group ?? "General";  // Group to which this property belongs
     public int Order { get; } = order;                  // Order within the group
 
-    protected IView CreateGroupCell(IView view, object owner, PropertyInfo info) {
+    protected IView CreateGroupCell(IView view, int? height = null) {
         var grid = new Grid();
-        grid.HeightRequest = 43;
+        grid.MinimumHeightRequest = height ?? 43;
         grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = 150 });
         grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
         grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
@@ -55,7 +55,6 @@ public abstract class EditableProperty(string label, string description = "", in
         grid.SetColumn(boxView, 0);
         grid.SetRow(boxView, 1);
         grid.SetColumnSpan(boxView, 2);
-
         return grid;
     }
 }

@@ -1,9 +1,11 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.View.Components;
 using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
@@ -11,16 +13,12 @@ namespace DCCPanelController.View.Actions;
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty] private ActionsContext _actionContext;
     [ObservableProperty] private TurnoutActions _turnoutPanelActions;
-
     [ObservableProperty] List<string> _availableTurnouts;
-    [ObservableProperty] List<string> _selectableTurnouts;
 
     public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
         AvailableTurnouts = availableTurnouts;
-        SelectableTurnouts = new List<string>(availableTurnouts);
         TurnoutPanelActions = turnoutPanelActions;
-        UpdateSelectableTurnouts();
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
         OnPropertyChanged(nameof(ControlHeight));
@@ -30,36 +28,35 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
 
     public bool IsGridVisible => TurnoutPanelActions.Count > 0;
-    public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
+    public bool IsAddButtonEnabled => SelectableTurnouts().Count > 0;
     public double ControlHeight => 40 + TurnoutPanelActions.Count * 40;
 
     public string NoDataText {
         get {
             if (AvailableTurnouts.Count == 0) return "No Turnouts have been defined. ";
             if (TurnoutPanelActions.Count == 0) return "Use the + key to add a turnout action.";
-            if (SelectableTurnouts.Count == 0) return "All defined turnouts have been assigned.";
+            if (SelectableTurnouts().Count == 0) return "All defined turnouts have been assigned.";
             return "";
         }
     }
 
     [RelayCommand]
     private void AddRow() {
-        if (SelectableTurnouts.Count > 0) {
-            TurnoutPanelActions.Add(new TurnoutAction { Id = SelectableTurnouts[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
+        if (SelectableTurnouts().Count > 0) {
+            TurnoutPanelActions.Add(new TurnoutAction { Id = SelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
         }
-
-        UpdateSelectableTurnouts();
     }
 
     [RelayCommand]
     private void RemoveRow(TurnoutAction panelAction) {
         TurnoutPanelActions.Remove(panelAction);
-        UpdateSelectableTurnouts();
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        OnPropertyChanged(nameof(TurnoutPanelActions));
     }
 
     [RelayCommand]
     private void IdValueChanged(string id) {
-        UpdateSelectableTurnouts();
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
     }
 
     // Build a collection of all available turnouts that could be selected.
@@ -78,27 +75,21 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         return foundTurnouts;
     }
 
-    public void UpdateSelectableTurnouts(string? activeTurnout = "") {
+    public List<string> SelectableTurnouts(string? activeTurnout = "") {
+        var selectableTurnouts = new List<string>(AvailableTurnouts);
         for (var i = AvailableTurnouts.Count - 1; i >= 0; i--) {
             var turnout = AvailableTurnouts[i];
 
             if (TurnoutPanelActions.Any(btn => btn.Id == turnout) && turnout != activeTurnout) {
-                SelectableTurnouts.Remove(turnout);
+                if (selectableTurnouts.Contains(turnout)) selectableTurnouts.Remove(turnout);
             } else {
                 // Otherwise add it to the Selectable ones as it may have been removed
                 // -------------------------------------------------------------------
-                if (!SelectableTurnouts.Contains(turnout)) {
-                    SelectableTurnouts.Add(turnout);
+                if (!selectableTurnouts.Contains(turnout)) {
+                    selectableTurnouts.Add(turnout);
                 }
             }
         }
-
-        OnPropertyChanged(nameof(TurnoutPanelActions));
-        OnPropertyChanged(nameof(SelectableTurnouts));
-        OnPropertyChanged(nameof(AvailableTurnouts));
-        OnPropertyChanged(nameof(ControlHeight));
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
-        OnPropertyChanged(nameof(IsGridVisible));
-        OnPropertyChanged(nameof(NoDataText));
+        return selectableTurnouts;
     }
 }

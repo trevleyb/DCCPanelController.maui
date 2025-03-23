@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Security.Cryptography;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
@@ -30,6 +31,8 @@ public partial class ControlPanelView {
     private double _gridSize;
     private double _viewHeight;
     private double _viewWidth;
+    private int _dragStartCol;
+    private int _dragStartRow;
     private int _lastDragCol;
     private int _lastDragRow;
     private int _tapCount;
@@ -104,26 +107,35 @@ public partial class ControlPanelView {
                 }
             }
             DrawGrid();
-            AddTilesToGrid(Panel);
+            AddEntitiesToGrid(Panel);
         }
     }
 
     /// <summary>
     /// Given the Panel list of Entities, add each one as a tile to the panel.
     /// </summary>
-    private void AddTilesToGrid(Panel? panel) {
+    private void AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
         foreach (var entity in panel.Entities) {
-            AddTileToGrid(entity);
+            AddEntityToGrid(entity);
         }
     }
 
     /// <summary>
     /// Given an Entity, create a tile and add it to the panel grid. 
     /// </summary>
-    /// <returns>Returns a instance of the created tile or null if it could not create one. </returns>
-    private ITile? AddTileToGrid(Entity entity) {
+    /// <returns>Returns an instance of the created tile or null if it could not create one. </returns>
+    private ITile? AddEntityToGrid(Entity entity) {
         var tile = TileFactory.CreateTile(entity, _gridSize);
+        if (tile is ContentView view) {
+            SetTileGestures(tile);
+            SetTileGridPosition(tile);
+            DynamicGrid.Children.Add(view);
+        }
+        return tile;
+    }
+
+    private void SetTileGestures(ITile tile) {
         if (tile is ContentView view) {
             // If this tile is an interactive tile, then add a guesture recogniser
             // so that when tapped or double-tapped, we can interact with it.
@@ -145,13 +157,10 @@ public partial class ControlPanelView {
                 dragGesture.DropCompleted += (sender, args) => DragCompleted(sender, args);
                 view.GestureRecognizers.Add(dragGesture);
             }
-            SetTileGridPosition(tile);
-            DynamicGrid.Children.Add(view);
         }
-        return tile;
     }
-    
-    private void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
+
+    private static void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
 
         // TODO: Maybe this code draws the current path???
@@ -168,34 +177,38 @@ public partial class ControlPanelView {
     /// The event arguments related to the tap event, providing details about the interaction.
     /// </param>
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
-        _tapCount++;
-        await Task.Delay(DoubleTapTime);
+        try {
+            _tapCount++;
+            await Task.Delay(DoubleTapTime);
 
-        if (DesignMode) {
-            if (sender is ITile tile) {
-                if (_tapCount == 1) {
-                    if (tile.IsSelected) {
-                        ClearAllSelectedTiles();
-                        OnTileSelected(null, 1);
-                    } else {
+            if (DesignMode) {
+                if (sender is ITile tile) {
+                    if (_tapCount == 1) {
+                        if (tile.IsSelected) {
+                            ClearAllSelectedTiles();
+                            OnTileSelected(null, 1);
+                        } else {
+                            ClearAllSelectedTiles();
+                            MarkTileSelected(tile);
+                            OnTileSelected(tile, 1);
+                        }
+                    }
+                    if (_tapCount == 2) {
                         ClearAllSelectedTiles();
                         MarkTileSelected(tile);
-                        OnTileSelected(tile, 1);
+                        OnTileSelected(tile, 2);
                     }
                 }
-                if (_tapCount == 2) {
-                    ClearAllSelectedTiles();
-                    MarkTileSelected(tile);
-                    OnTileSelected(tile, 2);
+            } else {
+                if (sender is ITileInteractive interactiveTile) {
+                    if (_tapCount == 1) interactiveTile.Interact();
+                    if (_tapCount == 2) interactiveTile.Secondary();
                 }
             }
-        } else {
-            if (sender is ITileInteractive interactiveTile) {
-                if (_tapCount == 1) interactiveTile.Interact();
-                if (_tapCount == 2) interactiveTile.Secondary();
-            }
+            _tapCount = 0;
+        } catch (Exception ex) {
+            Console.WriteLine($"Tap Tile failed due to: {ex.Message}"); // TODO handle exception
         }
-        _tapCount = 0;
     }
 
     private void RemoveTileFromGrid(ITile tile) => RemoveEntityFromGrid(tile.Entity);
@@ -203,16 +216,8 @@ public partial class ControlPanelView {
     private void RemoveEntityFromGrid(Entity entity) {
         var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId.Equals(entity.Guid.ToString())).ToList();
         foreach (var child in children) {
+            child.GestureRecognizers.Clear();
             DynamicGrid.Remove(child);
-        }
-    }
-
-    private void SetTileGridPosition(ITile tile) {
-        if (tile is ContentView view) {
-            DynamicGrid.SetColumn(view, tile.Entity.Col);
-            DynamicGrid.SetRow(view, tile.Entity.Row);
-            DynamicGrid.SetColumnSpan(view, tile.Entity.Width);
-            DynamicGrid.SetRowSpan(view, tile.Entity.Height);
         }
     }
 
@@ -259,14 +264,6 @@ public partial class ControlPanelView {
 
     #region Support Marking and UnMarking Tiles on the Panel
     public void MarkTileSelected(ITile tile) {
-        if (tile is IView view) {
-            var colSpan = DynamicGrid.GetColumnSpan(view);
-            var rowSpan = DynamicGrid.GetRowSpan(view);
-            var colPos = DynamicGrid.GetColumn(view);
-            var rowPos = DynamicGrid.GetRow(view);
-            Console.WriteLine($"Marking tile: {tile.Entity.Name} at {colPos} x {colSpan},{rowPos} x {rowSpan}");
-        }
-        
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
         OnTileSelected(tile, 1);
@@ -294,7 +291,7 @@ public partial class ControlPanelView {
 
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
-        
+
         UnHighlightCell(col, row);
         var color = action switch {
             CellHighlightAction.Selected    => Colors.CornflowerBlue,
@@ -311,8 +308,8 @@ public partial class ControlPanelView {
             Stroke = borderColor,
             StrokeThickness = 2,
             BackgroundColor = backgroundColor,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Start,
             WidthRequest = width * _gridSize,
             HeightRequest = height * _gridSize,
             ZIndex = EntityPresets.Highlight,
@@ -361,8 +358,10 @@ public partial class ControlPanelView {
         args.Data.Properties.Add("Tile", tile);
         args.Data.Properties.Add("Source", "Panel");
         ClearAllSelectedTiles();
-        _lastDragCol = EditMode == EditModeEnum.Size ? tile.Entity.Col : 0;
-        _lastDragRow = EditMode == EditModeEnum.Size ? tile.Entity.Row : 0;
+        _lastDragCol = tile.Entity.Col;
+        _lastDragRow = tile.Entity.Row;
+        _dragStartCol = tile.Entity.Col;
+        _dragStartRow = tile.Entity.Row;
 
 #if IOS || MACCATALYST
         UIDragPreview Action() {
@@ -408,12 +407,15 @@ public partial class ControlPanelView {
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
         var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
 
-        if (gridPosition is { } position && tile is not null) {
-            UnHighlightCell(_lastDragCol, _lastDragRow);
+        if (gridPosition is { } position && tile is not null && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
             if (EditMode == EditModeEnum.Size && source == "Panel") {
+                UnHighlightCell(_lastDragCol, _lastDragRow);
                 ResizeTrack(tile, position.Col, position.Row);
-                HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Resize);
+                HighlightCell(tile, CellHighlightAction.Resize);
+                _lastDragCol = tile.Entity.Col;
+                _lastDragRow = tile.Entity.Row;
             } else {
+                UnHighlightCell(_lastDragCol, _lastDragRow);
                 if (!DoesTrackClash(tile, position.Col, position.Row) && !IsTileOutOfBounds(tile, position.Col, position.Row)) {
                     e.AcceptedOperation = DataPackageOperation.Copy;
                     HighlightCell(position.Col, position.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragValid);
@@ -421,13 +423,9 @@ public partial class ControlPanelView {
                     e.AcceptedOperation = DataPackageOperation.None;
                     HighlightCell(position.Col, position.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragInvalid);
                 }
+                _lastDragCol = position.Col;
+                _lastDragRow = position.Row;
             }
-            _lastDragCol = position.Col;
-            _lastDragRow = position.Row;
-        } else {
-            UnHighlightCell(_lastDragCol, _lastDragRow);
-            _lastDragCol = 0;
-            _lastDragRow = 0;
         }
 
 #if IOS || MACCATALYST
@@ -451,7 +449,7 @@ public partial class ControlPanelView {
 
     private void DragCompleted(object? sender, DropCompletedEventArgs e) {
         if (sender is DragGestureRecognizer { Parent : ITile tile }) {
-            MarkTileUnSelected(tile);
+            MarkTileSelected(tile);
         }
     }
 
@@ -557,40 +555,52 @@ public partial class ControlPanelView {
     #endregion
 
     private void ResizeTrack(ITile? tile, int newCol, int newRow) {
-        if (tile is null) return;
+        if (tile is null) return; // Only resize tracks
 
-        // Original position and size
-        var originalX = tile.Entity.Col;
-        var originalY = tile.Entity.Row;
+        // Current size and position of the tile during drag
+        var currentCol = _dragStartCol; // Always work from the starting position
+        var currentRow = _dragStartRow;
 
-        // Resizing right (increasing width)
-        if (newCol > originalX) {
-            tile.Entity.Width = newCol - originalX + 1; // +1 to include the new column
+        // Work relative to the drag start position
+        if (newCol >= _dragStartCol) {
+            // Dragging right - increase width and keep column the same
+            tile.Entity.Col = _dragStartCol;
+            tile.Entity.Width = newCol - _dragStartCol + 1;
+        } else {
+            // Dragging left - move column left and increase width
+            tile.Entity.Col = newCol;
+            tile.Entity.Width = _dragStartCol - newCol + 1;
         }
 
-        // Resizing left (shifting X and adjusting width)
-        else if (newCol < originalX) {
-            var deltaX = originalX - newCol;
-            tile.Entity.Col -= deltaX;   // Shift left
-            tile.Entity.Width += deltaX; // Increase width
+        if (newRow >= _dragStartRow) {
+            // Dragging down - increase height and keep row the same
+            tile.Entity.Row = _dragStartRow;
+            tile.Entity.Height = newRow - _dragStartRow + 1;
+        } else {
+            // Dragging up - move row up and increase height
+            tile.Entity.Row = newRow;
+            tile.Entity.Height = _dragStartRow - newRow + 1;
         }
 
-        // Resizing down (increasing height)
-        if (newRow > originalY) {
-            tile.Entity.Height = newRow - originalY + 1; // +1 to include the new row
-        }
-
-        // Resizing up (shifting Y and adjusting height)
-        else if (newRow < originalY) {
-            var deltaY = originalY - newRow;
-            tile.Entity.Row -= deltaY;    // Shift up
-            tile.Entity.Height += deltaY; // Increase height
-        }
-
-        // Ensure minimum size limits
+        // Ensure minimum size limits (width and height shouldn't be less than 1)
         tile.Entity.Width = Math.Max(1, tile.Entity.Width);
         tile.Entity.Height = Math.Max(1, tile.Entity.Height);
+
+        // Log updated values for debugging
+        Console.WriteLine($"Resizing track: {tile.Entity.Name} starts from {_dragStartCol},{_dragStartRow} to {tile.Entity.Col},{tile.Entity.Row} with size {tile.Entity.Width} x {tile.Entity.Height}");
+
+        // Update the UI Grid to reflect the changes
         SetTileGridPosition(tile);
+    }
+
+    private void SetTileGridPosition(ITile tile) {
+        if (tile is ContentView view) {
+            view.BackgroundColor = Colors.Red;
+            DynamicGrid.SetColumn(view, tile.Entity.Col);
+            DynamicGrid.SetRow(view, tile.Entity.Row);
+            DynamicGrid.SetColumnSpan(view, tile.Entity.Width);
+            DynamicGrid.SetRowSpan(view, tile.Entity.Height);
+        }
     }
 
     /// <summary>
