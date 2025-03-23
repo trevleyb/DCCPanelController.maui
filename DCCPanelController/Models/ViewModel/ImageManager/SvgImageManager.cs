@@ -2,7 +2,9 @@ using System.Diagnostics;
 using System.Text;
 using System.Xml.Linq;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using DCCPanelController.View.Helpers;
 using SkiaSharp;
+using SkiaSharp.Views.Maui.Controls;
 using Svg.Skia;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
@@ -35,46 +37,87 @@ public class SvgImageManager {
     ///     change to any of the elements. The change functions will set _imageSource to null which will
     ///     cause a call to the image function to re-calculate/re-draw the image itself.
     /// </summary>
-    public ImageSource ImageSource => GetSvgAsImageSource();
+    public ImageSource AsImageSource => GetSvgAsImageSource(_svgDocument);
+    public SKCanvasView AsCanvasView(double width, double height, int rotation) => GetSvgAsCanvasView(_svgDocument, width, height, rotation);
 
     /// <summary>
     ///     Converts the SVG DisplayImage into a PNG. Up-scales it to the default size as part of the process.
     /// </summary>
     /// <returns>A PNG DisplayImage of the SVG</returns>
-    private ImageSource GetSvgAsImageSource() {
-        using (var svg = new SKSvg()) {
-            svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
-            if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
+    private static ImageSource GetSvgAsImageSource(XDocument svgDocument, float scale = 1.0f) {
+        var svg = new SKSvg();
+        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(svgDocument.ToString())));
+        if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
 
-            // Safe retrieval of dimensions
-            var width = svg.Picture.CullRect.Width;
-            var height = svg.Picture.CullRect.Height;
-            if (width <= 0 || height <= 0) throw new ApplicationException("Invalid SVG picture dimensions.");
+        // Safe retrieval of dimensions
+        var width = svg.Picture.CullRect.Width;
+        var height = svg.Picture.CullRect.Height;
+        if (width <= 0 || height <= 0) throw new ApplicationException("Invalid SVG picture dimensions.");
 
-            // Maintain aspect-ratio when scaling
-            const int quality = 100;
-            var scaleX = DefaultWidth / width;
-            var scaleY = DefaultHeight / height;
+        // Maintain aspect-ratio when scaling
+        const int quality = 100;
+        var scaleX = (DefaultWidth / width);
+        var scaleY = (DefaultHeight / height);
 
-            var stream = new MemoryStream();
-            svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
-            stream.Seek(0, SeekOrigin.Begin);
-            return ImageSource.FromStream(() => stream);
-        }
+        var stream = new MemoryStream();
+        svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
+        stream.Seek(0, SeekOrigin.Begin);
+        return ImageSource.FromStream(() => stream);
+    }
+
+    private static SKCanvasView GetSvgAsCanvasView(XDocument svgDocument, double width, double height, int rotation) {
+        var svg = new SKSvg();
+        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(svgDocument.ToString())));
+        if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
+
+        var canvasView = new SKCanvasView {
+            WidthRequest = width,
+            HeightRequest = height
+        };
+        
+        canvasView.PaintSurface += (sender, e) => {
+            var canvas = e.Surface.Canvas;
+            canvas.Clear(SKColors.Transparent); // Clear the canvas
+
+            // Get the dimensions of the canvas surface and SVG
+            var canvasWidth = e.Info.Width; 
+            var canvasHeight = e.Info.Height;
+            var svgWidth = svg.Picture?.CullRect.Width;
+            var svgHeight = svg.Picture?.CullRect.Height;
+
+            // Calculate scale to fit the SVG into the canvas, maintaining aspect-ratio
+            var scaleX = (canvasWidth / svgWidth) ?? 1.0f;
+            var scaleY = (canvasHeight / svgHeight) ?? 1.0f;
+
+            // Create transformation-matrix to center and scale the SVG
+            var matrix = SKMatrix.CreateScale(scaleX, scaleY);
+            var translateX = (canvasWidth - (svgWidth * scaleX)) / 2;
+            var translateY = (canvasHeight - (svgHeight * scaleY)) / 2;
+            matrix = SKMatrix.Concat(SKMatrix.CreateTranslation(translateX ?? 0, translateY ?? 0), matrix);
+
+            // Apply rotation to the canvas
+            canvas.Translate((float)canvasWidth / 2 , (float)canvasHeight /2);   // Move to the center of the canvas
+            canvas.RotateDegrees(rotation);                                      // Rotate by the specified angle
+            canvas.Translate((float)-canvasWidth / 2 , (float)-canvasHeight /2); // Move to the center of the canvas
+
+            // Draw the SVG picture on the canvas
+            canvas.DrawPicture(svg.Picture, in matrix);
+        };
+        return canvasView;
     }
 
     /// <summary>
     ///     Converts the XDocument SVG DisplayImage into a stream which can be consumed by
     ///     the ImageSource.FromStream method
     /// </summary>
-    private Stream ConvertXDocumentToStream(XDocument svgDocument) {
+    private static Stream ConvertXDocumentToStream(XDocument svgDocument) {
         var stream = new MemoryStream();
         svgDocument.Save(stream);
         stream.Position = 0;
         return stream;
     }
 
-    private XDocument LoadSvg(string resourceName) {
+    private static XDocument LoadSvg(string resourceName) {
         try {
             using var stream = SvgImages.ExecutingAssembly.GetManifestResourceStream(resourceName);
             if (stream == null) {

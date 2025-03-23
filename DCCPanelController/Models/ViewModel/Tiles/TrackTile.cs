@@ -1,11 +1,16 @@
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using DCCPanelController.View.Helpers;
 using SkiaSharp;
+using SkiaSharp.Views.Maui.Controls;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract partial class TrackTile : Tile {
+    private const double DefaultScale = 1.5;
+    
     // @formatter:off
     public bool IsOccupied {get; set => SetField(ref field, value); }
     public bool IsPath {get; set => SetField(ref field, value); }
@@ -18,20 +23,36 @@ public abstract partial class TrackTile : Tile {
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
         VisualProperties.Add(nameof(TrackEntity.IsOpaque));
     }
-    
+
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
+        return CreateTrackTileAsCanvas(trackName, trackRotation);
+    }
+
+    protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation) {
+        var svgImage = SvgImages.GetImage(trackName, trackRotation);
+        var style = GetDefaultStyle();
+        svgImage.ApplyStyle(style.Build());
+
+        var canvas = svgImage.AsCanvas(TileWidth*DefaultScale,TileHeight*DefaultScale,svgImage.Rotation);
+        canvas.HorizontalOptions = LayoutOptions.Fill;
+        canvas.VerticalOptions = LayoutOptions.Fill;
+        
+        if (Entity is TrackEntity { IsOpaque : true } entity) canvas.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
+        if (IsPath) canvas.BackgroundColor = Colors.CornflowerBlue;
+        if (IsOccupied) canvas.BackgroundColor = Colors.Tomato;
+        return canvas;
+    }
+
+    protected Microsoft.Maui.Controls.View? CreateTrackTileAsImage(string trackName, int trackRotation) {
         var svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
         
-        var image = svgImage.AsImage(1.5);
-        
+        var image = svgImage.AsImage(1.5f);
         if (Entity is TrackEntity { IsOpaque : true } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
         if (IsPath) image.BackgroundColor = Colors.CornflowerBlue;
         if (IsOccupied) image.BackgroundColor = Colors.Tomato;
-
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
-        //image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
         return image;
     }
 

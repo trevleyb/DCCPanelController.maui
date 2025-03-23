@@ -17,8 +17,7 @@ public partial class PlatformTile : TrackTile, ITileInteractive {
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("platform").AsImage();
     }
-
-
+    
     public void Interact() {
         if (Entity is PlatformEntity straight) {
             straight.TrackType = straight.TrackType == TrackTypeEnum.MainLine ? TrackTypeEnum.BranchLine : TrackTypeEnum.MainLine;

@@ -18,27 +18,13 @@ public abstract partial class TurnoutTile : TrackTile, ITileInteractive {
     }
 
     new protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
-        SvgImage? svgImage;
-        Image? image;
-        svgImage = State switch {
-            TurnoutStateEnum.Unknown => SvgImages.GetImage(trackName + "Unknown", trackRotation),
-            TurnoutStateEnum.Closed  => SvgImages.GetImage(trackName + "Straight", trackRotation),
-            TurnoutStateEnum.Thrown  => SvgImages.GetImage(trackName + "Diverging", trackRotation),
-            _                        => null
+        var imageName = State switch {
+            TurnoutStateEnum.Unknown => trackName + "Unknown",
+            TurnoutStateEnum.Closed  => trackName + "Straight",
+            TurnoutStateEnum.Thrown  => trackName + "Diverging",
+            _                        => trackName + "Unknown"
         };
-
-        if (svgImage is null) return null;
-        svgImage.ApplyStyle(GetDefaultStyle().Build());
-
-        image = new Image {
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
-            Scale = 1.5,
-        };
-
-        image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
-        image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
-        return image;
+        return base.CreateTrackTile(imageName, Entity.Rotation);
     }
 
     public void Interact() {

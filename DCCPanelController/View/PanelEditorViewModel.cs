@@ -21,6 +21,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [NotifyPropertyChangedFor(nameof(PanelTitle))]
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
 
+    [ObservableProperty] private bool _gridVisible = false;
     [ObservableProperty] private bool _designMode = false;
     [ObservableProperty] private bool _propertiesChanged = false;
 
@@ -40,7 +41,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         ArgumentNullException.ThrowIfNull(profile, "Profile Service should be provided by the DI.");
         Profile = profile;
         Panels = Profile.Panels;
-        SelectedPanel = Panels.First();
+        SelectedPanel = Panels.FirstOrDefault();
         IsFullScreen = false;
     }
 
@@ -103,10 +104,16 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public void EditPanel() => DesignMode = true;
 
     public void ExitEditMode() {
+        GridVisible = false;
         DesignMode = false;
         Profile.Save();
     }
 
+    public void ToggleGrid() {
+        GridVisible = !GridVisible;
+    }
+
+    
     public void ToggleMode() {
         EditMode = EditMode switch {
             EditModeEnum.Copy => EditModeEnum.Move,
@@ -178,6 +185,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         Console.WriteLine($"SelectionChangedAsync: {SelectedPanel?.Id ?? "NONE"}");
         OnPropertyChanged(nameof(DesignMode));
         OnPropertyChanged(nameof(PanelTitle));
+        OnPropertyChanged(nameof(SelectedPanel));
     }
 
     private async Task<bool> AskUserToConfirm(string title, string message) {
@@ -244,5 +252,5 @@ public partial class PanelEditorViewModel : BaseViewModel {
         OnPropertyChanged(nameof(PanelTitle));
     }
     #endregion
-    
+
 }

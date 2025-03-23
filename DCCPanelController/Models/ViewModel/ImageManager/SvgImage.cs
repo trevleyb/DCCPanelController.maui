@@ -2,6 +2,8 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using DCCPanelController.View.Helpers;
+using SkiaSharp.Views.Maui.Controls;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
@@ -19,10 +21,11 @@ public partial class SvgImage : ObservableObject {
     }
 
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
-    public ImageSource ImageSource => ImageManager.ImageSource;
-    public Image AsImage(double scale) => new Image { Source = ImageSource, Scale = scale, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill};
-    public Image AsImage() => AsImage(0.75);
     
+    public ImageSource AsImageSource => ImageManager.AsImageSource;
+    public Image AsImage(float scale = 1.0f) => new Image { Source = ImageManager.AsImageSource, Scale = scale, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill};
+    public SKCanvasView AsCanvas(double width, double height, int rotation = 0) => ImageManager.AsCanvasView(width, height, rotation);
+
     public void SetAttribute(SvgElementType elementType, Color color) {
         ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());
     }

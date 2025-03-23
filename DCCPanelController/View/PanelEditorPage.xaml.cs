@@ -34,6 +34,13 @@ public partial class PanelEditorPage {
         Console.WriteLine($"PanelEditorPage.PropertyChanged: {e.PropertyName}");
         switch (e.PropertyName) {
         case nameof(DesignMode):
+            PanelView.ShowGrid = true;
+            if (_viewModel is {} vm) vm.GridVisible = true;
+            UpdateToolbarItems();
+            break;
+
+        case nameof(_viewModel.GridVisible):
+            PanelView.ShowGrid = _viewModel?.GridVisible ?? false;
             UpdateToolbarItems();
             break;
 
@@ -61,6 +68,7 @@ public partial class PanelEditorPage {
     private readonly ToolbarItem _editCopyToolbar = new ToolbarItem { Text = "Copy", IconImageSource = "copy.png"};
     private readonly ToolbarItem _editDeleteToolbar = new ToolbarItem { Text = "Delete", IconImageSource = "trash_2.png"};
     private readonly ToolbarItem _editRotateToolbar = new ToolbarItem { Text = "Rotate", IconImageSource = "rotate_cw.png"};
+    private readonly ToolbarItem _editToggleGridToolbar = new ToolbarItem { Text = "ToggleGrid", IconImageSource = "grid_off.png"};
     
     private readonly ToolbarItem _exitEditModeToolbar = new ToolbarItem { Text = "Exit Edit Mode", IconImageSource = "log_out.png" };
     private readonly ToolbarItem _toggleFullscreenToolbar = new ToolbarItem { Text = "Toggle Fullscreen" };
@@ -77,6 +85,7 @@ public partial class PanelEditorPage {
     private void AssignToolbarCommands() {
         if (_viewModel is { } vm) {
 
+            _editToggleGridToolbar.Command = new Command(vm.ToggleGrid);
             _editMoveCopyResizeToolbar.Command = new Command(vm.ToggleMode);
             _editDeleteToolbar.Command = new Command(vm.DeleteSelectedTile);
             _editRotateToolbar.Command = new Command(vm.RotateSelectedTile);
@@ -110,6 +119,7 @@ public partial class PanelEditorPage {
             _duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _deletePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _editPanelToolbar.IsEnabled = vm.SelectedPanel != null;
+            _editToggleGridToolbar.IconImageSource = vm.GridVisible ? "grid_on.png" : "grid_off.png";
             _toggleFullscreenToolbar.IconImageSource = vm.IsFullScreen ? "minimize_2.png" : "maximize_2.png";
         }
     }
@@ -137,6 +147,7 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_editPropertiesToolbar);
                 ToolbarItems.Add(_spacerToolbar);
                 ToolbarItems.Add(_panelPropertiesToolbar);
+                ToolbarItems.Add(_editToggleGridToolbar);
                 ToolbarItems.Add(_exitEditModeToolbar);
                 ToolbarItems.Add(_toggleFullscreenToolbar);
             } else {

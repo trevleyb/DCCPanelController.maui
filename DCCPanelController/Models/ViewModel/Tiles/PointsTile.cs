@@ -11,10 +11,10 @@ public class PointsTile : Tile {
         if (Entity is PointsEntity entity) {
             var svgImage = SvgImages.GetImage("points", Entity.Rotation);
             var image = new Image {
-                Scale = 1.5
+                Scale = 1.5,
+                Source = svgImage.AsImageSource
             };
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
-            image.SetBinding(Image.SourceProperty, new Binding(nameof(ImageSource), BindingMode.OneWay, source: svgImage));
             return image;
         } 
         return CreateSymbol();
