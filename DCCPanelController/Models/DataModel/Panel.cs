@@ -102,6 +102,12 @@ public partial class Panel : ObservableObject, IEntityID {
         var modifiedHash = modifiedJson.GetHashCode();
         return originalHash != modifiedHash;
     }
+
+    /// <summary>
+    /// Serializes the current panel instance into a JSON string representation with predefined serialization options.
+    /// </summary>
+    /// <returns>A JSON string representation of the panel, including its properties and associated data.</returns>
+    public string DownloadPanel() => JsonSerializer.Serialize<Panel>(this, JsonOptions.Options);
     
     /// <summary>
     /// Calculates the ratio of columns to rows in the format "x:y".

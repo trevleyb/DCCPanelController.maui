@@ -37,27 +37,6 @@
                         Text="{Binding PropertyName}"
                         TextColor="White"
                         VerticalOptions="Center"/>
-                    <HorizontalStackLayout HorizontalOptions="End">
-                        <ImageButton
-                            Command="{Binding DownloadPanelClickedCommand}"
-                            Aspect="Center"
-                            HeightRequest="25"
-                            Source="download.png"
-                            WidthRequest="25">
-                            <ImageButton.Behaviors>
-                                <toolkit:IconTintColorBehavior TintColor="White"/>
-                            </ImageButton.Behaviors>
-                        </ImageButton>
-                        <ImageButton
-                            Command="{Binding UploadPanelClickedCommand}"
-                            Aspect="Center"
-                            HeightRequest="25"
-                            Source="upload.png"
-                            WidthRequest="25">
-                            <ImageButton.Behaviors>
-                                <toolkit:IconTintColorBehavior TintColor="White"/>
-                            </ImageButton.Behaviors>
-                        </ImageButton>
                         <ImageButton
                             Aspect="Center"
                             HeightRequest="25"
@@ -67,7 +46,6 @@
                                 <toolkit:IconTintColorBehavior TintColor="White"/>
                             </ImageButton.Behaviors>
                         </ImageButton>
-                    </HorizontalStackLayout>
                 </Grid>
                 
                 <Grid

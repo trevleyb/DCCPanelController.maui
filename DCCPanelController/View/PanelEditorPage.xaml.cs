@@ -69,6 +69,9 @@ public partial class PanelEditorPage {
     private readonly ToolbarItem _editDeleteToolbar = new ToolbarItem { Text = "Delete", IconImageSource = "trash_2.png"};
     private readonly ToolbarItem _editRotateToolbar = new ToolbarItem { Text = "Rotate", IconImageSource = "rotate_cw.png"};
     private readonly ToolbarItem _editToggleGridToolbar = new ToolbarItem { Text = "ToggleGrid", IconImageSource = "grid_off.png"};
+
+    private readonly ToolbarItem _panelDownloadToolbar = new ToolbarItem { Text = "Download Panel", IconImageSource = "download.png" };
+    private readonly ToolbarItem _panelUploadToolbar = new ToolbarItem { Text = "Upload Panel", IconImageSource = "upload.png" };
     
     private readonly ToolbarItem _exitEditModeToolbar = new ToolbarItem { Text = "Exit Edit Mode", IconImageSource = "log_out.png" };
     private readonly ToolbarItem _toggleFullscreenToolbar = new ToolbarItem { Text = "Toggle Fullscreen" };
@@ -97,6 +100,8 @@ public partial class PanelEditorPage {
             _editPanelToolbar.Command = new Command(vm.EditPanel);
             _duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
             _panelPropertiesToolbar.Command = new Command(vm.EditPanelProperties);
+            _panelDownloadToolbar.Command = new Command(vm.DownloadPanelAsync);
+            _panelUploadToolbar.Command = new Command(vm.UploadPanelAsync);
         }
     }
 
@@ -118,6 +123,8 @@ public partial class PanelEditorPage {
             _duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _deletePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _editPanelToolbar.IsEnabled = vm.SelectedPanel != null;
+            _panelDownloadToolbar.IsEnabled = vm.SelectedPanel != null;
+            _panelUploadToolbar.IsEnabled = true;
             _editToggleGridToolbar.IconImageSource = vm.GridVisible ? "grid_on.png" : "grid_off.png";
             _toggleFullscreenToolbar.IconImageSource = vm.IsFullScreen ? "minimize_2.png" : "maximize_2.png";
         }
@@ -155,6 +162,8 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_duplicatePanelToolbar);
                 ToolbarItems.Add(_deletePanelToolbar);
                 ToolbarItems.Add(_editPanelToolbar);
+                ToolbarItems.Add(_panelDownloadToolbar);
+                ToolbarItems.Add(_panelUploadToolbar);
             }
             ToolbarItems.Add(_toggleFullscreenToolbar);
             ConfigureToolbarItems();

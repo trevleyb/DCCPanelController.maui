@@ -149,6 +149,36 @@ public partial class PanelEditorViewModel : BaseViewModel {
             }
         }
     }
+
+    public async void DownloadPanelAsync() {
+        try {
+            if (SelectedPanel is { } panel) {
+                var panelAsJson = panel.DownloadPanel();
+                var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
+                Console.WriteLine(location);
+                await DisplayAlert("Panel Saved", location ?? "");
+            }
+        } catch (Exception ex) {
+            Console.WriteLine("Unable to save the panel: " + ex.Message);
+        }
+    }
+
+    public async void UploadPanelAsync() {
+        try {
+            var jsonString = await FileHelper.OpenFileAsync("Select a Panel File");
+            if (!string.IsNullOrEmpty(jsonString)) {
+                var panel = Panels.UploadPanel(jsonString);
+                if (panel is not null) {
+                    await DisplayAlert("Success", $"Uploaded Panel: {panel.Id ?? ""}");
+                } else {
+                    await DisplayAlert("Error", "Unable to upload the provided file as a Panel.");
+                }
+            }
+        } catch (Exception ex) {
+            Console.WriteLine("Unable to upload the panel: " + ex.Message);
+        }
+    }
+
     
     public void EditTileProperties() => EditTileProperties(SelectedEntity);
     public async void EditTileProperties(Entity? entity) {
@@ -203,6 +233,13 @@ public partial class PanelEditorViewModel : BaseViewModel {
         return false;
     }
 
+    private async Task DisplayAlert(string title, string message) {
+        if (App.Current.Windows[0].Page is { } window) {
+            await window.DisplayAlert(title, message, "OK");
+        }
+    }
+
+    
     #region Drag and Drop Support for Panels
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {
