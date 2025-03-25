@@ -9,10 +9,9 @@ namespace DCCPanelController.Models.DataModel.Entities;
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject {
 
-    protected readonly int RotationFactor = 45;
-
     public abstract string Name { get; }
     public virtual string Type => GetType().Name;
+    protected int RotationFactor = 45;
     
     [ObservableProperty] private int _col;                 // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _row;                 // What Grid Position (Vertical) is this component?

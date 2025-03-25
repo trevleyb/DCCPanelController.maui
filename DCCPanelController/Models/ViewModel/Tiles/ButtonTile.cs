@@ -37,10 +37,8 @@ public partial class ButtonTile : Tile, ITileInteractive {
             });
 
             var image = new Image {
-                Scale = 1.5,
-                Source= svgImage.AsImageSource,
+                Source = svgImage.AsImageSource(0, DefaultScaleFactor),
             };
-            image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
             return image;
         }
         return CreateSymbol();

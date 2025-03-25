@@ -5,10 +5,12 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableDouble(string label, string description = "", int order = 0, string? group = null)
+public class EditableDouble(string label, string description = "", int order = 0, string? group = null, double minValue = 0, double maxValue = 10, double stepValue = 0.1)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public double MinValue { get; set; } = 0;  // used for Int (Minimum Value)
-    public double MaxValue { get; set; } = 10; // used for Int (Maximum Value)
+
+    public double MinValue { get; set; } = minValue; // used for Int (Minimum Value) 
+    public double MaxValue { get; set; } = maxValue; // used for Int (Maximum Value)
+    public double StepValue { get; set; } = stepValue; // used for Int (Maximum Value)
 
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
@@ -27,10 +29,10 @@ public class EditableDouble(string label, string description = "", int order = 0
 
             dataCell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             var stepperUpDown = new Stepper {
-                Minimum = 0,  // Define the stepper min value if needed
-                Maximum = 10, // Define the stepper max value if needed
+                Minimum = MinValue,  // Define the stepper min value if needed
+                Maximum = MaxValue, // Define the stepper max value if needed
+                Increment = StepValue, // Increment/decrement step
                 HeightRequest = 30,
-                Increment = 0.10, // Increment/decrement step
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
             };
@@ -39,7 +41,7 @@ public class EditableDouble(string label, string description = "", int order = 0
                 stepperUpDown.Value = initialStepperValue;
             }
 
-            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("00.00", CultureInfo.InvariantCulture) ?? "1.00"; };
+            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("0.00", CultureInfo.InvariantCulture) ?? "1.00"; };
             dataCell.TextChanged += (s, e) => {
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;

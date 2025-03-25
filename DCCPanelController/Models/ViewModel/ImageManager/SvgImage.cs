@@ -22,9 +22,9 @@ public partial class SvgImage : ObservableObject {
 
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
     
-    public ImageSource AsImageSource => ImageManager.AsImageSource;
-    public Image AsImage(float scale = 1.0f) => new Image { Source = ImageManager.AsImageSource, Scale = scale, HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill};
-    public SKCanvasView AsCanvas(double width, double height, int rotation = 0) => ImageManager.AsCanvasView(width, height, rotation);
+    public ImageSource AsImageSource(int rotation = 0, float scale = 1.0f) => ImageManager.AsImageSource(rotation, scale);
+    public Image AsImage(int rotation = 0, float scale = 1.0f) => new Image { Source = ImageManager.AsImageSource(rotation, scale),  HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill};
+    public SKCanvasView AsCanvas(int rotation = 0, float scale = 1.5f) => ImageManager.AsCanvasView(rotation, scale);
 
     public void SetAttribute(SvgElementType elementType, Color color) {
         ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());

@@ -24,6 +24,7 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
             Tiles.Clear();
             var panel = (source == null) ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);
             AddTile(new ButtonEntity(panel));
+            AddTile(new CircleLabelEntity(panel));
             AddTile(new StraightEntity(panel));
             AddTile(new StraightContinuationEntity(panel));
             AddTile(new PlatformEntity(panel));
@@ -33,7 +34,6 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
             AddTile(new RightTurnoutEntity(panel));
             AddTile(new TerminatorEntity(panel));
             AddTile(new CrossingEntity(panel));
-            AddTile(new CircleLabelEntity(panel));
             AddTile(new TextEntity(panel));
             AddTile(new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black});
             AddTile(new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black,LineWidth = 3});
@@ -45,7 +45,6 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
     private void AddTile(Entity entity) {
         var tile = TileFactory.CreateTile(entity, GridSize, TileDisplayMode.Symbol);
         if (tile is Tile view) {
-            view.Scale = 0.75;
             Tiles.Add(view);
         } 
     }

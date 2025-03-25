@@ -12,7 +12,7 @@ public partial class CornerTile : TrackTile {
     }
     
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("corner").AsImage();
+        return CreateTrackTile("corner", Entity.Rotation, SymbolScaleFactor);
     }
 
 }

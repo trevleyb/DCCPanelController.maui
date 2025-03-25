@@ -10,7 +10,7 @@ public partial class CrossingTile : TrackTile {
         return CreateTrackTile("cross", Entity.Rotation);
     }
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("cross").AsImage();
+        return CreateTrackTile("cross", Entity.Rotation, SymbolScaleFactor);
     }
 
 }

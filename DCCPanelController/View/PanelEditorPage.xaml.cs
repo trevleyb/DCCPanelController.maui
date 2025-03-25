@@ -109,10 +109,10 @@ public partial class PanelEditorPage {
                 _                 => "move.png"
             };
 
-            _editPropertiesToolbar.IsEnabled = vm.IsEntitySelected;
-            _editCopyToolbar.IsEnabled = vm.IsEntitySelected;
-            _editDeleteToolbar.IsEnabled = vm.IsEntitySelected;
-            _editRotateToolbar.IsEnabled = vm.IsEntitySelected;
+            _editPropertiesToolbar.IsEnabled = vm is { IsEntitySelected: true };
+            _editCopyToolbar.IsEnabled = vm is { IsEntitySelected      : true };
+            _editDeleteToolbar.IsEnabled = vm is { IsEntitySelected    : true };
+            _editRotateToolbar.IsEnabled = vm is { IsEntitySelected    : true, SelectedEntity: IRotationEntity };
            
             _addPanelToolbar.IsEnabled = true;
             _duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
@@ -140,13 +140,13 @@ public partial class PanelEditorPage {
             if (vm.DesignMode) {
                 // In Design/Edit mode so we need a toolbar that supports the tiles.
                 // --------------------------------------------------------------------------------------------------
-                ToolbarItems.Add(_editMoveCopyResizeToolbar);
                 ToolbarItems.Add(_editRotateToolbar);
                 ToolbarItems.Add(_editDeleteToolbar);
                 ToolbarItems.Add(_editPropertiesToolbar);
+                ToolbarItems.Add(_editMoveCopyResizeToolbar);
                 ToolbarItems.Add(_spacerToolbar);
                 ToolbarItems.Add(_panelPropertiesToolbar);
-                //ToolbarItems.Add(_editToggleGridToolbar);
+                ToolbarItems.Add(_editToggleGridToolbar);
                 ToolbarItems.Add(_exitEditModeToolbar);
             } else {
                 // In View mode so we need a toolbar that supports the panels.

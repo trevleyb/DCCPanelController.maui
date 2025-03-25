@@ -17,7 +17,7 @@
 
     <ContentView.Content>
         <VerticalStackLayout>
-            <Grid ColumnDefinitions="120,auto,auto">
+            <Grid Margin="5,5,0,0" ColumnDefinitions="120,auto,auto">
                 <Label
                     FontAttributes="Bold"
                     Grid.Column="0"

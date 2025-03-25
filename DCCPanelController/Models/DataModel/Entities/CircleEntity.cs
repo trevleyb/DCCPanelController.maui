@@ -13,11 +13,11 @@ public partial class CircleEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: EditableInt("Border Width", group: "Circle")]
     private int _borderWidth = 1;
 
-    [ObservableProperty] [property: EditableColor("Background", group: "Circle")] 
-    private Color _backgroundColor = Colors.Gray;
-    
     [ObservableProperty] [property: EditableColor("Border", group: "Circle")]
     private Color _borderColor = Colors.Black;
+    
+    [ObservableProperty] [property: EditableColor("Background", group: "Circle")] 
+    private Color _backgroundColor = Colors.Gray;
     
     [ObservableProperty] [property: EditableOpacity("Opacity", group: "Circle" )]
     private double _opacity = 0.5;

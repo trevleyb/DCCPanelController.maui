@@ -99,7 +99,7 @@
                                             Source="more_vertical.png"
                                             VerticalOptions="Center">
                                             <Image.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="WhiteSmoke" />
+                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
                                             </Image.Behaviors>
                                         </Image>
                                     </Grid>
@@ -126,7 +126,7 @@
                                             VerticalOptions="Center"
                                             x:DataType="view:PanelEditorViewModel">
                                             <Image.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="WhiteSmoke" />
+                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
                                             </Image.Behaviors>
                                             <!--  =========================================================================  -->
                                             <!--  Turn this back on once we can get the bindings to actually work correctly  -->
@@ -192,6 +192,7 @@
                     </StackLayout>
 
                     <view:ControlPanelView
+                        Margin="5"
                         BackgroundColor="Transparent"
                         DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=DesignMode, Mode=TwoWay}"
                         EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=TwoWay}"

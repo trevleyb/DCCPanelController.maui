@@ -6,7 +6,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
+public partial class TextEntity : Entity, ITextEntity, IDrawingEntity, IRotationEntity {
     public override string Name => "Text Block";
     
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
@@ -36,6 +36,8 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: EditableInt("Border Width", "", 5, group: "Border")]
     private int _borderWidth  = 0;
     
+    [ObservableProperty] [property: EditableOpacity("Opacity", "", 5, group: "Border" )]
+    private double _opacity = 0.5;
    
     [JsonConstructor]
     public TextEntity() {}

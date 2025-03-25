@@ -28,7 +28,7 @@ public class EditableInt(string label, string description = "", int order = 0, s
 
             var stepperUpDown = new Stepper {
                 Minimum = 0,  // Define the stepper min value if needed
-                Maximum = 20, // Define the stepper max value if needed
+                Maximum = 90, // Define the stepper max value if needed
                 HeightRequest = 30,
                 Increment = 1, // Increment/decrement step
                 VerticalOptions = LayoutOptions.Center,

@@ -10,6 +10,6 @@ public class RightTurnoutTile : TurnoutTile {
         return CreateTrackTile("RightTurnout", Entity.Rotation);
     }
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("RightTurnoutUnknown").AsImage();
+        return CreateTrackTile("rightturnoutunknown", Entity.Rotation, SymbolScaleFactor);
     }
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentView
     BackgroundColor="Transparent"
@@ -6,68 +6,66 @@
     x:DataType="panelProperties:PanelPropertyViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:local="clr-namespace:DCCPanelController.View.PanelProperties"
     xmlns:panelProperties="clr-namespace:DCCPanelController.View.PanelProperties"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.Content>
-        <VerticalStackLayout Margin="10">
+        <VerticalStackLayout Margin="5">
             <!--  Panel Name  -->
             <HorizontalStackLayout Margin="0,5,0,5">
                 <Label
-                    FontAttributes="Bold"
                     Text="Panel Name"
                     VerticalOptions="Center"
-                    WidthRequest="100" />
+                    WidthRequest="100"/>
                 <Entry
                     HorizontalOptions="FillAndExpand"
                     Placeholder="Enter Panel Name"
                     Text="{Binding Panel.Id}"
-                    WidthRequest="150" />
+                    HeightRequest="35"
+                    WidthRequest="150"/>
             </HorizontalStackLayout>
-
             <HorizontalStackLayout Margin="0,5,0,5">
                 <Label
-                    FontAttributes="Bold"
                     Text="Description"
                     VerticalOptions="Center"
-                    WidthRequest="100" />
+                    WidthRequest="100"/>
                 <Entry
                     HorizontalOptions="FillAndExpand"
                     Placeholder="Panel Description"
                     Text="{Binding Panel.Description}"
-                    WidthRequest="350" />
+                    HeightRequest="35"
+                    WidthRequest="350"/>
             </HorizontalStackLayout>
-
             <BoxView
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="2"
                 HorizontalOptions="Fill"
-                Margin="0,10,0,10" />
+                Margin="0,10,0,10"/>
 
             <HorizontalStackLayout>
-
                 <VerticalStackLayout>
                     <!--  Panel Columns  -->
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label
                             Text="Columns"
                             VerticalOptions="Center"
-                            WidthRequest="100" />
+                            WidthRequest="100"/>
                         <Entry
                             Keyboard="Numeric"
                             Margin="0,0,10,0"
                             Text="{Binding Panel.Cols}"
                             TextChanged="Cols_OnTextChanged"
                             VerticalOptions="Center"
-                            WidthRequest="30" />
+                            WidthRequest="30"/>
                         <Stepper
                             HorizontalOptions="FillAndExpand"
                             Increment="1"
                             Maximum="48"
                             Minimum="8"
                             Value="{Binding Panel.Cols}"
-                            x:Name="ColsStepper" />
+                            x:Name="ColsStepper"/>
                     </HorizontalStackLayout>
 
                     <!--  Panel Rows  -->
@@ -75,21 +73,21 @@
                         <Label
                             Text="Rows"
                             VerticalOptions="Center"
-                            WidthRequest="100" />
+                            WidthRequest="100"/>
                         <Entry
                             Keyboard="Numeric"
                             Margin="0,0,10,0"
                             Text="{Binding Panel.Rows}"
                             TextChanged="Rows_OnTextChanged"
                             VerticalOptions="Center"
-                            WidthRequest="30" />
+                            WidthRequest="30"/>
                         <Stepper
                             HorizontalOptions="FillAndExpand"
                             Increment="1"
                             Maximum="48"
                             Minimum="8"
                             Value="{Binding Panel.Rows}"
-                            x:Name="RowsStepper" />
+                            x:Name="RowsStepper"/>
                     </HorizontalStackLayout>
 
                 </VerticalStackLayout>
@@ -102,14 +100,14 @@
                         HorizontalOptions="Center"
                         Style="{StaticResource SmallLabel}"
                         Text="Panel Ratio"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
                     <Label
                         HorizontalOptions="Center"
                         IsEnabled="False"
                         Margin="0,10,0,0"
                         Style="{StaticResource Headline}"
                         Text="{Binding Panel.PanelRatio}"
-                        VerticalOptions="Center" />
+                        VerticalOptions="Center"/>
                 </VerticalStackLayout>
 
             </HorizontalStackLayout>
@@ -118,7 +116,7 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="2"
                 HorizontalOptions="Fill"
-                Margin="0,0,0,10" />
+                Margin="0,0,0,10"/>
 
             <Grid
                 ColumnDefinitions="*"
@@ -133,25 +131,25 @@
                         Style="{StaticResource MediumLabel}"
                         Text="Track Colors"
                         VerticalOptions="Center"
-                        WidthRequest="115" />
+                        WidthRequest="115"/>
                     <Button
                         Command="{Binding ResetDefaultsClickedCommand}"
                         FontSize="11"
                         Margin="5"
                         Text="Reset Defaults"
-                        WidthRequest="100" />
+                        WidthRequest="100"/>
                     <Button
                         Command="{Binding ResetOverridesClickedCommand}"
                         FontSize="11"
                         Margin="5"
                         Text="Reset Overrides"
-                        WidthRequest="120" />
+                        WidthRequest="120"/>
                     <Button
                         Command="{Binding ToAllPanelsClickedCommand}"
                         FontSize="11"
                         Margin="5"
                         Text="To All Panels"
-                        WidthRequest="100" />
+                        WidthRequest="100"/>
                 </HorizontalStackLayout>
             </Grid>
 
@@ -159,7 +157,7 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="0.5"
                 HorizontalOptions="Fill"
-                Margin="0,0,0,5" />
+                Margin="0,0,0,5"/>
 
             <Grid>
                 <ScrollView
@@ -173,24 +171,24 @@
                                     <Label
                                         Text="Background"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.BackgroundColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Track Border"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.BorderColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -198,25 +196,25 @@
                                     <Label
                                         Text="MainLine Track"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.MainLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="BranchLine Track"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.BranchLineColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -224,25 +222,25 @@
                                     <Label
                                         Text="Diverging Track"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.DivergingColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Hidden Track"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.HiddenColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -250,25 +248,25 @@
                                     <Label
                                         Text="Button Border"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Button Base"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -276,25 +274,25 @@
                                     <Label
                                         Text="Button On Border"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOnBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Button Off Border"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOffBorder, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -302,25 +300,25 @@
                                     <Label
                                         Text="Button On"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOnColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Button Off"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ButtonOffColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -328,25 +326,25 @@
                                     <Label
                                         Text="Continuation Marker"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ContinuationColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Terminator"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.TerminatorColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
                             <HorizontalStackLayout>
@@ -354,25 +352,25 @@
                                     <Label
                                         Text="Occupied"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.OccupiedColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                                 <HorizontalStackLayout Margin="0,5,0,5">
                                     <Label
                                         Text="Show Path"
                                         VerticalOptions="Center"
-                                        WidthRequest="120" />
+                                        WidthRequest="120"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="False"
                                         HeightRequest="25"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:PanelPropertyViewModel}}, Path=Panel.ShowPathColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        WidthRequest="100" />
+                                        WidthRequest="100"/>
                                 </HorizontalStackLayout>
                             </HorizontalStackLayout>
 

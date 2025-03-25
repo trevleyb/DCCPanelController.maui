@@ -5,7 +5,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ImageEntity : Entity, IDrawingEntity {
+public partial class ImageEntity : Entity, IDrawingEntity, IRotationEntity {
     public override string Name => "Image";
     
     [ObservableProperty][property: EditableInt("Border Radius", group: "Image")] 
@@ -19,9 +19,13 @@ public partial class ImageEntity : Entity, IDrawingEntity {
     
     [ObservableProperty] [property: EditableAspectRatio ("Aspect Ratio",group: "Image")]
     private Aspect _aspectRatio = Aspect.AspectFit;
-    
+
+    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Image" )]
+    private double _opacity = 0.5;
+
     [ObservableProperty] [property: EditableImage("Image", group: "Image")]
     private string _image = string.Empty;
+
 
     [JsonConstructor]
     public ImageEntity() {}

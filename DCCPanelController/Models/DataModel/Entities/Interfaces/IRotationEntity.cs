@@ -1,3 +1,5 @@
 namespace DCCPanelController.Models.DataModel.Interfaces;
 
-public interface ITrackEntity : IRotationEntity { }
+public interface IRotationEntity {
+    
+}

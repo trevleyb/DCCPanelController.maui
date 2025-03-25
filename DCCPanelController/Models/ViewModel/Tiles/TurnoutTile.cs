@@ -8,6 +8,7 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract partial class TurnoutTile : TrackTile, ITileInteractive {
+
     private TurnoutStateEnum State {
         get;
         set => SetField(ref field, value);
@@ -17,7 +18,7 @@ public abstract partial class TurnoutTile : TrackTile, ITileInteractive {
         VisualProperties.Add(nameof(State));
     }
 
-    new protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
         var imageName = State switch {
             TurnoutStateEnum.Unknown => trackName + "Unknown",
             TurnoutStateEnum.Closed  => trackName + "Straight",

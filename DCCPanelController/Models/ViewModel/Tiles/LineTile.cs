@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using Microsoft.Maui.Controls.Shapes;
@@ -5,30 +6,26 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class LineTile : Tile {
-    public LineTile(LineEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(entity.LineColor));
-        VisualProperties.Add(nameof(entity.LineWidth));
-        VisualProperties.Add(nameof(entity.Opacity));
-    }
+    public LineTile(LineEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-
         if (Entity is LineEntity entity) {
-            var line = new Line() {
+            var shape = new Line() {
                 X1 = 0,
                 Y1 = 0,
                 X2 = TileWidth,
                 Y2 = TileHeight,
-                Stroke = entity.LineColor,
-                StrokeThickness = entity.LineWidth,
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.Start,
-                ZIndex = entity.Layer,
-                Opacity = Opacity,
                 InputTransparent = true
             };
-            line.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
-            return line;
+            shape.SetBinding(Line.RotationProperty, new Binding(nameof(entity.Rotation), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(Line.X2Property, new Binding(nameof(TileWidth), BindingMode.TwoWay, source: this));
+            shape.SetBinding(Line.Y2Property, new Binding(nameof(TileHeight), BindingMode.TwoWay, source: this));
+            shape.SetBinding(Shape.OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.LineColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
+            shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.LineWidth), BindingMode.TwoWay, source: entity));
+            return shape;
         } 
         return CreateSymbol();
     }   

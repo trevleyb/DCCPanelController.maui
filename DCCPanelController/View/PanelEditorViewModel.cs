@@ -101,7 +101,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public void ToggleFullscreen() => IsFullScreen = !IsFullScreen;
-    public void EditPanel() => DesignMode = true;
+
+    public void EditPanel() {
+        DesignMode = true;
+        GridVisible = true;
+    }
 
     public void ExitEditMode() {
         GridVisible = false;
@@ -113,7 +117,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
         GridVisible = !GridVisible;
     }
 
-    
     public void ToggleMode() {
         EditMode = EditMode switch {
             EditModeEnum.Copy => EditModeEnum.Move,
@@ -148,7 +151,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
     
     public void EditTileProperties() => EditTileProperties(SelectedEntity);
-
     public async void EditTileProperties(Entity? entity) {
         try {
             entity ??= SelectedEntity;

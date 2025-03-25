@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using Microsoft.Maui.Controls.Shapes;
@@ -5,13 +6,7 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class RectangleTile : Tile {
-    public RectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(entity.BackgroundColor));
-        VisualProperties.Add(nameof(entity.BorderColor));
-        VisualProperties.Add(nameof(entity.BorderWidth));
-        VisualProperties.Add(nameof(entity.BorderRadius));
-        VisualProperties.Add(nameof(entity.Opacity));
-    }
+    public RectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
 
@@ -19,21 +14,18 @@ public class RectangleTile : Tile {
             Shape shape;
             if (entity.BorderRadius > 0) {
                 shape = new RoundRectangle() { CornerRadius = entity.BorderRadius, };
+                shape.SetBinding(RoundRectangle.CornerRadiusProperty, new Binding(nameof(entity.BorderRadius), BindingMode.TwoWay, source: entity));
             } else {
                 shape = new Rectangle();
             }
-            shape.Fill = entity.BackgroundColor;
-            shape.Stroke = entity.BorderColor;
-            shape.StrokeThickness = entity.BorderWidth;
-            shape.WidthRequest = TileWidth;
-            shape.HeightRequest = TileHeight;
+            shape.SetBinding(Shape.OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
+            shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
+            shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: entity));
             shape.HorizontalOptions = LayoutOptions.Fill;
             shape.VerticalOptions = LayoutOptions.Fill;
-            shape.ZIndex = entity.Layer;
-            shape.Opacity = entity.Opacity;
             shape.InputTransparent = true;
             shape.Scale = 1;
-            shape.Rotation = Rotation;
             return shape;
         } 
         return CreateSymbol();

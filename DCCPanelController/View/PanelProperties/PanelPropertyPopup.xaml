@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <toolkit:Popup
     x:Class="DCCPanelController.View.PanelProperties.PanelPropertyPopup"
@@ -29,39 +29,63 @@
                     <Button
                         Clicked="ClosePropertyPage"
                         HorizontalOptions="Start"
-                        Text="Close" />
+                        Text="Close"/>
                     <Label
                         HorizontalOptions="Center"
                         Margin="0,0,0,0"
                         Style="{StaticResource LargeLabel}"
                         Text="{Binding PropertyName}"
                         TextColor="White"
-                        VerticalOptions="Center" />
-                    <ImageButton
-                        Aspect="Center"
-                        HeightRequest="25"
-                        HorizontalOptions="End"
-                        Source="info.png"
-                        WidthRequest="25">
-                        <ImageButton.Behaviors>
-                            <toolkit:IconTintColorBehavior TintColor="White" />
-                        </ImageButton.Behaviors>
-                    </ImageButton>
+                        VerticalOptions="Center"/>
+                    <HorizontalStackLayout HorizontalOptions="End">
+                        <ImageButton
+                            Command="{Binding DownloadPanelClickedCommand}"
+                            Aspect="Center"
+                            HeightRequest="25"
+                            Source="download.png"
+                            WidthRequest="25">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="White"/>
+                            </ImageButton.Behaviors>
+                        </ImageButton>
+                        <ImageButton
+                            Command="{Binding UploadPanelClickedCommand}"
+                            Aspect="Center"
+                            HeightRequest="25"
+                            Source="upload.png"
+                            WidthRequest="25">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="White"/>
+                            </ImageButton.Behaviors>
+                        </ImageButton>
+                        <ImageButton
+                            Aspect="Center"
+                            HeightRequest="25"
+                            Source="info.png"
+                            WidthRequest="25">
+                            <ImageButton.Behaviors>
+                                <toolkit:IconTintColorBehavior TintColor="White"/>
+                            </ImageButton.Behaviors>
+                        </ImageButton>
+                    </HorizontalStackLayout>
                 </Grid>
+                
                 <Grid
                     Grid.Row="1"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill"
-                    x:Name="Properties" />
-                <Grid Grid.Row="3">
+                    x:Name="Properties"/>
+
+                <Grid Grid.Row="2">
                     <Button
                         Clicked="ClosePropertyPage"
                         HorizontalOptions="Center"
                         Margin="0,10,0,10"
                         Style="{StaticResource ButtonOutline}"
                         Text="Close"
-                        WidthRequest="150" />
+                        WidthRequest="150"/>
                 </Grid>
+                
             </Grid>
         </Border>
     </toolkit:Popup.Content>

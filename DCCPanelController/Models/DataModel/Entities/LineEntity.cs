@@ -5,7 +5,8 @@ using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
-public partial class LineEntity : Entity, IDrawingEntity {
+public partial class LineEntity : Entity, IDrawingEntity, IRotationEntity {
+
     public override string Name => "Line";
     
     [ObservableProperty][property: EditableColor("Line Color", group: "Line")] 
@@ -26,6 +27,7 @@ public partial class LineEntity : Entity, IDrawingEntity {
         LineColor = entity.LineColor;
         LineWidth = entity.LineWidth;
         Opacity = entity.Opacity;
+        RotationFactor = 10;
     }
     public override Entity Clone() => new LineEntity(this);
 }

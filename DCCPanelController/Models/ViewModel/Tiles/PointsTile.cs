@@ -12,7 +12,7 @@ public class PointsTile : Tile {
             var svgImage = SvgImages.GetImage("points", Entity.Rotation);
             var image = new Image {
                 Scale = 1.5,
-                Source = svgImage.AsImageSource
+                Source = svgImage.AsImageSource(0, DefaultScaleFactor)
             };
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
             return image;

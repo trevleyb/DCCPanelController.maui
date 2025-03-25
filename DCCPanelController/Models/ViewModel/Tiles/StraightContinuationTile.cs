@@ -16,6 +16,6 @@ public partial class StraightContinuationTile : TrackTile {
         };
     }
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("StraightContinuationArrow").AsImage();
+        return CreateTrackTile("StraightContinuationArrow", Entity.Rotation, SymbolScaleFactor);
     }
 }

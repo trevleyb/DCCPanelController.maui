@@ -15,7 +15,7 @@ public partial class PlatformTile : TrackTile, ITileInteractive {
     }
     
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("platform").AsImage();
+        return CreateTrackTile("platform", Entity.Rotation, SymbolScaleFactor);
     }
     
     public void Interact() {

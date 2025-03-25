@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
+using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.View.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
@@ -22,8 +23,8 @@ public abstract partial class TrackEntity : Entity {
     [ObservableProperty] [property: EditableColor("Border Color", "", 5, group: "Track")]
     private Color? _trackBorderColor;
     
-    [ObservableProperty] [property: EditableBool("Is Opaque", "", 5, group: "Track")]
-    private bool _isOpaque;
+    [ObservableProperty] [property: EditableOpacity("Opacity", "", 5, group: "Track" )]
+    private double _opacity = 1.0;
 
     public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;
     
@@ -35,5 +36,6 @@ public abstract partial class TrackEntity : Entity {
         TrackBorderColor = entity.TrackBorderColor;
         TrackType = entity.TrackType;
         TrackAttribute = entity.TrackAttribute;
+        Rotation = entity.Rotation;
     }
 }

@@ -18,7 +18,7 @@ using UIKit;
 namespace DCCPanelController.View;
 
 [ObservableObject]
-public partial class ControlPanelView {
+internal sealed partial class ControlPanelView {
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
@@ -50,7 +50,7 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    protected virtual void OnTileSelected(ITile? tile, int tapCount) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile, tapCount));
+    private void OnTileSelected(ITile? tile, int tapCount) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile, tapCount));
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
@@ -89,6 +89,7 @@ public partial class ControlPanelView {
             _viewWidth = _gridSize * Cols;
             _viewHeight = _gridSize * Rows;
 
+            DynamicGrid.ZIndex = 0;
             DynamicGrid.WidthRequest = _viewWidth;
             DynamicGrid.HeightRequest = _viewHeight;
             DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
@@ -128,6 +129,7 @@ public partial class ControlPanelView {
     private ITile? AddEntityToGrid(Entity entity) {
         var tile = TileFactory.CreateTile(entity, _gridSize);
         if (tile is ContentView view) {
+            view.ClassId = entity.Guid.ToString();
             SetTileGestures(tile);
             SetTileGridPosition(tile);
             DynamicGrid.Children.Add(view);
@@ -207,14 +209,14 @@ public partial class ControlPanelView {
             }
             _tapCount = 0;
         } catch (Exception ex) {
-            Console.WriteLine($"Tap Tile failed due to: {ex.Message}"); // TODO handle exception
+            Console.WriteLine($"Tap Tile failed due to: {ex.Message}"); 
         }
     }
 
     private void RemoveTileFromGrid(ITile tile) => RemoveEntityFromGrid(tile.Entity);
 
     private void RemoveEntityFromGrid(Entity entity) {
-        var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId.Equals(entity.Guid.ToString())).ToList();
+        var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId != null && x.ClassId.Equals(entity.Guid.ToString())).ToList();
         foreach (var child in children) {
             child.GestureRecognizers.Clear();
             DynamicGrid.Remove(child);
@@ -357,6 +359,8 @@ public partial class ControlPanelView {
 
         args.Data.Properties.Add("Tile", tile);
         args.Data.Properties.Add("Source", "Panel");
+        args.Data.Image = GetEditModeIconFilename;
+
         ClearAllSelectedTiles();
         _lastDragCol = tile.Entity.Col;
         _lastDragRow = tile.Entity.Row;
@@ -365,12 +369,7 @@ public partial class ControlPanelView {
 
 #if IOS || MACCATALYST
         UIDragPreview Action() {
-            var image = EditMode switch {
-                EditModeEnum.Copy => UIImage.FromFile("copy.png"),
-                EditModeEnum.Move => UIImage.FromFile("move.png"),
-                EditModeEnum.Size => UIImage.FromFile("crop.png"),
-                _                 => UIImage.FromFile("move.png"),
-            };
+            var image = UIImage.FromFile(GetEditModeIconFilename);
             var imageView = new UIImageView(image);
             imageView.ContentMode = UIViewContentMode.Center;
             imageView.Frame = new CGRect(0, 0, 32, 32);
@@ -435,6 +434,7 @@ public partial class ControlPanelView {
             e?.PlatformArgs?.SetDropProposal(EditMode switch {
                 EditModeEnum.Copy => new UIDropProposal(UIDropOperation.Copy),
                 EditModeEnum.Move => new UIDropProposal(UIDropOperation.Move),
+                EditModeEnum.Size => new UIDropProposal(UIDropOperation.Move),
                 _                 => new UIDropProposal(UIDropOperation.Forbidden),
             });
         }
@@ -449,6 +449,7 @@ public partial class ControlPanelView {
 
     private void DragCompleted(object? sender, DropCompletedEventArgs e) {
         if (sender is DragGestureRecognizer { Parent : ITile tile }) {
+            tile.ForceRedraw();
             MarkTileSelected(tile);
         }
     }
@@ -586,16 +587,13 @@ public partial class ControlPanelView {
         tile.Entity.Width = Math.Max(1, tile.Entity.Width);
         tile.Entity.Height = Math.Max(1, tile.Entity.Height);
 
-        // Log updated values for debugging
-        Console.WriteLine($"Resizing track: {tile.Entity.Name} starts from {_dragStartCol},{_dragStartRow} to {tile.Entity.Col},{tile.Entity.Row} with size {tile.Entity.Width} x {tile.Entity.Height}");
-
         // Update the UI Grid to reflect the changes
         SetTileGridPosition(tile);
+        tile.ForceRedraw();
     }
 
     private void SetTileGridPosition(ITile tile) {
         if (tile is ContentView view) {
-            view.BackgroundColor = Colors.Red;
             DynamicGrid.SetColumn(view, tile.Entity.Col);
             DynamicGrid.SetRow(view, tile.Entity.Row);
             DynamicGrid.SetColumnSpan(view, tile.Entity.Width);
@@ -636,6 +634,15 @@ public partial class ControlPanelView {
         Console.WriteLine($"Could not determine the Grid Position from the point provided: {point.ToString()}");
         return null;
     }
+    
+    private string GetEditModeIconFilename =>
+        EditMode switch {
+            EditModeEnum.Copy => "copy.png",
+            EditModeEnum.Move => "move.png",
+            EditModeEnum.Size => "crop.png",
+            _                 => "move.png",
+        };
+
 }
 
 public class TileSelectedEventArgs(ITile? tile, int tapCount) : EventArgs {

@@ -33,6 +33,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
         TurnoutPanelActions = new TurnoutActions(entity.TurnoutPanelActions);
         State = TurnoutStateEnum.Unknown;
         TrackColor = entity.TrackColor;
+        RotationFactor = 90; 
     }
     public string GenerateID() {
         var entities = Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? new List<TurnoutEntity>();

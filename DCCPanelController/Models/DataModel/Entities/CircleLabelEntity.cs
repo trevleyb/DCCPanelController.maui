@@ -6,7 +6,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class CircleLabelEntity : Entity, ITextEntity {
+public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
     public override string Name => "Circle Label";
 
     [ObservableProperty] [property: EditableString("Label", "", 0, group: "Text")]
@@ -18,9 +18,6 @@ public partial class CircleLabelEntity : Entity, ITextEntity {
     [ObservableProperty] [property: EditableInt("Font Size", "", 0, group: "Text")]
     private int _fontSize = 8;
     
-    [ObservableProperty] [property: EditableDouble("Scale Factor", "", 0, group: "Text")]
-    private double _scaleFactor = 1.00;
-
     [ObservableProperty] [property: EditableInt("Border Width", "", 5, group: "Circle")]
     private int _borderWidth = 2;
     
@@ -41,6 +38,9 @@ public partial class CircleLabelEntity : Entity, ITextEntity {
     
     [ObservableProperty][property: EditableOpacity("Opacity", "", 5, group: "Circle")] 
     private double _opacity = 1;
+
+    [ObservableProperty][property: EditableDouble("Scale", "", 5, group: "Circle", .25, 2.0)] 
+    private double _scale = 1;
 
     [JsonConstructor]
     public CircleLabelEntity() { }

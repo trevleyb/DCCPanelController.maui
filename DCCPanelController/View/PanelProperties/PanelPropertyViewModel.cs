@@ -15,6 +15,12 @@ public partial class PanelPropertyViewModel : BaseViewModel {
     }
 
     [RelayCommand]
+    private async Task DownloadPanelClickedAsync() { }
+
+    [RelayCommand]
+    private async Task UploadPanelClickedAsync() { }
+
+    [RelayCommand]
     private async Task ResetDefaultsClickedAsync() {
         var result = await AskUserToConfirm("Reset Default Colors?", "Are you sure you want to reset all Panels colors to the Default?");
         if (!result) return; // Exit if the user cancels the delete operation

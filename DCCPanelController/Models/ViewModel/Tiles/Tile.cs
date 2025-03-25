@@ -7,19 +7,25 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 using System.ComponentModel;
 
 public abstract class Tile : ContentView, ITile {
+    
+    public TileDisplayMode DisplayMode = TileDisplayMode.Normal;
     public Entity Entity { get; init; }
 
+    protected const float DefaultScaleFactor = 1.5f;
+    protected const float SymbolScaleFactor = 0.75f;
+    
     private const int DebounceDelay = 50;
-    private bool _visualPropertiesChanged;
     private Dictionary<string, object?> _propertyCache = [];
     private CancellationTokenSource? _debounceRebuildCts;
+
+    protected bool HaveVisualPropertiesChanged;
     protected HashSet<string> VisualProperties { get; } = [];
+    protected HashSet<string> VisualPropertiesChanged { get; } = [];
     
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
 
     // @formatter:off
-    public Microsoft.Maui.Controls.View? TileView { get; set => SetField(ref field, value); }
     public bool IsSelected {get; set => SetField(ref field, value); }
     public double GridSize {get; set => SetField(ref field, value); }
     // @formatter:on
@@ -27,14 +33,12 @@ public abstract class Tile : ContentView, ITile {
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
         GridSize = gridSize;
+        DisplayMode = displayMode;
+        
         PropertyChanged += OnPropertyChanged;
         entity.PropertyChanged += OnPropertyChanged;
         
         VisualProperties.Add(nameof(GridSize));
-        VisualProperties.Add(nameof(Entity.Rotation));
-        VisualProperties.Add(nameof(Entity.IsEnabled));
-        VisualProperties.Add(nameof(Entity.Height));
-        VisualProperties.Add(nameof(Entity.Width));
         VisualProperties.Add(nameof(Entity.Col));
         VisualProperties.Add(nameof(Entity.Row));
         SetContent();
@@ -42,21 +46,43 @@ public abstract class Tile : ContentView, ITile {
 
     protected abstract Microsoft.Maui.Controls.View? CreateTile();
     protected abstract Microsoft.Maui.Controls.View? CreateSymbol();
-    private void SetContent() {
+
+    private void SetNormalContent() {
         BindingContext = this;
         Content = CreateTile();
         if (Content != null) {
             Content.ClassId = Entity.Guid.ToString();
-            Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), source: this));
-            Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), source: this));
-            Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), source: Entity));
-            Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), source: Entity));
+            Content.SetBinding(WidthRequestProperty, new Binding(nameof(TileWidth), BindingMode.OneWay, source: this));
+            Content.SetBinding(HeightRequestProperty, new Binding(nameof(TileHeight), BindingMode.OneWay, source: this));
+            Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.OneWay, source: Entity));
+            Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), BindingMode.OneWay, source: Entity));
         }
     }
 
+    private void SetSymbolContent() {        BindingContext = this;
+        BindingContext = this;
+        Content = CreateSymbol();
+        if (Content != null) {
+            Content.WidthRequest = TileWidth;
+            Content.HeightRequest= TileHeight;
+            Content.ZIndex = Entity.Layer;
+        }
+    }
+
+    private void SetContent() {
+        if (DisplayMode == TileDisplayMode.Normal) SetNormalContent();
+        if (DisplayMode == TileDisplayMode.Symbol) SetSymbolContent();
+    }
+
+    public void ForceRedraw() {
+        HaveVisualPropertiesChanged = true;
+        RebuildIfNecessary();
+    }
+    
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
-            _visualPropertiesChanged = true;
+            HaveVisualPropertiesChanged = true;
+            VisualPropertiesChanged.Add(property);
         }
         RebuildIfNecessary();
     }
@@ -78,9 +104,11 @@ public abstract class Tile : ContentView, ITile {
         Task.Delay(DebounceDelay, token)
             .ContinueWith((t) => {
                  if (t.IsCanceled) return;
-                 if (_visualPropertiesChanged) {
+                 if (HaveVisualPropertiesChanged) {
+                     Console.WriteLine($"{Entity.Name}: Properties changed. [{string.Join(",", VisualProperties)}]");
                      SetContent();
-                     _visualPropertiesChanged = false; // Reset flag
+                     HaveVisualPropertiesChanged = false; // Reset flag
+                     VisualPropertiesChanged.Clear();
                  }
              }, TaskScheduler.FromCurrentSynchronizationContext());
     }

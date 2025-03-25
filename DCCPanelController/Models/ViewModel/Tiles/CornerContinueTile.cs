@@ -17,7 +17,7 @@ public partial class CornerContinueTile : TrackTile {
     }
     
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("CornerContinuationArrow").AsImage();
+        return CreateTrackTile("CornerContinuationArrow", Entity.Rotation, SymbolScaleFactor);
     }
 
 }

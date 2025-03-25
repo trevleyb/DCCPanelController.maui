@@ -15,7 +15,7 @@ public partial class StraightTile : TrackTile, ITileInteractive {
     }
     
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("straight").AsImage();
+        return CreateTrackTile("straight", Entity.Rotation, SymbolScaleFactor);
     }
     
     public void Interact() {

@@ -33,20 +33,12 @@ public class SvgImageManager {
     }
 
     /// <summary>
-    ///     Returns the image. We store it so that we only need to re-calculate it if we have made a
-    ///     change to any of the elements. The change functions will set _imageSource to null which will
-    ///     cause a call to the image function to re-calculate/re-draw the image itself.
-    /// </summary>
-    public ImageSource AsImageSource => GetSvgAsImageSource(_svgDocument);
-    public SKCanvasView AsCanvasView(double width, double height, int rotation) => GetSvgAsCanvasView(_svgDocument, width, height, rotation);
-
-    /// <summary>
     ///     Converts the SVG DisplayImage into a PNG. Up-scales it to the default size as part of the process.
     /// </summary>
     /// <returns>A PNG DisplayImage of the SVG</returns>
-    private static ImageSource GetSvgAsImageSource(XDocument svgDocument, float scale = 1.0f) {
+    public ImageSource AsImageSource(int rotation = 0, float scale = 1.0f) {
         var svg = new SKSvg();
-        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(svgDocument.ToString())));
+        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
         if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
 
         // Safe retrieval of dimensions
@@ -56,8 +48,8 @@ public class SvgImageManager {
 
         // Maintain aspect-ratio when scaling
         const int quality = 100;
-        var scaleX = (DefaultWidth / width);
-        var scaleY = (DefaultHeight / height);
+        var scaleX = (float)(DefaultWidth / width) * scale;
+        var scaleY = (float)(DefaultHeight / height) * scale;
 
         var stream = new MemoryStream();
         svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
@@ -65,16 +57,12 @@ public class SvgImageManager {
         return ImageSource.FromStream(() => stream);
     }
 
-    private static SKCanvasView GetSvgAsCanvasView(XDocument svgDocument, double width, double height, int rotation) {
+    public SKCanvasView AsCanvasView(int rotation = 0, float scale = 1.5f) {
         var svg = new SKSvg();
-        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(svgDocument.ToString())));
+        svg.Load(new MemoryStream(Encoding.UTF8.GetBytes(_svgDocument.ToString())));
         if (svg.Picture == null) throw new ApplicationException("Unable to load SVG or create Picture.");
 
-        var canvasView = new SKCanvasView {
-            WidthRequest = width,
-            HeightRequest = height
-        };
-        
+        var canvasView = new SKCanvasView();
         canvasView.PaintSurface += (sender, e) => {
             var canvas = e.Surface.Canvas;
             canvas.Clear(SKColors.Transparent); // Clear the canvas
@@ -86,20 +74,20 @@ public class SvgImageManager {
             var svgHeight = svg.Picture?.CullRect.Height;
 
             // Calculate scale to fit the SVG into the canvas, maintaining aspect-ratio
-            var scaleX = (canvasWidth / svgWidth) ?? 1.0f;
-            var scaleY = (canvasHeight / svgHeight) ?? 1.0f;
+            var scaleX = (float) ((canvasWidth / svgWidth) * scale ?? 1.0f);
+            var scaleY = (float) ((canvasHeight / svgHeight) * scale ?? 1.0f);
 
             // Create transformation-matrix to center and scale the SVG
             var matrix = SKMatrix.CreateScale(scaleX, scaleY);
-            var translateX = (canvasWidth - (svgWidth * scaleX)) / 2;
-            var translateY = (canvasHeight - (svgHeight * scaleY)) / 2;
-            matrix = SKMatrix.Concat(SKMatrix.CreateTranslation(translateX ?? 0, translateY ?? 0), matrix);
-
+            var translateX = (float) (((canvasWidth - (svgWidth * scaleX)) / 2) ?? 0.0f) ;
+            var translateY = (float) (((canvasHeight - (svgHeight * scaleY)) / 2) ?? 0.0f) ;
+            matrix = SKMatrix.Concat(SKMatrix.CreateTranslation(translateX, translateY), matrix);
+            
             // Apply rotation to the canvas
             canvas.Translate((float)canvasWidth / 2 , (float)canvasHeight /2);   // Move to the center of the canvas
             canvas.RotateDegrees(rotation);                                      // Rotate by the specified angle
             canvas.Translate((float)-canvasWidth / 2 , (float)-canvasHeight /2); // Move to the center of the canvas
-
+            
             // Draw the SVG picture on the canvas
             canvas.DrawPicture(svg.Picture, in matrix);
         };

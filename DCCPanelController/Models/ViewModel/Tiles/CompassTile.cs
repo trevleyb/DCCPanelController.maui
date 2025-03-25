@@ -8,7 +8,7 @@ public partial class CompassTile : Tile {
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         var svgImage = SvgImages.GetImage("compass", Entity.Rotation);
-        var image = new Image() { Source = svgImage.AsImageSource, Scale = 1.5 };
+        var image = new Image() { Source = svgImage.AsImageSource(0, DefaultScaleFactor), Scale = 1.5 };
         return image;
     }
     

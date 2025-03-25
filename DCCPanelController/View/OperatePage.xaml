@@ -18,10 +18,10 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <!-- <ToolbarItem -->
-        <!--     Clicked="ToggleGrid" -->
-        <!--     IconImageSource="grid_on.png" -->
-        <!--     x:Name="ToggleGridToolbar" /> -->
+        <ToolbarItem
+            Clicked="ToggleGrid"
+            IconImageSource="grid_on.png"
+            x:Name="ToggleGridToolbar" />
         <ToolbarItem
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"

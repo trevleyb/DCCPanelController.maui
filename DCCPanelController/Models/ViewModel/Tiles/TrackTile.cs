@@ -1,61 +1,73 @@
 using DCCPanelController.Helpers;
+using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.StyleManager;
 using DCCPanelController.View.Helpers;
+using DCCPanelController.View.TileSelectors;
 using SkiaSharp;
 using SkiaSharp.Views.Maui.Controls;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract partial class TrackTile : Tile {
-    private const double DefaultScale = 1.5;
+   
+    private const float HighlightColorAlpha = 0.25f;
     
     // @formatter:off
     public bool IsOccupied {get; set => SetField(ref field, value); }
     public bool IsPath {get; set => SetField(ref field, value); }
     // @formatter:on
 
+    public Color HighlightColor {
+        get {
+            if (IsPath) return Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
+            if (IsOccupied) return Colors.Tomato.WithAlpha(HighlightColorAlpha);
+            return Colors.Transparent;
+        }
+    }
+    
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(TrackEntity.Rotation));
         VisualProperties.Add(nameof(TrackEntity.TrackType));
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
         VisualProperties.Add(nameof(TrackEntity.TrackColor));
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
-        VisualProperties.Add(nameof(TrackEntity.IsOpaque));
     }
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
-        return CreateTrackTileAsCanvas(trackName, trackRotation);
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
+        return CreateTrackTileAsCanvas(trackName, trackRotation, scale);
     }
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation) {
+    protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
         var svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
 
-        var canvas = svgImage.AsCanvas(TileWidth*DefaultScale,TileHeight*DefaultScale,svgImage.Rotation);
+        var canvas = svgImage.AsCanvas(svgImage.Rotation, 1);
         canvas.HorizontalOptions = LayoutOptions.Fill;
         canvas.VerticalOptions = LayoutOptions.Fill;
-        
-        if (Entity is TrackEntity { IsOpaque : true } entity) canvas.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
-        if (IsPath) canvas.BackgroundColor = Colors.CornflowerBlue;
-        if (IsOccupied) canvas.BackgroundColor = Colors.Tomato;
-        return canvas;
+        canvas.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
+        canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, converter: new ColorToSolidColorConverter(), source: this));
+
+        var absoluteLayout = new AbsoluteLayout();
+        AbsoluteLayout.SetLayoutBounds(canvas, new Rect(-GridSize * 0.25, -GridSize * 0.25, GridSize * 1.5, GridSize * 1.5));
+        absoluteLayout.Children.Add(canvas);
+        return absoluteLayout;
     }
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTileAsImage(string trackName, int trackRotation) {
+    protected Microsoft.Maui.Controls.View? CreateTrackTileAsImage(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
         var svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
         
-        var image = svgImage.AsImage(1.5f);
-        if (Entity is TrackEntity { IsOpaque : true } entity) image.Opacity = entity?.Parent?.OpacityAttribute ?? 1.0;
-        if (IsPath) image.BackgroundColor = Colors.CornflowerBlue;
-        if (IsOccupied) image.BackgroundColor = Colors.Tomato;
+        var image = svgImage.AsImage(svgImage.Rotation, scale);
+        image.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
+        image.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, converter: new ColorToSolidColorConverter(), source: this));
         return image;
     }
-
+    
     /// <summary>
     /// Most Track types follow the same principles, which is that the track is either
     /// a MainLine or BranchLine and is either Hidden (in a tunnel) or Normal. 
