@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCWithrottleClient.ServiceHelper;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -10,8 +9,7 @@ public partial class Settings : ObservableObject {
     [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
 
     public Settings() {
-        var thisIp = ServiceHelper.GetLocalIPAddress();
-        if (WiServers.Count == 0) WiServers.Add(new WiServer("WiThrottle", thisIp));
+        if (WiServers.Count == 0) WiServers.Add(new WiServer("WiThrottle"));
     }
 
     public Settings(string ipAddress = "0.0.0.0", int port = 12090) {

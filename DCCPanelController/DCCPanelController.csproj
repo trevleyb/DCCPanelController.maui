@@ -221,10 +221,6 @@
 -->
 
     <ItemGroup>
-        <ProjectReference Include="..\DCCWithrottleClient\DCCWithrottleClient.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
         <MauiXaml Update="View\Components\ColorPickerButton.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -370,6 +366,10 @@
 
     <ItemGroup>
       <Folder Include="Models\ViewModel\Actions\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DCCClients\DCCClients.csproj" />
     </ItemGroup>
 
 </Project>

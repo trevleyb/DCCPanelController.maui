@@ -189,7 +189,7 @@ public partial class SettingsViewModel : BaseViewModel {
     public void SelectWiServer(WiServer? server) {
         if (server == null) return;
         IpAddress = server.IpAddress;
-        Port = server.Port;
+        Port = (int)server.Port;
     }
 
     /// <summary>
