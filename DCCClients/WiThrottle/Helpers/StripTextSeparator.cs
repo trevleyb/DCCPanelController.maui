@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Helpers;
+namespace DCCClients.WiThrottle.Helpers;
 
 public static class StripTextSeparator {
     public static string RemoveWiThrottleSeparators(this string message) {

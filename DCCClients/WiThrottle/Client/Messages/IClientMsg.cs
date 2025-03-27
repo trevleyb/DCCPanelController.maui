@@ -1,6 +1,6 @@
-﻿using DCCWithrottleClient.Client.Events;
+﻿using DCCClients.WiThrottle.Client.Events;
 
-namespace DCCWithrottleClient.Client.Messages;
+namespace DCCClients.WiThrottle.Client.Messages;
 
 public interface IClientMsg {
     List<IClientEvent> FoundEvents { get; }

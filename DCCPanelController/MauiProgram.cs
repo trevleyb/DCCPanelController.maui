@@ -2,6 +2,7 @@
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Services;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
@@ -39,6 +40,7 @@ public static class MauiProgram {
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<Profile>(sp => Profile.NewOrLoad("Sample"));
+        services.AddSingleton<ConnectionService>();
 
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
@@ -48,6 +50,7 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<PanelEditorPage, PanelEditorViewModel>();
         services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
+        services.AddSingletonViewAndModel<TurnoutsEditView, TurnoutsEditViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);

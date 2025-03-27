@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Events;
+namespace DCCClients.WiThrottle.Client.Events;
 
 public class RouteEvent(string systemName, string userName, RouteStateEnum stateEnum) : EventArgs, IClientEvent {
     public RouteEvent(string systemName, char state) : this(systemName, "", state.ToString()) { }

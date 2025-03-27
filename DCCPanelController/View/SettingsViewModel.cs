@@ -4,55 +4,44 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCClients.Interfaces;
+using DCCClients.WiThrottle.ServiceHelper;
+using DCCPanelController.Models;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
-using DCCWithrottleClient.ServiceHelper;
 
 namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
-    // public readonly ConnectionService? ConnectionService;
-    // public readonly SettingsService? SettingsService;
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
     [ObservableProperty] private Profile _profile;
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
 
-    [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
+    [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
 
-    public SettingsViewModel() {
-        // SettingsService = settingsService;
-        // ConnectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
-        // ConnectionService.PropertyChanged += ConnectionServiceOnPropertyChanged;
-        // Settings = SettingsService.Settings;
+    public SettingsViewModel(Profile profile) {
+        _profile = profile;
     }
 
-    public Settings? Settings => Profile.Settings;
-    public WiServer? SelectedWiServer => Settings?.WiServers[0];
+    public Settings Settings => Profile.Settings;
+    public Connection? SelectedServer => Settings?.Connections[0];
     public string ConnectLabel => "Tofix"; //ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool ShowWiServers => !ShowMessages;
     public bool IsConnected => true; //ConnectionService is { IsConnected : true } ? true : false;
     public bool IsLiveMode => !IsDemoMode || !IsConnected;
     public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 
+    [ObservableProperty] private string _name = "withrottle";
+    [ObservableProperty] private string _ipAddress = "0.0.0.0";
+    [ObservableProperty] private int _port = 12090;
+
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
         set {
             Settings.BackgroundColor = value;
             OnPropertyChanged();
-        }
-    }
-
-    public string IpAddress {
-        get => SelectedWiServer?.IpAddress ?? "";
-        set {
-            SelectedWiServer.IpAddress = value;
-            OnPropertyChanged();
-            OnPropertyChanged(nameof(IpAddress1));
-            OnPropertyChanged(nameof(IpAddress2));
-            OnPropertyChanged(nameof(IpAddress3));
-            OnPropertyChanged(nameof(IpAddress4));
         }
     }
 
@@ -63,14 +52,6 @@ public partial class SettingsViewModel : BaseViewModel {
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsLiveMode));
             OnPropertyChanged(nameof(IsConnectAvailable));
-        }
-    }
-
-    public int Port {
-        get => SelectedWiServer?.Port ?? 12090;
-        set {
-            SelectedWiServer.Port = value;
-            OnPropertyChanged();
         }
     }
 
@@ -160,20 +141,23 @@ public partial class SettingsViewModel : BaseViewModel {
         if (IsBusy) return;
         AddMessage("Attempting to scan for WiThrottle Servers");
 
+        // TODO: Major Overhaul needed to support different server types
+
         try {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
-            WiServers.Clear();
+
+            //WiServers.Clear();
 
             var servers = await ServiceFinder.FindServices("withrottle");
 
-            if (servers is { Count: > 0 }) {
-                foreach (var server in servers) {
-                    WiServers.Add(new WiServer(server.Name, server.ClientInfo.Address, server.ClientInfo.Port));
-                }
-            }
+            //if (servers is { Count: > 0 }) {
+            //    foreach (var server in servers) {
+            //        WiServers.Add(new WiServer(server.Name, server.WithrottleSettings.Address, server.WithrottleSettings.Port));
+            //    }
+            //}
 
-            AddMessage($"Found {WiServers.Count} WiThrottle Servers");
+            //AddMessage($"Found {WiServers.Count} WiThrottle Servers");
         } catch (Exception ex) {
             AddMessage("Unable to search for WiThrottle Servers.");
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
@@ -186,10 +170,10 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public void SelectWiServer(WiServer? server) {
-        if (server == null) return;
-        IpAddress = server.IpAddress;
-        Port = (int)server.Port;
+    public void SelectWiServer(object? server) {
+        //if (server == null) return;
+        //IpAddress = server.IpAddress;
+        //Port = (int)server.Port;
     }
 
     /// <summary>
@@ -198,13 +182,9 @@ public partial class SettingsViewModel : BaseViewModel {
     /// <param name="part">The part number to get where 1= first, 2=second, 3=third, 4=fourth</param>
     /// <returns>The part of the Address</returns>
     private string GetIpAddressParts(int part) {
-        if (SelectedWiServer is { } wiServer) {
-            var parts = wiServer.IpAddress.Split('.');
-            if (part == 0) part = 1;
-            return parts.Length >= part ? parts[part - 1] : "0";
-        }
-
-        return "0";
+        var parts = IpAddress.Split('.');
+        if (part == 0) part = 1;
+        return parts.Length >= part ? parts[part - 1] : "0";
     }
 
     /// <summary>
@@ -214,25 +194,22 @@ public partial class SettingsViewModel : BaseViewModel {
     /// <param name="value">the value to set</param>
     /// <returns>The full IPAddress</returns>
     private string SetIpAddressParts(int part, string value, [CallerMemberName] string? propertyName = null) {
-        if (SelectedWiServer is { } wiServer) {
-            if (wiServer?.IpAddress == null) return "0";
-            if (string.IsNullOrEmpty(value)) return SelectedWiServer.IpAddress;
-            var parts = SelectedWiServer?.IpAddress.Split('.');
+        if (IpAddress == null) return "0";
+        if (string.IsNullOrEmpty(value)) return IpAddress;
+        var parts = IpAddress.Split('.');
 
-            if (parts?.Length > 0) {
-                if (part == 0) part = 1;
-                if (parts?.Length >= part) parts[part - 1] = value;
+        if (parts?.Length > 0) {
+            if (part == 0) part = 1;
+            if (parts?.Length >= part) parts[part - 1] = value;
 
-                if (parts is not null) {
-                    wiServer.IpAddress = string.Join(".", parts);
-                    OnPropertyChanged(propertyName);
-                    OnPropertyChanged(nameof(IpAddress));
-                }
-
-                return SelectedWiServer?.IpAddress ?? "0.0.0.0";
+            if (parts is not null) {
+                IpAddress = string.Join(".", parts);
+                OnPropertyChanged(propertyName);
+                OnPropertyChanged(nameof(IpAddress));
             }
-        }
 
+            return IpAddress ?? "0.0.0.0";
+        }
         return "0";
     }
 }

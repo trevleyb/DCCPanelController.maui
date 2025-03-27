@@ -33,25 +33,3 @@ public class JsonTrackTypeConverter : JsonConverter<Entity> {
         JsonSerializer.Serialize<object>(writer, value, options);
     }
 }
-
-
-            // Entity? obj = typeName switch {
-            //     "ButtonEntity"               => JsonSerializer.Deserialize<ButtonEntity>(rawText, options),
-            //     "CircleEntity"               => JsonSerializer.Deserialize<CircleEntity>(rawText, options),
-            //     "CircleLabelEntity"          => JsonSerializer.Deserialize<CircleLabelEntity>(rawText, options),
-            //     "CompassEntity"              => JsonSerializer.Deserialize<CompassEntity>(rawText, options),
-            //     "CornerContinuationEntity"   => JsonSerializer.Deserialize<CornerContinuationEntity>(rawText, options),
-            //     "CornerEntity"               => JsonSerializer.Deserialize<CornerEntity>(rawText, options),
-            //     "CrossingEntity"             => JsonSerializer.Deserialize<CrossingEntity>(rawText, options),
-            //     "ImageEntity"                => JsonSerializer.Deserialize<ImageEntity>(rawText, options),
-            //     "LeftTurnoutEntity"          => JsonSerializer.Deserialize<LeftTurnoutEntity>(rawText, options),
-            //     "LineEntity"                 => JsonSerializer.Deserialize<LineEntity>(rawText, options),
-            //     "PointsEntity"               => JsonSerializer.Deserialize<PointsEntity>(rawText, options),
-            //     "RectangleEntity"            => JsonSerializer.Deserialize<RectangleEntity>(rawText, options),
-            //     "RightTurnoutEntity"         => JsonSerializer.Deserialize<RightTurnoutEntity>(rawText, options),
-            //     "StraightContinuationEntity" => JsonSerializer.Deserialize<StraightContinuationEntity>(rawText, options),
-            //     "StraightEntity"             => JsonSerializer.Deserialize<StraightEntity>(rawText, options),
-            //     "TerminatorEntity"           => JsonSerializer.Deserialize<TerminatorEntity>(rawText, options),
-            //     "TextEntity"                 => JsonSerializer.Deserialize<TextEntity>(rawText, options),
-            //     _                            => throw new JsonException("Unknown type: " + "\"" + typeName + "\"")
-            // };

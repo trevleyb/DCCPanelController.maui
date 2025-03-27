@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Messages;
+namespace DCCClients.WiThrottle.Client.Messages;
 
 public class MsgHeartbeat : ClientMsg, IClientMsg {
     private readonly string _commandStr;

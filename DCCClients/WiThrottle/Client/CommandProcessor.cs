@@ -1,3 +1,3 @@
-namespace DCCWithrottleClient.Client;
+namespace DCCClients.WiThrottle.Client;
 
 public class CommandProcessor { }

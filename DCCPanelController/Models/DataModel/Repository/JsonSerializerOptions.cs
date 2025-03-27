@@ -6,6 +6,7 @@ public static class JsonOptions {
     public static readonly System.Text.Json.JsonSerializerOptions? Options = new() {
         WriteIndented = true,
         Converters = {
+            new JsonSettingsTypeConverter(),
             new JsonTrackTypeConverter(),
             new MauiColorJsonConverter(),
             new JsonEnumToStringConverter<Aspect>(),

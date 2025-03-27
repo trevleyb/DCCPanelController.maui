@@ -1,52 +1,97 @@
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
-using DCCWithrottleClient.Client.Commands;
-using DCCWithrottleClient.Client.Events;
-using DCCWithrottleClient.Client.Messages;
-using DCCWithrottleClient.Helpers;
+using DCCClients.Common;
+using DCCClients.WiThrottle.Client.Commands;
+using DCCClients.WiThrottle.Client.Events;
+using DCCClients.WiThrottle.Client.Messages;
+using DCCClients.WiThrottle.Helpers;
+using Result = DCCClients.Common.Result;
 using Timer = System.Timers.Timer;
 
-namespace DCCWithrottleClient.Client;
+namespace DCCClients.WiThrottle.Client;
 
-public class Client(ClientInfo clientInfo) {
+public class Client {
     private TcpClient? _client;
+    private NetworkStream? _stream;
     private Timer? _heartbeatTimer;
     private bool _running;
-    private NetworkStream? _stream;
+    private readonly WithrottleSettings _withrottleSettings;
 
-    public Client(string address, int port) : this(new ClientInfo(address, port)) { }
-    public Client(string name, string address, int port) : this(new ClientInfo(name, address, port)) { }
+    public bool IsRunning => _running;
+    public Client(string address, int port) : this(new WithrottleSettings(address, port)) { }
+    public Client(string name, string address, int port) : this(new WithrottleSettings(name, address, port)) { }
+
+    public Client(WithrottleSettings withrottleSettings) {
+        _withrottleSettings = withrottleSettings;
+    }
 
     public bool Echo { get; set; } = true;
-
     public event Action<IClientEvent>? ConnectionEvent;
     public event Action<string>? ConnectionError;
 
-    /// <summary>
-    ///     Connect to the WiThrottle Service via the given Address/Port
-    /// </summary>
-    /// <returns>A Result.OK if it connected or a Result.Fail if it could not. </returns>
-    public IResult Connect() {
-        try {
-            if (_running) Stop();
+    public async Task<IResult> ConnectAsync()
+    {
+        if (_running) Stop();
+        try
+        {
+            _client = new TcpClient();
 
-            _client = new TcpClient(clientInfo.Address, clientInfo.Port);
+            // Attempt to connect asynchronously with a timeout
+            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
+                await _client.ConnectAsync(_withrottleSettings.Address, _withrottleSettings.Port, cts.Token); 
+            }
+
             _stream = _client.GetStream();
             _running = true;
 
-            var listenThread = new Thread(Listen);
-            listenThread.Start();
+            // Start the listener as an asynchronous background task
+            _ = Task.Run(ListenAsync);
             return Result.Ok();
-        } catch (Exception ex) {
-            return Result.Fail(ex);
+        }
+        catch (Exception ex)
+        {
+            return Result.Fail(new Error("Failed to connect").CausedBy(ex));
         }
     }
 
+    private async Task ListenAsync() {
+
+        if (_client is null || _stream is null) throw new InvalidOperationException("Client or stream is null");
+        
+        StringBuilder buffer = new();
+        var bytes = new byte[256];
+
+        SendWakeUpMessages();
+        try {
+            while (_running && _client.Connected) {
+                var bytesRead = await _stream.ReadAsync(bytes, 0, buffer.Length);
+                if (bytesRead != 0) {
+                    var data = Encoding.ASCII.GetString(bytes, 0, bytesRead);
+                    buffer.Append(data);
+
+                    if (Terminators.HasTerminator(buffer)) {
+                        foreach (var command in Terminators.GetMessagesAndLeaveIncomplete(buffer)) {
+                            ProcessMessage(command);
+                        }
+                    }
+                }
+            }
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"Listener encountered an error: {ex.Message}");
+            ConnectionError?.Invoke(ex.Message);
+        }
+        finally {
+            Stop();
+        }
+    }
+
+    
     /// <summary>
     ///     Listen for incomming messages and event them via the DataReceived event to the caller.
     /// </summary>
-    private void Listen() {
+    private void ListenOld() {
         StringBuilder buffer = new();
         var bytes = new byte[256];
         SendWakeUpMessages();
@@ -108,8 +153,8 @@ public class Client(ClientInfo clientInfo) {
     private void SendWakeUpMessages() {
         // To initialise a connection to a WiThrottle service we need to send the following messages
         // ------------------------------------------------------------------------------------------
-        SendMessage(clientInfo.GetNameMessage);
-        SendMessage(clientInfo.GetHardwareMessage);
+        SendMessage(_withrottleSettings.GetNameMessage);
+        SendMessage(_withrottleSettings.GetHardwareMessage);
         SendMessage("*+");
     }
 

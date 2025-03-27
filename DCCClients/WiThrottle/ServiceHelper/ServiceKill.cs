@@ -1,9 +1,10 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using DCCWithrottleClient.Helpers;
+using DCCClients.Common;
+using Result = DCCClients.Common.Result;
 
-namespace DCCWithrottleClient.ServiceHelper;
+namespace DCCClients.WiThrottle.ServiceHelper;
 
 public static class ServiceKill {
     public static IResult KillService(int port) {
@@ -18,7 +19,7 @@ public static class ServiceKill {
 
             return Result.Fail("Unsupported operating system");
         } catch (Exception ex) {
-            return Result.Fail("Failed to terminate process.", ex);
+            return Result.Fail("Failed to terminate process.",ex);
         }
     }
 
@@ -44,7 +45,6 @@ public static class ServiceKill {
             process.Kill();
             return Result.Ok($"Process with PID {pid} listening on port {port} has been terminated.");
         }
-
         return Result.Fail($"No process found listening on port {port}");
     }
 

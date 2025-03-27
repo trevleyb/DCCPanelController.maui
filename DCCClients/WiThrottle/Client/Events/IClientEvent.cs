@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Events;
+namespace DCCClients.WiThrottle.Client.Events;
 
 public interface IClientEvent {
     string ToString();

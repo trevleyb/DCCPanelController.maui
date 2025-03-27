@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCClients;
+using DCCClients.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -23,16 +25,27 @@ public partial class RoutesViewModel : BaseViewModel {
     private string _sortColumn = "";
 
     private Profile Profile { get; init; }
-    private IConnectionService? ConnectionService { get; }
-    
-    public RoutesViewModel(Profile profile, IConnectionService connectionService) {
-        ConnectionService = connectionService;
+    private IDccClient Client { get; init; }
+    private ConnectionService? ConnectionService { get; }
+
+    public RoutesViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
+        ConnectionService = connectionService;
         Routes = Profile.Routes;
-        CanToggleRoutesState = ConnectionService is not null && ConnectionService.IsConnected;
+        Client = ConnectionService.GetClient(profile.ActiveConnection);
+        Client.RouteMsgReceived += ClientOnRouteMsgReceived;
         SetLabels();
     }
-    
+
+    private void ClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
+        if (Routes.Any(x => x.Id == e.RouteId)) {
+            var route = Routes.First(x => x.Id == e.RouteId);
+            route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
+        } else {
+            Routes.Add(new Route() { Id = e.RouteId, State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive });
+        }
+    }
+
     [RelayCommand]
     public async Task SortByColumn(string columnName) {
         List<Route> sortedRoutes;
@@ -76,8 +89,6 @@ public partial class RoutesViewModel : BaseViewModel {
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Active
         };
-
-        // TODO: Fix this
-        // if (!string.IsNullOrEmpty(route.Id)) ConnectionService?.SendRouteStateChangeCommand(route.Id, route.State);
+        if (!string.IsNullOrEmpty(route.Id)) Client?.SendRouteCmd(route.Id, route.State == RouteStateEnum.Active);
     }
 }

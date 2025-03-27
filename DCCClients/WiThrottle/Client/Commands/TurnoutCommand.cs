@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Commands;
+namespace DCCClients.WiThrottle.Client.Commands;
 
 public class TurnoutCommand(string systemName, TurnoutStateEnum state) : IClientCmd {
     public string SystemName { get; set; } = systemName;

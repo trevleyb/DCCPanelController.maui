@@ -15,6 +15,7 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     [ObservableProperty] private ObservableCollection<Route> _routes;
 
+    public Connection ActiveConnection => Settings.ActiveConnection();
     public static Profile NewOrLoad(string profileName) => JsonRepository.Load(profileName);    
     public static Profile Load(string profileName) => JsonRepository.Load(profileName);
     public void Save() => JsonRepository.Save(this, ProfileName);
@@ -26,7 +27,7 @@ public partial class Profile : ObservableObject {
         Turnouts = new ObservableCollection<Turnout>();
         Routes = new ObservableCollection<Route>();
     }
-
+    
     /// <summary>
     /// This method ensures that each panel in the collection of panels is properly initialized with the reference to the parent
     /// collection and performs necessary validation or adjustments by invoking their respective parent-checking logic.
@@ -37,5 +38,4 @@ public partial class Profile : ObservableObject {
             panel.CheckEntityParents();
         }    
     } 
-        
 }

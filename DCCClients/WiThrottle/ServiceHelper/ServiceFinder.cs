@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Sockets;
-using DCCWithrottleClient.Client;
+using DCCClients.WiThrottle.Client;
 using Makaretu.Dns;
 
-namespace DCCWithrottleClient.ServiceHelper;
+namespace DCCClients.WiThrottle.ServiceHelper;
 
 public static class ServiceFinder {
     /// <summary>
@@ -19,12 +19,14 @@ public static class ServiceFinder {
         var sd = new ServiceDiscovery();
 
         sd.ServiceDiscovered += (s, domainName) => {
+            Console.WriteLine($"ServiceFinder: Found service: {domainName}");
             if (CheckDomainNameComponents(domainName, serviceName)) {
                 sd.QueryServiceInstances(domainName.ToString().Replace(".local", ""));
             }
         };
 
         sd.ServiceInstanceDiscovered += (s, e) => {
+            Console.WriteLine($"ServiceFinder: Found instance: {e.ServiceInstanceName}");
             if (CheckDomainNameComponents(e.ServiceInstanceName, serviceName)) {
                 var query = new Message();
                 query.Questions.Add(new Question { Name = e.ServiceInstanceName, Type = DnsType.SRV });
@@ -34,22 +36,34 @@ public static class ServiceFinder {
 
         sd.Mdns.AnswerReceived += (s, e) => {
             foreach (var answer in e.Message.Answers) {
+                Console.WriteLine($"ServiceFinder: Answer: {answer}");
                 if (answer is SRVRecord srv) {
                     if (CheckDomainNameComponents(srv.Name, serviceName)) {
-                        var foundIps = Dns.GetHostAddresses(srv.Target.ToString());
-                        foundServices.AddRange(from ip in foundIps where ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != "127.0.0.1" && !string.IsNullOrEmpty(ip.ToString()) select new ServiceInfo(srv.Name.ToString(), new ClientInfo(ip.ToString(), srv.Port)));
+                        try {
+                            var foundIps = Dns.GetHostAddresses(srv.Target.ToString());
+                            foreach (var ip in foundIps) {
+                                if (ip.AddressFamily == AddressFamily.InterNetwork && ip.ToString() != "127.0.0.1" && !string.IsNullOrEmpty(ip.ToString())) {
+                                    foundServices.Add(new ServiceInfo(srv.Name.ToString(), new WithrottleSettings(ip.ToString(), srv.Port)));
+                                }
+                            }
+                        } catch (Exception ex) {
+                            Console.WriteLine(ex);
+                        }
                     }
                 }
             }
         };
 
-        await Task.Run(() => {
-            sd.Mdns.Start();
-            sd.QueryAllServices();
-            Thread.Sleep(timeout);
+        sd.Mdns.Start();
+        sd.QueryAllServices();
+        try {
+            //var cts = new CancellationTokenSource(timeout);
+            //await Task.Delay(timeout, cts.Token);
+        } catch (Exception ex) {
+            Console.WriteLine(ex);
+        } finally {
             sd.Mdns.Stop();
-        });
-
+        }
         return foundServices;
     }
 

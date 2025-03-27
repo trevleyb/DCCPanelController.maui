@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Commands;
+namespace DCCClients.WiThrottle.Client.Commands;
 
 public class StopFastClockCommand() : FastClockCommand(DateTime.Now, 0);
 

@@ -1,15 +1,15 @@
 using System.Text.RegularExpressions;
-using DCCWithrottleClient.Client;
+using DCCClients.WiThrottle.Client;
 
-namespace DCCWithrottleClient.ServiceHelper;
+namespace DCCClients.WiThrottle.ServiceHelper;
 
 /// <summary>
 ///     Record containing the found information for a service
 /// </summary>
 public class ServiceInfo {
-    public ServiceInfo(string name, string address, int port) : this(name, new ClientInfo(address, port)) { }
+    public ServiceInfo(string name, string address, int port) : this(name, new WithrottleSettings(address, port)) { }
 
-    public ServiceInfo(string name, ClientInfo clientInfo) {
+    public ServiceInfo(string name, WithrottleSettings withrottleSettings) {
         // Remove the trailing TCP part from the name of the service if it exists
         // Then make sure there are no Unicode identifiers in the string. If there are 
         // then remove then and replace with the correct ASCII character.
@@ -19,11 +19,11 @@ public class ServiceInfo {
         }
 
         Name = ConvertOctalToAscii(name);
-        ClientInfo = clientInfo;
+        WithrottleSettings = withrottleSettings;
     }
 
     public string Name { get; set; }
-    public ClientInfo ClientInfo { get; set; }
+    public WithrottleSettings WithrottleSettings { get; set; }
 
     private string ConvertOctalToAscii(string input) {
         if (string.IsNullOrEmpty(input)) return "";

@@ -1,18 +1,30 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCClients.Interfaces;
+using DCCClients.WiThrottle.Client;
 
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Settings : ObservableObject {
     [ObservableProperty] private bool _useConnection;
+    [ObservableProperty] private string _activeConnectionName = "default";
     [ObservableProperty] private Color _backgroundColor = Colors.White;
-    [ObservableProperty] private ObservableCollection<WiServer> _wiServers = [];
+    [ObservableProperty] private ObservableCollection<Connection> _connections = [];
 
-    public Settings() {
-        if (WiServers.Count == 0) WiServers.Add(new WiServer("WiThrottle"));
-    }
-
-    public Settings(string ipAddress = "0.0.0.0", int port = 12090) {
-        WiServers.Add(new WiServer("WiThrottle", ipAddress, port));
-    }
+    public Connection ActiveConnection() {
+        try {
+            if (string.IsNullOrEmpty(ActiveConnectionName)) {
+                ActiveConnectionName = "default";
+                if (Connections.Count > 0) ActiveConnectionName = Connections[0].Name;
+            }
+            if (!Connections.Any(con => con.Name.Equals(ActiveConnectionName))) {
+                Connections.Add(new Connection("default", new WithrottleSettings("withrottle", "0.0.0.0", 12090)));
+            }
+            return Connections.First(con => con.Name.Equals(ActiveConnectionName));
+        } catch (Exception ex) {
+            Console.WriteLine($"This should never happen as if the key does not exist, it will be added. {ex.Message}");
+            throw new InvalidOperationException("Could not get the active connection.");
+        }
+    } 
+   
 }

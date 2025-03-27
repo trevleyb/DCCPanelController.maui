@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCClients;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using Turnout = DCCPanelController.Models.DataModel.Turnout;
@@ -16,9 +17,9 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
 
-    //private IConnectionService ConnectionService { get; }
-
-    public TurnoutsEditViewModel(Turnout turnout) {
+    IDccClient Client { get; init; }
+    
+    public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
         Turnout = turnout;
         SystemName = Turnout.Id ?? "NT001";
         UserName = Turnout.Name ?? "New Turnout";
@@ -26,9 +27,8 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         CurrentState = Turnout.State;
         DefaultState = Turnout.Default;
         IsEditable = Turnout.IsEditable;
-        
-        // TODO: Move this to constructor and DI
-        //ConnectionService = MauiProgram.ServiceHelper.GetService<ConnectionService>();
+
+        Client = connectionService.GetClient();
     }
 
     public event Action<Turnout?>? OnSaveCompleted;
@@ -37,21 +37,20 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
         if (Turnout == null) return;
-        // TODO: Fix This
-        // if (!string.IsNullOrEmpty(Turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(Turnout.Id, CurrentState);
+        if (!string.IsNullOrEmpty(Turnout.Id)) Client.SendTurnoutCmd(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
         OnPropertyChanged(nameof(CurrentState));
         OnPropertyChanged(nameof(Turnout));
     }
 
     [RelayCommand]
     private async Task ToggleTurnoutDefaultStateAsync() {
-        // DefaultState = DefaultState switch {
-        //      TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-        //      TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-        //      _                       => TurnoutStateEnum.Closed
-        // };
-        // OnPropertyChanged(nameof(DefaultState));
-        // OnPropertyChanged(nameof(Turnout));
+        DefaultState = DefaultState switch {
+            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+            _                       => TurnoutStateEnum.Closed
+        };
+        OnPropertyChanged(nameof(DefaultState));
+        OnPropertyChanged(nameof(Turnout));
     }
 
     [RelayCommand]

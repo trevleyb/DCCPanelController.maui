@@ -1,6 +1,6 @@
-using DCCWithrottleClient.Client.Messages;
+using DCCClients.WiThrottle.Client.Messages;
 
-namespace DCCWithrottleClient.Client;
+namespace DCCClients.WiThrottle.Client;
 
 public static class MessageProcessor {
     /// <summary>

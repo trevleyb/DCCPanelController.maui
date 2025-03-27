@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Events;
+namespace DCCClients.WiThrottle.Client.Events;
 
 public class TurnoutEvent(string systemName, string userName, TurnoutStateEnum stateEnum) : EventArgs, IClientEvent {
     public TurnoutEvent(string systemName, char state) : this(systemName, "", state.ToString()) { }

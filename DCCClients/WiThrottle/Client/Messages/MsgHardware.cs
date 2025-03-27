@@ -1,6 +1,6 @@
-using DCCWithrottleClient.Client.Events;
+using DCCClients.WiThrottle.Client.Events;
 
-namespace DCCWithrottleClient.Client.Messages;
+namespace DCCClients.WiThrottle.Client.Messages;
 
 public class MsgHardware : ClientMsg, IClientMsg {
     private readonly string _commandStr;

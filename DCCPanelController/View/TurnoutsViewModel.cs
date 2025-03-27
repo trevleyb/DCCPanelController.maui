@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCClients;
+using DCCClients.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -21,16 +23,28 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private string _sortColumn = "";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
-    private IConnectionService ConnectionService { get; init; }
+    private IDccClient Client { get; init; }
+    private ConnectionService? ConnectionService { get; }
     private Profile Profile { get; init; }
 
-    public TurnoutsViewModel(Profile profile, IConnectionService connectionService) {
+    public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         ConnectionService = connectionService;
         Turnouts = Profile.Turnouts;
+        Client = ConnectionService.GetClient(profile.ActiveConnection);
+        Client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
         SetLabels();
     }
-    
+
+    private void ClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
+        if (Turnouts.Any(x => x.Id == e.TurnoutId)) {
+            var turnout = Turnouts.First(x => x.Id == e.TurnoutId);
+            turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
+        } else {
+            Turnouts.Add(new Turnout() { DccAddress = int.Parse(e.DccAddress), State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown, Id = e.TurnoutId});
+        }
+    }
+
     private void SetLabels() {
         ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
@@ -67,8 +81,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task EditTurnoutAsync(Turnout? turnout) {
-        // TODO: Correct this
-        //await NavigationService.NavigateToEditTurnoutAsync(turnout);
+        await NavigateToEditTurnoutAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
     }
 
@@ -88,33 +101,49 @@ public partial class TurnoutsViewModel : BaseViewModel {
             IsEditable = true
         };
 
-        // TODO: Fix this
-        //var result = await NavigationService.NavigateToEditTurnoutAsync(turnout);
-        //if (result is not null) Turnouts.Add(result);
+        var result = await NavigateToEditTurnoutAsync(turnout);
+        if (result is not null) Turnouts.Add(result);
         OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
-        
-        // TODO: Fix This
-        // if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
+        if (!string.IsNullOrEmpty(turnout.DccAddress.ToString())) Client.SendTurnoutCmd(turnout.DccAddress.ToString() ?? "",turnout.State == TurnoutStateEnum.Thrown);
         OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
-
         turnout.State = turnout.State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
             _                       => TurnoutStateEnum.Closed
         };
-
-        // TODO: Fix This
-        // if (!string.IsNullOrEmpty(turnout.Id)) ConnectionService?.SendTurnoutStateChangeCommand(turnout.Id, turnout.State);
+        
+        await SendTurnoutStateAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
     }
+    
+    public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
+        if (turnout is null) return null;
+
+        var mainPage = App.Current.Windows[0].Page;
+        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+
+        var editPage = new TurnoutsEditView(turnout);
+        var tcs = new TaskCompletionSource<Turnout?>();
+
+        if (editPage.ViewModel != null) {
+            editPage.ViewModel.OnSaveCompleted += turnoutResult => {
+                tcs.SetResult(turnoutResult);
+                mainPage.Navigation.PopModalAsync();
+            };
+        }
+
+        await mainPage.Navigation.PushModalAsync(editPage);
+        return await tcs.Task;
+    }
+
 }

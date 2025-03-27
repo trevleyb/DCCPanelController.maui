@@ -1,4 +1,4 @@
-namespace DCCJmriClient.EventArgs;
+namespace DCCClients.JMRI.EventArgs;
 
 public class OccupancyEventArgs : System.EventArgs {
     /// <summary>

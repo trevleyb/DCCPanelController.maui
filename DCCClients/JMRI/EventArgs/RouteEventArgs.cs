@@ -1,4 +1,4 @@
-namespace DCCJmriClient.EventArgs;
+namespace DCCClients.JMRI.EventArgs;
 
 public class RouteEventArgs : System.EventArgs {
     /// <summary>

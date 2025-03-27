@@ -160,7 +160,7 @@
                         IsVisible="{Binding IsBusy}"
                         VerticalOptions="Center" />
 
-                    <CollectionView ItemsSource="{Binding WiServers}" SelectionMode="None">
+                    <CollectionView ItemsSource="{Binding Messages}" SelectionMode="None">
                         <CollectionView.EmptyView>
                             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
                                 <Label HorizontalOptions="Center" Text=" " />
@@ -172,7 +172,7 @@
                         </CollectionView.EmptyView>
 
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="dataModel:WiServer">
+                            <DataTemplate>
                                 <StackLayout>
                                     <Grid ColumnDefinitions="48,*">
                                         <Grid.GestureRecognizers>

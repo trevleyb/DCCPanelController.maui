@@ -1,9 +1,11 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using DCCJmriClient.EventArgs;
+using DCCClients.Interfaces;
+using DCCClients.JMRI.EventArgs;
+using DCCClients.WiThrottle.Client;
 
-namespace DCCJmriClient;
+namespace DCCClients.JMRI;
 
 public class JmriClient {
     private static readonly HttpClient _httpClient = new() {
@@ -15,11 +17,13 @@ public class JmriClient {
     private CancellationTokenSource? _cancellationTokenSource;
     private IWebSocket _webSocket = new WebSocketWrapper();
 
-    public JmriClient(string jmriUrl) {
-        _jmriUrl = jmriUrl.TrimEnd('/');
-        TurnoutChanged += (_, args) => DumpObjectProperties(args);
-        RouteChanged += (_, args) => DumpObjectProperties(args);
-        OccupancyChanged += (_, args) => DumpObjectProperties(args);
+    public JmriClient(IDccSettings settings) {
+        if (settings is JmriSettings info) {
+            _jmriUrl = info.JmriServerUrl.TrimEnd('/');
+            TurnoutChanged += (_, args) => DumpObjectProperties(args);
+            RouteChanged += (_, args) => DumpObjectProperties(args);
+            OccupancyChanged += (_, args) => DumpObjectProperties(args);
+        } else throw new ArgumentException("Invalid settings provided.");
     }
 
     public Func<HttpClient> HttpClientFactory { get; set; } = () => new HttpClient();

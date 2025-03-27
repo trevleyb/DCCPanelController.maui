@@ -1,4 +1,4 @@
-namespace DCCWithrottleClient.Client.Events;
+namespace DCCClients.WiThrottle.Client.Events;
 
 public class FastClockEvent(DateTime time) : IClientEvent {
     public DateTime Time { get; init; } = time;
