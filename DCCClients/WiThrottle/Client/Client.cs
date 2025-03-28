@@ -46,7 +46,9 @@ public class Client {
             _running = true;
 
             // Start the listener as an asynchronous background task
-            _ = Task.Run(ListenAsync);
+            // _ = Task.Run(ListenAsync);
+            var listenThread = new Thread(Listen);
+            listenThread.Start();
             return Result.Ok();
         }
         catch (Exception ex)
@@ -91,7 +93,7 @@ public class Client {
     /// <summary>
     ///     Listen for incomming messages and event them via the DataReceived event to the caller.
     /// </summary>
-    private void ListenOld() {
+    private void Listen() {
         StringBuilder buffer = new();
         var bytes = new byte[256];
         SendWakeUpMessages();

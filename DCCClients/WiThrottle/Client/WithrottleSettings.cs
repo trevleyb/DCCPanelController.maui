@@ -7,7 +7,7 @@ public class WithrottleSettings : IDccSettings {
     public string Type => "withrottle";
     public WithrottleSettings(string address, int port) : this(null, address, port) { }
     public WithrottleSettings(string? name, string address, int port) {
-        Name = name ?? Environment.MachineName ?? "WiThrottle";
+        Name = name ?? Environment.MachineName ?? "DCCPanelController";
         Address = address;
         Port = port;
     }
