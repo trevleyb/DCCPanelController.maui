@@ -4,6 +4,7 @@ using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 namespace DCCPanelController.View;
 
 public partial class RoutesPage : ContentPage {
+
     public RoutesPage(RoutesViewModel viewModel) {
         InitializeComponent();
         BindingContext = viewModel;

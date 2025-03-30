@@ -48,9 +48,8 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelEditorPage, PanelEditorViewModel>();
-        services.AddSingletonViewAndModel<RoutesPage, RoutesViewModel>();
-        services.AddSingletonViewAndModel<TurnoutsPage, TurnoutsViewModel>();
-        services.AddSingletonViewAndModel<TurnoutsEditView, TurnoutsEditViewModel>();
+        services.AddTransientViewAndModel<RoutesPage, RoutesViewModel>();
+        services.AddTransientViewAndModel<TurnoutsPage, TurnoutsViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
@@ -65,9 +64,10 @@ public static class MauiProgram {
     /// <typeparam name="TView">The type of the view to be registered.</typeparam>
     /// <typeparam name="TViewModel">The type of the view model associated with the view.</typeparam>
     /// <param name="services">The service collection to register the view and view model.</param>
-    private static void AddTransientViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage, new() where TViewModel : class {
+    private static void AddTransientViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage where TViewModel : class {
         services.AddTransient<TViewModel>();
-        services.AddTransient<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
+        //services.AddTransient<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
+        services.AddTransient<TView>();
     }
 
     /// <summary>
@@ -76,9 +76,10 @@ public static class MauiProgram {
     /// <typeparam name="TView">The type of the view to be registered.</typeparam>
     /// <typeparam name="TViewModel">The type of the view model associated with the view.</typeparam>
     /// <param name="services">The service collection to register the view and view model.</param>
-    private static void AddSingletonViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage, new() where TViewModel : class {
+    private static void AddSingletonViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage where TViewModel : class {
         services.AddSingleton<TViewModel>();
-        services.AddSingleton<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
+        services.AddSingleton<TView>();
+        //services.AddSingleton<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
     }
 
     /// <summary>

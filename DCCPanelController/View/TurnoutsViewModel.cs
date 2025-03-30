@@ -14,22 +14,26 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelID = "ID";
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
+    private const string LabelAddress = "DCC Address";
 
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
+    [ObservableProperty] private string _columnLabelAddress = LabelAddress;
     [ObservableProperty] private string _columnLabelState = LabelState;
 
     private bool _isAscending;
     private string _sortColumn = "";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
+    private ConnectionService ConnectionService { get; init; }
     private IDccClient Client { get; init; }
     private Profile Profile { get; init; }
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         Turnouts = Profile.Turnouts;
-        
+        ConnectionService = connectionService;
+
         connectionService.Connect(profile.ActiveConnectionInfo);
         Client = connectionService.Connection;
         Client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
@@ -39,16 +43,25 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private void ClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
         if (Turnouts.Any(x => x.Id == e.TurnoutId)) {
             var turnout = Turnouts.First(x => x.Id == e.TurnoutId);
+            turnout.Id = e.TurnoutId;
+            turnout.DccAddress = e.DccAddress;
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
         } else {
-            Turnouts.Add(new Turnout() { DccAddress = e.DccAddress, State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown, Id = e.TurnoutId});
+            Turnouts.Add(new Turnout() {
+                Name = e.TurnoutId,
+                Id = e.TurnoutId,
+                DccAddress = e.DccAddress, 
+                State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown 
+            });
         }
+        Profile.Save();
     }
 
     private void SetLabels() {
         ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
         ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelAddress = LabelAddress + (_sortColumn.Equals("DCCAddress") ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand]
@@ -57,17 +70,19 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
         if (!_isAscending) {
             sortedTurnout = columnName.ToLower() switch {
-                "name"  => Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList(),
-                "id"    => Turnouts.OrderBy<Turnout, string>(x => x.Id ?? "").ToList(),
-                "state" => Turnouts.OrderBy<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
-                _       => Turnouts.ToList<Turnout>()
+                "name"       => Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList(),
+                "dccaddress" => Turnouts.OrderBy<Turnout, string>(x => x.DccAddress ?? "").ToList(),
+                "id"         => Turnouts.OrderBy<Turnout, string>(x => x.Id ?? "").ToList(),
+                "state"      => Turnouts.OrderBy<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
+                _            => Turnouts.ToList<Turnout>()
             };
         } else {
             sortedTurnout = columnName.ToLower() switch {
-                "name"  => Turnouts.OrderByDescending<Turnout, string>(x => x.Name ?? "").ToList(),
-                "id"    => Turnouts.OrderByDescending<Turnout, string>(x => x.Id ?? "").ToList(),
-                "state" => Turnouts.OrderByDescending<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
-                _       => Turnouts.ToList<Turnout>()
+                "name"       => Turnouts.OrderByDescending<Turnout, string>(x => x.Name ?? "").ToList(),
+                "id"         => Turnouts.OrderByDescending<Turnout, string>(x => x.Id ?? "").ToList(),
+                "dccaddress" => Turnouts.OrderByDescending<Turnout, string>(x => x.DccAddress ?? "").ToList(),
+                "state"      => Turnouts.OrderByDescending<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
+                _            => Turnouts.ToList<Turnout>()
             };
         }
 
@@ -83,17 +98,19 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private async Task EditTurnoutAsync(Turnout? turnout) {
         await NavigateToEditTurnoutAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
+        Profile.Save();
     }
 
     [RelayCommand]
     private async Task DeleteTurnoutAsync(Turnout turnout) {
         Turnouts.Remove(turnout);
         OnPropertyChanged(nameof(Turnouts));
+        Profile.Save();
     }
 
     [RelayCommand]
     private async Task AddTurnoutAsync() {
-        var turnout = new  Turnout {
+        var turnout = new Turnout {
             Id = TurnoutAnalyzer.GetUniqueID(Turnouts.ToList<Turnout>()),
             Name = "New Turnout",
             State = TurnoutStateEnum.Closed,
@@ -104,12 +121,13 @@ public partial class TurnoutsViewModel : BaseViewModel {
         var result = await NavigateToEditTurnoutAsync(turnout);
         if (result is not null) Turnouts.Add(result);
         OnPropertyChanged(nameof(Turnouts));
+        Profile.Save();
     }
 
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
-        if (!string.IsNullOrEmpty(turnout.DccAddress)) Client.SendTurnoutCmd(turnout.DccAddress ?? "",turnout.State == TurnoutStateEnum.Thrown);
+        if (!string.IsNullOrEmpty(turnout.DccAddress)) Client.SendTurnoutCmd(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown);
         OnPropertyChanged(nameof(Turnouts));
     }
 
@@ -121,18 +139,18 @@ public partial class TurnoutsViewModel : BaseViewModel {
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
             _                       => TurnoutStateEnum.Closed
         };
-        
+
         await SendTurnoutStateAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
     }
-    
+
     public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
         if (turnout is null) return null;
 
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
 
-        var editPage = new TurnoutsEditView(turnout);
+        var editPage = new TurnoutsEditView(turnout,ConnectionService);
         var tcs = new TaskCompletionSource<Turnout?>();
 
         if (editPage.ViewModel != null) {
@@ -145,5 +163,4 @@ public partial class TurnoutsViewModel : BaseViewModel {
         await mainPage.Navigation.PushModalAsync(editPage);
         return await tcs.Task;
     }
-
 }

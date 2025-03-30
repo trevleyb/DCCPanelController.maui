@@ -1,15 +1,13 @@
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
 public partial class TurnoutsEditView : ContentPage {
     public TurnoutsEditViewModel? ViewModel;
-
-    public TurnoutsEditView() { }
-
-    public TurnoutsEditView(Turnout turnout) {
+    public TurnoutsEditView(Turnout turnout, ConnectionService connectionService) {
         InitializeComponent();
-        ViewModel = MauiProgram.ServiceHelper.GetService<TurnoutsEditViewModel>();
+        ViewModel = new TurnoutsEditViewModel(turnout, connectionService);
         BindingContext = ViewModel;
     }
 }

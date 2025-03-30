@@ -8,7 +8,6 @@ public partial class PanelEditorPage {
     private PanelEditorViewModel? _viewModel;
 
     public PanelEditorPage() {
-        Console.WriteLine($"PanelEditorPage.ctor");
         InitializeComponent();
     }
 

@@ -131,12 +131,12 @@ public class DccWiThrottleClient : DccClient, IDccClient {
 
         case TurnoutEvent turnout:
             Console.WriteLine($"Turnout event received: {turnout.SystemName} - {turnout.UserName} - {turnout.StateEnum}");
-            OnTurnoutMsgReceived(new DccTurnoutArgs(turnout.SystemName, turnout.UserName, turnout.StateEnum == TurnoutStateEnum.Thrown));
+            OnTurnoutMsgReceived(new DccTurnoutArgs(turnout.UserName, turnout.SystemName, turnout.StateEnum == TurnoutStateEnum.Thrown));
             break;
 
         case RouteEvent route:
             Console.WriteLine($"Route event received: {route.SystemName} - {route.UserName} - {route.StateEnum}");
-            OnRouteMsgReceived(new DccRouteArgs(route.SystemName, route.UserName, route.StateEnum == RouteStateEnum.Active));
+            OnRouteMsgReceived(new DccRouteArgs(route.UserName, route.SystemName, route.StateEnum == RouteStateEnum.Active));
             break;
 
         default:
