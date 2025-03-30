@@ -24,8 +24,9 @@
             ColumnDefinitions="*,100"
             HorizontalOptions="Fill"
             Padding="5">
-            <HorizontalStackLayout Grid.Column="0">
+            <Grid ColumnDefinitions="50,300,200" Grid.Column="0">
                 <Button
+                    Grid.Column="0"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                     CommandParameter="ID"
                     HorizontalOptions="Start"
@@ -33,12 +34,18 @@
                     Style="{StaticResource ButtonLabel}"
                     Text="{Binding ColumnLabelID}" />
                 <Button
+                    Grid.Column="1"
                     Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                     CommandParameter="SystemName"
                     HorizontalOptions="Start"
                     Style="{StaticResource ButtonLabel}"
                     Text="{Binding ColumnLabelName}" />
-            </HorizontalStackLayout>
+                <Label
+                    Grid.Column="2"
+                    HorizontalOptions="Start"
+                    Style="{StaticResource ButtonLabel}"
+                    Text="DCC Address" />
+            </Grid>
             <HorizontalStackLayout Grid.Column="1">
                 <Button
                     Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
@@ -116,12 +123,13 @@
                             <SwipeView.Content>
                                 <StackLayout x:DataType="dataModel:Turnout">
                                     <Grid ColumnDefinitions="*,100">
-                                        <HorizontalStackLayout Grid.Column="0" HorizontalOptions="Start">
-                                            <HorizontalStackLayout.GestureRecognizers>
+                                        <Grid ColumnDefinitions="50,300,200" Grid.Column="0" HorizontalOptions="Start">
+                                            <Grid.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}" CommandParameter="{Binding .}" />
-                                            </HorizontalStackLayout.GestureRecognizers>
+                                            </Grid.GestureRecognizers>
 
                                             <Label
+                                                Grid.Column="0"
                                                 HorizontalOptions="Start"
                                                 LineBreakMode="NoWrap"
                                                 Margin="10,0,10,0"
@@ -129,11 +137,18 @@
                                                 Text="{Binding Id}"
                                                 VerticalOptions="Center" />
                                             <Label
+                                                Grid.Column="1"
                                                 FontAttributes="Bold"
                                                 Style="{StaticResource MediumLabel}"
                                                 Text="{Binding Name}"
                                                 VerticalOptions="Center" />
-                                        </HorizontalStackLayout>
+                                            <Label
+                                                Grid.Column="2"
+                                                FontAttributes="Bold"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding DccAddress}"
+                                                VerticalOptions="Center" />
+                                        </Grid>
 
                                         <components:TurnoutStateControl
                                             CanToggleState="true"

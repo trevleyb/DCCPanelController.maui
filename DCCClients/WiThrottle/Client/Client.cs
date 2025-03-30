@@ -1,3 +1,4 @@
+using System.Data;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
@@ -27,69 +28,62 @@ public class Client {
     }
 
     public bool Echo { get; set; } = true;
+    public event Action<IClientEvent>? DataEvent;
     public event Action<IClientEvent>? ConnectionEvent;
-    public event Action<string>? ConnectionError;
 
-    public async Task<IResult> ConnectAsync()
-    {
+    public async Task<IResult> ConnectAsync() {
         if (_running) Stop();
-        try
-        {
-            _client = new TcpClient();
-
-            // Attempt to connect asynchronously with a timeout
-            using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
-                await _client.ConnectAsync(_withrottleSettings.Address, _withrottleSettings.Port, cts.Token); 
-            }
-
-            _stream = _client.GetStream();
-            _running = true;
+        try {
+            await EstablishConnection();
 
             // Start the listener as an asynchronous background task
             // _ = Task.Run(ListenAsync);
             var listenThread = new Thread(Listen);
             listenThread.Start();
             return Result.Ok();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             return Result.Fail(new Error("Failed to connect").CausedBy(ex));
         }
     }
 
-    private async Task ListenAsync() {
-
-        if (_client is null || _stream is null) throw new InvalidOperationException("Client or stream is null");
-        
-        StringBuilder buffer = new();
-        var bytes = new byte[256];
-
-        SendWakeUpMessages();
-        try {
-            while (_running && _client.Connected) {
-                var bytesRead = await _stream.ReadAsync(bytes, 0, buffer.Length);
-                if (bytesRead != 0) {
-                    var data = Encoding.ASCII.GetString(bytes, 0, bytesRead);
-                    buffer.Append(data);
-
-                    if (Terminators.HasTerminator(buffer)) {
-                        foreach (var command in Terminators.GetMessagesAndLeaveIncomplete(buffer)) {
-                            ProcessMessage(command);
-                        }
-                    }
+    private async Task EstablishConnectionWithRetries(int maxRetries = 3, int delayMilliseconds = 2000) {
+        int retryCount = 0;
+        while (retryCount < maxRetries) {
+            try {
+                await EstablishConnection(); // Attempt to establish a connection
+                return;                      // Exit the loop on success
+            } catch (Exception ex) {
+                retryCount++;
+                Console.WriteLine($"Failed to connect: {ex.Message} Retrying... {retryCount}/{maxRetries}");
+                if (retryCount >= maxRetries) {
+                    // Log and rethrow the exception if max retries are reached
+                    Console.WriteLine($"Failed to connect after {maxRetries} attempts: {ex.Message}");
+                    throw;
                 }
+
+                Console.WriteLine($"Retrying connection... Attempt {retryCount}/{maxRetries}");
+                await Task.Delay(delayMilliseconds); // Wait before retrying
             }
-        }
-        catch (Exception ex) {
-            Console.WriteLine($"Listener encountered an error: {ex.Message}");
-            ConnectionError?.Invoke(ex.Message);
-        }
-        finally {
-            Stop();
         }
     }
 
-    
+    /// <summary>
+    /// Used to connect, or try again, to get a connection
+    /// </summary>
+    private async Task EstablishConnection() {
+        Console.WriteLine("Establishing connection...");
+        if (_client is not null && _client.Connected) return;
+        if (_client is not null) CloseConnection();
+        
+        _client = new TcpClient();
+        using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
+            await _client.ConnectAsync(_withrottleSettings.Address, _withrottleSettings.Port, cts.Token);
+        }
+        _stream = _client.GetStream();
+        _running = true;
+        Console.WriteLine("Connection established.");
+    }
+
     /// <summary>
     ///     Listen for incomming messages and event them via the DataReceived event to the caller.
     /// </summary>
@@ -121,13 +115,32 @@ public class Client {
                     }
                 }
             } catch (Exception ex) {
+                Console.WriteLine($"Listener encountered an error: {ex.Message}");
+                EstablishConnectionWithRetries().Wait();
+                if (_client is null) {
+                    ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
+                    break;
+                }
+
                 // Just ignore any exceptions for now, but this should raise events to say 
                 // that we have an issue so that we can try to re-establish the connection
-                ConnectionError?.Invoke(ex.Message);
+                //ConnectionEvent?.Invoke(ex.Message);
             }
 
             Thread.Sleep(100);
         }
+        CloseConnection();
+        ConnectionEvent?.Invoke(new ConnectionEvent("Connection closed", GetConnectionState(), false));
+    }
+
+    private void CloseConnection() {
+        _running = false;
+        _client?.Close();
+        _client = null;
+        _stream = null;
+        _heartbeatTimer?.Stop();
+        _heartbeatTimer?.Dispose();
+        _heartbeatTimer = null;
     }
 
     private void ProcessMessage(string message) {
@@ -188,10 +201,19 @@ public class Client {
         } catch (Exception ex) {
             // Just ignore any exceptions for now, but this should raise events to say 
             // that we have an issue so that we can try to re-establish the connection
-            ConnectionError?.Invoke(ex.Message);
+            ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
         }
     }
 
+    private ConnectionState GetConnectionState() {
+        if (_client is null) return ConnectionState.Closed;
+        if (!_client.Connected) return ConnectionState.Closed;
+        if (_stream is null) return ConnectionState.Open;
+        if (!_stream.CanRead) return ConnectionState.Open;
+        if (!_stream.CanWrite) return ConnectionState.Open;
+        return ConnectionState.Open;
+    }
+    
     /// <summary>
     ///     Shutdown the connection to the WiThrottle Service and clean up.
     /// </summary>
@@ -220,6 +242,6 @@ public class Client {
     }
 
     protected void OnClientEventOccurred(IClientEvent clientEvent) {
-        ConnectionEvent?.Invoke(clientEvent);
+        DataEvent?.Invoke(clientEvent);
     }
 }

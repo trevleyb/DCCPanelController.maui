@@ -19,19 +19,11 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
-            Clicked="ToggleGrid"
-            IconImageSource="grid_on.png"
-            x:Name="ToggleGridToolbar" />
-        <ToolbarItem
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"
             Text="Hide"
             ToolTipProperties.Text="Hide Bottom Tab Bar"
             x:Name="HideUnHide" />
-        <ToolbarItem
-            Clicked="ConnectButton_OnClicked"
-            IconImageSource="circle_white.png"
-            x:Name="ConnectToolbarButton" />
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

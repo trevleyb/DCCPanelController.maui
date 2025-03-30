@@ -24,14 +24,14 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     private IDccClient Client { get; init; }
-    private ConnectionService? ConnectionService { get; }
     private Profile Profile { get; init; }
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
-        ConnectionService = connectionService;
         Turnouts = Profile.Turnouts;
-        Client = ConnectionService.GetClient(profile.ActiveConnection);
+        
+        connectionService.Connect(profile.ActiveConnectionInfo);
+        Client = connectionService.Connection;
         Client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
         SetLabels();
     }
@@ -41,7 +41,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
             var turnout = Turnouts.First(x => x.Id == e.TurnoutId);
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
         } else {
-            Turnouts.Add(new Turnout() { DccAddress = int.Parse(e.DccAddress), State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown, Id = e.TurnoutId});
+            Turnouts.Add(new Turnout() { DccAddress = e.DccAddress, State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown, Id = e.TurnoutId});
         }
     }
 
@@ -109,7 +109,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
-        if (!string.IsNullOrEmpty(turnout.DccAddress.ToString())) Client.SendTurnoutCmd(turnout.DccAddress.ToString() ?? "",turnout.State == TurnoutStateEnum.Thrown);
+        if (!string.IsNullOrEmpty(turnout.DccAddress)) Client.SendTurnoutCmd(turnout.DccAddress ?? "",turnout.State == TurnoutStateEnum.Thrown);
         OnPropertyChanged(nameof(Turnouts));
     }
 

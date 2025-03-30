@@ -7,6 +7,6 @@ public class DccErrorArgs : EventArgs {
     public DccErrorArgs(string error, bool clientIsRunning) {
         Error = error;
         ClientIsRunning = clientIsRunning;
-        throw new NotImplementedException();
+        Console.WriteLine(error);
     }
 }

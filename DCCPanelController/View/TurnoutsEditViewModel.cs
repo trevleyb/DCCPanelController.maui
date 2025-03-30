@@ -9,7 +9,7 @@ namespace DCCPanelController.View;
 
 public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private TurnoutStateEnum _currentState;
-    [ObservableProperty] private int? _dccAddress;
+    [ObservableProperty] private string? _dccAddress;
     [ObservableProperty] private TurnoutStateEnum _defaultState;
     [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private string _systemName;
@@ -28,7 +28,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         DefaultState = Turnout.Default;
         IsEditable = Turnout.IsEditable;
 
-        Client = connectionService.GetClient();
+        Client = connectionService.Connection;
     }
 
     public event Action<Turnout?>? OnSaveCompleted;

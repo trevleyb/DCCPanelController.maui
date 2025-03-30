@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Models.DataModel.Entities;
+using DCCClients.WiThrottle.Client;
+using TurnoutStateEnum = DCCPanelController.Models.DataModel.Entities.TurnoutStateEnum;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -9,18 +10,19 @@ namespace DCCPanelController.Models.DataModel;
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
-public partial class Turnout : ObservableObject {
-    [ObservableProperty] private string? _dccAddress;
-    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
+public partial class Signal : ObservableObject {
+    [ObservableProperty] private string _dccAddress;
+    [ObservableProperty] private SignalAspectEnum _aspect = SignalAspectEnum.Off;
 
     [ObservableProperty] private string? _id;
     [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private string? _name;
-    [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     /// <summary>
     ///     Represents a Turnout with its current state.
     ///     This is controlled by data that comes in via the Withrottle Interface
     /// </summary>
-    public Turnout() { }
+    public Signal() {
+        _dccAddress = string.Empty;
+    }
 }

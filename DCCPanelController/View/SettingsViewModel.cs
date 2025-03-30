@@ -26,7 +26,7 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public Settings Settings => Profile.Settings;
-    public Connection? SelectedServer => Settings?.Connections[0];
+    public ConnectionInfo? SelectedServer => Settings?.Connections[0];
     public string ConnectLabel => "Tofix"; //ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
     public bool ShowWiServers => !ShowMessages;
     public bool IsConnected => true; //ConnectionService is { IsConnected : true } ? true : false;

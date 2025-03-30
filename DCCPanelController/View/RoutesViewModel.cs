@@ -3,10 +3,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients;
 using DCCClients.Events;
+using DCCClients.WiThrottle.Client;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
+using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEnum;
 
 namespace DCCPanelController.View;
 
@@ -26,13 +27,13 @@ public partial class RoutesViewModel : BaseViewModel {
 
     private Profile Profile { get; init; }
     private IDccClient Client { get; init; }
-    private ConnectionService? ConnectionService { get; }
 
     public RoutesViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
-        ConnectionService = connectionService;
         Routes = Profile.Routes;
-        Client = ConnectionService.GetClient(profile.ActiveConnection);
+        
+        connectionService.Connect(profile.ActiveConnectionInfo);
+        Client = connectionService.Connection;
         Client.RouteMsgReceived += ClientOnRouteMsgReceived;
         SetLabels();
     }

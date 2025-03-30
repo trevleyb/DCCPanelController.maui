@@ -4,10 +4,26 @@ using DCCPanelController.Helpers.Result;
     
 namespace DCCPanelController.Services;
 
-public class ConnectionService {
+public class ConnectionService : IConnectionService {
     
     private IDccClient? _dccClient;
-    public IDccClient GetClient(Connection? connection = null) {
+    public ConnectionInfo? ConnectionInfo { get; set; }
+
+    public IDccClient? Connect(ConnectionInfo? connectionInfo = null) {
+        if (connectionInfo is not null) ConnectionInfo = connectionInfo;
+        ArgumentNullException.ThrowIfNull(ConnectionInfo);
+        _dccClient = GetClient(ConnectionInfo);
+        return _dccClient;
+    }
+
+    public IDccClient Connection => _dccClient ??= GetClient(ConnectionInfo);
+
+    public void Disconnect() {
+        if (_dccClient is not null) _dccClient.Disconnect();
+        _dccClient = null;
+    }
+    
+    private IDccClient GetClient(ConnectionInfo? connection = null) {
         
         // Allow null as a parameter if we know we have already setup the connection
         // This will then return the active connection.
@@ -17,7 +33,6 @@ public class ConnectionService {
         // If we don't have a connection setup, and we did not provide settings, then we error
         // --------------------------------------------------------------------------
         if (connection?.Settings is null) throw new ArgumentNullException(nameof(connection),"No Connection Details provided.");
-        
         
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------

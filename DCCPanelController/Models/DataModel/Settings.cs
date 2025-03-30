@@ -9,16 +9,16 @@ public partial class Settings : ObservableObject {
     [ObservableProperty] private bool _useConnection;
     [ObservableProperty] private string _activeConnectionName = "default";
     [ObservableProperty] private Color _backgroundColor = Colors.White;
-    [ObservableProperty] private ObservableCollection<Connection> _connections = [];
+    [ObservableProperty] private ObservableCollection<ConnectionInfo> _connections = [];
 
-    public Connection ActiveConnection() {
+    public ConnectionInfo ActiveConnection() {
         try {
             if (string.IsNullOrEmpty(ActiveConnectionName)) {
                 ActiveConnectionName = "default";
                 if (Connections.Count > 0) ActiveConnectionName = Connections[0].Name;
             }
             if (!Connections.Any(con => con.Name.Equals(ActiveConnectionName))) {
-                Connections.Add(new Connection("default", new WithrottleSettings("withrottle", "0.0.0.0", 12090)));
+                Connections.Add(new ConnectionInfo("default", new WithrottleSettings("withrottle", "0.0.0.0", 12090)));
             }
             return Connections.First(con => con.Name.Equals(ActiveConnectionName));
         } catch (Exception ex) {

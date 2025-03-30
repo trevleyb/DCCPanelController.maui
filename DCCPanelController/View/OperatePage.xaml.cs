@@ -54,21 +54,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
         _tabBarState = state;
     }
-
-    private void ConnectButton_OnClicked(object? sender, EventArgs e) {
-        _viewModel.Connect();
-
-        var icon = _viewModel.IsConnected switch {
-            true  => "circle_green.png",
-            false => "circle_red.png",
-            null  => "circle_white.png"
-        };
-
-        ConnectToolbarButton.IconImageSource = icon;
-
-        //OnPropertyChanged(nameof(ConnectToolbarButton));
-    }
-
+    
     private void ToggleGrid(object? sender, EventArgs e) {
         _viewModel.ShowGrid = !_viewModel.ShowGrid;
     }

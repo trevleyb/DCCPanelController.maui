@@ -41,8 +41,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         // --------------------------
         try {
             _client = new Client(_settings);
-            _client.ConnectionError += OnOnConnectionError;
-            _client.ConnectionEvent += ProcessClientEvent;
+            _client.ConnectionEvent += OnOnConnectionEvent;
+            _client.DataEvent += ProcessClientEvent;
             return await _client.ConnectAsync();
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to connect to the Withrottle server.").CausedBy(ex));
@@ -79,8 +79,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
             return Result.Fail(new Error("Unable to disconnect from the Withrottle server.").CausedBy(ex));
         } finally {
             if (_client is not null) {
-                _client.ConnectionError -= OnOnConnectionError;
-                _client.ConnectionEvent -= ProcessClientEvent;
+                _client.ConnectionEvent -= OnOnConnectionEvent;
+                _client.DataEvent -= ProcessClientEvent;
             }
         }
         _client = null;
@@ -146,8 +146,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         }
     }
 
-    protected virtual void OnOnConnectionError(string error) {
-        Console.WriteLine($"Connection error: {error}");
-        OnConnectionError(new DccErrorArgs(error, _client?.IsRunning ?? false));
+    protected virtual void OnOnConnectionEvent(IClientEvent clientEvent) {
+        Console.WriteLine($"Connection error: {clientEvent.GetType().Name} - {clientEvent}");
+        OnConnectionError(new DccErrorArgs(clientEvent.ToString(), _client?.IsRunning ?? false));
     }
 }
