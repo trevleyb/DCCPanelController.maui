@@ -1,11 +1,16 @@
 using DCCClients;
 using DCCPanelController.Models;
 using DCCPanelController.Helpers.Result;
-    
+using DCCPanelController.Models.DataModel;
+
 namespace DCCPanelController.Services;
 
 public class ConnectionService : IConnectionService {
-    
+
+    public ConnectionService(Profile profile) {
+        ConnectionInfo = profile.ActiveConnectionInfo;
+    }
+
     private IDccClient? _dccClient;
     public ConnectionInfo? ConnectionInfo { get; set; }
 

@@ -4,9 +4,9 @@ using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 namespace DCCPanelController.View;
 
 public partial class RoutesPage : ContentPage {
-    public RoutesPage() {
+    public RoutesPage(RoutesViewModel viewModel) {
         InitializeComponent();
-        BindingContext = MauiProgram.ServiceHelper.GetService<RoutesViewModel>();
+        BindingContext = viewModel;
 
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();

@@ -10,10 +10,6 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Shell.MenuBarItems>
-        <MenuBarItem Text="Connect"></MenuBarItem>        
-    </Shell.MenuBarItems>
-    
     <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
         <ShellContent
             ContentTemplate="{DataTemplate view:OperatePage}"
