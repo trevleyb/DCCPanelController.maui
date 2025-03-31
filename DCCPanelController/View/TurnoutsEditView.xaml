@@ -18,6 +18,8 @@
             HorizontalOptions="Center"
             Margin="10"
             Padding="10"
+            Stroke="{StaticResource Primary}"
+            StrokeThickness="1"
             VerticalOptions="Center">
             <VerticalStackLayout>
                 <Label
@@ -31,32 +33,21 @@
                     BackgroundColor="{StaticResource Primary}"
                     HeightRequest="2"
                     HorizontalOptions="Fill"
-                    Margin="0,5,0,15" />
+                    Margin="0,5,0,0" />
 
-                <StackLayout Margin="10" Padding="10">
-                    <Grid ColumnDefinitions="120,300" RowDefinitions="auto,auto,auto,25,auto,auto">
-                        <Label
-                            Grid.Column="0"
-                            Grid.Row="0"
-                            HorizontalOptions="Start"
-                            Text="System Name"
-                            VerticalOptions="Center" />
-                        <Entry
-                            Grid.Column="1"
-                            Grid.Row="0"
-                            HorizontalOptions="Start"
-                            Text="{Binding SystemName}"
-                            VerticalOptions="Center"
-                            WidthRequest="300" />
+                <StackLayout>
+                    <Grid ColumnDefinitions="150,300" RowDefinitions="30,30,30,10,35,35">
                         <Label
                             Grid.Column="0"
                             Grid.Row="1"
+                            HeightRequest="25"
                             HorizontalOptions="Start"
-                            Text="User Name"
+                            Text="ID (User Name)"
                             VerticalOptions="Center" />
                         <Entry
                             Grid.Column="1"
                             Grid.Row="1"
+                            HeightRequest="25"
                             HorizontalOptions="Start"
                             Text="{Binding UserName}"
                             VerticalOptions="Center"
@@ -64,12 +55,14 @@
                         <Label
                             Grid.Column="0"
                             Grid.Row="2"
+                            HeightRequest="25"
                             HorizontalOptions="Start"
-                            Text="DCC Address"
+                            Text="System Name (DCC Address)"
                             VerticalOptions="Center" />
                         <Entry
                             Grid.Column="1"
                             Grid.Row="2"
+                            HeightRequest="25"
                             HorizontalOptions="Start"
                             Text="{Binding DccAddress}"
                             VerticalOptions="Center"

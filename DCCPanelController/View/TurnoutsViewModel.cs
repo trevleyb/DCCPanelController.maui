@@ -36,7 +36,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
         connectionService.Connect(profile.ActiveConnectionInfo);
         Client = connectionService.Connection;
-        Client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
+        //Client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
         SetLabels();
     }
 

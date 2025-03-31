@@ -34,10 +34,7 @@ public class Client {
     public async Task<IResult> ConnectAsync() {
         if (_running) Stop();
         try {
-            await EstablishConnection();
-
-            // Start the listener as an asynchronous background task
-            // _ = Task.Run(ListenAsync);
+            await EstablishConnectionWithRetries();
             var listenThread = new Thread(Listen);
             listenThread.Start();
             return Result.Ok();
@@ -47,6 +44,9 @@ public class Client {
     }
 
     private async Task EstablishConnectionWithRetries(int maxRetries = 3, int delayMilliseconds = 2000) {
+        
+        CloseConnection();
+       
         int retryCount = 0;
         while (retryCount < maxRetries) {
             try {
@@ -96,7 +96,6 @@ public class Client {
             try {
                 if (_stream is { DataAvailable: true } && _client is { Connected: true }) {
                     var bytesRead = 0;
-
                     try {
                         bytesRead = _stream.Read(bytes, 0, bytes.Length);
                     } catch (ObjectDisposedException) {
@@ -104,16 +103,18 @@ public class Client {
                     }
 
                     if (bytesRead != 0) {
+                        Console.WriteLine($"Bytes read: {bytesRead}");
                         var data = Encoding.ASCII.GetString(bytes, 0, bytesRead);
                         buffer.Append(data);
 
                         if (Terminators.HasTerminator(buffer)) {
                             foreach (var command in Terminators.GetMessagesAndLeaveIncomplete(buffer)) {
+                                Console.WriteLine($"Command received: {command}");
                                 ProcessMessage(command);
                             }
                         }
                     }
-                }
+                } 
             } catch (Exception ex) {
                 Console.WriteLine($"Listener encountered an error: {ex.Message}");
                 EstablishConnectionWithRetries().Wait();
@@ -121,12 +122,7 @@ public class Client {
                     ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
                     break;
                 }
-
-                // Just ignore any exceptions for now, but this should raise events to say 
-                // that we have an issue so that we can try to re-establish the connection
-                //ConnectionEvent?.Invoke(ex.Message);
             }
-
             Thread.Sleep(100);
         }
         CloseConnection();
@@ -134,6 +130,7 @@ public class Client {
     }
 
     private void CloseConnection() {
+        Console.WriteLine("Closing connection...");
         _running = false;
         _client?.Close();
         _client = null;
@@ -191,7 +188,7 @@ public class Client {
 
     public void SendMessage(string message) {
         message = message.WithTerminator();
-        if (Echo) OnClientEventOccurred(new MessageEvent("Command", message));
+        if (Echo) OnClientEventOccurred(new MessageEvent("Command Sent", message));
 
         try {
             if (_stream is { CanWrite: true }) {
@@ -199,9 +196,12 @@ public class Client {
                 _stream.Write(data, 0, data.Length);
             }
         } catch (Exception ex) {
-            // Just ignore any exceptions for now, but this should raise events to say 
-            // that we have an issue so that we can try to re-establish the connection
-            ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
+            EstablishConnectionWithRetries().Wait();
+            if (_client is null) {
+                ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
+                CloseConnection();
+                return;
+            }
         }
     }
 
@@ -217,11 +217,7 @@ public class Client {
     /// <summary>
     ///     Shutdown the connection to the WiThrottle Service and clean up.
     /// </summary>
-    public void Stop() {
-        _running = false;
-        if (_stream is { } stream) stream.Close();
-        if (_client is { } client) client.Close();
-    }
+    public void Stop() => CloseConnection();
 
     private void StartHeartbeatTimer(int secs) {
         _heartbeatTimer = new Timer(secs * 1000);

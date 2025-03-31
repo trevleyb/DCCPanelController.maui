@@ -38,13 +38,6 @@
                 Style="{StaticResource ButtonLabel}"
                 Text="DCC Address"/>
             <Button
-                Grid.Column="2"
-                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                CommandParameter="SystemName"
-                HorizontalOptions="Start"
-                Style="{StaticResource ButtonLabel}"
-                Text="{Binding ColumnLabelName}"/>
-            <Button
                 Grid.Column="3"
                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                 CommandParameter="State"
@@ -136,12 +129,6 @@
                                             VerticalOptions="Center"/>
                                         <Label
                                             Grid.Column="1"
-                                            FontAttributes="Bold"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding Name}"
-                                            VerticalOptions="Center"/>
-                                        <Label
-                                            Grid.Column="2"
                                             FontAttributes="Bold"
                                             Style="{StaticResource MediumLabel}"
                                             Text="{Binding DccAddress}"

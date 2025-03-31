@@ -7,8 +7,10 @@ namespace DCCPanelController.View;
 public partial class PanelEditorPage {
     private PanelEditorViewModel? _viewModel;
 
-    public PanelEditorPage() {
+    public PanelEditorPage(PanelEditorViewModel viewModel) {
         InitializeComponent();
+        _viewModel = viewModel;
+        BindingContext = viewModel;
     }
 
     protected override void OnBindingContextChanged() {
