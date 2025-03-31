@@ -4,7 +4,10 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCClients;
+using DCCClients.Events;
 using DCCClients.Interfaces;
+using DCCClients.WiThrottle.Client;
 using DCCClients.WiThrottle.ServiceHelper;
 using DCCPanelController.Models;
 using DCCPanelController.Models.DataModel;
@@ -13,29 +16,35 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
+    
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-    [ObservableProperty] private Profile _profile;
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(ShowWiServers))]
-    private bool _showMessages;
-
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
-
-    public SettingsViewModel(Profile profile) {
-        _profile = profile;
-    }
-
-    public Settings Settings => Profile.Settings;
-    public ConnectionInfo? SelectedServer => Settings?.Connections[0];
-    public string ConnectLabel => "Tofix"; //ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
-    public bool ShowWiServers => !ShowMessages;
-    public bool IsConnected => true; //ConnectionService is { IsConnected : true } ? true : false;
-    public bool IsLiveMode => !IsDemoMode || !IsConnected;
-    public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 
     [ObservableProperty] private string _name = "withrottle";
     [ObservableProperty] private string _ipAddress = "0.0.0.0";
     [ObservableProperty] private int _port = 12090;
+
+    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(ShowWiServers))]
+    private bool _showMessages;
+
+    private IDccClient? _client;
+    private Profile _profile;
+    private ConnectionService ConnectionService { get; init; }
+
+    public SettingsViewModel(Profile profile, ConnectionService connectionService) {
+        _profile = profile;
+        ConnectionService = connectionService;
+        ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
+    }
+    
+    public Settings Settings => _profile.Settings;
+    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
+    public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
+    public bool ShowWiServers => !ShowMessages;
+    public bool IsConnected => ConnectionService?.IsConnected ?? false;
+    public bool IsLiveMode => !IsDemoMode || !IsConnected;
+    public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
 
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
@@ -76,21 +85,17 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public void SaveSettings() {
-        //SettingsService?.Save();
+        _profile.Save();
     }
 
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
     // ---------------------------------------------------------------------------------------------
-    private void ConnectionServiceOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        switch (e.PropertyName) {
-        case nameof(IsConnected):
-            OnPropertyChanged(nameof(IsConnectAvailable));
-            OnPropertyChanged(nameof(IsConnected));
-            OnPropertyChanged(nameof(ConnectLabel));
-            break;
-        }
+    private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
+        OnPropertyChanged(nameof(IsConnectAvailable));
+        OnPropertyChanged(nameof(IsConnected));
+        OnPropertyChanged(nameof(ConnectLabel));
     }
-
+    
     [RelayCommand]
     public async Task ConnectAsync() {
         if (!IsDemoMode) {
@@ -99,18 +104,17 @@ public partial class SettingsViewModel : BaseViewModel {
 
             try {
                 IsBusy = true;
-
-                // if (ConnectionService is not null) {
-                //     if (IsConnected) {
-                //         ConnectionService.Disconnect();
-                //         ConnectionService.MessageRecieved -= ServiceOnMessageRecieved;
-                //         AddMessage("Disconnected.");
-                //     } else {
-                //         ConnectionService.Connect(Settings.WiServer);
-                //         ConnectionService.MessageRecieved += ServiceOnMessageRecieved;
-                //         AddMessage("Connected.");
-                //     }
-                // }
+                if (_client is not null || ConnectionService.IsConnected) {
+                    AddMessage("Disconnected.");
+                    if (_client != null) _client.MessageReceived -= ClientOnMessageReceived;
+                    ConnectionService.Disconnect();
+                }
+                
+                _client = await ConnectionService.Connect(Settings.ActiveConnection());
+                if (_client is not null) {
+                    _client.MessageReceived += ClientOnMessageReceived;
+                    AddMessage("Connected.");
+                }
             } catch {
                 IsBusy = false;
                 AddMessage("Unable to Connect.");
@@ -120,13 +124,14 @@ public partial class SettingsViewModel : BaseViewModel {
         IsBusy = false;
     }
 
-    private void ServiceOnMessageRecieved(string message) {
-        AddMessage(message);
+    private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
+        AddMessage($"{e.MessageType}: {e.Message}");
     }
 
     public void AddMessage(string message) {
         if (!string.IsNullOrEmpty(message)) {
-            Messages.Add(new SettingsMessage(message));
+            var msg = new SettingsMessage(message);
+            Messages.Add(msg);
             if (Messages.Count > 100) Messages.RemoveAt(0);
         }
     }
@@ -140,24 +145,18 @@ public partial class SettingsViewModel : BaseViewModel {
     public async Task RefreshWiServersAsync() {
         if (IsBusy) return;
         AddMessage("Attempting to scan for WiThrottle Servers");
-
-        // TODO: Major Overhaul needed to support different server types
-
         try {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
 
-            //WiServers.Clear();
-
+            Servers.Clear();
             var servers = await ServiceFinder.FindServices("withrottle");
-
-            //if (servers is { Count: > 0 }) {
-            //    foreach (var server in servers) {
-            //        WiServers.Add(new WiServer(server.Name, server.WithrottleSettings.Address, server.WithrottleSettings.Port));
-            //    }
-            //}
-
-            //AddMessage($"Found {WiServers.Count} WiThrottle Servers");
+            if (servers is { Count: > 0 }) {
+                foreach (var server in servers) { 
+                    Servers.Add(new WithrottleSettings(server.Name, server.WithrottleSettings.Address, server.WithrottleSettings.Port));
+                }
+            }
+            AddMessage($"Found {Servers.Count} WiThrottle Servers");
         } catch (Exception ex) {
             AddMessage("Unable to search for WiThrottle Servers.");
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
@@ -170,10 +169,10 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public void SelectWiServer(object? server) {
-        //if (server == null) return;
-        //IpAddress = server.IpAddress;
-        //Port = (int)server.Port;
+    public void SelectWiServer(WithrottleSettings? server) {
+        if (server == null) return;
+        IpAddress = server.Address;
+        Port = (int)server.Port;
     }
 
     /// <summary>

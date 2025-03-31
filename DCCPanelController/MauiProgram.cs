@@ -50,6 +50,7 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<PanelEditorPage, PanelEditorViewModel>();
         services.AddTransientViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddTransientViewAndModel<TurnoutsPage, TurnoutsViewModel>();
+        services.AddTransientViewAndModel<SettingsPage, SettingsViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);

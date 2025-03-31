@@ -18,7 +18,7 @@ public partial class Settings : ObservableObject {
                 if (Connections.Count > 0) ActiveConnectionName = Connections[0].Name;
             }
             if (!Connections.Any(con => con.Name.Equals(ActiveConnectionName))) {
-                Connections.Add(new ConnectionInfo("default", new WithrottleSettings("withrottle", "0.0.0.0", 12090)));
+                Connections.Add(new ConnectionInfo("default", new WithrottleSettings("DCCPanelController", "0.0.0.0", 12090)));
             }
             return Connections.First(con => con.Name.Equals(ActiveConnectionName));
         } catch (Exception ex) {

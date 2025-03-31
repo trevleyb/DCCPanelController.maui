@@ -7,9 +7,9 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private readonly SettingsViewModel? _viewModel;
     private Grid? _lastGridSelected;
 
-    public SettingsPage() {
+    public SettingsPage(SettingsViewModel viewModel) {
         InitializeComponent();
-        _viewModel = MauiProgram.ServiceHelper.GetService<SettingsViewModel>();
+        _viewModel = viewModel; //MauiProgram.ServiceHelper.GetService<SettingsViewModel>();
         BindingContext = _viewModel;
     }
 

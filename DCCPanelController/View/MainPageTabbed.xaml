@@ -27,6 +27,10 @@
             ContentTemplate="{DataTemplate view:RoutesPage}"
             Icon="routes.png"
             Title="Routes" />
+        <ShellContent
+            ContentTemplate="{DataTemplate view:SettingsPage}"
+            Icon="settings.png"
+            Title="Settings" />
     </FlyoutItem>
 
 </Shell>

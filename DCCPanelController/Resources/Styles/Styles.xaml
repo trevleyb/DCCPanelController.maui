@@ -126,16 +126,14 @@
         </Setter>
     </Style>
 
-    <Style TargetType="Frame" x:Key="IpAddress">
+    <Style TargetType="Border" x:Key="IpAddress">
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
                     <VisualState x:Name="Normal">
                         <VisualState.Setters>
-                            <Setter Property="BorderColor" Value="{StaticResource Primary}" />
-                            <Setter Property="CornerRadius" Value="5" />
+                            <Setter Property="Stroke" Value="{StaticResource Primary}" />
                             <Setter Property="HeightRequest" Value="40" />
-                            <Setter Property="WidthRequest" Value="55" />
                             <Setter Property="HorizontalOptions" Value="Center" />
                             <Setter Property="Padding" Value="5" />
                             <Setter Property="VerticalOptions" Value="Center" />
@@ -143,10 +141,8 @@
                     </VisualState>
                     <VisualState x:Name="Disabled">
                         <VisualState.Setters>
-                            <Setter Property="BorderColor" Value="{StaticResource PrimaryDisabled}" />
-                            <Setter Property="CornerRadius" Value="5" />
+                            <Setter Property="Stroke" Value="{StaticResource PrimaryDisabled}" />
                             <Setter Property="HeightRequest" Value="40" />
-                            <Setter Property="WidthRequest" Value="55" />
                             <Setter Property="HorizontalOptions" Value="Center" />
                             <Setter Property="Padding" Value="5" />
                             <Setter Property="VerticalOptions" Value="Center" />
