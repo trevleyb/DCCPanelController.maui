@@ -44,6 +44,8 @@ public class DccJmriClient : DccClient, IDccClient {
         return Result.Fail(new Error("JMRI Client not currently implemented"));
     }
 
+    public bool IsConnected => false;
+    
     public IResult SendCmd(string message) {
         return Result.Fail(new Error("JMRI Client not currently implemented"));
     }

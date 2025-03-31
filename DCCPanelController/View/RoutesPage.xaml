@@ -13,8 +13,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IconImageSource="plus_circle.png" IsEnabled="False" />
-        <ToolbarItem IconImageSource="x_circle.png" IsEnabled="False" />
+        <ToolbarItem Command="{Binding RefreshRoutesCommand}" IconImageSource="refresh_cw.png"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">

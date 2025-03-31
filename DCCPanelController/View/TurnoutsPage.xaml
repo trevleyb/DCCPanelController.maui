@@ -15,6 +15,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IconImageSource="refresh_cw.png"/>
         <ToolbarItem Command="{Binding AddTurnoutCommand}" IconImageSource="plus_circle.png"/>
     </ContentPage.ToolbarItems>
 

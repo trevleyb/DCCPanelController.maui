@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
@@ -7,12 +8,21 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly OperateViewModel _viewModel;
     private bool _tabBarState = true;
 
-    public OperatePage() {
+    public OperatePage(OperateViewModel viewModel) {
         InitializeComponent();
-        _viewModel = MauiProgram.ServiceHelper.GetService<OperateViewModel>();
+        _viewModel = viewModel; //MauiProgram.ServiceHelper.GetService<OperateViewModel>(profile, connectionService);
         BindingContext = _viewModel;
+        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
         SetTabBarState(true);
+    }
+
+    private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        switch (e?.PropertyName) {
+        case nameof(OperateViewModel.IsConnected):
+            ConnectButton.IconImageSource = _viewModel.IsConnected ? "wifi.png" : "wifi_off.png";
+            break;
+        }
     }
 
     protected override void OnAppearing() {

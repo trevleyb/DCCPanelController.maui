@@ -9,6 +9,7 @@ public interface IDccClient {
     Task<IResult> ConnectAsync();
     Task<IResult> ReconnectAsync();
     IResult Disconnect();
+    bool IsConnected { get; }
     
     IResult SendCmd(string message);
     IResult SendTurnoutCmd(string dccAddress, bool thrown);

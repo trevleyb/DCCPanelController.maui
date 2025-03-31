@@ -26,15 +26,13 @@ public partial class RoutesViewModel : BaseViewModel {
     private string _sortColumn = "";
 
     private Profile Profile { get; init; }
-    private IDccClient Client { get; init; }
-
+    private IDccClient? Client { get; set; }
+    private ConnectionService ConnectionService { get; init; }
+    
     public RoutesViewModel(Profile profile, ConnectionService connectionService) {
+        ConnectionService = connectionService;
         Profile = profile;
         Routes = Profile.Routes;
-        
-        connectionService.Connect(profile.ActiveConnectionInfo);
-        Client = connectionService.Connection;
-        Client.RouteMsgReceived += ClientOnRouteMsgReceived;
         SetLabels();
     }
 
@@ -81,6 +79,15 @@ public partial class RoutesViewModel : BaseViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
+    [RelayCommand]
+    private async Task RefreshRoutesAsync() {
+        if (ConnectionService.IsConnected) {
+            Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+            Client?.Disconnect();
+        }
+        Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+    }
+
     [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
     public async Task ToggleRoutesState(Route? route) {
         if (route == null) return;
@@ -90,6 +97,9 @@ public partial class RoutesViewModel : BaseViewModel {
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Active
         };
-        if (!string.IsNullOrEmpty(route.Id)) Client?.SendRouteCmd(route.Id, route.State == RouteStateEnum.Active);
+        if (!string.IsNullOrEmpty(route.Id)) {
+            Client = await ConnectionService.Connect();
+            Client?.SendRouteCmd(route.Id, route.State == RouteStateEnum.Active);
+        }
     }
 }

@@ -1,17 +1,25 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using DCCClients.WiThrottle.Client;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
 public partial class OperateViewModel : BaseViewModel {
-    [ObservableProperty] private bool? _isConnected;
+    [ObservableProperty] private bool _isConnected = false;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
+    private ConnectionService ConnectionService { get; init; }
 
-    public OperateViewModel(Profile profile) {
+    public OperateViewModel(Profile profile, ConnectionService connectionService) {
+        ConnectionService = connectionService;
+        ConnectionService.ConnectionChanged += (sender, args) => {
+            Console.WriteLine($"Connection Service Event Raised: {args.IsConnected}");
+            IsConnected = args.IsConnected;
+        };
         Panels = profile.Panels;
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
@@ -26,14 +34,13 @@ public partial class OperateViewModel : BaseViewModel {
         OnPropertyChanged(nameof(BackgroundColor));
         return SelectedPanel?.Id ?? "Control Panel";
     }
-
-    // TODO: Add support for Connecting/Disconnecting
-    // TODO: Add events to change the Icon on Connection Status
-    public void Connect() {
-        IsConnected = IsConnected switch {
-            true  => false,
-            false => null,
-            null  => true
-        };
+    
+    [RelayCommand]
+    private async Task ToggleConnectionAsync() {
+        if (!IsConnected) {
+            await ConnectionService.Connect();
+        } else {
+            ConnectionService.Disconnect();
+        }
     }
 }

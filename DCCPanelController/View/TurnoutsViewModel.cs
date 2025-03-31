@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients;
@@ -26,35 +27,14 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     private ConnectionService ConnectionService { get; init; }
-    private IDccClient Client { get; init; }
+    private IDccClient? Client { get; set; }
     private Profile Profile { get; init; }
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         Turnouts = Profile.Turnouts;
         ConnectionService = connectionService;
-
-        connectionService.Connect(profile.ActiveConnectionInfo);
-        Client = connectionService.Connection;
-        //Client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
         SetLabels();
-    }
-
-    private void ClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
-        if (Turnouts.Any(x => x.Id == e.TurnoutId)) {
-            var turnout = Turnouts.First(x => x.Id == e.TurnoutId);
-            turnout.Id = e.TurnoutId;
-            turnout.DccAddress = e.DccAddress;
-            turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
-        } else {
-            Turnouts.Add(new Turnout() {
-                Name = e.TurnoutId,
-                Id = e.TurnoutId,
-                DccAddress = e.DccAddress, 
-                State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown 
-            });
-        }
-        Profile.Save();
     }
 
     private void SetLabels() {
@@ -64,6 +44,15 @@ public partial class TurnoutsViewModel : BaseViewModel {
         ColumnLabelAddress = LabelAddress + (_sortColumn.Equals("DCCAddress") ? _isAscending.GetSortDirection() : "");
     }
 
+    [RelayCommand]
+    private async Task RefreshTurnoutsAsync() {
+        if (ConnectionService.IsConnected) {
+            Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+            Client?.Disconnect();
+        }
+        Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+    }
+    
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
         List<Turnout> sortedTurnout;
@@ -127,7 +116,10 @@ public partial class TurnoutsViewModel : BaseViewModel {
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
-        if (!string.IsNullOrEmpty(turnout.DccAddress)) Client.SendTurnoutCmd(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown);
+        if (!string.IsNullOrEmpty(turnout.DccAddress)) {
+            Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+            Client?.SendTurnoutCmd(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown);
+        }
         OnPropertyChanged(nameof(Turnouts));
     }
 

@@ -43,6 +43,8 @@ public class DccInvalidClient : DccClient, IDccClient {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
+    public bool IsConnected => false;
+
     public IResult SendCmd(string message) {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }

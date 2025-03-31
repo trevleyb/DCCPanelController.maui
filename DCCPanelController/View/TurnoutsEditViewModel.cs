@@ -17,18 +17,18 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
 
-    IDccClient Client { get; init; }
+    ConnectionService ConnectionService { get; init; }
+    IDccClient? Client { get; set; }
     
     public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
         Turnout = turnout;
+        ConnectionService = connectionService;
         SystemName = Turnout.Id ?? "NT001";
         UserName = Turnout.Name ?? "New Turnout";
         DccAddress = Turnout.DccAddress;
         CurrentState = Turnout.State;
         DefaultState = Turnout.Default;
         IsEditable = Turnout.IsEditable;
-
-        Client = connectionService.Connection;
     }
 
     public event Action<Turnout?>? OnSaveCompleted;
@@ -37,7 +37,10 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
         if (Turnout == null) return;
-        if (!string.IsNullOrEmpty(Turnout.Id)) Client.SendTurnoutCmd(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
+        if (!string.IsNullOrEmpty(Turnout.Id)) {
+            Client = await ConnectionService.Connect();
+            Client?.SendTurnoutCmd(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
+        }
         OnPropertyChanged(nameof(CurrentState));
         OnPropertyChanged(nameof(Turnout));
     }

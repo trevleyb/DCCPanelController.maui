@@ -17,6 +17,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         _settings = settings as WithrottleSettings ?? throw new ArgumentException("Invalid settings provided.");
     }
 
+    public bool IsConnected => _client is not null && _client.IsRunning;
+    
     /// <summary>
     /// Establishes a connection to the WiThrottle server using the provided settings.
     /// </summary>
