@@ -21,7 +21,7 @@
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="200,300,*,100"
+            ColumnDefinitions="*,250,150"
             HorizontalOptions="Fill"
             Padding="5">
             <Button
@@ -39,7 +39,7 @@
                 Style="{StaticResource ButtonLabel}"
                 Text="DCC Address"/>
             <Button
-                Grid.Column="3"
+                Grid.Column="2"
                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                 CommandParameter="State"
                 HorizontalOptions="Start"
@@ -113,7 +113,7 @@
 
                             <SwipeView.Content>
                                 <StackLayout x:DataType="dataModel:Turnout">
-                                    <Grid ColumnDefinitions="200,300,*,100" Padding="5">
+                                    <Grid ColumnDefinitions="*,250,150" Padding="5">
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}"
@@ -137,7 +137,7 @@
 
                                         <components:TurnoutStateControl
                                             CanToggleState="true"
-                                            Grid.Column="3"
+                                            Grid.Column="2"
                                             Margin="0,0,10,0"
                                             State="{Binding State}"
                                             StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
