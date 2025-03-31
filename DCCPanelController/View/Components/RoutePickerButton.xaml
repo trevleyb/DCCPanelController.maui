@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<ContentView
+    x:Class="DCCPanelController.View.Components.RoutePickerButton"
+    x:DataType="colorPickerControl:RoutePickerButton"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Grid>
+        <Button
+            BackgroundColor="{Binding SelectedRoute.Name}"
+            BorderColor="{StaticResource Gray500}"
+            BorderWidth="1"
+            Command="{Binding ShowDropdownCommand}"
+            CornerRadius="10"
+            Grid.Column="0" />
+    </Grid>
+</ContentView>

@@ -38,12 +38,4 @@
             Source="x_circle.png"
             VerticalOptions="Center" />
     </Grid>
-
-    <!--  <Button  -->
-    <!--  BackgroundColor="{Binding SelectedColor}"  -->
-    <!--  BorderColor="{StaticResource Gray100}"  -->
-    <!--  BorderWidth="2"  -->
-    <!--  Command="{Binding ShowDropdownCommand}"  -->
-    <!--  CornerRadius="10" />  -->
-    <!-- </ContentView.Content> -->
 </ContentView>

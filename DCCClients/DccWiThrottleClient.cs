@@ -91,6 +91,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
 
     public IResult SendCmd(string message) {
         try {
+            Console.WriteLine($"Sending command: {message}");
             _client?.SendMessage(message);
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
@@ -100,6 +101,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
 
     public IResult SendTurnoutCmd(string dccAddress, bool isThrown) {
         try {
+            Console.WriteLine($"Sending turnout command: {dccAddress} - {isThrown}");
             _client?.SendMessage(new TurnoutCommand(dccAddress, isThrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
@@ -109,6 +111,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
 
     public IResult SendRouteCmd(string dccAddress, bool isActive) {
         try {
+            Console.WriteLine($"Sending route command: {dccAddress} - {isActive}");
             _client?.SendMessage(new RouteCommand(dccAddress));
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));

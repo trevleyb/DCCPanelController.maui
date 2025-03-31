@@ -8,17 +8,14 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class RouteEntity : Entity, IInteractiveEntity, IActionEntity {
+public partial class RouteEntity : Entity, IInteractiveEntity {
     public override string Name => "Route";
 
     [ObservableProperty] [property: EditableButtonSize("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")] 
-    private ButtonActions _buttonPanelActions = [];
-    
-    [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions")]
-    private TurnoutActions _turnoutPanelActions = [];
+    [ObservableProperty] [property: EditableRoute("Route")]
+    private string _dccAddress = string.Empty;
     
     [ObservableProperty] private ButtonStateEnum _state  = ButtonStateEnum.Unknown;
     

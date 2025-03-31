@@ -6,7 +6,7 @@ namespace DCCPanelController.View.Components;
 
 public partial class IDPicker : Popup {
     private string _selectedItem;
-    private string? _itemType;
+    private readonly string? _itemType;
     
     public IDPicker(string itemType, string item, List<string> items) {
         _itemType = itemType;

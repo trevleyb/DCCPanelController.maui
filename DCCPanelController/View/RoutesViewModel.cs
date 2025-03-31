@@ -33,6 +33,7 @@ public partial class RoutesViewModel : BaseViewModel {
         ConnectionService = connectionService;
         Profile = profile;
         Routes = Profile.Routes;
+        CanToggleRoutesState = true;
         SetLabels();
     }
 

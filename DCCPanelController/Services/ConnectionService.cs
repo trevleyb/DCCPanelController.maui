@@ -74,11 +74,15 @@ public sealed class ConnectionService {
         route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
         if (route is not null) {
             route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
+            Console.WriteLine($"Route Updated {route.Name} is now {route.State}");
         } else {
-            _profile.Routes.Add(new Route() {
+            route = new Route() {
                 Id = e.RouteId,
+                Name = e.DccAddress,
                 State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive
-            });
+            };
+            _profile.Routes.Add(route);
+            Console.WriteLine($"Route Added {route.Name} is now {route.State}");
         }
     }
 
@@ -96,13 +100,17 @@ public sealed class ConnectionService {
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.DccAddress == e.DccAddress) ?? null;
         if (turnout is not null) {
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
+            Console.WriteLine($"Turnout Updated {turnout.Name} is now {turnout.State}");
         } else if (_profile is not null && _profile.Turnouts is not null) {
-            _profile.Turnouts.Add(new Turnout() {
+            
+            turnout = new Turnout() {
                 Name = e.TurnoutId,
                 Id   = e.TurnoutId,
                 DccAddress = e.DccAddress,
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
-            });
+            };
+            _profile.Turnouts.Add(turnout);
+            Console.WriteLine($"Turnout Added {turnout.Name} is now {turnout.State}");
         }
     }
 
