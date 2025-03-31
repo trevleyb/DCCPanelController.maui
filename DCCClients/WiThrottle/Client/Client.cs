@@ -103,13 +103,11 @@ public class Client {
                     }
 
                     if (bytesRead != 0) {
-                        Console.WriteLine($"Bytes read: {bytesRead}");
                         var data = Encoding.ASCII.GetString(bytes, 0, bytesRead);
                         buffer.Append(data);
 
                         if (Terminators.HasTerminator(buffer)) {
                             foreach (var command in Terminators.GetMessagesAndLeaveIncomplete(buffer)) {
-                                Console.WriteLine($"Command received: {command}");
                                 ProcessMessage(command);
                             }
                         }
