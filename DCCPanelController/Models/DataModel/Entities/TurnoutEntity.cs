@@ -39,4 +39,6 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
         var entities = Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? new List<TurnoutEntity>();
         return EntityID.NextTurnoutID(entities);
     }
+
+    public override string ToString() => Id;
 }

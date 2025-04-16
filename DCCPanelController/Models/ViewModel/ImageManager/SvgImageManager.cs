@@ -1,8 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DCCPanelController.Models.ViewModel.StyleManager;
-using DCCPanelController.View.Helpers;
+using Microsoft.Maui.Controls;
 using SkiaSharp;
 using SkiaSharp.Views.Maui.Controls;
 using Svg.Skia;

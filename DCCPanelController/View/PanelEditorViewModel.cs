@@ -6,6 +6,7 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.PanelProperties;
@@ -13,14 +14,14 @@ using DCCPanelController.View.PanelProperties;
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : BaseViewModel {
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
     [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private Panel? _selectedPanel;
-
+    
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
     [NotifyPropertyChangedFor(nameof(PanelTitle))]
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
-
+    [ObservableProperty] private Panel? _selectedPanel;
+    
     [ObservableProperty] private bool _gridVisible = false;
     [ObservableProperty] private bool _designMode = false;
     [ObservableProperty] private bool _propertiesChanged = false;
@@ -31,14 +32,16 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     private readonly Profile Profile;
     private Panel? _draggedPanel;
-
+    private ConnectionService? _connectionService;
+    
     public string PanelTitle => SelectedPanel?.Id ?? "Panel Editor";
     public bool IsNotFullScreen => !IsFullScreen;
     public bool IsPanelSelected => SelectedPanel is not null;
     public bool NoPanelSelected => !IsPanelSelected;
 
-    public PanelEditorViewModel(Profile profile) {
+    public PanelEditorViewModel(Profile profile, ConnectionService connectionService) {
         ArgumentNullException.ThrowIfNull(profile, "Profile Service should be provided by the DI.");
+        _connectionService = connectionService;
         Profile = profile;
         Panels = Profile.Panels;
         SelectedPanel = Panels.FirstOrDefault();
@@ -134,6 +137,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             OnPropertyChanged(nameof(Panels));
         }
     }
+    
     public void RotateSelectedTile() {
         if (SelectedEntity is not null) {
             SelectedEntity.RotateRight();
@@ -150,7 +154,18 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
-    public async void DownloadPanelAsync() {
+    [RelayCommand]
+    public async Task ToggleConnection() {
+        if (_connectionService is null) return;
+        if (_connectionService.IsConnected) {
+            _connectionService.Disconnect();
+        } else {
+            await _connectionService.Connect();
+        }
+    }
+
+    [RelayCommand]
+    public async Task DownloadPanelAsync() {
         try {
             if (SelectedPanel is { } panel) {
                 var panelAsJson = panel.DownloadPanel();
@@ -163,7 +178,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
-    public async void UploadPanelAsync() {
+    [RelayCommand]
+    public async Task UploadPanelAsync() {
         try {
             var jsonString = await FileHelper.OpenFileAsync("Select a Panel File");
             if (!string.IsNullOrEmpty(jsonString)) {
@@ -178,7 +194,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
             Console.WriteLine("Unable to upload the panel: " + ex.Message);
         }
     }
-
     
     public void EditTileProperties() => EditTileProperties(SelectedEntity);
     public async void EditTileProperties(Entity? entity) {
@@ -191,7 +206,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public async Task EditTilePropertiesAsync(Entity entity) {
-        Console.WriteLine($"Launching the Properties page for '{entity.Name}'");
+        Console.WriteLine($"Launching the Properties page for '{entity.EntityName}'");
         await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entity);
         Profile.Save();
     }
@@ -218,6 +233,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
         OnPropertyChanged(nameof(DesignMode));
         OnPropertyChanged(nameof(PanelTitle));
         OnPropertyChanged(nameof(SelectedPanel));
+        OnPropertyChanged(nameof(IsPanelSelected));
+        OnPropertyChanged(nameof(NoPanelSelected));
     }
 
     private async Task<bool> AskUserToConfirm(string title, string message) {

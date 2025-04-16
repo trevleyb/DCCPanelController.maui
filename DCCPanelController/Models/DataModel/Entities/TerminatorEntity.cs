@@ -7,7 +7,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TerminatorEntity : TrackEntity, ITrackEntity {
-    public override string Name => "Terminator Track";
+    public override string EntityName => "Terminator Track";
 
     [JsonConstructor]
     public TerminatorEntity() { }

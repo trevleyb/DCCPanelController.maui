@@ -6,7 +6,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ImageEntity : Entity, IDrawingEntity, IRotationEntity {
-    public override string Name => "Image";
+    public override string EntityName => "Image";
     
     [ObservableProperty][property: EditableInt("Border Radius", group: "Image")] 
     private int _borderRadius = 0;

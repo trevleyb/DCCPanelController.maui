@@ -93,7 +93,7 @@ internal sealed partial class ControlPanelView {
             // -------------------------------------------------------------------------
             var oldEntities = e.OldItems?.Cast<Entity>().ToList() ?? new List<Entity>();
             foreach (var oldEntity in oldEntities) {
-                Console.WriteLine($"Removing {oldEntity.Name} from the grid");
+                Console.WriteLine($"Removing {oldEntity.EntityName} from the grid");
                 control.RemoveEntityFromGrid(oldEntity);
             }
 
@@ -103,7 +103,7 @@ internal sealed partial class ControlPanelView {
             var newEntities = e.NewItems?.Cast<Entity>().ToList() ?? new List<Entity>();
             ITile? lastTile = null;
             foreach (var newEntity in newEntities) {
-                Console.WriteLine($"Adding {newEntity.Name} to the grid");
+                Console.WriteLine($"Adding {newEntity.EntityName} to the grid");
                 lastTile = control.AddEntityToGrid(newEntity);
             }
 

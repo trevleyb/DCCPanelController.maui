@@ -8,7 +8,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleEntity : Entity, IDrawingEntity {
-    public override string Name => "Circle";
+    public override string EntityName => "Circle";
 
     [ObservableProperty] [property: EditableInt("Border Width", group: "Circle")]
     private int _borderWidth = 1;

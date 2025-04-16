@@ -3,7 +3,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class CornerEntity : TrackEntity, ITrackEntity {
-    public override string Name => "Corner Track";
+    public override string EntityName => "Corner Track";
     
     [JsonConstructor]
     public CornerEntity() {}

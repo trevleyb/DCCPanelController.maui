@@ -20,7 +20,7 @@ public partial class RouteTile : Tile, ITileInteractive {
     } = RouteStateEnum.Unknown;
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is ButtonEntity button) {
+        if (Entity is RouteEntity button) {
             var svgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("route", Entity.Rotation)

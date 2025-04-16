@@ -3,7 +3,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class CrossingEntity : TrackEntity, ITrackEntity {
-    public override string Name => "Crossing Track";
+    public override string EntityName => "Crossing Track";
 
     [JsonConstructor]
     public CrossingEntity() {}

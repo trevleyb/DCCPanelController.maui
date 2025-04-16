@@ -1,16 +1,25 @@
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
 public partial class PanelEditorPage {
+    private ConnectionService? _connectionService;
     private PanelEditorViewModel? _viewModel;
 
-    public PanelEditorPage(PanelEditorViewModel viewModel) {
+    public PanelEditorPage(PanelEditorViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
+        _connectionService = connectionService;
+        _connectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         _viewModel = viewModel;
         BindingContext = viewModel;
+    }
+
+    private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
+        _panelConnectionToolbar.IconImageSource = e.IsConnected ? "wifi.png" : "wifi_off.png";
     }
 
     protected override void OnBindingContextChanged() {
@@ -70,7 +79,6 @@ public partial class PanelEditorPage {
     private readonly ToolbarItem _editDeleteToolbar = new ToolbarItem { Text = "Delete", IconImageSource = "trash_2.png"};
     private readonly ToolbarItem _editRotateToolbar = new ToolbarItem { Text = "Rotate", IconImageSource = "rotate_cw.png"};
     private readonly ToolbarItem _editToggleGridToolbar = new ToolbarItem { Text = "ToggleGrid", IconImageSource = "grid_off.png"};
-
     private readonly ToolbarItem _panelDownloadToolbar = new ToolbarItem { Text = "Download Panel", IconImageSource = "download.png" };
     private readonly ToolbarItem _panelUploadToolbar = new ToolbarItem { Text = "Upload Panel", IconImageSource = "upload.png" };
     
@@ -81,14 +89,11 @@ public partial class PanelEditorPage {
     private readonly ToolbarItem _deletePanelToolbar = new ToolbarItem { Text = "Delete Panel", IconImageSource = "trash_2.png" };
     private readonly ToolbarItem _editPanelToolbar = new ToolbarItem { Text = "Edit Panel", IconImageSource = "edit.png" };
     private readonly ToolbarItem _panelPropertiesToolbar = new ToolbarItem { Text = "Properties", IconImageSource = "settings.png" };
+    private readonly ToolbarItem _panelConnectionToolbar = new ToolbarItem { Text = "Connection", IconImageSource = "wifi_off.png"};
     private readonly ToolbarItem _spacerToolbar = new ToolbarItem { Text = "", IsEnabled = false };
-
-    //private const string IconFullscreenLarge = "maximize_2.png";
-    //private const string IconFullscreenSmall = "minimize_2.png";
 
     private void AssignToolbarCommands() {
         if (_viewModel is { } vm) {
-
             _editToggleGridToolbar.Command = new Command(vm.ToggleGrid);
             _editMoveCopyResizeToolbar.Command = new Command(vm.ToggleMode);
             _editDeleteToolbar.Command = new Command(vm.DeleteSelectedTile);
@@ -101,8 +106,9 @@ public partial class PanelEditorPage {
             _editPanelToolbar.Command = new Command(vm.EditPanel);
             _duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
             _panelPropertiesToolbar.Command = new Command(vm.EditPanelProperties);
-            _panelDownloadToolbar.Command = new Command(vm.DownloadPanelAsync);
-            _panelUploadToolbar.Command = new Command(vm.UploadPanelAsync);
+            _panelConnectionToolbar.Command = new AsyncRelayCommand(vm.ToggleConnection);
+            _panelDownloadToolbar.Command = new AsyncRelayCommand(vm.DownloadPanelAsync);
+            _panelUploadToolbar.Command = new AsyncRelayCommand(vm.UploadPanelAsync);
         }
     }
 
@@ -119,13 +125,13 @@ public partial class PanelEditorPage {
             _editCopyToolbar.IsEnabled = vm is { IsEntitySelected      : true };
             _editDeleteToolbar.IsEnabled = vm is { IsEntitySelected    : true };
             _editRotateToolbar.IsEnabled = vm is { IsEntitySelected    : true, SelectedEntity: IRotationEntity };
-           
             _addPanelToolbar.IsEnabled = true;
             _duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _deletePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _editPanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _panelDownloadToolbar.IsEnabled = vm.SelectedPanel != null;
             _panelUploadToolbar.IsEnabled = true;
+            _panelConnectionToolbar.IconImageSource = _connectionService?.IsConnected ?? false ? "wifi.png" : "wifi_off.png";
             _editToggleGridToolbar.IconImageSource = vm.GridVisible ? "grid_on.png" : "grid_off.png";
             _toggleFullscreenToolbar.IconImageSource = vm.IsFullScreen ? "minimize_2.png" : "maximize_2.png";
         }
@@ -152,7 +158,6 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_editDeleteToolbar);
                 ToolbarItems.Add(_editPropertiesToolbar);
                 ToolbarItems.Add(_editMoveCopyResizeToolbar);
-                ToolbarItems.Add(_spacerToolbar);
                 ToolbarItems.Add(_panelPropertiesToolbar);
                 ToolbarItems.Add(_editToggleGridToolbar);
                 ToolbarItems.Add(_exitEditModeToolbar);
@@ -165,6 +170,7 @@ public partial class PanelEditorPage {
                 ToolbarItems.Add(_editPanelToolbar);
                 ToolbarItems.Add(_panelDownloadToolbar);
                 ToolbarItems.Add(_panelUploadToolbar);
+                ToolbarItems.Add(_panelConnectionToolbar);
             }
             ToolbarItems.Add(_toggleFullscreenToolbar);
             ConfigureToolbarItems();

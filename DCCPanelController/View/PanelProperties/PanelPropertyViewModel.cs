@@ -13,7 +13,7 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         Panel = panel;
         PropertyName = panel.Id ?? "Panel Properties";
     }
-
+    
     [RelayCommand]
     private async Task ResetDefaultsClickedAsync() {
         var result = await AskUserToConfirm("Reset Default Colors?", "Are you sure you want to reset all Panels colors to the Default?");

@@ -9,7 +9,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
-    public override string Name => "Button";
+    public override string EntityName => "Button";
 
     [ObservableProperty] [property: EditableID("Button ID")]
     private string _id = string.Empty;

@@ -7,7 +7,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TextEntity : Entity, ITextEntity, IDrawingEntity, IRotationEntity {
-    public override string Name => "Text Block";
+    public override string EntityName => "Text Block";
     
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;

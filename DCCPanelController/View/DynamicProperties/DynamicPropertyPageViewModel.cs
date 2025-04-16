@@ -16,7 +16,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private Entity _entity;
     public DynamicPropertyPageViewModel(Entity entity, string? propertyName, StackBase propertyContainer) {
         Entity = entity;
-        PropertyName = propertyName ?? (string.IsNullOrEmpty(entity.Name) ? "Track" : $"{entity.Name}");
+        PropertyName = propertyName ?? (string.IsNullOrEmpty(entity.EntityName) ? "Track" : $"{entity.EntityName}");
         BuildProperties(propertyContainer, entity);
     }
 

@@ -7,13 +7,18 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info) {        // TODO: Add support so we can set a Turnout State
+    public IView? CreateView(object owner, PropertyInfo info) {       
         try {
-            var cell = new TurnoutPickerButton();
-            cell.SetBinding(TurnoutPickerButton.SelectedTurnoutProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            cell.AvailableTurnouts = profile.Turnouts.ToList();
-            return cell;
+            var turnouts  = profile.Turnouts.ToList();
+            var cell = new PopUpListBox {
+                ItemsSource = turnouts,
+                IsEnabled = turnouts.Count > 0,
+                Placeholder = "Select a Turnout",
+                HorizontalOptions = LayoutOptions.Start
+            };
+            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Route: {e.Message}");
             return null;

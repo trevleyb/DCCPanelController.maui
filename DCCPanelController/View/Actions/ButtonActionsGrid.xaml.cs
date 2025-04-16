@@ -23,22 +23,21 @@ public partial class ButtonActionsGrid : ContentView {
     /// and buggered if I could solve it so I wrote a popup selector. 
     /// </summary>
     private async void IdLabel_OnClicked(object? sender, EventArgs e) {
-        try {
-            if (sender is Button picker) {
-                var selectedItem = picker.Text ?? "";
-                if (BindingContext is ButtonActionsGridViewModel viewModel) {
-                    var popup = new IDPicker("Button", selectedItem, viewModel.SelectableButtons());
-                    if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
-                        var result = await mainpage.ShowPopupAsync(popup);
-                        if (result is string resultItem) {
-                            picker.Text = resultItem;
-                        }
-                    }
-                }
-            }
-        } catch (Exception ex) {
-            Console.WriteLine(ex.Message);  
-        }
-        
+        // try {
+        //     if (sender is Button picker) {
+        //         var selectedItem = picker.Text ?? "";
+        //         if (BindingContext is ButtonActionsGridViewModel viewModel) {
+        //             var popup = new IDPicker("Button", selectedItem, viewModel.SelectableButtons());
+        //             if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
+        //                 var result = await mainpage.ShowPopupAsync(popup);
+        //                 if (result is string resultItem) {
+        //                     picker.Text = resultItem;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // } catch (Exception ex) {
+        //     Console.WriteLine(ex.Message);  
+        // }
     }
 }

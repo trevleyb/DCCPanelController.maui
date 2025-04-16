@@ -7,7 +7,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class LineEntity : Entity, IDrawingEntity, IRotationEntity {
 
-    public override string Name => "Line";
+    public override string EntityName => "Line";
     
     [ObservableProperty][property: EditableColor("Line Color", group: "Line")] 
     private Color _lineColor = Colors.Black;

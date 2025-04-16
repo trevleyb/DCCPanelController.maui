@@ -4,7 +4,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RightTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity {
-    public override string Name => "Right Turnout";
+    public override string EntityName => "Right Turnout";
     
     [JsonConstructor]
     public RightTurnoutEntity() {}

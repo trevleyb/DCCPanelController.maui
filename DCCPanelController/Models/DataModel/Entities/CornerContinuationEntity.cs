@@ -6,7 +6,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
-    public override string Name => "Corner Track";
+    public override string EntityName => "Corner Track";
 
     [ObservableProperty]  [property: EditableTrackTerminator("Terminator",  group: "Track")] 
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;

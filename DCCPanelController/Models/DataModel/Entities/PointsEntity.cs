@@ -5,7 +5,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class PointsEntity : Entity, IDrawingEntity {
-    public override string Name => "Connection Points";
+    public override string EntityName => "Connection Points";
     
     [JsonConstructor]
     public PointsEntity() {}

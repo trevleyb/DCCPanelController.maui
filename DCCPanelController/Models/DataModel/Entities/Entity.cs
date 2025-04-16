@@ -5,11 +5,11 @@ using CommunityToolkit.Mvvm.ComponentModel;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-[DebuggerDisplay("{Name} is {Type} @ {Col},{Row}")]
+[DebuggerDisplay("{EntityName} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject {
 
-    public abstract string Name { get; }
+    public abstract string EntityName { get; }
     public virtual string Type => GetType().Name;
     protected int RotationFactor = 45;
     

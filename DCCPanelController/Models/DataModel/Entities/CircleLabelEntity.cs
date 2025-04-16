@@ -7,7 +7,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
-    public override string Name => "Circle Label";
+    public override string EntityName => "Circle Label";
 
     [ObservableProperty] [property: EditableString("Label", "", 0, group: "Text")]
     private string _label = string.Empty;

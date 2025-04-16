@@ -9,7 +9,7 @@ using DCCPanelController.View.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RouteEntity : Entity, IInteractiveEntity {
-    public override string Name => "Route";
+    public override string EntityName => "Route";
 
     [ObservableProperty] [property: EditableButtonSize("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
@@ -24,4 +24,5 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     public RouteEntity(Panel panel) : base(panel) { }
     public RouteEntity(RouteEntity entity) : base(entity) {}
     public override Entity Clone() => new RouteEntity(this);
+    public override string ToString() => DccAddress;
 }

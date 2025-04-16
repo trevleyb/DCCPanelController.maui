@@ -5,7 +5,7 @@ using DCCPanelController.Models.DataModel.Interfaces;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class PlatformEntity : TrackEntity, ITrackEntity {
-    public override string Name => "Straight Track";
+    public override string EntityName => "Straight Track";
     
     [JsonConstructor]
     public PlatformEntity() {}

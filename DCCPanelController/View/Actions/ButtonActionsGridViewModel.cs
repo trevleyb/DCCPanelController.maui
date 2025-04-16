@@ -13,7 +13,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     
     [ObservableProperty] private ActionsContext _actionContext;
     [ObservableProperty] private ButtonActions _buttonPanelActions;
-    
     [ObservableProperty] public List<string> _availableButtons;
 
     public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
@@ -28,22 +27,22 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
     public bool IsGridVisible => ButtonPanelActions.Count > 0;
-    public bool IsAddButtonEnabled => SelectableButtons().Count > 0;
+    public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
     public double ControlHeight => 40 + ButtonPanelActions.Count * 40;
 
     public string NoDataText {
         get {
             if (AvailableButtons.Count == 0) return "No Buttons have been defined. ";
             if (ButtonPanelActions.Count == 0) return "Use the + key to add a button action.";
-            if (SelectableButtons().Count == 0) return "All defined buttons have been assigned.";
+            if (SelectableButtons.Count == 0) return "All defined buttons have been assigned.";
             return "";
         }
     }
 
     [RelayCommand]
     private void AddRow() {
-        if (SelectableButtons().Count > 0) {
-            ButtonPanelActions.Add(new ButtonAction { Id = SelectableButtons()[0], WhenOn = ButtonStateEnum.On, WhenOff = ButtonStateEnum.Off, Cascade = false });
+        if (SelectableButtons.Count > 0) {
+            ButtonPanelActions.Add(new ButtonAction { Id = SelectableButtons[0], WhenOn = ButtonStateEnum.On, WhenOff = ButtonStateEnum.Off, Cascade = false });
         }
     }
 
@@ -60,7 +59,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsAddButtonEnabled));
     }
 
-    public List<string> SelectableButtons(string? activeButton = "") {
+    public List<string> SelectableButtons => BuildSelectableButtons();
+    private List<string> BuildSelectableButtons(string? activeButton = null) {
         var selectableButtons = new List<string>(AvailableButtons);
         for (var i = AvailableButtons.Count - 1; i >= 0; i--) {
             var button = AvailableButtons[i];

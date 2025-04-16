@@ -6,7 +6,7 @@ using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class RectangleEntity : Entity, IDrawingEntity {
-    public override string Name => "Rectangle";
+    public override string EntityName => "Rectangle";
     
     [ObservableProperty][property: EditableInt("Border Width", group: "Rectangle")] 
     private int _borderWidth  = 1;
