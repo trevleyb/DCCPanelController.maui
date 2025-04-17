@@ -39,6 +39,7 @@ public partial class ButtonTile : Tile, ITileInteractive {
             var image = new Image {
                 Source = svgImage.AsImageSource(0, DefaultScaleFactor),
             };
+            image.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
             return image;
         }
         return CreateSymbol();

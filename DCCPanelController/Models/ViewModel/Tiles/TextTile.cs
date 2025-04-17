@@ -39,6 +39,7 @@ public class TextTile : Tile {
             label.SetBinding(Label.TextColorProperty, new Binding(nameof(entity.TextColor), BindingMode.TwoWay, source: this.Entity));
             label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.TwoWay, source: this.Entity));
             label.SetBinding(Label.BackgroundColorProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, source: this.Entity));
+            label.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
 
             var border = new Border {
                     Content = label,

@@ -15,6 +15,7 @@ public class PointsTile : Tile {
                 Source = svgImage.AsImageSource(0, DefaultScaleFactor)
             };
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
+            image.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
             return image;
         } 
         return CreateSymbol();

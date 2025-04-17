@@ -22,6 +22,7 @@ public class RectangleTile : Tile {
             shape.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
             shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
             shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
             shape.HorizontalOptions = LayoutOptions.Fill;
             shape.VerticalOptions = LayoutOptions.Fill;
             shape.InputTransparent = true;

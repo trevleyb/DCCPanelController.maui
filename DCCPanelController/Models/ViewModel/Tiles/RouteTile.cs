@@ -39,6 +39,7 @@ public partial class RouteTile : Tile, ITileInteractive {
             var image = new Image {
                 Source = svgImage.AsImageSource(0, DefaultScaleFactor),
             };
+            image.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.TwoWay, source: Entity));
             return image;
         }
         return CreateSymbol();

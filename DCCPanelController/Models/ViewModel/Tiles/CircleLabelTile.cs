@@ -68,6 +68,7 @@ public class CircleLabelTile : Tile {
             grid.Children.Add(circleGap);
             grid.Children.Add(label);
             grid.SetBinding(ScaleProperty, new Binding(nameof(entity.Scale), BindingMode.TwoWay, source: this.Entity));
+            grid.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: this.Entity));
             return grid;
         }
 

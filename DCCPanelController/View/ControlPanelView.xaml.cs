@@ -120,7 +120,7 @@ internal sealed partial class ControlPanelView {
     /// </summary>
     private void AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
-        foreach (var entity in panel.Entities) {
+        foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
             AddEntityToGrid(entity);
         }
     }

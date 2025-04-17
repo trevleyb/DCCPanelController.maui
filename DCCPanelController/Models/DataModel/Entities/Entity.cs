@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.View.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -15,7 +16,6 @@ public abstract partial class Entity() : ObservableObject {
     
     [ObservableProperty] private int _col;                 // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _row;                 // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _layer = 1;           // What position (layer) should this exist at 
     [ObservableProperty] private int _width  = 1;          // What width is this component?
     [ObservableProperty] private int _height = 1;          // What Height is this component? 
     [ObservableProperty] private int _rotation = 0;        // Is the track rotated?
@@ -23,6 +23,9 @@ public abstract partial class Entity() : ObservableObject {
     
     [JsonIgnore] public Panel? Parent { get; set; } = null;
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
+    
+    [ObservableProperty] [property: EditableInt("Layer", "", 9, group: "Track")] 
+    private int _layer = 1;
     
     public void RotateLeft() => Rotation = (Rotation - RotationFactor + 360) % 360;
     public void RotateRight() => Rotation = (Rotation + RotationFactor) % 360;

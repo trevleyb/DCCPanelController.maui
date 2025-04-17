@@ -25,6 +25,7 @@ public class LineTile : Tile {
             shape.SetBinding(Shape.OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
             shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.LineColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
             shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.LineWidth), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
             return shape;
         } 
         return CreateSymbol();
