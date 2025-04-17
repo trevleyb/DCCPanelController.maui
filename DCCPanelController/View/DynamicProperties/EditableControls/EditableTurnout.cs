@@ -5,13 +5,14 @@ using DCCPanelController.View.Components;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null)
+public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null, int width = 150)
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {       
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var turnouts  = profile.Turnouts.ToList();
+            var turnouts  = profile.Turnouts.Select(t => t.Id).ToList();
             var cell = new PopUpListBox {
+                WidthRequest = width,
                 ItemsSource = turnouts,
                 IsEnabled = turnouts.Count > 0,
                 Placeholder = "Select a Turnout",

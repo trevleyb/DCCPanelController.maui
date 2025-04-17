@@ -13,10 +13,13 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private string _profileName;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Settings _settings;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-    [ObservableProperty] private ObservableCollection<Route> _routes;
-
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts = [];
+    [ObservableProperty] private ObservableCollection<Route> _routes = [];
+ 
     [JsonIgnore] public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection();
+    
+    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(t => t.Id == id);
+    public Route? Route(string id) => Routes.FirstOrDefault(r => r.Id == id);
     
     public static Profile NewOrLoad(string profileName) => JsonRepository.Load(profileName);    
     public static Profile Load(string profileName) => JsonRepository.Load(profileName);

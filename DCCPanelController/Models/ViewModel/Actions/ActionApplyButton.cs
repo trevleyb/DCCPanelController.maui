@@ -10,7 +10,7 @@ public static class ActionApplyButton {
 
     public static void ApplyButtonActions(Panel panel, ButtonEntity button, ActionList actionsList) {
         foreach (var action in button.ButtonPanelActions) {
-            var actionButton = panel.GetButton(action.Id);
+            var actionButton = panel.GetButtonEntity(action.Id);
             if (actionButton is null) continue;
             if (actionsList.IsActioned(ActionType.Button, actionButton.Id)) continue;
 
@@ -28,7 +28,7 @@ public static class ActionApplyButton {
         }
 
         foreach (var action in button.TurnoutPanelActions) {
-            var actionTurnout = panel.GetTurnout(action.Id);
+            var actionTurnout = panel.GetTurnoutEntity(action.Id);
             if (actionTurnout is null) continue;
             if (actionsList.IsActioned(ActionType.Turnout, actionTurnout.Id)) continue;
 

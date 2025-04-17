@@ -13,8 +13,8 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     [ObservableProperty] [property: EditableID("ID", "", 0, group: "Turnout")] 
     private string _id = string.Empty;
     
-    [ObservableProperty] [property: EditableString("DCC Address", "", 0, group: "Turnout")]
-    private string _address = string.Empty;
+    [ObservableProperty] [property: EditableTurnout("Turnout", "", 0, group: "Turnout")]
+    private string _turnoutID = string.Empty;
     
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)] 
     private ButtonActions _buttonPanelActions = [];
@@ -28,7 +28,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     protected TurnoutEntity() {}
     protected TurnoutEntity(Panel panel) : base(panel) { }
     protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
-        Address = string.Empty;
+        TurnoutID = string.Empty;
         ButtonPanelActions = new ButtonActions(entity.ButtonPanelActions);
         TurnoutPanelActions = new TurnoutActions(entity.TurnoutPanelActions);
         State = TurnoutStateEnum.Unknown;
