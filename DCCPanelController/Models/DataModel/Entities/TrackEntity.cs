@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.Models.DataModel.Interfaces;
 using DCCPanelController.View.DynamicProperties;
+using DCCPanelController.View.DynamicProperties.EditableControls;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -14,7 +14,7 @@ public abstract partial class TrackEntity : Entity {
     [property: EditableTrackType("Track Type", "", 5, group: "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
     
-    [ObservableProperty][property: EditableTrackAttribute("Attributes", "", 5, group: "Track")] 
+    [ObservableProperty][property: EditableTrack("Attributes", "", 5, group: "Track")] 
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
     [ObservableProperty] [property: EditableColor("Track Color", "", 5, group: "Track")]

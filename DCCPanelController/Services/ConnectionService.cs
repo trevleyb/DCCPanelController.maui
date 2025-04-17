@@ -3,6 +3,7 @@ using DCCClients.Events;
 using DCCPanelController.Models;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 
 namespace DCCPanelController.Services;
 

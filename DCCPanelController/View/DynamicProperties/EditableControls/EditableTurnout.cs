@@ -1,9 +1,8 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Components;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null, int width = 150)
     : EditableProperty(label, description, order, group), IEditableProperty {

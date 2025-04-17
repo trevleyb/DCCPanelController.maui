@@ -1,9 +1,8 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Reflection;
-using DCCPanelController.Models.DataModel.Helpers;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public class EditableDouble(string label, string description = "", int order = 0, string? group = null, double minValue = 0, double maxValue = 10, double stepValue = 0.1)
     : EditableProperty(label, description, order, group), IEditableProperty {

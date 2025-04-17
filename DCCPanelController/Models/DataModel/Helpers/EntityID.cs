@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 

@@ -1,3 +1,3 @@
-namespace DCCPanelController.Models.DataModel.Interfaces;
+namespace DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 public interface IInteractiveEntity { }

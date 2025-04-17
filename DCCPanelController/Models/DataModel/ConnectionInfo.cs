@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCClients.Interfaces;
 
-namespace DCCPanelController.Models;
+namespace DCCPanelController.Models.DataModel;
 
 public partial class ConnectionInfo : ObservableObject {
     [ObservableProperty] private string _name;

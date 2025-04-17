@@ -12,6 +12,7 @@ using DCCClients.WiThrottle.ServiceHelper;
 using DCCPanelController.Models;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 
 namespace DCCPanelController.View;
 

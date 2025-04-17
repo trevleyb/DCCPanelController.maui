@@ -1,7 +1,6 @@
 using System.Reflection;
-using DCCPanelController.Models.DataModel.Helpers;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public interface IEditableProperty { 
     string Label { get; }       

@@ -1,5 +1,3 @@
-using DCCPanelController.Models.DataModel.Interfaces;
-
 namespace DCCPanelController.Models.DataModel.Entities;
 public partial class CompassEntity : Entity {
     public override string EntityName => "Compass";

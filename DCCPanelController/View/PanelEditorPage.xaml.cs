@@ -1,6 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 

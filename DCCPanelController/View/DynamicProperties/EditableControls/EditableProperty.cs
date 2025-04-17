@@ -1,7 +1,4 @@
-using System.Reflection;
-using DCCPanelController.Models.DataModel.Helpers;
-
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
 public abstract class EditableProperty(string label, string description = "", int order = 0, string? group = null) : Attribute {

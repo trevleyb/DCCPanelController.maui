@@ -1,7 +1,6 @@
 using System.Reflection;
-using DCCPanelController.Models.DataModel.Helpers;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public class EditableButton(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {

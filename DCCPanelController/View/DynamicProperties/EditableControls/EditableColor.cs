@@ -1,11 +1,10 @@
 using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Components;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public class EditableColor(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {

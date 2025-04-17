@@ -1,6 +1,6 @@
 
 using System.Text.Json.Serialization;
-using DCCPanelController.Models.DataModel.Interfaces;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 

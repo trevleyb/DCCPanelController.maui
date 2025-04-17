@@ -1,10 +1,9 @@
 using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.DataModel.Helpers;
 using Switch = Microsoft.Maui.Controls.Switch;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public class EditableBool(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {

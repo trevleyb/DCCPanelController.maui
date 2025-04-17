@@ -2,9 +2,8 @@ using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Helpers;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
 public class EditableButtonSize(string label, string description = "", int order = 0, string? group = null)
     : EditableEnum(label, description, order, group), IEditableProperty {

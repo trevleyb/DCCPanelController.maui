@@ -9,6 +9,8 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Helpers;
+using DCCPanelController.View.DynamicProperties.Attributes;
+using DCCPanelController.View.DynamicProperties.EditableControls;
 
 namespace DCCPanelController.View.DynamicProperties;
 

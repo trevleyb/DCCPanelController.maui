@@ -1,7 +1,7 @@
-using CommunityToolkit.Maui.Storage;
-using System.IO;
 using System.Text;
-using System.Threading.Tasks;
+using CommunityToolkit.Maui.Storage;
+
+namespace DCCPanelController.Helpers;
 
 public static class FileHelper {
     /// <summary>
