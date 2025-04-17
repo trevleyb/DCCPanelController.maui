@@ -1,4 +1,4 @@
-namespace DCCClients.WiThrottle.Client.Messages;
+namespace DCCClients.WiThrottle.WiThrottle.Client.Messages;
 
 public class MsgIgnore(string commandStr) : ClientMsg, IClientMsg {
     public override string ToString() {

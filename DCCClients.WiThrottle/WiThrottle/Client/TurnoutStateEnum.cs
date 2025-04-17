@@ -1,4 +1,4 @@
-namespace DCCClients.WiThrottle.Client;
+namespace DCCClients.WiThrottle.WiThrottle.Client;
 
 public enum TurnoutStateEnum {
     Unknown = '1',

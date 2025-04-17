@@ -3,14 +3,14 @@ using System.Net.Sockets;
 using System.Text;
 using System.Timers;
 using DCCClients.Common;
-using DCCClients.WiThrottle.Client.Commands;
-using DCCClients.WiThrottle.Client.Events;
-using DCCClients.WiThrottle.Client.Messages;
-using DCCClients.WiThrottle.Helpers;
+using DCCClients.WiThrottle.WiThrottle.Client.Commands;
+using DCCClients.WiThrottle.WiThrottle.Client.Events;
+using DCCClients.WiThrottle.WiThrottle.Client.Messages;
+using DCCClients.WiThrottle.WiThrottle.Helpers;
 using Result = DCCClients.Common.Result;
 using Timer = System.Timers.Timer;
 
-namespace DCCClients.WiThrottle.Client;
+namespace DCCClients.WiThrottle.WiThrottle.Client;
 
 public class Client {
     private readonly WithrottleSettings _withrottleSettings;

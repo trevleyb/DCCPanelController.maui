@@ -1,6 +1,6 @@
 using System.Data;
 
-namespace DCCClients.WiThrottle.Client.Events;
+namespace DCCClients.WiThrottle.WiThrottle.Client.Events;
 
 public class ConnectionEvent(string message, ConnectionState state, bool isRunning = true) : EventArgs, IClientEvent {
     public string Message { get; set; } = message;

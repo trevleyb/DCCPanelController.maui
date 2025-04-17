@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 using DCCClients.Common;
 using Result = DCCClients.Common.Result;
 
-namespace DCCClients.WiThrottle.ServiceHelper;
+namespace DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 
 public static class ServiceKill {
     public static IResult KillService(int port) {

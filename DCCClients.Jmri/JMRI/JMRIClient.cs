@@ -2,11 +2,10 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
 using DCCClients.Common;
-using DCCClients.Interfaces;
-using DCCClients.JMRI.Commands;
-using DCCClients.JMRI.EventArgs;
+using DCCClients.Jmri.JMRI.Commands;
+using DCCClients.Jmri.JMRI.EventArgs;
 
-namespace DCCClients.JMRI;
+namespace DCCClients.Jmri.JMRI;
 
 public class JmriClient {
     private static readonly HttpClient _httpClient = new() {

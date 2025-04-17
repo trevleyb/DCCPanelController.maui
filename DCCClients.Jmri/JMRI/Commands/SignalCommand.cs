@@ -1,6 +1,6 @@
 using DCCClients.Common;
 
-namespace DCCClients.JMRI.Commands;
+namespace DCCClients.Jmri.JMRI.Commands;
 
 public class SignalCommand {
     public string Identifier { get; set; }

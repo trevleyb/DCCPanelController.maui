@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCClients.WiThrottle.Client;
+using DCCClients.WiThrottle.WiThrottle.Client;
 
 namespace DCCPanelController.Models.DataModel;
 

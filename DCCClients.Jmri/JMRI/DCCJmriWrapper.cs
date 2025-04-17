@@ -1,6 +1,6 @@
 using System.Net.WebSockets;
 
-namespace DCCClients.JMRI;
+namespace DCCClients.Jmri.JMRI;
 
 public class WebSocketWrapper : IWebSocket {
     private readonly ClientWebSocket _clientWebSocket;

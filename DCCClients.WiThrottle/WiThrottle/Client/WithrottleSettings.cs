@@ -1,6 +1,4 @@
-using DCCClients.Interfaces;
-
-namespace DCCClients.WiThrottle.Client;
+namespace DCCClients.WiThrottle.WiThrottle.Client;
 
 public class WithrottleSettings : IDccSettings {
     public WithrottleSettings() : this(null, "192.168.1.1", 12090) { }

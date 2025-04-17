@@ -1,7 +1,7 @@
 using System.Diagnostics;
-using DCCClients.WiThrottle.Client.Events;
+using DCCClients.WiThrottle.WiThrottle.Client.Events;
 
-namespace DCCClients.WiThrottle.Client.Messages;
+namespace DCCClients.WiThrottle.WiThrottle.Client.Messages;
 
 public class MsgPanel : ClientMsg, IClientMsg {
     private readonly string _commandStr;

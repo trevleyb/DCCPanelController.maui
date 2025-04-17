@@ -1,6 +1,6 @@
 using DCCClients.Common;
 
-namespace DCCClients.JMRI.EventArgs;
+namespace DCCClients.Jmri.JMRI.EventArgs;
 
 public class SignalEventArgs : System.EventArgs {
     /// <summary>

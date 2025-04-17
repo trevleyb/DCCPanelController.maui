@@ -1,4 +1,4 @@
-namespace DCCClients.WiThrottle.Client;
+namespace DCCClients.WiThrottle.WiThrottle.Client;
 
 public enum RouteStateEnum {
     Unknown = '1',

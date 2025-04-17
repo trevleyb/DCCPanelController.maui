@@ -1,9 +1,9 @@
 using DCCClients.Common;
 using DCCClients.Events;
-using DCCClients.JMRI;
-using DCCClients.WiThrottle.Client;
+using DCCClients.Jmri;
+using DCCClients.Jmri.JMRI;
 
-namespace DCCClients.Jmri.Test;
+namespace DCCClients.Test;
 
 [TestFixture]
 [Category("Integration")]

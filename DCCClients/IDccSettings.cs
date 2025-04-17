@@ -1,4 +1,4 @@
-namespace DCCClients.Interfaces;
+namespace DCCClients;
 
 public interface IDccSettings {
     string Name { get; }

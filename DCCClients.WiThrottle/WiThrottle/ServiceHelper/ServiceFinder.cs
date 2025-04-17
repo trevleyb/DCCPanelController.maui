@@ -1,9 +1,9 @@
 using System.Net;
 using System.Net.Sockets;
-using DCCClients.WiThrottle.Client;
+using DCCClients.WiThrottle.WiThrottle.Client;
 using Makaretu.Dns;
 
-namespace DCCClients.WiThrottle.ServiceHelper;
+namespace DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 
 public static class ServiceFinder {
     /// <summary>

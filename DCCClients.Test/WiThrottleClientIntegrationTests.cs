@@ -1,8 +1,9 @@
 using DCCClients.Common;
 using DCCClients.Events;
-using DCCClients.WiThrottle.Client;
+using DCCClients.WiThrottle;
+using DCCClients.WiThrottle.WiThrottle.Client;
 
-namespace DCCClients.Withrottle.Test;
+namespace DCCClients.Test;
 
 [TestFixture]
 [Category("Integration")]

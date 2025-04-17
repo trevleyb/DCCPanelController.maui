@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace DCCClients.WiThrottle.ServiceHelper;
+namespace DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 
 public static class ServiceHelper {
     public static string GetLocalIPAddress() {

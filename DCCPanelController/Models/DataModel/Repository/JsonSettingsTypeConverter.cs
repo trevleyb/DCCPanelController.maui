@@ -1,8 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DCCClients;
 using DCCClients.Interfaces;
-using DCCClients.JMRI;
-using DCCClients.WiThrottle.Client;
+using DCCClients.Jmri.JMRI;
+using DCCClients.WiThrottle.WiThrottle.Client;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 

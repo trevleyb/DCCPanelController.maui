@@ -1,4 +1,4 @@
-namespace DCCClients.WiThrottle.Client.Events;
+namespace DCCClients.WiThrottle.WiThrottle.Client.Events;
 
 public class RosterEvent : EventArgs, IClientEvent {
     public override string ToString() {

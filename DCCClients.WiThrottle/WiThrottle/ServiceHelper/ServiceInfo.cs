@@ -1,7 +1,7 @@
 using System.Text.RegularExpressions;
-using DCCClients.WiThrottle.Client;
+using DCCClients.WiThrottle.WiThrottle.Client;
 
-namespace DCCClients.WiThrottle.ServiceHelper;
+namespace DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 
 /// <summary>
 ///     Record containing the found information for a service

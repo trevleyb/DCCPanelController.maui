@@ -1,10 +1,9 @@
 using DCCClients.Common;
 using DCCClients.Events;
-using DCCClients.Interfaces;
-using DCCClients.JMRI;
-using DCCClients.JMRI.EventArgs;
+using DCCClients.Jmri.JMRI;
+using DCCClients.Jmri.JMRI.EventArgs;
 
-namespace DCCClients;
+namespace DCCClients.Jmri;
 
 public class DccJmriClient : DccClient, IDccClient {
     private readonly JmriSettings? _settings;

@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace DCCClients.WiThrottle.Helpers;
+namespace DCCClients.WiThrottle.WiThrottle.Helpers;
 
 public static class Terminators {
     public const char Terminator = (char)0x0a;

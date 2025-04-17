@@ -1,6 +1,6 @@
 using System.Net.WebSockets;
 
-namespace DCCClients.JMRI;
+namespace DCCClients.Jmri.JMRI;
 
 public interface IWebSocket : IDisposable {
     WebSocketState State { get; }

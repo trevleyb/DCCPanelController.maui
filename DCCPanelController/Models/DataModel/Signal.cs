@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCClients.Common;
-using DCCClients.WiThrottle.Client;
 
 namespace DCCPanelController.Models.DataModel;
 

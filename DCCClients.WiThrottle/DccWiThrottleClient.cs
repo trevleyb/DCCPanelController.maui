@@ -1,12 +1,11 @@
 using DCCClients.Common;
 using DCCClients.Events;
-using DCCClients.Interfaces;
-using DCCClients.WiThrottle.Client;
-using DCCClients.WiThrottle.Client.Commands;
-using DCCClients.WiThrottle.Client.Events;
-using DCCClients.WiThrottle.ServiceHelper;
+using DCCClients.WiThrottle.WiThrottle.Client;
+using DCCClients.WiThrottle.WiThrottle.Client.Commands;
+using DCCClients.WiThrottle.WiThrottle.Client.Events;
+using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 
-namespace DCCClients;
+namespace DCCClients.WiThrottle;
 
 public class DccWiThrottleClient : DccClient, IDccClient {
     private readonly WithrottleSettings? _settings;

@@ -1,4 +1,4 @@
-namespace DCCClients.WiThrottle.Client.Events;
+namespace DCCClients.WiThrottle.WiThrottle.Client.Events;
 
 public class MessageEvent(string type, string value) : EventArgs, IClientEvent {
     public string Type { get; set; } = type;

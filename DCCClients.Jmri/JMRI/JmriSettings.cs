@@ -1,6 +1,4 @@
-using DCCClients.Interfaces;
-
-namespace DCCClients.JMRI;
+namespace DCCClients.Jmri.JMRI;
 
 public class JmriSettings : IDccSettings {
     public string JmriServerUrl { get; set; } = "http://localhost:8080";
