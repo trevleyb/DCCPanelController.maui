@@ -1,5 +1,4 @@
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Interfaces;
 #if IOS
 using UIKit;
 #endif
@@ -7,7 +6,7 @@ using UIKit;
 namespace DCCPanelController.View.DynamicProperties;
 
 /// <summary>
-/// Dynamic Property Page is used for iOS iPhone sizes and is full screen
+///     Dynamic Property Page is used for iOS iPhone sizes and is full screen
 /// </summary>
 public partial class DynamicPropertyPage : ContentPage {
     public DynamicPropertyPage(List<Entity> entities, string? propertyName = null) {

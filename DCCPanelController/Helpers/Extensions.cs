@@ -37,7 +37,7 @@ public static class Extensions {
             _       => false
         };
     }
-    
+
     public static byte[] ToByteArray(this XDocument document) {
         using (var memoryStream = new MemoryStream()) {
             using (var writer = XmlWriter.Create(memoryStream, new XmlWriterSettings { Encoding = Encoding.UTF8, Indent = false })) {
@@ -46,5 +46,4 @@ public static class Extensions {
             return memoryStream.ToArray();
         }
     }
-
 }

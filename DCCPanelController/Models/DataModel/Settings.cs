@@ -1,15 +1,14 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCClients.Interfaces;
 using DCCClients.WiThrottle.Client;
 
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Settings : ObservableObject {
-    [ObservableProperty] private bool _useConnection;
     [ObservableProperty] private string _activeConnectionName = "default";
     [ObservableProperty] private Color _backgroundColor = Colors.White;
     [ObservableProperty] private ObservableCollection<ConnectionInfo> _connections = [];
+    [ObservableProperty] private bool _useConnection;
 
     public ConnectionInfo ActiveConnection() {
         try {
@@ -25,6 +24,5 @@ public partial class Settings : ObservableObject {
             Console.WriteLine($"This should never happen as if the key does not exist, it will be added. {ex.Message}");
             throw new InvalidOperationException("Could not get the active connection.");
         }
-    } 
-   
+    }
 }

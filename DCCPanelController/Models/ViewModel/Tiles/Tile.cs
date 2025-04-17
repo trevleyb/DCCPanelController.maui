@@ -1,47 +1,46 @@
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-using System.ComponentModel;
-
 public abstract class Tile : ContentView, ITile {
-    
-    public TileDisplayMode DisplayMode = TileDisplayMode.Normal;
-    public Entity Entity { get; init; }
-
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor = 0.75f;
-    
+
     private const int DebounceDelay = 50;
-    private Dictionary<string, object?> _propertyCache = [];
     private CancellationTokenSource? _debounceRebuildCts;
+    private Dictionary<string, object?> _propertyCache = [];
+
+    public TileDisplayMode DisplayMode = TileDisplayMode.Normal;
 
     protected bool HaveVisualPropertiesChanged;
-    protected HashSet<string> VisualProperties { get; } = [];
-    protected HashSet<string> VisualPropertiesChanged { get; } = [];
-    
-    public double TileWidth => GridSize * Entity.Width;
-    public double TileHeight => GridSize * Entity.Height;
-
-    // @formatter:off
-    public bool IsSelected {get; set => SetField(ref field, value); }
-    public double GridSize {get; set => SetField(ref field, value); }
-    // @formatter:on
 
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
         GridSize = gridSize;
         DisplayMode = displayMode;
-        
+
         PropertyChanged += OnPropertyChanged;
         entity.PropertyChanged += OnPropertyChanged;
-        
+
         VisualProperties.Add(nameof(GridSize));
         VisualProperties.Add(nameof(Entity.Col));
         VisualProperties.Add(nameof(Entity.Row));
         SetContent();
+    }
+
+    protected HashSet<string> VisualProperties { get; } = [];
+    protected HashSet<string> VisualPropertiesChanged { get; } = [];
+
+    public double TileWidth => GridSize * Entity.Width;
+    public double TileHeight => GridSize * Entity.Height;
+    public Entity Entity { get; init; }
+
+    public void ForceRedraw() {
+        HaveVisualPropertiesChanged = true;
+        RebuildIfNecessary();
     }
 
     protected abstract Microsoft.Maui.Controls.View? CreateTile();
@@ -59,12 +58,13 @@ public abstract class Tile : ContentView, ITile {
         }
     }
 
-    private void SetSymbolContent() {        BindingContext = this;
+    private void SetSymbolContent() {
+        BindingContext = this;
         BindingContext = this;
         Content = CreateSymbol();
         if (Content != null) {
             Content.WidthRequest = TileWidth;
-            Content.HeightRequest= TileHeight;
+            Content.HeightRequest = TileHeight;
             Content.ZIndex = Entity.Layer;
         }
     }
@@ -74,11 +74,6 @@ public abstract class Tile : ContentView, ITile {
         if (DisplayMode == TileDisplayMode.Symbol) SetSymbolContent();
     }
 
-    public void ForceRedraw() {
-        HaveVisualPropertiesChanged = true;
-        RebuildIfNecessary();
-    }
-    
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
             HaveVisualPropertiesChanged = true;
@@ -88,13 +83,15 @@ public abstract class Tile : ContentView, ITile {
     }
 
     /// <summary>
-    /// Rebuilds the tile's content if visual properties have changed,
-    /// using debounce mechanisms to minimize redundant updates.
+    ///     Rebuilds the tile's content if visual properties have changed,
+    ///     using debounce mechanisms to minimize redundant updates.
     /// </summary>
     /// <remarks>
-    /// This method listens for changes in visual properties and schedules a delayed execution to rebuild the tile content if necessary.
-    /// The debouncing mechanism ensures that multiple rapid changes are processed efficiently. The content is only updated if the
-    /// visual properties have changed.
+    ///     This method listens for changes in visual properties and schedules a delayed execution to rebuild the tile content
+    ///     if necessary.
+    ///     The debouncing mechanism ensures that multiple rapid changes are processed efficiently. The content is only updated
+    ///     if the
+    ///     visual properties have changed.
     /// </remarks>
     private void RebuildIfNecessary() {
         _debounceRebuildCts?.Cancel();
@@ -102,7 +99,7 @@ public abstract class Tile : ContentView, ITile {
         var token = _debounceRebuildCts.Token;
 
         Task.Delay(DebounceDelay, token)
-            .ContinueWith((t) => {
+            .ContinueWith(t => {
                  if (t.IsCanceled) return;
                  if (HaveVisualPropertiesChanged) {
                      Console.WriteLine($"{Entity.EntityName}: Properties changed. [{string.Join(",", VisualProperties)}]");
@@ -114,14 +111,17 @@ public abstract class Tile : ContentView, ITile {
     }
 
     /// <summary>
-    /// Sets the value of a field and raises property-changing and changed notifications.
+    ///     Sets the value of a field and raises property-changing and changed notifications.
     /// </summary>
     /// <typeparam name="T">The type of the field.</typeparam>
     /// <param name="field">The field to be updated.</param>
     /// <param name="value">The new value to set.</param>
-    /// <param name="propertyName">The name of the property that changed. This parameter is optional and automatically supplied by the compiler.</param>
+    /// <param name="propertyName">
+    ///     The name of the property that changed. This parameter is optional and automatically supplied
+    ///     by the compiler.
+    /// </param>
     /// <returns>
-    /// True if the value of the field was changed, otherwise false.
+    ///     True if the value of the field was changed, otherwise false.
     /// </returns>
     protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = "") {
         if (EqualityComparer<T>.Default.Equals(field, value)) return false;
@@ -130,6 +130,11 @@ public abstract class Tile : ContentView, ITile {
         OnPropertyChanged(propertyName);
         return true;
     }
+
+    // @formatter:off
+    public bool IsSelected {get; set => SetField(ref field, value); }
+    public double GridSize {get; set => SetField(ref field, value); }
+    // @formatter:on
 }
 
 public enum TileDisplayMode {

@@ -1,15 +1,18 @@
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using System.Text.Json;
 using DCCPanelController.Models.DataModel.Repository;
 
 namespace DCCPanelController.Models.DataModel;
 
 public sealed class Panels : ObservableCollection<Panel> {
+    public Panel CreatePanel() {
+        return new Panel(this);
+    }
 
-    public Panels() { }
-    public Panel CreatePanel() => new Panel(this);
-    public Panel CreatePanelFrom(Panel panel) => panel.Clone();
+    public Panel CreatePanelFrom(Panel panel) {
+        return panel.Clone();
+    }
+
     new private Panel Add(Panel panel) {
         base.Add(panel);
         return panel;

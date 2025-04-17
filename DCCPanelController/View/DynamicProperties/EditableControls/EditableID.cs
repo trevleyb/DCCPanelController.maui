@@ -8,6 +8,7 @@ namespace DCCPanelController.View.DynamicProperties.EditableControls;
 public class EditableID(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
     private IEntityID? _entity;
+
     public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             _entity = owner as IEntityID;
@@ -51,12 +52,12 @@ public class EditableID(string label, string description = "", int order = 0, st
         if (_entity is ButtonEntity { Parent: not null } button) {
             var buttons = button.Parent?.GetAllEntitiesWithID<ButtonEntity>();
             var conflictingButtons = buttons?.Where(b => b.Id == value).ToArray() ?? null;
-            isValid = conflictingButtons == null || (conflictingButtons.Length == 1 && conflictingButtons[0].Equals(button));
+            isValid = conflictingButtons == null || conflictingButtons.Length == 1 && conflictingButtons[0].Equals(button);
         }
         if (_entity is TurnoutEntity { Parent: not null } turnout) {
             var turnouts = turnout.Parent?.GetAllEntitiesWithID<TurnoutEntity>();
             var conflictingTurnouts = turnouts?.Where(b => b.Id == value).ToArray() ?? null;
-            isValid = conflictingTurnouts == null || (conflictingTurnouts.Length == 1 && conflictingTurnouts[0].Equals(turnout));
+            isValid = conflictingTurnouts == null || conflictingTurnouts.Length == 1 && conflictingTurnouts[0].Equals(turnout);
         }
         return isValid;
     }

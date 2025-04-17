@@ -9,16 +9,16 @@ using DCCPanelController.Models.ViewModel.Tiles;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class FloatingTileSelectorViewModel : BaseViewModel {
-    
-    [ObservableProperty] private double _x = 0;
-    [ObservableProperty] private double _y = 0;
-    [ObservableProperty] private double _width = 0;
-    [ObservableProperty] private double _height = 0;
-    [ObservableProperty] private double _lastX = 0;
-    [ObservableProperty] private double _lastY = 0;
+    [ObservableProperty] private double _gridSize = 32;
+    [ObservableProperty] private double _height;
+    [ObservableProperty] private double _lastX;
+    [ObservableProperty] private double _lastY;
     [ObservableProperty] private string _layoutBounds = "0.5,0.5,autosize,autosize";
-    [ObservableProperty] private double _gridSize = 32; 
     [ObservableProperty] private ObservableCollection<Tile> _tiles = new();
+    [ObservableProperty] private double _width;
+
+    [ObservableProperty] private double _x;
+    [ObservableProperty] private double _y;
 
     public FloatingTileSelectorViewModel() {
         BuildTileList();

@@ -9,18 +9,17 @@ public class RectangleTile : Tile {
     public RectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-
         if (Entity is RectangleEntity entity) {
             Shape shape;
             if (entity.BorderRadius > 0) {
-                shape = new RoundRectangle() { CornerRadius = entity.BorderRadius, };
+                shape = new RoundRectangle { CornerRadius = entity.BorderRadius };
                 shape.SetBinding(RoundRectangle.CornerRadiusProperty, new Binding(nameof(entity.BorderRadius), BindingMode.TwoWay, source: entity));
             } else {
                 shape = new Rectangle();
             }
-            shape.SetBinding(Shape.OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
-            shape.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
-            shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, converter: new ColorToSolidColorConverter(), source: entity));
+            shape.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: entity));
+            shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: entity));
             shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: entity));
             shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
             shape.HorizontalOptions = LayoutOptions.Fill;
@@ -28,10 +27,10 @@ public class RectangleTile : Tile {
             shape.InputTransparent = true;
             shape.Scale = 1;
             return shape;
-        } 
+        }
         return CreateSymbol();
-    }   
-    
+    }
+
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("rectangle").AsImage();
     }

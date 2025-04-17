@@ -1,29 +1,35 @@
 using System.Text.RegularExpressions;
-using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 
 public static class EntityID {
-    
     // TODO: Make it so that generating IDs includes the Panel Name as part of the ID
-    public static string NextPanelID(IEnumerable<Panel> panels) => Next(panels, "Panel ");
-    public static string NextTurnoutID(IEnumerable<IEntityID> entities) => Next(entities, "T");
-    public static string NextButtonID(IEnumerable<IEntityID> entities) => Next(entities, "B");
+    public static string NextPanelID(IEnumerable<Panel> panels) {
+        return Next(panels, "Panel ");
+    }
+
+    public static string NextTurnoutID(IEnumerable<IEntityID> entities) {
+        return Next(entities, "T");
+    }
+
+    public static string NextButtonID(IEnumerable<IEntityID> entities) {
+        return Next(entities, "B");
+    }
 
     public static string Next(IEnumerable<IEntityID> entities, string prefix) {
         return GetNextID(entities, t => t.Id, prefix);
     }
 
     private static string GetNextID<T>(IEnumerable<T> entities, Func<T, string> idSelector, string defaultPrefix = "UKN") {
-        var ids = entities.Select(idSelector).Where(id => !string.IsNullOrEmpty(id)) .OrderBy(id => id).ToList();
+        var ids = entities.Select(idSelector).Where(id => !string.IsNullOrEmpty(id)).OrderBy(id => id).ToList();
         if (ids.Count == 0) return $"{defaultPrefix}1"; // Default name if the list is empty.
         var numericalPattern = ids.Select(id => {
-               var match = Regex.Match(id,@"^(.*?)(\d+)$");                                                                               // Match a prefix and a number (e.g., "Button123").
-               return match.Success ? (Prefix: match.Groups[1].Value, Number: int.Parse(match.Groups[2].Value)) : (Prefix: id, Number: 0); // No numerical suffix, treat as 0.
-           })
-          .OrderBy(item => item.Number)
-          .ToList();
+                                       var match = Regex.Match(id, @"^(.*?)(\d+)$");                                                                               // Match a prefix and a number (e.g., "Button123").
+                                       return match.Success ? (Prefix: match.Groups[1].Value, Number: int.Parse(match.Groups[2].Value)) : (Prefix: id, Number: 0); // No numerical suffix, treat as 0.
+                                   })
+                                  .OrderBy(item => item.Number)
+                                  .ToList();
 
         if (numericalPattern.Count > 0) {
             var latestItem = numericalPattern.Last(); // Get the last item in the sequence.
@@ -33,9 +39,9 @@ public static class EntityID {
 
         // Step 3: Look for alphabetical patterns (e.g., ButtonA, ButtonB).
         var alphabeticalPattern = ids
-             .Where(id => Regex.IsMatch(id, @"^[a-zA-Z]+$")) // Match IDs containing only letters.
-             .OrderBy(id => id)
-             .ToList();
+                                 .Where(id => Regex.IsMatch(id, @"^[a-zA-Z]+$")) // Match IDs containing only letters.
+                                 .OrderBy(id => id)
+                                 .ToList();
 
         if (alphabeticalPattern.Count > 0) {
             var lastID = alphabeticalPattern.Last();          // Get the last ID in the alphabetical sequence.

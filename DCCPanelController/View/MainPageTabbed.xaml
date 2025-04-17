@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <Shell
     FlyoutBehavior="Disabled"
@@ -14,23 +14,23 @@
         <ShellContent
             ContentTemplate="{DataTemplate view:OperatePage}"
             Icon="control.png"
-            Title="Operate" />
+            Title="Operate"/>
         <ShellContent
             ContentTemplate="{DataTemplate view:PanelEditorPage}"
             Icon="panels.png"
-            Title="Panels" />
+            Title="Panels"/>
         <ShellContent
             ContentTemplate="{DataTemplate view:TurnoutsPage}"
             Icon="turnouts.png"
-            Title="Turnouts" />
+            Title="Turnouts"/>
         <ShellContent
             ContentTemplate="{DataTemplate view:RoutesPage}"
             Icon="routes.png"
-            Title="Routes" />
+            Title="Routes"/>
         <ShellContent
             ContentTemplate="{DataTemplate view:SettingsPage}"
             Icon="settings.png"
-            Title="Settings" />
+            Title="Settings"/>
     </FlyoutItem>
 
 </Shell>

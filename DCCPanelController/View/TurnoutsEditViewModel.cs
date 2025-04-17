@@ -17,9 +17,6 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
 
-    ConnectionService ConnectionService { get; init; }
-    IDccClient? Client { get; set; }
-    
     public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
         Turnout = turnout;
         ConnectionService = connectionService;
@@ -30,6 +27,9 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
         DefaultState = Turnout.Default;
         IsEditable = Turnout.IsEditable;
     }
+
+    private ConnectionService ConnectionService { get; }
+    private IDccClient? Client { get; set; }
 
     public event Action<Turnout?>? OnSaveCompleted;
     public event EventHandler? CloseRequested;

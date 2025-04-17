@@ -1,5 +1,3 @@
-using DCCClients.WiThrottle.Client;
-
 namespace DCCClients.Events;
 
 public class DccRouteArgs(string dccAddress, string routeId, bool isActive) : EventArgs {

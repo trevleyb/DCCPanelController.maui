@@ -7,10 +7,10 @@ using SkiaSharp.Views.Maui.Controls;
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public partial class SvgImage : ObservableObject {
-    private SvgImageManager? _imageManager;
-    [ObservableProperty] private string _filename = string.Empty;
-    [ObservableProperty] private int _rotation;
     [ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
+    [ObservableProperty] private string _filename = string.Empty;
+    private SvgImageManager? _imageManager;
+    [ObservableProperty] private int _rotation;
 
     public SvgImage(string filename, int rotation, SvgConnections connections) {
         Filename = filename;
@@ -20,15 +20,23 @@ public partial class SvgImage : ObservableObject {
     }
 
     private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
-    
-    public ImageSource AsImageSource(int rotation = 0, float scale = 1.0f) => ImageManager.AsImageSource(rotation, scale);
-    public Image AsImage(int rotation = 0, float scale = 1.0f) => new Image { Source = ImageManager.AsImageSource(rotation, scale),  HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill};
-    public SKCanvasView AsCanvas(int rotation = 0, float scale = 1.5f) => ImageManager.AsCanvasView(rotation, scale);
+
+    public ImageSource AsImageSource(int rotation = 0, float scale = 1.0f) {
+        return ImageManager.AsImageSource(rotation, scale);
+    }
+
+    public Image AsImage(int rotation = 0, float scale = 1.0f) {
+        return new Image { Source = ImageManager.AsImageSource(rotation, scale), HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill };
+    }
+
+    public SKCanvasView AsCanvas(int rotation = 0, float scale = 1.5f) {
+        return ImageManager.AsCanvasView(rotation, scale);
+    }
 
     public void SetAttribute(SvgElementType elementType, Color color) {
         ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());
     }
-    
+
     public void SetLabel(string label) {
         if (string.IsNullOrEmpty(label)) return;
         ImageManager.SetAllAttributeValues(SvgElementType.Text, "text", label);
@@ -42,7 +50,7 @@ public partial class SvgImage : ObservableObject {
         }
         return this;
     }
-   
+
     // Element Types Supported Include
     // ---------------------------------------------------------------------------
     // <rect>       - fill, fill-opacity
@@ -64,7 +72,6 @@ public partial class SvgImage : ObservableObject {
     }
 
     public void ApplyElementStyle(string elementName, string attributeName, string attributeValue) {
-        
         // Get back all the elements that have an ID = the element name provided (such as "border")
         // -----------------------------------------------------------------------------------------
         foreach (var element in ImageManager.FindElements(elementName)) {
@@ -159,5 +166,4 @@ public partial class SvgImage : ObservableObject {
         }
         return true;
     }
-
 }

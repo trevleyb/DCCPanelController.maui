@@ -6,14 +6,14 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.View.PanelProperties;
 
 public partial class PanelPropertyViewModel : BaseViewModel {
-    [ObservableProperty] private string _propertyName;
     [ObservableProperty] private Panel _panel;
+    [ObservableProperty] private string _propertyName;
 
     public PanelPropertyViewModel(Panel panel) {
         Panel = panel;
         PropertyName = panel.Id ?? "Panel Properties";
     }
-    
+
     [RelayCommand]
     private async Task ResetDefaultsClickedAsync() {
         var result = await AskUserToConfirm("Reset Default Colors?", "Are you sure you want to reset all Panels colors to the Default?");

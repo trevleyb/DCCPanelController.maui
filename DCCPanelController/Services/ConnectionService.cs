@@ -1,6 +1,5 @@
 using DCCClients;
 using DCCClients.Events;
-using DCCPanelController.Models;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
@@ -8,19 +7,24 @@ using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 namespace DCCPanelController.Services;
 
 public sealed class ConnectionService {
-
-    private IDccClient? _dccClient;
     private readonly Profile _profile;
     private ConnectionInfo? _connectionInfo;
 
-    public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
-    
+    private IDccClient? _dccClient;
+
     public ConnectionService(Profile profile) {
         _profile = profile;
         _connectionInfo = profile.ActiveConnectionInfo;
     }
 
-    public async Task<IDccClient?> Connect() => await Connect(_profile.ActiveConnectionInfo);
+    public bool IsConnected => _dccClient is not null && _dccClient.IsConnected;
+
+    public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
+
+    public async Task<IDccClient?> Connect() {
+        return await Connect(_profile.ActiveConnectionInfo);
+    }
+
     public async Task<IDccClient?> Connect(ConnectionInfo? connectionInfo) {
         if (connectionInfo is not null) _connectionInfo = connectionInfo;
         ArgumentNullException.ThrowIfNull(_connectionInfo);
@@ -28,7 +32,7 @@ public sealed class ConnectionService {
         OnConnectionChanged();
         return _dccClient;
     }
-    
+
     public void Disconnect() {
         if (_dccClient is not null) {
             _dccClient.Disconnect();
@@ -39,33 +43,30 @@ public sealed class ConnectionService {
         OnConnectionChanged();
     }
 
-    public bool IsConnected => _dccClient is not null && _dccClient.IsConnected;
-
     private async Task<IDccClient> GetClient(ConnectionInfo? connection = null) {
-        
         // Allow null as a parameter if we know we have already setup the connection
         // This will then return the active connection.
         // --------------------------------------------------------------------------
         if (_dccClient is { IsConnected: true }) return _dccClient;
         if (_dccClient is { IsConnected: false }) Disconnect();
-        
+
         // If we don't have a connection setup, and we did not provide settings, then we error
         // --------------------------------------------------------------------------
-        if (connection?.Settings is null) throw new ArgumentNullException(nameof(connection),"No Connection Details provided.");
-        
+        if (connection?.Settings is null) throw new ArgumentNullException(nameof(connection), "No Connection Details provided.");
+
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
         _dccClient = DccClientFactory.Create(connection.Settings);
         var result = await _dccClient.ConnectAsync();
         if (result.IsFailure) _dccClient = new DccInvalidClient(connection.Settings);
-        
+
         _dccClient.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
         _dccClient.RouteMsgReceived += DccClientOnRouteMsgReceived;
-        return _dccClient;  
+        return _dccClient;
     }
 
     /// <summary>
-    /// Global Update of any routes that get sent by the server
+    ///     Global Update of any routes that get sent by the server
     /// </summary>
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
         Route? route = null;
@@ -77,7 +78,7 @@ public sealed class ConnectionService {
             route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
             Console.WriteLine($"Route Updated {route.Name} is now {route.State}");
         } else {
-            route = new Route() {
+            route = new Route {
                 Id = e.RouteId,
                 Name = e.DccAddress,
                 State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive
@@ -88,8 +89,8 @@ public sealed class ConnectionService {
     }
 
     /// <summary>
-    /// Global update of any Turnouts that appear once we do a connection. WiThrottle in particular only reports
-    /// any defined turnouts on connection. 
+    ///     Global update of any Turnouts that appear once we do a connection. WiThrottle in particular only reports
+    ///     any defined turnouts on connection.
     /// </summary>
     private void DccClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
         Turnout? turnout = null;
@@ -103,10 +104,9 @@ public sealed class ConnectionService {
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
             Console.WriteLine($"Turnout Updated {turnout.Name} is now {turnout.State}");
         } else if (_profile is not null && _profile.Turnouts is not null) {
-            
-            turnout = new Turnout() {
+            turnout = new Turnout {
                 Name = e.TurnoutId,
-                Id   = e.TurnoutId,
+                Id = e.TurnoutId,
                 DccAddress = e.DccAddress,
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
             };
@@ -116,6 +116,6 @@ public sealed class ConnectionService {
     }
 
     private void OnConnectionChanged() {
-        ConnectionChanged?.Invoke(this, new ConnectionChangedEvent() { IsConnected = IsConnected});
+        ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { IsConnected = IsConnected });
     }
 }

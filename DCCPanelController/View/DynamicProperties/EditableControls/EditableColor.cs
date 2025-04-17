@@ -11,8 +11,8 @@ public class EditableColor(string label, string description = "", int order = 0,
     public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var cell = new ColorPickerButton {
-                WidthRequest = 100, HeightRequest = 30, AllowsNoColor = true, 
-                VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Start,
+                WidthRequest = 100, HeightRequest = 30, AllowsNoColor = true,
+                VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Start
             };
             cell.SetBinding(ColorPickerButton.SelectedColorProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             if (owner is ITrackEntity && info.Name == nameof(TrackEntity.TrackBorderColor)) {

@@ -5,13 +5,11 @@
     x:DataType="dynamicProperties:DynamicPropertyPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:dynamicProperties="clr-namespace:DCCPanelController.View.DynamicProperties"
-    xmlns:propertyPages="clr-namespace:DCCPanelController.View.DynamicProperties"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Clicked="ClosePropertyPage" IconImageSource="info.png" />
-        <ToolbarItem Clicked="ClosePropertyPage" Text="Close" />
+        <ToolbarItem Clicked="ClosePropertyPage" IconImageSource="info.png"/>
+        <ToolbarItem Clicked="ClosePropertyPage" Text="Close"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -24,20 +22,13 @@
                     HorizontalOptions="Fill"
                     Margin="5,0,5,0"
                     VerticalOptions="Fill"
-                    x:Name="PropertyContainer" />
+                    x:Name="PropertyContainer"/>
             </ScrollView>
         </Grid>
         <!--     </VerticalStackLayout> -->
         <!-- </Border> -->
     </ContentPage.Content>
 </ContentPage>
-
-
-
-
-
-
-
 
 
 <!--  <Border  -->

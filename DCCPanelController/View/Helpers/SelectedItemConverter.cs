@@ -1,6 +1,4 @@
-using System;
 using System.Globalization;
-using Microsoft.Maui.Controls;
 using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.View.Helpers;

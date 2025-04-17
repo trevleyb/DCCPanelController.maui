@@ -1,4 +1,5 @@
 namespace DCCPanelController.View.Helpers;
+
 /// <summary>
 ///     This is a helper class that draws the Grid Lines on the Page.
 /// </summary>
@@ -10,7 +11,6 @@ public class GridLinesDrawable(int rows, int columns, Color? gridColor = null, f
     private float GridWidth { get; } = gridWidth ?? 5.0f;
 
     public void Draw(ICanvas canvas, RectF dirtyRect) {
-    
         var cellWidth = dirtyRect.Width / columns;
         var cellHeight = dirtyRect.Height / rows;
         canvas.StrokeColor = GridColor;

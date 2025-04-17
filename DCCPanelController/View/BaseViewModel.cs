@@ -3,7 +3,6 @@
 namespace DCCPanelController.View;
 
 public partial class BaseViewModel : ObservableObject {
-
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotBusy))]
     private bool _isBusy;

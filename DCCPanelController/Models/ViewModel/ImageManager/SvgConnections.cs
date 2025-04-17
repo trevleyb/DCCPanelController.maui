@@ -14,6 +14,8 @@ public class SvgConnections {
         Connections = RotateConnections(connections.Connections, rotation);
     }
 
+    public static SvgConnections NoConnections => new("********");
+
     public override string ToString() {
         var result = string.Empty;
         for (var i = 0; i < CompassPoints; ++i) {
@@ -45,7 +47,6 @@ public class SvgConnections {
         return RotateConnections(connectionTypes, rotation);
     }
 
-    public static SvgConnections NoConnections => new SvgConnections("********");
     private static ConnectionType[] RotateConnections(ConnectionType[] connections, int rotation = 0) {
         // Fix the rotation. If it is < 0 then inverse it (-90 = +270) and then work out what index 
         // the position would be. So a rotation of -90 is +270 which would be position 6. 

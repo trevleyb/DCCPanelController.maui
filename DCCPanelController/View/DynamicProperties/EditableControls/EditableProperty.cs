@@ -1,20 +1,19 @@
 namespace DCCPanelController.View.DynamicProperties.EditableControls;
 
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property)]
 public abstract class EditableProperty(string label, string description = "", int order = 0, string? group = null) : Attribute {
-    
-    public string Label { get; } = label;               // Label/Prompt for the property
-    public string Description { get; } = description;   // Description of the property
-    public string Group { get; } = group ?? "General";  // Group to which this property belongs
-    public int Order { get; } = order;                  // Order within the group
+    public string Label { get; } = label;              // Label/Prompt for the property
+    public string Description { get; } = description;  // Description of the property
+    public string Group { get; } = group ?? "General"; // Group to which this property belongs
+    public int Order { get; } = order;                 // Order within the group
 
     protected IView CreateGroupCell(IView view, int? height = null) {
         var grid = new Grid();
         grid.MinimumHeightRequest = height ?? 43;
-        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = 150 });
-        grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-        grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
-        grid.RowDefinitions.Add(new RowDefinition() { Height = 3 });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = 150 });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+        grid.RowDefinitions.Add(new RowDefinition { Height = 3 });
         grid.BackgroundColor = Colors.White;
 
         // If there is a Label, then add the label to the first column. 
@@ -27,7 +26,7 @@ public abstract class EditableProperty(string label, string description = "", in
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(5, 5, 5, 5),
+                Margin = new Thickness(5, 5, 5, 5)
             };
             grid.Children.Add(label);
             grid.SetColumn(label, 0);

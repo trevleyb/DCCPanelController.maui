@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
@@ -13,7 +13,7 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:ColorFallbackConverter x:Key="ColorFallbackConverter" />
+            <converters:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -21,14 +21,14 @@
         <ToolbarItem
             Command="{Binding ToggleConnectionCommand}"
             IconImageSource="wifi_off.png"
-            x:Name="ConnectButton" />
+            x:Name="ConnectButton"/>
 
         <ToolbarItem
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"
             Text="Hide"
             ToolTipProperties.Text="Hide Bottom Tab Bar"
-            x:Name="HideUnHide" />
+            x:Name="HideUnHide"/>
 
     </ContentPage.ToolbarItems>
 
@@ -43,7 +43,7 @@
                 x:Name="PanelCarousel">
 
                 <CarouselView.ItemsSource>
-                    <Binding Path="Panels" />
+                    <Binding Path="Panels"/>
                 </CarouselView.ItemsSource>
 
                 <CarouselView.EmptyView>
@@ -54,7 +54,7 @@
                                 HorizontalOptions="Center"
                                 Margin="0,20,0,20"
                                 Text="Welcome to the DCC Model Layout Panel Controller"
-                                VerticalOptions="Center" />
+                                VerticalOptions="Center"/>
                             <HorizontalStackLayout
                                 HorizontalOptions="Center"
                                 Margin="20"
@@ -64,12 +64,12 @@
                                     Clicked="ButtonInstructions_OnClicked"
                                     Margin="10,10,10,10"
                                     Style="{StaticResource ButtonOutline}"
-                                    Text="Instructions" />
+                                    Text="Instructions"/>
                                 <Button
                                     Clicked="ButtonAbout_OnClicked"
                                     Margin="10,10,10,10"
                                     Style="{StaticResource ButtonOutline}"
-                                    Text="About" />
+                                    Text="About"/>
                             </HorizontalStackLayout>
                         </StackLayout>
                     </ContentView>
@@ -84,7 +84,7 @@
                             ShowGrid="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=ShowGrid}"
                             VerticalOptions="Fill"
                             x:DataType="dataModel:Panel"
-                            x:Name="PanelView" />
+                            x:Name="PanelView"/>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
             </CarouselView>
@@ -98,7 +98,7 @@
                 Margin="0,5,0,10"
                 SelectedIndicatorColor="{StaticResource Primary}"
                 VerticalOptions="Start"
-                x:Name="IndicatorView" />
+                x:Name="IndicatorView"/>
 
         </Grid>
     </ContentPage.Content>

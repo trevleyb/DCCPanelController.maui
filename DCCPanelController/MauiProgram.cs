@@ -55,7 +55,7 @@ public static class MauiProgram {
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
-        
+
         return app;
     }
 
@@ -67,6 +67,7 @@ public static class MauiProgram {
     /// <param name="services">The service collection to register the view and view model.</param>
     private static void AddTransientViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage where TViewModel : class {
         services.AddTransient<TViewModel>();
+
         //services.AddTransient<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
         services.AddTransient<TView>();
     }
@@ -80,6 +81,7 @@ public static class MauiProgram {
     private static void AddSingletonViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage where TViewModel : class {
         services.AddSingleton<TViewModel>();
         services.AddSingleton<TView>();
+
         //services.AddSingleton<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
     }
 

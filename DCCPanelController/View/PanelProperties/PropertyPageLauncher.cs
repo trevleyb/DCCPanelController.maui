@@ -7,14 +7,12 @@ using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 namespace DCCPanelController.View.PanelProperties;
 
 public static class PropertyPageLauncher {
- 
     public static async Task ShowPanelPropertyPageAsync(Panel panel) {
         // -------------------------------------------------------------------------------
         if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
             await LaunchNavigationPage(new PanelPropertyPage(panel));
-        }
-        else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
-                 DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
+        } else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
+                   DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
             await LaunchPopupPage(new PanelPropertyPopup(panel));
         }
     }

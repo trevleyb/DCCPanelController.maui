@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using DCCClients.WiThrottle.ServiceHelper;
 
 namespace DCCClients.Common;
 
@@ -20,9 +19,9 @@ public interface IError {
 }
 
 public class Error(string message, Exception? exception = null) : IError {
+    private List<Exception> Causes { get; } = new();
     public string Message { get; } = message;
     public Exception? Exception { get; } = exception;
-    private List<Exception> Causes { get; } = new();
 
     public IError CausedBy(Exception exception) {
         Causes.Add(exception);
@@ -37,16 +36,16 @@ public class Error(string message, Exception? exception = null) : IError {
 
 // Generic result with or without a value
 public class Result<T> : IResult<T> {
-    public bool IsSuccess { get; }
-    public bool IsFailure => !IsSuccess;
-    public T? Value { get; }
-    public IReadOnlyCollection<IError> Errors { get; }
-
     protected Result(bool isSuccess, T? value, IEnumerable<IError>? errors) {
         IsSuccess = isSuccess;
         Value = value;
         Errors = new ReadOnlyCollection<IError>(errors?.ToList() ?? []);
     }
+
+    public bool IsSuccess { get; }
+    public bool IsFailure => !IsSuccess;
+    public T? Value { get; }
+    public IReadOnlyCollection<IError> Errors { get; }
 
     // Static factory methods for success
     public static IResult<T?> Ok(T? value = default) {
@@ -112,7 +111,7 @@ public class Result : Result<object> {
     public new static Result Fail(IEnumerable<IError>? errors) {
         return new Result(false, errors);
     }
-    
+
     public new static Result Fail(IEnumerable<Exception>? exceptions) {
         return new Result(false, exceptions?.Select(e => new Error(e.Message, e)));
     }

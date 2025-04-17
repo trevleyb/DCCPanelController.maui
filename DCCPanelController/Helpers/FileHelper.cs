@@ -5,7 +5,7 @@ namespace DCCPanelController.Helpers;
 
 public static class FileHelper {
     /// <summary>
-    /// Prompts the user to choose a location to save the file and writes the specified content to that location.
+    ///     Prompts the user to choose a location to save the file and writes the specified content to that location.
     /// </summary>
     /// <param name="content">The content to save into the file.</param>
     /// <param name="fileName">The suggested name for the file (e.g., example.txt).</param>
@@ -30,7 +30,7 @@ public static class FileHelper {
         try {
             var filePicker = FilePicker.Default;
             var fileResult = await filePicker.PickAsync(new PickOptions {
-                PickerTitle = text ?? "Select a Panel to Upload", 
+                PickerTitle = text ?? "Select a Panel to Upload"
             });
             if (fileResult == null) return null;
 
@@ -43,5 +43,4 @@ public static class FileHelper {
             return null;
         }
     }
-    
 }

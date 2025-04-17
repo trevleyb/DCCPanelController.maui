@@ -9,7 +9,7 @@ public class EditableButtonSize(string label, string description = "", int order
     : EditableEnum(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
-            var items = new[] { ButtonSizeEnum.Normal, ButtonSizeEnum.Large};
+            var items = new[] { ButtonSizeEnum.Normal, ButtonSizeEnum.Large };
             return CreateRadioGroupForEnums("Button Size", items, owner, info, propertyModified);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Button Size Enum:  {e.Message}");
@@ -35,7 +35,7 @@ public class EditableAspectRatio(string label, string description = "", int orde
     : EditableEnum(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
-            var items = new[] { Aspect.Center, Aspect.AspectFit, Aspect.AspectFill};
+            var items = new[] { Aspect.Center, Aspect.AspectFit, Aspect.AspectFill };
             return CreateRadioGroupForEnums("Aspect Ratio", items, owner, info, propertyModified);
         } catch (Exception e) {
             Debug.WriteLine($"Unable to create a Aspect Ratio Enum:  {e.Message}");
@@ -111,7 +111,7 @@ public abstract class EditableEnum(string label, string description = "", int or
             radioButton.IsChecked = value.Equals(PropertyHelper.GetEnumPropertyValue<T>(owner, info.Name));
             radioGroup.Children.Add(radioButton);
         }
-       
+
         return CreateGroupCell(radioGroup);
     }
 }

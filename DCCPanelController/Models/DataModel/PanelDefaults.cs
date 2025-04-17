@@ -23,10 +23,10 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] private Color _hiddenColor = null!;
     [ObservableProperty] private Color _mainLineColor = null!;
     [ObservableProperty] private Color _occupiedColor = null!;
+
+    [ObservableProperty] private double _opacityAttribute = 0.35;
     [ObservableProperty] private Color _showPathColor = null!;
     [ObservableProperty] private Color _terminatorColor = null!;
-    
-    [ObservableProperty] private double _opacityAttribute = 0.35;
 
     public void CopyColorsTo(Panel target) {
         target.BackgroundColor = BackgroundColor;
@@ -67,11 +67,11 @@ public partial class Panel : ObservableObject {
 
         ContinuationColor = AppleCrayonColors.Value("Iron");
         TerminatorColor = AppleCrayonColors.Value("Iron");
-        
+
         HiddenColor = AppleCrayonColors.Value("Snow");
         OccupiedColor = AppleCrayonColors.Value("Cayenne");
         ShowPathColor = AppleCrayonColors.Value("Cayenne");
-        
+
         OpacityAttribute = 0.35;
     }
 }

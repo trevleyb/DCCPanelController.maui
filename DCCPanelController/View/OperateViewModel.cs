@@ -1,18 +1,16 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients.WiThrottle.Client;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
 public partial class OperateViewModel : BaseViewModel {
-    [ObservableProperty] private bool _isConnected = false;
+    [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
-    private ConnectionService ConnectionService { get; init; }
 
     public OperateViewModel(Profile profile, ConnectionService connectionService) {
         ConnectionService = connectionService;
@@ -26,6 +24,8 @@ public partial class OperateViewModel : BaseViewModel {
         }
     }
 
+    private ConnectionService ConnectionService { get; }
+
     public Color BackgroundColor => SelectedPanel?.BackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; set; }
 
@@ -34,7 +34,7 @@ public partial class OperateViewModel : BaseViewModel {
         OnPropertyChanged(nameof(BackgroundColor));
         return SelectedPanel?.Id ?? "Control Panel";
     }
-    
+
     [RelayCommand]
     private async Task ToggleConnectionAsync() {
         if (!IsConnected) {

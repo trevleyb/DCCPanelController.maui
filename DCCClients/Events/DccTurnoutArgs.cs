@@ -1,6 +1,3 @@
-
-using System.Runtime.CompilerServices;
-
 namespace DCCClients.Events;
 
 public class DccTurnoutArgs(string dccAddress, string turnoutId, bool isThrown) : EventArgs {

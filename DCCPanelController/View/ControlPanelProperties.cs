@@ -1,10 +1,7 @@
 using System.Collections.Specialized;
-using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
@@ -15,7 +12,7 @@ internal sealed partial class ControlPanelView {
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
     public static readonly BindableProperty EditModeProperty = BindableProperty.Create(nameof(EditMode), typeof(EditModeEnum), typeof(ControlPanelView), EditModeEnum.Move, BindingMode.Default, propertyChanged: OnEditModeChanged);
-    
+
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
@@ -40,7 +37,7 @@ internal sealed partial class ControlPanelView {
         get => (bool)GetValue(ShowTrackErrorsProperty);
         set => SetValue(ShowTrackErrorsProperty, value);
     }
-    
+
     private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is ControlPanelView control) {
             control.ShowGrid = control.DesignMode;
@@ -63,18 +60,18 @@ internal sealed partial class ControlPanelView {
             control.DrawPanel(true);
         }
     }
-    
+
     /// <summary>
-    /// If the Panel object is changed, then we need to clear and rebuild the whole Panel
+    ///     If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is ControlPanelView control) {
             if (oldValue != newValue) {
                 if (oldValue is Panel oldPanel) {
-                    oldPanel.Entities.CollectionChanged -= EntitiesOnCollectionChanged; 
+                    oldPanel.Entities.CollectionChanged -= EntitiesOnCollectionChanged;
                 }
                 if (newValue is Panel newPanel) {
-                    newPanel.Entities.CollectionChanged += (_, args) =>EntitiesOnCollectionChanged(control, args); 
+                    newPanel.Entities.CollectionChanged += (_, args) => EntitiesOnCollectionChanged(control, args);
                     control.Panel = newPanel;
                     control.ClearAllSelectedTiles();
                     control.DrawPanel(true);
@@ -86,7 +83,7 @@ internal sealed partial class ControlPanelView {
     private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
         if (sender is ControlPanelView control) {
             control.ClearAllSelectedTiles();
-            
+
             // Any items that have been removed from the collection need to be
             // removed from the display panel. 
             // -------------------------------------------------------------------------
@@ -114,17 +111,16 @@ internal sealed partial class ControlPanelView {
             }
         }
     }
-    
+
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
         if (bindable is ControlPanelView control) { }
     }
 
     private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
         if (bindable is ControlPanelView control) {
-            control.DrawGrid();    
+            control.DrawGrid();
         }
     }
 
-    private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
-    }
+    private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) { }
 }

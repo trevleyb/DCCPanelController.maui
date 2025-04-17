@@ -3,7 +3,9 @@ namespace DCCPanelController.Models.ViewModel.StyleManager;
 public class SvgStyleBuilder {
     private readonly SvgStyle _style = new();
 
-    public SvgStyle Build() => _style;
+    public SvgStyle Build() {
+        return _style;
+    }
 
     public SvgStyleBuilder Add(Action<SvgElementBuilder> buildElement) {
         var builder = new SvgElementBuilder(string.Empty);

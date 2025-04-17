@@ -7,7 +7,6 @@ using DCCClients.WiThrottle.Client;
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public class JsonSettingsTypeConverter : JsonConverter<IDccSettings> {
-    
     public override IDccSettings Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
         // Use the type discriminator or another property to determine the specific type
         // --------------------------------------------------------------------------------------------

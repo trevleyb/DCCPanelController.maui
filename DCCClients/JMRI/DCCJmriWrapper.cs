@@ -1,5 +1,4 @@
 using System.Net.WebSockets;
-using DCCClients.Interfaces;
 
 namespace DCCClients.JMRI;
 

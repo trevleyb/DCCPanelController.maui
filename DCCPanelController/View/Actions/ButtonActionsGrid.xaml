@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentView
     x:Class="DCCPanelController.View.Actions.ButtonActionsGrid"
@@ -7,12 +7,11 @@
     xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
-    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.Resources>
-        <ResourceDictionary />
+        <ResourceDictionary/>
     </ContentView.Resources>
 
     <ContentView.Content>
@@ -23,7 +22,7 @@
                     Grid.Column="0"
                     HeightRequest="25"
                     Text="Button Actions"
-                    TextColor="{StaticResource Primary}" />
+                    TextColor="{StaticResource Primary}"/>
                 <ImageButton
                     Aspect="Center"
                     Command="{Binding AddRowCommand}"
@@ -34,7 +33,7 @@
                     Source="plus_circle.png"
                     WidthRequest="25">
                     <ImageButton.Behaviors>
-                        <behaviors:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                        <behaviors:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </ImageButton.Behaviors>
                 </ImageButton>
                 <Label
@@ -42,7 +41,7 @@
                     HeightRequest="25"
                     Style="{StaticResource SmallLabel}"
                     Text="{Binding NoDataText}"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center"/>
             </Grid>
 
             <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}">
@@ -58,18 +57,18 @@
                             ColumnDefinitions="3*,4*,4*,3*,1*"
                             ColumnSpacing="2"
                             RowDefinitions="25">
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="0" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="1" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="2" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="3" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="4" />
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="0"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="1"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="2"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="3"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="4"/>
 
                             <Label
                                 FontAttributes="Bold"
                                 Grid.Column="0"
                                 Margin="2"
                                 Text="Button"
-                                TextColor="{StaticResource White}" />
+                                TextColor="{StaticResource White}"/>
 
                             <components:ButtonStateControl
                                 CanToggleState="False"
@@ -77,7 +76,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsButtonContext}"
                                 Margin="2"
-                                State="On" />
+                                State="On"/>
 
                             <components:ButtonStateControl
                                 CanToggleState="False"
@@ -85,7 +84,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsButtonContext}"
                                 Margin="2"
-                                State="Off" />
+                                State="Off"/>
 
                             <components:TurnoutStateControl
                                 CanToggleState="False"
@@ -93,7 +92,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsTurnoutContext}"
                                 Margin="2"
-                                State="Closed" />
+                                State="Closed"/>
 
                             <components:TurnoutStateControl
                                 CanToggleState="False"
@@ -101,7 +100,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsTurnoutContext}"
                                 Margin="2"
-                                State="Thrown" />
+                                State="Thrown"/>
 
                             <Label
                                 FontAttributes="Bold"
@@ -109,14 +108,14 @@
                                 HorizontalOptions="Center"
                                 Margin="2"
                                 Text="Cascade?"
-                                TextColor="{StaticResource White}" />
+                                TextColor="{StaticResource White}"/>
 
                             <Image
                                 Grid.Column="4"
                                 Margin="2"
                                 Source="trash.png">
                                 <Image.Behaviors>
-                                    <behaviors:IconTintColorBehavior TintColor="Firebrick" />
+                                    <behaviors:IconTintColorBehavior TintColor="Firebrick"/>
                                 </Image.Behaviors>
                             </Image>
 
@@ -151,13 +150,12 @@
                                         HorizontalOptions="Start"
                                         VerticalOptions="Center"
                                         BackgroundColor="Transparent"
-                                        TextColor = "Black"
-                                        TextSize  = "15"
+                                        TextColor="Black"
+                                        TextSize="15"
                                         SelectedItem="{Binding Id, Mode=TwoWay}"
-                                        ItemsSource ="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}}, Path=SelectableButtons}"
-                                        Placeholder ="Select a Button"
-                                        />
-                                    
+                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}}, Path=SelectableButtons}"
+                                        Placeholder="Select a Button"/>
+
                                     <components:ButtonStateControl
                                         CanSetStateUnknown="True"
                                         CanToggleState="True"
@@ -184,7 +182,7 @@
 
                                     <ImageButton
                                         Aspect="Center"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}}, x:DataType=local:ButtonActionsGridViewModel, Path=RemoveRowCommand}"    
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}}, x:DataType=local:ButtonActionsGridViewModel, Path=RemoveRowCommand}"
                                         CommandParameter="{Binding .}"
                                         Grid.Column="4"
                                         HeightRequest="10"
@@ -192,8 +190,8 @@
                                         Source="minus_circle.png"
                                         VerticalOptions="Center"
                                         WidthRequest="10"/>
-                                    
-              
+
+
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

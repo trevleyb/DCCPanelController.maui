@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentView
     x:Class="DCCPanelController.View.Actions.TurnoutActionsGrid"
@@ -12,7 +12,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.Resources>
-        <ResourceDictionary />
+        <ResourceDictionary/>
     </ContentView.Resources>
 
     <ContentView.Content>
@@ -23,7 +23,7 @@
                     Grid.Column="0"
                     HeightRequest="25"
                     Text="Turnout Actions"
-                    TextColor="{StaticResource Primary}" />
+                    TextColor="{StaticResource Primary}"/>
                 <ImageButton
                     Aspect="Center"
                     Command="{Binding AddRowCommand}"
@@ -34,7 +34,7 @@
                     Source="plus_circle.png"
                     WidthRequest="25">
                     <ImageButton.Behaviors>
-                        <behaviors:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                        <behaviors:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </ImageButton.Behaviors>
                 </ImageButton>
                 <Label
@@ -42,7 +42,7 @@
                     HeightRequest="25"
                     Style="{StaticResource SmallLabel}"
                     Text="{Binding NoDataText}"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center"/>
             </Grid>
 
             <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}">
@@ -58,18 +58,18 @@
                             ColumnDefinitions="3*,4*,4*,3*,1*"
                             ColumnSpacing="2"
                             RowDefinitions="25">
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="0" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="1" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="2" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="3" />
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="4" />
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="0"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="1"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="2"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="3"/>
+                            <BoxView Background="{StaticResource Primary}" Grid.Column="4"/>
 
                             <Label
                                 FontAttributes="Bold"
                                 Grid.Column="0"
                                 Margin="2"
                                 Text="Turnout"
-                                TextColor="{StaticResource White}" />
+                                TextColor="{StaticResource White}"/>
 
                             <components:ButtonStateControl
                                 CanToggleState="False"
@@ -77,7 +77,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsButtonContext}"
                                 Margin="2"
-                                State="On" />
+                                State="On"/>
 
                             <components:ButtonStateControl
                                 CanToggleState="False"
@@ -85,7 +85,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsButtonContext}"
                                 Margin="2"
-                                State="Off" />
+                                State="Off"/>
 
                             <components:TurnoutStateControl
                                 CanToggleState="False"
@@ -93,7 +93,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsTurnoutContext}"
                                 Margin="2"
-                                State="Closed" />
+                                State="Closed"/>
 
                             <components:TurnoutStateControl
                                 CanToggleState="False"
@@ -101,7 +101,7 @@
                                 HorizontalOptions="Start"
                                 IsVisible="{Binding IsTurnoutContext}"
                                 Margin="2"
-                                State="Thrown" />
+                                State="Thrown"/>
 
                             <Label
                                 FontAttributes="Bold"
@@ -109,14 +109,14 @@
                                 HorizontalOptions="Center"
                                 Margin="2"
                                 Text="Cascade?"
-                                TextColor="{StaticResource White}" />
+                                TextColor="{StaticResource White}"/>
 
                             <Image
                                 Grid.Column="4"
                                 Margin="2"
                                 Source="trash.png">
                                 <Image.Behaviors>
-                                    <behaviors:IconTintColorBehavior TintColor="Red" />
+                                    <behaviors:IconTintColorBehavior TintColor="Red"/>
                                 </Image.Behaviors>
                             </Image>
 
@@ -142,8 +142,8 @@
                                         Margin="-10,0,0,0"
                                         Text="{Binding Id, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        x:Name="IdLabel" />
-                                    
+                                        x:Name="IdLabel"/>
+
                                     <components:TurnoutStateControl
                                         CanSetStateUnknown="True"
                                         CanToggleState="True"
@@ -167,7 +167,7 @@
                                         IsChecked="{Binding Cascade}"
                                         Margin="2,0,0,0"
                                         VerticalOptions="Center"
-                                        x:DataType="dataModel:TurnoutAction" />
+                                        x:DataType="dataModel:TurnoutAction"/>
 
                                     <ImageButton
                                         Aspect="Center"
@@ -178,7 +178,7 @@
                                         Margin="2,0,0,0"
                                         Source="minus_circle.png"
                                         VerticalOptions="Center"
-                                        WidthRequest="10" />
+                                        WidthRequest="10"/>
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -9,7 +8,6 @@ using DCCClients.Events;
 using DCCClients.Interfaces;
 using DCCClients.WiThrottle.Client;
 using DCCClients.WiThrottle.ServiceHelper;
-using DCCPanelController.Models;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
@@ -17,28 +15,29 @@ using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
-    
-    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-    [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
-
-    [ObservableProperty] private string _name = "withrottle";
-    [ObservableProperty] private string _ipAddress = "0.0.0.0";
-    [ObservableProperty] private int _port = 12090;
-
-    [ObservableProperty] 
-    [NotifyPropertyChangedFor(nameof(ShowWiServers))]
-    private bool _showMessages;
+    private readonly Profile _profile;
 
     private IDccClient? _client;
-    private Profile _profile;
-    private ConnectionService ConnectionService { get; init; }
+    [ObservableProperty] private string _ipAddress = "0.0.0.0";
+
+    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
+
+    [ObservableProperty] private string _name = "withrottle";
+    [ObservableProperty] private int _port = 12090;
+    [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ShowWiServers))]
+    private bool _showMessages;
 
     public SettingsViewModel(Profile profile, ConnectionService connectionService) {
         _profile = profile;
         ConnectionService = connectionService;
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
     }
-    
+
+    private ConnectionService ConnectionService { get; }
+
     public Settings Settings => _profile.Settings;
     public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
     public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
@@ -96,7 +95,7 @@ public partial class SettingsViewModel : BaseViewModel {
         OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(ConnectLabel));
     }
-    
+
     [RelayCommand]
     public async Task ConnectAsync() {
         if (!IsDemoMode) {
@@ -110,7 +109,7 @@ public partial class SettingsViewModel : BaseViewModel {
                     if (_client != null) _client.MessageReceived -= ClientOnMessageReceived;
                     ConnectionService.Disconnect();
                 }
-                
+
                 _client = await ConnectionService.Connect(Settings.ActiveConnection());
                 if (_client is not null) {
                     _client.MessageReceived += ClientOnMessageReceived;
@@ -153,7 +152,7 @@ public partial class SettingsViewModel : BaseViewModel {
             Servers.Clear();
             var servers = await ServiceFinder.FindServices("withrottle");
             if (servers is { Count: > 0 }) {
-                foreach (var server in servers) { 
+                foreach (var server in servers) {
                     Servers.Add(new WithrottleSettings(server.Name, server.WithrottleSettings.Address, server.WithrottleSettings.Port));
                 }
             }
@@ -173,7 +172,7 @@ public partial class SettingsViewModel : BaseViewModel {
     public void SelectWiServer(WithrottleSettings? server) {
         if (server == null) return;
         IpAddress = server.Address;
-        Port = (int)server.Port;
+        Port = server.Port;
     }
 
     /// <summary>

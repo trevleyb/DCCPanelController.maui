@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
@@ -54,17 +53,19 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void SetTabBarState(bool state) {
         if (state) {
             Shell.SetTabBarIsVisible(this, true);
+
             //IndicatorView.IsVisible = true;
             HideUnHide.IconImageSource = "maximize_2.png";
         } else {
             Shell.SetTabBarIsVisible(this, false);
+
             //IndicatorView.IsVisible = false;
             HideUnHide.IconImageSource = "minimize_2.png";
         }
 
         _tabBarState = state;
     }
-    
+
     private void ToggleGrid(object? sender, EventArgs e) {
         _viewModel.ShowGrid = !_viewModel.ShowGrid;
     }

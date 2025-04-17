@@ -12,10 +12,11 @@ public partial class PanelPropertyPage : ContentPage {
         var propertyDetails = new PanelPropertyBase(panel);
         Properties.Children.Add(propertyDetails);
         BindingContext = propertyDetails.BindingContext;
-   }
+    }
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {
         Navigation.PopModalAsync(true);
+
         //CloseRequested?.Invoke(this, EventArgs.Empty);
     }
 }

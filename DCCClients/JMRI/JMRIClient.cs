@@ -3,7 +3,6 @@ using System.Text;
 using System.Text.Json;
 using DCCClients.Interfaces;
 using DCCClients.JMRI.EventArgs;
-using DCCClients.WiThrottle.Client;
 
 namespace DCCClients.JMRI;
 

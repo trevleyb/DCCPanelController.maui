@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     Title="{Binding PanelTitle}"
@@ -13,15 +13,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.Resources>
-        <helpers:SelectedItemConverter x:Key="SelectedItemConverter" />
+        <helpers:SelectedItemConverter x:Key="SelectedItemConverter"/>
         <Style TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
                     <VisualStateGroup x:Name="CommonStates">
-                        <VisualState x:Name="Normal" />
+                        <VisualState x:Name="Normal"/>
                         <VisualState x:Name="Selected">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="LightGray" />
+                                <Setter Property="BackgroundColor" Value="LightGray"/>
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
@@ -30,7 +30,7 @@
         </Style>
     </ContentPage.Resources>
 
-    <ContentPage.ToolbarItems />
+    <ContentPage.ToolbarItems/>
 
     <ContentPage.Content>
 
@@ -66,25 +66,25 @@
                                         FontAttributes="Bold"
                                         FontSize="12"
                                         HorizontalOptions="Center"
-                                        Text="No Panels were found." />
+                                        Text="No Panels were found."/>
                                     <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0">
                                         <Label
                                             FontSize="12"
                                             Text="Please use"
-                                            VerticalOptions="Center" />
+                                            VerticalOptions="Center"/>
                                         <ImageButton
                                             Command="{Binding AddPanelCommand}"
                                             Margin="-5,0,-5,0"
                                             Scale="0.50"
                                             Source="plus_circle.png">
                                             <Image.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                                             </Image.Behaviors>
                                         </ImageButton>
                                         <Label
                                             FontSize="12"
                                             Text="to add a new Panel."
-                                            VerticalOptions="Center" />
+                                            VerticalOptions="Center"/>
                                     </HorizontalStackLayout>
                                 </StackLayout>
                             </Grid>
@@ -99,7 +99,7 @@
                                             Source="more_vertical.png"
                                             VerticalOptions="Center">
                                             <Image.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                                             </Image.Behaviors>
                                         </Image>
                                     </Grid>
@@ -113,11 +113,11 @@
                                         <Label
                                             FontAttributes="Bold"
                                             FontSize="16"
-                                            Text="{Binding Id}" />
+                                            Text="{Binding Id}"/>
                                         <Label
                                             FontSize="12"
                                             Text="{Binding Description}"
-                                            TextColor="Gray" />
+                                            TextColor="Gray"/>
                                     </StackLayout>
                                     <Grid Grid.Column="2">
                                         <Image
@@ -126,15 +126,16 @@
                                             VerticalOptions="Center"
                                             x:DataType="view:PanelEditorViewModel">
                                             <Image.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}" />
+                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                                             </Image.Behaviors>
                                             <!--  =========================================================================  -->
                                             <!--  Turn this back on once we can get the bindings to actually work correctly  -->
                                             <!--  =========================================================================  -->
                                             <Image.IsVisible>
                                                 <MultiBinding Converter="{StaticResource SelectedItemConverter}">
-                                                    <Binding Path="." x:DataType="dataModel:Panel" />
-                                                    <Binding Path="SelectedPanel" Source="{RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}" />
+                                                    <Binding Path="." x:DataType="dataModel:Panel"/>
+                                                    <Binding Path="SelectedPanel"
+                                                             Source="{RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}"/>
                                                 </MultiBinding>
                                             </Image.IsVisible>
 
@@ -142,14 +143,16 @@
                                     </Grid>
 
                                     <Grid.GestureRecognizers>
-                                        <DragGestureRecognizer DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelCommand}" DragStartingCommandParameter="{Binding}" />
+                                        <DragGestureRecognizer
+                                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelCommand}"
+                                            DragStartingCommandParameter="{Binding}"/>
                                         <DropGestureRecognizer
                                             DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelLeaveCommand}"
                                             DragLeaveCommandParameter="{Binding}"
                                             DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DragPanelOverCommand}"
                                             DragOverCommandParameter="{Binding}"
                                             DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType='view:PanelEditorViewModel', Path=DropPanelCommand}"
-                                            DropCommandParameter="{Binding}" />
+                                            DropCommandParameter="{Binding}"/>
                                     </Grid.GestureRecognizers>
 
                                 </Grid>
@@ -180,15 +183,15 @@
                             HorizontalOptions="Center"
                             Margin="0,0,0,20"
                             Text="No Panel Selected."
-                            TextColor="{StaticResource Primary}" />
+                            TextColor="{StaticResource Primary}"/>
                         <Label
                             FontSize="12"
                             HorizontalOptions="Center"
-                            Text="Please select a Panel from the Panels selection." />
+                            Text="Please select a Panel from the Panels selection."/>
                         <Label
                             FontSize="12"
                             HorizontalOptions="Center"
-                            Text="or add a new panel." />
+                            Text="or add a new panel."/>
                     </StackLayout>
 
                     <view:ControlPanelView
@@ -201,7 +204,7 @@
                         IsVisible="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=IsPanelSelected, Mode=TwoWay}"
                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=SelectedPanel, Mode=TwoWay}"
                         VerticalOptions="Fill"
-                        x:Name="PanelView" />
+                        x:Name="PanelView"/>
                 </Grid>
             </Border>
             <Grid
@@ -216,7 +219,7 @@
                     <tileSelectors:VerticalTileSelector
                         HorizontalOptions="Center"
                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=SelectedPanel}"
-                        x:Name="TileSelector" />
+                        x:Name="TileSelector"/>
                 </Border>
             </Grid>
         </Grid>

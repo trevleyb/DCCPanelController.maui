@@ -1,5 +1,3 @@
-using CommunityToolkit.Maui.Converters;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -8,7 +6,7 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public partial class ButtonTile : Tile, ITileInteractive {
+public class ButtonTile : Tile, ITileInteractive {
     public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
@@ -18,6 +16,18 @@ public partial class ButtonTile : Tile, ITileInteractive {
         get;
         set => SetField(ref field, value);
     } = ButtonStateEnum.Unknown;
+
+    public void Interact() {
+        ClickSounds.PlayButtonClickSound();
+        State = State switch {
+            ButtonStateEnum.Unknown => ButtonStateEnum.On,
+            ButtonStateEnum.On      => ButtonStateEnum.Off,
+            ButtonStateEnum.Off     => ButtonStateEnum.On,
+            _                       => ButtonStateEnum.Unknown
+        };
+    }
+
+    public void Secondary() { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {
@@ -37,7 +47,7 @@ public partial class ButtonTile : Tile, ITileInteractive {
             });
 
             var image = new Image {
-                Source = svgImage.AsImageSource(0, DefaultScaleFactor),
+                Source = svgImage.AsImageSource(0, DefaultScaleFactor)
             };
             image.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
             return image;
@@ -48,16 +58,4 @@ public partial class ButtonTile : Tile, ITileInteractive {
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("button").AsImage();
     }
-
-    public void Interact() {
-        ClickSounds.PlayButtonClickSound();
-        State = State switch {
-            ButtonStateEnum.Unknown => ButtonStateEnum.On,
-            ButtonStateEnum.On      => ButtonStateEnum.Off,
-            ButtonStateEnum.Off     => ButtonStateEnum.On,
-            _                       => ButtonStateEnum.Unknown
-        };
-    }
-
-    public void Secondary() { }
 }

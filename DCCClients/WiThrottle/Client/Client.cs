@@ -13,13 +13,10 @@ using Timer = System.Timers.Timer;
 namespace DCCClients.WiThrottle.Client;
 
 public class Client {
-    private TcpClient? _client;
-    private NetworkStream? _stream;
-    private Timer? _heartbeatTimer;
-    private bool _running;
     private readonly WithrottleSettings _withrottleSettings;
-
-    public bool IsRunning => _running;
+    private TcpClient? _client;
+    private Timer? _heartbeatTimer;
+    private NetworkStream? _stream;
     public Client(string address, int port) : this(new WithrottleSettings(address, port)) { }
     public Client(string name, string address, int port) : this(new WithrottleSettings(name, address, port)) { }
 
@@ -27,12 +24,14 @@ public class Client {
         _withrottleSettings = withrottleSettings;
     }
 
+    public bool IsRunning { get; private set; }
+
     public bool Echo { get; set; } = true;
     public event Action<IClientEvent>? DataEvent;
     public event Action<IClientEvent>? ConnectionEvent;
 
     public async Task<IResult> ConnectAsync() {
-        if (_running) Stop();
+        if (IsRunning) Stop();
         try {
             await EstablishConnectionWithRetries();
             var listenThread = new Thread(Listen);
@@ -44,10 +43,9 @@ public class Client {
     }
 
     private async Task EstablishConnectionWithRetries(int maxRetries = 3, int delayMilliseconds = 2000) {
-        
         CloseConnection();
-       
-        int retryCount = 0;
+
+        var retryCount = 0;
         while (retryCount < maxRetries) {
             try {
                 await EstablishConnection(); // Attempt to establish a connection
@@ -68,19 +66,19 @@ public class Client {
     }
 
     /// <summary>
-    /// Used to connect, or try again, to get a connection
+    ///     Used to connect, or try again, to get a connection
     /// </summary>
     private async Task EstablishConnection() {
         Console.WriteLine("Establishing connection...");
         if (_client is not null && _client.Connected) return;
         if (_client is not null) CloseConnection();
-        
+
         _client = new TcpClient();
         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
             await _client.ConnectAsync(_withrottleSettings.Address, _withrottleSettings.Port, cts.Token);
         }
         _stream = _client.GetStream();
-        _running = true;
+        IsRunning = true;
         Console.WriteLine("Connection established.");
     }
 
@@ -92,7 +90,7 @@ public class Client {
         var bytes = new byte[256];
         SendWakeUpMessages();
 
-        while (_running) {
+        while (IsRunning) {
             try {
                 if (_stream is { DataAvailable: true } && _client is { Connected: true }) {
                     var bytesRead = 0;
@@ -112,7 +110,7 @@ public class Client {
                             }
                         }
                     }
-                } 
+                }
             } catch (Exception ex) {
                 Console.WriteLine($"Listener encountered an error: {ex.Message}");
                 EstablishConnectionWithRetries().Wait();
@@ -129,7 +127,7 @@ public class Client {
 
     private void CloseConnection() {
         Console.WriteLine("Closing connection...");
-        _running = false;
+        IsRunning = false;
         _client?.Close();
         _client = null;
         _stream = null;
@@ -143,7 +141,7 @@ public class Client {
 
         switch (clientMsg) {
         case MsgQuit quit:
-            _running = false;
+            IsRunning = false;
             break;
 
         case MsgHeartbeat heartbeat:
@@ -198,7 +196,6 @@ public class Client {
             if (_client is null) {
                 ConnectionEvent?.Invoke(new ConnectionEvent(ex.Message, GetConnectionState(), false));
                 CloseConnection();
-                return;
             }
         }
     }
@@ -211,11 +208,13 @@ public class Client {
         if (!_stream.CanWrite) return ConnectionState.Open;
         return ConnectionState.Open;
     }
-    
+
     /// <summary>
     ///     Shutdown the connection to the WiThrottle Service and clean up.
     /// </summary>
-    public void Stop() => CloseConnection();
+    public void Stop() {
+        CloseConnection();
+    }
 
     private void StartHeartbeatTimer(int secs) {
         _heartbeatTimer = new Timer(secs * 1000);

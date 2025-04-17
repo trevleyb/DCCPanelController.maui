@@ -1,9 +1,7 @@
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients;
-using DCCClients.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -16,19 +14,15 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
     private const string LabelAddress = "DCC Address";
+    [ObservableProperty] private string _columnLabelAddress = LabelAddress;
 
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
-    [ObservableProperty] private string _columnLabelAddress = LabelAddress;
     [ObservableProperty] private string _columnLabelState = LabelState;
 
     private bool _isAscending;
     private string _sortColumn = "";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-
-    private ConnectionService ConnectionService { get; init; }
-    private IDccClient? Client { get; set; }
-    private Profile Profile { get; init; }
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
@@ -36,6 +30,10 @@ public partial class TurnoutsViewModel : BaseViewModel {
         ConnectionService = connectionService;
         SetLabels();
     }
+
+    private ConnectionService ConnectionService { get; }
+    private IDccClient? Client { get; set; }
+    private Profile Profile { get; }
 
     private void SetLabels() {
         ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
@@ -52,7 +50,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
         }
         Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
     }
-    
+
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
         List<Turnout> sortedTurnout;
@@ -142,7 +140,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
 
-        var editPage = new TurnoutsEditView(turnout,ConnectionService);
+        var editPage = new TurnoutsEditView(turnout, ConnectionService);
         var tcs = new TaskCompletionSource<Turnout?>();
 
         if (editPage.ViewModel != null) {

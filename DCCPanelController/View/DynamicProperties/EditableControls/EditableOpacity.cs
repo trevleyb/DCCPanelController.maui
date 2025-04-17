@@ -21,7 +21,7 @@ public class EditableOpacity(string label, string description = "", int order = 
                 Text = ConvertOpacityToPercentage((double)(info.GetValue(owner) ?? 0.00))
             };
             var stepperUpDown = new Stepper {
-                Minimum = 0,  // Define the stepper min value if needed
+                Minimum = 0, // Define the stepper min value if needed
                 Maximum = 1, // Define the stepper max value if needed
                 HeightRequest = 30,
                 Increment = 0.05, // Increment/decrement step
@@ -34,14 +34,14 @@ public class EditableOpacity(string label, string description = "", int order = 
                 info.SetValue(owner, stepperUpDown.Value);
                 Console.WriteLine($"Stepper Value Changed: {stepperUpDown.Value} = {dataCell.Text}");
             };
-            
+
             dataCell.TextChanged += (s, e) => {
                 propertyModified?.Invoke(info.Name);
                 stepperUpDown.Value = ConvertToPercentageToOpacity(dataCell.Text);
                 info.SetValue(owner, stepperUpDown.Value);
                 Console.WriteLine($"Stepper Text Changed: {stepperUpDown.Value} = {dataCell.Text}");
             };
-            
+
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);
@@ -50,11 +50,11 @@ public class EditableOpacity(string label, string description = "", int order = 
             return null;
         }
     }
-    
+
     private static string ConvertOpacityToPercentage(double opacity) {
         return opacity.ToString("0%", CultureInfo.InvariantCulture);
     }
-    
+
     private static double ConvertToPercentageToOpacity(string percentage) {
         if (percentage.EndsWith("%") && double.TryParse(percentage.TrimEnd('%'), NumberStyles.Number, CultureInfo.InvariantCulture, out var parsedValue)) {
             return Math.Clamp(parsedValue / 100.0, 0.0, 1.0);

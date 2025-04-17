@@ -1,6 +1,5 @@
 using CommunityToolkit.Maui.Views;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Interfaces;
 #if IOS
 using UIKit;
 #endif
@@ -8,7 +7,7 @@ using UIKit;
 namespace DCCPanelController.View.DynamicProperties;
 
 /// <summary>
-///  Popup Page is used for iPad and MacCatalst
+///     Popup Page is used for iPad and MacCatalst
 /// </summary>
 public partial class DynamicPropertyPopup : Popup {
     public DynamicPropertyPopup(Entity entity, string? propertyName = null) {
@@ -16,7 +15,7 @@ public partial class DynamicPropertyPopup : Popup {
         BindingContext = new DynamicPropertyPageViewModel([entity], propertyName, PropertyContainer);
     }
 
-    public DynamicPropertyPopup(List<Entity> entities,string? propertyName = null) {
+    public DynamicPropertyPopup(List<Entity> entities, string? propertyName = null) {
         InitializeComponent();
         BindingContext = new DynamicPropertyPageViewModel(entities, propertyName, PropertyContainer);
     }
@@ -25,6 +24,6 @@ public partial class DynamicPropertyPopup : Popup {
         if (BindingContext is DynamicPropertyPageViewModel viewModel) {
             viewModel.ApplyChangesToAllEntities();
         }
-        this.Close();
+        Close();
     }
 }

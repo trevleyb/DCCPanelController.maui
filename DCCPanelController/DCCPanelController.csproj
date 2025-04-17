@@ -75,78 +75,78 @@
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
-        <EmbeddedResource Include="Models\TileImages\draw_circle.svg" />
-        <EmbeddedResource Include="Models\TileImages\draw_line.svg" />
-        <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg" />
-        <EmbeddedResource Include="Models\TileImages\sample.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_arrow.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle_tunnel.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_button.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_button_corner.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_compass.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_corner_left.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_arrow.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_lines.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_corner_right.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_arrow.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_lines.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_image.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_label.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_large_button.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_large_route.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_platform.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_points.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_route.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_route_large.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight_tunnel.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_text.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_threeway.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_threeway_right.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_threeway_straight.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_left.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_right.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_unknown.svg" />
+        <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\sample.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_arrow.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_tunnel.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_button.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_button_corner.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_compass.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_corner_left.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_arrow.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_lines.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_corner_right.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_arrow.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_lines.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_image.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_label.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_large_button.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_large_route.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_platform.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_points.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_route.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_route_large.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_tunnel.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_text.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_threeway.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_threeway_right.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_threeway_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_unknown.svg"/>
 
         <!-- Images -->
-        <MauiImage Include="Resources\Images\*" />
-        <MauiImage Include="Resources\Icons\*" />
+        <MauiImage Include="Resources\Images\*"/>
+        <MauiImage Include="Resources\Icons\*"/>
 
         <!-- Custom Fonts -->
-        <MauiFont Include="Resources\Fonts\*" />
+        <MauiFont Include="Resources\Fonts\*"/>
 
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
-        <None Remove="Resources\AppIcon\appiconfg.svg" />
-        <MauiIcon Include="Resources\AppIcon\appiconfg.svg" />
+        <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+        <None Remove="Resources\AppIcon\appiconfg.svg"/>
+        <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="FreakyControls" Version="0.5.1" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60" />
-        <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0" />
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.0" />
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2" />
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4" />
-        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.60" />
-        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18" />
-        <PackageReference Include="Plugin.Maui.Audio" Version="3.1.1" />
-        <PackageReference Include="SkiaSharp" Version="3.116.1" />
-        <PackageReference Include="Svg.Skia" Version="3.0.0" />
+        <PackageReference Include="FreakyControls" Version="0.5.1"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.60"/>
+        <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0"/>
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.0"/>
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.4"/>
+        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.60"/>
+        <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
+        <PackageReference Include="Plugin.Maui.Audio" Version="3.1.1"/>
+        <PackageReference Include="SkiaSharp" Version="3.116.1"/>
+        <PackageReference Include="Svg.Skia" Version="3.0.0"/>
     </ItemGroup>
 
     <!--
@@ -253,22 +253,22 @@
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\PropertyPages\DynamicPropertyPopup.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\LayoutPanel\LayoutPanelView.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\TestPanelPage.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\TileSelectors\FloatingTileSelector.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\TileSelectors\VerticalTileSelector.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Components\IDPicker.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
 
@@ -319,61 +319,61 @@
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\PropertyPages\DynamicPropertyPopup.xaml.cs">
-          <DependentUpon>DynamicPropertyPopup.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>DynamicPropertyPopup.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\LayoutPanel\LayoutPanelView.xaml.cs">
-          <DependentUpon>ControlPanelView.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ControlPanelView.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\ControlPanelProperties.cs">
-          <DependentUpon>ControlPanelView.xaml</DependentUpon>
+            <DependentUpon>ControlPanelView.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TestPanelPage.xaml.cs">
-          <DependentUpon>TestPanelPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>TestPanelPage.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\TestPanelViewModel.cs">
-          <DependentUpon>TestPanelPage.xaml</DependentUpon>
+            <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\PanelEditorViewModel.cs">
-          <DependentUpon>PanelEditorPage.xaml</DependentUpon>
+            <DependentUpon>PanelEditorPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TileSelectors\FloatingTileSelector.xaml.cs">
-          <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\TileSelectors\VerticalTileSelector.xaml.cs">
-          <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\OperateViewModel.cs">
-          <DependentUpon>OperatePage.xaml</DependentUpon>
+            <DependentUpon>OperatePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\RoutesViewModel.cs">
-          <DependentUpon>RoutesPage.xaml</DependentUpon>
+            <DependentUpon>RoutesPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TurnoutsEditViewModel.cs">
-          <DependentUpon>TurnoutsEditView.xaml</DependentUpon>
+            <DependentUpon>TurnoutsEditView.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TurnoutsViewModel.cs">
-          <DependentUpon>TurnoutsPage.xaml</DependentUpon>
+            <DependentUpon>TurnoutsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\Components\IDPicker.xaml.cs">
-          <DependentUpon>IDPicker.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>IDPicker.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\SettingsViewModel.cs">
-          <DependentUpon>SettingsPage.xaml</DependentUpon>
+            <DependentUpon>SettingsPage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Models\ViewModel\Actions\" />
+        <Folder Include="Models\ViewModel\Actions\"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DCCClients\DCCClients.csproj" />
+        <ProjectReference Include="..\DCCClients\DCCClients.csproj"/>
     </ItemGroup>
 
 </Project>

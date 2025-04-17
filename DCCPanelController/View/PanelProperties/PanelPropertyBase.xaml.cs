@@ -10,7 +10,7 @@ public partial class PanelPropertyBase : ContentView {
         RowsStepper.Minimum = GetMaxRows(panel);
         ColsStepper.Minimum = GetMaxCols(panel);
     }
-    
+
     private void Order_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (sender is Entry field) {
             if (int.TryParse(e.NewTextValue, out var order)) {
@@ -54,5 +54,4 @@ public partial class PanelPropertyBase : ContentView {
     private static int GetMaxCols(Panel panel) {
         return int.Max(panel.Entities.Select(track => track.Col).Prepend(0).Max(), 12);
     }
-
 }

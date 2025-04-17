@@ -1,13 +1,12 @@
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.Components;
 
 public partial class IDPicker : Popup {
-    private string _selectedItem;
     private readonly string? _itemType;
-    
+    private string _selectedItem;
+
     public IDPicker(string itemType, string item, List<string> items) {
         _itemType = itemType;
         _selectedItem = item;
@@ -16,9 +15,9 @@ public partial class IDPicker : Popup {
         BindingContext = this;
     }
 
-    public string Prompt => "Select a "+ _itemType;
+    public string Prompt => "Select a " + _itemType;
     public List<string> Items { get; init; }
-    
+
     public string Item {
         get => _selectedItem;
         set {

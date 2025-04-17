@@ -6,22 +6,22 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.View;
 
 public partial class TestPanelPageModel : BaseViewModel {
-    [ObservableProperty] Panel? _panel;
-    [ObservableProperty] private bool _showGrid = true;
-    [ObservableProperty] private bool _designMode = false;
+    [ObservableProperty] private bool _designMode;
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+    [ObservableProperty] private Panel? _panel;
+    [ObservableProperty] private bool _showGrid = true;
     [ObservableProperty] private int _zoom = 10;
 
     public TestPanelPageModel() {
         IsRefreshing = true;
         IsBusy = true;
-        
+
         var panels = new Panels();
         var panel = panels.CreatePanel();
         panels.Add(panel);
         panel.Rows = 18;
         panel.Cols = 27;
-        
+
         var buttonEntity = panel.AddEntity(panel.CreateEntity<ButtonEntity>());
         var cornerEntity = panel.AddEntity(panel.CreateEntity<CornerEntity>());
         var cornerContinuationEntity = panel.AddEntity(panel.CreateEntity<CornerContinuationEntity>());
@@ -49,17 +49,16 @@ public partial class TestPanelPageModel : BaseViewModel {
             entity.Row = row;
             entity.Width = 1;
             entity.Height = 1;
-            col+= 2;
+            col += 2;
             if (col > panel.Cols) {
                 col = col - panel.Cols;
-                row+= 2;
+                row += 2;
             }
         }
-       
+
         Panel = panel;
-        
+
         IsRefreshing = false;
         IsBusy = false;
-
     }
 }

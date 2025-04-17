@@ -6,7 +6,7 @@ public class SvgStyleElement {
     }
 
     public string Name { get; internal set; }
-    public Dictionary<string, string> Attributes { get; private set; } = new();
+    public Dictionary<string, string> Attributes { get; } = new();
 
     public static SvgElementBuilder Builder(string name) {
         return new SvgElementBuilder(name);

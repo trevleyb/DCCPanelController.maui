@@ -3,10 +3,10 @@ using DCCClients.Events;
 namespace DCCClients;
 
 public abstract class DccClient {
-    public event EventHandler<DccErrorArgs>?     ConnectionError;
-    public event EventHandler<DccMessageArgs>?   MessageReceived;
-    public event EventHandler<DccTurnoutArgs>?   TurnoutMsgReceived;
-    public event EventHandler<DccRouteArgs>?     RouteMsgReceived;
+    public event EventHandler<DccErrorArgs>? ConnectionError;
+    public event EventHandler<DccMessageArgs>? MessageReceived;
+    public event EventHandler<DccTurnoutArgs>? TurnoutMsgReceived;
+    public event EventHandler<DccRouteArgs>? RouteMsgReceived;
     public event EventHandler<DccOccupancyArgs>? OccupancyMsgReceived;
 
     protected virtual void OnConnectionError(DccErrorArgs e) {

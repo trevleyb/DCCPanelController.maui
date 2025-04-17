@@ -1,11 +1,8 @@
-using System.Diagnostics;
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.DynamicProperties;
@@ -15,38 +12,26 @@ using DCCPanelController.View.PanelProperties;
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : BaseViewModel {
+    private readonly ConnectionService? _connectionService;
+
+    private readonly Profile Profile;
+    [ObservableProperty] private bool _designMode;
+    private Panel? _draggedPanel;
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+
+    [ObservableProperty] private bool _gridVisible;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
+    private bool _isFullScreen;
+
     [ObservableProperty] private Panels _panels;
-    
+    [ObservableProperty] private bool _propertiesChanged;
+
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
     [NotifyPropertyChangedFor(nameof(PanelTitle))]
     [ObservableProperty] private Panel? _selectedPanel;
-    
-    [ObservableProperty] private bool _gridVisible = false;
-    [ObservableProperty] private bool _designMode = false;
-    [ObservableProperty] private bool _propertiesChanged = false;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
-    private bool _isFullScreen = false;
-
-    public HashSet<ITile> SelectedTiles { get; set; } = new();
-    public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
-    public int SelectedEntitiesCount => SelectedEntities.Count;
-    public bool HasSelectedEntities => SelectedEntitiesCount > 0;
-    public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
-    public bool SingleEntitySelected => SelectedEntitiesCount == 1;
-    public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
-    
-    private readonly Profile Profile;
-    private Panel? _draggedPanel;
-    private ConnectionService? _connectionService;
-    
-    public string PanelTitle => SelectedPanel?.Id ?? "Panel Editor";
-    public bool IsNotFullScreen => !IsFullScreen;
-    public bool IsPanelSelected => SelectedPanel is not null;
-    public bool NoPanelSelected => !IsPanelSelected;
 
     public PanelEditorViewModel(Profile profile, ConnectionService connectionService) {
         ArgumentNullException.ThrowIfNull(profile, "Profile Service should be provided by the DI.");
@@ -57,11 +42,26 @@ public partial class PanelEditorViewModel : BaseViewModel {
         IsFullScreen = false;
     }
 
+    public HashSet<ITile> SelectedTiles { get; set; } = new();
+    public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
+    public int SelectedEntitiesCount => SelectedEntities.Count;
+    public bool HasSelectedEntities => SelectedEntitiesCount > 0;
+    public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
+    public bool SingleEntitySelected => SelectedEntitiesCount == 1;
+    public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
+
+    public string PanelTitle => SelectedPanel?.Id ?? "Panel Editor";
+    public bool IsNotFullScreen => !IsFullScreen;
+    public bool IsPanelSelected => SelectedPanel is not null;
+    public bool NoPanelSelected => !IsPanelSelected;
+
     /// <summary>
-    /// Adds a new panel to the collection. The newly created panel becomes the selected panel.
-    /// Updates the profile to persist the changes.
+    ///     Adds a new panel to the collection. The newly created panel becomes the selected panel.
+    ///     Updates the profile to persist the changes.
     /// </summary>
-    [RelayCommand] private async Task AddPanelAsync() => AddPanel();
+    [RelayCommand] private async Task AddPanelAsync() {
+        AddPanel();
+    }
 
     public void AddPanel() {
         SelectedPanel = Panels.CreatePanel();
@@ -70,16 +70,18 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     /// <summary>
-    /// Deletes the currently selected panel from the application. Prompts the user for confirmation
-    /// before performing the deletion. If confirmed, removes the selected panel from the collection,
-    /// updates the panel order, selects the next available panel, and saves the updated profile.
-    /// Logs any errors encountered during the operation.
+    ///     Deletes the currently selected panel from the application. Prompts the user for confirmation
+    ///     before performing the deletion. If confirmed, removes the selected panel from the collection,
+    ///     updates the panel order, selects the next available panel, and saves the updated profile.
+    ///     Logs any errors encountered during the operation.
     /// </summary>
-    [RelayCommand] private async Task DeletePanelAsync() => DeletePanel();
+    [RelayCommand] private async Task DeletePanelAsync() {
+        DeletePanel();
+    }
 
     public async void DeletePanel() {
         try {
-            Console.WriteLine($"DeletePanel:");
+            Console.WriteLine("DeletePanel:");
             if (SelectedPanel is not null) {
                 var result = await AskUserToConfirm("Delete Panel?", $"Are you sure you want to delete the panel '{SelectedPanel.Id}'");
                 if (!result) return; // Exit if the user cancels the delete operation
@@ -94,12 +96,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     /// <summary>
-    /// Duplicates the currently selected panel by creating a new panel based on the
-    /// properties of the selected panel. If no panel is currently selected, the
-    /// operation is not performed. After duplication, notifies the system of the
-    /// updated panel collection.
+    ///     Duplicates the currently selected panel by creating a new panel based on the
+    ///     properties of the selected panel. If no panel is currently selected, the
+    ///     operation is not performed. After duplication, notifies the system of the
+    ///     updated panel collection.
     /// </summary>
-    [RelayCommand] private async Task DuplicatePanelAsync() => DuplicatePanel();
+    [RelayCommand] private async Task DuplicatePanelAsync() {
+        DuplicatePanel();
+    }
 
     public void DuplicatePanel() {
         if (SelectedPanel != null) {
@@ -109,7 +113,9 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
-    public void ToggleFullscreen() => IsFullScreen = !IsFullScreen;
+    public void ToggleFullscreen() {
+        IsFullScreen = !IsFullScreen;
+    }
 
     public void EditPanel() {
         DesignMode = true;
@@ -145,7 +151,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             OnPropertyChanged(nameof(Panels));
         }
     }
-    
+
     public void RotateSelectedTile() {
         if (HasSelectedEntities && SelectedPanel is not null) {
             foreach (var entity in SelectedEntities) {
@@ -153,7 +159,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
             }
         }
     }
-    
+
     public void EditProperties() {
         if (SelectedPanel is not null) {
             if (HasSelectedEntities) {
@@ -204,8 +210,11 @@ public partial class PanelEditorViewModel : BaseViewModel {
             Console.WriteLine("Unable to upload the panel: " + ex.Message);
         }
     }
-    
-    public void EditTileProperties() => EditTileProperties(SelectedEntities);
+
+    public void EditTileProperties() {
+        EditTileProperties(SelectedEntities);
+    }
+
     public async void EditTileProperties(Entity? entity) {
         try {
             entity ??= SelectedEntity;
@@ -230,7 +239,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public async Task EditTilePropertiesAsync(List<Entity> entities) {
-        Console.WriteLine($"Launching the Properties page for multiple Entities");
+        Console.WriteLine("Launching the Properties page for multiple Entities");
         await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entities);
         Profile.Save();
     }
@@ -280,7 +289,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
-    
     #region Drag and Drop Support for Panels
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {
@@ -332,5 +340,4 @@ public partial class PanelEditorViewModel : BaseViewModel {
         OnPropertyChanged(nameof(PanelTitle));
     }
     #endregion
-
 }

@@ -1,25 +1,19 @@
 using DCCClients.Common;
-using DCCClients.Events;
 using DCCClients.Interfaces;
 using DCCClients.JMRI;
-using DCCClients.JMRI.EventArgs;
 using DCCClients.WiThrottle.Client;
-using DCCClients.WiThrottle.Client.Commands;
-using DCCClients.WiThrottle.Client.Events;
 
 namespace DCCClients;
 
 public class DccJmriClient : DccClient, IDccClient {
-    
-    private JmriSettings? _settings;
+    private readonly JmriSettings? _settings;
 
     public DccJmriClient(IDccSettings? settings) {
         _settings = settings as JmriSettings;
     }
 
-    
     /// <summary>
-    /// Establishes a connection to the WiThrottle server using the provided settings.
+    ///     Establishes a connection to the WiThrottle server using the provided settings.
     /// </summary>
     /// <param name="settings">The settings required to configure the connection, such as server address and port.</param>
     /// <returns>Returns a result indicating the success or failure of the connection attempt.</returns>
@@ -29,7 +23,7 @@ public class DccJmriClient : DccClient, IDccClient {
     }
 
     /// <summary>
-    /// Attempts to reconnect to the WiThrottle server using the existing client connection.
+    ///     Attempts to reconnect to the WiThrottle server using the existing client connection.
     /// </summary>
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
@@ -37,7 +31,7 @@ public class DccJmriClient : DccClient, IDccClient {
     }
 
     /// <summary>
-    /// Disconnects from the service and releases related resources.
+    ///     Disconnects from the service and releases related resources.
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public IResult Disconnect() {
@@ -45,7 +39,7 @@ public class DccJmriClient : DccClient, IDccClient {
     }
 
     public bool IsConnected => false;
-    
+
     public IResult SendCmd(string message) {
         return Result.Fail(new Error("JMRI Client not currently implemented"));
     }

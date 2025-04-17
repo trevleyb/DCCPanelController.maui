@@ -9,6 +9,7 @@ using Microsoft.Maui.Layouts;
 using Application = Microsoft.Maui.Controls.Application;
 using LayoutAlignment = Microsoft.Maui.Primitives.LayoutAlignment;
 using ListView = Microsoft.Maui.Controls.ListView;
+using VisualElement = Microsoft.Maui.Controls.VisualElement;
 
 namespace DCCPanelController.View.Components;
 
@@ -19,201 +20,25 @@ public class DropDownListBox() : DropDownBoxBase(DropDownStyleEnum.Dropdown);
 public class PopUpListBox() : DropDownBoxBase(DropDownStyleEnum.Popup);
 
 public abstract class DropDownBoxBase : ContentView, IDisposable {
-    private Popup? _popup;
+    private readonly Border _popupContainer = new();
+    private Image _arrowImage = new();
     private bool _disposed;
+    private Popup? _popup;
     public DropDownStyleEnum DropDownStyle;
-
-    private readonly Border _popupContainer = new Border();
-    private Image _arrowImage = new Image();
 
     protected DropDownBoxBase(DropDownStyleEnum dropdownStyle) {
         DropDownStyle = dropdownStyle;
         DrawDropDown();
     }
 
-    #region Bindable Properties
-    public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(DropDownBoxBase));
-    public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DropDownBoxBase), null, BindingMode.TwoWay);
-    public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(DropDownBoxBase), string.Empty);
-    public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(DropDownBoxBase), Colors.Black);
-    public static readonly BindableProperty TextSizeProperty = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(DropDownBoxBase), 12.0);
-    public static readonly BindableProperty DropDownWidthProperty = BindableProperty.Create(nameof(DropDownWidth), typeof(double), typeof(DropDownBoxBase), -1.0);
-    public static readonly BindableProperty DropDownHeightProperty = BindableProperty.Create(nameof(DropDownHeight), typeof(double), typeof(DropDownBoxBase), 200.0);
-    public static readonly BindableProperty DropdownCornerRadiusProperty = BindableProperty.Create(nameof(DropdownCornerRadius), typeof(CornerRadius), typeof(DropDownBoxBase), new CornerRadius(10), propertyChanged: CornerRadiusChanged);
-    public static readonly BindableProperty DropdownTextColorProperty = BindableProperty.Create(nameof(DropdownTextColor), typeof(Color), typeof(DropDownBoxBase), Colors.Black);
-    public static readonly BindableProperty DropdownBackgroundColorProperty = BindableProperty.Create(nameof(DropdownBackgroundColor), typeof(Color), typeof(DropDownBoxBase), Colors.White);
-    public static readonly BindableProperty DropdownBorderColorProperty = BindableProperty.Create(nameof(DropdownBorderColor), typeof(Color), typeof(DropDownBoxBase), Colors.DarkGrey);
-    public static readonly BindableProperty DropdownBorderWidthProperty = BindableProperty.Create(nameof(DropdownBorderWidth), typeof(double), typeof(DropDownBoxBase), 1.0);
-    public static readonly BindableProperty DropdownClosedImageSourceProperty = BindableProperty.Create(nameof(DropdownClosedImageSource), typeof(string), typeof(DropDownBoxBase), "chevron_right.png");
-    public static readonly BindableProperty DropdownOpenImageSourceProperty = BindableProperty.Create(nameof(DropdownOpenImageSource), typeof(string), typeof(DropDownBoxBase), "chevron_down.png");
-    public static readonly BindableProperty DropdownImageTintProperty = BindableProperty.Create(nameof(DropdownImageTint), typeof(Color), typeof(DropDownBoxBase));
-    public static readonly BindableProperty DropdownShadowProperty = BindableProperty.Create(nameof(DropdownShadow), typeof(bool), typeof(DropDownBoxBase), true);
-    public static readonly BindableProperty DropdownSeparatorProperty = BindableProperty.Create(nameof(DropdownSeparator), typeof(bool), typeof(DropDownBoxBase), true);
-
-    /// <summary>
-    /// The source of the dropdown list. This is either a collection of strings
-    /// in which case Path should be null, or an object and Path should point to
-    /// the property in the object that should be displayed. 
-    /// </summary>
-    public IEnumerable ItemsSource {
-        get => (IEnumerable)GetValue(ItemsSourceProperty);
-        set => SetValue(ItemsSourceProperty, value);
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
-    /// The currently selected item. If an item is clicked, this will become
-    /// the selected item. 
-    /// </summary>
-    public object SelectedItem {
-        get => GetValue(SelectedItemProperty);
-        set => SetValue(SelectedItemProperty, value);
-    }
-
-    /// <summary>
-    /// If the current object is blank, this is the text that should be
-    /// displayed as a placeholder. 
-    /// </summary>
-    public string Placeholder {
-        get => (string)GetValue(PlaceholderProperty);
-        set => SetValue(PlaceholderProperty, value);
-    }
-
-    /// <summary>
-    /// Part of the DropDown Configuration: How rounded should the dropdown be?
-    /// The default is 10. Set to 0 for square corners. 
-    /// </summary>
-    public CornerRadius DropdownCornerRadius {
-        get => (CornerRadius)GetValue(DropdownCornerRadiusProperty);
-        set => SetValue(DropdownCornerRadiusProperty, value);
-    }
-
-    /// <summary>
-    /// Specifies the width of the dropdown menu. If set to a value greater than 0,
-    /// the dropdown will use the specified width. Otherwise, it defaults to the
-    /// width of the main button layout.
-    /// </summary>
-    public double DropDownWidth {
-        get => (double)GetValue(DropDownWidthProperty);
-        set => SetValue(DropDownWidthProperty, value);
-    }
-
-    /// <summary>
-    /// Defines the height of the dropdown component. This value determines
-    /// the vertical size of the dropdown when it is displayed.
-    /// </summary>
-    public double DropDownHeight {
-        get => (double)GetValue(DropDownHeightProperty);
-        set => SetValue(DropDownHeightProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the color of the text within the DropDownBox.
-    /// </summary>
-    public Color TextColor {
-        get => (Color)GetValue(TextColorProperty) ?? Colors.Black;
-        set => SetValue(TextColorProperty, value);
-    }
-
-    /// <summary>
-    /// Determines the font size of the text displayed in the drop-down box.
-    /// </summary>
-    public double TextSize {
-        get => (double)GetValue(TextSizeProperty);
-        set => SetValue(TextSizeProperty, value);
-    }
-
-    /// <summary>
-    /// Specifies the text color for items displayed in the dropdown list.
-    /// This property determines the `TextColor` of labels rendered within the dropdown.
-    /// </summary>
-    public Color DropdownTextColor {
-        get => (Color)GetValue(DropdownTextColorProperty) ?? Colors.Black;
-        set => SetValue(DropdownTextColorProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the border color of the dropdown. This property defines the color of the border
-    /// surrounding the dropdown menu when it is displayed.
-    /// </summary>
-    public Color DropdownBorderColor {
-        get => (Color)GetValue(DropdownBorderColorProperty) ?? Colors.DarkGrey;
-        set => SetValue(DropdownBorderColorProperty, value);
-    }
-
-    /// <summary>
-    /// Represents a brush that is derived from the <c>DropdownBorderColor</c> property,
-    /// used to define the border color as a solid brush for the dropdown box.
-    /// </summary>
-    public SolidColorBrush DropdownBorderColorBrush => new SolidColorBrush(DropdownBorderColor);
-
-    /// <summary>
-    /// Gets or sets the width of the border surrounding the dropdown.
-    /// </summary>
-    public double DropdownBorderWidth {
-        get => (double)GetValue(DropdownBorderWidthProperty);
-        set => SetValue(DropdownBorderWidthProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the background color of the dropdown list.
-    /// This property determines the visual background appearance
-    /// of the dropdown items when displayed.
-    /// </summary>
-    public Color DropdownBackgroundColor {
-        get => (Color)GetValue(DropdownBackgroundColorProperty) ?? Colors.Gainsboro;
-        set => SetValue(DropdownBackgroundColorProperty, value);
-    }
-
-    /// <summary>
-    /// Gets or sets the image source used to represent the closed state of the dropdown.
-    /// </summary>
-    public string DropdownClosedImageSource {
-        get => (string)GetValue(DropdownClosedImageSourceProperty);
-        set => SetValue(DropdownClosedImageSourceProperty, value);
-    }
-
-    /// <summary>
-    /// Represents the image source to be used when the dropdown is in its open state.
-    /// This property allows customization of the visual appearance by specifying
-    /// the file path or resource name of the image displayed.
-    /// </summary>
-    public string DropdownOpenImageSource {
-        get => (string)GetValue(DropdownOpenImageSourceProperty);
-        set => SetValue(DropdownOpenImageSourceProperty, value);
-    }
-
-    /// <summary>
-    /// Specifies the tint color applied to the dropdown indicator image.
-    /// This property allows customization of the arrow image's color, enhancing visual consistency
-    /// with the application's theme or design requirements.
-    /// </summary>
-    public Color? DropdownImageTint {
-        get => (Color?)GetValue(DropdownImageTintProperty);
-        set => SetValue(DropdownImageTintProperty, value);
-    }
-
-    /// <summary>
-    /// Determines whether the dropdown box displays a shadow effect.
-    /// </summary>
-    public bool DropdownShadow {
-        get => (bool)GetValue(DropdownShadowProperty);
-        set => SetValue(DropdownShadowProperty, value);
-    }
-
-    /// <summary>
-    /// Indicates whether a separator is displayed within the dropdown.
-    /// </summary>
-    public bool DropdownSeparator {
-        get => (bool)GetValue(DropdownSeparatorProperty);
-        set => SetValue(DropdownSeparatorProperty, value);
-    }
-
-    public SeparatorVisibility DropdownSeparatorVisibility => DropdownSeparator ? SeparatorVisibility.Default : SeparatorVisibility.None;
-    #endregion
-
-    /// <summary>
-    /// Renders the dropdown menu, handling its visual update and ensuring
-    /// that it is properly displayed within the parent container.
+    ///     Renders the dropdown menu, handling its visual update and ensuring
+    ///     that it is properly displayed within the parent container.
     /// </summary>
     private void DrawDropDown() {
         // The label that will be displayed containing the selected item
@@ -221,7 +46,7 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
         var selectedItemLabel = new Label {
             VerticalOptions = LayoutOptions.Center,
             VerticalTextAlignment = TextAlignment.Center,
-            LineBreakMode = LineBreakMode.TailTruncation,
+            LineBreakMode = LineBreakMode.TailTruncation
         };
         selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
         selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
@@ -232,7 +57,7 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
             Source = DropdownClosedImageSource,
             HorizontalOptions = LayoutOptions.End,
             VerticalOptions = LayoutOptions.Center,
-            Margin = new Thickness(1, 1, 1, 1),
+            Margin = new Thickness(1, 1, 1, 1)
         };
         var togglePopupGesture = new TapGestureRecognizer();
         togglePopupGesture.Tapped += (_, _) => TogglePopup();
@@ -269,17 +94,17 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
                 var label = new Label {
                     Margin = new Thickness(5, 0, 5, 0),
                     VerticalOptions = LayoutOptions.Center,
-                    HorizontalOptions = LayoutOptions.Fill,
+                    HorizontalOptions = LayoutOptions.Fill
                 };
                 label.SetBinding(Label.TextColorProperty, new Binding(nameof(DropdownTextColor), BindingMode.OneWay, source: this));
                 label.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
-                label.SetBinding(Label.BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
+                label.SetBinding(BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
                 label.SetBinding(Label.TextProperty, new Binding("."));
                 return label;
-            }),
+            })
         };
         itemListView.SetBinding(ListView.ItemsSourceProperty, new Binding(nameof(ItemsSource), BindingMode.TwoWay, source: this));
-        itemListView.SetBinding(ListView.BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
+        itemListView.SetBinding(BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
         itemListView.SetBinding(ListView.SeparatorColorProperty, new Binding(nameof(DropdownTextColor), BindingMode.OneWay, source: this));
         itemListView.SetBinding(ListView.SeparatorVisibilityProperty, new Binding(nameof(DropdownSeparatorVisibility), BindingMode.OneWay, source: this));
         itemListView.On<iOS>().SetSeparatorStyle(SeparatorStyle.FullWidth);
@@ -327,7 +152,8 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
             switch (e.PropertyName) {
             case nameof(SelectedItem):
             case nameof(Placeholder):
-                selectedItemLabel.Text = SelectedItem?.ToString() ?? Placeholder ?? string.Empty;;
+                selectedItemLabel.Text = SelectedItem?.ToString() ?? Placeholder ?? string.Empty;
+                ;
                 break;
 
             case nameof(DropdownSeparator):
@@ -350,11 +176,11 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
             }
         };
     }
-    
+
     /// <summary>
-    /// Retrieves the value of a specified property from the given object based on
-    /// the provided property path. If the value is null or the property path is invalid,
-    /// a default value is returned.
+    ///     Retrieves the value of a specified property from the given object based on
+    ///     the provided property path. If the value is null or the property path is invalid,
+    ///     a default value is returned.
     /// </summary>
     /// <param name="source">The object from which the property value should be retrieved.</param>
     /// <param name="propertyPath">The path or name of the property to retrieve the value from.</param>
@@ -373,10 +199,10 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
     }
 
     /// <summary>
-    /// Updates the corner radius of the dropdown's popup container to match the specified
-    /// value in the `DropdownCornerRadius` property, ensuring the visual shape of the popup
-    /// is consistent with the designated styling.
-    /// This is needed as we can't bind to the Stroke in the dropdown.
+    ///     Updates the corner radius of the dropdown's popup container to match the specified
+    ///     value in the `DropdownCornerRadius` property, ensuring the visual shape of the popup
+    ///     is consistent with the designated styling.
+    ///     This is needed as we can't bind to the Stroke in the dropdown.
     /// </summary>
     private void UpdateCornerRadius() {
         ArgumentNullException.ThrowIfNull(_popupContainer);
@@ -384,7 +210,7 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
     }
 
     /// <summary>
-    /// Updates the dropdown arrow image to reflect its open or closed state.
+    ///     Updates the dropdown arrow image to reflect its open or closed state.
     /// </summary>
     /// <param name="isOpen">A boolean value indicating whether the dropdown is open (true) or closed (false).</param>
     private void SetDropDownImage(bool isOpen) {
@@ -399,9 +225,9 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
     }
 
     /// <summary>
-    /// Toggles the visibility of the dropdown popup.
-    /// Depending on the configured dropdown style, either shows or hides the popup
-    /// container by updating its visibility or dynamically creating and displaying a popup.
+    ///     Toggles the visibility of the dropdown popup.
+    ///     Depending on the configured dropdown style, either shows or hides the popup
+    ///     container by updating its visibility or dynamically creating and displaying a popup.
     /// </summary>
     private void TogglePopup() {
         if (DropDownStyle == DropDownStyleEnum.Dropdown) {
@@ -423,7 +249,7 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
                     CanBeDismissedByTappingOutsideOfPopup = true,
                     Anchor = this,
                     VerticalOptions = LayoutAlignment.Center,
-                    HorizontalOptions = LayoutAlignment.Center,
+                    HorizontalOptions = LayoutAlignment.Center
                 };
                 _popup.SetBinding(Popup.ColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
                 _popup.Closed += (sender, args) => {
@@ -443,19 +269,14 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
         var y = element.Y;
 
         // Get absolute position by walking up the visual tree
-        var parent = element.Parent as Microsoft.Maui.Controls.VisualElement;
+        var parent = element.Parent as VisualElement;
         while (parent != null) {
             x += parent.X;
             y += parent.Y;
-            parent = parent.Parent as Microsoft.Maui.Controls.VisualElement;
+            parent = parent.Parent as VisualElement;
         }
 
         return new Rect(x, y, Width, Height);
-    }
-
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     protected virtual void Dispose(bool disposing) {
@@ -469,18 +290,198 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
             _disposed = true;
         }
     }
+
+    #region Bindable Properties
+    public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(DropDownBoxBase));
+    public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(DropDownBoxBase), null, BindingMode.TwoWay);
+    public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(DropDownBoxBase), string.Empty);
+    public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(DropDownBoxBase), Colors.Black);
+    public static readonly BindableProperty TextSizeProperty = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(DropDownBoxBase), 12.0);
+    public static readonly BindableProperty DropDownWidthProperty = BindableProperty.Create(nameof(DropDownWidth), typeof(double), typeof(DropDownBoxBase), -1.0);
+    public static readonly BindableProperty DropDownHeightProperty = BindableProperty.Create(nameof(DropDownHeight), typeof(double), typeof(DropDownBoxBase), 200.0);
+    public static readonly BindableProperty DropdownCornerRadiusProperty = BindableProperty.Create(nameof(DropdownCornerRadius), typeof(CornerRadius), typeof(DropDownBoxBase), new CornerRadius(10), propertyChanged: CornerRadiusChanged);
+    public static readonly BindableProperty DropdownTextColorProperty = BindableProperty.Create(nameof(DropdownTextColor), typeof(Color), typeof(DropDownBoxBase), Colors.Black);
+    public static readonly BindableProperty DropdownBackgroundColorProperty = BindableProperty.Create(nameof(DropdownBackgroundColor), typeof(Color), typeof(DropDownBoxBase), Colors.White);
+    public static readonly BindableProperty DropdownBorderColorProperty = BindableProperty.Create(nameof(DropdownBorderColor), typeof(Color), typeof(DropDownBoxBase), Colors.DarkGrey);
+    public static readonly BindableProperty DropdownBorderWidthProperty = BindableProperty.Create(nameof(DropdownBorderWidth), typeof(double), typeof(DropDownBoxBase), 1.0);
+    public static readonly BindableProperty DropdownClosedImageSourceProperty = BindableProperty.Create(nameof(DropdownClosedImageSource), typeof(string), typeof(DropDownBoxBase), "chevron_right.png");
+    public static readonly BindableProperty DropdownOpenImageSourceProperty = BindableProperty.Create(nameof(DropdownOpenImageSource), typeof(string), typeof(DropDownBoxBase), "chevron_down.png");
+    public static readonly BindableProperty DropdownImageTintProperty = BindableProperty.Create(nameof(DropdownImageTint), typeof(Color), typeof(DropDownBoxBase));
+    public static readonly BindableProperty DropdownShadowProperty = BindableProperty.Create(nameof(DropdownShadow), typeof(bool), typeof(DropDownBoxBase), true);
+    public static readonly BindableProperty DropdownSeparatorProperty = BindableProperty.Create(nameof(DropdownSeparator), typeof(bool), typeof(DropDownBoxBase), true);
+
+    /// <summary>
+    ///     The source of the dropdown list. This is either a collection of strings
+    ///     in which case Path should be null, or an object and Path should point to
+    ///     the property in the object that should be displayed.
+    /// </summary>
+    public IEnumerable ItemsSource {
+        get => (IEnumerable)GetValue(ItemsSourceProperty);
+        set => SetValue(ItemsSourceProperty, value);
+    }
+
+    /// <summary>
+    ///     The currently selected item. If an item is clicked, this will become
+    ///     the selected item.
+    /// </summary>
+    public object SelectedItem {
+        get => GetValue(SelectedItemProperty);
+        set => SetValue(SelectedItemProperty, value);
+    }
+
+    /// <summary>
+    ///     If the current object is blank, this is the text that should be
+    ///     displayed as a placeholder.
+    /// </summary>
+    public string Placeholder {
+        get => (string)GetValue(PlaceholderProperty);
+        set => SetValue(PlaceholderProperty, value);
+    }
+
+    /// <summary>
+    ///     Part of the DropDown Configuration: How rounded should the dropdown be?
+    ///     The default is 10. Set to 0 for square corners.
+    /// </summary>
+    public CornerRadius DropdownCornerRadius {
+        get => (CornerRadius)GetValue(DropdownCornerRadiusProperty);
+        set => SetValue(DropdownCornerRadiusProperty, value);
+    }
+
+    /// <summary>
+    ///     Specifies the width of the dropdown menu. If set to a value greater than 0,
+    ///     the dropdown will use the specified width. Otherwise, it defaults to the
+    ///     width of the main button layout.
+    /// </summary>
+    public double DropDownWidth {
+        get => (double)GetValue(DropDownWidthProperty);
+        set => SetValue(DropDownWidthProperty, value);
+    }
+
+    /// <summary>
+    ///     Defines the height of the dropdown component. This value determines
+    ///     the vertical size of the dropdown when it is displayed.
+    /// </summary>
+    public double DropDownHeight {
+        get => (double)GetValue(DropDownHeightProperty);
+        set => SetValue(DropDownHeightProperty, value);
+    }
+
+    /// <summary>
+    ///     Gets or sets the color of the text within the DropDownBox.
+    /// </summary>
+    public Color TextColor {
+        get => (Color)GetValue(TextColorProperty) ?? Colors.Black;
+        set => SetValue(TextColorProperty, value);
+    }
+
+    /// <summary>
+    ///     Determines the font size of the text displayed in the drop-down box.
+    /// </summary>
+    public double TextSize {
+        get => (double)GetValue(TextSizeProperty);
+        set => SetValue(TextSizeProperty, value);
+    }
+
+    /// <summary>
+    ///     Specifies the text color for items displayed in the dropdown list.
+    ///     This property determines the `TextColor` of labels rendered within the dropdown.
+    /// </summary>
+    public Color DropdownTextColor {
+        get => (Color)GetValue(DropdownTextColorProperty) ?? Colors.Black;
+        set => SetValue(DropdownTextColorProperty, value);
+    }
+
+    /// <summary>
+    ///     Gets or sets the border color of the dropdown. This property defines the color of the border
+    ///     surrounding the dropdown menu when it is displayed.
+    /// </summary>
+    public Color DropdownBorderColor {
+        get => (Color)GetValue(DropdownBorderColorProperty) ?? Colors.DarkGrey;
+        set => SetValue(DropdownBorderColorProperty, value);
+    }
+
+    /// <summary>
+    ///     Represents a brush that is derived from the <c>DropdownBorderColor</c> property,
+    ///     used to define the border color as a solid brush for the dropdown box.
+    /// </summary>
+    public SolidColorBrush DropdownBorderColorBrush => new(DropdownBorderColor);
+
+    /// <summary>
+    ///     Gets or sets the width of the border surrounding the dropdown.
+    /// </summary>
+    public double DropdownBorderWidth {
+        get => (double)GetValue(DropdownBorderWidthProperty);
+        set => SetValue(DropdownBorderWidthProperty, value);
+    }
+
+    /// <summary>
+    ///     Gets or sets the background color of the dropdown list.
+    ///     This property determines the visual background appearance
+    ///     of the dropdown items when displayed.
+    /// </summary>
+    public Color DropdownBackgroundColor {
+        get => (Color)GetValue(DropdownBackgroundColorProperty) ?? Colors.Gainsboro;
+        set => SetValue(DropdownBackgroundColorProperty, value);
+    }
+
+    /// <summary>
+    ///     Gets or sets the image source used to represent the closed state of the dropdown.
+    /// </summary>
+    public string DropdownClosedImageSource {
+        get => (string)GetValue(DropdownClosedImageSourceProperty);
+        set => SetValue(DropdownClosedImageSourceProperty, value);
+    }
+
+    /// <summary>
+    ///     Represents the image source to be used when the dropdown is in its open state.
+    ///     This property allows customization of the visual appearance by specifying
+    ///     the file path or resource name of the image displayed.
+    /// </summary>
+    public string DropdownOpenImageSource {
+        get => (string)GetValue(DropdownOpenImageSourceProperty);
+        set => SetValue(DropdownOpenImageSourceProperty, value);
+    }
+
+    /// <summary>
+    ///     Specifies the tint color applied to the dropdown indicator image.
+    ///     This property allows customization of the arrow image's color, enhancing visual consistency
+    ///     with the application's theme or design requirements.
+    /// </summary>
+    public Color? DropdownImageTint {
+        get => (Color?)GetValue(DropdownImageTintProperty);
+        set => SetValue(DropdownImageTintProperty, value);
+    }
+
+    /// <summary>
+    ///     Determines whether the dropdown box displays a shadow effect.
+    /// </summary>
+    public bool DropdownShadow {
+        get => (bool)GetValue(DropdownShadowProperty);
+        set => SetValue(DropdownShadowProperty, value);
+    }
+
+    /// <summary>
+    ///     Indicates whether a separator is displayed within the dropdown.
+    /// </summary>
+    public bool DropdownSeparator {
+        get => (bool)GetValue(DropdownSeparatorProperty);
+        set => SetValue(DropdownSeparatorProperty, value);
+    }
+
+    public SeparatorVisibility DropdownSeparatorVisibility => DropdownSeparator ? SeparatorVisibility.Default : SeparatorVisibility.None;
+    #endregion
 }
 
 public static class ViewExtensions {
     public static Rect GetAbsoluteBounds(this IView view) {
-        var element = view as Microsoft.Maui.Controls.VisualElement;
+        var element = view as VisualElement;
         var x = element?.X ?? 0;
         var y = element?.Y ?? 0;
-        var parent = element?.Parent as Microsoft.Maui.Controls.VisualElement;
+        var parent = element?.Parent as VisualElement;
         while (parent != null) {
             x += parent.X;
             y += parent.Y;
-            parent = parent.Parent as Microsoft.Maui.Controls.VisualElement;
+            parent = parent.Parent as VisualElement;
         }
         return new Rect(x, y, element?.Width ?? 0, element?.Height ?? 0);
     }

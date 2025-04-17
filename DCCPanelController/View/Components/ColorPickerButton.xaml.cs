@@ -1,6 +1,5 @@
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Components;
 

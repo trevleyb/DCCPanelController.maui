@@ -2,14 +2,19 @@ using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
-public partial class CrossingEntity : TrackEntity, ITrackEntity {
-    public override string EntityName => "Crossing Track";
 
+public class CrossingEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
-    public CrossingEntity() {}
+    public CrossingEntity() { }
+
     public CrossingEntity(Panel panel) : this() {
         Parent = panel;
     }
-    public CrossingEntity(CrossingEntity entity) : base(entity) {}
-    public override Entity Clone() => new CrossingEntity(this);
+
+    public CrossingEntity(CrossingEntity entity) : base(entity) { }
+    public override string EntityName => "Crossing Track";
+
+    public override Entity Clone() {
+        return new CrossingEntity(this);
+    }
 }

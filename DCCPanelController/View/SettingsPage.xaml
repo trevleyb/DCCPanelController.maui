@@ -10,7 +10,6 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:interfaces="clr-namespace:DCCClients.Interfaces;assembly=DCCClients">
 
     <ContentPage.Resources>
@@ -44,11 +43,10 @@
                         WidthRequest="500"
                         Focused="OnEntryFocused"
                         IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding Name}">
-                    </Entry>
+                        Text="{Binding Name}"/>
                 </Frame>
             </HorizontalStackLayout>
-            
+
             <HorizontalStackLayout HorizontalOptions="Start" Margin="10,0,10,10">
                 <Label VerticalOptions="Center" WidthRequest="250" Text="WiThrottle Server Address:"/>
                 <Frame Style="{StaticResource IpAddress}">
@@ -266,7 +264,7 @@
                                     Style="{StaticResource MediumLabel}"
                                     Text="{Binding TimeStamp}"
                                     WidthRequest="200"/>
-                                <Label Style="{StaticResource MediumLabel}" 
+                                <Label Style="{StaticResource MediumLabel}"
                                        Text="{Binding Message}"/>
                             </HorizontalStackLayout>
                         </DataTemplate>

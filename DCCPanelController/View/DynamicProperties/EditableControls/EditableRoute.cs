@@ -9,8 +9,8 @@ public class EditableRouteAttribute(string label, string description = "", int o
     public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var routes  = profile.Routes.ToList();
-            var cell = new PopUpListBox() {
+            var routes = profile.Routes.ToList();
+            var cell = new PopUpListBox {
                 ItemsSource = routes,
                 IsEnabled = routes.Count > 0,
                 Placeholder = "Select a Route",
@@ -19,7 +19,6 @@ public class EditableRouteAttribute(string label, string description = "", int o
             cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
             return CreateGroupCell(cell);
-
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Route: {e.Message}");
             return null;

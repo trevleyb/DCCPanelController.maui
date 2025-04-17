@@ -52,8 +52,8 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="system:String">
                                 <Grid RowDefinitions="30,3" Padding="1">
-                                <Label Margin="2" VerticalOptions="Center" Text="{Binding .}" Grid.Row="0"/>
-                                <BoxView Margin="2" Grid.Row="1" Width="1" Color="Gainsboro"></BoxView>
+                                    <Label Margin="2" VerticalOptions="Center" Text="{Binding .}" Grid.Row="0"/>
+                                    <BoxView Margin="2" Grid.Row="1" Width="1" Color="Gainsboro"/>
                                 </Grid>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>

@@ -1,18 +1,19 @@
 using System.Text.Json;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonRepository {
     #region Save Storage Object to JSON file
     /// <summary>
-    /// Serializes the provided Storage object to a JSON string and saves it to the specified file.
-    /// Uses default JSON serialization options and handles exceptions during the saving process.
+    ///     Serializes the provided Storage object to a JSON string and saves it to the specified file.
+    ///     Uses default JSON serialization options and handles exceptions during the saving process.
     /// </summary>
     /// <param name="profile">The Storage object containing data to serialize and save. Cannot be null.</param>
-    /// <param name="profileName">The name of the file where the serialized JSON data will be saved.
-    /// Defaults to "DCCPanelController.json" if not specified.</param>
+    /// <param name="profileName">
+    ///     The name of the file where the serialized JSON data will be saved.
+    ///     Defaults to "DCCPanelController.json" if not specified.
+    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when the provided storage is null.</exception>
     /// <exception cref="Exception">Thrown if an error occurs during the serialization or saving process.</exception>
     public static void Save(Profile profile, string profileName = "default") {
@@ -27,7 +28,7 @@ public static class JsonRepository {
     }
 
     /// <summary>
-    /// Writes the provided JSON string representation of data to the specified file.
+    ///     Writes the provided JSON string representation of data to the specified file.
     /// </summary>
     /// <param name="fileName">The name of the file to save the JSON data to. Cannot be null, empty, or whitespace.</param>
     /// <param name="jsonString">The JSON string content to write to the file. Cannot be null or empty.</param>
@@ -42,17 +43,24 @@ public static class JsonRepository {
 
     #region Load Storage Object from JSON file
     /// <summary>
-    /// Reads and loads the storage data from the specified file.
-    /// If the file exists, it reads the content, deserializes it into a Storage object, and ensures all panels are properly referenced.
-    /// If the file does not exist or an error occurs, a new empty Storage object is returned.
+    ///     Reads and loads the storage data from the specified file.
+    ///     If the file exists, it reads the content, deserializes it into a Storage object, and ensures all panels are
+    ///     properly referenced.
+    ///     If the file does not exist or an error occurs, a new empty Storage object is returned.
     /// </summary>
-    /// <param name="profileName">The name of the file to load the storage data from. Defaults to "DCCPanelController.json" if not provided.</param>
-    /// <returns>A Storage object containing the loaded data, or an empty Storage object if the file does not exist or an error occurs.</returns>
+    /// <param name="profileName">
+    ///     The name of the file to load the storage data from. Defaults to "DCCPanelController.json" if
+    ///     not provided.
+    /// </param>
+    /// <returns>
+    ///     A Storage object containing the loaded data, or an empty Storage object if the file does not exist or an error
+    ///     occurs.
+    /// </returns>
     /// <exception cref="Exception">Thrown if an unexpected error occurs while attempting to read or process the file.</exception>
     public static Profile Load(string profileName = "default") {
         var others = Profiles;
         var filePath = GetStorageFilePath(profileName);
-        using (new CodeTimer("Load JSON File"))
+        using (new CodeTimer("Load JSON File")) {
             try {
                 if (File.Exists(filePath)) {
                     try {
@@ -71,13 +79,17 @@ public static class JsonRepository {
                 Console.WriteLine("Could not access Profile. New Profile created. " + ex.Message);
                 return new Profile(profileName);
             }
+        }
     }
 
     /// <summary>
-    /// Deserializes the provided JSON string into a Storage object.
+    ///     Deserializes the provided JSON string into a Storage object.
     /// </summary>
     /// <param name="jsonString">The JSON string containing the serialized Storage data. Cannot be null or empty.</param>
-    /// <returns>A Storage object deserialized from the JSON string. If deserialization fails or the JSON is invalid, a new Storage object is returned.</returns>
+    /// <returns>
+    ///     A Storage object deserialized from the JSON string. If deserialization fails or the JSON is invalid, a new
+    ///     Storage object is returned.
+    /// </returns>
     /// <exception cref="JsonException">Thrown when the JSON string cannot be deserialized into a Storage object.</exception>
     private static Profile LoadFromJson(string jsonString, string profileName = "default") {
         try {
@@ -92,7 +104,7 @@ public static class JsonRepository {
 
     #region Supporting Methods
     /// <summary>
-    /// Deletes the specified file if it exists.
+    ///     Deletes the specified file if it exists.
     /// </summary>
     /// <param name="profileName">The name of the file to be deleted. Defaults to "DCCPanelController.json" if not provided.</param>
     /// <exception cref="Exception">Thrown if an unexpected error occurs while attempting to delete the file.</exception>
@@ -106,26 +118,26 @@ public static class JsonRepository {
     }
 
     /// <summary>
-    /// Retrieves a list of profile names available in the application's data directory.
-    /// The profiles are determined by the files present in the directory used for storing settings.
-    /// The list is generated from the file names without their extensions.
-    /// Ensures that the storage directory exists before attempting to retrieve profiles.
+    ///     Retrieves a list of profile names available in the application's data directory.
+    ///     The profiles are determined by the files present in the directory used for storing settings.
+    ///     The list is generated from the file names without their extensions.
+    ///     Ensures that the storage directory exists before attempting to retrieve profiles.
     /// </summary>
     /// <remarks>
-    /// If the directory does not exist, it is created automatically.
-    /// Returns an empty list if no files are found in the directory.
+    ///     If the directory does not exist, it is created automatically.
+    ///     Returns an empty list if no files are found in the directory.
     /// </remarks>
     public static List<string> Profiles {
         get {
             var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
             if (!Directory.Exists(storageDir)) Directory.CreateDirectory(storageDir);
             var storageFiles = Directory.GetFiles(storageDir);
-            return (storageFiles.Select(Path.GetFileNameWithoutExtension).ToList())!;
+            return storageFiles.Select(Path.GetFileNameWithoutExtension).ToList()!;
         }
     }
 
     /// <summary>
-    /// Serializes the provided Storage instance into a JSON string format.
+    ///     Serializes the provided Storage instance into a JSON string format.
     /// </summary>
     /// <param name="profile">The Storage object containing the data and settings to be serialized.</param>
     /// <returns>A JSON string representation of the provided Storage object, or an empty string if an error occurs.</returns>
@@ -139,7 +151,7 @@ public static class JsonRepository {
     }
 
     /// <summary>
-    /// Reads and deserializes the JSON data from the provided file to create and return a Storage object.
+    ///     Reads and deserializes the JSON data from the provided file to create and return a Storage object.
     /// </summary>
     /// <param name="profileName">The path of the JSON file containing the settings data to be uploaded.</param>
     /// <returns>A Storage object populated with the data from the JSON file, or a new Storage object if deserialization fails.</returns>
@@ -153,13 +165,16 @@ public static class JsonRepository {
     }
 
     /// <summary>
-    /// Constructs and retrieves the full file path for storing the configuration file
-    /// associated with the provided profile name. Creates the necessary storage
-    /// directory if it does not already exist.
+    ///     Constructs and retrieves the full file path for storing the configuration file
+    ///     associated with the provided profile name. Creates the necessary storage
+    ///     directory if it does not already exist.
     /// </summary>
     /// <param name="profileName">The name of the profile file. Defaults to "default" if not provided.</param>
     /// <returns>A string representing the absolute file path for the specified profile's storage location.</returns>
-    /// <exception cref="Exception">Thrown if an error occurs while determining or creating the storage directory or full file path.</exception>
+    /// <exception cref="Exception">
+    ///     Thrown if an error occurs while determining or creating the storage directory or full file
+    ///     path.
+    /// </exception>
     private static string GetStorageFilePath(string profileName = "default") {
         try {
             var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");

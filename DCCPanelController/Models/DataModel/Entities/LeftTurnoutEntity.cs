@@ -3,12 +3,15 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class LeftTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity {
-    public override string EntityName => "Left Turnout";
-    
+public class LeftTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity {
     [JsonConstructor]
-    public LeftTurnoutEntity() {}
+    public LeftTurnoutEntity() { }
+
     public LeftTurnoutEntity(Panel panel) : base(panel) { }
-    public LeftTurnoutEntity(LeftTurnoutEntity entity) : base(entity) {}
-    public override Entity Clone() => new LeftTurnoutEntity(this);
+    public LeftTurnoutEntity(LeftTurnoutEntity entity) : base(entity) { }
+    public override string EntityName => "Left Turnout";
+
+    public override Entity Clone() {
+        return new LeftTurnoutEntity(this);
+    }
 }

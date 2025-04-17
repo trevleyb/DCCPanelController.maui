@@ -1,19 +1,14 @@
-using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGridViewModel : ObservableObject {
-    
     [ObservableProperty] private ActionsContext _actionContext;
-    [ObservableProperty] private ButtonActions _buttonPanelActions;
     [ObservableProperty] public List<string> _availableButtons;
+    [ObservableProperty] private ButtonActions _buttonPanelActions;
 
     public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
         ActionContext = context;
@@ -39,6 +34,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         }
     }
 
+    public List<string> SelectableButtons => BuildSelectableButtons();
+
     [RelayCommand]
     private void AddRow() {
         if (SelectableButtons.Count > 0) {
@@ -59,7 +56,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsAddButtonEnabled));
     }
 
-    public List<string> SelectableButtons => BuildSelectableButtons();
     private List<string> BuildSelectableButtons(string? activeButton = null) {
         var selectableButtons = new List<string>(AvailableButtons);
         for (var i = AvailableButtons.Count - 1; i >= 0; i--) {

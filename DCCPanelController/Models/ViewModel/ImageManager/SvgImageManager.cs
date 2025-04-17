@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using DCCPanelController.Models.ViewModel.StyleManager;
-using Microsoft.Maui.Controls;
 using SkiaSharp;
 using SkiaSharp.Views.Maui.Controls;
 using Svg.Skia;
@@ -52,8 +47,8 @@ public class SvgImageManager {
 
         // Maintain aspect-ratio when scaling
         const int quality = 100;
-        var scaleX = (float)(DefaultWidth / width) * scale;
-        var scaleY = (float)(DefaultHeight / height) * scale;
+        var scaleX = DefaultWidth / width * scale;
+        var scaleY = DefaultHeight / height * scale;
 
         var stream = new MemoryStream();
         svg.Save(stream, SKColor.Empty, SKEncodedImageFormat.Png, quality, scaleX, scaleY);
@@ -72,26 +67,26 @@ public class SvgImageManager {
             canvas.Clear(SKColors.Transparent); // Clear the canvas
 
             // Get the dimensions of the canvas surface and SVG
-            var canvasWidth = e.Info.Width; 
+            var canvasWidth = e.Info.Width;
             var canvasHeight = e.Info.Height;
             var svgWidth = svg.Picture?.CullRect.Width;
             var svgHeight = svg.Picture?.CullRect.Height;
 
             // Calculate scale to fit the SVG into the canvas, maintaining aspect-ratio
-            var scaleX = (float) ((canvasWidth / svgWidth) * scale ?? 1.0f);
-            var scaleY = (float) ((canvasHeight / svgHeight) * scale ?? 1.0f);
+            var scaleX = canvasWidth / svgWidth * scale ?? 1.0f;
+            var scaleY = canvasHeight / svgHeight * scale ?? 1.0f;
 
             // Create transformation-matrix to center and scale the SVG
             var matrix = SKMatrix.CreateScale(scaleX, scaleY);
-            var translateX = (float) (((canvasWidth - (svgWidth * scaleX)) / 2) ?? 0.0f) ;
-            var translateY = (float) (((canvasHeight - (svgHeight * scaleY)) / 2) ?? 0.0f) ;
+            var translateX = (canvasWidth - svgWidth * scaleX) / 2 ?? 0.0f;
+            var translateY = (canvasHeight - svgHeight * scaleY) / 2 ?? 0.0f;
             matrix = SKMatrix.Concat(SKMatrix.CreateTranslation(translateX, translateY), matrix);
-            
+
             // Apply rotation to the canvas
-            canvas.Translate((float)canvasWidth / 2 , (float)canvasHeight /2);   // Move to the center of the canvas
+            canvas.Translate((float)canvasWidth / 2, (float)canvasHeight / 2);   // Move to the center of the canvas
             canvas.RotateDegrees(rotation);                                      // Rotate by the specified angle
-            canvas.Translate((float)-canvasWidth / 2 , (float)-canvasHeight /2); // Move to the center of the canvas
-            
+            canvas.Translate((float)-canvasWidth / 2, (float)-canvasHeight / 2); // Move to the center of the canvas
+
             // Draw the SVG picture on the canvas
             canvas.DrawPicture(svg.Picture, in matrix);
         };
@@ -126,7 +121,9 @@ public class SvgImageManager {
     /// <summary>
     ///     Forces a set of any attributes defined in the element to the value. Does not add the attribute if it does not exist
     /// </summary>
-    public void SetAllAttributeValues(SvgElementType svgElement, string attributeName, string attributeValue) => SetAllAttributeValues(SvgElementTypes.GetElement(svgElement), attributeName, attributeValue);
+    public void SetAllAttributeValues(SvgElementType svgElement, string attributeName, string attributeValue) {
+        SetAllAttributeValues(SvgElementTypes.GetElement(svgElement), attributeName, attributeValue);
+    }
 
     public void SetAllAttributeValues(string svgElement, string attributeName, string attributeValue) {
         foreach (var element in FindElements(svgElement)) {

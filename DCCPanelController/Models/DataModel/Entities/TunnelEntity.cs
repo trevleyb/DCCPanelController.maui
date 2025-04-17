@@ -1,17 +1,20 @@
-
 using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TunnelEntity : StraightEntity, ITrackEntity {
-    public override string EntityName => "Tunnel Track";
-    
+public class TunnelEntity : StraightEntity, ITrackEntity {
     [JsonConstructor]
-    public TunnelEntity() {}
+    public TunnelEntity() { }
+
     public TunnelEntity(Panel panel) : this() {
         Parent = panel;
     }
-    public TunnelEntity(TunnelEntity entity) : base(entity) {}
-    public override Entity Clone() => new TunnelEntity(this);
+
+    public TunnelEntity(TunnelEntity entity) : base(entity) { }
+    public override string EntityName => "Tunnel Track";
+
+    public override Entity Clone() {
+        return new TunnelEntity(this);
+    }
 }

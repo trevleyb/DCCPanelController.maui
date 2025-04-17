@@ -21,9 +21,9 @@ public class JsonTrackTypeConverter : JsonConverter<Entity> {
             var typeName = typeProperty.GetString();
 
             var obj = Type.GetType($"DCCPanelController.Models.DataModel.Entities.{typeName}") is { } entityType
-            ? (Entity?)JsonSerializer.Deserialize(rawText, entityType, options)
-            : throw new JsonException("Unknown type: " + "\"" + typeName + "\"");
-            
+                ? (Entity?)JsonSerializer.Deserialize(rawText, entityType, options)
+                : throw new JsonException("Unknown type: " + "\"" + typeName + "\"");
+
             if (obj == null) throw new ApplicationException("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
             return obj;
         }

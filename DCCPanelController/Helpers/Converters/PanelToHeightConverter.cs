@@ -29,7 +29,7 @@ public class PanelToCardHeightConverter : IMultiValueConverter {
                 return [width, rows, cols];
             }
         }
-    
+
         // Default fallback if conversion could not be applied
         return [0.0, 0, 0]; // Default width, rows, and cols
     }

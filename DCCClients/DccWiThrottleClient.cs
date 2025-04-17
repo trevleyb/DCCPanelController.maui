@@ -1,7 +1,6 @@
 using DCCClients.Common;
 using DCCClients.Events;
 using DCCClients.Interfaces;
-using DCCClients.JMRI.EventArgs;
 using DCCClients.WiThrottle.Client;
 using DCCClients.WiThrottle.Client.Commands;
 using DCCClients.WiThrottle.Client.Events;
@@ -10,24 +9,24 @@ using DCCClients.WiThrottle.ServiceHelper;
 namespace DCCClients;
 
 public class DccWiThrottleClient : DccClient, IDccClient {
+    private readonly WithrottleSettings? _settings;
     private Client? _client;
-    private WithrottleSettings? _settings;
 
     public DccWiThrottleClient(IDccSettings? settings) {
         _settings = settings as WithrottleSettings ?? throw new ArgumentException("Invalid settings provided.");
     }
 
     public bool IsConnected => _client is not null && _client.IsRunning;
-    
+
     /// <summary>
-    /// Establishes a connection to the WiThrottle server using the provided settings.
+    ///     Establishes a connection to the WiThrottle server using the provided settings.
     /// </summary>
     /// <param name="settings">The settings required to configure the connection, such as server address and port.</param>
     /// <returns>Returns a result indicating the success or failure of the connection attempt.</returns>
     public async Task<IResult> ConnectAsync() {
         ArgumentNullException.ThrowIfNull(_settings);
         if (_client is not null && _client.IsRunning) return Result.Ok("A connection is already established.");
-        
+
         // Validate that we have an address for the WiService. If not, try and find one. 
         // ------------------------------------------------------------------------------------------
         if (string.IsNullOrEmpty(_settings.Address) || _settings.Port == 0 || _settings.Address == "0.0.0.0") {
@@ -38,7 +37,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
             _settings.Address = "192.168.68.54";
             _settings.Port = 12090;
         }
-        
+
         // Connect to the service
         // --------------------------
         try {
@@ -51,14 +50,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         }
     }
 
-    private async Task<IResult<ServiceInfo?>> FindServices() {
-        var services = await ServiceFinder.FindServices("_withrottle._tcp");
-        if (services.Count == 0) return Result<ServiceInfo>.Fail(new Error("Unable to find a WiThrottle server."));
-        return Result<ServiceInfo>.Ok(services[0]);
-    }
-
     /// <summary>
-    /// Attempts to reconnect to the WiThrottle server using the existing client connection.
+    ///     Attempts to reconnect to the WiThrottle server using the existing client connection.
     /// </summary>
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
@@ -71,7 +64,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     }
 
     /// <summary>
-    /// Disconnects from the service and releases related resources.
+    ///     Disconnects from the service and releases related resources.
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public IResult Disconnect() {
@@ -123,10 +116,20 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Fail("Withrottle does not support signal commands.");
     }
 
+    private async Task<IResult<ServiceInfo?>> FindServices() {
+        var services = await ServiceFinder.FindServices("_withrottle._tcp");
+        if (services.Count == 0) return Result<ServiceInfo>.Fail(new Error("Unable to find a WiThrottle server."));
+        return Result<ServiceInfo>.Ok(services[0]);
+    }
+
     /// <summary>
-    /// Processes a client event received from the WiThrottle client and triggers the appropriate actions based on the event type.
+    ///     Processes a client event received from the WiThrottle client and triggers the appropriate actions based on the
+    ///     event type.
     /// </summary>
-    /// <param name="clientEvent">The client event to be processed, which can include various types such as message, turnout, route, or roster events.</param>
+    /// <param name="clientEvent">
+    ///     The client event to be processed, which can include various types such as message, turnout,
+    ///     route, or roster events.
+    /// </param>
     private void ProcessClientEvent(IClientEvent clientEvent) {
         switch (clientEvent) {
         case MessageEvent message:

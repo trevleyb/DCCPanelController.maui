@@ -1,19 +1,20 @@
 using System.Text.Json.Serialization;
-using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TerminatorEntity : TrackEntity, ITrackEntity {
-    public override string EntityName => "Terminator Track";
-
+public class TerminatorEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public TerminatorEntity() { }
+
     public TerminatorEntity(Panel panel) : this() {
         Parent = panel;
     }
+
     public TerminatorEntity(TerminatorEntity entity) : base(entity) { }
-    public override Entity Clone() => new TerminatorEntity(this);
+    public override string EntityName => "Terminator Track";
+
+    public override Entity Clone() {
+        return new TerminatorEntity(this);
+    }
 }

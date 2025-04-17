@@ -7,7 +7,27 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.View;
 
 public partial class PanelEditorPage {
-    private ConnectionService? _connectionService;
+    private readonly ToolbarItem _addPanelToolbar = new() { Text = "Add Panel", IconImageSource = "plus_circle.png" };
+    private readonly ConnectionService? _connectionService;
+    private readonly ToolbarItem _deletePanelToolbar = new() { Text = "Delete Panel", IconImageSource = "trash_2.png" };
+    private readonly ToolbarItem _duplicatePanelToolbar = new() { Text = "Duplicate Panel", IconImageSource = "copy.png" };
+    private readonly ToolbarItem _editCopyToolbar = new() { Text = "Copy", IconImageSource = "copy.png" };
+    private readonly ToolbarItem _editDeleteToolbar = new() { Text = "Delete", IconImageSource = "trash_2.png" };
+    private readonly ToolbarItem _editMoveCopyResizeToolbar = new() { Text = "Move", IconImageSource = "move.png" };
+    private readonly ToolbarItem _editPanelToolbar = new() { Text = "Edit Panel", IconImageSource = "edit.png" };
+
+// ------------------------------------------------------------------------------------------------
+    private readonly ToolbarItem _editPropertiesToolbar = new() { Text = "Properties", IconImageSource = "edit_3.png" };
+    private readonly ToolbarItem _editRotateToolbar = new() { Text = "Rotate", IconImageSource = "rotate_cw.png" };
+    private readonly ToolbarItem _editToggleGridToolbar = new() { Text = "ToggleGrid", IconImageSource = "grid_off.png" };
+
+    private readonly ToolbarItem _exitEditModeToolbar = new() { Text = "Exit Edit Mode", IconImageSource = "log_out.png" };
+    private readonly ToolbarItem _panelConnectionToolbar = new() { Text = "Connection", IconImageSource = "wifi_off.png" };
+    private readonly ToolbarItem _panelDownloadToolbar = new() { Text = "Download Panel", IconImageSource = "download.png" };
+    private readonly ToolbarItem _panelPropertiesToolbar = new() { Text = "Properties", IconImageSource = "settings.png" };
+    private readonly ToolbarItem _panelUploadToolbar = new() { Text = "Upload Panel", IconImageSource = "upload.png" };
+    private readonly ToolbarItem _spacerToolbar = new() { Text = "", IsEnabled = false };
+    private readonly ToolbarItem _toggleFullscreenToolbar = new() { Text = "Toggle Fullscreen" };
     private PanelEditorViewModel? _viewModel;
 
     public PanelEditorPage(PanelEditorViewModel viewModel, ConnectionService connectionService) {
@@ -28,7 +48,7 @@ public partial class PanelEditorPage {
             _viewModel = vm;
             PanelListView.SelectedItem = vm.SelectedPanel;
             PanelView.TileSelected += (sender, e) => {
-                if (e is {} args) {
+                if (e is { } args) {
                     vm.SelectedTiles = args.Tiles;
                     ConfigureToolbarItems();
                     if (args.IsDoubleTap) vm.EditTileProperties();
@@ -45,7 +65,7 @@ public partial class PanelEditorPage {
         switch (e.PropertyName) {
         case nameof(DesignMode):
             PanelView.ShowGrid = true;
-            if (_viewModel is {} vm) vm.GridVisible = true;
+            if (_viewModel is { } vm) vm.GridVisible = true;
             UpdateToolbarItems();
             break;
 
@@ -71,26 +91,6 @@ public partial class PanelEditorPage {
         }
         ConfigureToolbarItems();
     }
-
-// ------------------------------------------------------------------------------------------------
-    private readonly ToolbarItem _editPropertiesToolbar = new ToolbarItem { Text = "Properties", IconImageSource = "edit_3.png" };
-    private readonly ToolbarItem _editMoveCopyResizeToolbar = new ToolbarItem { Text = "Move", IconImageSource = "move.png"};
-    private readonly ToolbarItem _editCopyToolbar = new ToolbarItem { Text = "Copy", IconImageSource = "copy.png"};
-    private readonly ToolbarItem _editDeleteToolbar = new ToolbarItem { Text = "Delete", IconImageSource = "trash_2.png"};
-    private readonly ToolbarItem _editRotateToolbar = new ToolbarItem { Text = "Rotate", IconImageSource = "rotate_cw.png"};
-    private readonly ToolbarItem _editToggleGridToolbar = new ToolbarItem { Text = "ToggleGrid", IconImageSource = "grid_off.png"};
-    private readonly ToolbarItem _panelDownloadToolbar = new ToolbarItem { Text = "Download Panel", IconImageSource = "download.png" };
-    private readonly ToolbarItem _panelUploadToolbar = new ToolbarItem { Text = "Upload Panel", IconImageSource = "upload.png" };
-    
-    private readonly ToolbarItem _exitEditModeToolbar = new ToolbarItem { Text = "Exit Edit Mode", IconImageSource = "log_out.png" };
-    private readonly ToolbarItem _toggleFullscreenToolbar = new ToolbarItem { Text = "Toggle Fullscreen" };
-    private readonly ToolbarItem _addPanelToolbar = new ToolbarItem { Text = "Add Panel", IconImageSource = "plus_circle.png" };
-    private readonly ToolbarItem _duplicatePanelToolbar = new ToolbarItem { Text = "Duplicate Panel", IconImageSource = "copy.png" };
-    private readonly ToolbarItem _deletePanelToolbar = new ToolbarItem { Text = "Delete Panel", IconImageSource = "trash_2.png" };
-    private readonly ToolbarItem _editPanelToolbar = new ToolbarItem { Text = "Edit Panel", IconImageSource = "edit.png" };
-    private readonly ToolbarItem _panelPropertiesToolbar = new ToolbarItem { Text = "Properties", IconImageSource = "settings.png" };
-    private readonly ToolbarItem _panelConnectionToolbar = new ToolbarItem { Text = "Connection", IconImageSource = "wifi_off.png"};
-    private readonly ToolbarItem _spacerToolbar = new ToolbarItem { Text = "", IsEnabled = false };
 
     private void AssignToolbarCommands() {
         if (_viewModel is { } vm) {
@@ -121,9 +121,9 @@ public partial class PanelEditorPage {
                 _                 => "move.png"
             };
             _editPropertiesToolbar.IsEnabled = vm is { HasSelectedEntities: true };
-            _editCopyToolbar.IsEnabled = vm is { SingleEntitySelected : true };
-            _editDeleteToolbar.IsEnabled = vm is { HasSelectedEntities: true };
-            _editRotateToolbar.IsEnabled = vm is { HasSelectedEntities: true, SelectedEntity: IRotationEntity };
+            _editCopyToolbar.IsEnabled = vm is { SingleEntitySelected     : true };
+            _editDeleteToolbar.IsEnabled = vm is { HasSelectedEntities    : true };
+            _editRotateToolbar.IsEnabled = vm is { HasSelectedEntities    : true, SelectedEntity: IRotationEntity };
             _addPanelToolbar.IsEnabled = true;
             _duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _deletePanelToolbar.IsEnabled = vm.SelectedPanel != null;
@@ -137,15 +137,15 @@ public partial class PanelEditorPage {
     }
 
     /// <summary>
-    /// Updates the toolbar items based on the current mode (Design/Edit or View mode)
-    /// in the PanelEditorPage. This method clears the existing toolbar items
-    /// and repopulates them with commands relevant to the current mode.
+    ///     Updates the toolbar items based on the current mode (Design/Edit or View mode)
+    ///     in the PanelEditorPage. This method clears the existing toolbar items
+    ///     and repopulates them with commands relevant to the current mode.
     /// </summary>
     /// <remarks>
-    /// In Design/Edit mode, toolbar items include commands for managing tiles like deleting and editing properties.
-    /// In View mode, toolbar items include commands for managing panels like adding, editing, and deleting panels.
-    /// This method dynamically adjusts the available toolbar options based on the
-    /// <see cref="PanelEditorViewModel.DesignMode"/> property.
+    ///     In Design/Edit mode, toolbar items include commands for managing tiles like deleting and editing properties.
+    ///     In View mode, toolbar items include commands for managing panels like adding, editing, and deleting panels.
+    ///     This method dynamically adjusts the available toolbar options based on the
+    ///     <see cref="PanelEditorViewModel.DesignMode" /> property.
     /// </remarks>
     private void UpdateToolbarItems() {
         ToolbarItems.Clear();

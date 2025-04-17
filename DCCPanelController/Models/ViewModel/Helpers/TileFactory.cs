@@ -1,23 +1,11 @@
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
-using ExCSS;
 
 namespace DCCPanelController.Models.ViewModel.Helpers;
 
 public static class TileFactory {
-    public static ITile? CreateTile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
-        var entityType = entity.GetType();
-        if (EntityTileMappings.Value.TryGetValue(entityType, out var tileType)) {
-            return (ITile?)Activator.CreateInstance(tileType, entity, gridSize, displayMode);
-        }
-        Console.WriteLine($"No tile found for entity type {entityType.Name}");
-        return null;
-    }
-
     private static readonly Lazy<Dictionary<Type, Type>> EntityTileMappings = new(() => {
         // Get all tile types implementing ITile
         var tileTypes = Assembly.GetExecutingAssembly()
@@ -29,11 +17,11 @@ public static class TileFactory {
         foreach (var tileType in tileTypes) {
             // Find a constructor with parameters where the first parameter is an Entity type
             var constructor = tileType.GetConstructors()
-                .FirstOrDefault(ctor => {
-                    var parameters = ctor.GetParameters();
-                    return parameters.Length > 0 &&
-                    typeof(Entity).IsAssignableFrom(parameters[0].ParameterType);
-                });
+                                      .FirstOrDefault(ctor => {
+                                           var parameters = ctor.GetParameters();
+                                           return parameters.Length > 0 &&
+                                                  typeof(Entity).IsAssignableFrom(parameters[0].ParameterType);
+                                       });
 
             if (constructor != null) {
                 var entityType = constructor.GetParameters()[0].ParameterType;
@@ -42,4 +30,13 @@ public static class TileFactory {
         }
         return mappings;
     });
+
+    public static ITile? CreateTile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
+        var entityType = entity.GetType();
+        if (EntityTileMappings.Value.TryGetValue(entityType, out var tileType)) {
+            return (ITile?)Activator.CreateInstance(tileType, entity, gridSize, displayMode);
+        }
+        Console.WriteLine($"No tile found for entity type {entityType.Name}");
+        return null;
+    }
 }

@@ -3,7 +3,6 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients;
 using DCCClients.Events;
-using DCCClients.WiThrottle.Client;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -25,10 +24,6 @@ public partial class RoutesViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<Route> _routes;
     private string _sortColumn = "";
 
-    private Profile Profile { get; init; }
-    private IDccClient? Client { get; set; }
-    private ConnectionService ConnectionService { get; init; }
-    
     public RoutesViewModel(Profile profile, ConnectionService connectionService) {
         ConnectionService = connectionService;
         Profile = profile;
@@ -37,12 +32,16 @@ public partial class RoutesViewModel : BaseViewModel {
         SetLabels();
     }
 
+    private Profile Profile { get; }
+    private IDccClient? Client { get; set; }
+    private ConnectionService ConnectionService { get; }
+
     private void ClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
         if (Routes.Any(x => x.Id == e.RouteId)) {
             var route = Routes.First(x => x.Id == e.RouteId);
             route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
         } else {
-            Routes.Add(new Route() { Id = e.RouteId, State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive });
+            Routes.Add(new Route { Id = e.RouteId, State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive });
         }
     }
 

@@ -17,9 +17,9 @@ public static class ActionApplyButton {
             // Get what state we should be setting the related button to
             // -----------------------------------------------------------------
             var buttonState = button.State switch {
-                ButtonStateEnum.On   => action.WhenOn,
+                ButtonStateEnum.On  => action.WhenOn,
                 ButtonStateEnum.Off => action.WhenOff,
-                _                        => ButtonStateEnum.Unknown // Ignore an Unknown State
+                _                   => ButtonStateEnum.Unknown // Ignore an Unknown State
             };
 
             // TODO: Fix
@@ -37,7 +37,7 @@ public static class ActionApplyButton {
             var turnoutState = button.State switch {
                 ButtonStateEnum.On  => action.WhenClosed,
                 ButtonStateEnum.Off => action.WhenThrown,
-                _                        => TurnoutStateEnum.Unknown // Ignore an Unknown State
+                _                   => TurnoutStateEnum.Unknown // Ignore an Unknown State
             };
 
             // TODO: Fix

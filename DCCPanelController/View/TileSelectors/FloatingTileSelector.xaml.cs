@@ -30,8 +30,8 @@ public partial class FloatingTileSelector {
                 Console.WriteLine($"Drag Over: {sender?.GetType().Name} @ {pos.X}, {pos.Y}");
                 vm.X = pos.X;
                 vm.Y = pos.Y;
-                vm.Width = this.Width;
-                vm.Height = this.Height;
+                vm.Width = Width;
+                vm.Height = Height;
                 OnPropertyChanged(vm.LayoutBounds);
             }
         }
@@ -44,8 +44,8 @@ public partial class FloatingTileSelector {
             if (position is { } pos) {
                 vm.X = pos.X;
                 vm.Y = pos.Y;
-                vm.Width = this.Width;
-                vm.Height = this.Height;
+                vm.Width = Width;
+                vm.Height = Height;
                 OnPropertyChanged(vm.LayoutBounds);
             }
         }

@@ -1,19 +1,15 @@
 using System.Collections.ObjectModel;
-using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.View.Components;
-using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty] private ActionsContext _actionContext;
+    [ObservableProperty] private List<string> _availableTurnouts;
     [ObservableProperty] private TurnoutActions _turnoutPanelActions;
-    [ObservableProperty] List<string> _availableTurnouts;
 
     public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;

@@ -1,13 +1,15 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public static class SvgImages {
     public static readonly Assembly ExecutingAssembly = Assembly.GetExecutingAssembly();
-    private record SvgReference(string Filename, int Rotation, SvgConnections Connections);
+
+    private static readonly Lock LockObject = new();
+    private static readonly List<string> AvailableSymbols;
+    private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new();
 
     static SvgImages() {
         AvailableSymbols = BuildAvailableSymbols();
@@ -16,10 +18,6 @@ public static class SvgImages {
         }
     }
 
-    private static readonly Lock LockObject = new();
-    private static readonly List<string> AvailableSymbols;
-    private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new();
-    
     private static void BuildAvailableImages() {
         Console.WriteLine("Building Available Images");
         AddImage("Unknown", "Track_Unknown");
@@ -37,8 +35,8 @@ public static class SvgImages {
         AddImage("Button", "Track_Button_Corner", "********", 4, 45); // Add Buttons at NE,SE,SW,NW
         AddImage("ButtonLarge", "Track_Large_Button", 4);             // Add Buttons at N,E,S,W
 
-        AddImage("Route", "Track_Route", 4);                        // Add Buttons at N,E,S,W
-        AddImage("RouteLarge", "Track_Route_Large", 4);             // Add Buttons at N,E,S,W
+        AddImage("Route", "Track_Route", 4);            // Add Buttons at N,E,S,W
+        AddImage("RouteLarge", "Track_Route_Large", 4); // Add Buttons at N,E,S,W
 
         AddImage("Platform", "Track_Platform", "**S***S*", 4);
         AddImage("Straight", "Track_Straight", "**S***S*", 4);
@@ -79,9 +77,9 @@ public static class SvgImages {
     public static SvgImage GetImage(string name, int direction = 0) {
         var reference = GetImageReference(name, direction);
         if (reference is null) throw new SvgImageException($"***** Image '{name}' not found");
-        return new SvgImage(filename: reference.Filename,
-                            rotation: reference.Rotation,
-                            connections: reference.Connections
+        return new SvgImage(reference.Filename,
+                            reference.Rotation,
+                            reference.Connections
         );
     }
 
@@ -95,21 +93,23 @@ public static class SvgImages {
     }
 
     /// <summary>
-    /// Add a non-repeating Image (Button, Image, Circle) etc. These are more used as Icons. 
+    ///     Add a non-repeating Image (Button, Image, Circle) etc. These are more used as Icons.
     /// </summary>
     private static void AddImage(string name, string filename) {
         if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
         var imageRoot = Images[name.ToLower()];
         if (!imageRoot.ContainsKey(0)) {
-            imageRoot.Add(0, new SvgReference(GetFullPathImage(filename), 0, new SvgConnections("********", 0)));
+            imageRoot.Add(0, new SvgReference(GetFullPathImage(filename), 0, new SvgConnections("********")));
         }
     }
 
-    private static void AddImage(string name, string filename, int points, int start = 0) => AddImage(name, filename, "********", points, start);
+    private static void AddImage(string name, string filename, int points, int start = 0) {
+        AddImage(name, filename, "********", points, start);
+    }
 
     /// <summary>
-    /// Add a repeating image to the list. Ideally we build up so that every Image has 8 points that we can get
-    /// a display image for. 
+    ///     Add a repeating image to the list. Ideally we build up so that every Image has 8 points that we can get
+    ///     a display image for.
     /// </summary>
     /// <param name="name">Name for the root of this Image</param>
     /// <param name="filename">Filename for the rotated image</param>
@@ -119,9 +119,9 @@ public static class SvgImages {
     private static void AddImage(string name, string filename, string connections, int points = 8, int start = 0) {
         if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
         var imageRoot = Images[name.ToLower()];
-        for (var direction = 0; direction < 8; direction += (8 / points)) {
-            var key = start + (direction * 45);
-            var rotation = (direction * 45);
+        for (var direction = 0; direction < 8; direction += 8 / points) {
+            var key = start + direction * 45;
+            var rotation = direction * 45;
             if (!imageRoot.ContainsKey(key)) {
                 imageRoot.Add(key, new SvgReference(GetFullPathImage(filename), rotation, new SvgConnections(connections, rotation)));
             }
@@ -140,4 +140,6 @@ public static class SvgImages {
         availableSymbols.AddRange(resourceNames.Where(name => name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)).ToList());
         return availableSymbols ?? throw new ApplicationException("No SVG Symbols for Tracks found in this assembly.");
     }
+
+    private record SvgReference(string Filename, int Rotation, SvgConnections Connections);
 }

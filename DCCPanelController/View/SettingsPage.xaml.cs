@@ -72,7 +72,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                 //    await DisplayAlert("Success", "File Loaded.", "OK");
                 //} else {
                 //    throw new Exception("File could not be loaded.");
-               // }
+                // }
             }
         } catch (Exception ex) {
             await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");

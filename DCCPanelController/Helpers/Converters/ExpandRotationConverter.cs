@@ -12,7 +12,7 @@ public class ExpandRotationConverter : IValueConverter {
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
         if (value is int isExpanded) {
-            return isExpanded >=0; // 0 degrees for expanded, -90 for collapsed
+            return isExpanded >= 0; // 0 degrees for expanded, -90 for collapsed
         }
         return false;
     }

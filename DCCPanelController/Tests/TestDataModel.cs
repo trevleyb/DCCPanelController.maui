@@ -2,7 +2,6 @@ using System.Diagnostics;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.DataModel.Repository;
 
 namespace DCCPanelController.Tests;
@@ -21,28 +20,28 @@ public class TestDataModel {
         var original = CreatePanel(storage.Panels);
         var clone = storage.Panels.CreatePanelFrom(original);
         storage.Panels.Add(clone);
-        Debug.Assert(clone.Id != original.Id, "clone.Id != original.Id");
-        Debug.Assert(clone.GetHashCode() != original.GetHashCode(), "clone.GetHashCode() != original.GetHashCode()");
+        Debug.Assert(clone.Id != original.Id);
+        Debug.Assert(clone.GetHashCode() != original.GetHashCode());
     }
 
     private void ValidateTestDataModel(Profile storage) {
         var panelIDs = new List<string>();
         var entityIDs = new List<string>();
         foreach (var panel in storage.Panels) {
-            Debug.Assert(panel.Id != null,"panel.Id != null");
-            Debug.Assert(!panelIDs.Contains(panel.Id), $"panelIDs.Contains(panel.Id)");
-            Debug.Assert(panel.Panels == storage.Panels, "panel.Panels == storage.Panels");
+            Debug.Assert(panel.Id != null);
+            Debug.Assert(!panelIDs.Contains(panel.Id), "panelIDs.Contains(panel.Id)");
+            Debug.Assert(panel.Panels == storage.Panels);
             panelIDs.Add(panel.Id);
 
             foreach (var entity in panel.Entities) {
-                Debug.Assert(entity.Parent == panel, "entity.Parent == panel");
+                Debug.Assert(entity.Parent == panel);
                 if (entity is IEntityID entityID) {
-                    Debug.Assert(entityID.Id != null, "entityID.Id != null");
-                    Debug.Assert(!entityIDs.Contains(entityID.Id), $"entityIDs.Contains(entityID.Id)");
+                    Debug.Assert(entityID.Id != null);
+                    Debug.Assert(!entityIDs.Contains(entityID.Id), "entityIDs.Contains(entityID.Id)");
                     entityIDs.Add(entityID.Id);
                 }
             }
-        }            
+        }
     }
 
     private Panel CreatePanel(Panels panels) {
@@ -69,7 +68,6 @@ public class TestDataModel {
     }
 
     private void CreateEntity<T>(Panel panel) where T : Entity {
-
         var entity = panel.CreateEntity<T>();
         entity.Height = 1;
         entity.Width = 1;
@@ -81,7 +79,7 @@ public class TestDataModel {
             trackEntity.TrackType = TrackTypeEnum.MainLine;
             trackEntity.TrackAttribute = TrackAttributeEnum.Normal;
         }
-        
+
         switch (entity) {
         case ButtonEntity buttonEntity:
             buttonEntity.State = ButtonStateEnum.Off;

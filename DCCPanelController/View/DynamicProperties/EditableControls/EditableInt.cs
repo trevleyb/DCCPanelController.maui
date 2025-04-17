@@ -9,7 +9,8 @@ public class EditableInt(string label, string description = "", int order = 0, s
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {        try {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+        try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
             cell.HorizontalOptions = LayoutOptions.Start;

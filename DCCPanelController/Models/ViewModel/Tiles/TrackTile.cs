@@ -1,4 +1,3 @@
-using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -6,14 +5,16 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public abstract partial class TrackTile : Tile {
-   
+public abstract class TrackTile : Tile {
     private const float HighlightColorAlpha = 0.25f;
-    
-    // @formatter:off
-    public bool IsOccupied {get; set => SetField(ref field, value); }
-    public bool IsPath {get; set => SetField(ref field, value); }
-    // @formatter:on
+
+    protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(TrackEntity.Rotation));
+        VisualProperties.Add(nameof(TrackEntity.TrackType));
+        VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
+        VisualProperties.Add(nameof(TrackEntity.TrackColor));
+        VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
+    }
 
     public Color HighlightColor {
         get {
@@ -21,14 +22,6 @@ public abstract partial class TrackTile : Tile {
             if (IsOccupied) return Colors.Tomato.WithAlpha(HighlightColorAlpha);
             return Colors.Transparent;
         }
-    }
-    
-    protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(TrackEntity.Rotation));
-        VisualProperties.Add(nameof(TrackEntity.TrackType));
-        VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
-        VisualProperties.Add(nameof(TrackEntity.TrackColor));
-        VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
@@ -44,9 +37,9 @@ public abstract partial class TrackTile : Tile {
         canvas.HorizontalOptions = LayoutOptions.Fill;
         canvas.VerticalOptions = LayoutOptions.Fill;
         canvas.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
-        canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, converter: new ColorToSolidColorConverter(), source: this));
+        canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: this));
         canvas.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
-       
+
         var absoluteLayout = new AbsoluteLayout();
         AbsoluteLayout.SetLayoutBounds(canvas, new Rect(-GridSize * 0.25, -GridSize * 0.25, GridSize * 1.5, GridSize * 1.5));
         absoluteLayout.Children.Add(canvas);
@@ -57,17 +50,17 @@ public abstract partial class TrackTile : Tile {
         var svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
-        
+
         var image = svgImage.AsImage(svgImage.Rotation, scale);
         image.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
         image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
-        image.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, converter: new ColorToSolidColorConverter(), source: this));
+        image.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: this));
         return image;
     }
-    
+
     /// <summary>
-    /// Most Track types follow the same principles, which is that the track is either
-    /// a MainLine or BranchLine and is either Hidden (in a tunnel) or Normal. 
+    ///     Most Track types follow the same principles, which is that the track is either
+    ///     a MainLine or BranchLine and is either Hidden (in a tunnel) or Normal.
     /// </summary>
     /// <returns>A style for a standard piece of Track</returns>
     protected SvgStyleBuilder GetDefaultStyle() {
@@ -99,4 +92,9 @@ public abstract partial class TrackTile : Tile {
         }
         return style;
     }
+    
+    // @formatter:off
+    public bool IsOccupied {get; set => SetField(ref field, value); }
+    public bool IsPath {get; set => SetField(ref field, value); }
+    // @formatter:on
 }

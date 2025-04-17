@@ -9,20 +9,19 @@ using DCCPanelController.Models.ViewModel.Tiles;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class VerticalTileSelectorViewModel : BaseViewModel {
-
-    private Panels _symbolPanels;
-    [ObservableProperty] private double _gridSize = 32; 
+    private readonly Panels _symbolPanels;
+    [ObservableProperty] private double _gridSize = 32;
     [ObservableProperty] private ObservableCollection<Tile> _tiles = new();
 
     public VerticalTileSelectorViewModel() {
         _symbolPanels = new Panels();
         BuildTileList();
     }
-    
+
     public async void BuildTileList(Panel? source = null) {
         using (new CodeTimer("BuildTileList")) {
             Tiles.Clear();
-            var panel = (source == null) ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);
+            var panel = source == null ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);
             AddTile(new ButtonEntity(panel));
             AddTile(new RouteEntity(panel));
             AddTile(new CircleLabelEntity(panel));
@@ -37,9 +36,9 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
             AddTile(new TunnelEntity(panel));
             AddTile(new CrossingEntity(panel));
             AddTile(new TextEntity(panel));
-            AddTile(new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black});
-            AddTile(new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black,LineWidth = 3});
-            AddTile(new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black});
+            AddTile(new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black });
+            AddTile(new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 3 });
+            AddTile(new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black });
             AddTile(new ImageEntity(panel));
         }
     }
@@ -48,6 +47,6 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
         var tile = TileFactory.CreateTile(entity, GridSize, TileDisplayMode.Symbol);
         if (tile is Tile view) {
             Tiles.Add(view);
-        } 
+        }
     }
 }

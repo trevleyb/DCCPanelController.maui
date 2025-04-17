@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     IconImageSource="route_active.png"
@@ -28,30 +28,30 @@
                 HorizontalOptions="CenterAndExpand"
                 Margin="-5,0,0,0"
                 Style="{StaticResource ButtonLabel}"
-                Text="{Binding ColumnLabelID}" />
+                Text="{Binding ColumnLabelID}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
                 CommandParameter="SystemName"
                 Grid.Column="1"
                 Style="{StaticResource ButtonLabel}"
-                Text="{Binding ColumnLabelName}" />
+                Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
                 CommandParameter="State"
                 Grid.Column="2"
                 Style="{StaticResource ButtonLabel}"
-                Text="{Binding ColumnLabelState}" />
+                Text="{Binding ColumnLabelState}"/>
         </Grid>
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
-            HorizontalOptions="FillAndExpand" />
+            HorizontalOptions="FillAndExpand"/>
         <Grid Padding="5" VerticalOptions="FillAndExpand">
             <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <Label Text="No Route data available" />
+                            <Label Text="No Route data available"/>
                         </StackLayout>
                     </Grid>
                 </CollectionView.EmptyView>
@@ -64,7 +64,7 @@
                                     <TapGestureRecognizer
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
                                         CommandParameter="{Binding .}"
-                                        x:DataType="{x:Type view:RoutesViewModel}" />
+                                        x:DataType="{x:Type view:RoutesViewModel}"/>
                                 </Grid.GestureRecognizers>
                                 <Label
                                     Grid.Column="0"
@@ -72,7 +72,7 @@
                                     LineBreakMode="NoWrap"
                                     Style="{StaticResource MediumLabel}"
                                     Text="{Binding Id}"
-                                    VerticalOptions="Center" />
+                                    VerticalOptions="Center"/>
                                 <Label
                                     FontAttributes="Bold"
                                     Grid.Column="1"
@@ -80,7 +80,7 @@
                                     LineBreakMode="WordWrap"
                                     Style="{StaticResource MediumLabel}"
                                     Text="{Binding Name}"
-                                    VerticalOptions="Center" />
+                                    VerticalOptions="Center"/>
                                 <Image
                                     Grid.Column="2"
                                     HeightRequest="32"
@@ -92,19 +92,19 @@
                                             Binding="{Binding State}"
                                             TargetType="Image"
                                             Value="Active">
-                                            <Setter Property="Source" Value="route_active.png" />
+                                            <Setter Property="Source" Value="route_active.png"/>
                                         </DataTrigger>
                                         <DataTrigger
                                             Binding="{Binding State}"
                                             TargetType="Image"
                                             Value="Inactive">
-                                            <Setter Property="Source" Value="route_inactive.png" />
+                                            <Setter Property="Source" Value="route_inactive.png"/>
                                         </DataTrigger>
                                         <DataTrigger
                                             Binding="{Binding State}"
                                             TargetType="Image"
                                             Value="Unknown">
-                                            <Setter Property="Source" Value="route_unknown.png" />
+                                            <Setter Property="Source" Value="route_unknown.png"/>
                                         </DataTrigger>
                                     </Image.Triggers>
                                 </Image>
@@ -119,19 +119,19 @@
                                             Binding="{Binding State}"
                                             TargetType="Label"
                                             Value="Active">
-                                            <Setter Property="TextColor" Value="Green" />
+                                            <Setter Property="TextColor" Value="Green"/>
                                         </DataTrigger>
                                         <DataTrigger
                                             Binding="{Binding State}"
                                             TargetType="Label"
                                             Value="Inactive">
-                                            <Setter Property="TextColor" Value="Red" />
+                                            <Setter Property="TextColor" Value="Red"/>
                                         </DataTrigger>
                                         <DataTrigger
                                             Binding="{Binding State}"
                                             TargetType="Label"
                                             Value="Unknown">
-                                            <Setter Property="TextColor" Value="Grey" />
+                                            <Setter Property="TextColor" Value="Grey"/>
                                         </DataTrigger>
                                     </Label.Triggers>
                                 </Label>
@@ -139,7 +139,7 @@
                             <BoxView
                                 BackgroundColor="{StaticResource Primary}"
                                 HeightRequest="1"
-                                HorizontalOptions="FillAndExpand" />
+                                HorizontalOptions="FillAndExpand"/>
                         </StackLayout>
 
                     </DataTemplate>
@@ -149,7 +149,7 @@
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
-            HorizontalOptions="FillAndExpand" />
+            HorizontalOptions="FillAndExpand"/>
     </StackLayout>
 
 </ContentPage>

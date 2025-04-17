@@ -22,7 +22,7 @@ public class EditableImage(string label, string description = "", int order = 0,
                 Aspect = Aspect.AspectFit,
                 Margin = new Thickness(10, 10, 10, 10),
                 HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
             };
 
             var horizontal = new StackLayout {
@@ -61,7 +61,7 @@ public class EditableImage(string label, string description = "", int order = 0,
             return null;
         }
     }
-    
+
     private async Task SelectPhotoAsync(Image image, object owner, PropertyInfo info) {
         try {
             // Open the file-picker to select an image

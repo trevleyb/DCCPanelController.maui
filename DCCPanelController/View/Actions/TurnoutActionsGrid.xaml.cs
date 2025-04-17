@@ -1,8 +1,6 @@
 using CommunityToolkit.Maui.Views;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
-using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Actions;
 
@@ -13,8 +11,8 @@ public partial class TurnoutActionsGrid : ContentView {
     }
 
     /// <summary>
-    /// Ideally we would use a Picker, but there is a bug in the picker and it is clearing the Selected Item
-    /// and buggered if I could solve it so I wrote a popup selector. 
+    ///     Ideally we would use a Picker, but there is a bug in the picker and it is clearing the Selected Item
+    ///     and buggered if I could solve it so I wrote a popup selector.
     /// </summary>
     private async void IdLabel_OnClicked(object? sender, EventArgs e) {
         try {
@@ -31,7 +29,7 @@ public partial class TurnoutActionsGrid : ContentView {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine(ex.Message);  
+            Console.WriteLine(ex.Message);
         }
     }
 }

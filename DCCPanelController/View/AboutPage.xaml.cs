@@ -1,5 +1,3 @@
-using DCCPanelController.Tests;
-
 namespace DCCPanelController.View;
 
 public partial class AboutPage : ContentPage {

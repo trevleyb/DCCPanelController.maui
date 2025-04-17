@@ -10,9 +10,8 @@ public partial class PanelPropertyPopup : Popup {
         Properties.Children.Add(propertyDetails);
         BindingContext = propertyDetails.BindingContext;
     }
-    
-    private void ClosePropertyPage(object? sender, EventArgs? e) {
-        this.Close();
-    }
 
+    private void ClosePropertyPage(object? sender, EventArgs? e) {
+        Close();
+    }
 }

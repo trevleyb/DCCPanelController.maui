@@ -6,17 +6,17 @@
     <ContentPage.Content>
         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
-                <Label HorizontalOptions="Center" Text="Welcome to the DCC Panel Controller!" FontAttributes="Bold" />
-                <Label HorizontalOptions="Center" Text="  " />
+                <Label HorizontalOptions="Center" Text="Welcome to the DCC Panel Controller!" FontAttributes="Bold"/>
+                <Label HorizontalOptions="Center" Text="  "/>
                 <Label HorizontalOptions="Center"
-                       Text="This page will populate once you have created panels and turnout control. To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server." />
-                <Label HorizontalOptions="Center" Text="  " />
+                       Text="This page will populate once you have created panels and turnout control. To get started, head over to the instructions page and then to Settings to connect to your WiThrottle server."/>
+                <Label HorizontalOptions="Center" Text="  "/>
             </StackLayout>
             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" Padding="20">
                 <Button Style="{StaticResource ButtonOutline}" Text="Instructions" Margin="0,10,0,10"
-                        Clicked="ButtonInstructions_OnClicked" />
+                        Clicked="ButtonInstructions_OnClicked"/>
                 <Button Style="{StaticResource ButtonOutline}" Text="About" Margin="0,10,0,10"
-                        Clicked="ButtonAbout_OnClicked" />
+                        Clicked="ButtonAbout_OnClicked"/>
             </StackLayout>
         </StackLayout>
 

@@ -7,7 +7,6 @@ public class PointsTile : Tile {
     public PointsTile(PointsEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-
         if (Entity is PointsEntity entity) {
             var svgImage = SvgImages.GetImage("points", Entity.Rotation);
             var image = new Image {
@@ -17,15 +16,14 @@ public class PointsTile : Tile {
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
             image.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
             return image;
-        } 
+        }
         return CreateSymbol();
     }
-    
+
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("points").AsImage();
     }
 
-    
     public void SetPoints(SvgImage svgImage, bool[] points) {
         for (var point = 0; point < 8; point++) {
             SetPointColor(svgImage, PointLabel(point), points[point]);

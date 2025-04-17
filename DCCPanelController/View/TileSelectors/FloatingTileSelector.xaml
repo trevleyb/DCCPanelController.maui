@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentView
     x:Class="DCCPanelController.View.TileSelectors.FloatingTileSelector"
     x:DataType="tileSelectors:FloatingTileSelectorViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
-    xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentView.GestureRecognizers>
-        <DragGestureRecognizer DragStarting="DragGestureRecognizer_OnDragStarting" />
-        <DropGestureRecognizer DragOver="DropGestureRecognizer_OnDragOver" />
-        <DropGestureRecognizer Drop="DropGestureRecognizer_OnDrop" />
+        <DragGestureRecognizer DragStarting="DragGestureRecognizer_OnDragStarting"/>
+        <DropGestureRecognizer DragOver="DropGestureRecognizer_OnDragOver"/>
+        <DropGestureRecognizer Drop="DropGestureRecognizer_OnDrop"/>
     </ContentView.GestureRecognizers>
 
     <AbsoluteLayout>
@@ -30,7 +29,7 @@
                     <Shadow
                         Brush="{StaticResource Gray500}"
                         Offset="5,5"
-                        Opacity="0.7" />
+                        Opacity="0.7"/>
                 </Border.Shadow>
                 <ScrollView Orientation="Horizontal">
                     <HorizontalStackLayout>
@@ -41,7 +40,7 @@
                                 HorizontalOptions="Center"
                                 Stroke="{StaticResource Black}"
                                 VerticalOptions="Center"
-                                WidthRequest="12" />
+                                WidthRequest="12"/>
                         </Grid>
                         <CollectionView
                             ItemSizingStrategy="MeasureAllItems"
@@ -53,7 +52,7 @@
                                     HorizontalItemSpacing="2"
                                     Orientation="Horizontal"
                                     SnapPointsType="MandatorySingle"
-                                    Span="1" />
+                                    Span="1"/>
                             </CollectionView.ItemsLayout>
 
                             <CollectionView.ItemTemplate>
@@ -75,7 +74,7 @@
                                                 VerticalOptions="Fill"
                                                 x:DataType="View">
                                                 <ContentView.GestureRecognizers>
-                                                    <DragGestureRecognizer DragStarting="SymbolDragStarting" />
+                                                    <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
                                                 </ContentView.GestureRecognizers>
                                             </ContentView>
                                         </Border>

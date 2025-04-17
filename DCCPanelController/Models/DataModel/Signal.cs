@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCClients.WiThrottle.Client;
-using TurnoutStateEnum = DCCPanelController.Models.DataModel.Entities.TurnoutStateEnum;
 
 namespace DCCPanelController.Models.DataModel;
 
@@ -11,8 +10,8 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Signal : ObservableObject {
-    [ObservableProperty] private string _dccAddress;
     [ObservableProperty] private SignalAspectEnum _aspect = SignalAspectEnum.Off;
+    [ObservableProperty] private string _dccAddress;
 
     [ObservableProperty] private string? _id;
     [ObservableProperty] private bool _isEditable;

@@ -19,7 +19,7 @@ public static class ServiceKill {
 
             return Result.Fail("Unsupported operating system");
         } catch (Exception ex) {
-            return Result.Fail("Failed to terminate process.",ex);
+            return Result.Fail("Failed to terminate process.", ex);
         }
     }
 

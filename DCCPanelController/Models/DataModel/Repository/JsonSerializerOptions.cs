@@ -1,9 +1,10 @@
+using System.Text.Json;
 using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonOptions {
-    public static readonly System.Text.Json.JsonSerializerOptions? Options = new() {
+    public static readonly JsonSerializerOptions? Options = new() {
         WriteIndented = true,
         Converters = {
             new JsonSettingsTypeConverter(),
@@ -17,7 +18,7 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<RouteStateEnum>(),
             new JsonEnumToStringConverter<TrackTypeEnum>(),
             new JsonEnumToStringConverter<TrackAttributeEnum>(),
-            new JsonEnumToStringConverter<TrackTerminatorEnum>(),
+            new JsonEnumToStringConverter<TrackTerminatorEnum>()
         }
     };
 }

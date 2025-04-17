@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8"?>
 
 <ContentPage
     BackgroundColor="Transparent"
@@ -27,13 +27,13 @@
                     FontSize="Large"
                     Margin="0,0,0,0"
                     Text="Turnout Properties"
-                    VerticalOptions="Center" />
+                    VerticalOptions="Center"/>
 
                 <BoxView
                     BackgroundColor="{StaticResource Primary}"
                     HeightRequest="2"
                     HorizontalOptions="Fill"
-                    Margin="0,5,0,0" />
+                    Margin="0,5,0,0"/>
 
                 <StackLayout>
                     <Grid ColumnDefinitions="150,300" RowDefinitions="30,30,30,10,35,35">
@@ -43,7 +43,7 @@
                             HeightRequest="25"
                             HorizontalOptions="Start"
                             Text="ID (User Name)"
-                            VerticalOptions="Center" />
+                            VerticalOptions="Center"/>
                         <Entry
                             Grid.Column="1"
                             Grid.Row="1"
@@ -51,14 +51,14 @@
                             HorizontalOptions="Start"
                             Text="{Binding UserName}"
                             VerticalOptions="Center"
-                            WidthRequest="300" />
+                            WidthRequest="300"/>
                         <Label
                             Grid.Column="0"
                             Grid.Row="2"
                             HeightRequest="25"
                             HorizontalOptions="Start"
                             Text="System Name (DCC Address)"
-                            VerticalOptions="Center" />
+                            VerticalOptions="Center"/>
                         <Entry
                             Grid.Column="1"
                             Grid.Row="2"
@@ -66,14 +66,14 @@
                             HorizontalOptions="Start"
                             Text="{Binding DccAddress}"
                             VerticalOptions="Center"
-                            WidthRequest="100" />
+                            WidthRequest="100"/>
                         <Label
                             Grid.Column="0"
                             Grid.Row="4"
                             HorizontalOptions="Start"
                             Text="Current State"
                             VerticalOptions="Center"
-                            Width="100" />
+                            Width="100"/>
                         <components:TurnoutStateControl
                             CanToggleState="True"
                             Grid.Column="1"
@@ -81,14 +81,14 @@
                             HorizontalOptions="Start"
                             State="{Binding CurrentState}"
                             StateChangedCommand="{Binding ToggleTurnoutStateCommand}"
-                            Turnout="{Binding Turnout}" />
+                            Turnout="{Binding Turnout}"/>
                         <Label
                             Grid.Column="0"
                             Grid.Row="5"
                             HorizontalOptions="Start"
                             Text="Default State"
                             VerticalOptions="Center"
-                            Width="100" />
+                            Width="100"/>
                         <components:TurnoutStateControl
                             CanToggleState="True"
                             Grid.Column="1"
@@ -96,15 +96,15 @@
                             HorizontalOptions="Start"
                             State="{Binding DefaultState}"
                             StateChangedCommand="{Binding ToggleTurnoutDefaultStateCommand}"
-                            Turnout="{Binding Turnout}" />
+                            Turnout="{Binding Turnout}"/>
                     </Grid>
                     <StackLayout
                         HorizontalOptions="Center"
                         Margin="0,20,0,0"
                         Orientation="Horizontal"
                         Spacing="20">
-                        <Button Command="{Binding SaveCommand}" Text="Save" />
-                        <Button Command="{Binding CancelCommand}" Text="Cancel" />
+                        <Button Command="{Binding SaveCommand}" Text="Save"/>
+                        <Button Command="{Binding CancelCommand}" Text="Cancel"/>
                     </StackLayout>
                 </StackLayout>
             </VerticalStackLayout>
