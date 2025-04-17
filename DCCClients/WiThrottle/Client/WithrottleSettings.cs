@@ -5,6 +5,8 @@ namespace DCCClients.WiThrottle.Client;
 public class WithrottleSettings : IDccSettings {
 
     public string Type => "withrottle";
+
+    public WithrottleSettings() : this(null, "192.168.1.1", 12090) { }
     public WithrottleSettings(string address, int port) : this(null, address, port) { }
     public WithrottleSettings(string? name, string address, int port) {
         Name = name ?? Environment.MachineName ?? "DCCPanelController";

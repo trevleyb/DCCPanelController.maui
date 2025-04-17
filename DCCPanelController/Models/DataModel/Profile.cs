@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Repository;
 
@@ -15,7 +16,8 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     [ObservableProperty] private ObservableCollection<Route> _routes;
 
-    public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection();
+    [JsonIgnore] public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection();
+    
     public static Profile NewOrLoad(string profileName) => JsonRepository.Load(profileName);    
     public static Profile Load(string profileName) => JsonRepository.Load(profileName);
     public void Save() => JsonRepository.Save(this, ProfileName);

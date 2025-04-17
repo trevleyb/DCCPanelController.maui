@@ -5,8 +5,6 @@ using DCCPanelController.Helpers;
 namespace DCCPanelController.View.Components;
 
 public partial class GridColorPicker : Popup {
-    private Color? _selectedColor;
-
     public GridColorPicker(Color color) {
         InitializeComponent();
         SelectedColor = color;
@@ -17,9 +15,9 @@ public partial class GridColorPicker : Popup {
     public IReadOnlyCollection<Color> SelectableColors { get; init; }
 
     public Color? SelectedColor {
-        get => _selectedColor;
+        get;
         set {
-            _selectedColor = value;
+            field = value;
             OnPropertyChanged();
         }
     }

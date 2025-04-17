@@ -1,5 +1,6 @@
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.View.DynamicProperties;
 
 namespace DCCPanelController.View.Components;
 
@@ -59,10 +60,8 @@ public partial class ColorPickerButton : ContentView {
     [RelayCommand]
     private async Task ShowDropdownAsync() {
         var popup = new GridColorPicker(SelectedColor ?? Colors.White);
-
-        if (App.Current?.Windows[0]?.Page is Page { } mainpage) {
-            var result = await mainpage.ShowPopupAsync(popup);
-
+        if (App.Current?.Windows[0]?.Page is Page { } mainPage) {
+            var result = await mainPage.ShowPopupAsync(popup);
             if (result is Color selectedColor) {
                 SelectedColor = selectedColor;
             }

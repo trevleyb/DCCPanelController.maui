@@ -38,8 +38,9 @@ internal sealed partial class ControlPanelView {
     private int _tapCount;
 
     private const int DoubleTapTime = 200;
-    private bool _canDragTiles = true;
-
+    private readonly bool _canDragTiles = true;
+    private readonly HashSet<ITile> _selectedTiles = [];
+    
     public ControlPanelView() {
         InitializeComponent();
         BindingContext = this;
@@ -50,7 +51,9 @@ internal sealed partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 1;
     public int Cols => Panel?.Cols ?? 1;
 
-    private void OnTileSelected(ITile? tile, int tapCount) => TileSelected?.Invoke(this, new TileSelectedEventArgs(tile, tapCount));
+    private void OnTileSelected(int tapCount) {
+        TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
+    }
 
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
@@ -164,7 +167,6 @@ internal sealed partial class ControlPanelView {
 
     private static void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
-
         // TODO: Maybe this code draws the current path???
     }
 
@@ -187,18 +189,16 @@ internal sealed partial class ControlPanelView {
                 if (sender is ITile tile) {
                     if (_tapCount == 1) {
                         if (tile.IsSelected) {
-                            ClearAllSelectedTiles();
-                            OnTileSelected(null, 1);
+                            MarkTileUnSelected(tile); 
                         } else {
-                            ClearAllSelectedTiles();
                             MarkTileSelected(tile);
-                            OnTileSelected(tile, 1);
                         }
+                        OnTileSelected(_tapCount);
                     }
                     if (_tapCount == 2) {
                         ClearAllSelectedTiles();
                         MarkTileSelected(tile);
-                        OnTileSelected(tile, 2);
+                        OnTileSelected(_tapCount);
                     }
                 }
             } else {
@@ -266,31 +266,42 @@ internal sealed partial class ControlPanelView {
 
     #region Support Marking and UnMarking Tiles on the Panel
     public void MarkTileSelected(ITile tile) {
+        _selectedTiles.Add(tile);
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
-        OnTileSelected(tile, 1);
+        //OnTileSelected(tile, 1);
     }
 
     public void MarkTileUnSelected(ITile tile) {
+        _selectedTiles.Remove(tile);
         UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
         tile.IsSelected = false;
-        OnTileSelected(null, 0);
     }
 
     public void ClearAllSelectedTiles() {
-        var tiles = DynamicGrid.Children.OfType<ITile>().Where(x => x.IsSelected).ToList();
-        foreach (var tile in tiles) tile.IsSelected = false;
+        // Remove each tile from the collection of selected tiles.
+        // -------------------------------------------------------
+        foreach (var tile in _selectedTiles) {
+            MarkTileUnSelected(tile);
+        }
+        
+        // Do a clean-up in case anything is left over? There should not be anything.
+        // -------------------------------------------------------
         var children = DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
         foreach (var child in children) DynamicGrid.Remove(child);
+
+        _selectedTiles.Clear();
+        OnTileSelected(0);
+        
+        // var tiles = DynamicGrid.Children.OfType<ITile>().Where(x => x.IsSelected).ToList();
+        // foreach (var tile in tiles) MarkTileUnSelected(tile);
     }
 
     /// <summary>
     /// Only highlight a cell if we are in Design Mode
     /// </summary>
     public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity, action);
-
     public void HighlightCell(Entity entity, CellHighlightAction action) => HighlightCell(entity.Col, entity.Row, entity.Width, entity.Height, action);
-
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
 
@@ -506,6 +517,7 @@ internal sealed partial class ControlPanelView {
                             dropEntity.Col = position.Col;
                             dropEntity.Row = position.Row;
                             panel.AddEntity(dropEntity);
+                            ClearAllSelectedTiles();
                             break;
 
                         default:
@@ -645,8 +657,9 @@ internal sealed partial class ControlPanelView {
 
 }
 
-public class TileSelectedEventArgs(ITile? tile, int tapCount) : EventArgs {
-    public ITile? Tile { get; set; } = tile;
+public class TileSelectedEventArgs(HashSet<ITile> tiles, int tapCount) : EventArgs {
+    public HashSet<ITile> Tiles { get; set; } = tiles;
+    public ITile? Tile => Tiles.FirstOrDefault();
     public int TapCount { get; set; } = tapCount;
     public bool IsSingleTap => TapCount == 1;
     public bool IsDoubleTap => TapCount == 2;

@@ -10,7 +10,7 @@ public class EditableInt(string label, string description = "", int order = 0, s
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
-    public IView? CreateView(object owner, PropertyInfo info) {        try {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {        try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
             cell.HorizontalOptions = LayoutOptions.Start;
@@ -42,6 +42,7 @@ public class EditableInt(string label, string description = "", int order = 0, s
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
 
             dataCell.TextChanged += (s, e) => {
+                propertyModified?.Invoke(info.Name);
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;
                 }

@@ -10,7 +10,7 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public class EditableButtonActions(string label, string description = "", int order = 0, string? group = null, ActionsContext context = ActionsContext.Button)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info) {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";
@@ -32,7 +32,7 @@ public class EditableButtonActions(string label, string description = "", int or
 
 public class EditableTurnoutActions(string label, string description = "", int order = 0, string? group = null, ActionsContext context = ActionsContext.Button)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info) {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";

@@ -8,7 +8,7 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public class EditableImage(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info) {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var stack = new StackLayout {
                 Orientation = StackOrientation.Vertical,

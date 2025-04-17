@@ -29,7 +29,7 @@ public partial class PanelEditorPage {
             PanelListView.SelectedItem = vm.SelectedPanel;
             PanelView.TileSelected += (sender, e) => {
                 if (e is {} args) {
-                    vm.SelectedEntity = args.Tile?.Entity ?? null;
+                    vm.SelectedTiles = args.Tiles;
                     ConfigureToolbarItems();
                     if (args.IsDoubleTap) vm.EditTileProperties();
                 }
@@ -120,11 +120,10 @@ public partial class PanelEditorPage {
                 EditModeEnum.Size => "crop.png",
                 _                 => "move.png"
             };
-
-            _editPropertiesToolbar.IsEnabled = vm is { IsEntitySelected: true };
-            _editCopyToolbar.IsEnabled = vm is { IsEntitySelected      : true };
-            _editDeleteToolbar.IsEnabled = vm is { IsEntitySelected    : true };
-            _editRotateToolbar.IsEnabled = vm is { IsEntitySelected    : true, SelectedEntity: IRotationEntity };
+            _editPropertiesToolbar.IsEnabled = vm is { HasSelectedEntities: true };
+            _editCopyToolbar.IsEnabled = vm is { SingleEntitySelected : true };
+            _editDeleteToolbar.IsEnabled = vm is { HasSelectedEntities: true };
+            _editRotateToolbar.IsEnabled = vm is { HasSelectedEntities: true, SelectedEntity: IRotationEntity };
             _addPanelToolbar.IsEnabled = true;
             _duplicatePanelToolbar.IsEnabled = vm.SelectedPanel != null;
             _deletePanelToolbar.IsEnabled = vm.SelectedPanel != null;

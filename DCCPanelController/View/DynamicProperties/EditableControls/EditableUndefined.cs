@@ -8,10 +8,10 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public class EditableUndefined(string label = "undefined", string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info) {
+    public IView? CreateView(object? owner, PropertyInfo? info, Action<string>? propertyModified = null) {
         try {
             return new Label {
-                Text = "Undefined Editable Property",
+                Text = label,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center
             };

@@ -46,7 +46,7 @@ public static class JsonRepository {
     /// If the file exists, it reads the content, deserializes it into a Storage object, and ensures all panels are properly referenced.
     /// If the file does not exist or an error occurs, a new empty Storage object is returned.
     /// </summary>
-    /// <param name="profileName ">The name of the file to load the storage data from. Defaults to "DCCPanelController.json" if not provided.</param>
+    /// <param name="profileName">The name of the file to load the storage data from. Defaults to "DCCPanelController.json" if not provided.</param>
     /// <returns>A Storage object containing the loaded data, or an empty Storage object if the file does not exist or an error occurs.</returns>
     /// <exception cref="Exception">Thrown if an unexpected error occurs while attempting to read or process the file.</exception>
     public static Profile Load(string profileName = "default") {

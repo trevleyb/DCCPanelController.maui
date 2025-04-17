@@ -9,14 +9,14 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public static class DynamicPageLauncher {
  
-    public static async Task ShowDynamicPropertyPageAsync(Entity entity) {
+    public static async Task ShowDynamicPropertyPageAsync(List<Entity> entities) {
         // -------------------------------------------------------------------------------
         if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {
-            await LaunchNavigationPage(new DynamicPropertyPage(entity));
+            await LaunchNavigationPage(new DynamicPropertyPage(entities));
         }
         else if (DeviceInfo.Idiom == DeviceIdiom.Tablet && DeviceInfo.Platform == DevicePlatform.iOS ||
                  DeviceInfo.Platform == DevicePlatform.MacCatalyst) {
-            await LaunchPopupPage(new DynamicPropertyPopup(entity));
+            await LaunchPopupPage(new DynamicPropertyPopup(entities));
         }
     }
 

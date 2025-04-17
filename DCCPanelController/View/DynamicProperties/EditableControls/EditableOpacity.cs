@@ -7,7 +7,7 @@ namespace DCCPanelController.View.DynamicProperties;
 
 public class EditableOpacity(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info) {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
@@ -37,6 +37,7 @@ public class EditableOpacity(string label, string description = "", int order = 
             };
             
             dataCell.TextChanged += (s, e) => {
+                propertyModified?.Invoke(info.Name);
                 stepperUpDown.Value = ConvertToPercentageToOpacity(dataCell.Text);
                 info.SetValue(owner, stepperUpDown.Value);
                 Console.WriteLine($"Stepper Text Changed: {stepperUpDown.Value} = {dataCell.Text}");

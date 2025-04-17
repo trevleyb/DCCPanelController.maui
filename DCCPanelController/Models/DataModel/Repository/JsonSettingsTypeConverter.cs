@@ -13,7 +13,7 @@ public class JsonSettingsTypeConverter : JsonConverter<IDccSettings> {
         // --------------------------------------------------------------------------------------------
         using (var document = JsonDocument.ParseValue(ref reader)) {
             var root = document.RootElement;
-            if (!root.TryGetProperty("Name", out var typeProperty)) {
+            if (!root.TryGetProperty("Type", out var typeProperty)) {
                 throw new JsonException($"Name property not found: {root.ToString()}");
             }
 

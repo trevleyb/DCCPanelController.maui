@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Reflection;
 using CommunityToolkit.Maui.Behaviors;
@@ -14,24 +15,81 @@ namespace DCCPanelController.View.DynamicProperties;
 public partial class DynamicPropertyPageViewModel : BaseViewModel {
     [ObservableProperty] private string _propertyName;
     [ObservableProperty] private Entity _entity;
-    public DynamicPropertyPageViewModel(Entity entity, string? propertyName, StackBase propertyContainer) {
-        Entity = entity;
-        PropertyName = propertyName ?? (string.IsNullOrEmpty(entity.EntityName) ? "Track" : $"{entity.EntityName}");
-        BuildProperties(propertyContainer, entity);
+    [ObservableProperty] private List<Entity> _entities;
+    [ObservableProperty] private Entity? _proxyEntity = null;
+    
+    private readonly ConcurrentDictionary<string, bool> _modifiedProperties = new();
+
+    public DynamicPropertyPageViewModel(List<Entity> entities, string? propertyName, StackBase propertyContainer) {
+        Entities = entities;
+        Entity = entities.FirstOrDefault() ?? throw new Exception("No entities found");
+        
+        if (entities.Count == 1) {
+            PropertyName = propertyName ?? (string.IsNullOrEmpty(Entity.EntityName) ? "Track" : $"{Entity.EntityName}");
+        } else {
+            PropertyName = propertyName ?? $"Multiple Tiles ({entities.Count})";
+        }
+        BuildProperties(propertyContainer, entities);
+    }
+    
+    /// <summary>
+    /// Determines if a property has been explicitly modified by the user
+    /// </summary>
+    public bool IsPropertyModified(string propertyName) {
+        return _modifiedProperties.ContainsKey(propertyName) && _modifiedProperties[propertyName];
+    }
+    
+    /// <summary>
+    /// Marks a property as modified by the user
+    /// </summary>
+    public void MarkPropertyModified(string propertyName) {
+        _modifiedProperties[propertyName] = true;
     }
 
+    public void ApplyChangesToAllEntities() {
+        if (Entities.Count <= 1) return; // No need for special handling with single entity
+        
+        foreach (var propertyName in _modifiedProperties.Keys) {
+            if (!_modifiedProperties[propertyName]) continue; // Skip properties not actually modified
+            
+            // Get the property value from the proxy entity (Entity)
+            var properties = EditableExtractor.GetEditableProperties(Entity);
+            var property = properties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
+            
+            if (property != null) {
+                var newValue = property.GetValue(Entity);
+                foreach (var targetEntity in Entities) {
+                    var targetProperties = EditableExtractor.GetEditableProperties(targetEntity);
+                    var targetProperty = targetProperties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
+                    if (targetProperty != null) {
+                        targetProperty.SetValue(targetEntity, newValue);
+                    }
+                }
+            }
+        }
+    }
+    
     /// <summary>
     ///     This is the main method that iterates over all the properties in the given ITrack and builds up a dynamic
     ///     collection of the editable properties that the track contains.
     ///     It uses attributes attached to the ITrack properties, and each of the properties knows how to create an
     ///     IView which allows the editing or viewing of that given property.
     /// </summary>
-    private void BuildProperties(StackBase tableView, Entity entity) {
-        var properties = EditableExtractor.GetEditableProperties(entity);
+    private void BuildProperties(StackBase tableView, List<Entity> entities) {
         tableView.Children.Clear();
-        var isFirst = true;
+        if (entities.Count == 1) {
+            BuildPropertiesForSingleEntity(tableView, entities[0]);
+        } else {
+            BuildPropertiesForMultipleEntities(tableView, entities);
+            _modifiedProperties.Clear(); 
+        }
+    }
 
+    private void BuildPropertiesForSingleEntity(StackBase tableView, Entity entity) {
+        var properties = EditableExtractor.GetEditableProperties(entity);
+        var isFirst = true;
         var lastGroup = "*";
+
         (IView? Group, IList<IView>? Container) groupContainer = (null, null);
         foreach (var property in properties) {
             
@@ -56,6 +114,130 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         }
     }
 
+    /// <summary>
+    ///     New behavior for handling multiple entities. Identifies common properties across all entities
+    ///     and only displays those. For each common property, it sets the default value based on whether
+    ///     all entities have the same value for that property.
+    /// </summary>
+    private void BuildPropertiesForMultipleEntities(StackBase tableView, List<Entity> entities) {
+        if (entities.Count == 0) return;
+        
+        // Get properties from the first entity as a starting point
+        var firstEntityProperties = EditableExtractor.GetEditableProperties(entities[0]);
+        
+        // Find common properties across all entities
+        var commonProperties = new List<(PropertyInfo Property, IEditableProperty Metadata)>();
+        
+        foreach (var property in firstEntityProperties) {
+            var isCommonProperty = true;
+            
+            // Check if this property exists in all other entities
+            for (int i = 1; i < entities.Count; i++) {
+                var entityProperties = EditableExtractor.GetEditableProperties(entities[i]);
+                if (entityProperties.All(p => p.Property.Name != property.Property.Name)) {
+                    isCommonProperty = false;
+                    break;
+                }
+            }
+            
+            if (isCommonProperty) {
+                commonProperties.Add(property);
+            }
+        }
+        
+        // Now build the UI for the common properties
+        var isFirst = true;
+        var lastGroup = "*";
+        (IView? Group, IList<IView>? Container) groupContainer = (null, null);
+
+        var addedProperties = false;
+        foreach (var property in commonProperties) {
+            // Create group/expander if needed
+            if (property.Metadata.Group != lastGroup) {
+                groupContainer = CreateExpanderGroup(property.Metadata.Group, isFirst);
+                tableView.Children.Add(groupContainer.Group);
+                lastGroup = property.Metadata.Group;
+                isFirst = false;
+            }
+            
+            if (groupContainer.Container is not null) {
+                // Check if all entities have the same value for this property
+                var allSameValue = true;
+                var firstValue = property.Property.GetValue(entities[0]);
+                
+                for (int i = 1; i < entities.Count; i++) {
+                    // Get the corresponding property from the other entity
+                    var entityProperties = EditableExtractor.GetEditableProperties(entities[i]);
+                    var matchingProperty = entityProperties.FirstOrDefault(p => p.Property.Name == property.Property.Name);
+                    
+                    if (matchingProperty.Property != null) {
+                        var currentValue = matchingProperty.Property.GetValue(entities[i]);
+                        
+                        // Compare values, handling null cases
+                        if ((firstValue == null && currentValue != null) || 
+                            (firstValue != null && !firstValue.Equals(currentValue))) {
+                            allSameValue = false;
+                            break;
+                        }
+                    }
+                }
+                
+                // Initialize the property with a common value if all entities have the same value,
+                // otherwise use the first entity's value but mark it as not modified
+                var propertyName = property.Property.Name;
+                _modifiedProperties[propertyName] = false; // Initially mark as not modified
+                
+                // Create the UI element
+                var cell = property.Metadata.CreateView(Entity, property.Property, MarkPropertyModified);
+                if (cell is not null) {
+                    // Add a property changed handler to detect when the user modifies this property
+                    if (cell is BindableObject bindable) {
+                        // Create a unique binding context for this property
+                        var context = new PropertyBindingContext {
+                            PropertyName = propertyName,
+                            PropertyViewModel = this,
+                            OriginalBindingContext = bindable.BindingContext
+                        };
+                        bindable.BindingContext = context;
+                    }
+                    groupContainer.Container.Add(cell);
+                    addedProperties = true;
+                }
+            }
+        }
+        
+        // If we have no common properties, add a placeholder
+        // ----------------------------------------------------------------------
+        if (addedProperties == false) {
+            var labelTitle = new Label() { FontSize = 18, Margin = new Thickness(10,20,10,20), FontAttributes = FontAttributes.Bold, Text="No Common Properties", HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+            var labelDescription = new Label() { FontSize=12,  Text="There are no common properties between the selected track elements.", HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+            tableView?.Children?.Add(labelTitle);
+            tableView?.Children?.Add(labelDescription);
+        }
+    }
+
+    // Helper class to maintain binding context for each property
+    private class PropertyBindingContext {
+        public string PropertyName { get; set; }
+        public DynamicPropertyPageViewModel PropertyViewModel { get; set; }
+        public object OriginalBindingContext { get; set; }
+    }
+
+    private Entity CreateProxyEntity(Entity template, PropertyInfo property) {
+        // Create a shallow clone of the template entity
+        var proxy = (Entity)template.Clone();
+        
+        // Set the specific property to its default value
+        if (property.PropertyType.IsValueType) {
+            // For value types, use Activator to create a default instance
+            property.SetValue(proxy, Activator.CreateInstance(property.PropertyType));
+        } else {
+            // For reference types, set to null
+            property.SetValue(proxy, null);
+        }
+        return proxy;
+    }
+    
     /// <summary>
     /// Creates an expander group with a specified header and container for child elements,
     /// allowing for collapsible sections in the UI. If the group key is empty or whitespace,

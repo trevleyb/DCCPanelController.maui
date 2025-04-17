@@ -12,7 +12,7 @@ public class EditableDouble(string label, string description = "", int order = 0
     public double MaxValue { get; set; } = maxValue; // used for Int (Maximum Value)
     public double StepValue { get; set; } = stepValue; // used for Int (Maximum Value)
 
-    public IView? CreateView(object owner, PropertyInfo info) {
+    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
         try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
@@ -43,6 +43,7 @@ public class EditableDouble(string label, string description = "", int order = 0
 
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("0.00", CultureInfo.InvariantCulture) ?? "1.00"; };
             dataCell.TextChanged += (s, e) => {
+                propertyModified?.Invoke(info.Name);
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
                     stepperUpDown.Value = parsedValue;
                 }

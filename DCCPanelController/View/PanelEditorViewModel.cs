@@ -30,6 +30,14 @@ public partial class PanelEditorViewModel : BaseViewModel {
     [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
     private bool _isFullScreen = false;
 
+    public HashSet<ITile> SelectedTiles { get; set; } = new();
+    public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
+    public int SelectedEntitiesCount => SelectedEntities.Count;
+    public bool HasSelectedEntities => SelectedEntitiesCount > 0;
+    public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
+    public bool SingleEntitySelected => SelectedEntitiesCount == 1;
+    public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
+    
     private readonly Profile Profile;
     private Panel? _draggedPanel;
     private ConnectionService? _connectionService;
@@ -47,9 +55,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
         SelectedPanel = Panels.FirstOrDefault();
         IsFullScreen = false;
     }
-
-    public bool IsEntitySelected => SelectedEntity is not null;
-    public Entity? SelectedEntity;
 
     /// <summary>
     /// Adds a new panel to the collection. The newly created panel becomes the selected panel.
@@ -131,23 +136,27 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     public void DeleteSelectedTile() {
-        if (SelectedEntity is not null && SelectedPanel is not null) {
-            SelectedPanel.Entities.Remove(SelectedEntity);
-            SelectedEntity = null;
+        if (HasSelectedEntities && SelectedPanel is not null) {
+            foreach (var entity in SelectedEntities) {
+                SelectedPanel.Entities.Remove(entity);
+            }
+            SelectedEntities.Clear();
             OnPropertyChanged(nameof(Panels));
         }
     }
     
     public void RotateSelectedTile() {
-        if (SelectedEntity is not null) {
-            SelectedEntity.RotateRight();
+        if (HasSelectedEntities && SelectedPanel is not null) {
+            foreach (var entity in SelectedEntities) {
+                entity.RotateRight();
+            }
         }
     }
     
     public void EditProperties() {
         if (SelectedPanel is not null) {
-            if (SelectedEntity is not null) {
-                EditTileProperties(SelectedEntity);
+            if (HasSelectedEntities) {
+                EditTileProperties(SelectedEntities);
             } else {
                 EditPanelProperties();
             }
@@ -195,7 +204,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
     
-    public void EditTileProperties() => EditTileProperties(SelectedEntity);
+    public void EditTileProperties() => EditTileProperties(SelectedEntities);
     public async void EditTileProperties(Entity? entity) {
         try {
             entity ??= SelectedEntity;
@@ -205,9 +214,23 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
+    public async void EditTileProperties(List<Entity> entities) {
+        try {
+            await EditTilePropertiesAsync(entities);
+        } catch (Exception e) {
+            Console.WriteLine("Unable to launch the edit tile panel: " + e.Message);
+        }
+    }
+
     public async Task EditTilePropertiesAsync(Entity entity) {
         Console.WriteLine($"Launching the Properties page for '{entity.EntityName}'");
-        await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entity);
+        await DynamicPageLauncher.ShowDynamicPropertyPageAsync([entity]);
+        Profile.Save();
+    }
+
+    public async Task EditTilePropertiesAsync(List<Entity> entities) {
+        Console.WriteLine($"Launching the Properties page for multiple Entities");
+        await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entities);
         Profile.Save();
     }
 

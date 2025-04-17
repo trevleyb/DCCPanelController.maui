@@ -8,5 +8,5 @@ public interface IEditableProperty {
     string Description { get; } 
     string Group { get; }       
     int Order { get; }  
-    IView? CreateView(object owner, PropertyInfo info);
+    IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null);
 }
