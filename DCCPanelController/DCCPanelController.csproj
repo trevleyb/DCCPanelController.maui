@@ -84,6 +84,7 @@
         <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg" />
         <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg" />
         <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_tunnel.svg" />
         <EmbeddedResource Include="Models\TileImages\track_button.svg" />
         <EmbeddedResource Include="Models\TileImages\track_button_corner.svg" />
         <EmbeddedResource Include="Models\TileImages\track_compass.svg" />
@@ -106,6 +107,7 @@
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_tunnel.svg" />
         <EmbeddedResource Include="Models\TileImages\track_text.svg" />
         <EmbeddedResource Include="Models\TileImages\track_threeway.svg" />
         <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg" />

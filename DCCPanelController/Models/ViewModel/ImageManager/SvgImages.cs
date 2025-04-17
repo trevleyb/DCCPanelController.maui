@@ -43,6 +43,8 @@ public static class SvgImages {
         AddImage("Platform", "Track_Platform", "**S***S*", 4);
         AddImage("Straight", "Track_Straight", "**S***S*", 4);
         AddImage("Straight", "Track_Angle", "*S***S**", 4, 45);
+        AddImage("Tunnel", "Track_Straight_Tunnel", "**S***S*", 4);
+        AddImage("Tunnel", "Track_Angle_Tunnel", "*S***S**", 4, 45);
 
         AddImage("Cross", "Track_Straight_Cross", "S*S*S*S*", 4);
         AddImage("Cross", "Track_Angle_Cross", "*S*S*S*S", 4, 45);

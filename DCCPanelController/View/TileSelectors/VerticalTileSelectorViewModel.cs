@@ -34,6 +34,7 @@ public partial class VerticalTileSelectorViewModel : BaseViewModel {
             AddTile(new LeftTurnoutEntity(panel));
             AddTile(new RightTurnoutEntity(panel));
             AddTile(new TerminatorEntity(panel));
+            AddTile(new TunnelEntity(panel));
             AddTile(new CrossingEntity(panel));
             AddTile(new TextEntity(panel));
             AddTile(new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black});

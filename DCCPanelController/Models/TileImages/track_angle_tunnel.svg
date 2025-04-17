@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip_path_1">
+            <rect width="48" height="48" />
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip_path_1)">
+        <g>
+            <g>
+                <path id="Border" d="M3.8147e-06 43.0001L0 40.0001L40 0L41.0525 0L43 0L3.8147e-06 43.0001Z" fill="#000000" fill-rule="evenodd" />
+                <path id="Border" d="M43 0L0 43L3 43L43 3L43 0Z" fill="#000000" fill-rule="evenodd" transform="translate(5 5)" />
+                <path id="Track" d="M48 5.00001L5 48L0 48L0 43L43 0L48 1.14441e-05L48 5.00001Z" fill="#BDBDBD" fill-rule="evenodd" />
+                <line id="Dashline" x1="0" y1="40" x2="40" y2="0" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 4)" />
+            </g>
+            <path id="Border" d="M0 0L6 3.8147e-06L6 2L3.8147e-06 2L0 0Z" fill="#000000" fill-rule="evenodd" transform="matrix(0.707 -0.707 0.707 0.707 33.95 28.192)" />
+            <path id="Border" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd" transform="matrix(0.707 -0.707 0.707 0.707 33.95 22.536)" />
+            <path id="Border" d="M0 0L6 1.90735e-06L6 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd" transform="matrix(0.707 -0.707 0.707 0.707 18.393 12.636)" />
+            <path id="Border" d="M0 0L2 -1.90735e-06L2 4L-1.90735e-06 4L0 0Z" fill="#000000" fill-rule="evenodd" transform="matrix(0.707 -0.707 0.707 0.707 22.636 11.222)" />
+        </g>
+    </g>
+</svg>
