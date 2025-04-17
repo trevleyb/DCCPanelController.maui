@@ -162,10 +162,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
             
             if (groupContainer.Container is not null) {
                 // Check if all entities have the same value for this property
-                var allSameValue = true;
                 var firstValue = property.Property.GetValue(entities[0]);
-                
-                for (int i = 1; i < entities.Count; i++) {
+                for (var i = 1; i < entities.Count; i++) {
                     // Get the corresponding property from the other entity
                     var entityProperties = EditableExtractor.GetEditableProperties(entities[i]);
                     var matchingProperty = entityProperties.FirstOrDefault(p => p.Property.Name == property.Property.Name);
@@ -176,7 +174,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                         // Compare values, handling null cases
                         if ((firstValue == null && currentValue != null) || 
                             (firstValue != null && !firstValue.Equals(currentValue))) {
-                            allSameValue = false;
                             break;
                         }
                     }
@@ -218,9 +215,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
 
     // Helper class to maintain binding context for each property
     private class PropertyBindingContext {
-        public string PropertyName { get; set; }
-        public DynamicPropertyPageViewModel PropertyViewModel { get; set; }
-        public object OriginalBindingContext { get; set; }
+        public string PropertyName { get; set; } = "";
+        public DynamicPropertyPageViewModel? PropertyViewModel { get; set; } = null;
+        public object OriginalBindingContext { get; set; } = "";
     }
 
     private Entity CreateProxyEntity(Entity template, PropertyInfo property) {

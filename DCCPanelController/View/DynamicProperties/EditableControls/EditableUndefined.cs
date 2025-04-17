@@ -11,7 +11,7 @@ public class EditableUndefined(string label = "undefined", string description = 
     public IView? CreateView(object? owner, PropertyInfo? info, Action<string>? propertyModified = null) {
         try {
             return new Label {
-                Text = label,
+                Text = Label,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center
             };
