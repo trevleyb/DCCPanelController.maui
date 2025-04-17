@@ -6,6 +6,7 @@ public interface IResult {
     bool IsSuccess { get; }
     bool IsFailure { get; }
     IReadOnlyCollection<IError> Errors { get; }
+    IError? Error => Errors?.FirstOrDefault();
 }
 
 public interface IResult<T> : IResult {

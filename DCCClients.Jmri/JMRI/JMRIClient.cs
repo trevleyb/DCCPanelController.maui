@@ -1,7 +1,9 @@
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using DCCClients.Common;
 using DCCClients.Interfaces;
+using DCCClients.JMRI.Commands;
 using DCCClients.JMRI.EventArgs;
 
 namespace DCCClients.JMRI;
@@ -22,6 +24,7 @@ public class JmriClient {
             TurnoutChanged += (_, args) => DumpObjectProperties(args);
             RouteChanged += (_, args) => DumpObjectProperties(args);
             OccupancyChanged += (_, args) => DumpObjectProperties(args);
+            SignalChanged += (_, args) => DumpObjectProperties(args);
         } else throw new ArgumentException("Invalid settings provided.");
     }
 
@@ -31,8 +34,9 @@ public class JmriClient {
     public event EventHandler<TurnoutEventArgs>? TurnoutChanged;
     public event EventHandler<RouteEventArgs>? RouteChanged;
     public event EventHandler<OccupancyEventArgs>? OccupancyChanged;
+    public event EventHandler<SignalEventArgs>? SignalChanged;
 
-    public async Task InitializeAsync() {
+    public virtual async Task InitializeAsync() {
         // Fetch initial turnout data and raise events
         var turnoutData = await FetchInitialDataWithRetriesAsync("/json/turnouts");
 
@@ -68,9 +72,21 @@ public class JmriClient {
                 OccupancyChanged?.Invoke(this, args);
             }
         }
+
+        // Fetch initial signal data and raise events
+        var signalData = await FetchInitialDataWithRetriesAsync("/json/signalHeads");
+
+        if (!string.IsNullOrEmpty(signalData)) {
+            var signals = JsonDocument.Parse(signalData).RootElement;
+
+            foreach (var signal in signals.EnumerateArray()) {
+                var args = ParseSignalData(signal);
+                SignalChanged?.Invoke(this, args);
+            }
+        }
     }
 
-    public async Task StartMonitoringAsync() {
+    public virtual async Task StartMonitoringAsync() {
         _cancellationTokenSource = new CancellationTokenSource();
         await ConnectWebSocketAsync();
         var token = _cancellationTokenSource.Token;
@@ -140,6 +156,11 @@ public class JmriClient {
                         var occupancyArgs = ParseOccupancyData(root);
                         OccupancyChanged?.Invoke(this, occupancyArgs);
                         break;
+                        
+                    case "signalHead":
+                        var signalArgs = ParseSignalData(root);
+                        SignalChanged?.Invoke(this, signalArgs);
+                        break;
                     }
                 }
             } catch (OperationCanceledException) {
@@ -170,7 +191,7 @@ public class JmriClient {
         return string.Empty; // Fallback (should not be reached)
     }
 
-    public async Task StopAsync() {
+    public virtual async Task StopAsync() {
         if (_cancellationTokenSource is not null) {
             _cancellationTokenSource.Cancel();
             _cancellationTokenSource.Dispose();
@@ -190,13 +211,19 @@ public class JmriClient {
         return response;
     }
 
-    public async Task SendTurnoutCommandAsync(string identifier, bool set) {
-        var command = new { type = "turnout", identifier, state = set ? "THROWN" : "CLOSED" };
+    public virtual async Task SendTurnoutCommandAsync(string identifier, bool thrown) {
+        var command = new { type = "turnout", identifier, state = thrown ? "THROWN" : "CLOSED" };
         await SendCommandAsync(command);
     }
 
-    public async Task SendRouteCommandAsync(string routeIdentifier) {
+    public virtual async Task SendRouteCommandAsync(string routeIdentifier) {
         var command = new { type = "route", identifier = routeIdentifier };
+        await SendCommandAsync(command);
+    }
+    
+    public virtual async Task SendSignalCommandAsync(string identifier, SignalAspectEnum aspect) {
+        var signalCommand = new SignalCommand(identifier, aspect);
+        var command = new { type = "signalHead", identifier, state = signalCommand.GetAspectString() };
         await SendCommandAsync(command);
     }
 
@@ -240,6 +267,35 @@ public class JmriClient {
             IsOccupied = GetJsonValue<bool>(data, "occupied"),
             TrainId = GetJsonValue<string>(data, "trainId") ?? "UNKNOWN",
             Metadata = GetJsonValue<string>(data, "metadata")
+        };
+    }
+    
+    private SignalEventArgs ParseSignalData(JsonElement data) {
+        var stateString = GetJsonValue<string>(data, "state") ?? "DARK";
+        var aspect = ConvertStateToAspect(stateString);
+        
+        return new SignalEventArgs {
+            Identifier = GetJsonValue<string>(data, "name") ?? "UNKNOWN",
+            DccAddress = GetJsonValue<int>(data, "dccAddress"),
+            State = stateString,
+            Aspect = aspect,
+            Metadata = GetJsonValue<string>(data, "metadata")
+        };
+    }
+    
+    private SignalAspectEnum ConvertStateToAspect(string state) {
+        return state.ToUpperInvariant() switch {
+            "RED" => SignalAspectEnum.Red,
+            "YELLOW" => SignalAspectEnum.Yellow,
+            "GREEN" => SignalAspectEnum.Green,
+            "FLASHRED" => SignalAspectEnum.FlashRed,
+            "FLASHYELLOW" => SignalAspectEnum.FlashYellow,
+            "FLASHGREEN" => SignalAspectEnum.FlashGreen,
+            "RED_OVER_YELLOW" => SignalAspectEnum.RedYellow,
+            "RED_OVER_GREEN" => SignalAspectEnum.RedGreen,
+            "YELLOW_OVER_GREEN" => SignalAspectEnum.YellowGreen,
+            "DARK" => SignalAspectEnum.Off,
+            _ => SignalAspectEnum.Off
         };
     }
 

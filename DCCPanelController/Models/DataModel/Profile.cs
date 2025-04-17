@@ -16,6 +16,7 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private ObservableCollection<Route> _routes = [];
     [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts = [];
+    [ObservableProperty] private ObservableCollection<Signal> _signals = [];
 
     public Profile(string profileName) {
         _profileName = profileName;
@@ -23,6 +24,7 @@ public partial class Profile : ObservableObject {
         Settings = new Settings();
         Turnouts = new ObservableCollection<Turnout>();
         Routes = new ObservableCollection<Route>();
+        Signals = new ObservableCollection<Signal>();
     }
 
     [JsonIgnore] public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection();
@@ -33,6 +35,10 @@ public partial class Profile : ObservableObject {
 
     public Route? Route(string id) {
         return Routes.FirstOrDefault(r => r.Id == id);
+    }
+    
+    public Signal? Signal(string id) {
+        return Signals.FirstOrDefault(s => s.Id == id);
     }
 
     public static Profile NewOrLoad(string profileName) {

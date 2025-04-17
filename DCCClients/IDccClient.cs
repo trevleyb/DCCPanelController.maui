@@ -1,6 +1,5 @@
 using DCCClients.Common;
 using DCCClients.Events;
-using DCCClients.WiThrottle.Client;
 
 namespace DCCClients;
 
@@ -20,4 +19,5 @@ public interface IDccClient {
     event EventHandler<DccTurnoutArgs> TurnoutMsgReceived;
     event EventHandler<DccRouteArgs> RouteMsgReceived;
     event EventHandler<DccOccupancyArgs> OccupancyMsgReceived;
+    event EventHandler<DccSignalArgs> SignalMsgReceived;
 }

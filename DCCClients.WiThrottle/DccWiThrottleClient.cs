@@ -41,13 +41,21 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         // Connect to the service
         // --------------------------
         try {
-            _client = new Client(_settings);
+            _client = CreateClient(_settings);
             _client.ConnectionEvent += OnOnConnectionEvent;
             _client.DataEvent += ProcessClientEvent;
             return await _client.ConnectAsync();
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to connect to the Withrottle server.").CausedBy(ex));
         }
+    }
+
+    /// <summary>
+    /// Creates a new Client instance. Can be overridden in tests to provide a mock.
+    /// </summary>
+    protected virtual Client CreateClient(WithrottleSettings settings)
+    {
+        return new Client(settings);
     }
 
     /// <summary>

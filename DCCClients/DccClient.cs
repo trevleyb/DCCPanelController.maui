@@ -8,6 +8,7 @@ public abstract class DccClient {
     public event EventHandler<DccTurnoutArgs>? TurnoutMsgReceived;
     public event EventHandler<DccRouteArgs>? RouteMsgReceived;
     public event EventHandler<DccOccupancyArgs>? OccupancyMsgReceived;
+    public event EventHandler<DccSignalArgs>? SignalMsgReceived;
 
     protected virtual void OnConnectionError(DccErrorArgs e) {
         ConnectionError?.Invoke(this, e);
@@ -27,5 +28,9 @@ public abstract class DccClient {
 
     protected virtual void OnOccupancyMsgReceived(DccOccupancyArgs e) {
         OccupancyMsgReceived?.Invoke(this, e);
+    }
+    
+    protected virtual void OnSignalMsgReceived(DccSignalArgs e) {
+        SignalMsgReceived?.Invoke(this, e);
     }
 }

@@ -1,5 +1,6 @@
 using DCCClients;
 using DCCClients.Events;
+using DCCClients.Interfaces;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
@@ -38,6 +39,7 @@ public sealed class ConnectionService {
             _dccClient.Disconnect();
             _dccClient.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
             _dccClient.RouteMsgReceived -= DccClientOnRouteMsgReceived;
+            _dccClient.SignalMsgReceived -= DccClientOnSignalMsgReceived;
         }
         _dccClient = null;
         OnConnectionChanged();
@@ -56,12 +58,13 @@ public sealed class ConnectionService {
 
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
-        _dccClient = DccClientFactory.Create(connection.Settings);
+        _dccClient = CreateClient(connection.Settings);
         var result = await _dccClient.ConnectAsync();
         if (result.IsFailure) _dccClient = new DccInvalidClient(connection.Settings);
 
         _dccClient.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
         _dccClient.RouteMsgReceived += DccClientOnRouteMsgReceived;
+        _dccClient.SignalMsgReceived += DccClientOnSignalMsgReceived;
         return _dccClient;
     }
 
@@ -114,8 +117,42 @@ public sealed class ConnectionService {
             Console.WriteLine($"Turnout Added {turnout.Name} is now {turnout.State}");
         }
     }
+    
+    /// <summary>
+    ///     Global update of any Signals that appear once we do a connection.
+    /// </summary>
+    private void DccClientOnSignalMsgReceived(object? sender, DccSignalArgs e) {
+        Signal? signal = null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.DccAddress) ?? null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress == e.SignalId) ?? null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress == e.DccAddress) ?? null;
+        if (signal is not null) {
+            signal.Aspect = e.Aspect;
+            Console.WriteLine($"Signal Updated {signal.Name} is now {signal.Aspect}");
+        } else if (_profile is not null && _profile.Signals is not null) {
+            signal = new Signal {
+                Name = e.SignalId,
+                Id = e.SignalId,
+                DccAddress = e.DccAddress,
+                Aspect = e.Aspect
+            };
+            _profile.Signals.Add(signal);
+            Console.WriteLine($"Signal Added {signal.Name} with aspect {signal.Aspect}");
+        }
+    }
 
     private void OnConnectionChanged() {
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { IsConnected = IsConnected });
+    }
+    
+    public static IDccClient CreateClient(IDccSettings settings) {
+        return settings.Type.ToLowerInvariant() switch {
+            "withrottle" => new DccWiThrottleClient(settings),
+            "jmri"       => new DccJmriClient(settings),
+            _            => throw new NotImplementedException("Unknown client requested: {name}")
+        };
     }
 }

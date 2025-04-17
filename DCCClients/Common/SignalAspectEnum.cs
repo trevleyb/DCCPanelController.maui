@@ -1,4 +1,4 @@
-namespace DCCClients.WiThrottle.Client;
+namespace DCCClients.Common;
 
 [Flags]
 public enum SignalAspectEnum {

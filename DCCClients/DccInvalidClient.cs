@@ -1,15 +1,13 @@
 using DCCClients.Common;
 using DCCClients.Interfaces;
-using DCCClients.JMRI;
-using DCCClients.WiThrottle.Client;
 
 namespace DCCClients;
 
 public class DccInvalidClient : DccClient, IDccClient {
-    private JmriSettings? _settings;
+    private IDccSettings? _settings;
 
     public DccInvalidClient(IDccSettings? settings) {
-        _settings = settings as JmriSettings;
+        _settings = settings;
     }
 
     /// <summary>
