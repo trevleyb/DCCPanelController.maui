@@ -42,46 +42,40 @@ public class JmriClient {
 
         if (!string.IsNullOrEmpty(turnoutData)) {
             var turnouts = JsonDocument.Parse(turnoutData).RootElement;
-
             foreach (var turnout in turnouts.EnumerateArray()) {
                 var args = ParseTurnoutData(turnout);
-                TurnoutChanged?.Invoke(this, args);
+                if (args is not null) TurnoutChanged?.Invoke(this, args);
             }
         }
 
         // Fetch initial route data and raise events
         var routeData = await FetchInitialDataWithRetriesAsync("/json/routes");
-
         if (!string.IsNullOrEmpty(routeData)) {
             var routes = JsonDocument.Parse(routeData).RootElement;
-
             foreach (var route in routes.EnumerateArray()) {
                 var args = ParseRouteData(route);
-                RouteChanged?.Invoke(this, args);
+                if (args is not null) RouteChanged?.Invoke(this, args);
             }
         }
 
         // Fetch initial occupancy data and raise events
         var occupancyData = await FetchInitialDataWithRetriesAsync("/json/blocks");
-
         if (!string.IsNullOrEmpty(occupancyData)) {
             var blocks = JsonDocument.Parse(occupancyData).RootElement;
-
             foreach (var block in blocks.EnumerateArray()) {
                 var args = ParseOccupancyData(block);
-                OccupancyChanged?.Invoke(this, args);
+                if (args is not null) OccupancyChanged?.Invoke(this, args);
             }
         }
 
         // Fetch initial signal data and raise events
-        var signalData = await FetchInitialDataWithRetriesAsync("/json/signalHeads");
+        var signalData = await FetchInitialDataWithRetriesAsync("/json/signalMasts");
 
         if (!string.IsNullOrEmpty(signalData)) {
             var signals = JsonDocument.Parse(signalData).RootElement;
-
             foreach (var signal in signals.EnumerateArray()) {
                 var args = ParseSignalData(signal);
-                SignalChanged?.Invoke(this, args);
+                if (args is not null) SignalChanged?.Invoke(this, args);
             }
         }
     }
@@ -113,7 +107,6 @@ public class JmriClient {
         while (!token.IsCancellationRequested) {
             if (_webSocket.State != WebSocketState.Open) {
                 Console.WriteLine("WebSocket connection lost. Attempting to reconnect...");
-
                 try {
                     await ConnectWebSocketAsync();
                     Console.WriteLine("WebSocket reconnected.");
@@ -121,7 +114,6 @@ public class JmriClient {
                     Console.WriteLine($"Reconnection failed: {ex.Message}");
                 }
             }
-
             await Task.Delay(5000, token); // Use token-aware delay
         }
 
@@ -144,27 +136,26 @@ public class JmriClient {
                     switch (type.GetString()) {
                     case "turnout":
                         var turnoutArgs = ParseTurnoutData(root);
-                        TurnoutChanged?.Invoke(this, turnoutArgs);
+                        if (turnoutArgs is not null) TurnoutChanged?.Invoke(this, turnoutArgs);
                         break;
 
                     case "route":
                         var routeArgs = ParseRouteData(root);
-                        RouteChanged?.Invoke(this, routeArgs);
+                        if (routeArgs is not null) RouteChanged?.Invoke(this, routeArgs);
                         break;
 
                     case "block":
                         var occupancyArgs = ParseOccupancyData(root);
-                        OccupancyChanged?.Invoke(this, occupancyArgs);
+                        if (occupancyArgs is not null) OccupancyChanged?.Invoke(this, occupancyArgs);
                         break;
                         
                     case "signalHead":
                         var signalArgs = ParseSignalData(root);
-                        SignalChanged?.Invoke(this, signalArgs);
+                        if (signalArgs is not null) SignalChanged?.Invoke(this, signalArgs);
                         break;
                     }
                 }
             } catch (OperationCanceledException) {
-                // Gracefully handle cancellation
                 Console.WriteLine("Listener task canceled.");
                 break;
             } catch (Exception ex) {
@@ -234,78 +225,24 @@ public class JmriClient {
         await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
     }
 
-    private TurnoutEventArgs ParseTurnoutData(JsonElement data) {
-        return new TurnoutEventArgs {
-            Identifier = GetJsonValue<string>(data, "name") ?? "UNKNOWN",
-            DccAddress = GetJsonValue<int>(data, "dccAddress"),
-            State = GetJsonValue<string>(data, "state") ?? "UNKNOWN",
-            IsLocked = GetJsonValue<bool>(data, "locked")
-        };
+    private TurnoutEventArgs? ParseTurnoutData(JsonElement data) {
+        var dataStr = data.GetString();
+        return !string.IsNullOrEmpty(dataStr) ? new TurnoutEventArgs(dataStr) : null;
     }
 
-    private RouteEventArgs ParseRouteData(JsonElement data) {
-        var routeStates = new Dictionary<string, string>();
-
-        if (data.TryGetProperty("turnouts", out var turnouts) && turnouts.ValueKind == JsonValueKind.Array) {
-            foreach (var turnout in turnouts.EnumerateArray()) {
-                var turnoutId = GetJsonValue<string>(data, "name") ?? "UNKNOWN";
-                var turnoutState = GetJsonValue<string>(data, "state") ?? "UNKNOWN";
-                routeStates[turnoutId] = turnoutState;
-            }
-        }
-
-        return new RouteEventArgs {
-            Identifier = GetJsonValue<string>(data, "name") ?? "UNKNOWN",
-            State = GetJsonValue<string>(data, "state") ?? "UNKNOWN",
-            TurnoutStates = routeStates,
-            Metadata = GetJsonValue<string>(data, "metadata")
-        };
+    private RouteEventArgs? ParseRouteData(JsonElement data) {
+        var dataStr = data.GetString();
+        return !string.IsNullOrEmpty(dataStr) ? new RouteEventArgs(dataStr) : null;
     }
 
-    private OccupancyEventArgs ParseOccupancyData(JsonElement data) {
-        return new OccupancyEventArgs {
-            Identifier = GetJsonValue<string>(data, "name") ?? "UNKNOWN",
-            IsOccupied = GetJsonValue<bool>(data, "occupied"),
-            TrainId = GetJsonValue<string>(data, "trainId") ?? "UNKNOWN",
-            Metadata = GetJsonValue<string>(data, "metadata")
-        };
+    private OccupancyEventArgs? ParseOccupancyData(JsonElement data) {
+        var dataStr = data.GetString();
+        return !string.IsNullOrEmpty(dataStr) ? new OccupancyEventArgs(dataStr) : null;
     }
     
-    private SignalEventArgs ParseSignalData(JsonElement data) {
-        var stateString = GetJsonValue<string>(data, "state") ?? "DARK";
-        var aspect = ConvertStateToAspect(stateString);
-        
-        return new SignalEventArgs {
-            Identifier = GetJsonValue<string>(data, "name") ?? "UNKNOWN",
-            DccAddress = GetJsonValue<int>(data, "dccAddress"),
-            State = stateString,
-            Aspect = aspect,
-            Metadata = GetJsonValue<string>(data, "metadata")
-        };
-    }
-    
-    private SignalAspectEnum ConvertStateToAspect(string state) {
-        return state.ToUpperInvariant() switch {
-            "RED" => SignalAspectEnum.Red,
-            "YELLOW" => SignalAspectEnum.Yellow,
-            "GREEN" => SignalAspectEnum.Green,
-            "FLASHRED" => SignalAspectEnum.FlashRed,
-            "FLASHYELLOW" => SignalAspectEnum.FlashYellow,
-            "FLASHGREEN" => SignalAspectEnum.FlashGreen,
-            "RED_OVER_YELLOW" => SignalAspectEnum.RedYellow,
-            "RED_OVER_GREEN" => SignalAspectEnum.RedGreen,
-            "YELLOW_OVER_GREEN" => SignalAspectEnum.YellowGreen,
-            "DARK" => SignalAspectEnum.Off,
-            _ => SignalAspectEnum.Off
-        };
-    }
-
-    private T? GetJsonValue<T>(JsonElement element, string propertyName) {
-        if (element.TryGetProperty(propertyName, out var property) && property.ValueKind != JsonValueKind.Null) {
-            return JsonSerializer.Deserialize<T>(property.GetRawText());
-        }
-
-        return default;
+    private SignalEventArgs? ParseSignalData(JsonElement data) {
+        var dataStr = data.GetString();
+        return !string.IsNullOrEmpty(dataStr) ? new SignalEventArgs(dataStr) : null;
     }
 
     public static void DumpObjectProperties(object? obj) {

@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients;
+using DCCClients.Jmri.JMRI.DataBlocks;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -89,8 +90,8 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private async Task DeleteTurnoutAsync(Turnout turnout) {
-        Turnouts.Remove(turnout);
+    private async Task DeleteTurnoutAsync(Turnout Turnout) {
+        Turnouts.Remove(Turnout);
         OnPropertyChanged(nameof(Turnouts));
         Profile.Save();
     }

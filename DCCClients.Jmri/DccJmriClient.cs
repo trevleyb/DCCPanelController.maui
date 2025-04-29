@@ -47,8 +47,7 @@ public class DccJmriClient : DccClient, IDccClient {
     /// <summary>
     /// Creates a new JmriClient instance. Can be overridden in tests to provide a mock.
     /// </summary>
-    protected virtual JmriClient CreateJmriClient(JmriSettings settings)
-    {
+    protected virtual JmriClient CreateJmriClient(JmriSettings settings) {
         return new JmriClient(settings);
     }
 
@@ -57,15 +56,11 @@ public class DccJmriClient : DccClient, IDccClient {
     /// </summary>
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
-        if (_jmriClient == null) {
-            return Result.Fail(new Error("No previous connection to reconnect to"));
-        }
-        
         try {
+            if (_jmriClient == null) return await ConnectAsync();
             await _jmriClient.StopAsync();
             await _jmriClient.InitializeAsync();
             await _jmriClient.StartMonitoringAsync();
-            
             _isConnected = true;
             return Result.Ok();
         }

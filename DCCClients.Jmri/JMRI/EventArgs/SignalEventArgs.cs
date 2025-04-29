@@ -1,4 +1,6 @@
+using System.Data;
 using DCCClients.Common;
+using DCCClients.Jmri.JMRI.DataBlocks;
 
 namespace DCCClients.Jmri.JMRI.EventArgs;
 
@@ -27,4 +29,39 @@ public class SignalEventArgs : System.EventArgs {
     ///     Additional metadata or information about the signal.
     /// </summary>
     public string? Metadata { get; set; }
+    
+    public SignalEventArgs(string identifier, int? dccAddress, SignalAspectEnum aspect, string state, string? metadata) {
+        Identifier = identifier;
+        DccAddress = dccAddress;
+        Aspect = aspect;
+        State = state;
+        Metadata = metadata;
+    }
+    
+    public SignalEventArgs(string jsonString) {
+        var signalData = SignalMastParser.ParseSignalMastData(jsonString);
+        if (signalData is null) throw new DataException("Invalid JSON object for SignalMast: " + jsonString);
+        Identifier = signalData.Data.UserName;
+        DccAddress = int.Parse(signalData.Data.Name);
+        Aspect =  ConvertStateToAspect(signalData.Data.Aspect);
+        State = signalData.Data.State;
+    }
+    
+    private SignalAspectEnum ConvertStateToAspect(string state) {
+        return state.ToUpperInvariant() switch {
+            "RED"               => SignalAspectEnum.Red,
+            "YELLOW"            => SignalAspectEnum.Yellow,
+            "GREEN"             => SignalAspectEnum.Green,
+            "FLASHRED"          => SignalAspectEnum.FlashRed,
+            "FLASHYELLOW"       => SignalAspectEnum.FlashYellow,
+            "FLASHGREEN"        => SignalAspectEnum.FlashGreen,
+            "RED_OVER_YELLOW"   => SignalAspectEnum.RedYellow,
+            "RED_OVER_GREEN"    => SignalAspectEnum.RedGreen,
+            "YELLOW_OVER_GREEN" => SignalAspectEnum.YellowGreen,
+            "DARK"              => SignalAspectEnum.Off,
+            _                   => SignalAspectEnum.Off
+        };
+    }
+
 }
+

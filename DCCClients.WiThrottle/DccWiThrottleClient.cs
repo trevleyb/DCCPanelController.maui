@@ -63,7 +63,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
         try {
-            if (_client is not null) return await _client.ConnectAsync();
+            var client = await ConnectAsync();
+            return Result.Ok(client);
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to reconnect to the Withrottle server.").CausedBy(ex));
         }
