@@ -128,11 +128,8 @@ public sealed class ConnectionService {
     private void DccClientOnSignalMsgReceived(object? sender, DccSignalArgs e) {
         Signal? signal = null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.DccAddress) ?? null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress == e.SignalId) ?? null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress == e.DccAddress) ?? null;
         if (signal is not null) {
             signal.Aspect = e.Aspect;
             Console.WriteLine($"Signal Updated {signal.Name} is now {signal.Aspect}");
@@ -140,7 +137,6 @@ public sealed class ConnectionService {
             signal = new Signal {
                 Name = e.SignalId,
                 Id = e.SignalId,
-                DccAddress = e.DccAddress,
                 Aspect = e.Aspect
             };
             _profile.Signals.Add(signal);

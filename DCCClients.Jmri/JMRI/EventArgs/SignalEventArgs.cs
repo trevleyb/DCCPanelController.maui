@@ -1,6 +1,7 @@
 using System.Data;
 using DCCClients.Common;
 using DCCClients.Jmri.JMRI.DataBlocks;
+using DCCClients.Jmri.JMRI.Helpers;
 
 namespace DCCClients.Jmri.JMRI.EventArgs;
 
@@ -9,11 +10,6 @@ public class SignalEventArgs : System.EventArgs {
     ///     The unique identifier of the signal.
     /// </summary>
     public string Identifier { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     The DCC address of the signal, if applicable.
-    /// </summary>
-    public int? DccAddress { get; set; }
 
     /// <summary>
     ///     The current aspect of the signal.
@@ -30,9 +26,8 @@ public class SignalEventArgs : System.EventArgs {
     /// </summary>
     public string? Metadata { get; set; }
     
-    public SignalEventArgs(string identifier, int? dccAddress, SignalAspectEnum aspect, string state, string? metadata) {
+    public SignalEventArgs(string identifier, SignalAspectEnum aspect, string state, string? metadata) {
         Identifier = identifier;
-        DccAddress = dccAddress;
         Aspect = aspect;
         State = state;
         Metadata = metadata;
@@ -42,7 +37,6 @@ public class SignalEventArgs : System.EventArgs {
         var signalData = SignalMastParser.ParseSignalMastData(jsonString);
         if (signalData is null) throw new DataException("Invalid JSON object for SignalMast: " + jsonString);
         Identifier = signalData.Data.UserName;
-        DccAddress = int.Parse(signalData.Data.Name);
         Aspect =  ConvertStateToAspect(signalData.Data.Aspect);
         State = signalData.Data.State;
     }

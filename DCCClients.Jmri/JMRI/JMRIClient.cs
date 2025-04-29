@@ -70,7 +70,6 @@ public class JmriClient {
 
         // Fetch initial signal data and raise events
         var signalData = await FetchInitialDataWithRetriesAsync("/json/signalMasts");
-
         if (!string.IsNullOrEmpty(signalData)) {
             var signals = JsonDocument.Parse(signalData).RootElement;
             foreach (var signal in signals.EnumerateArray()) {
@@ -78,6 +77,10 @@ public class JmriClient {
                 if (args is not null) SignalChanged?.Invoke(this, args);
             }
         }
+        
+        Console.WriteLine("------------------------------------------------------------------------------------");
+        Console.WriteLine("INITIAL DATA FETCH FINISHED ::: Waiting on Events...");
+        Console.WriteLine("------------------------------------------------------------------------------------");
     }
 
     public virtual async Task StartMonitoringAsync() {
@@ -226,26 +229,27 @@ public class JmriClient {
     }
 
     private TurnoutEventArgs? ParseTurnoutData(JsonElement data) {
-        var dataStr = data.GetString();
+        var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new TurnoutEventArgs(dataStr) : null;
     }
 
     private RouteEventArgs? ParseRouteData(JsonElement data) {
-        var dataStr = data.GetString();
+        var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new RouteEventArgs(dataStr) : null;
     }
 
     private OccupancyEventArgs? ParseOccupancyData(JsonElement data) {
-        var dataStr = data.GetString();
+        var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new OccupancyEventArgs(dataStr) : null;
     }
     
     private SignalEventArgs? ParseSignalData(JsonElement data) {
-        var dataStr = data.GetString();
+        var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new SignalEventArgs(dataStr) : null;
     }
 
     public static void DumpObjectProperties(object? obj) {
+        return;
         if (obj == null) {
             Console.WriteLine("Object is null.");
             return;

@@ -1,6 +1,7 @@
 using System.Data;
 using System.Text.Json;
 using DCCClients.Jmri.JMRI.DataBlocks;
+using DCCClients.Jmri.JMRI.Helpers;
 
 namespace DCCClients.Jmri.JMRI.EventArgs;
 
@@ -36,7 +37,7 @@ public class TurnoutEventArgs : System.EventArgs {
         var turnoutData = TurnoutParser.ParseTurnoutData(jsonString);
         if (turnoutData is null) throw new DataException("Invalid JSON object for Turnout: " + jsonString);
         Identifier = turnoutData.Data.UserName;
-        DccAddress = int.Parse(turnoutData.Data.Name);
+        DccAddress = turnoutData.Data.Name.ConvertToDCCAddress();
         State = turnoutData.Data.State == 0 ? "THROWN" : "CLOSED";
         Inverted = turnoutData.Data.Inverted;
     }

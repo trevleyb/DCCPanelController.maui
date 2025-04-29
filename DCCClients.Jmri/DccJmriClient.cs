@@ -212,8 +212,7 @@ public class DccJmriClient : DccClient, IDccClient {
         OnMessageReceived(new DccMessageArgs("Signal", $"Signal {e.Identifier} aspect changed to {e.State}"));
         
         // Raise the event
-        var dccAddress = e.DccAddress?.ToString() ?? e.Identifier;
-        OnSignalMsgReceived(new DccSignalArgs(dccAddress, e.Identifier, e.Aspect));
+        OnSignalMsgReceived(new DccSignalArgs(e.Identifier, e.Aspect));
     }
     
     #endregion
