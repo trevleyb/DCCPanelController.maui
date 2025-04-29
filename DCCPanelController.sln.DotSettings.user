@@ -228,11 +228,20 @@
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ECSharpPlaceEmbeddedOnSameLineMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ECSharpUseContinuousIndentInsideBracesMigration/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/Environment/SettingsMigration/IsMigratorApplied/=JetBrains_002EReSharper_002EPsi_002ECSharp_002ECodeStyle_002ESettingsUpgrade_002EMigrateBlankLinesAroundFieldToBlankLinesAroundProperty/@EntryIndexedValue">True</s:Boolean>
-	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=050d78dd_002Dc212_002D43a7_002D9b94_002D2153b386cd9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="RunClientTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=04e2406d_002D218e_002D4689_002Dab2b_002Dfc95397f72dd/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="ServiceDiscoveryConsoleTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;TestAncestor&gt;
-    &lt;TestId&gt;NUnit3x::2F9022A3-B795-4F17-B974-35163D06B116::net8.0::DCCWithrottleClient.Tests.ClientTest&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::642F352C-9E04-45BA-9EC2-9B8EAF49C868::net9.0::DCCJMRIClient.Tests.JmriClientTests&lt;/TestId&gt;
-    &lt;TestId&gt;NUnit3x::642F352C-9E04-45BA-9EC2-9B8EAF49C868::net9.0::DCCJMRIClient.Tests.JmriClienttestsLive+JmriClientIntegrationTests&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::4D70A1AA-486F-415F-9210-F26BE1762B9E::net9.0::DCCClients.Test.Discovery.ServiceDiscoveryConsoleTest&lt;/TestId&gt;
+    &lt;TestId&gt;NUnit3x::4D70A1AA-486F-415F-9210-F26BE1762B9E::net9.0::DCCClients.Test.JmriClientIntegrationTests&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=050d78dd_002Dc212_002D43a7_002D9b94_002D2153b386cd9d/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="RunClientTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::4D70A1AA-486F-415F-9210-F26BE1762B9E::net9.0::DCCClients.Test.Discovery.ServiceDiscoveryConsoleTest&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=0f1092bc_002D37c6_002D4ce2_002Db1a9_002Daf2276895c18/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="ServiceDiscoveryConsoleTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;NUnit3x::4D70A1AA-486F-415F-9210-F26BE1762B9E::net9.0::DCCClients.Test.Discovery.ServiceDiscoveryConsoleTest&lt;/TestId&gt;
   &lt;/TestAncestor&gt;
 &lt;/SessionState&gt;</s:String>
 	

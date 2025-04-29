@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
@@ -99,8 +100,8 @@ public class JmriClient {
 
             _webSocket.Dispose(); // Dispose of the previous instance if needed
             _webSocket = WebSocketFactory();
-
-            await _webSocket.ConnectAsync(new Uri($"{_jmriUrl}/websocket"), CancellationToken.None);
+            var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
+            await _webSocket.ConnectAsync(new Uri(wsUri), CancellationToken.None);
             Console.WriteLine("WebSocket connected.");
         } catch (Exception ex) {
             Console.WriteLine($"WebSocket connection failed: {ex.Message}");
@@ -177,8 +178,9 @@ public class JmriClient {
     private async Task<string> FetchInitialDataWithRetriesAsync(string endpoint, int maxRetries = 3, int delayMilliseconds = 1000) {
         for (var attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                using var httpClient = _httpClient;
-                return await httpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
+                //using var httpClient = _httpClient;
+                Debug.WriteLine($"{_jmriUrl}{endpoint}");
+                return await _httpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
             } catch (Exception ex) {
                 Console.WriteLine($"Attempt {attempt + 1} to fetch {endpoint} failed: {ex.Message}");
                 if (attempt == maxRetries - 1) throw; // Rethrow on final attempt

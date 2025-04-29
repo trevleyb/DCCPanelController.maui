@@ -35,6 +35,7 @@
         <string>We need access to the local network to scan for WiThrottle Services</string>
         <key>NSBonjourServices</key>
         <array>
+            <string>_http._tcp</string>
             <string>_withrottle._tcp</string>
             <string>_service._tcp</string>
         </array>
