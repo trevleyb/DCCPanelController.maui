@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using DCCClients.Common;
 using DCCClients.Jmri.JMRI.Commands;
+using DCCClients.Jmri.JMRI.DataBlocks;
 using DCCClients.Jmri.JMRI.EventArgs;
 
 namespace DCCClients.Jmri.JMRI;
@@ -14,6 +15,10 @@ public class JmriClient {
     };
 
     private readonly string _jmriUrl;
+    private readonly Dictionary<string, string> _previousTurnoutStates = new();
+    private readonly Dictionary<string, string> _previousRouteStates = new();
+    private readonly Dictionary<string, string> _previousOccupancyStates = new();
+    private readonly Dictionary<string, string> _previousSignalStates = new();
 
     private CancellationTokenSource? _cancellationTokenSource;
     private IWebSocket _webSocket = new WebSocketWrapper();
@@ -21,10 +26,6 @@ public class JmriClient {
     public JmriClient(IDccSettings settings) {
         if (settings is JmriSettings info) {
             _jmriUrl = info.JmriServerUrl.TrimEnd('/');
-            TurnoutChanged += (_, args) => DumpObjectProperties(args);
-            RouteChanged += (_, args) => DumpObjectProperties(args);
-            OccupancyChanged += (_, args) => DumpObjectProperties(args);
-            SignalChanged += (_, args) => DumpObjectProperties(args);
         } else throw new ArgumentException("Invalid settings provided.");
     }
 
@@ -37,46 +38,14 @@ public class JmriClient {
     public event EventHandler<SignalEventArgs>? SignalChanged;
 
     public virtual async Task InitializeAsync() {
-        // Fetch initial turnout data and raise events
-        var turnoutData = await FetchInitialDataWithRetriesAsync("/json/turnouts");
 
-        if (!string.IsNullOrEmpty(turnoutData)) {
-            var turnouts = JsonDocument.Parse(turnoutData).RootElement;
-            foreach (var turnout in turnouts.EnumerateArray()) {
-                var args = ParseTurnoutData(turnout);
-                if (args is not null) TurnoutChanged?.Invoke(this, args);
-            }
-        }
-
-        // Fetch initial route data and raise events
-        var routeData = await FetchInitialDataWithRetriesAsync("/json/routes");
-        if (!string.IsNullOrEmpty(routeData)) {
-            var routes = JsonDocument.Parse(routeData).RootElement;
-            foreach (var route in routes.EnumerateArray()) {
-                var args = ParseRouteData(route);
-                if (args is not null) RouteChanged?.Invoke(this, args);
-            }
-        }
-
-        // Fetch initial occupancy data and raise events
-        var occupancyData = await FetchInitialDataWithRetriesAsync("/json/blocks");
-        if (!string.IsNullOrEmpty(occupancyData)) {
-            var blocks = JsonDocument.Parse(occupancyData).RootElement;
-            foreach (var block in blocks.EnumerateArray()) {
-                var args = ParseOccupancyData(block);
-                if (args is not null) OccupancyChanged?.Invoke(this, args);
-            }
-        }
-
-        // Fetch initial signal data and raise events
-        var signalData = await FetchInitialDataWithRetriesAsync("/json/signalMasts");
-        if (!string.IsNullOrEmpty(signalData)) {
-            var signals = JsonDocument.Parse(signalData).RootElement;
-            foreach (var signal in signals.EnumerateArray()) {
-                var args = ParseSignalData(signal);
-                if (args is not null) SignalChanged?.Invoke(this, args);
-            }
-        }
+        // Clear any previous existing states. These will be updated when we initially poll for 
+        // the data and will update the dictionaries for tracking data changes. 
+        // ------------------------------------------------------------------------------------
+        _previousTurnoutStates.Clear();
+        _previousRouteStates.Clear();
+        _previousOccupancyStates.Clear();
+        _previousSignalStates.Clear();
         
         Console.WriteLine("------------------------------------------------------------------------------------");
         Console.WriteLine("INITIAL DATA FETCH FINISHED ::: Waiting on Events...");
@@ -94,8 +63,7 @@ public class JmriClient {
     private async Task ConnectWebSocketAsync() {
         try {
             if (_webSocket.State == WebSocketState.Open) return;
-
-            _webSocket.Dispose(); // Dispose of the previous instance if needed
+            _webSocket?.Dispose(); // Dispose of the previous instance if needed
             _webSocket = WebSocketFactory();
             var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
             await _webSocket.ConnectAsync(new Uri(wsUri), CancellationToken.None);
@@ -106,8 +74,22 @@ public class JmriClient {
         }
     }
 
+    private async Task DisconnectWebSocketAsync() {
+        try {
+            if (_webSocket.State == WebSocketState.Open) {
+                await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Terminating Connection", CancellationToken.None);
+            }
+            _webSocket?.Dispose(); // Dispose of the previous instance if needed
+            Console.WriteLine("WebSocket disconnected.");
+        } catch (Exception ex) {
+            Console.WriteLine($"WebSocket disconnect failed: {ex.Message}");
+            throw; // Rethrow to let the caller handle retries
+        }
+    }
+    
     private async Task MonitorWebSocketAsync(CancellationToken token) {
         while (!token.IsCancellationRequested) {
+            Console.WriteLine($"MonitorWebSocketAsync running... State={_webSocket.State}");
             if (_webSocket.State != WebSocketState.Open) {
                 Console.WriteLine("WebSocket connection lost. Attempting to reconnect...");
                 try {
@@ -119,54 +101,70 @@ public class JmriClient {
             }
             await Task.Delay(5000, token); // Use token-aware delay
         }
-
+        await DisconnectWebSocketAsync();
         Console.WriteLine("MonitorWebSocketAsync stopped.");
     }
 
     private async Task ListenForEventsAsync(CancellationToken token) {
-        var buffer = new byte[4096];
+        // Define polling interval
+        const int pollingIntervalMs = 1000; // Poll every second, adjust as needed
 
-        while (!token.IsCancellationRequested && _webSocket.State == WebSocketState.Open) {
+        Console.WriteLine("Starting polling for state changes...");
+        while (!token.IsCancellationRequested) {
             try {
-                var result = await _webSocket.ReceiveAsync(buffer, token);
-                var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
-
-                // Parse the JSON message and raise appropriate events
-                var data = JsonDocument.Parse(message);
-                var root = data.RootElement;
-
-                if (root.TryGetProperty("type", out var type)) {
-                    switch (type.GetString()) {
-                    case "turnout":
-                        var turnoutArgs = ParseTurnoutData(root);
-                        if (turnoutArgs is not null) TurnoutChanged?.Invoke(this, turnoutArgs);
-                        break;
-
-                    case "route":
-                        var routeArgs = ParseRouteData(root);
-                        if (routeArgs is not null) RouteChanged?.Invoke(this, routeArgs);
-                        break;
-
-                    case "block":
-                        var occupancyArgs = ParseOccupancyData(root);
-                        if (occupancyArgs is not null) OccupancyChanged?.Invoke(this, occupancyArgs);
-                        break;
-                        
-                    case "signalHead":
-                        var signalArgs = ParseSignalData(root);
-                        if (signalArgs is not null) SignalChanged?.Invoke(this, signalArgs);
-                        break;
-                    }
+                if (_webSocket.State == WebSocketState.Open) {
+                    await PollForChanges("/json/turnouts", _previousTurnoutStates, ParseTurnoutData, TurnoutChanged, token);
+                    await PollForChanges("/json/routes", _previousRouteStates, ParseRouteData, RouteChanged, token);
+                    await PollForChanges("/json/blocks", _previousOccupancyStates, ParseOccupancyData, OccupancyChanged, token);
+                    await PollForChanges("/json/signalMasts", _previousSignalStates, ParseSignalData, SignalChanged, token);
                 }
+                await Task.Delay(pollingIntervalMs, token);
             } catch (OperationCanceledException) {
-                Console.WriteLine("Listener task canceled.");
+                Console.WriteLine("Polling task canceled.");
                 break;
             } catch (Exception ex) {
-                Console.WriteLine($"Error in WebSocket listener: {ex.Message}");
+                Console.WriteLine($"Error in polling: {ex.Message}");
+                await Task.Delay(2000, token);
             }
         }
-
         Console.WriteLine("ListenForEventsAsync stopped.");
+    }
+
+    private async Task PollForChanges<T>(string endpoint,
+                                         Dictionary<string, string> previousStates,
+                                         Func<JsonElement, T?> parseData,
+                                         EventHandler<T>? eventHandler,
+                                         CancellationToken token,
+                                         string? identifierField = "name",
+                                         string? stateField = "state") where T : class {
+        try {
+            var currentData = await FetchInitialDataWithRetriesAsync(endpoint, maxRetries: 1);
+            if (string.IsNullOrEmpty(currentData)) return;
+
+            var items = JsonDocument.Parse(currentData).RootElement;
+            foreach (var item in items.EnumerateArray()) {
+                if (item.TryGetProperty("data", out var dataProperty) &&
+                    dataProperty.TryGetProperty(identifierField ?? "name", out var nameProperty) &&
+                    dataProperty.TryGetProperty(stateField ?? "state", out var stateProperty)) {
+
+                    var name = nameProperty.ToString() ?? "";
+                    var currentState = stateProperty.ToString()?? "";;
+
+                    // Check if this is a new item or its state has changed
+                    if (!string.IsNullOrEmpty(name)) {
+                        if (!previousStates.TryGetValue(name, out var previousState) || previousState != currentState) {
+                            var args = parseData(item);
+                            if (args != null && eventHandler != null) {
+                                eventHandler.Invoke(this, args);
+                            }
+                            previousStates[name] = currentState;
+                        }
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error polling {endpoint}: {ex.Message}");
+        }
     }
 
     private async Task<string> FetchInitialDataWithRetriesAsync(string endpoint, int maxRetries = 3, int delayMilliseconds = 1000) {
@@ -215,7 +213,7 @@ public class JmriClient {
         var command = new { type = "route", identifier = routeIdentifier };
         await SendCommandAsync(command);
     }
-    
+
     public virtual async Task SendSignalCommandAsync(string identifier, SignalAspectEnum aspect) {
         var signalCommand = new SignalCommand(identifier, aspect);
         var command = new { type = "signalHead", identifier, state = signalCommand.GetAspectString() };
@@ -242,29 +240,9 @@ public class JmriClient {
         var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new OccupancyEventArgs(dataStr) : null;
     }
-    
+
     private SignalEventArgs? ParseSignalData(JsonElement data) {
         var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new SignalEventArgs(dataStr) : null;
-    }
-
-    public static void DumpObjectProperties(object? obj) {
-        return;
-        if (obj == null) {
-            Console.WriteLine("Object is null.");
-            return;
-        }
-
-        var type = obj.GetType();
-        Console.WriteLine($"Dumping properties for {type.Name}:");
-
-        foreach (var property in type.GetProperties()) {
-            try {
-                var value = property.GetValue(obj) ?? "null";
-                Console.WriteLine($"  {property.Name}: {value}");
-            } catch (Exception ex) {
-                Console.WriteLine($"  {property.Name}: Error retrieving value ({ex.Message})");
-            }
-        }
     }
 }

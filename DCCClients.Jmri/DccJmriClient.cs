@@ -77,17 +77,9 @@ public class DccJmriClient : DccClient, IDccClient {
     public IResult Disconnect() {
         try {
             if (_jmriClient != null) {
-                // Unsubscribe from events
-                _jmriClient.TurnoutChanged -= OnJmriTurnoutChanged;
-                _jmriClient.RouteChanged -= OnJmriRouteChanged;
-                _jmriClient.OccupancyChanged -= OnJmriOccupancyChanged;
-                _jmriClient.SignalChanged -= OnJmriSignalChanged;
-                
-                // Stop the client
                 _jmriClient.StopAsync().Wait();
                 _jmriClient = null;
             }
-            
             _isConnected = false;
             return Result.Ok();
         }
@@ -212,7 +204,7 @@ public class DccJmriClient : DccClient, IDccClient {
         OnMessageReceived(new DccMessageArgs("Signal", $"Signal {e.Identifier} aspect changed to {e.State}"));
         
         // Raise the event
-        OnSignalMsgReceived(new DccSignalArgs(e.Identifier, e.Aspect));
+        OnSignalMsgReceived(new DccSignalArgs(e.Identifier, e.State));
     }
     
     #endregion

@@ -6,24 +6,9 @@ using DCCClients.Jmri.JMRI.Helpers;
 namespace DCCClients.Jmri.JMRI.EventArgs;
 
 public class TurnoutEventArgs : System.EventArgs {
-    /// <summary>
-    ///     The unique identifier of the turnout.
-    /// </summary>
-    public string Identifier { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     The DCC address of the turnout, if applicable.
-    /// </summary>
+    public string Identifier { get; set; }
     public int? DccAddress { get; set; }
-
-    /// <summary>
-    ///     The current state of the turnout (e.g., "THROWN", "CLOSED").
-    /// </summary>
-    public string State { get; set; } = string.Empty;
-
-    /// <summary>
-    ///     Indicates whether the turnout is locked.
-    /// </summary>
+    public string State { get; set; }
     public bool Inverted { get; set; }
 
     public TurnoutEventArgs(string identifier, int? dccAddress, string state) {

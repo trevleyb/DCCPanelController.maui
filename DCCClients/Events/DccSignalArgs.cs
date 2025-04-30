@@ -2,7 +2,7 @@ using DCCClients.Common;
 
 namespace DCCClients.Events;
 
-public class DccSignalArgs(string signalId, SignalAspectEnum aspect) : EventArgs {
+public class DccSignalArgs(string signalId, string aspect) : EventArgs {
     public string SignalId { get; } = signalId;
-    public SignalAspectEnum Aspect { get; } = aspect;
+    public string Aspect { get; } = aspect;
 }

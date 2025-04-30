@@ -10,7 +10,7 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Signal : ObservableObject {
-    [ObservableProperty] private SignalAspectEnum _aspect = SignalAspectEnum.Off;
+    [ObservableProperty] private string _aspect = "Off";
     [ObservableProperty] private string _dccAddress;
 
     [ObservableProperty] private string? _id;

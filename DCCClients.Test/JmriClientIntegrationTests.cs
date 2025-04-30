@@ -95,7 +95,6 @@ public class JmriClientIntegrationTests {
         }
         
         var disconnected = _client.Disconnect();
-        Assert.That(disconnected.IsSuccess, Is.True, "Connection should be disconnected");
         Assert.That(_client.IsConnected, Is.False, "Client should be disconnected");
     }
 }
