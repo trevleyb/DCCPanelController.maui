@@ -8,7 +8,7 @@ namespace DCCClients.Discovery
     /// <summary>
     /// Discovers WiThrottle servers on the local network
     /// </summary>
-    public class WiThrottleServiceDiscovery
+    public class WiThrottleServiceDiscovery : IServiceDiscovery
     {
         private readonly INetworkServiceDiscovery _discovery;
         
@@ -27,22 +27,21 @@ namespace DCCClients.Discovery
         /// <param name="timeoutSeconds">How long to search for services in seconds</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of discovered WiThrottle servers</returns>
-        public async Task<List<DiscoveredService>> DiscoverWiThrottleServersAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default)
+        public async Task<List<DiscoveredService>> DiscoverServersAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default)
         {
             // WiThrottle servers advertise as _withrottle._tcp.local
             return await _discovery.DiscoverServicesAsync("_withrottle._tcp.local", timeoutSeconds, cancellationToken);
         }
-        
+
         /// <summary>
         /// Gets the address and port pairs for discovered WiThrottle servers
         /// </summary>
         /// <param name="timeoutSeconds">How long to search for services in seconds</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of (address, port) tuples for WiThrottle servers</returns>
-        public async Task<List<(string Address, int Port)>> DiscoverWiThrottleServerAddressesAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default)
-        {
-            var servers = await DiscoverWiThrottleServersAsync(timeoutSeconds, cancellationToken);
-            
+        public async Task<List<string>> DiscoverServerUrlsAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default) { 
+            var servers = await DiscoverServersAsync(timeoutSeconds, cancellationToken);
+           
             return servers.Select(s => 
             {
                 // Get the preferred address (IPv4 if available)
@@ -57,7 +56,7 @@ namespace DCCClients.Discovery
                     address = address.Substring(0, address.Length - 1);
                 }
                 
-                return (address, s.Port);
+                return $"{address}:{s.Port}";
             }).ToList();
         }
     }

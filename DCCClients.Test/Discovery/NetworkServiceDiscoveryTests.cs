@@ -65,8 +65,8 @@ namespace DCCClients.Test.Discovery
             
             // Act
             Console.WriteLine("Discovering JMRI servers...");
-            var servers = await _jmriDiscovery.DiscoverJmriServersAsync(timeoutSeconds);
-            var urls = await _jmriDiscovery.DiscoverJmriServerUrlsAsync(timeoutSeconds);
+            var servers = await _jmriDiscovery.DiscoverServersAsync(timeoutSeconds);
+            var urls = await _jmriDiscovery.DiscoverServerUrlsAsync(timeoutSeconds);
             
             // Assert
             Console.WriteLine($"Found {servers.Count} JMRI servers:");
@@ -100,8 +100,8 @@ namespace DCCClients.Test.Discovery
             
             // Act
             Console.WriteLine("Discovering WiThrottle servers...");
-            var servers = await _wiThrottleDiscovery.DiscoverWiThrottleServersAsync(timeoutSeconds);
-            var addresses = await _wiThrottleDiscovery.DiscoverWiThrottleServerAddressesAsync(timeoutSeconds);
+            var servers = await _wiThrottleDiscovery.DiscoverServersAsync(timeoutSeconds);
+            var addresses = await _wiThrottleDiscovery.DiscoverServerUrlsAsync(timeoutSeconds);
             
             // Assert
             Console.WriteLine($"Found {servers.Count} WiThrottle servers:");
@@ -116,9 +116,9 @@ namespace DCCClients.Test.Discovery
             }
             
             Console.WriteLine("WiThrottle Server Addresses:");
-            foreach (var (address, port) in addresses)
+            foreach (var url in addresses)
             {
-                Console.WriteLine($"- {address}:{port}");
+                Console.WriteLine($"- {url}");
             }
             
             // We don't assert that servers were found, as there might not be any on the network
@@ -138,7 +138,7 @@ namespace DCCClients.Test.Discovery
             
             // Discover JMRI servers
             Console.WriteLine("\n=== JMRI SERVERS ===");
-            var jmriServers = await _jmriDiscovery.DiscoverJmriServersAsync(timeoutSeconds);
+            var jmriServers = await _jmriDiscovery.DiscoverServersAsync(timeoutSeconds);
             Console.WriteLine($"Found {jmriServers.Count} JMRI servers");
             foreach (var server in jmriServers)
             {
@@ -147,7 +147,7 @@ namespace DCCClients.Test.Discovery
             
             // Discover WiThrottle servers
             Console.WriteLine("\n=== WITHROTTLE SERVERS ===");
-            var wiThrottleServers = await _wiThrottleDiscovery.DiscoverWiThrottleServersAsync(timeoutSeconds);
+            var wiThrottleServers = await _wiThrottleDiscovery.DiscoverServersAsync(timeoutSeconds);
             Console.WriteLine($"Found {wiThrottleServers.Count} WiThrottle servers");
             foreach (var server in wiThrottleServers)
             {
@@ -183,7 +183,7 @@ namespace DCCClients.Test.Discovery
             while (true)
             {
                 Console.WriteLine("\n=== JMRI SERVERS ===");
-                var jmriServers = await _jmriDiscovery.DiscoverJmriServersAsync(2);
+                var jmriServers = await _jmriDiscovery.DiscoverServersAsync(2);
                 Console.WriteLine($"Found {jmriServers.Count} JMRI servers");
                 foreach (var server in jmriServers)
                 {
@@ -191,7 +191,7 @@ namespace DCCClients.Test.Discovery
                 }
                 
                 Console.WriteLine("\n=== WITHROTTLE SERVERS ===");
-                var wiThrottleServers = await _wiThrottleDiscovery.DiscoverWiThrottleServersAsync(2);
+                var wiThrottleServers = await _wiThrottleDiscovery.DiscoverServersAsync(2);
                 Console.WriteLine($"Found {wiThrottleServers.Count} WiThrottle servers");
                 foreach (var server in wiThrottleServers)
                 {

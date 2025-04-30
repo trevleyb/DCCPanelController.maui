@@ -26,7 +26,7 @@ namespace DCCClients.Test.Discovery
             
             // Search for JMRI servers
             Console.WriteLine("\nSearching for JMRI servers...");
-            var jmriServers = await jmriDiscovery.DiscoverJmriServersAsync(10);
+            var jmriServers = await jmriDiscovery.DiscoverServersAsync(10);
             
             if (jmriServers.Count == 0) {
                 Console.WriteLine("No JMRI servers found.");
@@ -43,7 +43,7 @@ namespace DCCClients.Test.Discovery
             
             // Search for WiThrottle servers
             Console.WriteLine("\nSearching for WiThrottle servers...");
-            var wiThrottleServers = await wiThrottleDiscovery.DiscoverWiThrottleServersAsync(10);
+            var wiThrottleServers = await wiThrottleDiscovery.DiscoverServersAsync(10);
             
             if (wiThrottleServers.Count == 0) {
                 Console.WriteLine("No WiThrottle servers found.");
@@ -57,10 +57,10 @@ namespace DCCClients.Test.Discovery
                     Console.WriteLine($"  TXT Records: {string.Join(", ", server.TxtRecords)}");
                 }
                 
-                var addresses = await wiThrottleDiscovery.DiscoverWiThrottleServerAddressesAsync(1);
+                var addresses = await wiThrottleDiscovery.DiscoverServerUrlsAsync(1);
                 Console.WriteLine("\nWiThrottle Server Addresses:");
-                foreach (var (address, port) in addresses) {
-                    Console.WriteLine($"- {address}:{port}");
+                foreach (var url in addresses) {
+                    Console.WriteLine($"- {url}");
                 }
             }
             Console.WriteLine("\nFinished.");
@@ -84,7 +84,7 @@ namespace DCCClients.Test.Discovery
                 
                 // Search for JMRI servers
                 Console.WriteLine("\n=== JMRI SERVERS ===");
-                var jmriServers = await jmriDiscovery.DiscoverJmriServersAsync(3);
+                var jmriServers = await jmriDiscovery.DiscoverServersAsync(3);
                 
                 if (jmriServers.Count == 0)
                 {
@@ -101,7 +101,7 @@ namespace DCCClients.Test.Discovery
                 
                 // Search for WiThrottle servers
                 Console.WriteLine("\n=== WITHROTTLE SERVERS ===");
-                var wiThrottleServers = await wiThrottleDiscovery.DiscoverWiThrottleServersAsync(3);
+                var wiThrottleServers = await wiThrottleDiscovery.DiscoverServersAsync(3);
                 
                 if (wiThrottleServers.Count == 0)
                 {

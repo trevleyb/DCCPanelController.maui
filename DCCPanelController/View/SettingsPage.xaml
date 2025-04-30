@@ -120,7 +120,9 @@
             HeightRequest="2"
             HorizontalOptions="FillAndExpand"/>
 
-        <StackLayout IsVisible="{Binding ShowWiServers}">
+        <!-- <StackLayout IsVisible="{Binding ShowWiServers}"> -->
+        <ScrollView>
+        <StackLayout HeightRequest="225">
             <Grid ColumnDefinitions="*,150">
                 <Label
                     Grid.Column="0"
@@ -132,7 +134,7 @@
                 </Label>
                 <Button
                     BackgroundColor="{StaticResource White}"
-                    Command="{Binding RefreshWiServersCommand}"
+                    Command="{Binding RefreshServersCommand}"
                     Grid.Column="1"
                     HorizontalOptions="End"
                     ImageSource="refresh_cw.png"
@@ -146,7 +148,7 @@
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand"/>
 
-            <RefreshView Command="{Binding RefreshWiServersCommand}" IsRefreshing="{Binding IsRefreshing}">
+            <RefreshView VerticalOptions="Start" HeightRequest="150" Command="{Binding RefreshServersCommand}" IsRefreshing="{Binding IsRefreshing}">
                 <Grid>
                     <ActivityIndicator
                         Color="{StaticResource Primary}"
@@ -204,8 +206,15 @@
                 </Grid>
             </RefreshView>
         </StackLayout>
+        </ScrollView>
+        <!-- <StackLayout IsVisible="{Binding ShowMessages}"> -->
 
-        <StackLayout IsVisible="{Binding ShowMessages}">
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="2"
+            HorizontalOptions="FillAndExpand"/>
+
+        <StackLayout>
             <Grid ColumnDefinitions="*,150">
                 <Label
                     Grid.Column="0"

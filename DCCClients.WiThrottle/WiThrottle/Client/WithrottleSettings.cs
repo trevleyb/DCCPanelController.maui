@@ -10,8 +10,8 @@ public class WithrottleSettings : DccSettings, IDccSettings {
     }
 
     public Guid Id { get; set; } = Guid.NewGuid();
-    public override string Type => "withrottle";
-    public override sealed string Name { get; set; }
+    public new string Type => "withrottle";
+    public new string Name { get; set; }
     public string GetNameMessage => $"N{Name}";
     public string GetHardwareMessage => $"HU{Id.ToString()}";
     

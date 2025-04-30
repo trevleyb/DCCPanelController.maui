@@ -20,7 +20,7 @@ namespace DCCClients.Discovery
             Console.WriteLine("Searching for JMRI servers...");
             
             // Discover JMRI servers
-            var servers = await jmriDiscovery.DiscoverJmriServersAsync();
+            var servers = await jmriDiscovery.DiscoverServersAsync();
             
             if (servers.Count == 0)
             {
@@ -51,7 +51,7 @@ namespace DCCClients.Discovery
             Console.WriteLine("Searching for WiThrottle servers...");
             
             // Discover WiThrottle servers
-            var servers = await wiThrottleDiscovery.DiscoverWiThrottleServersAsync();
+            var servers = await wiThrottleDiscovery.DiscoverServersAsync();
             
             if (servers.Count == 0)
             {
@@ -70,11 +70,11 @@ namespace DCCClients.Discovery
             }
             
             // Get address and port pairs
-            var addresses = await wiThrottleDiscovery.DiscoverWiThrottleServerAddressesAsync();
+            var addresses = await wiThrottleDiscovery.DiscoverServerUrlsAsync();
             Console.WriteLine("\nWiThrottle server addresses:");
-            foreach (var (address, port) in addresses)
+            foreach (var url in addresses)
             {
-                Console.WriteLine($"- {address}:{port}");
+                Console.WriteLine($"- {url}");
             }
         }
     }

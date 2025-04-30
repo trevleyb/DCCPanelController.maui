@@ -18,7 +18,7 @@ namespace DCCPanelController.View;
 public partial class SettingsViewModel : BaseViewModel {
     private readonly Profile _profile;
     private IDccClient? _client;
-    
+
     [ObservableProperty] private string _name = "withrottle";
     [ObservableProperty] private string _ipAddress = "localhost";
     [ObservableProperty] private int _port = 12090;
@@ -43,7 +43,7 @@ public partial class SettingsViewModel : BaseViewModel {
             Protocol = jmriSettings.Protocol;
             Url = jmriSettings.Url;
         }
-        
+
         if (_profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
             IpAddress = wiThrottleSettings.Address;
             Port = wiThrottleSettings.Port;
@@ -118,6 +118,7 @@ public partial class SettingsViewModel : BaseViewModel {
             _profile.ActiveConnectionInfo.Settings = new JmriSettings();
             SaveConnectionDetails();
             break;
+
         case "withrottle":
             _profile.ActiveConnectionInfo.Settings = new WithrottleSettings();
             SaveConnectionDetails();
@@ -126,21 +127,20 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public void SaveConnectionDetails() {
-            if (_profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
-                jmriSettings.Address = IpAddress;
-                jmriSettings.Port = Port;
-                jmriSettings.Protocol = Protocol;
-                jmriSettings.Url = Url;
-            }
-            if (_profile?.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
-                wiThrottleSettings.Address = IpAddress;
-                wiThrottleSettings.Port = Port;
-                wiThrottleSettings.Protocol = Protocol;
-                wiThrottleSettings.Url = Url;
-            }
+        if (_profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+            jmriSettings.Address = IpAddress;
+            jmriSettings.Port = Port;
+            jmriSettings.Protocol = Protocol;
+            jmriSettings.Url = Url;
+        }
+        if (_profile?.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+            wiThrottleSettings.Address = IpAddress;
+            wiThrottleSettings.Port = Port;
+            wiThrottleSettings.Protocol = Protocol;
+            wiThrottleSettings.Url = Url;
+        }
     }
 
-    
     [RelayCommand]
     public async Task ConnectAsync() {
         if (!IsDemoMode) {
@@ -150,11 +150,12 @@ public partial class SettingsViewModel : BaseViewModel {
             try {
                 IsBusy = true;
                 if (_client is not null || ConnectionService.IsConnected) {
-                    AddMessage("Disconnected.");
                     if (_client != null) _client.MessageReceived -= ClientOnMessageReceived;
                     ConnectionService.Disconnect();
+                    AddMessage("Disconnected.");
                 }
 
+                SaveConnectionDetails();
                 _client = await ConnectionService.Connect(Settings.ActiveConnection());
                 if (_client is not null) {
                     _client.MessageReceived += ClientOnMessageReceived;
@@ -165,7 +166,6 @@ public partial class SettingsViewModel : BaseViewModel {
                 AddMessage("Unable to Connect.");
             }
         }
-
         IsBusy = false;
     }
 
@@ -177,6 +177,7 @@ public partial class SettingsViewModel : BaseViewModel {
         if (!string.IsNullOrEmpty(message)) {
             var msg = new SettingsMessage(message);
             Messages.Add(msg);
+            OnPropertyChanged(nameof(Messages));
             if (Messages.Count > 100) Messages.RemoveAt(0);
         }
     }
@@ -187,23 +188,32 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task RefreshWiServersAsync() {
+    public async Task RefreshServersAsync() {
         if (IsBusy) return;
-        AddMessage("Attempting to scan for WiThrottle Servers");
+        AddMessage("Attempting to scan for Available Servers");
         try {
             IsBusy = true;
             OnPropertyChanged(nameof(IsConnectAvailable));
 
             Servers.Clear();
-            var servers = await ServiceFinder.FindServices("withrottle");
+
+            var serverDiscovery = DCCClients.Discovery.ServiceDiscoveryFactory.DiscoverServices(CurrentSettings?.Settings?.Type ?? "");
+            var servers = await serverDiscovery.DiscoverServersAsync();
+            
             if (servers is { Count: > 0 }) {
+                Console.WriteLine($"Found {servers.Count} Servers");
                 foreach (var server in servers) {
-                    Servers.Add(new WithrottleSettings(server.Name, server.WithrottleSettings.Address, server.WithrottleSettings.Port));
+                    Console.WriteLine($"Found Server: {server.HostName}");
+                    Servers.Add(new DccSettings() {
+                        Name = server.HostName,
+                        Url = server.GetUrl(),
+                        Type = CurrentSettings?.Settings?.Type ?? "unknown"
+                    });
                 }
             }
-            AddMessage($"Found {Servers.Count} WiThrottle Servers");
+            AddMessage($"Found {Servers.Count} Servers");
         } catch (Exception ex) {
-            AddMessage("Unable to search for WiThrottle Servers.");
+            AddMessage($"Unable to search for Servers of type { CurrentSettings?.Settings?.Type ?? "withrottle"}");
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
             await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
         } finally {
