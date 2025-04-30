@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCClients;
 using DCCClients.Events;
 using DCCClients.Interfaces;
+using DCCClients.Jmri.JMRI;
 using DCCClients.WiThrottle.WiThrottle.Client;
 using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 using DCCPanelController.Models.DataModel;
@@ -16,15 +17,15 @@ namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
     private readonly Profile _profile;
-
     private IDccClient? _client;
-    [ObservableProperty] private string _ipAddress = "0.0.0.0";
-
-    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-
+    
     [ObservableProperty] private string _name = "withrottle";
+    [ObservableProperty] private string _ipAddress = "localhost";
     [ObservableProperty] private int _port = 12090;
+    [ObservableProperty] private string _protocol = "http";
+    [ObservableProperty] private string _url = "http://localhost:12090";
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
+    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowWiServers))]
@@ -34,10 +35,24 @@ public partial class SettingsViewModel : BaseViewModel {
         _profile = profile;
         ConnectionService = connectionService;
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
+        Name = _profile.ActiveConnectionInfo?.Name ?? "default";
+
+        if (_profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+            IpAddress = jmriSettings.Address;
+            Port = jmriSettings.Port;
+            Protocol = jmriSettings.Protocol;
+            Url = jmriSettings.Url;
+        }
+        
+        if (_profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+            IpAddress = wiThrottleSettings.Address;
+            Port = wiThrottleSettings.Port;
+            Protocol = wiThrottleSettings.Protocol;
+            Url = wiThrottleSettings.Url;
+        }
     }
 
     private ConnectionService ConnectionService { get; }
-
     public Settings Settings => _profile.Settings;
     public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
     public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
@@ -85,6 +100,7 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     public void SaveSettings() {
+        SaveConnectionDetails();
         _profile.Save();
     }
 
@@ -96,6 +112,35 @@ public partial class SettingsViewModel : BaseViewModel {
         OnPropertyChanged(nameof(ConnectLabel));
     }
 
+    public void SetNewConnectionMethod(string type) {
+        switch (type) {
+        case "jmri":
+            _profile.ActiveConnectionInfo.Settings = new JmriSettings();
+            SaveConnectionDetails();
+            break;
+        case "withrottle":
+            _profile.ActiveConnectionInfo.Settings = new WithrottleSettings();
+            SaveConnectionDetails();
+            break;
+        }
+    }
+
+    public void SaveConnectionDetails() {
+            if (_profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+                jmriSettings.Address = IpAddress;
+                jmriSettings.Port = Port;
+                jmriSettings.Protocol = Protocol;
+                jmriSettings.Url = Url;
+            }
+            if (_profile?.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+                wiThrottleSettings.Address = IpAddress;
+                wiThrottleSettings.Port = Port;
+                wiThrottleSettings.Protocol = Protocol;
+                wiThrottleSettings.Url = Url;
+            }
+    }
+
+    
     [RelayCommand]
     public async Task ConnectAsync() {
         if (!IsDemoMode) {

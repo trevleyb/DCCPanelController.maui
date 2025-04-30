@@ -31,110 +31,88 @@
 
     <StackLayout>
         <Label
-            Margin="10,10,0,0"
-            Style="{StaticResource MediumLabel}"
-            Text="WiThrottle Server Details:"
+            Text="Server Connection Details:"
+            Margin="10,10,20,0"
+            Style="{StaticResource LargeLabel}"
             TextColor="{StaticResource Primary}"/>
-        <VerticalStackLayout>
+
+        <HorizontalStackLayout Margin="20,20,0,0">
+            <RadioButton GroupName="ServerType" Content="JMRI Server"
+                         CheckedChanged="JmriServerButton_OnCheckedChanged" x:Name="JmriServerButton"/>
+            <RadioButton GroupName="ServerType" Content="WiThrottle Server"
+                         CheckedChanged="WiThrottleServerButton_OnCheckedChanged" x:Name="WiThrottleServerButton"/>
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Margin="20,0,0,0">
+            <HorizontalStackLayout Margin="10,0,10,0">
+                <Label Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="150" Text="Client Identifier:"/>
+                <Border 
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry WidthRequest="250" Text="{Binding Name}" Style="{StaticResource PanelEntry}"/>
+                </Border>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout>
+            <HorizontalStackLayout Margin="10,0,10,0">
+                <Label Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="150" Text="Server Protocol:"/>
+                <Border 
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Entry WidthRequest="75" Text="{Binding Protocol}" Style="{StaticResource PanelEntry}" TextChanged="Protocol_OnTextChanged" />
+                </Border>
+            </HorizontalStackLayout>
 
             <HorizontalStackLayout Margin="10,0,10,0">
-                <Label VerticalOptions="Center" WidthRequest="250" Text="Client Identifier:"/>
-                <Frame Style="{StaticResource IpAddress}">
-                    <Entry
-                        WidthRequest="500"
-                        Focused="OnEntryFocused"
-                        IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding Name}"/>
-                </Frame>
+                <Label Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="75" Text="Address:"/>
+                <Border 
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Entry WidthRequest="185" Text="{Binding IpAddress}" Style="{StaticResource PanelEntry}" TextChanged="Address_OnTextChanged"/>
+                </Border>
+            </HorizontalStackLayout>
+            
+            <HorizontalStackLayout Margin="10,0,10,0">
+                <Label Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="40" Text="Port:"/>
+                <Border 
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Entry WidthRequest="50" Text="{Binding Port}" Style="{StaticResource PanelEntry}" TextChanged="Port_OnTextChanged"/>
+                </Border>
+            </HorizontalStackLayout>
+            </HorizontalStackLayout>
+            <HorizontalStackLayout Margin="10,0,10,0">
+                <Label Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="150" Text="Server URL:"/>
+                <Border 
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Entry WidthRequest="500" Text="{Binding Url}" Style="{StaticResource PanelEntry}" TextChanged="Url_OnTextChanged"/>
+                </Border>
             </HorizontalStackLayout>
 
-            <HorizontalStackLayout HorizontalOptions="Start" Margin="10,0,10,10">
-                <Label VerticalOptions="Center" WidthRequest="250" Text="WiThrottle Server Address:"/>
-                <Frame Style="{StaticResource IpAddress}">
-                    <Entry
-                        Focused="OnEntryFocused"
-                        WidthRequest="55"
-                        IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding IpAddress1}">
-                        <Entry.Behaviors>
-                            <view:EntryValidationBehavior/>
-                        </Entry.Behaviors>
-                    </Entry>
-                </Frame>
-                <Label
-                    FontSize="48"
-                    Margin="2,2,2,30"
-                    Text="."
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center"/>
-                <Frame Style="{StaticResource IpAddress}">
-                    <Entry
-                        Focused="OnEntryFocused"
-                        WidthRequest="55"
-                        IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding IpAddress2}">
-                        <Entry.Behaviors>
-                            <view:EntryValidationBehavior/>
-                        </Entry.Behaviors>
-                    </Entry>
-                </Frame>
-                <Label
-                    FontSize="48"
-                    Margin="2,2,2,30"
-                    Text="."
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center"/>
-                <Frame Style="{StaticResource IpAddress}">
-                    <Entry
-                        Focused="OnEntryFocused"
-                        WidthRequest="55"
-                        IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding IpAddress3}">
-                        <Entry.Behaviors>
-                            <view:EntryValidationBehavior/>
-                        </Entry.Behaviors>
-                    </Entry>
-                </Frame>
-                <Label
-                    FontSize="48"
-                    Margin="2,2,2,30"
-                    Text="."
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center"/>
-                <Frame Style="{StaticResource IpAddress}">
-                    <Entry
-                        Focused="OnEntryFocused"
-                        WidthRequest="55"
-                        IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding IpAddress4}">
-                        <Entry.Behaviors>
-                            <view:EntryValidationBehavior/>
-                        </Entry.Behaviors>
-                    </Entry>
-                </Frame>
-                <Label
-                    FontSize="48"
-                    HorizontalOptions="Center"
-                    Margin="2,2,2,10"
-                    Text=":"
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center"/>
-                <Frame Style="{StaticResource IpPort}" WidthRequest="75">
-                    <Entry
-                        Focused="OnEntryFocused"
-                        WidthRequest="55"
-                        IsEnabled="{Binding IsLiveMode}"
-                        Text="{Binding Port}"/>
-                </Frame>
-                <Button
-                    Command="{Binding ConnectCommand}"
-                    HorizontalOptions="Center"
-                    IsEnabled="{Binding IsConnectAvailable}"
-                    Margin="10,0,0,0"
-                    Style="{StaticResource ButtonOutline}"
-                    Text="{Binding ConnectLabel}"
-                    WidthRequest="150"/>
-            </HorizontalStackLayout>
+            <Button
+                Command="{Binding ConnectCommand}"
+                HorizontalOptions="Center"
+                IsEnabled="{Binding IsConnectAvailable}"
+                Margin="10,20,20,20"
+                Style="{StaticResource ButtonOutline}"
+                Text="{Binding ConnectLabel}"
+                WidthRequest="150"/>
 
         </VerticalStackLayout>
         <BoxView
@@ -150,7 +128,7 @@
                     Style="{StaticResource MediumLabel}"
                     TextColor="{StaticResource Primary}"
                     VerticalOptions="Center">
-                    Available WiThrottle Servers :
+                    Available Servers :
                 </Label>
                 <Button
                     BackgroundColor="{StaticResource White}"
@@ -181,10 +159,9 @@
                         <CollectionView.EmptyView>
                             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
                                 <Label HorizontalOptions="Center" Text=" "/>
-                                <Label HorizontalOptions="Center" Text="No WiThrottle Servers could be found."/>
+                                <Label HorizontalOptions="Center" Text="No Servers could be found."/>
                                 <Label HorizontalOptions="Center" Text=" "/>
-                                <Label HorizontalOptions="Center" Text="Use Refresh to search for WiThrottle servers"/>
-                                <Label HorizontalOptions="Center" Text="available on the network."/>
+                                <Label HorizontalOptions="Center" Text="Use Refresh to search for available servers"/>
                             </StackLayout>
                         </CollectionView.EmptyView>
 

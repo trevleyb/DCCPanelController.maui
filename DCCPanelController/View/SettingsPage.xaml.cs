@@ -10,6 +10,16 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     public SettingsPage(SettingsViewModel viewModel) {
         InitializeComponent();
         _viewModel = viewModel; //MauiProgram.ServiceHelper.GetService<SettingsViewModel>();
+        if (_viewModel?.CurrentSettings?.Settings is { } current) {
+            if (current.Type == "jmri") {
+                JmriServerButton.IsChecked = true;
+                WiThrottleServerButton.IsChecked = false;
+            }
+            if (current.Type == "withrottle") {
+                JmriServerButton.IsChecked = false;
+                WiThrottleServerButton.IsChecked = true;
+            }
+        }
         BindingContext = _viewModel;
     }
 
@@ -127,6 +137,35 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         using var reader = new StreamReader(filePath);
         return await reader.ReadToEndAsync();
     }
+
+    private void JmriServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
+        _viewModel?.SetNewConnectionMethod("jmri");
+    }
+
+    private void WiThrottleServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
+        _viewModel?.SetNewConnectionMethod("withrottle");
+    }
+
+    private void Protocol_OnTextChanged(object? sender, TextChangedEventArgs e) {
+        if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
+    }
+    private void Address_OnTextChanged(object? sender, TextChangedEventArgs e) {
+        if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
+    }
+    private void Port_OnTextChanged(object? sender, TextChangedEventArgs e) {
+        if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
+    }
+    private void Url_OnTextChanged(object? sender, TextChangedEventArgs e) {
+        if (_viewModel is not null) {
+            try {
+                var uri = new Uri(_viewModel.Url);
+                _viewModel.Protocol = uri.Scheme;
+                _viewModel.IpAddress = uri.Host;
+                _viewModel.Port = uri.Port;
+            } catch { /* ignored */ }
+        }
+    }
+
 }
 
 public class EntryValidationBehavior : Behavior<Entry> {
