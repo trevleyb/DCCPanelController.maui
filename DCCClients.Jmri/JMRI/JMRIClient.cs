@@ -25,7 +25,7 @@ public class JmriClient {
 
     public JmriClient(IDccSettings settings) {
         if (settings is JmriSettings info) {
-            _jmriUrl = info.JmriServerUrl.TrimEnd('/');
+            _jmriUrl = info.Url.TrimEnd('/');
         } else throw new ArgumentException("Invalid settings provided.");
     }
 

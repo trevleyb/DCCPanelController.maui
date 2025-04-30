@@ -25,7 +25,7 @@ public class JmriClientIntegrationTests {
         if (string.IsNullOrEmpty(jmriUrl)) jmriUrl = "http://localhost:12080";
 
         _settings = new JmriSettings {
-            JmriServerUrl = jmriUrl,
+            Url = jmriUrl,
             Name = "ContinuousTest"
         };
     }
