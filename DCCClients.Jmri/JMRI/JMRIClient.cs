@@ -38,7 +38,6 @@ public class JmriClient {
     public event EventHandler<SignalEventArgs>? SignalChanged;
 
     public virtual async Task InitializeAsync() {
-
         // Clear any previous existing states. These will be updated when we initially poll for 
         // the data and will update the dictionaries for tracking data changes. 
         // ------------------------------------------------------------------------------------
@@ -46,10 +45,27 @@ public class JmriClient {
         _previousRouteStates.Clear();
         _previousOccupancyStates.Clear();
         _previousSignalStates.Clear();
-        
+
         Console.WriteLine("------------------------------------------------------------------------------------");
         Console.WriteLine("INITIAL DATA FETCH FINISHED ::: Waiting on Events...");
         Console.WriteLine("------------------------------------------------------------------------------------");
+    }
+
+    public void ForceRefresh(string? type) {
+        switch (type?.ToLower() ?? "all") {
+        case "turnout" or "turnouts": _previousTurnoutStates.Clear(); break;
+        case "route" or "routes":     _previousRouteStates.Clear(); break;
+        case "occupancy":             _previousOccupancyStates.Clear(); break;
+        case "block" or "blocks":     _previousOccupancyStates.Clear(); break;
+        case "signal" or "signals":   _previousSignalStates.Clear(); break;
+
+        default:
+            _previousTurnoutStates.Clear();
+            _previousRouteStates.Clear();
+            _previousOccupancyStates.Clear();
+            _previousSignalStates.Clear();
+            break;
+        }
     }
 
     public virtual async Task StartMonitoringAsync() {
@@ -86,7 +102,7 @@ public class JmriClient {
             throw; // Rethrow to let the caller handle retries
         }
     }
-    
+
     private async Task MonitorWebSocketAsync(CancellationToken token) {
         while (!token.IsCancellationRequested) {
             Console.WriteLine($"MonitorWebSocketAsync running... State={_webSocket.State}");
@@ -146,9 +162,9 @@ public class JmriClient {
                 if (item.TryGetProperty("data", out var dataProperty) &&
                     dataProperty.TryGetProperty(identifierField ?? "name", out var nameProperty) &&
                     dataProperty.TryGetProperty(stateField ?? "state", out var stateProperty)) {
-
                     var name = nameProperty.ToString() ?? "";
-                    var currentState = stateProperty.ToString()?? "";;
+                    var currentState = stateProperty.ToString() ?? "";
+                    ;
 
                     // Check if this is a new item or its state has changed
                     if (!string.IsNullOrEmpty(name)) {

@@ -14,6 +14,9 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshBlocksCommand}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}"  IconImageSource="delete.png"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="wifi_off.png" x:Name="ConnectButton"/>
+
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">
@@ -92,7 +95,7 @@
                                             Binding="{Binding IsOccupied}"
                                             TargetType="Image"
                                             Value="false">
-                                            <Setter Property="Source" Value="route_inactive.png"/>
+                                            <Setter Property="Source" Value="block_free.png"/>
                                         </DataTrigger>
                                     </Image.Triggers>
                                 </Image>

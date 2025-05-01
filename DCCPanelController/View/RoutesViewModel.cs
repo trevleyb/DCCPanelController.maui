@@ -15,6 +15,7 @@ public partial class RoutesViewModel : BaseViewModel {
     private const string LabelName = "Route";
     private const string LabelState = "State";
 
+    [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private bool _canToggleRoutesState;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
@@ -29,6 +30,9 @@ public partial class RoutesViewModel : BaseViewModel {
         Profile = profile;
         Routes = Profile.Routes;
         CanToggleRoutesState = true;
+        ConnectionService.ConnectionChanged += (sender, args) => {
+            IsConnected = args.IsConnected;
+        };
         SetLabels();
     }
 
@@ -106,4 +110,38 @@ public partial class RoutesViewModel : BaseViewModel {
             }
         }
     }
+    
+    [RelayCommand]
+    private async Task ClearAllAsync() {
+        if (await AskUserToConfirm("Reset all Routes?", "This wll remove all Routes previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
+            for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) { 
+                Profile.Routes.RemoveAt(ptr-1);
+                OnPropertyChanged(nameof(Routes));
+            }
+            await RefreshRoutesAsync();
+        }
+    }
+    
+    private async Task<bool> AskUserToConfirm(string title, string message) {
+        if (App.Current.Windows[0].Page is { } window) {
+            var result = await window.DisplayAlert(
+                title,
+                message,
+                "Yes",
+                "No"
+            );
+            return result;
+        }
+        return false;
+    }
+    
+    [RelayCommand]
+    private async Task ToggleConnectionAsync() {
+        if (!IsConnected) {
+            await ConnectionService.Connect();
+        } else {
+            ConnectionService.Disconnect();
+        }
+    }
+
 }

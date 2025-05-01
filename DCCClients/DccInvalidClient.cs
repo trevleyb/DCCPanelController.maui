@@ -52,4 +52,6 @@ public class DccInvalidClient : DccClient, IDccClient {
     public IResult SendSignalCmd(string dccAddress, SignalAspectEnum aspect) {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
+
+    public void ForceRefresh(string? type) {}
 }

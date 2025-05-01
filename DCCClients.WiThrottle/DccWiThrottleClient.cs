@@ -124,6 +124,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Fail("Withrottle does not support signal commands.");
     }
 
+    public void ForceRefresh(string? type) { }
+
     private async Task<IResult<ServiceInfo?>> FindServices() {
         var services = await ServiceFinder.FindServices("_withrottle._tcp");
         if (services.Count == 0) return Result<ServiceInfo>.Fail(new Error("Unable to find a WiThrottle server."));

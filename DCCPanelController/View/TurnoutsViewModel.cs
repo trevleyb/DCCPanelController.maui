@@ -15,8 +15,9 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
     private const string LabelAddress = "DCC Address";
-    [ObservableProperty] private string _columnLabelAddress = LabelAddress;
 
+    [ObservableProperty] private bool _isConnected;
+    [ObservableProperty] private string _columnLabelAddress = LabelAddress;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
@@ -29,6 +30,10 @@ public partial class TurnoutsViewModel : BaseViewModel {
         Profile = profile;
         Turnouts = Profile.Turnouts;
         ConnectionService = connectionService;
+        ConnectionService.ConnectionChanged += (sender, args) => {
+            IsConnected = args.IsConnected;
+        };
+
         SetLabels();
     }
 
@@ -48,7 +53,7 @@ public partial class TurnoutsViewModel : BaseViewModel {
         var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
         if (result.IsSuccess) {
             Client = result.Value;
-            Client?.Disconnect();
+            Client?.ForceRefresh();
         } else {
             Client = null;
         }
@@ -158,4 +163,40 @@ public partial class TurnoutsViewModel : BaseViewModel {
         await mainPage.Navigation.PushModalAsync(editPage);
         return await tcs.Task;
     }
+
+    [RelayCommand]
+    private async Task ClearAllAsync() {
+        if (await AskUserToConfirm("Reset all Turnouts?", "This wll remove all Tunrouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
+            var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
+            foreach (var turnout in removeTurnouts) {
+                Profile.Turnouts.Remove(turnout);
+                OnPropertyChanged(nameof(Turnouts));
+            }
+            await RefreshTurnoutsAsync();
+        }
+    }
+    
+    private async Task<bool> AskUserToConfirm(string title, string message) {
+        if (App.Current.Windows[0].Page is { } window) {
+            var result = await window.DisplayAlert(
+                title,
+                message,
+                "Yes",
+                "No"
+            );
+            return result;
+        }
+        return false;
+    }
+
+    
+    [RelayCommand]
+    private async Task ToggleConnectionAsync() {
+        if (!IsConnected) {
+            await ConnectionService.Connect();
+        } else {
+            ConnectionService.Disconnect();
+        }
+    }
+
 }

@@ -14,6 +14,9 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshRoutesCommand}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}"  IconImageSource="delete.png"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="wifi_off.png" x:Name="ConnectButton"/>
+
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">

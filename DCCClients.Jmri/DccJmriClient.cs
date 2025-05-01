@@ -163,7 +163,11 @@ public class DccJmriClient : DccClient, IDccClient {
             return Result.Fail(new Error("Failed to send signal command to JMRI server").CausedBy(ex));
         }
     }
-    
+
+    public void ForceRefresh(string? type) {
+        _jmriClient?.ForceRefresh(type);
+    }
+
     #region Event Handlers
     
     private void OnJmriTurnoutChanged(object? sender, TurnoutEventArgs e) {

@@ -14,6 +14,8 @@ public interface IDccClient {
     IResult SendRouteCmd(string dccAddress, bool active);
     IResult SendSignalCmd(string dccAddress, SignalAspectEnum aspect);
 
+    void ForceRefresh(string? type = "all");
+    
     event EventHandler<DccErrorArgs> ConnectionError;
     event EventHandler<DccMessageArgs> MessageReceived;
     event EventHandler<DccTurnoutArgs> TurnoutMsgReceived;
