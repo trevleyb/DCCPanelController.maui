@@ -34,7 +34,7 @@ public class EditableTurnoutActions(string label, string description = "", int o
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";
-            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID) && b.TurnoutID != entityID).Select(b => b.TurnoutID).ToList<string>() ?? [];
             if (entity is not null) {
                 return new TurnoutActionsGrid(((IActionEntity)entity).TurnoutPanelActions, context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,

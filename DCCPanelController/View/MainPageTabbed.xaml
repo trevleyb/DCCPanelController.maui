@@ -20,10 +20,14 @@
             Icon="panels.png"
             Title="Panels"/>
         
-        <Tab Title="Options" Icon="properties.png">
+        <Tab Title="Settings" Icon="settings.png">
             <ShellContent
-                ContentTemplate="{DataTemplate view:ConfigInstructionsPage}"
+                ContentTemplate="{DataTemplate view:InstructionsPage}"
                 Title="Instructions"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:SettingsPage}"
+                Icon="settings.png"
+                Title="Settings"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:TurnoutsPage}"
                 Title="Turnouts"/>
@@ -33,18 +37,6 @@
             <ShellContent
                 ContentTemplate="{DataTemplate view:BlocksPage}"
                 Title="Blocks"/>
-            <!-- <ShellContent -->
-            <!--     ContentTemplate="{DataTemplate view:SignalsPage}" -->
-            <!--     Title="Signals"/> -->
-        </Tab>
-        <Tab Title="Settings" Icon="settings.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate view:InstructionsPage}"
-                Title="Instructions"/>
-            <ShellContent
-                ContentTemplate="{DataTemplate view:SettingsPage}"
-                Icon="settings.png"
-                Title="Settings"/>
         </Tab>
     </FlyoutItem>
 

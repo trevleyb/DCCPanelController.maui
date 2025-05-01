@@ -22,6 +22,9 @@ public abstract partial class TrackEntity : Entity {
     [property: EditableTrackType("Track Type", "", 5, "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
 
+    [ObservableProperty] [property: EditableBlock("Block", "", 5, "Track")]
+    private string? _occupancyBlock;
+    
     protected TrackEntity() { }
     protected TrackEntity(Panel panel) : base(panel) { }
 

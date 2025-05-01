@@ -10,7 +10,7 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: EditableRoute("Route")]
-    private string _dccAddress = string.Empty;
+    private string _routeID = string.Empty;
 
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
@@ -26,6 +26,6 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     }
 
     public override string ToString() {
-        return DccAddress;
+        return RouteID;
     }
 }

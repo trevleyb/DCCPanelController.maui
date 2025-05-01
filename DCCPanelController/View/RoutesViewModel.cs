@@ -85,12 +85,18 @@ public partial class RoutesViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task RefreshRoutesAsync() {
+        try {
+            IsBusy = true;
         var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
         if (result.IsSuccess) {
             Client = result.Value;
             Client?.Disconnect();
         } else {
             Client = null;
+        }
+        } catch { /* ignore */
+        } finally {
+            IsBusy = false;
         }
     }
 
@@ -113,13 +119,20 @@ public partial class RoutesViewModel : BaseViewModel {
     
     [RelayCommand]
     private async Task ClearAllAsync() {
-        if (await AskUserToConfirm("Reset all Routes?", "This wll remove all Routes previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
-            for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) { 
-                Profile.Routes.RemoveAt(ptr-1);
-                OnPropertyChanged(nameof(Routes));
+        IsBusy = true;
+        try {
+            if (await AskUserToConfirm("Reset all Routes?", "This wll remove all Routes previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
+                for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) {
+                    Profile.Routes.RemoveAt(ptr - 1);
+                    OnPropertyChanged(nameof(Routes));
+                }
+                await RefreshRoutesAsync();
             }
-            await RefreshRoutesAsync();
+        } catch { /* ignored */
+        } finally {
+            IsBusy = false;
         }
+
     }
     
     private async Task<bool> AskUserToConfirm(string title, string message) {

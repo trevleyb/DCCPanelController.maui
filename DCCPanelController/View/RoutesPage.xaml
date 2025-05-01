@@ -14,7 +14,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshRoutesCommand}" IconImageSource="refresh_cw.png"/>
-        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}"  IconImageSource="delete.png"/>
+        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="wifi_off.png" x:Name="ConnectButton"/>
 
     </ContentPage.ToolbarItems>
@@ -49,106 +49,108 @@
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
-        <Grid Padding="5" VerticalOptions="FillAndExpand">
-            <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
-                <CollectionView.EmptyView>
-                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <Label Text="No Route data available"/>
-                        </StackLayout>
-                    </Grid>
-                </CollectionView.EmptyView>
+        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshRoutesCommand}">
+            <Grid Padding="5" VerticalOptions="FillAndExpand">
+                <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label Text="No Route data available"/>
+                            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="dataModel:Route">
-                        <StackLayout Padding="0">
-                            <Grid ColumnDefinitions="*,250,80" Padding="5">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
-                                        CommandParameter="{Binding .}"
-                                        x:DataType="{x:Type view:RoutesViewModel}"/>
-                                </Grid.GestureRecognizers>
-                                <Label
-                                    Grid.Column="0"
-                                    HorizontalOptions="Start"
-                                    LineBreakMode="NoWrap"
-                                    Style="{StaticResource MediumLabel}"
-                                    Text="{Binding Id}"
-                                    VerticalOptions="Center"/>
-                                <Label
-                                    FontAttributes="Bold"
-                                    Grid.Column="1"
-                                    HorizontalOptions="FillAndExpand"
-                                    LineBreakMode="WordWrap"
-                                    Style="{StaticResource MediumLabel}"
-                                    Text="{Binding Name}"
-                                    VerticalOptions="Center"/>
-                                <Image
-                                    Grid.Column="2"
-                                    HeightRequest="32"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center"
-                                    WidthRequest="32">
-                                    <Image.Triggers>
-                                        <DataTrigger
-                                            Binding="{Binding State}"
-                                            TargetType="Image"
-                                            Value="Active">
-                                            <Setter Property="Source" Value="route_active.png"/>
-                                        </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding State}"
-                                            TargetType="Image"
-                                            Value="Inactive">
-                                            <Setter Property="Source" Value="route_inactive.png"/>
-                                        </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding State}"
-                                            TargetType="Image"
-                                            Value="Unknown">
-                                            <Setter Property="Source" Value="route_unknown.png"/>
-                                        </DataTrigger>
-                                    </Image.Triggers>
-                                </Image>
-                                <Label
-                                    Grid.Column="3"
-                                    HorizontalOptions="Fill"
-                                    Style="{StaticResource MediumLabel}"
-                                    Text="{Binding State}"
-                                    VerticalOptions="Center">
-                                    <Label.Triggers>
-                                        <DataTrigger
-                                            Binding="{Binding State}"
-                                            TargetType="Label"
-                                            Value="Active">
-                                            <Setter Property="TextColor" Value="Green"/>
-                                        </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding State}"
-                                            TargetType="Label"
-                                            Value="Inactive">
-                                            <Setter Property="TextColor" Value="Red"/>
-                                        </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding State}"
-                                            TargetType="Label"
-                                            Value="Unknown">
-                                            <Setter Property="TextColor" Value="Grey"/>
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                            </Grid>
-                            <BoxView
-                                BackgroundColor="{StaticResource Primary}"
-                                HeightRequest="1"
-                                HorizontalOptions="FillAndExpand"/>
-                        </StackLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dataModel:Route">
+                            <StackLayout Padding="0">
+                                <Grid ColumnDefinitions="*,250,80" Padding="5">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
+                                            CommandParameter="{Binding .}"
+                                            x:DataType="{x:Type view:RoutesViewModel}"/>
+                                    </Grid.GestureRecognizers>
+                                    <Label
+                                        Grid.Column="0"
+                                        HorizontalOptions="Start"
+                                        LineBreakMode="NoWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Id}"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="1"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center"/>
+                                    <Image
+                                        Grid.Column="2"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="32">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Active">
+                                                <Setter Property="Source" Value="route_active.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Inactive">
+                                                <Setter Property="Source" Value="route_inactive.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Image"
+                                                Value="Unknown">
+                                                <Setter Property="Source" Value="route_unknown.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
+                                    <Label
+                                        Grid.Column="3"
+                                        HorizontalOptions="Fill"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding State}"
+                                        VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Active">
+                                                <Setter Property="TextColor" Value="Green"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Inactive">
+                                                <Setter Property="TextColor" Value="Red"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding State}"
+                                                TargetType="Label"
+                                                Value="Unknown">
+                                                <Setter Property="TextColor" Value="Grey"/>
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                                <BoxView
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="1"
+                                    HorizontalOptions="FillAndExpand"/>
+                            </StackLayout>
 
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"

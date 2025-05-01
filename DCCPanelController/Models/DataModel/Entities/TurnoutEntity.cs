@@ -8,14 +8,15 @@ using DCCPanelController.View.DynamicProperties.EditableControls;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
+public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, ITrackEntity, IActionEntity {
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)]
     private ButtonActions _buttonPanelActions = [];
 
-    [ObservableProperty] [property: EditableID("ID", "", 0, "Turnout")]
-    private string _id = string.Empty;
+    //[ObservableProperty] [property: EditableID("ID", "", 0, "Turnout")]
+    //private string _id = string.Empty;
 
-    [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    [ObservableProperty] 
+    private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     [ObservableProperty] [property: EditableTurnout("Turnout", "", 0, "Turnout")]
     private string _turnoutID = string.Empty;
@@ -37,12 +38,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
         RotationFactor = 90;
     }
 
-    public string GenerateID() {
-        var entities = Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? new List<TurnoutEntity>();
-        return EntityID.NextTurnoutID(entities);
-    }
-
     public override string ToString() {
-        return Id;
+        return TurnoutID;
     }
 }

@@ -50,12 +50,18 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task RefreshTurnoutsAsync() {
-        var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-        if (result.IsSuccess) {
-            Client = result.Value;
-            Client?.ForceRefresh();
-        } else {
-            Client = null;
+        try {
+            IsBusy = true;
+            var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+            if (result.IsSuccess) {
+                Client = result.Value;
+                Client?.ForceRefresh();
+            } else {
+                Client = null;
+            }
+        } catch { /* ignore */
+        } finally {
+            IsBusy = false;
         }
     }
 
@@ -166,13 +172,19 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task ClearAllAsync() {
-        if (await AskUserToConfirm("Reset all Turnouts?", "This wll remove all Tunrouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
-            var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
-            foreach (var turnout in removeTurnouts) {
-                Profile.Turnouts.Remove(turnout);
-                OnPropertyChanged(nameof(Turnouts));
+        IsBusy = true;
+        try {
+            if (await AskUserToConfirm("Reset all Turnouts?", "This wll remove all Tunrouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
+                var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
+                foreach (var turnout in removeTurnouts) {
+                    Profile.Turnouts.Remove(turnout);
+                    OnPropertyChanged(nameof(Turnouts));
+                }
+                await RefreshTurnoutsAsync();
             }
-            await RefreshTurnoutsAsync();
+        } catch { /* ignored */
+        } finally {
+            IsBusy = false;
         }
     }
     

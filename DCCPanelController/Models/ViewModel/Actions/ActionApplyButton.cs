@@ -30,7 +30,7 @@ public static class ActionApplyButton {
         foreach (var action in button.TurnoutPanelActions) {
             var actionTurnout = panel.GetTurnoutEntity(action.Id);
             if (actionTurnout is null) continue;
-            if (actionsList.IsActioned(ActionType.Turnout, actionTurnout.Id)) continue;
+            if (actionsList.IsActioned(ActionType.Turnout, actionTurnout.TurnoutID)) continue;
 
             // Get what state we should be setting the related button to
             // -----------------------------------------------------------------

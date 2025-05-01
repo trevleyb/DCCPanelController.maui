@@ -59,15 +59,15 @@ public partial class Panel : ObservableObject, IEntityID {
         return Entities.OfType<T>().ToList() ?? [];
     }
 
-    public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID {
-        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
+    public List<T> GetPanelEntitiesWithID<T>() where T : Entity {
+        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.EntityName)).ToList() ?? [];
     }
 
     public List<T> GetAllEntitiesByType<T>() where T : Entity {
         return Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
     }
 
-    public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID {
+    public List<T> GetAllEntitiesWithID<T>() where T : Entity {
         return Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
     }
 
@@ -76,9 +76,13 @@ public partial class Panel : ObservableObject, IEntityID {
     }
 
     public TurnoutEntity? GetTurnoutEntity(string id) {
-        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.TurnoutID == id) ?? null;
     }
 
+    public RouteEntity? GetRouteEntity(string id) {
+        return GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
+    }
+    
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;
         Entities.Add(entity);

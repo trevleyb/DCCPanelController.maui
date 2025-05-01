@@ -62,9 +62,9 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         if (turnout is { Parent: { Entities: { } entities } }) {
             foreach (var trk in entities) {
                 if (trk is TurnoutEntity trackTurnout) {
-                    if (turnout != null && trackTurnout.Id == turnout.Id) continue;
-                    if (string.IsNullOrWhiteSpace(trackTurnout.Id)) continue;
-                    foundTurnouts.Add(trackTurnout.Id);
+                    if (turnout != null && trackTurnout.TurnoutID == turnout.TurnoutID) continue;
+                    if (string.IsNullOrWhiteSpace(trackTurnout.TurnoutID)) continue;
+                    foundTurnouts.Add(trackTurnout.TurnoutID);
                 }
             }
         }

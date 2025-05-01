@@ -14,7 +14,7 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshBlocksCommand}" IconImageSource="refresh_cw.png"/>
-        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}"  IconImageSource="delete.png"/>
+        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="wifi_off.png" x:Name="ConnectButton"/>
 
     </ContentPage.ToolbarItems>
@@ -49,88 +49,91 @@
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
-        <Grid Padding="5" VerticalOptions="FillAndExpand">
-            <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="None">
-                <CollectionView.EmptyView>
-                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <Label Text="No Route data available"/>
-                        </StackLayout>
-                    </Grid>
-                </CollectionView.EmptyView>
+        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshBlocksCommand}">
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="dataModel:Block">
-                        <StackLayout Padding="0">
-                            <Grid ColumnDefinitions="*,250,100" Padding="5">
-                                <Label
-                                    Grid.Column="0"
-                                    HorizontalOptions="Start"
-                                    LineBreakMode="NoWrap"
-                                    Style="{StaticResource MediumLabel}"
-                                    Text="{Binding Id}"
-                                    VerticalOptions="Center"/>
-                                <Label
-                                    FontAttributes="Bold"
-                                    Grid.Column="1"
-                                    HorizontalOptions="FillAndExpand"
-                                    LineBreakMode="WordWrap"
-                                    Style="{StaticResource MediumLabel}"
-                                    Text="{Binding Name}"
-                                    VerticalOptions="Center"/>
-                                <Image
-                                    Grid.Column="2"
-                                    HeightRequest="32"
-                                    HorizontalOptions="End"
-                                    VerticalOptions="Center"
-                                    WidthRequest="42">
-                                    <Image.Triggers>
-                                        <DataTrigger
-                                            Binding="{Binding IsOccupied}"
-                                            TargetType="Image"
-                                            Value="true">
-                                            <Setter Property="Source" Value="block_occupied.png"/>
-                                        </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding IsOccupied}"
-                                            TargetType="Image"
-                                            Value="false">
-                                            <Setter Property="Source" Value="block_free.png"/>
-                                        </DataTrigger>
-                                    </Image.Triggers>
-                                </Image>
-                                <Label
-                                    Grid.Column="3"
-                                    HorizontalOptions="Fill"
-                                    Style="{StaticResource MediumLabel}"
-                                    Text="{Binding State}"
-                                    VerticalOptions="Center">
-                                    <Label.Triggers>
-                                        <DataTrigger
-                                            Binding="{Binding IsOccupied}"
-                                            TargetType="Label"
-                                            Value="true">
-                                            <Setter Property="TextColor" Value="Red"/>
-                                        </DataTrigger>
-                                        <DataTrigger
-                                            Binding="{Binding IsOccupied}"
-                                            TargetType="Label"
-                                            Value="false">
-                                            <Setter Property="TextColor" Value="Green"/>
-                                        </DataTrigger>
-                                    </Label.Triggers>
-                                </Label>
-                            </Grid>
-                            <BoxView
-                                BackgroundColor="{StaticResource Primary}"
-                                HeightRequest="1"
-                                HorizontalOptions="FillAndExpand"/>
-                        </StackLayout>
+            <Grid Padding="5" VerticalOptions="FillAndExpand">
+                <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label Text="No Route data available"/>
+                            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
 
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </Grid>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dataModel:Block">
+                            <StackLayout Padding="0">
+                                <Grid ColumnDefinitions="*,250,100" Padding="5">
+                                    <Label
+                                        Grid.Column="0"
+                                        HorizontalOptions="Start"
+                                        LineBreakMode="NoWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Id}"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="1"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center"/>
+                                    <Image
+                                        Grid.Column="2"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="42">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Image"
+                                                Value="true">
+                                                <Setter Property="Source" Value="block_occupied.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Image"
+                                                Value="false">
+                                                <Setter Property="Source" Value="block_free.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
+                                    <Label
+                                        Grid.Column="3"
+                                        HorizontalOptions="Fill"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding State}"
+                                        VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Label"
+                                                Value="true">
+                                                <Setter Property="TextColor" Value="Red"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Label"
+                                                Value="false">
+                                                <Setter Property="TextColor" Value="Green"/>
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                                <BoxView
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="1"
+                                    HorizontalOptions="FillAndExpand"/>
+                            </StackLayout>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"

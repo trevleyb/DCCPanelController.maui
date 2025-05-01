@@ -37,9 +37,6 @@ public class EditableID(string label, string description = "", int order = 0, st
         if (_entity is ButtonEntity { Parent: not null } button) {
             if (!IsIDValid(button.Id)) button.Id = button.Parent.GenerateID();
         }
-        if (_entity is TurnoutEntity { Parent: not null } turnout) {
-            if (!IsIDValid(turnout.Id)) turnout.Id = turnout.Parent.GenerateID();
-        }
     }
 
     private void CellOnTextChanged(object? sender, TextChangedEventArgs e) {
@@ -53,11 +50,6 @@ public class EditableID(string label, string description = "", int order = 0, st
             var buttons = button.Parent?.GetAllEntitiesWithID<ButtonEntity>();
             var conflictingButtons = buttons?.Where(b => b.Id == value).ToArray() ?? null;
             isValid = conflictingButtons == null || conflictingButtons.Length == 1 && conflictingButtons[0].Equals(button);
-        }
-        if (_entity is TurnoutEntity { Parent: not null } turnout) {
-            var turnouts = turnout.Parent?.GetAllEntitiesWithID<TurnoutEntity>();
-            var conflictingTurnouts = turnouts?.Where(b => b.Id == value).ToArray() ?? null;
-            isValid = conflictingTurnouts == null || conflictingTurnouts.Length == 1 && conflictingTurnouts[0].Equals(turnout);
         }
         return isValid;
     }
