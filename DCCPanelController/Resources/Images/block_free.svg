@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg"
+     version="1.1" viewBox="0 0 256 256" width="256" height="256">
+    <defs/>
+    <g id="Block_Free" stroke="none" stroke-opacity="1" stroke-dasharray="none" fill-opacity="1" fill="none">
+        <g id="Layer">
+            <rect x="103" y="53" width="50" height="150" fill="#68bc36"/>
+        </g>
+    </g>
+</svg>

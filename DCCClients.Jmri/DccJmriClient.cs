@@ -194,7 +194,7 @@ public class DccJmriClient : DccClient, IDccClient {
         OnMessageReceived(new DccMessageArgs("Occupancy", $"Block {e.Identifier} occupancy changed to {(e.IsOccupied ? "OCCUPIED" : "FREE")}"));
         
         // Raise the event
-        OnOccupancyMsgReceived(new DccOccupancyArgs(e.Identifier, e.Identifier, e.IsOccupied));
+        OnOccupancyMsgReceived(new DccOccupancyArgs(e.TrainId, e.Identifier, e.IsOccupied));
     }
     
     private void OnJmriSignalChanged(object? sender, SignalEventArgs e) {

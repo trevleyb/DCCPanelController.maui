@@ -179,6 +179,7 @@ public sealed class ConnectionService {
             signal = new Signal {
                 Name = e.SignalId,
                 Id = e.SignalId,
+                DccAddress = e.SignalId,
                 Aspect = e.Aspect
             };
             _profile.Signals.Add(signal);

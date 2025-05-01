@@ -270,6 +270,9 @@
         <MauiXaml Update="View\Components\IDPicker.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\BlocksPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -365,6 +368,13 @@
         </Compile>
         <Compile Update="View\SettingsViewModel.cs">
             <DependentUpon>SettingsPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\BlocksPage.xaml.cs">
+          <DependentUpon>BlocksPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\BlocksViewModel.cs">
+          <DependentUpon>BlocksPage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

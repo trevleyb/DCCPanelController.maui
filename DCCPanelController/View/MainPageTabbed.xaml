@@ -19,14 +19,22 @@
             ContentTemplate="{DataTemplate view:PanelEditorPage}"
             Icon="panels.png"
             Title="Panels"/>
-        <ShellContent
-            ContentTemplate="{DataTemplate view:TurnoutsPage}"
-            Icon="turnouts.png"
-            Title="Turnouts"/>
-        <ShellContent
-            ContentTemplate="{DataTemplate view:RoutesPage}"
-            Icon="routes.png"
-            Title="Routes"/>
+        
+        <Tab Title="Options" Icon="properties.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate view:TurnoutsPage}"
+                Title="Turnouts"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:RoutesPage}"
+                Title="Routes"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:BlocksPage}"
+                Title="Blocks"/>
+            <!-- <ShellContent -->
+            <!--     ContentTemplate="{DataTemplate view:SignalsPage}" -->
+            <!--     Title="Signals"/> -->
+        </Tab>
+        
         <ShellContent
             ContentTemplate="{DataTemplate view:SettingsPage}"
             Icon="settings.png"

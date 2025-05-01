@@ -6,24 +6,28 @@ namespace DCCClients.Jmri.JMRI.EventArgs;
 public class OccupancyEventArgs : System.EventArgs {
     public string Identifier { get; set; }
     public bool IsOccupied { get; set; }
-    public string? State { get; set; }
-    public string? TrainId { get; set; }
+    public string State { get; set; }
+    public string TrainId { get; set; }
     public string? Metadata { get; set; }
     
-    public OccupancyEventArgs(string identifier, bool isOccupied, string?  state , string? trainId, string? metadata) {
+    public OccupancyEventArgs(string trainId, string identifier, bool isOccupied, string? metadata) {
         Identifier = identifier;
         IsOccupied = isOccupied;
-        State = state;
+        State = IsOccupied ? "OCCUPIED" : "FREE";
         TrainId = trainId;
         Metadata = metadata;
     }
 
     public OccupancyEventArgs(string jsonString) {
-        var occupancyData = OccupancyParser.ParseBlockData(jsonString);
-        if (occupancyData is null) throw new DataException("Invalid JSON object for Occupancy block: " + jsonString);
-        Identifier = occupancyData.Data.UserName;
-        IsOccupied = occupancyData.Data.State == 2;
-        State = occupancyData.Data.State == 2 ? "OCCUPIED" : "FREE";
-        TrainId = occupancyData.Data.Name;
+        try {
+            var occupancyData = OccupancyParser.ParseBlockData(jsonString);
+            if (occupancyData is null) throw new DataException("Invalid JSON object for Occupancy block: " + jsonString);
+            TrainId = occupancyData.Data.Name ?? "unknown";
+            Identifier = occupancyData.Data.UserName ?? "Unknown";
+            IsOccupied = occupancyData.Data.State == 2;
+            State = IsOccupied ? "OCCUPIED" : "FREE";
+        } catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+        }
     }
 }
