@@ -45,11 +45,13 @@ public partial class TurnoutsViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task RefreshTurnoutsAsync() {
-        if (ConnectionService.IsConnected) {
-            Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+        var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+        if (result.IsSuccess) {
+            Client = result.Value;
             Client?.Disconnect();
+        } else {
+            Client = null;
         }
-        Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
     }
 
     [RelayCommand]
@@ -116,8 +118,10 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         if (!string.IsNullOrEmpty(turnout.DccAddress)) {
-            Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-            Client?.SendTurnoutCmd(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown);
+            var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+            if (result.IsSuccess) {
+                Client?.SendTurnoutCmd(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown);
+            } 
         }
         OnPropertyChanged(nameof(Turnouts));
     }

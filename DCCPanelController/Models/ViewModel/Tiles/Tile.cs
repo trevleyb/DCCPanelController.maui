@@ -102,7 +102,6 @@ public abstract class Tile : ContentView, ITile {
             .ContinueWith(t => {
                  if (t.IsCanceled) return;
                  if (HaveVisualPropertiesChanged) {
-                     Console.WriteLine($"{Entity.EntityName}: Properties changed. [{string.Join(",", VisualProperties)}]");
                      SetContent();
                      HaveVisualPropertiesChanged = false; // Reset flag
                      VisualPropertiesChanged.Clear();

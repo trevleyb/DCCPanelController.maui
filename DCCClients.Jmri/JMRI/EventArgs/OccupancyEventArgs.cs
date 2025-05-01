@@ -22,8 +22,8 @@ public class OccupancyEventArgs : System.EventArgs {
         var occupancyData = OccupancyParser.ParseBlockData(jsonString);
         if (occupancyData is null) throw new DataException("Invalid JSON object for Occupancy block: " + jsonString);
         Identifier = occupancyData.Data.UserName;
-        IsOccupied = occupancyData.Data.State != 0;
-        State = occupancyData.Data.State == 0 ? "OCCUPIED" : "FREE";
+        IsOccupied = occupancyData.Data.State == 2;
+        State = occupancyData.Data.State == 2 ? "OCCUPIED" : "FREE";
         TrainId = occupancyData.Data.Name;
     }
 }

@@ -15,13 +15,17 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityID {
+    [ObservableProperty] private ObservableCollection<Entity> _entities = [];
+    [ObservableProperty] private int _sortOrder;
+
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
-    [ObservableProperty] private ObservableCollection<Entity> _entities = [];
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
-
-    [ObservableProperty] private int _sortOrder;
+    
+    [JsonIgnore] public Panels? Panels { get; set; }
+    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
 
     [JsonConstructor]
     private Panel() {
@@ -32,10 +36,6 @@ public partial class Panel : ObservableObject, IEntityID {
         Panels = panels;
         Id = GenerateID();
     }
-
-    [JsonIgnore] public Panels? Panels { get; set; }
-    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
 
     [JsonIgnore]
     public string Title {

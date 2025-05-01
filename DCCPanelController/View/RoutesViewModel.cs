@@ -81,11 +81,13 @@ public partial class RoutesViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task RefreshRoutesAsync() {
-        if (ConnectionService.IsConnected) {
-            Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+        var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+        if (result.IsSuccess) {
+            Client = result.Value;
             Client?.Disconnect();
+        } else {
+            Client = null;
         }
-        Client = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
     }
 
     [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
@@ -98,8 +100,10 @@ public partial class RoutesViewModel : BaseViewModel {
             _                       => RouteStateEnum.Active
         };
         if (!string.IsNullOrEmpty(route.Id)) {
-            Client = await ConnectionService.Connect();
-            Client?.SendRouteCmd(route.Id, route.State == RouteStateEnum.Active);
+            var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
+            if (result.IsSuccess) {
+                Client?.SendRouteCmd(route.Id, route.State == RouteStateEnum.Active);
+            }
         }
     }
 }

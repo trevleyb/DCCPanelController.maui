@@ -16,8 +16,7 @@ namespace DCCClients.Discovery
         /// Creates a new instance of the JmriServiceDiscovery class
         /// </summary>
         /// <param name="discovery">The network service discovery implementation to use</param>
-        public JmriServiceDiscovery(INetworkServiceDiscovery discovery)
-        {
+        public JmriServiceDiscovery(INetworkServiceDiscovery discovery) {
             _discovery = discovery;
         }
         
@@ -30,9 +29,7 @@ namespace DCCClients.Discovery
         public async Task<List<DiscoveredService>> DiscoverServersAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default)
         {
             // JMRI servers advertise as _http._tcp.local
-            var services = await _discovery.DiscoverServicesAsync("_http._tcp.local", timeoutSeconds, cancellationToken);
-            
-            // Filter for JMRI servers (they have a path=/json TXT record)
+            var services = await _discovery.DiscoverServicesAsync("jmri", timeoutSeconds, cancellationToken);
             return services
                 .Where(s => s.TxtRecords.Any(txt => txt.Contains("path=/json")))
                 .ToList();
@@ -44,8 +41,7 @@ namespace DCCClients.Discovery
         /// <param name="timeoutSeconds">How long to search for services in seconds</param>
         /// <param name="cancellationToken">Cancellation token</param>
         /// <returns>List of JMRI server URLs</returns>
-        public async Task<List<string>> DiscoverServerUrlsAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default)
-        {
+        public async Task<List<string>> DiscoverServerUrlsAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default) {
             var servers = await DiscoverServersAsync(timeoutSeconds, cancellationToken);
             return servers.Select(s => s.GetUrl()).ToList();
         }

@@ -63,13 +63,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         Navigation.PushAsync(new InstructionsPage());
     }
 
-    private void ShowMessages_OnClicked(object? sender, EventArgs e) {
-        if (_viewModel is not null) {
-            _viewModel.ShowMessages = !_viewModel.ShowMessages;
-            ShowMessagesButton.IconImageSource = _viewModel.ShowMessages ? "chevron_down.png" : "chevron_up.png";
-        }
-    }
-
     private async void Upload_OnClicked(object? sender, EventArgs e) {
         try {
             // Prompt the user to choose where to save the file
@@ -138,7 +131,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         return await reader.ReadToEndAsync();
     }
 
-    private void JmriServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
+    private async void JmriServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
         _viewModel?.SetNewConnectionMethod("jmri");
     }
 

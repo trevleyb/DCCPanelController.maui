@@ -4,6 +4,7 @@ using DCCClients.Interfaces;
 using DCCClients.Jmri;
 using DCCClients.Jmri.JMRI.DataBlocks;
 using DCCClients.WiThrottle;
+using DCCPanelController.Helpers.Result;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
@@ -26,35 +27,46 @@ public sealed class ConnectionService {
 
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
 
-    public async Task<IDccClient?> Connect() {
+    public async Task<IResult<IDccClient?>> Connect() {
         return await Connect(_profile.ActiveConnectionInfo);
     }
 
-    public async Task<IDccClient?> Connect(ConnectionInfo? connectionInfo) {
+    public async Task<IResult<IDccClient?>> Connect(ConnectionInfo? connectionInfo) {
+        Console.WriteLine($"Connecting to {connectionInfo?.Name}");
         if (connectionInfo is not null) _connectionInfo = connectionInfo;
         ArgumentNullException.ThrowIfNull(_connectionInfo);
-        _dccClient = await GetClient(_connectionInfo);
+        var result = await GetClient(_connectionInfo);
+        if (result.IsFailure) {
+            Console.WriteLine("Failed to get Client.");
+            return result;
+        }
+
+        _dccClient = result.Value;
+        if (_dccClient is null) return Result<IDccClient>.Fail("Could not create a Client Instance.");
         OnConnectionChanged();
-        return _dccClient;
+        return Result<IDccClient?>.Ok(_dccClient);
     }
 
     public void Disconnect() {
+        Console.WriteLine("Disconnecting");
         if (_dccClient is not null) {
             _dccClient.Disconnect();
             _dccClient.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
             _dccClient.RouteMsgReceived -= DccClientOnRouteMsgReceived;
             _dccClient.SignalMsgReceived -= DccClientOnSignalMsgReceived;
+            _dccClient.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
         }
         _dccClient = null;
         OnConnectionChanged();
     }
 
-    private async Task<IDccClient> GetClient(ConnectionInfo? connection = null) {
+    private async Task<IResult<IDccClient?>> GetClient(ConnectionInfo? connection = null) {
+        Console.WriteLine($"Getting a Client....");
         // Allow null as a parameter if we know we have already setup the connection
         // This will then return the active connection.
         // --------------------------------------------------------------------------
-        if (_dccClient is { IsConnected: true }) return _dccClient;
-        if (_dccClient is { IsConnected: false }) Disconnect();
+        if (_dccClient is { IsConnected: true }) return Result<IDccClient>.Ok(_dccClient);
+        if (_dccClient is { IsConnected: true }) Disconnect();
 
         // If we don't have a connection setup, and we did not provide settings, then we error
         // --------------------------------------------------------------------------
@@ -63,13 +75,25 @@ public sealed class ConnectionService {
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
         _dccClient = CreateClient(connection.Settings);
+        if (_dccClient is null) {
+            Console.WriteLine($"Failed to create a client instance");
+            return Result<IDccClient?>.Fail("Unable to create a Client instance.");
+        }
+        
+        Console.WriteLine($"Created a client instance....");
         var result = await _dccClient.ConnectAsync();
-        if (result.IsFailure) _dccClient = new DccInvalidClient(connection.Settings);
+        if (result.IsFailure) {
+            Console.WriteLine($"Cannot connect to the specified client");
+            return Result<IDccClient?>.Fail("Unable to conect to the specified server.");
+        }
+        Console.WriteLine($"Connected OK... setting events");
 
+        _dccClient.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
         _dccClient.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
         _dccClient.RouteMsgReceived += DccClientOnRouteMsgReceived;
         _dccClient.SignalMsgReceived += DccClientOnSignalMsgReceived;
-        return _dccClient;
+        Console.WriteLine($"Returning OK with the dccClient");
+        return Result<IDccClient?>.Ok(_dccClient);
     }
 
     /// <summary>
@@ -122,6 +146,24 @@ public sealed class ConnectionService {
         }
     }
     
+    private void DccClientOnOccupancyMsgReceived(object? sender, DccOccupancyArgs e) {
+        Block? block = null;
+        block ??= _profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
+        block ??= _profile?.Blocks?.FirstOrDefault(x => x.Name == e.BlockId) ?? null;
+        if (block is not null) {
+            block.IsOccupied = e.IsOccupied;
+            Console.WriteLine($"Block Updated {block.Name} is now {(block.IsOccupied ? "OCCUPIED" : "FREE")}");
+        } else if (_profile is not null && _profile.Blocks is not null) {
+            block = new Block {
+                Name = e.BlockId,
+                Id = e.BlockId,
+                IsOccupied = e.IsOccupied
+            };
+            _profile.Blocks.Add(block);
+            Console.WriteLine($"Block Added {block.Name} is now {(block.IsOccupied ? "OCCUPIED" : "FREE")}");
+        }
+    }
+    
     /// <summary>
     ///     Global update of any Signals that appear once we do a connection.
     /// </summary>
@@ -148,11 +190,11 @@ public sealed class ConnectionService {
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { IsConnected = IsConnected });
     }
     
-    public static IDccClient CreateClient(IDccSettings settings) {
+    public static IDccClient?CreateClient(IDccSettings settings) {
         return settings.Type.ToLowerInvariant() switch {
             "withrottle" => new DccWiThrottleClient(settings),
             "jmri"       => new DccJmriClient(settings),
-            _            => throw new NotImplementedException("Unknown client requested: {name}")
+            _            => null
         };
     }
 }

@@ -38,11 +38,13 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     private async Task ToggleTurnoutStateAsync() {
         if (Turnout == null) return;
         if (!string.IsNullOrEmpty(Turnout.Id)) {
-            Client = await ConnectionService.Connect();
-            Client?.SendTurnoutCmd(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
+            var result = await ConnectionService.Connect();
+            if (result.IsSuccess) {
+                Client?.SendTurnoutCmd(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
+            }
+            OnPropertyChanged(nameof(CurrentState));
+            OnPropertyChanged(nameof(Turnout));
         }
-        OnPropertyChanged(nameof(CurrentState));
-        OnPropertyChanged(nameof(Turnout));
     }
 
     [RelayCommand]

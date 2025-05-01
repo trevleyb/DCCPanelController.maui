@@ -32,8 +32,6 @@ public class DccJmriClient : DccClient, IDccClient {
             
             // Initialize the client and fetch initial data
             await _jmriClient.InitializeAsync();
-            
-            // Start monitoring for changes
             await _jmriClient.StartMonitoringAsync();
             
             _isConnected = true;
@@ -77,7 +75,7 @@ public class DccJmriClient : DccClient, IDccClient {
     public IResult Disconnect() {
         try {
             if (_jmriClient != null) {
-                _jmriClient.StopAsync().Wait();
+                _jmriClient.StopAsync();
                 _jmriClient = null;
             }
             _isConnected = false;

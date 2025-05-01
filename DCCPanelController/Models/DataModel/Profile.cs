@@ -13,15 +13,17 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Profile : ObservableObject {
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private string _profileName;
-    [ObservableProperty] private ObservableCollection<Route> _routes = [];
     [ObservableProperty] private Settings _settings;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts = [];
-    [ObservableProperty] private ObservableCollection<Signal> _signals = [];
+    [ObservableProperty] private ObservableCollection<Block> _blocks;
+    [ObservableProperty] private ObservableCollection<Route> _routes;
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private ObservableCollection<Signal> _signals;
 
     public Profile(string profileName) {
         _profileName = profileName;
         Panels = new Panels();
         Settings = new Settings();
+        Blocks = new ObservableCollection<Block>();
         Turnouts = new ObservableCollection<Turnout>();
         Routes = new ObservableCollection<Route>();
         Signals = new ObservableCollection<Signal>();
@@ -39,6 +41,10 @@ public partial class Profile : ObservableObject {
     
     public Signal? Signal(string id) {
         return Signals.FirstOrDefault(s => s.Id == id);
+    }
+
+    public Block? Block(string id) {
+        return Blocks.FirstOrDefault(s => s.Id == id);
     }
 
     public static Profile NewOrLoad(string profileName) {

@@ -27,6 +27,12 @@ public partial class SettingsViewModel : BaseViewModel {
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
+    private ConnectionService ConnectionService { get; }
+    public Settings Settings => _profile.Settings;
+    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
+    public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Test Connect";
+    public bool ShowWiServers => !ShowMessages;
+    
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
@@ -51,16 +57,7 @@ public partial class SettingsViewModel : BaseViewModel {
             Url = wiThrottleSettings.Url;
         }
     }
-
-    private ConnectionService ConnectionService { get; }
-    public Settings Settings => _profile.Settings;
-    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
-    public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Connect";
-    public bool ShowWiServers => !ShowMessages;
-    public bool IsConnected => ConnectionService?.IsConnected ?? false;
-    public bool IsLiveMode => !IsDemoMode || !IsConnected;
-    public bool IsConnectAvailable => !IsBusy && !IsRefreshing && !IsDemoMode;
-
+    
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
         set {
@@ -74,8 +71,6 @@ public partial class SettingsViewModel : BaseViewModel {
         set {
             Settings.UseConnection = value;
             OnPropertyChanged();
-            OnPropertyChanged(nameof(IsLiveMode));
-            OnPropertyChanged(nameof(IsConnectAvailable));
         }
     }
 
@@ -107,8 +102,6 @@ public partial class SettingsViewModel : BaseViewModel {
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
     // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
-        OnPropertyChanged(nameof(IsConnectAvailable));
-        OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(ConnectLabel));
     }
 
@@ -124,6 +117,7 @@ public partial class SettingsViewModel : BaseViewModel {
             SaveConnectionDetails();
             break;
         }
+        //RefreshServersCommand.ExecuteAsync(null);
     }
 
     public void SaveConnectionDetails() {
@@ -145,32 +139,45 @@ public partial class SettingsViewModel : BaseViewModel {
     public async Task ConnectAsync() {
         if (!IsDemoMode) {
             Messages.Clear();
-            AddMessage("Attempting to connect/disconnect to WiService");
+            AddMessage("Attempting to connect/disconnect to Service");
 
             try {
                 IsBusy = true;
-                if (_client is not null || ConnectionService.IsConnected) {
-                    if (_client != null) _client.MessageReceived -= ClientOnMessageReceived;
-                    ConnectionService.Disconnect();
-                    AddMessage("Disconnected.");
-                }
-
                 SaveConnectionDetails();
-                _client = await ConnectionService.Connect(Settings.ActiveConnection());
-                if (_client is not null) {
-                    _client.MessageReceived += ClientOnMessageReceived;
-                    AddMessage("Connected.");
+                var result = await ConnectionService.Connect(Settings.ActiveConnection());
+                if (result.IsFailure) {
+                    AddMessage("Connection Failed.");
+                    foreach (var error in result.Errors) AddMessage(error.Message);
+                } else {
+                    _client = result.Value;
+                    if (_client is not null) {
+                        _client.MessageReceived += ClientOnMessageReceived;
+                        await Task.Delay(1000);
+                        if (_client.IsConnected) {
+                            AddMessage("Connected Successfully.");
+                            _client.Disconnect();
+                        } else {
+                            AddMessage("Connection Failed.");
+                        }
+                    }
                 }
             } catch {
                 IsBusy = false;
                 AddMessage("Unable to Connect.");
+            } finally {
+                if (_client is not null) {
+                    _client.MessageReceived -= ClientOnMessageReceived;
+                    _client.Disconnect();
+                }
+                OnPropertyChanged(nameof(ConnectLabel));
+                OnPropertyChanged(nameof(Messages));
+                IsBusy = false;
             }
         }
-        IsBusy = false;
     }
 
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
-        AddMessage($"{e.MessageType}: {e.Message}");
+        AddMessage($"{e.MessageType} message => {e.Message}");
     }
 
     public void AddMessage(string message) {
@@ -191,12 +198,11 @@ public partial class SettingsViewModel : BaseViewModel {
     public async Task RefreshServersAsync() {
         if (IsBusy) return;
         AddMessage("Attempting to scan for Available Servers");
+        Servers.Clear();
+        OnPropertyChanged(nameof(Servers));
+
         try {
             IsBusy = true;
-            OnPropertyChanged(nameof(IsConnectAvailable));
-
-            Servers.Clear();
-
             var serverDiscovery = DCCClients.Discovery.ServiceDiscoveryFactory.DiscoverServices(CurrentSettings?.Settings?.Type ?? "");
             var servers = await serverDiscovery.DiscoverServersAsync();
             
@@ -219,7 +225,6 @@ public partial class SettingsViewModel : BaseViewModel {
         } finally {
             IsBusy = false;
             IsRefreshing = false;
-            OnPropertyChanged(nameof(IsConnectAvailable));
         }
     }
 

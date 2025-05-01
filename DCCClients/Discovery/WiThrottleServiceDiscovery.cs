@@ -30,7 +30,7 @@ namespace DCCClients.Discovery
         public async Task<List<DiscoveredService>> DiscoverServersAsync(int timeoutSeconds = 5, CancellationToken cancellationToken = default)
         {
             // WiThrottle servers advertise as _withrottle._tcp.local
-            return await _discovery.DiscoverServicesAsync("_withrottle._tcp.local", timeoutSeconds, cancellationToken);
+            return await _discovery.DiscoverServicesAsync("withrottle", timeoutSeconds, cancellationToken);
         }
 
         /// <summary>
