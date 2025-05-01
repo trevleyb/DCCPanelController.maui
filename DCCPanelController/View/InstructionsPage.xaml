@@ -9,6 +9,13 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
     <ContentPage.Content>
-        <Label Text="Instructions"/>
+        <VerticalStackLayout>
+        <Label Margin="10,10,10,10" Style="{StaticResource LargeLabel}" Text="DCC Panel Controller" FontAttributes="Bold" FontSize="24" />
+        <Label Margin="10,10,10,10" Style="{StaticResource MediumLabel}">
+        </Label>
+        <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}" Text="SubHeading"/>
+        <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Bla Bla Bla</Label>
+        <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Bla Bla Bla</Label>
+        </VerticalStackLayout>
     </ContentPage.Content>
 </ContentPage>

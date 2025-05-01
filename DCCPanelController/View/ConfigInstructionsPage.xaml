@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    IconImageSource="info.png"
+    Title="Instructions"
+    iOsSpecific:Page.UseSafeArea="True"
+    x:Class="DCCPanelController.View.ConfigInstructionsPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <ContentPage.Content>
+        <VerticalStackLayout>
+        <Label Margin="10,10,10,10" Style="{StaticResource LargeLabel}" Text="Options Information and Instructions" FontAttributes="Bold" FontSize="24" />
+        <Label Margin="10,10,10,10" Style="{StaticResource MediumLabel}">
+            The tabs on this page allow you to view data that has been downloaded from your DCC System (JMRI, WiThrottle). When you connect to a DCC System, it will interogate data for Turnouts, Blocks (Occupancy), Routes and Signal Masts and will store this information within the Panel Controller. This information is used when configuring turnouts, blocks and routes as a reference to these are required for operating the layout. 
+        </Label>
+        <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}" Text="Turnouts (all systems)"/>
+        <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Turnout data includes the current state and the DCC Address of a particular turnout. Clicking on the state or the state icon will change/toggle the state of the turnout.</Label>
+        <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">You can manually add a Turnout if you are using a system such as WiThrottle that supports sending turnout messages to a turnout that has not previously been defined. </Label>
+        <HorizontalStackLayout>
+            <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">The state of a turnout is automatically updated when you connect using the connect button </Label>
+            <Image Source="wifi.png"></Image>
+            <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}"> or disconnect </Label>
+            <Image Source="wifi_off.png"></Image>
+            <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">but turnouts deleted on the server will not be reflected automatically. </Label>
+        </HorizontalStackLayout>
+        <HorizontalStackLayout>
+            <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">To refresh all turnout data (leaving manually added turnouts) use the delete and refresh button </Label>
+            <Image Source="delete.png"></Image>
+        </HorizontalStackLayout>
+        <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}" Text="Routes (all systems)"/>
+        <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Routes are any included routes defined in your DCC and you can activate a state by clicking on the state name or icon. You will notice that if this route changes the state of turnouts, the turnouts will be updated on the turnouts tab also.   </Label>
+        <HorizontalStackLayout>
+            <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">To refresh all route data use the delete and refresh button </Label>
+            <Image Source="delete.png"></Image>
+        </HorizontalStackLayout>
+        <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}" Text="Blocks (Occupancy) (JMRI Only)"/>
+        <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Block or Occupancy blocks a indicators if you have sensors defined in your JMRI system to indicate if a block is occupied and this will be shown on the Panel. Blocks are only supported with a direct connection to JMRI. This data is stored and used when defining track pieces. </Label>
+        <HorizontalStackLayout>
+            <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">To refresh all block (occupancy) data use the delete and refresh button </Label>
+            <Image Source="delete.png"></Image>
+        </HorizontalStackLayout>
+        </VerticalStackLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -273,6 +273,9 @@
         <MauiXaml Update="View\BlocksPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\ConfigInstructionsPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -375,6 +378,13 @@
         </Compile>
         <Compile Update="View\BlocksViewModel.cs">
           <DependentUpon>BlocksPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\ConfigInstructionsPage.xaml.cs">
+          <DependentUpon>ConfigInstructionsPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\ConfigInstructionsViewModel.cs">
+          <DependentUpon>ConfigInstructionsPage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 
