@@ -19,7 +19,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                     Title = "Select a Turnout",
                     HorizontalOptions = LayoutOptions.Start
                 };
-                picker.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+                picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
                 picker.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
                 return CreateGroupCell(picker);
             #else

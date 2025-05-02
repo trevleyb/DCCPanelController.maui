@@ -1,3 +1,4 @@
+using DCCClients;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -17,7 +18,7 @@ public class RouteTile : Tile, ITileInteractive {
         set => SetField(ref field, value);
     } = RouteStateEnum.Unknown;
 
-    public void Interact() {
+    public void Interact(IDccClient? client) {
         ClickSounds.PlayButtonClickSound();
         State = State switch {
             RouteStateEnum.Unknown  => RouteStateEnum.Active,
@@ -25,9 +26,14 @@ public class RouteTile : Tile, ITileInteractive {
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Unknown
         };
+
+        if (client is not null && Entity is RouteEntity { Route.Id: {} id } routeEntity) {
+            client.SendRouteCmd(id, State != RouteStateEnum.Inactive);
+        }
+
     }
 
-    public void Secondary() { }
+    public void Secondary(IDccClient? client) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is RouteEntity button) {

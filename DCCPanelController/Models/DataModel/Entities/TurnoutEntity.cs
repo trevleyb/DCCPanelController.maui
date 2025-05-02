@@ -38,6 +38,9 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
         RotationFactor = 90;
     }
 
+    [JsonIgnore]
+    public Turnout? Turnout => Parent?.Turnout(TurnoutID);
+    
     public override string ToString() {
         return TurnoutID;
     }

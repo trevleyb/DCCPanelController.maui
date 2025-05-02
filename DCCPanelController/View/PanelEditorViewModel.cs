@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCClients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -27,6 +28,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private bool _propertiesChanged;
+    [ObservableProperty] private IDccClient? _client;
 
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
@@ -171,15 +173,17 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task ToggleConnection() {
+    public async Task ToggleConnectionAsync() {
         if (_connectionService is null) return;
         if (_connectionService.IsConnected) {
             _connectionService.Disconnect();
+            Client = null;
         } else {
-            await _connectionService.Connect();
+            var result = await _connectionService.Connect();
+            Client = result.IsSuccess ? result.Value : null;
         }
     }
-
+    
     [RelayCommand]
     public async Task DownloadPanelAsync() {
         try {

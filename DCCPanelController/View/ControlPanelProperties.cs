@@ -1,7 +1,10 @@
 using System.Collections.Specialized;
+using DCCClients;
+using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
@@ -12,10 +15,16 @@ internal sealed partial class ControlPanelView {
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
     public static readonly BindableProperty EditModeProperty = BindableProperty.Create(nameof(EditMode), typeof(EditModeEnum), typeof(ControlPanelView), EditModeEnum.Move, BindingMode.Default, propertyChanged: OnEditModeChanged);
+    public static readonly BindableProperty ClientProperty = BindableProperty.Create(nameof(Client), typeof(IDccClient), typeof(ControlPanelView), null, BindingMode.Default, propertyChanged: OnClientChanged);
 
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
+    }
+
+    public IDccClient? Client {
+        get => (IDccClient?)GetValue(ClientProperty);
+        set => SetValue(ClientProperty, value);
     }
 
     public bool DesignMode {
@@ -56,7 +65,7 @@ internal sealed partial class ControlPanelView {
                 var tapRecogniser = new TapGestureRecognizer();
                 tapRecogniser.Tapped += control.DynamicGridTapped;
                 control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
-            }
+            } 
             control.DrawPanel(true);
         }
     }
@@ -109,6 +118,12 @@ internal sealed partial class ControlPanelView {
             if (lastTile is { } ITile) {
                 control.MarkTileSelected(lastTile);
             }
+        }
+    }
+
+    private static void OnClientChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        if (bindable is ControlPanelView control) {
+            Console.WriteLine("Client Connection Property Changed");
         }
     }
 

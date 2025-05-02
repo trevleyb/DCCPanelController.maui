@@ -82,6 +82,7 @@
                             HorizontalOptions="Fill"
                             Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"
                             ShowGrid="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=ShowGrid}"
+                            Client="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=Client}"
                             VerticalOptions="Fill"
                             x:DataType="dataModel:Panel"
                             x:Name="PanelView"/>

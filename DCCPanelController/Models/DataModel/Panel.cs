@@ -51,37 +51,24 @@ public partial class Panel : ObservableObject, IEntityID {
         return EntityID.NextPanelID(Panels ?? []);
     }
 
-    public Entity? GetEntityAtPosition(int x, int y) {
-        return Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
-    }
+    public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
+    public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
+    public List<T> GetPanelEntitiesWithID<T>() where T : Entity => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.EntityName)).ToList() ?? [];
+    public List<T> GetAllEntitiesByType<T>() where T : Entity   => Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
+    public List<T> GetAllEntitiesWithID<T>() where T : Entity   => Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
+    public ButtonEntity? GetButtonEntity(string id)             => GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    public TurnoutEntity? GetTurnoutEntity(string id)           => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.TurnoutID == id) ?? null;
+    public RouteEntity? GetRouteEntity(string id)               => GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
 
-    public List<T> GetPanelEntitiesByType<T>() where T : Entity {
-        return Entities.OfType<T>().ToList() ?? [];
-    }
+    public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
+    public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
+    public ObservableCollection<Turnout> Turnouts=> Panels?.Profile?.Turnouts ?? [];
+    public ObservableCollection<Signal> Signals=> Panels?.Profile?.Signals ?? [];
 
-    public List<T> GetPanelEntitiesWithID<T>() where T : Entity {
-        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.EntityName)).ToList() ?? [];
-    }
-
-    public List<T> GetAllEntitiesByType<T>() where T : Entity {
-        return Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
-    }
-
-    public List<T> GetAllEntitiesWithID<T>() where T : Entity {
-        return Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
-    }
-
-    public ButtonEntity? GetButtonEntity(string id) {
-        return GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
-    }
-
-    public TurnoutEntity? GetTurnoutEntity(string id) {
-        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.TurnoutID == id) ?? null;
-    }
-
-    public RouteEntity? GetRouteEntity(string id) {
-        return GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
-    }
+    public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
+    public Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
+    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
+    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
     
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;

@@ -106,7 +106,7 @@ public partial class PanelEditorPage {
             _editPanelToolbar.Command = new Command(vm.EditPanel);
             _duplicatePanelToolbar.Command = new Command(vm.DuplicatePanel);
             _panelPropertiesToolbar.Command = new Command(vm.EditPanelProperties);
-            _panelConnectionToolbar.Command = new AsyncRelayCommand(vm.ToggleConnection);
+            _panelConnectionToolbar.Command = new AsyncRelayCommand(vm.ToggleConnectionAsync);
             _panelDownloadToolbar.Command = new AsyncRelayCommand(vm.DownloadPanelAsync);
             _panelUploadToolbar.Command = new AsyncRelayCommand(vm.UploadPanelAsync);
         }

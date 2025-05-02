@@ -2,6 +2,7 @@ using System.Diagnostics;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCClients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -44,6 +45,7 @@ internal sealed partial class ControlPanelView {
         BindingContext = this;
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
+        
     }
 
     public int Rows => Panel?.Rows ?? 1;
@@ -212,8 +214,8 @@ internal sealed partial class ControlPanelView {
                 }
             } else {
                 if (sender is ITileInteractive interactiveTile) {
-                    if (_tapCount == 1) interactiveTile.Interact();
-                    if (_tapCount == 2) interactiveTile.Secondary();
+                    if (_tapCount == 1) interactiveTile.Interact(Client);
+                    if (_tapCount == 2) interactiveTile.Secondary(Client);
                 }
             }
             _tapCount = 0;

@@ -21,6 +21,9 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     public RouteEntity(RouteEntity entity) : base(entity) { }
     public override string EntityName => "Route";
 
+    [JsonIgnore]
+    public Route? Route => Parent?.Route(RouteID);
+    
     public override Entity Clone() {
         return new RouteEntity(this);
     }

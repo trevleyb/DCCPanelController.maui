@@ -1,3 +1,4 @@
+using DCCClients;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -17,7 +18,7 @@ public class ButtonTile : Tile, ITileInteractive {
         set => SetField(ref field, value);
     } = ButtonStateEnum.Unknown;
 
-    public void Interact() {
+    public void Interact(IDccClient? client) {
         ClickSounds.PlayButtonClickSound();
         State = State switch {
             ButtonStateEnum.Unknown => ButtonStateEnum.On,
@@ -27,7 +28,7 @@ public class ButtonTile : Tile, ITileInteractive {
         };
     }
 
-    public void Secondary() { }
+    public void Secondary(IDccClient? client) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {
