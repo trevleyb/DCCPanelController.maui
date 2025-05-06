@@ -11,28 +11,26 @@ using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEn
 namespace DCCPanelController.View;
 
 public partial class RoutesViewModel : BaseViewModel {
+    private bool _isAscending;
+    private string _sortColumn = "";
+
     private const string LabelID = "ID";
     private const string LabelName = "Route";
     private const string LabelState = "State";
 
     [ObservableProperty] private bool _isConnected;
-    [ObservableProperty] private bool _canToggleRoutesState;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-
-    private bool _isAscending;
+    [ObservableProperty] private string _connectionIcon = "wifi.png";
     [ObservableProperty] private ObservableCollection<Route> _routes;
-    private string _sortColumn = "";
 
     public RoutesViewModel(Profile profile, ConnectionService connectionService) {
         ConnectionService = connectionService;
+        ConnectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
+
         Profile = profile;
         Routes = Profile.Routes;
-        CanToggleRoutesState = true;
-        ConnectionService.ConnectionChanged += (sender, args) => {
-            IsConnected = args.IsConnected;
-        };
         SetLabels();
     }
 
@@ -50,7 +48,7 @@ public partial class RoutesViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task SortByColumn(string columnName) {
+    private async Task SortByColumnAsync(string columnName) {
         List<Route> sortedRoutes;
 
         if (!_isAscending) {
@@ -83,37 +81,28 @@ public partial class RoutesViewModel : BaseViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     private async Task RefreshRoutesAsync() {
         try {
             IsBusy = true;
-        var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-        if (result.IsSuccess) {
-            Client = result.Value;
-            Client?.Disconnect();
-        } else {
-            Client = null;
-        }
-        } catch { /* ignore */
+            ConnectionService.ForceRefresh();
+        } catch (Exception ex){
+            Console.WriteLine($"Unable to force refresh the routes: {ex.Message}");
         } finally {
             IsBusy = false;
         }
     }
 
-    [RelayCommand(CanExecute = nameof(CanToggleRoutesState))]
+    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     public async Task ToggleRoutesState(Route? route) {
         if (route == null) return;
-
         route.State = route.State switch {
             RouteStateEnum.Active   => RouteStateEnum.Inactive,
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Active
         };
         if (!string.IsNullOrEmpty(route.Id)) {
-            var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-            if (result.IsSuccess) {
-                Client?.SendRouteCmd(route.Id, route.State == RouteStateEnum.Active);
-            }
+            await ConnectionService?.SendRouteCmdAsync(route.Id, route.State == RouteStateEnum.Active)!;
         }
     }
     
@@ -150,11 +139,6 @@ public partial class RoutesViewModel : BaseViewModel {
     
     [RelayCommand]
     private async Task ToggleConnectionAsync() {
-        if (!IsConnected) {
-            await ConnectionService.Connect();
-        } else {
-            ConnectionService.Disconnect();
-        }
+        await ConnectionService.ToggleConnectionAsync();
     }
-
 }

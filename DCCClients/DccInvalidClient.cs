@@ -31,25 +31,25 @@ public class DccInvalidClient : DccClient, IDccClient {
     ///     Disconnects from the service and releases related resources.
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
-    public IResult Disconnect() {
+    public async Task<IResult> DisconnectAsync() {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public bool IsConnected => false;
 
-    public IResult SendCmd(string message) {
+    public async Task<IResult> SendCmdAsync(string message) {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
-    public IResult SendTurnoutCmd(string dccAddress, bool thrown) {
+    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
-    public IResult SendRouteCmd(string dccAddress, bool active) {
+    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
-    public IResult SendSignalCmd(string dccAddress, SignalAspectEnum aspect) {
+    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 

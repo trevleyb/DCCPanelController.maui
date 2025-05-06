@@ -21,7 +21,6 @@ public class DccJmriClient : DccClient, IDccClient {
     public async Task<IResult> ConnectAsync() {
         try {
             ArgumentNullException.ThrowIfNull(_settings);
-            
             _jmriClient = CreateJmriClient(_settings);
             
             // Subscribe to JMRI client events
@@ -72,10 +71,10 @@ public class DccJmriClient : DccClient, IDccClient {
     ///     Disconnects from the JMRI server and releases related resources.
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
-    public IResult Disconnect() {
+    public async Task<IResult> DisconnectAsync() {
         try {
             if (_jmriClient != null) {
-                _jmriClient.StopAsync();
+                await _jmriClient.StopAsync();
                 _jmriClient = null;
             }
             _isConnected = false;
@@ -88,16 +87,12 @@ public class DccJmriClient : DccClient, IDccClient {
 
     public bool IsConnected => _isConnected && _jmriClient != null;
 
-    public IResult SendCmd(string message) {
+    public async Task<IResult> SendCmdAsync(string message) {
         try {
             if (!IsConnected) {
                 return Result.Fail(new Error("Not connected to JMRI server"));
             }
-            
-            // Log the command
             OnMessageReceived(new DccMessageArgs("Command", message));
-            
-            // Since JMRI doesn't have a generic command interface, we'll just log it
             return Result.Ok();
         }
         catch (Exception ex) {
@@ -105,18 +100,13 @@ public class DccJmriClient : DccClient, IDccClient {
         }
     }
 
-    public IResult SendTurnoutCmd(string dccAddress, bool thrown) {
+    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
         try {
             if (!IsConnected || _jmriClient == null) {
                 return Result.Fail(new Error("Not connected to JMRI server"));
             }
-            
-            // Log the command
             OnMessageReceived(new DccMessageArgs("Turnout", $"Setting turnout {dccAddress} to {(thrown ? "THROWN" : "CLOSED")}"));
-            
-            // Send the command
-            _jmriClient.SendTurnoutCommandAsync(dccAddress, thrown).Wait();
-            
+            await _jmriClient.SendTurnoutCommandAsync(dccAddress, thrown);
             return Result.Ok();
         }
         catch (Exception ex) {
@@ -124,20 +114,15 @@ public class DccJmriClient : DccClient, IDccClient {
         }
     }
 
-    public IResult SendRouteCmd(string dccAddress, bool active) {
+    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
         try {
             if (!IsConnected || _jmriClient == null) {
                 return Result.Fail(new Error("Not connected to JMRI server"));
             }
-            
-            // Log the command
             OnMessageReceived(new DccMessageArgs("Route", $"Setting route {dccAddress} to {(active ? "ACTIVE" : "INACTIVE")}"));
-            
-            // Send the command - JMRI routes are activated by sending the route identifier
             if (active) {
-                _jmriClient.SendRouteCommandAsync(dccAddress).Wait();
+                await _jmriClient.SendRouteCommandAsync(dccAddress);
             }
-            
             return Result.Ok();
         }
         catch (Exception ex) {
@@ -145,18 +130,13 @@ public class DccJmriClient : DccClient, IDccClient {
         }
     }
 
-    public IResult SendSignalCmd(string dccAddress, SignalAspectEnum aspect) {
+    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
         try {
             if (!IsConnected || _jmriClient == null) {
                 return Result.Fail(new Error("Not connected to JMRI server"));
             }
-            
-            // Log the command
             OnMessageReceived(new DccMessageArgs("Signal", $"Setting signal {dccAddress} to aspect {aspect}"));
-            
-            // Send the command
-            _jmriClient.SendSignalCommandAsync(dccAddress, aspect).Wait();
-            
+            await _jmriClient.SendSignalCommandAsync(dccAddress, aspect);
             return Result.Ok();
         }
         catch (Exception ex) {

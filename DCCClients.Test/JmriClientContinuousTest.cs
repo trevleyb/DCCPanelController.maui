@@ -50,7 +50,7 @@ public class JmriClientContinuousTest {
 
     [TearDown]
     public void TearDown() {
-        _client.Disconnect();
+        _client.DisconnectAsync();
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class JmriClientContinuousTest {
     public async Task ReconnectAsync_ShouldReconnectAfterDisconnect() {
         // Arrange
         await _client.ConnectAsync();
-        _client.Disconnect();
+        await _client.DisconnectAsync();
 
         // Clear events
         _receivedMessages.Clear();
@@ -105,7 +105,7 @@ public class JmriClientContinuousTest {
         _receivedMessages.Clear();
 
         // Act - Send turnout command
-        var result = _client.SendTurnoutCmd(turnoutId, true);
+        var result = await _client.SendTurnoutCmdAsync(turnoutId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending turnout command should succeed");
@@ -134,7 +134,7 @@ public class JmriClientContinuousTest {
         _receivedMessages.Clear();
 
         // Act - Send route command
-        var result = _client.SendRouteCmd(routeId, true);
+        var result = await _client.SendRouteCmdAsync(routeId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending route command should succeed");
@@ -163,7 +163,7 @@ public class JmriClientContinuousTest {
         _receivedMessages.Clear();
 
         // Act - Send signal command
-        var result = _client.SendSignalCmd(signalId, SignalAspectEnum.Red);
+        var result = await _client.SendSignalCmdAsync(signalId, SignalAspectEnum.Red);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending signal command should succeed");
@@ -182,7 +182,7 @@ public class JmriClientContinuousTest {
         await _client.ConnectAsync();
 
         // Act
-        var result = _client.Disconnect();
+        var result = await _client.DisconnectAsync();
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Disconnect should succeed");

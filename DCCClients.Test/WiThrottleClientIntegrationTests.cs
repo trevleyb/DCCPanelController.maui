@@ -51,7 +51,7 @@ public class WiThrottleClientIntegrationTests {
 
     [TearDown]
     public void TearDown() {
-        _client.Disconnect();
+        _client.DisconnectAsync();
     }
 
     [Test]
@@ -74,7 +74,7 @@ public class WiThrottleClientIntegrationTests {
     public async Task ReconnectAsync_ShouldReconnectAfterDisconnect() {
         // Arrange
         await _client.ConnectAsync();
-        _client.Disconnect();
+        await _client.DisconnectAsync();
 
         // Clear events
         _receivedMessages.Clear();
@@ -103,7 +103,7 @@ public class WiThrottleClientIntegrationTests {
         _receivedMessages.Clear();
 
         // Act - Send a heartbeat command
-        var result = _client.SendCmd("*");
+        var result = await _client.SendCmdAsync("*");
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending command should succeed");
@@ -131,7 +131,7 @@ public class WiThrottleClientIntegrationTests {
         _receivedMessages.Clear();
 
         // Act - Send turnout command
-        var result = _client.SendTurnoutCmd(turnoutId, true);
+        var result = await _client.SendTurnoutCmdAsync(turnoutId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending turnout command should succeed");
@@ -159,7 +159,7 @@ public class WiThrottleClientIntegrationTests {
         _receivedMessages.Clear();
 
         // Act - Send route command
-        var result = _client.SendRouteCmd(routeId, true);
+        var result = await _client.SendRouteCmdAsync(routeId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending route command should succeed");
@@ -177,7 +177,7 @@ public class WiThrottleClientIntegrationTests {
         await _client.ConnectAsync();
 
         // Act
-        var result = _client.SendSignalCmd("IH1", SignalAspectEnum.Red);
+        var result = await _client.SendSignalCmdAsync("IH1", SignalAspectEnum.Red);
 
         // Assert
         Assert.That(result.IsSuccess, Is.False, "Sending signal command should fail");
@@ -191,7 +191,7 @@ public class WiThrottleClientIntegrationTests {
         await _client.ConnectAsync();
 
         // Act
-        var result = _client.Disconnect();
+        var result = await _client.DisconnectAsync();
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Disconnect should succeed");

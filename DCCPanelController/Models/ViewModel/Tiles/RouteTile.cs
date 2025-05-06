@@ -28,7 +28,7 @@ public class RouteTile : Tile, ITileInteractive {
         };
 
         if (client is not null && Entity is RouteEntity { Route.Id: {} id } routeEntity) {
-            client.SendRouteCmd(id, State != RouteStateEnum.Inactive);
+            client.SendRouteCmdAsync(id, State != RouteStateEnum.Inactive);
         }
 
     }

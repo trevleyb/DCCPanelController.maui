@@ -11,36 +11,31 @@ using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEn
 namespace DCCPanelController.View;
 
 public partial class BlocksViewModel : BaseViewModel {
+    private bool _isAscending;
+    private string _sortColumn = "";
+
     private const string LabelID = "ID";
     private const string LabelName = "Block";
     private const string LabelState = "Is Occupied?";
 
+    private Profile Profile { get; }
+    private ConnectionService ConnectionService { get; }
+
     [ObservableProperty] private bool _isConnected;
-    [ObservableProperty] private bool _canToggleRoutesState;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-
-    private bool _isAscending;
+    [ObservableProperty] private string _connectionIcon = "wifi.png";
     [ObservableProperty] private ObservableCollection<Block> _blocks;
-    private string _sortColumn = "";
 
     public BlocksViewModel(Profile profile, ConnectionService connectionService) {
         ConnectionService = connectionService;
+        ConnectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
         Profile = profile;
         Blocks = Profile.Blocks;
-        CanToggleRoutesState = true;
-        ConnectionService.ConnectionChanged += (sender, args) => {
-            IsConnected = args.IsConnected;
-        };
-
         SetLabels();
     }
-
-    private Profile Profile { get; }
-    private IDccClient? Client { get; set; }
-    private ConnectionService ConnectionService { get; }
-
+    
     private void ClientOnRouteMsgReceived(object? sender, DccOccupancyArgs e) {
         if (Blocks.Any(x => x.Id == e.BlockId)) {
             var block = Blocks.First(x => x.Id == e.BlockId);
@@ -51,9 +46,8 @@ public partial class BlocksViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task SortByColumn(string columnName) {
+    private async Task SortByColumnAsync(string columnName) {
         List<Block> sortedBlocks;
-
         if (!_isAscending) {
             sortedBlocks = columnName.ToLower() switch {
                 "name"  => Blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList(),
@@ -84,18 +78,13 @@ public partial class BlocksViewModel : BaseViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals("Is Occupied") ? _isAscending.GetSortDirection() : "");
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     private async Task RefreshBlocksAsync() {
         try {
             IsBusy = true;
-        var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-        if (result.IsSuccess) {
-            Client = result.Value;
-            Client?.Disconnect();
-        } else {
-            Client = null;
-        }
-        } catch { /* ignore */
+            ConnectionService.ForceRefresh();
+        } catch (Exception ex){
+            Console.WriteLine($"Unable to force refresh the blocks: {ex.Message}");
         } finally {
             IsBusy = false;
         }
@@ -132,14 +121,8 @@ public partial class BlocksViewModel : BaseViewModel {
         return false;
     }
 
-    
     [RelayCommand]
     private async Task ToggleConnectionAsync() {
-        if (!IsConnected) {
-            await ConnectionService.Connect();
-        } else {
-            ConnectionService.Disconnect();
-        }
+        await ConnectionService.ToggleConnectionAsync();
     }
-
 }

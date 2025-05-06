@@ -1,8 +1,10 @@
+using DCCClients.Common;
 using DCCClients.Events;
 
 namespace DCCClients;
 
 public abstract class DccClient {
+    
     public event EventHandler<DccErrorArgs>? ConnectionError;
     public event EventHandler<DccMessageArgs>? MessageReceived;
     public event EventHandler<DccTurnoutArgs>? TurnoutMsgReceived;

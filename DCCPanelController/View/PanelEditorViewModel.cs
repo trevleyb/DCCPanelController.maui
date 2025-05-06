@@ -28,16 +28,19 @@ public partial class PanelEditorViewModel : BaseViewModel {
 
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private bool _propertiesChanged;
-    [ObservableProperty] private IDccClient? _client;
 
     [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
     [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
     [NotifyPropertyChangedFor(nameof(PanelTitle))]
     [ObservableProperty] private Panel? _selectedPanel;
 
+    [ObservableProperty] private string _connectionIcon = "wifi.png";
+
     public PanelEditorViewModel(Profile profile, ConnectionService connectionService) {
         ArgumentNullException.ThrowIfNull(profile, "Profile Service should be provided by the DI.");
         _connectionService = connectionService;
+        _connectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
+
         Profile = profile;
         Panels = Profile.Panels;
         SelectedPanel = Panels.FirstOrDefault();
@@ -171,17 +174,10 @@ public partial class PanelEditorViewModel : BaseViewModel {
             }
         }
     }
-
+    
     [RelayCommand]
     public async Task ToggleConnectionAsync() {
-        if (_connectionService is null) return;
-        if (_connectionService.IsConnected) {
-            _connectionService.Disconnect();
-            Client = null;
-        } else {
-            var result = await _connectionService.Connect();
-            Client = result.IsSuccess ? result.Value : null;
-        }
+        await _connectionService?.ToggleConnectionAsync()!;
     }
     
     [RelayCommand]

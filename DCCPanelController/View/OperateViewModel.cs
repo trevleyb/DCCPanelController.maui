@@ -12,7 +12,7 @@ public partial class OperateViewModel : BaseViewModel {
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
-    [ObservableProperty] private IDccClient? _client;
+    [ObservableProperty] private string _connectionIcon = "wifi.png";
 
     private ConnectionService ConnectionService { get; }
     public Color BackgroundColor => SelectedPanel?.BackgroundColor ?? Colors.White;
@@ -20,11 +20,6 @@ public partial class OperateViewModel : BaseViewModel {
 
     public OperateViewModel(Profile profile, ConnectionService connectionService) {
         ConnectionService = connectionService;
-        ConnectionService.ConnectionChanged += (sender, args) => {
-            Console.WriteLine($"Connection Service Event Raised: {args.IsConnected}");
-            IsConnected = args.IsConnected;
-        };
-        
         Panels = profile.Panels;
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
@@ -39,14 +34,6 @@ public partial class OperateViewModel : BaseViewModel {
 
     [RelayCommand]
     private async Task ToggleConnectionAsync() {
-        if (!IsConnected) {
-            var result = await ConnectionService.Connect();
-            Client = result.IsSuccess ? result.Value : null;
-            IsConnected = result.IsSuccess ? true : false;
-        } else {
-            ConnectionService.Disconnect();
-            Client = null;
-            IsConnected = false;
-        }
+        await ConnectionService.ToggleConnectionAsync();
     }
 }

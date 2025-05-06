@@ -17,32 +17,32 @@ namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : BaseViewModel {
     private readonly Profile _profile;
-    private IDccClient? _client;
+    private ConnectionService ConnectionService { get; init; }
+    public Settings Settings => _profile.Settings;
+    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
 
     [ObservableProperty] private string _name = "withrottle";
     [ObservableProperty] private string _ipAddress = "localhost";
     [ObservableProperty] private int _port = 12090;
     [ObservableProperty] private string _protocol = "http";
     [ObservableProperty] private string _url = "http://localhost:12090";
+    [ObservableProperty] private string _connectLabel = "Test Connection";
+
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-
-    private ConnectionService ConnectionService { get; }
-    public Settings Settings => _profile.Settings;
-    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
-    public string ConnectLabel => ConnectionService is { IsConnected: true } ? "Disconnect" : "Test Connect";
-    public bool ShowWiServers => !ShowMessages;
     
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
+    public bool ShowWiServers => !ShowMessages;
 
     public SettingsViewModel(Profile profile, ConnectionService connectionService) {
         _profile = profile;
         ConnectionService = connectionService;
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
+        ConnectionService.Disconnect();
+        
         Name = _profile.ActiveConnectionInfo?.Name ?? "default";
-
         if (_profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
             IpAddress = jmriSettings.Address;
             Port = jmriSettings.Port;
@@ -57,7 +57,7 @@ public partial class SettingsViewModel : BaseViewModel {
             Url = wiThrottleSettings.Url;
         }
     }
-    
+
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
         set {
@@ -102,6 +102,8 @@ public partial class SettingsViewModel : BaseViewModel {
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
     // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
+        Console.WriteLine($"Connection Changed: {e.IsConnected}");
+        ConnectLabel = e.IsConnected == ConnectionStatus.Connected ? "Testing" : "Test Connection"; 
         OnPropertyChanged(nameof(ConnectLabel));
     }
 
@@ -117,6 +119,7 @@ public partial class SettingsViewModel : BaseViewModel {
             SaveConnectionDetails();
             break;
         }
+
         //RefreshServersCommand.ExecuteAsync(null);
     }
 
@@ -136,7 +139,7 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    public async Task ConnectAsync() {
+    private async Task ConnectAsync() {
         if (!IsDemoMode) {
             Messages.Clear();
             AddMessage("Attempting to connect/disconnect to Service");
@@ -149,35 +152,30 @@ public partial class SettingsViewModel : BaseViewModel {
                     AddMessage("Connection Failed.");
                     foreach (var error in result.Errors) AddMessage(error.Message);
                 } else {
-                    _client = result.Value;
-                    if (_client is not null) {
-                        _client.MessageReceived += ClientOnMessageReceived;
-                        await Task.Delay(1000);
-                        if (_client.IsConnected) {
-                            AddMessage("Connected Successfully.");
-                            _client.Disconnect();
-                        } else {
-                            AddMessage("Connection Failed.");
-                        }
+                    ConnectionService.ConnectionMessage += ClientOnMessageReceived;
+                    await Task.Delay(1000);
+                    if (ConnectionService.IsConnected) {
+                        AddMessage("Connected Successfully.");
+                        await ConnectionService.Disconnect();
+                    } else {
+                        AddMessage("Connection Failed.");
                     }
                 }
             } catch {
-                IsBusy = false;
                 AddMessage("Unable to Connect.");
             } finally {
-                if (_client is not null) {
-                    _client.MessageReceived -= ClientOnMessageReceived;
-                    _client.Disconnect();
-                }
-                OnPropertyChanged(nameof(ConnectLabel));
-                OnPropertyChanged(nameof(Messages));
+                ConnectionService.ConnectionMessage -= ClientOnMessageReceived;
+                ConnectionService?.Disconnect();
                 IsBusy = false;
             }
+            OnPropertyChanged(nameof(ConnectLabel));
+            OnPropertyChanged(nameof(Messages));
+            IsBusy = false;
         }
     }
 
-    private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
-        AddMessage($"{e.MessageType} message => {e.Message}");
+    private void ClientOnMessageReceived(object? sender, ConnectionMessageEvent e) {
+        AddMessage($"{e.Message}");
     }
 
     public void AddMessage(string message) {
@@ -205,7 +203,7 @@ public partial class SettingsViewModel : BaseViewModel {
             IsBusy = true;
             var serverDiscovery = DCCClients.Discovery.ServiceDiscoveryFactory.DiscoverServices(CurrentSettings?.Settings?.Type ?? "");
             var servers = await serverDiscovery.DiscoverServersAsync();
-            
+
             if (servers is { Count: > 0 }) {
                 Console.WriteLine($"Found {servers.Count} Servers");
                 foreach (var server in servers) {
@@ -219,7 +217,7 @@ public partial class SettingsViewModel : BaseViewModel {
             }
             AddMessage($"Found {Servers.Count} Servers");
         } catch (Exception ex) {
-            AddMessage($"Unable to search for Servers of type { CurrentSettings?.Settings?.Type ?? "withrottle"}");
+            AddMessage($"Unable to search for Servers of type {CurrentSettings?.Settings?.Type ?? "withrottle"}");
             Debug.WriteLine($"Unable to get Settings: {ex.Message}");
             await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
         } finally {

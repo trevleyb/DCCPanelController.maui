@@ -75,7 +75,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     ///     Disconnects from the service and releases related resources.
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
-    public IResult Disconnect() {
+    public async Task<IResult> DisconnectAsync() {
         try {
             _client?.Disconnect();
         } catch (Exception ex) {
@@ -90,7 +90,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Ok();
     }
 
-    public IResult SendCmd(string message) {
+    public async Task<IResult> SendCmdAsync(string message) {
         try {
             Console.WriteLine($"Sending command: {message}");
             _client?.SendMessage(message);
@@ -100,7 +100,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Ok();
     }
 
-    public IResult SendTurnoutCmd(string dccAddress, bool isThrown) {
+    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool isThrown) {
         try {
             Console.WriteLine($"Sending turnout command: {dccAddress} - {isThrown}");
             _client?.SendMessage(new TurnoutCommand(dccAddress, isThrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
@@ -110,7 +110,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Ok();
     }
 
-    public IResult SendRouteCmd(string dccAddress, bool isActive) {
+    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool isActive) {
         try {
             Console.WriteLine($"Sending route command: {dccAddress} - {isActive}");
             _client?.SendMessage(new RouteCommand(dccAddress));
@@ -120,7 +120,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Ok();
     }
 
-    public IResult SendSignalCmd(string dccAddress, SignalAspectEnum aspect) {
+    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
         return Result.Fail("Withrottle does not support signal commands.");
     }
 

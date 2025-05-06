@@ -82,6 +82,7 @@ public class JmriClient {
             _webSocket?.Dispose(); // Dispose of the previous instance if needed
             _webSocket = WebSocketFactory();
             var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
+            using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // 1-second timeout
             await _webSocket.ConnectAsync(new Uri(wsUri), CancellationToken.None);
             Console.WriteLine("WebSocket connected.");
         } catch (Exception ex) {
@@ -96,6 +97,7 @@ public class JmriClient {
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Terminating Connection", CancellationToken.None);
             }
             _webSocket?.Dispose(); // Dispose of the previous instance if needed
+            await _cancellationTokenSource?.CancelAsync()!;
             Console.WriteLine("WebSocket disconnected.");
         } catch (Exception ex) {
             Console.WriteLine($"WebSocket disconnect failed: {ex.Message}");
@@ -202,16 +204,11 @@ public class JmriClient {
 
     public virtual async Task StopAsync() {
         if (_cancellationTokenSource is not null) {
-            _cancellationTokenSource.Cancel();
+            await _cancellationTokenSource.CancelAsync();
             _cancellationTokenSource.Dispose();
             _cancellationTokenSource = null;
         }
-
-        if (_webSocket.State == WebSocketState.Open) {
-            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client shutting down", CancellationToken.None);
-        }
-
-        _webSocket.Dispose();
+        //await DisconnectWebSocketAsync();
     }
 
     private async Task<string> FetchInitialDataAsync(string endpoint) {

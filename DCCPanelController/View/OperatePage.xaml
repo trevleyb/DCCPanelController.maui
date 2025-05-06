@@ -18,11 +18,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem
-            Command="{Binding ToggleConnectionCommand}"
-            IconImageSource="wifi_off.png"
-            x:Name="ConnectButton"/>
-
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
         <ToolbarItem
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"

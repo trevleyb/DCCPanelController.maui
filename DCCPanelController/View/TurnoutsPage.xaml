@@ -18,8 +18,7 @@
         <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IconImageSource="refresh_cw.png"/>
         <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
         <ToolbarItem Command="{Binding AddTurnoutCommand}" IconImageSource="plus_circle.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="wifi_off.png" x:Name="ConnectButton"/>
-
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">

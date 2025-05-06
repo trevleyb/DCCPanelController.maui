@@ -7,40 +7,38 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
 public partial class TurnoutsViewModel : BaseViewModel {
+    private bool _isAscending;
+    private string _sortColumn = "";
+    
     private const string LabelID = "ID";
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
     private const string LabelAddress = "DCC Address";
+
+    private ConnectionService ConnectionService { get; }
+    private Profile Profile { get; }
 
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private string _columnLabelAddress = LabelAddress;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-
-    private bool _isAscending;
-    private string _sortColumn = "";
+    [ObservableProperty] private string _connectionIcon = "wifi.png";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-
+    
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         Turnouts = Profile.Turnouts;
         ConnectionService = connectionService;
-        ConnectionService.ConnectionChanged += (sender, args) => {
-            IsConnected = args.IsConnected;
-        };
-
+        ConnectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
         SetLabels();
     }
-
-    private ConnectionService ConnectionService { get; }
-    private IDccClient? Client { get; set; }
-    private Profile Profile { get; }
-
+    
     private void SetLabels() {
         ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
@@ -49,17 +47,17 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
+    private async Task ToggleConnectionAsync() {
+        await ConnectionService.ToggleConnectionAsync();
+    }
+    
+    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     private async Task RefreshTurnoutsAsync() {
         try {
             IsBusy = true;
-            var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-            if (result.IsSuccess) {
-                Client = result.Value;
-                Client?.ForceRefresh();
-            } else {
-                Client = null;
-            }
-        } catch { /* ignore */
+            ConnectionService.ForceRefresh();
+        } catch (Exception ex){
+            Console.WriteLine($"Unable to force refresh the turnouts: {ex.Message}");
         } finally {
             IsBusy = false;
         }
@@ -125,19 +123,16 @@ public partial class TurnoutsViewModel : BaseViewModel {
         Profile.Save();
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         if (!string.IsNullOrEmpty(turnout.DccAddress)) {
-            var result = await ConnectionService.Connect(Profile.ActiveConnectionInfo);
-            if (result.IsSuccess) {
-                Client?.SendTurnoutCmd(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown);
-            } 
+            await ConnectionService?.SendTurnoutCmdAsync(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
         }
         OnPropertyChanged(nameof(Turnouts));
     }
 
-    [RelayCommand]
+    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     private async Task ToggleTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         turnout.State = turnout.State switch {
@@ -145,7 +140,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
             _                       => TurnoutStateEnum.Closed
         };
-
         await SendTurnoutStateAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
     }
@@ -200,15 +194,4 @@ public partial class TurnoutsViewModel : BaseViewModel {
         }
         return false;
     }
-
-    
-    [RelayCommand]
-    private async Task ToggleConnectionAsync() {
-        if (!IsConnected) {
-            await ConnectionService.Connect();
-        } else {
-            ConnectionService.Disconnect();
-        }
-    }
-
 }

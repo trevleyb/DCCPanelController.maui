@@ -33,15 +33,11 @@ public partial class PanelEditorPage {
     public PanelEditorPage(PanelEditorViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
         _connectionService = connectionService;
-        _connectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
+        _connectionService.ConnectionChanged += (sender, args) => _panelConnectionToolbar.IconImageSource = args.ConnectionIcon; 
         _viewModel = viewModel;
         BindingContext = viewModel;
     }
-
-    private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
-        _panelConnectionToolbar.IconImageSource = e.IsConnected ? "wifi.png" : "wifi_off.png";
-    }
-
+    
     protected override void OnBindingContextChanged() {
         base.OnBindingContextChanged();
         if (BindingContext is PanelEditorViewModel { } vm) {

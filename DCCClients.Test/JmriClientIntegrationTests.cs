@@ -94,7 +94,7 @@ public class JmriClientIntegrationTests {
             await Task.Delay(5000);
         }
         
-        var disconnected = _client.Disconnect();
+        var disconnected = _client.DisconnectAsync();
         Assert.That(_client.IsConnected, Is.False, "Client should be disconnected");
     }
 }

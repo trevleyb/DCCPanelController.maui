@@ -16,10 +16,12 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
 
     [ObservableProperty] private Turnout? _turnout;
     [ObservableProperty] private string _userName;
+    [ObservableProperty] private string _connectionIcon = "wifi.png";
 
     public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
         Turnout = turnout;
         ConnectionService = connectionService;
+        ConnectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
         SystemName = Turnout.Id ?? "NT001";
         UserName = Turnout.Name ?? "New Turnout";
         DccAddress = Turnout.DccAddress;
@@ -38,10 +40,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel {
     private async Task ToggleTurnoutStateAsync() {
         if (Turnout == null) return;
         if (!string.IsNullOrEmpty(Turnout.Id)) {
-            var result = await ConnectionService.Connect();
-            if (result.IsSuccess) {
-                Client?.SendTurnoutCmd(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
-            }
+            ConnectionService?.SendTurnoutCmdAsync(Turnout.Id, CurrentState == TurnoutStateEnum.Thrown);
             OnPropertyChanged(nameof(CurrentState));
             OnPropertyChanged(nameof(Turnout));
         }
