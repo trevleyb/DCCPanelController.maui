@@ -12,40 +12,8 @@ using DCCPanelController.View.PanelProperties;
 
 namespace DCCPanelController.View;
 
-public partial class PanelEditorViewModel : BaseViewModel {
-    private readonly ConnectionService? _connectionService;
-
-    private readonly Profile Profile;
-    [ObservableProperty] private bool _designMode;
+public partial class PanelEditorViewModel : ConnectionViewModel {
     private Panel? _draggedPanel;
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
-
-    [ObservableProperty] private bool _gridVisible;
-
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
-    private bool _isFullScreen;
-
-    [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private bool _propertiesChanged;
-
-    [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(PanelTitle))]
-    [ObservableProperty] private Panel? _selectedPanel;
-
-    [ObservableProperty] private string _connectionIcon = "wifi.png";
-
-    public PanelEditorViewModel(Profile profile, ConnectionService connectionService) {
-        ArgumentNullException.ThrowIfNull(profile, "Profile Service should be provided by the DI.");
-        _connectionService = connectionService;
-        _connectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
-
-        Profile = profile;
-        Panels = Profile.Panels;
-        SelectedPanel = Panels.FirstOrDefault();
-        IsFullScreen = false;
-    }
 
     public HashSet<ITile> SelectedTiles { get; set; } = new();
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
@@ -59,6 +27,28 @@ public partial class PanelEditorViewModel : BaseViewModel {
     public bool IsNotFullScreen => !IsFullScreen;
     public bool IsPanelSelected => SelectedPanel is not null;
     public bool NoPanelSelected => !IsPanelSelected;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
+    private bool _isFullScreen;
+
+    [ObservableProperty] private bool _designMode;
+    [ObservableProperty] private bool _gridVisible;
+    [ObservableProperty] private Panels _panels;
+    [ObservableProperty] private bool _propertiesChanged;
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+
+    [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(PanelTitle))]
+    [ObservableProperty] private Panel? _selectedPanel;
+
+    public PanelEditorViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
+        ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
+        Panels = Profile.Panels;
+        SelectedPanel = Panels.FirstOrDefault();
+        IsFullScreen = false;
+    }
 
     /// <summary>
     ///     Adds a new panel to the collection. The newly created panel becomes the selected panel.
@@ -176,11 +166,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
     }
     
     [RelayCommand]
-    public async Task ToggleConnectionAsync() {
-        await _connectionService?.ToggleConnectionAsync()!;
-    }
-    
-    [RelayCommand]
     public async Task DownloadPanelAsync() {
         try {
             if (SelectedPanel is { } panel) {
@@ -215,7 +200,7 @@ public partial class PanelEditorViewModel : BaseViewModel {
         EditTileProperties(SelectedEntities);
     }
 
-    public async void EditTileProperties(Entity? entity) {
+    public async Task EditTileProperties(Entity? entity) {
         try {
             entity ??= SelectedEntity;
             if (entity is not null) await EditTilePropertiesAsync(entity);
@@ -260,6 +245,8 @@ public partial class PanelEditorViewModel : BaseViewModel {
         }
     }
 
+    public new async Task ToggleConnectionAsync() => await base.ToggleConnectionAsync();
+
     [RelayCommand]
     private async Task SelectionChangedAsync() {
         Console.WriteLine($"SelectionChangedAsync: {SelectedPanel?.Id ?? "NONE"}");
@@ -268,19 +255,6 @@ public partial class PanelEditorViewModel : BaseViewModel {
         OnPropertyChanged(nameof(SelectedPanel));
         OnPropertyChanged(nameof(IsPanelSelected));
         OnPropertyChanged(nameof(NoPanelSelected));
-    }
-
-    private async Task<bool> AskUserToConfirm(string title, string message) {
-        if (App.Current.Windows[0].Page is { } window) {
-            var result = await window.DisplayAlert(
-                title,
-                message,
-                "Yes",
-                "No"
-            );
-            return result;
-        }
-        return false;
     }
 
     private async Task DisplayAlert(string title, string message) {

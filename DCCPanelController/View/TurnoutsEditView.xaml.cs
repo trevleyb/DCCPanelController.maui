@@ -7,9 +7,9 @@ namespace DCCPanelController.View;
 public partial class TurnoutsEditView : ContentPage {
     public TurnoutsEditViewModel? ViewModel;
 
-    public TurnoutsEditView(Turnout Turnout, ConnectionService connectionService) {
+    public TurnoutsEditView(Turnout turnout, ConnectionService connectionService) {
         InitializeComponent();
-        ViewModel = new TurnoutsEditViewModel(Turnout, connectionService);
+        ViewModel = new TurnoutsEditViewModel(turnout, connectionService);
         BindingContext = ViewModel;
     }
 }

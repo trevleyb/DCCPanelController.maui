@@ -10,7 +10,7 @@ using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEn
 
 namespace DCCPanelController.View;
 
-public partial class BlocksViewModel : BaseViewModel {
+public partial class BlocksViewModel : ConnectionViewModel {
     private bool _isAscending;
     private string _sortColumn = "";
 
@@ -18,30 +18,22 @@ public partial class BlocksViewModel : BaseViewModel {
     private const string LabelName = "Block";
     private const string LabelState = "Is Occupied?";
 
-    private Profile Profile { get; }
-    private ConnectionService ConnectionService { get; }
-
-    [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    [ObservableProperty] private string _connectionIcon = "wifi.png";
     [ObservableProperty] private ObservableCollection<Block> _blocks;
 
-    public BlocksViewModel(Profile profile, ConnectionService connectionService) {
-        ConnectionService = connectionService;
-        ConnectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
-        Profile = profile;
+    public BlocksViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Blocks = Profile.Blocks;
         SetLabels();
     }
-    
+
     private void ClientOnRouteMsgReceived(object? sender, DccOccupancyArgs e) {
         if (Blocks.Any(x => x.Id == e.BlockId)) {
             var block = Blocks.First(x => x.Id == e.BlockId);
             block.IsOccupied = e.IsOccupied;
         } else {
-            Blocks.Add(new Block { Id = e.BlockId, IsOccupied = e.IsOccupied});
+            Blocks.Add(new Block { Id = e.BlockId, IsOccupied = e.IsOccupied });
         }
     }
 
@@ -78,51 +70,32 @@ public partial class BlocksViewModel : BaseViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals("Is Occupied") ? _isAscending.GetSortDirection() : "");
     }
 
-    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
+    [RelayCommand]
     private async Task RefreshBlocksAsync() {
         try {
             IsBusy = true;
             ConnectionService.ForceRefresh();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Console.WriteLine($"Unable to force refresh the blocks: {ex.Message}");
         } finally {
             IsBusy = false;
         }
     }
-    
+
     [RelayCommand]
     private async Task ClearAllAsync() {
         IsBusy = true;
         try {
-        if (await AskUserToConfirm("Reset all Blocks?", "This wll remove all Blocks previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
-            for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) { 
-                Profile.Blocks.RemoveAt(ptr-1);
-                OnPropertyChanged(nameof(Blocks));
+            if (await AskUserToConfirm("Reset all Blocks?", "This wll remove all Blocks previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
+                for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) {
+                    Profile.Blocks.RemoveAt(ptr - 1);
+                    OnPropertyChanged(nameof(Blocks));
+                }
+                await RefreshBlocksAsync();
             }
-            await RefreshBlocksAsync();
-        }
         } catch { /* ignored */
         } finally {
             IsBusy = false;
         }
-
-    }
-    
-    private async Task<bool> AskUserToConfirm(string title, string message) {
-        if (App.Current.Windows[0].Page is { } window) {
-            var result = await window.DisplayAlert(
-                title,
-                message,
-                "Yes",
-                "No"
-            );
-            return result;
-        }
-        return false;
-    }
-
-    [RelayCommand]
-    private async Task ToggleConnectionAsync() {
-        await ConnectionService.ToggleConnectionAsync();
     }
 }

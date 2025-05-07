@@ -7,20 +7,17 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
-public partial class OperateViewModel : BaseViewModel {
-    [ObservableProperty] private bool _isConnected;
+public partial class OperateViewModel : ConnectionViewModel {
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
     [ObservableProperty] private string _connectionIcon = "wifi.png";
 
-    private ConnectionService ConnectionService { get; }
     public Color BackgroundColor => SelectedPanel?.BackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; set; }
 
-    public OperateViewModel(Profile profile, ConnectionService connectionService) {
-        ConnectionService = connectionService;
-        Panels = profile.Panels;
+    public OperateViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
+        Panels = Profile.Panels;
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }
@@ -30,10 +27,5 @@ public partial class OperateViewModel : BaseViewModel {
         SelectedPanel = panelCarouselCurrentItem;
         OnPropertyChanged(nameof(BackgroundColor));
         return SelectedPanel?.Id ?? "Control Panel";
-    }
-
-    [RelayCommand]
-    private async Task ToggleConnectionAsync() {
-        await ConnectionService.ToggleConnectionAsync();
     }
 }

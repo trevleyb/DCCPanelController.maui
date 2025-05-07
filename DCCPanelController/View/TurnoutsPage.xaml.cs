@@ -10,7 +10,10 @@ public partial class TurnoutsPage : ContentPage {
     public TurnoutsPage(TurnoutsViewModel viewModel) {
         InitializeComponent();
         BindingContext = viewModel;
-        viewModel.PropertyChanged += (sender, args) => Console.WriteLine($"PROPERTY CHANGED: {args.PropertyName}");
+        viewModel.PropertyChanged += (sender, args) => {
+            Console.WriteLine($"PROPERTY CHANGED: {args.PropertyName}");
+            Console.WriteLine($"CONNECTION ICON: {viewModel.ConnectionIcon}");
+        };
         
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();

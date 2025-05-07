@@ -25,6 +25,7 @@ public class ConnectionService : IDccClientCommands {
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
 
     public bool IsConnected => (_client is { IsConnected: true }); 
+    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
     
     public async Task<IResult> ToggleConnectionAsync() {
         if (IsConnected) {
@@ -48,6 +49,19 @@ public class ConnectionService : IDccClientCommands {
     }
 
     public async Task<IResult> Connect(ConnectionInfo? connection = null) {
+        try {
+            var result = await ConnectHelper(connection);
+            Console.WriteLine($"Connection Result: {result.IsSuccess} {result.Message}");
+            OnConnectionChanged();
+            return result;
+        } catch (Exception ex) {
+            Console.WriteLine($"Connection Failed: {ex.Message}");
+            OnConnectionChanged();
+            return Result.Fail("Unable to connect to the server.", ex);
+        }     
+    }
+
+    private async Task<IResult> ConnectHelper(ConnectionInfo? connection = null) {
         // Allow null as a parameter if we know we have already setup the connection
         // This will then return the active connection.
         // --------------------------------------------------------------------------
@@ -58,29 +72,22 @@ public class ConnectionService : IDccClientCommands {
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
         _client = CreateClient(connection.Settings);
-        if (_client is null) {
-            Console.WriteLine($"Failed to create a client instance");
-            return Result.Fail("Unable to create a Client instance.");
-        }
-
+        if (_client is null) return Result.Fail("Unable to create a Client instance.");
+        
         var result = await _client.ConnectAsync();
-        if (result.IsFailure) {
-            Console.WriteLine($"Cannot connect to the specified client");
-            return Result.Fail("Unable to connect to the specified server.");
-        }
-        Console.WriteLine($"Connected OK... setting events");
-
-        _client.ConnectionStateChanged += (sender, args) => OnConnectionChanged();
-        _client.MessageReceived += ClientOnMessageReceived;
-        _client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
-        _client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
-        _client.RouteMsgReceived += DccClientOnRouteMsgReceived;
-        _client.SignalMsgReceived += DccClientOnSignalMsgReceived;
-        Console.WriteLine($"Returning OK with the dccClient");
+        if (result.IsFailure) return Result.Fail("Unable to connect to the specified server.");
+        
+        _client.ConnectionStateChanged  += OnConnectionChanged;
+        _client.MessageReceived         += ClientOnMessageReceived;
+        _client.OccupancyMsgReceived    += DccClientOnOccupancyMsgReceived;
+        _client.TurnoutMsgReceived      += DccClientOnTurnoutMsgReceived;
+        _client.RouteMsgReceived        += DccClientOnRouteMsgReceived;
+        _client.SignalMsgReceived       += DccClientOnSignalMsgReceived;
+        
         return Result.Ok("Connected to the Server.");
     }
 
-    private void OnConnectionChanged() {
+    private void OnConnectionChanged(object? sender = null, EventArgs? e = null) {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { Status = isConnected });
     }

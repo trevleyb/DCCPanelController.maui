@@ -11,7 +11,7 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
-public partial class TurnoutsViewModel : BaseViewModel {
+public partial class TurnoutsViewModel : ConnectionViewModel {
     private bool _isAscending;
     private string _sortColumn = "";
     
@@ -19,25 +19,15 @@ public partial class TurnoutsViewModel : BaseViewModel {
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
     private const string LabelAddress = "DCC Address";
-
-    private ConnectionService ConnectionService { get; }
-    private Profile Profile { get; }
-
-    [ObservableProperty] private bool _isConnected;
+    
     [ObservableProperty] private string _columnLabelAddress = LabelAddress;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    [ObservableProperty] private string _connectionIcon = "wifi.png";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     
-    public TurnoutsViewModel(Profile profile, ConnectionService connectionService) {
-        Profile = profile;
+    public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile,connectionService) {
         Turnouts = Profile.Turnouts;
-        ConnectionService = connectionService;
-        ConnectionService.ConnectionChanged += (sender, args) => {
-            ConnectionIcon = args.ConnectionIcon;
-        }; 
         SetLabels();
     }
     
@@ -49,11 +39,6 @@ public partial class TurnoutsViewModel : BaseViewModel {
     }
 
     [RelayCommand]
-    private async Task ToggleConnectionAsync() {
-        await ConnectionService.ToggleConnectionAsync();
-    }
-    
-    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
     private async Task RefreshTurnoutsAsync() {
         try {
             IsBusy = true;
@@ -125,16 +110,16 @@ public partial class TurnoutsViewModel : BaseViewModel {
         Profile.Save();
     }
 
-    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
+    [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
-        if (!string.IsNullOrEmpty(turnout.DccAddress)) {
+        if (!string.IsNullOrEmpty(turnout.DccAddress) && IsConnected) {
             await ConnectionService?.SendTurnoutCmdAsync(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
         }
         OnPropertyChanged(nameof(Turnouts));
     }
 
-    [RelayCommand(CanExecute = nameof(ConnectionService.IsConnected))]
+    [RelayCommand]
     private async Task ToggleTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         turnout.State = turnout.State switch {
@@ -182,18 +167,5 @@ public partial class TurnoutsViewModel : BaseViewModel {
         } finally {
             IsBusy = false;
         }
-    }
-    
-    private async Task<bool> AskUserToConfirm(string title, string message) {
-        if (App.Current.Windows[0].Page is { } window) {
-            var result = await window.DisplayAlert(
-                title,
-                message,
-                "Yes",
-                "No"
-            );
-            return result;
-        }
-        return false;
     }
 }

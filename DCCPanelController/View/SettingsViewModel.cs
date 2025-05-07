@@ -15,10 +15,8 @@ using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 
 namespace DCCPanelController.View;
 
-public partial class SettingsViewModel : BaseViewModel {
-    private readonly Profile _profile;
-    private ConnectionService ConnectionService { get; init; }
-    public Settings Settings => _profile.Settings;
+public partial class SettingsViewModel : ConnectionViewModel {
+    public Settings Settings => Profile.Settings;
     public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
 
     [ObservableProperty] private string _name = "withrottle";
@@ -36,21 +34,21 @@ public partial class SettingsViewModel : BaseViewModel {
     private bool _showMessages;
     public bool ShowWiServers => !ShowMessages;
 
-    public SettingsViewModel(Profile profile, ConnectionService connectionService) {
-        _profile = profile;
-        ConnectionService = connectionService;
+    public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
+
+        if (ConnectionService.IsConnected) ConnectionService.Disconnect();
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
-        ConnectionService.Disconnect();
+        ConnectionService.ConnectionMessage += ClientOnMessageReceived;
         
-        Name = _profile.ActiveConnectionInfo?.Name ?? "default";
-        if (_profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+        Name = Profile.ActiveConnectionInfo?.Name ?? "default";
+        if (Profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
             IpAddress = jmriSettings.Address;
             Port = jmriSettings.Port;
             Protocol = jmriSettings.Protocol;
             Url = jmriSettings.Url;
         }
 
-        if (_profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+        if (Profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
             IpAddress = wiThrottleSettings.Address;
             Port = wiThrottleSettings.Port;
             Protocol = wiThrottleSettings.Protocol;
@@ -96,7 +94,7 @@ public partial class SettingsViewModel : BaseViewModel {
 
     public void SaveSettings() {
         SaveConnectionDetails();
-        _profile.Save();
+        Profile.Save();
     }
 
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
@@ -110,27 +108,25 @@ public partial class SettingsViewModel : BaseViewModel {
     public void SetNewConnectionMethod(string type) {
         switch (type) {
         case "jmri":
-            _profile.ActiveConnectionInfo.Settings = new JmriSettings();
+            Profile.ActiveConnectionInfo.Settings = new JmriSettings();
             SaveConnectionDetails();
             break;
 
         case "withrottle":
-            _profile.ActiveConnectionInfo.Settings = new WithrottleSettings();
+            Profile.ActiveConnectionInfo.Settings = new WithrottleSettings();
             SaveConnectionDetails();
             break;
         }
-
-        //RefreshServersCommand.ExecuteAsync(null);
     }
 
     public void SaveConnectionDetails() {
-        if (_profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+        if (Profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
             jmriSettings.Address = IpAddress;
             jmriSettings.Port = Port;
             jmriSettings.Protocol = Protocol;
             jmriSettings.Url = Url;
         }
-        if (_profile?.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+        if (Profile?.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
             wiThrottleSettings.Address = IpAddress;
             wiThrottleSettings.Port = Port;
             wiThrottleSettings.Protocol = Protocol;
