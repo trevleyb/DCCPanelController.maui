@@ -5,15 +5,15 @@ namespace DCCClients;
 
 public abstract class DccClient {
     
-    public event EventHandler<DccErrorArgs>? ConnectionError;
+    public event EventHandler<DccStateChangedArgs>? ConnectionStateChanged;
     public event EventHandler<DccMessageArgs>? MessageReceived;
     public event EventHandler<DccTurnoutArgs>? TurnoutMsgReceived;
     public event EventHandler<DccRouteArgs>? RouteMsgReceived;
     public event EventHandler<DccOccupancyArgs>? OccupancyMsgReceived;
     public event EventHandler<DccSignalArgs>? SignalMsgReceived;
 
-    protected virtual void OnConnectionError(DccErrorArgs e) {
-        ConnectionError?.Invoke(this, e);
+    protected virtual void OnConnectionStateChanged(DccStateChangedArgs e) {
+        ConnectionStateChanged?.Invoke(this, e);
     }
 
     protected virtual void OnMessageReceived(DccMessageArgs e) {

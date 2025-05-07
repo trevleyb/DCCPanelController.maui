@@ -15,7 +15,7 @@ public class WiThrottleClientIntegrationTests {
     private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
     private List<DccRouteArgs> _receivedRouteEvents = new();
     private List<DccMessageArgs> _receivedMessages = new();
-    private List<DccErrorArgs> _receivedErrors = new();
+    private List<DccStateChangedArgs> _receivedErrors = new();
 
     [OneTimeSetUp]
     public void OneTimeSetUp() {
@@ -40,13 +40,13 @@ public class WiThrottleClientIntegrationTests {
         _receivedTurnoutEvents = new List<DccTurnoutArgs>();
         _receivedRouteEvents = new List<DccRouteArgs>();
         _receivedMessages = new List<DccMessageArgs>();
-        _receivedErrors = new List<DccErrorArgs>();
+        _receivedErrors = new List<DccStateChangedArgs>();
 
         // Subscribe to events
         _client.TurnoutMsgReceived += (sender, args) => _receivedTurnoutEvents.Add(args);
         _client.RouteMsgReceived += (sender, args) => _receivedRouteEvents.Add(args);
         _client.MessageReceived += (sender, args) => _receivedMessages.Add(args);
-        _client.ConnectionError += (sender, args) => _receivedErrors.Add(args);
+        _client.ConnectionStateChanged += (sender, args) => _receivedErrors.Add(args);
     }
 
     [TearDown]

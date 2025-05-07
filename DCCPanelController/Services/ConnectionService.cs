@@ -70,19 +70,19 @@ public class ConnectionService : IDccClientCommands {
         }
         Console.WriteLine($"Connected OK... setting events");
 
+        _client.ConnectionStateChanged += (sender, args) => OnConnectionChanged();
         _client.MessageReceived += ClientOnMessageReceived;
-        _client.ConnectionError += ClientOnConnectionError;
         _client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
         _client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
         _client.RouteMsgReceived += DccClientOnRouteMsgReceived;
         _client.SignalMsgReceived += DccClientOnSignalMsgReceived;
         Console.WriteLine($"Returning OK with the dccClient");
-        return Result.Ok(_client);
+        return Result.Ok("Connected to the Server.");
     }
 
     private void OnConnectionChanged() {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
-        ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { IsConnected = isConnected });
+        ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { Status = isConnected });
     }
     
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
@@ -96,11 +96,7 @@ public class ConnectionService : IDccClientCommands {
             _            => null
         };
     }
-
-    private void ClientOnConnectionError(object? sender, DccErrorArgs e) {
-        OnConnectionChanged();
-    }
-
+    
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
         Route? route = null;
         route ??= _profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
@@ -189,14 +185,10 @@ public class ConnectionService : IDccClientCommands {
     public void ForceRefresh(string? type = "all") => _client?.ForceRefresh(type);
 }
 
-public enum ConnectionStatus {
-    Connected,
-    Disconnected
-}
-
 public class ConnectionChangedEvent : EventArgs {
-    public ConnectionStatus IsConnected { get; init; }
-    public string ConnectionIcon => IsConnected == ConnectionStatus.Connected ? "wifi.png" : "wifi_off.png";
+    public ConnectionStatus Status { get; init; }
+    public bool IsConnected => Status == ConnectionStatus.Connected;
+    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
 }
 
 public class ConnectionMessageEvent : EventArgs {

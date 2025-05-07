@@ -35,7 +35,9 @@ public partial class TurnoutsViewModel : BaseViewModel {
         Profile = profile;
         Turnouts = Profile.Turnouts;
         ConnectionService = connectionService;
-        ConnectionService.ConnectionChanged += (sender, args) => ConnectionIcon = args.ConnectionIcon; 
+        ConnectionService.ConnectionChanged += (sender, args) => {
+            ConnectionIcon = args.ConnectionIcon;
+        }; 
         SetLabels();
     }
     

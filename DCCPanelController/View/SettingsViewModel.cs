@@ -102,8 +102,8 @@ public partial class SettingsViewModel : BaseViewModel {
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
     // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
-        Console.WriteLine($"Connection Changed: {e.IsConnected}");
-        ConnectLabel = e.IsConnected == ConnectionStatus.Connected ? "Testing" : "Test Connection"; 
+        Console.WriteLine($"Connection Changed: {e.Status}");
+        ConnectLabel = e.Status == ConnectionStatus.Connected ? "Testing" : "Test Connection"; 
         OnPropertyChanged(nameof(ConnectLabel));
     }
 

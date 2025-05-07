@@ -21,18 +21,29 @@ public class DccJmriClient : DccClient, IDccClient {
     public async Task<IResult> ConnectAsync() {
         try {
             ArgumentNullException.ThrowIfNull(_settings);
-            _jmriClient = CreateJmriClient(_settings);
+            _jmriClient = new JmriClient(_settings);
             
             // Subscribe to JMRI client events
             _jmriClient.TurnoutChanged += OnJmriTurnoutChanged;
             _jmriClient.RouteChanged += OnJmriRouteChanged;
             _jmriClient.OccupancyChanged += OnJmriOccupancyChanged;
             _jmriClient.SignalChanged += OnJmriSignalChanged;
-            
+            _jmriClient.ConnectionStatusChanged += JmriClientOnConnectionStatusChanged;
+
             // Initialize the client and fetch initial data
-            await _jmriClient.InitializeAsync();
-            await _jmriClient.StartMonitoringAsync();
+            var initialised = await _jmriClient.InitializeAsync();
+            if (initialised.IsFailure) {
+                OnConnectionStateChanged(new DccStateChangedArgs(false, "Failed to initialise JMRI client."));
+                return initialised;
+            }
             
+            var monitoring  = await _jmriClient.StartMonitoringAsync();
+            if (monitoring.IsFailure) {
+                OnConnectionStateChanged(new DccStateChangedArgs(false, "Failed to start monitoring JMRI client."));
+                return monitoring;
+            }
+            
+            OnConnectionStateChanged(new DccStateChangedArgs(true, "Connected to JMRI server."));
             _isConnected = true;
             return Result.Ok();
         }
@@ -41,11 +52,9 @@ public class DccJmriClient : DccClient, IDccClient {
         }
     }
 
-    /// <summary>
-    /// Creates a new JmriClient instance. Can be overridden in tests to provide a mock.
-    /// </summary>
-    protected virtual JmriClient CreateJmriClient(JmriSettings settings) {
-        return new JmriClient(settings);
+    private void JmriClientOnConnectionStatusChanged(object? sender, ConnectionStatusEventArgs e) {
+        OnConnectionStateChanged(new DccStateChangedArgs(e.IsConnected, e.Message));
+        Console.WriteLine($"DccJmriClient: Connection Status Changed: {e.IsConnected} - {e.Message}");
     }
 
     /// <summary>
@@ -54,12 +63,8 @@ public class DccJmriClient : DccClient, IDccClient {
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
         try {
-            if (_jmriClient == null) return await ConnectAsync();
-            await _jmriClient.StopAsync();
-            await _jmriClient.InitializeAsync();
-            await _jmriClient.StartMonitoringAsync();
-            _isConnected = true;
-            return Result.Ok();
+            if (_jmriClient != null) await DisconnectAsync();
+            return await ConnectAsync();
         }
         catch (Exception ex) {
             _isConnected = false;
@@ -72,11 +77,10 @@ public class DccJmriClient : DccClient, IDccClient {
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public async Task<IResult> DisconnectAsync() {
+        OnConnectionStateChanged(new DccStateChangedArgs(false, "Disconnected from JMRI server"));
         try {
-            if (_jmriClient != null) {
-                await _jmriClient.StopAsync();
-                _jmriClient = null;
-            }
+            if (_jmriClient != null) await _jmriClient.StopAsync();
+            _jmriClient = null;
             _isConnected = false;
             return Result.Ok();
         }
@@ -89,9 +93,7 @@ public class DccJmriClient : DccClient, IDccClient {
 
     public async Task<IResult> SendCmdAsync(string message) {
         try {
-            if (!IsConnected) {
-                return Result.Fail(new Error("Not connected to JMRI server"));
-            }
+            if (!IsConnected) return Result.Fail(new Error("Not connected to JMRI server"));
             OnMessageReceived(new DccMessageArgs("Command", message));
             return Result.Ok();
         }
@@ -102,9 +104,7 @@ public class DccJmriClient : DccClient, IDccClient {
 
     public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
         try {
-            if (!IsConnected || _jmriClient == null) {
-                return Result.Fail(new Error("Not connected to JMRI server"));
-            }
+            if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
             OnMessageReceived(new DccMessageArgs("Turnout", $"Setting turnout {dccAddress} to {(thrown ? "THROWN" : "CLOSED")}"));
             await _jmriClient.SendTurnoutCommandAsync(dccAddress, thrown);
             return Result.Ok();
@@ -116,9 +116,7 @@ public class DccJmriClient : DccClient, IDccClient {
 
     public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
         try {
-            if (!IsConnected || _jmriClient == null) {
-                return Result.Fail(new Error("Not connected to JMRI server"));
-            }
+            if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
             OnMessageReceived(new DccMessageArgs("Route", $"Setting route {dccAddress} to {(active ? "ACTIVE" : "INACTIVE")}"));
             if (active) {
                 await _jmriClient.SendRouteCommandAsync(dccAddress);
@@ -132,9 +130,7 @@ public class DccJmriClient : DccClient, IDccClient {
 
     public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
         try {
-            if (!IsConnected || _jmriClient == null) {
-                return Result.Fail(new Error("Not connected to JMRI server"));
-            }
+            if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
             OnMessageReceived(new DccMessageArgs("Signal", $"Setting signal {dccAddress} to aspect {aspect}"));
             await _jmriClient.SendSignalCommandAsync(dccAddress, aspect);
             return Result.Ok();
@@ -151,41 +147,25 @@ public class DccJmriClient : DccClient, IDccClient {
     #region Event Handlers
     
     private void OnJmriTurnoutChanged(object? sender, TurnoutEventArgs e) {
-        // Convert JMRI turnout event to DCC turnout event
         var dccAddress = e.DccAddress?.ToString() ?? e.Identifier;
         var isThrown = e.State.Equals("THROWN", StringComparison.OrdinalIgnoreCase);
-        
-        // Log the event
         OnMessageReceived(new DccMessageArgs("Turnout", $"Turnout {e.Identifier} state changed to {e.State}"));
-        
-        // Raise the event
         OnTurnoutMsgReceived(new DccTurnoutArgs(dccAddress, e.Identifier, isThrown));
     }
     
     private void OnJmriRouteChanged(object? sender, RouteEventArgs e) {
-        // Convert JMRI route event to DCC route event
         var isActive = e.State.Equals("ACTIVE", StringComparison.OrdinalIgnoreCase);
-        
-        // Log the event
         OnMessageReceived(new DccMessageArgs("Route", $"Route {e.Identifier} state changed to {e.State}"));
-        
-        // Raise the event
         OnRouteMsgReceived(new DccRouteArgs(e.Identifier, e.Identifier, isActive));
     }
     
     private void OnJmriOccupancyChanged(object? sender, OccupancyEventArgs e) {
-        // Log the event
         OnMessageReceived(new DccMessageArgs("Occupancy", $"Block {e.Identifier} occupancy changed to {(e.IsOccupied ? "OCCUPIED" : "FREE")}"));
-        
-        // Raise the event
         OnOccupancyMsgReceived(new DccOccupancyArgs(e.TrainId, e.Identifier, e.IsOccupied));
     }
     
     private void OnJmriSignalChanged(object? sender, SignalEventArgs e) {
-        // Log the event
         OnMessageReceived(new DccMessageArgs("Signal", $"Signal {e.Identifier} aspect changed to {e.State}"));
-        
-        // Raise the event
         OnSignalMsgReceived(new DccSignalArgs(e.Identifier, e.State));
     }
     

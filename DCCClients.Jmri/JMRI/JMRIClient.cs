@@ -4,13 +4,12 @@ using System.Text;
 using System.Text.Json;
 using DCCClients.Common;
 using DCCClients.Jmri.JMRI.Commands;
-using DCCClients.Jmri.JMRI.DataBlocks;
 using DCCClients.Jmri.JMRI.EventArgs;
 
 namespace DCCClients.Jmri.JMRI;
 
 public class JmriClient {
-    private static readonly HttpClient _httpClient = new() {
+    private static readonly HttpClient HttpClient = new() {
         Timeout = TimeSpan.FromSeconds(10)
     };
 
@@ -22,6 +21,15 @@ public class JmriClient {
 
     private CancellationTokenSource? _cancellationTokenSource;
     private IWebSocket _webSocket = new WebSocketWrapper();
+
+    // Configuration properties
+    public int ConnectionTimeoutSeconds { get; set; } = 10;
+    public int MaxConnectionRetries { get; set; } = 5;
+    public int PollingIntervalMs { get; set; } = 5000;
+    public int ReconnectionDelayMs { get; set; } = 2000;
+
+    // Event to notify about connection status changes
+    public event EventHandler<ConnectionStatusEventArgs>? ConnectionStatusChanged;
 
     public JmriClient(IDccSettings settings) {
         if (settings is JmriSettings info) {
@@ -37,18 +45,36 @@ public class JmriClient {
     public event EventHandler<OccupancyEventArgs>? OccupancyChanged;
     public event EventHandler<SignalEventArgs>? SignalChanged;
 
-    public virtual async Task InitializeAsync() {
-        // Clear any previous existing states. These will be updated when we initially poll for 
-        // the data and will update the dictionaries for tracking data changes. 
-        // ------------------------------------------------------------------------------------
-        _previousTurnoutStates.Clear();
-        _previousRouteStates.Clear();
-        _previousOccupancyStates.Clear();
-        _previousSignalStates.Clear();
+    public async Task<IResult> InitializeAsync() {
+        try {
+            // Clear any previous existing states
+            _previousTurnoutStates.Clear();
+            _previousRouteStates.Clear();
+            _previousOccupancyStates.Clear();
+            _previousSignalStates.Clear();
 
-        Console.WriteLine("------------------------------------------------------------------------------------");
-        Console.WriteLine("INITIAL DATA FETCH FINISHED ::: Waiting on Events...");
-        Console.WriteLine("------------------------------------------------------------------------------------");
+            // Test connection to JMRI server
+            var pingResult = await TestConnectionAsync();
+            return !pingResult.IsSuccess ? pingResult : Result.Ok("Successfully initialized JMRI client");
+        } catch (Exception ex) {
+            return Result.Fail($"Failed to initialize JMRI client: {ex.Message}", ex);
+        }
+    }
+
+    private async Task<IResult> TestConnectionAsync() {
+        try {
+            // Simple test to check if server is reachable
+            using var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
+            var response = await HttpClient.GetAsync($"{_jmriUrl}/json", cancellationToken.Token);
+
+            return response.IsSuccessStatusCode 
+                ? Result.Ok("JMRI server connection successful") 
+                : Result.Fail($"JMRI server returned status code: {response.StatusCode }");
+        } catch (TaskCanceledException) {
+            return Result.Fail($"Connection to JMRI server timed out after {ConnectionTimeoutSeconds} seconds");
+        } catch (Exception ex) {
+            return Result.Fail($"Failed to connect to JMRI server: {ex.Message}", ex);
+        }
     }
 
     public void ForceRefresh(string? type) {
@@ -68,27 +94,58 @@ public class JmriClient {
         }
     }
 
-    public virtual async Task StartMonitoringAsync() {
-        _cancellationTokenSource = new CancellationTokenSource();
-        await ConnectWebSocketAsync();
-        var token = _cancellationTokenSource.Token;
-        _ = Task.Run(() => ListenForEventsAsync(token), token);
-        _ = Task.Run(() => MonitorWebSocketAsync(token), token);
+    public virtual async Task<IResult> StartMonitoringAsync() {
+        try {
+            _cancellationTokenSource = new CancellationTokenSource();
+            var connectionResult = await ConnectWebSocketAsync();
+            if (!connectionResult.IsSuccess) {
+                return connectionResult;
+            }
+
+            var token = _cancellationTokenSource.Token;
+            _ = Task.Run(() => ListenForEventsAsync(token), token);
+            _ = Task.Run(() => MonitorWebSocketAsync(token), token);
+
+            RaiseConnectionStatusChanged(true, "Monitoring started successfully");
+            return Result.Ok("Monitoring started successfully");
+        } catch (Exception ex) {
+            RaiseConnectionStatusChanged(false, $"Failed to start monitoring: {ex.Message}");
+            return Result.Fail($"Failed to start monitoring: {ex.Message}", ex);
+        }
     }
 
-    private async Task ConnectWebSocketAsync() {
-        try {
-            if (_webSocket.State == WebSocketState.Open) return;
-            _webSocket?.Dispose(); // Dispose of the previous instance if needed
-            _webSocket = WebSocketFactory();
-            var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
-            using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(10)); // 1-second timeout
-            await _webSocket.ConnectAsync(new Uri(wsUri), CancellationToken.None);
-            Console.WriteLine("WebSocket connected.");
-        } catch (Exception ex) {
-            Console.WriteLine($"WebSocket connection failed: {ex.Message}");
-            throw; // Rethrow to let the caller handle retries
+    private async Task<IResult> ConnectWebSocketAsync() {
+        var retryCount = 0;
+        Exception? lastException = null;
+
+        while (retryCount < MaxConnectionRetries) {
+            try {
+                if (_webSocket.State == WebSocketState.Open) return Result.Ok("WebSocket already connected");
+
+                _webSocket.Dispose();
+                _webSocket = WebSocketFactory();
+                var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
+
+                using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
+                await _webSocket.ConnectAsync(new Uri(wsUri), timeoutCts.Token);
+
+                Console.WriteLine("WebSocket connected successfully.");
+                RaiseConnectionStatusChanged(true, "WebSocket connected successfully");
+                return Result.Ok("WebSocket connected successfully");
+            } catch (Exception ex) {
+                lastException = ex;
+                retryCount++;
+
+                if (retryCount < MaxConnectionRetries) {
+                    Console.WriteLine($"WebSocket connection attempt {retryCount} failed: {ex.Message}. Retrying...");
+                    await Task.Delay(ReconnectionDelayMs * retryCount); // Increasing delay for each retry
+                }
+            }
         }
+
+        var errorMessage = $"WebSocket connection failed after {MaxConnectionRetries} attempts";
+        RaiseConnectionStatusChanged(false, errorMessage);
+        return Result.Fail(errorMessage, lastException ?? new Exception(errorMessage));
     }
 
     private async Task DisconnectWebSocketAsync() {
@@ -96,38 +153,55 @@ public class JmriClient {
             if (_webSocket.State == WebSocketState.Open) {
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Terminating Connection", CancellationToken.None);
             }
-            _webSocket?.Dispose(); // Dispose of the previous instance if needed
-            await _cancellationTokenSource?.CancelAsync()!;
+            _webSocket.Dispose();
             Console.WriteLine("WebSocket disconnected.");
+            RaiseConnectionStatusChanged(false, "WebSocket disconnected");
         } catch (Exception ex) {
+            // Don't throw - just log the error
             Console.WriteLine($"WebSocket disconnect failed: {ex.Message}");
-            throw; // Rethrow to let the caller handle retries
         }
     }
 
     private async Task MonitorWebSocketAsync(CancellationToken token) {
+        var consecutiveFailures = 0;
         while (!token.IsCancellationRequested) {
-            Console.WriteLine($"MonitorWebSocketAsync running... State={_webSocket.State}");
-            if (_webSocket.State != WebSocketState.Open) {
-                Console.WriteLine("WebSocket connection lost. Attempting to reconnect...");
-                try {
-                    await ConnectWebSocketAsync();
-                    Console.WriteLine("WebSocket reconnected.");
-                } catch (Exception ex) {
-                    Console.WriteLine($"Reconnection failed: {ex.Message}");
+            try {
+                if (_webSocket.State != WebSocketState.Open) {
+                    Console.WriteLine("WebSocket connection lost. Attempting to reconnect...");
+                    var result = await ConnectWebSocketAsync();
+
+                    if (result.IsSuccess) {
+                        consecutiveFailures = 0;
+                        Console.WriteLine("WebSocket reconnected successfully.");
+                    } else {
+                        consecutiveFailures++;
+                        if (consecutiveFailures >= MaxConnectionRetries) {
+                            var errorMessage = $"WebSocket reconnection failed after {MaxConnectionRetries} attempts. Stopping monitor.";
+                            Console.WriteLine(errorMessage);
+                            RaiseConnectionStatusChanged(false, errorMessage);
+                            break;
+                        }
+                    }
+                } else {
+                    consecutiveFailures = 0;
                 }
+
+                await Task.Delay(ReconnectionDelayMs, token);
+            } catch (OperationCanceledException) {
+                break;
+            } catch (Exception ex) {
+                Console.WriteLine($"Error in WebSocket monitor: {ex.Message}");
+                await Task.Delay(ReconnectionDelayMs, token);
             }
-            await Task.Delay(5000, token); // Use token-aware delay
         }
+
         await DisconnectWebSocketAsync();
         Console.WriteLine("MonitorWebSocketAsync stopped.");
     }
 
     private async Task ListenForEventsAsync(CancellationToken token) {
-        // Define polling interval
-        const int pollingIntervalMs = 1000; // Poll every second, adjust as needed
-
         Console.WriteLine("Starting polling for state changes...");
+
         while (!token.IsCancellationRequested) {
             try {
                 if (_webSocket.State == WebSocketState.Open) {
@@ -136,15 +210,17 @@ public class JmriClient {
                     await PollForChanges("/json/blocks", _previousOccupancyStates, ParseOccupancyData, OccupancyChanged, token);
                     await PollForChanges("/json/signalMasts", _previousSignalStates, ParseSignalData, SignalChanged, token);
                 }
-                await Task.Delay(pollingIntervalMs, token);
+
+                await Task.Delay(PollingIntervalMs, token);
             } catch (OperationCanceledException) {
                 Console.WriteLine("Polling task canceled.");
                 break;
             } catch (Exception ex) {
                 Console.WriteLine($"Error in polling: {ex.Message}");
-                await Task.Delay(2000, token);
+                await Task.Delay(ReconnectionDelayMs, token);
             }
         }
+
         Console.WriteLine("ListenForEventsAsync stopped.");
     }
 
@@ -165,8 +241,7 @@ public class JmriClient {
                     dataProperty.TryGetProperty(identifierField ?? "name", out var nameProperty) &&
                     dataProperty.TryGetProperty(stateField ?? "state", out var stateProperty)) {
                     var name = nameProperty.ToString() ?? "";
-                    var currentState = stateProperty.ToString() ?? "";
-                    ;
+                    var currentState = stateProperty.ToString();
 
                     // Check if this is a new item or its state has changed
                     if (!string.IsNullOrEmpty(name)) {
@@ -188,9 +263,8 @@ public class JmriClient {
     private async Task<string> FetchInitialDataWithRetriesAsync(string endpoint, int maxRetries = 3, int delayMilliseconds = 1000) {
         for (var attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                //using var httpClient = _httpClient;
                 Debug.WriteLine($"{_jmriUrl}{endpoint}");
-                return await _httpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
+                return await HttpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
             } catch (Exception ex) {
                 Console.WriteLine($"Attempt {attempt + 1} to fetch {endpoint} failed: {ex.Message}");
                 if (attempt == maxRetries - 1) throw; // Rethrow on final attempt
@@ -202,13 +276,19 @@ public class JmriClient {
         return string.Empty; // Fallback (should not be reached)
     }
 
-    public virtual async Task StopAsync() {
-        if (_cancellationTokenSource is not null) {
-            await _cancellationTokenSource.CancelAsync();
-            _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = null;
+    public virtual async Task<IResult> StopAsync() {
+        try {
+            if (_cancellationTokenSource is not null) {
+                await _cancellationTokenSource.CancelAsync();
+                _cancellationTokenSource.Dispose();
+                _cancellationTokenSource = null;
+            }
+
+            await DisconnectWebSocketAsync();
+            return Result.Ok("Monitoring stopped successfully");
+        } catch (Exception ex) {
+            return Result.Fail($"Error stopping monitoring: {ex.Message}", ex);
         }
-        //await DisconnectWebSocketAsync();
     }
 
     private async Task<string> FetchInitialDataAsync(string endpoint) {
@@ -217,26 +297,47 @@ public class JmriClient {
         return response;
     }
 
-    public virtual async Task SendTurnoutCommandAsync(string identifier, bool thrown) {
-        var command = new { type = "turnout", identifier, state = thrown ? "THROWN" : "CLOSED" };
-        await SendCommandAsync(command);
+    public virtual async Task<IResult> SendTurnoutCommandAsync(string identifier, bool thrown) {
+        try {
+            var command = new { type = "turnout", identifier, state = thrown ? "THROWN" : "CLOSED" };
+            return await SendCommandAsync(command);
+        } catch (Exception ex) {
+            return Result.Fail($"Failed to send turnout command: {ex.Message}", ex);
+        }
     }
 
-    public virtual async Task SendRouteCommandAsync(string routeIdentifier) {
-        var command = new { type = "route", identifier = routeIdentifier };
-        await SendCommandAsync(command);
+    public virtual async Task<IResult> SendRouteCommandAsync(string routeIdentifier) {
+        try {
+            var command = new { type = "route", identifier = routeIdentifier };
+            return await SendCommandAsync(command);
+        } catch (Exception ex) {
+            return Result.Fail($"Failed to send route command: {ex.Message}", ex);
+        }
     }
 
-    public virtual async Task SendSignalCommandAsync(string identifier, SignalAspectEnum aspect) {
-        var signalCommand = new SignalCommand(identifier, aspect);
-        var command = new { type = "signalHead", identifier, state = signalCommand.GetAspectString() };
-        await SendCommandAsync(command);
+    public virtual async Task<IResult> SendSignalCommandAsync(string identifier, SignalAspectEnum aspect) {
+        try {
+            var signalCommand = new SignalCommand(identifier, aspect);
+            var command = new { type = "signalHead", identifier, state = signalCommand.GetAspectString() };
+            return await SendCommandAsync(command);
+        } catch (Exception ex) {
+            return Result.Fail($"Failed to send signal command: {ex.Message}", ex);
+        }
     }
 
-    private async Task SendCommandAsync(object command) {
-        var json = JsonSerializer.Serialize(command);
-        var bytes = Encoding.UTF8.GetBytes(json);
-        await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+    private async Task<IResult> SendCommandAsync(object command) {
+        try {
+            if (_webSocket.State != WebSocketState.Open) {
+                return Result.Fail("WebSocket is not connected");
+            }
+
+            var json = JsonSerializer.Serialize(command);
+            var bytes = Encoding.UTF8.GetBytes(json);
+            await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+            return Result.Ok("Command sent successfully");
+        } catch (Exception ex) {
+            return Result.Fail($"Failed to send command: {ex.Message}", ex);
+        }
     }
 
     private TurnoutEventArgs? ParseTurnoutData(JsonElement data) {
@@ -257,5 +358,21 @@ public class JmriClient {
     private SignalEventArgs? ParseSignalData(JsonElement data) {
         var dataStr = data.GetRawText();
         return !string.IsNullOrEmpty(dataStr) ? new SignalEventArgs(dataStr) : null;
+    }
+
+    private void RaiseConnectionStatusChanged(bool isConnected, string message) {
+        ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(isConnected, message));
+    }
+}
+
+public class ConnectionStatusEventArgs : System.EventArgs {
+    public bool IsConnected { get; }
+    public string Message { get; }
+    public DateTime Timestamp { get; }
+
+    public ConnectionStatusEventArgs(bool isConnected, string message) {
+        IsConnected = isConnected;
+        Message = message;
+        Timestamp = DateTime.Now;
     }
 }
