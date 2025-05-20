@@ -63,10 +63,8 @@ public class JmriClient {
 
     private async Task<IResult> TestConnectionAsync() {
         try {
-            // Simple test to check if server is reachable
             using var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
             var response = await HttpClient.GetAsync($"{_jmriUrl}/json", cancellationToken.Token);
-
             return response.IsSuccessStatusCode 
                 ? Result.Ok("JMRI server connection successful") 
                 : Result.Fail($"JMRI server returned status code: {response.StatusCode }");
@@ -125,11 +123,16 @@ public class JmriClient {
                 _webSocket.Dispose();
                 _webSocket = WebSocketFactory();
                 var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
-
                 using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
                 await _webSocket.ConnectAsync(new Uri(wsUri), timeoutCts.Token);
-
                 Console.WriteLine("WebSocket connected successfully.");
+
+                // Send a Hello command to the server
+                // -------------------------------------------------------------------
+                var command = BuildJmriMessage("hello", "get", new Dictionary<string, object> { });
+                var result = await SendAndRecvAsync(command);
+                Console.WriteLine(result.Value);;
+                
                 RaiseConnectionStatusChanged(true, "WebSocket connected successfully");
                 return Result.Ok("WebSocket connected successfully");
             } catch (Exception ex) {
@@ -299,16 +302,24 @@ public class JmriClient {
 
     public virtual async Task<IResult> SendTurnoutCommandAsync(string identifier, bool thrown) {
         try {
-            var command = new { type = "turnout", identifier, state = thrown ? "THROWN" : "CLOSED" };
-            return await SendCommandAsync(command);
+            var command = BuildJmriMessage("turnout", "post", new Dictionary<string, object> {
+                { "type", "turnout" },
+                { "name", identifier },
+                { "state", thrown ? 4 : 2}
+            });
+            return await SendAndRecvAsync(command);
         } catch (Exception ex) {
             return Result.Fail($"Failed to send turnout command: {ex.Message}", ex);
         }
     }
 
-    public virtual async Task<IResult> SendRouteCommandAsync(string routeIdentifier) {
+    public virtual async Task<IResult> SendRouteCommandAsync(string identifier) {
         try {
-            var command = new { type = "route", identifier = routeIdentifier };
+            var command = BuildJmriMessage("route", "post", new Dictionary<string, object> {
+                { "type", "route" },
+                { "name", identifier },
+                { "action", "set" }
+            });
             return await SendCommandAsync(command);
         } catch (Exception ex) {
             return Result.Fail($"Failed to send route command: {ex.Message}", ex);
@@ -317,23 +328,54 @@ public class JmriClient {
 
     public virtual async Task<IResult> SendSignalCommandAsync(string identifier, SignalAspectEnum aspect) {
         try {
-            var signalCommand = new SignalCommand(identifier, aspect);
-            var command = new { type = "signalHead", identifier, state = signalCommand.GetAspectString() };
+            //{ "type" : "signalMast", "method" : "post", "data" : { "name": "Signal1",   "state": "Clear"   } }
+            var command = BuildJmriMessage("signalMast", "post", new Dictionary<string, object> {
+                { "name", identifier },
+                { "set", aspect.ToString() }
+            });
             return await SendCommandAsync(command);
         } catch (Exception ex) {
             return Result.Fail($"Failed to send signal command: {ex.Message}", ex);
         }
     }
 
-    private async Task<IResult> SendCommandAsync(object command) {
-        try {
-            if (_webSocket.State != WebSocketState.Open) {
-                return Result.Fail("WebSocket is not connected");
-            }
+    private async Task<IResult<string>> SendAndRecvAsync(string command) {
+        var sendResponse = await SendCommandAsync(command);
+        if (!sendResponse.IsSuccess) {
+            Console.WriteLine($"Failed to send command: {sendResponse.Message}");
+            return Result<string>.Fail("Failed to send message.");       
+        }
 
+        var recvResponse = await RecvResponseAsync(100);
+        if (!recvResponse.IsSuccess) {
+            Console.WriteLine($"Failed to receive response: {recvResponse.Message}");
+            return Result<string>.Fail("Failed to receive response.");
+        }
+        return Result<string>.Ok(recvResponse.Value);
+    }
+
+    private async Task<IResult<string>> RecvResponseAsync(int? timeoutMs = 100) {
+        try {
+            if (_webSocket.State != WebSocketState.Open) return Result<string>.Fail("WebSocket is not connected");
+            var buffer = new byte[4096];
+            var timeout = new CancellationTokenSource(timeoutMs ?? 100);
+            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), timeout.Token);
+            var response = Encoding.UTF8.GetString(buffer, 0, result.Count);
+            Console.WriteLine($"Json Recv Message: {response}");
+            return Result<string>.Ok(response, "Response received successfully");
+        } catch (Exception ex) {
+            return Result<string>.Fail($"Failed to send command: {ex.Message}", ex);
+        }
+    }
+    
+    private async Task<IResult> SendCommandAsync(string command, int? timeoutMs = 100) {
+        try {
+            if (_webSocket.State != WebSocketState.Open) return Result.Fail("WebSocket is not connected");
             var json = JsonSerializer.Serialize(command);
-            var bytes = Encoding.UTF8.GetBytes(json);
-            await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, CancellationToken.None);
+            var bytes = Encoding.ASCII.GetBytes(command);
+            var timeout = new CancellationTokenSource(timeoutMs ?? 100);
+            await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, timeout.Token);;
+            Console.WriteLine($"Json Send Message: {Encoding.Default.GetString(bytes)}");
             return Result.Ok("Command sent successfully");
         } catch (Exception ex) {
             return Result.Fail($"Failed to send command: {ex.Message}", ex);
@@ -362,6 +404,15 @@ public class JmriClient {
 
     private void RaiseConnectionStatusChanged(bool isConnected, string message) {
         ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(isConnected, message));
+    }
+    
+    public static string BuildJmriMessage(string type, string? method, Dictionary<string, object>? parameters) {
+        var message = new Dictionary<string, object?> { ["type"] = type };
+        if (method is not null) message["method"] = method;
+        if (parameters is { Count: > 0 }) {
+            message["data"] = parameters;
+        }
+        return JsonSerializer.Serialize(message);
     }
 }
 

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 
@@ -36,8 +37,16 @@ public partial class PanelEditorPage {
         _connectionService.ConnectionChanged += (sender, args) => _panelConnectionToolbar.IconImageSource = args.ConnectionIcon; 
         _viewModel = viewModel;
         BindingContext = viewModel;
+        PanelView.TileSelected += PanelViewOnTileSelected;
     }
-    
+
+    private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
+        if (sender is ITileInteractive interactiveTile) {
+            if (e.TapCount == 1) interactiveTile.Interact(_connectionService);
+            if (e.TapCount == 2) interactiveTile.Secondary(_connectionService);
+        }
+    }
+
     protected override void OnBindingContextChanged() {
         base.OnBindingContextChanged();
         if (BindingContext is PanelEditorViewModel { } vm) {

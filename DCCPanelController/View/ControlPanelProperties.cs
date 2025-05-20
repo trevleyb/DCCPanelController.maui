@@ -15,16 +15,10 @@ internal sealed partial class ControlPanelView {
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
     public static readonly BindableProperty EditModeProperty = BindableProperty.Create(nameof(EditMode), typeof(EditModeEnum), typeof(ControlPanelView), EditModeEnum.Move, BindingMode.Default, propertyChanged: OnEditModeChanged);
-    public static readonly BindableProperty ClientProperty = BindableProperty.Create(nameof(Client), typeof(IDccClient), typeof(ControlPanelView), null, BindingMode.Default, propertyChanged: OnClientChanged);
 
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
-    }
-
-    public IDccClient? Client {
-        get => (IDccClient?)GetValue(ClientProperty);
-        set => SetValue(ClientProperty, value);
     }
 
     public bool DesignMode {

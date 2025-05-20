@@ -202,7 +202,6 @@
                         Grid.Column="0"
                         HorizontalOptions="Fill"
                         IsVisible="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=IsPanelSelected, Mode=TwoWay}"
-                        Client="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Client, Mode=TwoWay}"
                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=SelectedPanel, Mode=TwoWay}"
                         VerticalOptions="Fill"
                         x:Name="PanelView"/>

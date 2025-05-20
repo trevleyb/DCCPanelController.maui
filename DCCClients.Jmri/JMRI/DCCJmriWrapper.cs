@@ -24,7 +24,8 @@ public class WebSocketWrapper : IWebSocket {
     }
 
     public ValueTask SendAsync(ReadOnlyMemory<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken token) {
-        return _clientWebSocket.SendAsync(buffer, messageType, endOfMessage, token);
+        var result = _clientWebSocket.SendAsync(buffer, messageType, endOfMessage, token); 
+        return result;
     }
 
     public void Dispose() {

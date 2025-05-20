@@ -60,7 +60,6 @@ internal sealed partial class ControlPanelView {
         };
 
     public event EventHandler<TileSelectedEventArgs>? TileSelected;
-
     private void OnTileSelected(int tapCount) {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
@@ -213,10 +212,10 @@ internal sealed partial class ControlPanelView {
                     }
                 }
             } else {
-                if (sender is ITileInteractive interactiveTile) {
-                    if (_tapCount == 1) interactiveTile.Interact(Client);
-                    if (_tapCount == 2) interactiveTile.Secondary(Client);
-                }
+                // if (sender is ITileInteractive interactiveTile) {
+                //     if (_tapCount == 1) interactiveTile.Interact(Client);
+                //     if (_tapCount == 2) interactiveTile.Secondary(Client);
+                // }
             }
             _tapCount = 0;
         } catch (Exception ex) {

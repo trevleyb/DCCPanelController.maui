@@ -8,7 +8,7 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.View.Components;
 
 public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
-    public static readonly BindableProperty TurnoutProperty = BindableProperty.Create(nameof(JmriTurnout), typeof(JmriTurnout), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
+    public static readonly BindableProperty TurnoutProperty = BindableProperty.Create(nameof(Turnout), typeof(Turnout), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
     public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(TurnoutStateEnum), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
     public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(TurnoutStateControl), true);
     public static readonly BindableProperty CanSetStateUnknownProperty = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(TurnoutStateControl), false);
@@ -22,8 +22,8 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
         InitializeComponent();
     }
 
-    public JmriTurnout JmriTurnout {
-        get => (JmriTurnout)GetValue(TurnoutProperty);
+    public Turnout Turnout {
+        get => (Turnout)GetValue(TurnoutProperty);
         set => SetValue(TurnoutProperty, value);
     }
 
@@ -84,10 +84,9 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
             }
 
             if (StateChangedCommand is { } command) {
-                if (command.CanExecute(JmriTurnout)) command.Execute(JmriTurnout);
+                if (command.CanExecute(Turnout)) command.Execute(Turnout);
             }
         }
-
         OnPropertyChanged(nameof(JmriTurnout));
     }
 }

@@ -16,6 +16,8 @@ public partial class ConnectionViewModel : BaseViewModel {
     protected ConnectionViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         ConnectionService = connectionService;
+        OnPropertyChanged(nameof(IsConnected));
+        OnPropertyChanged(nameof(ConnectionIcon));
         ConnectionService.ConnectionChanged += (sender, args) => {
             OnPropertyChanged(nameof(IsConnected));
             OnPropertyChanged(nameof(ConnectionIcon));

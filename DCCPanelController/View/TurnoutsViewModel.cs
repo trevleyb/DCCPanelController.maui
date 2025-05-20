@@ -114,23 +114,11 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout == null) return;
         if (!string.IsNullOrEmpty(turnout.DccAddress) && IsConnected) {
-            await ConnectionService?.SendTurnoutCmdAsync(turnout.DccAddress ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
+            await ConnectionService?.SendTurnoutCmdAsync(turnout.Name ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
         }
         OnPropertyChanged(nameof(Turnouts));
     }
-
-    [RelayCommand]
-    private async Task ToggleTurnoutStateAsync(Turnout? turnout) {
-        if (turnout == null) return;
-        turnout.State = turnout.State switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed
-        };
-        await SendTurnoutStateAsync(turnout);
-        OnPropertyChanged(nameof(Turnouts));
-    }
-
+    
     public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
         if (turnout is null) return null;
 

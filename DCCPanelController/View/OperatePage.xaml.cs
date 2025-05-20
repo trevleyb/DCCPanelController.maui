@@ -9,7 +9,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     public OperatePage(OperateViewModel viewModel) {
         InitializeComponent();
-        _viewModel = viewModel; //MauiProgram.ServiceHelper.GetService<OperateViewModel>(profile, connectionService);
+        _viewModel = viewModel; 
         BindingContext = _viewModel;
         PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
         SetTabBarState(true);
@@ -23,6 +23,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
 
     private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {
+        if (e.CurrentItem is not null) {} 
         if (BindingContext is OperateViewModel viewModel) {
             Title = viewModel.SetActivePanel(PanelCarousel.CurrentItem as Panel);
             OnPropertyChanged(nameof(viewModel.SelectedPanel));
