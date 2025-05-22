@@ -1,8 +1,8 @@
 namespace DCCClients;
 
 public class DccSettings : IDccSettings {
-    public string Name { get; set; }
-    public string Type { get; set; }
+    public string Name { get; set; } = "Unknown";
+    public string Type { get; set; } = "jmri";
     public string Protocol { get; set; } = "http";
     public string Address { get; set; } = "localhost";
     public int Port { get; set; } = 12080;

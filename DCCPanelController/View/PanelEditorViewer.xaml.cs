@@ -36,6 +36,10 @@ public partial class PanelEditorViewer {
 
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
+        SetLayoutSpan(width, height);
+    }
+
+    private void SetLayoutSpan(double width, double height) {
         if (PanelsLayout == null || PanelsCollectionView == null) return;
 
         if (DeviceInfo.Platform == DevicePlatform.iOS) {
@@ -52,8 +56,9 @@ public partial class PanelEditorViewer {
         } else {
             SetWideScreenLayout(width);
         }
-    }
 
+    }
+    
     private void SetWideScreenLayout(double width) {
         PanelsLayout.Span = width switch {
             > 1000 => 4,

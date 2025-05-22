@@ -34,17 +34,18 @@
                 Stroke="#CCCCCC"
                 StrokeThickness="1"
                 StrokeShape="RoundRectangle 8"
-                Margin="8"
+                Margin="5"
                 Background="#FAFAFA"
-                Padding="10">
+                Padding="5">
                 <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
-                    <Border Stroke="#CCCCCC" StrokeThickness="1" Background="#FAFAFA">
-                    <Image Grid.Column="0" Source="{Binding Thumbnail}" Aspect="AspectFill" HeightRequest="100"
-                               WidthRequest="100" Margin="0,0,10,0"/>
+                    <Border Grid.Column="0" Stroke="#CCCCCC" StrokeThickness="1" Margin="5" Background="{Binding BackgroundColor}">
+                        <Image Source="{Binding Thumbnail}" Aspect="AspectFill" 
+                               HeightRequest="100"
+                               WidthRequest="100"/>
                     </Border>
                     <StackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
-                        <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="18"/>
-                        <Label Text="{Binding Description}" FontSize="14" TextColor="Gray"/>
+                        <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="15"/>
+                        <Label Text="{Binding Description}" FontSize="10" TextColor="Gray"/>
                     </StackLayout>
 
                     <Grid.GestureRecognizers>
@@ -75,19 +76,18 @@
                 Stroke="#CCCCCC"
                 StrokeThickness="1"
                 StrokeShape="RoundRectangle 8"
-                Margin="8"
-                Background="#797979"
-                Padding="10">
+                Margin="5"
+                Background="#FAFAFA"
+                Padding="5">
                 <Grid>
                     <StackLayout>
-                        <Border Stroke="#CCCCCC" StrokeThickness="1" Background="#FAFAFA">
-
-                            <Image Source="{Binding Thumbnail}" Aspect="AspectFill" HeightRequest="120"
-                                   WidthRequest="180" Margin="0,0,0,8"/>
+                        <Border Stroke="#CCCCCC" StrokeThickness="1" Margin="5" Background="{Binding BackgroundColor}">
+                            <Image Source="{Binding Thumbnail}" Aspect="AspectFill" 
+                                   HeightRequest="120"
+                                   WidthRequest="180" Margin="0,5,0,5"/>
                         </Border>
-                        <Label Text="{Binding Title}" HorizontalOptions="Center" FontAttributes="Bold" FontSize="18"
-                               Margin="0,0,0,4"/>
-                        <Label Text="{Binding Description}" HorizontalOptions="Center" FontSize="14" TextColor="Gray"/>
+                        <Label Text="{Binding Id}" HorizontalOptions="Center" FontAttributes="Bold" FontSize="15" Margin="0,0,0,4"/>
+                        <Label Text="{Binding Description}" HorizontalOptions="Center" FontSize="10" TextColor="Gray"/>
                     </StackLayout>
 
                     <Grid.GestureRecognizers>
@@ -121,8 +121,6 @@
                      Command="{Binding Path=DeletePanelCommand}"/>
         <ToolbarItem Text="Edit" IsEnabled="{Binding IsPanelSelected}" IconImageSource="edit.png"
                      Command="{Binding Path=EditPanelCommand}"/>
-        <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="settings.png"
-                     Command="{Binding Path=EditPanelPropertiesCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -158,8 +156,7 @@
             </CollectionView.EmptyView>
 
             <CollectionView.ItemsLayout>
-                <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1">
-                </GridItemsLayout>
+                <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1"/>
             </CollectionView.ItemsLayout>
         </CollectionView>
     </ContentPage.Content>

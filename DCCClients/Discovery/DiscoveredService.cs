@@ -6,17 +6,16 @@ namespace DCCClients.Discovery
     /// <summary>
     /// Represents a discovered network service
     /// </summary>
-    public class DiscoveredService
-    {
+    public class DiscoveredService {
         /// <summary>
         /// The instance name of the service
         /// </summary>
-        public string InstanceName { get; set; }
+        public string InstanceName { get; set; } = string.Empty;
         
         /// <summary>
         /// The hostname of the service
         /// </summary>
-        public string HostName { get; set; }
+        public string HostName { get; set; } = string.Empty;
         
         /// <summary>
         /// The port number of the service
@@ -26,7 +25,7 @@ namespace DCCClients.Discovery
         /// <summary>
         /// The service type (e.g., "_http._tcp.local")
         /// </summary>
-        public string ServiceType { get; set; }
+        public string ServiceType { get; set; }  = string.Empty;
         
         /// <summary>
         /// IP addresses associated with the service
