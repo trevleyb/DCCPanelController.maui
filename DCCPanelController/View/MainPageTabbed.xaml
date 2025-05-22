@@ -16,10 +16,13 @@
             Icon="control.png"
             Title="Operate"/>
         <ShellContent
-            ContentTemplate="{DataTemplate view:PanelEditorPage}"
+            ContentTemplate="{DataTemplate view:PanelEditorSinglePage}"
             Icon="panels.png"
             Title="Panels"/>
-        
+        <ShellContent
+            ContentTemplate="{DataTemplate view:PanelEditorViewer}"
+            Icon="panels.png"
+            Title="Viewer"/>
         <Tab Title="Settings" Icon="settings.png">
             <ShellContent
                 ContentTemplate="{DataTemplate view:InstructionsPage}"

@@ -46,4 +46,19 @@ public static class Extensions {
             return memoryStream.ToArray();
         }
     }
+    
+    public static async Task<string> RenderSchematicToBase64ImageAsync(this IView view) => Convert.ToBase64String(await RenderSchematicToImageStreamAsync(view) ?? []);
+    public static async Task<byte[]?> RenderSchematicToImageStreamAsync(this IView view) {
+        try {
+            var image = await view.CaptureAsync();
+            if (image is null) return null;
+
+            using (var stream = new MemoryStream()) {
+                await image.CopyToAsync(stream);
+                return stream.ToArray();
+            }
+        } catch {
+            return null;
+        }
+    }
 }

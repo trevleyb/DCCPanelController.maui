@@ -29,13 +29,13 @@ public class ConnectionService : IDccClientCommands {
     
     public async Task<IResult> ToggleConnectionAsync() {
         if (IsConnected) {
-            await Disconnect();
+            await DisconnectAsync();
             return Result.Ok();
         }
-        return await Connect(_connectionInfo);
+        return await ConnectAsync(_connectionInfo);
     }
     
-    public async Task Disconnect() {
+    public async Task DisconnectAsync() {
         Console.WriteLine("Disconnecting");
         if (_client is not null) {
             _client.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
@@ -48,7 +48,7 @@ public class ConnectionService : IDccClientCommands {
         OnConnectionChanged();
     }
 
-    public async Task<IResult> Connect(ConnectionInfo? connection = null) {
+    public async Task<IResult> ConnectAsync(ConnectionInfo? connection = null) {
         try {
             var result = await ConnectHelper(connection);
             Console.WriteLine($"Connection Result: {result.IsSuccess} {result.Message}");
@@ -199,5 +199,5 @@ public class ConnectionChangedEvent : EventArgs {
 }
 
 public class ConnectionMessageEvent : EventArgs {
-    public string Message { get; init; }
+    public string Message { get; init; } = string.Empty;
 }

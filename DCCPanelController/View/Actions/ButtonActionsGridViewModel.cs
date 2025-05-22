@@ -10,6 +10,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [ObservableProperty] public List<string> _availableButtons;
     [ObservableProperty] private ButtonActions _buttonPanelActions;
 
+    public List<string> SelectableButtons => BuildSelectableButtons();
+
     public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
         ActionContext = context;
         AvailableButtons = availableButtons;
@@ -33,8 +35,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
             return "";
         }
     }
-
-    public List<string> SelectableButtons => BuildSelectableButtons();
 
     [RelayCommand]
     private void AddRow() {

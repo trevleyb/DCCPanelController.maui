@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+             xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
+             Title="Panels Viewer"
+             x:DataType="view:PanelEditorViewerViewModel"
+             x:Class="DCCPanelController.View.PanelEditorViewer">
+
+    <ContentPage.Resources>
+
+        <Style TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal"/>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="LightGray"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+
+
+        <!-- Horizontal (Image left, text right) -->
+        <DataTemplate x:Key="HorizontalTemplate" x:DataType="dataModel:Panel">
+            <Border
+                Stroke="#CCCCCC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 8"
+                Margin="8"
+                Background="#FAFAFA"
+                Padding="10">
+                <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
+                    <Border Stroke="#CCCCCC" StrokeThickness="1" Background="#FAFAFA">
+                    <Image Grid.Column="0" Source="{Binding Thumbnail}" Aspect="AspectFill" HeightRequest="100"
+                               WidthRequest="100" Margin="0,0,10,0"/>
+                    </Border>
+                    <StackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
+                        <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="18"/>
+                        <Label Text="{Binding Description}" FontSize="14" TextColor="Gray"/>
+                    </StackLayout>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer
+                            NumberOfTapsRequired="2"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=EditPanelCommand}"
+                            CommandParameter="{Binding}"/>
+
+                        <DragGestureRecognizer
+                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelCommand}"
+                            DragStartingCommandParameter="{Binding}"/>
+                        <DropGestureRecognizer
+                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelLeaveCommand}"
+                            DragLeaveCommandParameter="{Binding}"
+                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelOverCommand}"
+                            DragOverCommandParameter="{Binding}"
+                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DropPanelCommand}"
+                            DropCommandParameter="{Binding}"/>
+                    </Grid.GestureRecognizers>
+
+                </Grid>
+            </Border>
+        </DataTemplate>
+
+        <!-- Vertical (Image above, text below) -->
+        <DataTemplate x:Key="VerticalTemplate" x:DataType="dataModel:Panel">
+            <Border
+                Stroke="#CCCCCC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 8"
+                Margin="8"
+                Background="#797979"
+                Padding="10">
+                <Grid>
+                    <StackLayout>
+                        <Border Stroke="#CCCCCC" StrokeThickness="1" Background="#FAFAFA">
+
+                            <Image Source="{Binding Thumbnail}" Aspect="AspectFill" HeightRequest="120"
+                                   WidthRequest="180" Margin="0,0,0,8"/>
+                        </Border>
+                        <Label Text="{Binding Title}" HorizontalOptions="Center" FontAttributes="Bold" FontSize="18"
+                               Margin="0,0,0,4"/>
+                        <Label Text="{Binding Description}" HorizontalOptions="Center" FontSize="14" TextColor="Gray"/>
+                    </StackLayout>
+
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer
+                            NumberOfTapsRequired="2"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=EditPanelCommand}"
+                            CommandParameter="{Binding}"/>
+
+                        <DragGestureRecognizer
+                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelCommand}"
+                            DragStartingCommandParameter="{Binding}"/>
+                        <DropGestureRecognizer
+                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelLeaveCommand}"
+                            DragLeaveCommandParameter="{Binding}"
+                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelOverCommand}"
+                            DragOverCommandParameter="{Binding}"
+                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DropPanelCommand}"
+                            DropCommandParameter="{Binding}"/>
+                    </Grid.GestureRecognizers>
+
+                </Grid>
+            </Border>
+        </DataTemplate>
+    </ContentPage.Resources>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Add" IconImageSource="plus_circle.png" Command="{Binding Path=AddPanelCommand}"/>
+        <ToolbarItem Text="Duplicate" IsEnabled="{Binding IsPanelSelected}" IconImageSource="copy.png"
+                     Command="{Binding Path=DuplicatePanelCommand}"/>
+        <ToolbarItem Text="Delete" IsEnabled="{Binding IsPanelSelected}" IconImageSource="trash_2.png"
+                     Command="{Binding Path=DeletePanelCommand}"/>
+        <ToolbarItem Text="Edit" IsEnabled="{Binding IsPanelSelected}" IconImageSource="edit.png"
+                     Command="{Binding Path=EditPanelCommand}"/>
+        <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="settings.png"
+                     Command="{Binding Path=EditPanelPropertiesCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        <CollectionView x:Name="PanelsCollectionView"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedPanel}"
+                        ItemsSource="{Binding Panels}"
+                        Margin="10">
+
+            <CollectionView.EmptyView>
+                <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <StackLayout HorizontalOptions="Fill" VerticalOptions="Center">
+                        <Label FontAttributes="Bold" FontSize="12" HorizontalOptions="Center"
+                               Text="No Panels were found."/>
+                        <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0">
+                            <Label FontSize="12" Text="Please use" VerticalOptions="Center"/>
+                            <ImageButton
+                                Command="{Binding AddPanelCommand}"
+                                Margin="-5,0,-5,0"
+                                Scale="0.50"
+                                Source="plus_circle.png">
+                                <Image.Behaviors>
+                                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                                </Image.Behaviors>
+                            </ImageButton>
+                            <Label
+                                FontSize="12"
+                                Text="to add a new Panel."
+                                VerticalOptions="Center"/>
+                        </HorizontalStackLayout>
+                    </StackLayout>
+                </Grid>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1">
+                </GridItemsLayout>
+            </CollectionView.ItemsLayout>
+        </CollectionView>
+    </ContentPage.Content>
+</ContentPage>

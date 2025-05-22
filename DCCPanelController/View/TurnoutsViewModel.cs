@@ -84,14 +84,14 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task EditTurnoutAsync(Turnout? turnout) {
         await NavigateToEditTurnoutAsync(turnout);
         OnPropertyChanged(nameof(Turnouts));
-        Profile.Save();
+        await Profile.SaveAsync();
     }
 
     [RelayCommand]
     private async Task DeleteTurnoutAsync(Turnout Turnout) {
         Turnouts.Remove(Turnout);
         OnPropertyChanged(nameof(Turnouts));
-        Profile.Save();
+        await Profile.SaveAsync();
     }
 
     [RelayCommand]
@@ -107,7 +107,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         var result = await NavigateToEditTurnoutAsync(turnout);
         if (result is not null) Turnouts.Add(result);
         OnPropertyChanged(nameof(Turnouts));
-        Profile.Save();
+        await Profile.SaveAsync();
     }
 
     [RelayCommand]

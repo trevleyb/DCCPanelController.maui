@@ -339,8 +339,8 @@
         <Compile Update="View\TestPanelViewModel.cs">
             <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\PanelEditorViewModel.cs">
-            <DependentUpon>PanelEditorPage.xaml</DependentUpon>
+        <Compile Update="View\PanelEditorSinglePageViewModel.cs">
+            <DependentUpon>PanelEditorPagePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TileSelectors\FloatingTileSelector.xaml.cs">
             <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
@@ -375,6 +375,12 @@
         </Compile>
         <Compile Update="View\BlocksViewModel.cs">
           <DependentUpon>BlocksPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\PanelEditorViewerViewModel.cs">
+          <DependentUpon>PanelEditorViewer.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\PanelEditorViewModel.cs">
+          <DependentUpon>PanelEditor.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

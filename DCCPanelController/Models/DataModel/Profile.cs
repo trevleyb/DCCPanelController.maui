@@ -56,7 +56,7 @@ public partial class Profile : ObservableObject {
         return JsonRepository.Load(profileName);
     }
 
-    public async Task Save() {
+    public async Task SaveAsync() {
         await JsonRepository.SaveAsync(this, ProfileName);
     }
 

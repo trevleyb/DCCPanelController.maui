@@ -16,14 +16,13 @@ namespace DCCPanelController.Models.DataModel;
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityID {
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
-    [ObservableProperty] private int _sortOrder;
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
-
-    public string Base64Image { get; set; } = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
+    [ObservableProperty] private int _sortOrder;
     
     [JsonIgnore] public Panels? Panels { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
@@ -101,6 +100,7 @@ public partial class Panel : ObservableObject, IEntityID {
         var clone = new Panel(Panels) {
             Description = Description,
             SortOrder = SortOrder,
+            Base64Image = Base64Image,
             Cols = Cols,
             Rows = Rows
         };

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+             xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
+             x:DataType="view:PanelEditorViewModel"
+             Title="{Binding Title}"
+             x:Class="DCCPanelController.View.PanelEditor">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Edit"        x:Name="EditToolbar"    IsEnabled="{Binding HasSelectedEntities}" IconImageSource="edit.png" Command="{Binding Path=EditTileCommand}"/>
+        <ToolbarItem Text="Rotate"      x:Name="RotateToolbar"  IsEnabled="{Binding HasSelectedEntities}" IconImageSource="rotate_cw.png" Command="{Binding Path=RotateTileCommand}"/>
+        <ToolbarItem Text="Delete"      x:Name="DeleteToolbar"  IsEnabled="{Binding HasSelectedEntities}" IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
+        <ToolbarItem Text="Mode"        x:Name="ModeToolbar"        IconImageSource="move.png" Command="{Binding Path=SwitchModeCommand}"/>
+        <ToolbarItem Text="Grid"        x:Name="GridToolbar"        IconImageSource="grid_off.png" Command="{Binding Path=ToggleGridCommand}"/>
+        <ToolbarItem Text="Properties"  x:Name="PropertiesToolbar"  IconImageSource="settings.png" Command="{Binding Path=ShowPropertiesCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Content>
+        
+        <Grid
+            BackgroundColor="White"
+            ColumnDefinitions="*,auto"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
+
+        <Border
+                BackgroundColor="WhiteSmoke"
+                Grid.Column="0"
+                Stroke="#FFF5F5F5"
+                StrokeThickness="0">
+                <Grid
+                    BackgroundColor="White"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
+
+                    <view:ControlPanelView
+                        Margin="5"
+                        BackgroundColor="Transparent"
+                        DesignMode="true"
+                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=TwoWay}"
+                        Grid.Column="0"
+                        HorizontalOptions="Fill"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=TwoWay}"
+                        VerticalOptions="Fill"
+                        x:Name="PanelView"/>
+                </Grid>
+            </Border>
+            <Grid
+                Grid.Column="1" Margin="5,0,0,0">
+                <Border
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <tileSelectors:VerticalTileSelector
+                        HorizontalOptions="Center"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
+                        x:Name="TileSelector"/>
+                </Border>
+            </Grid>
+        </Grid>
+        
+    </ContentPage.Content>
+</ContentPage>

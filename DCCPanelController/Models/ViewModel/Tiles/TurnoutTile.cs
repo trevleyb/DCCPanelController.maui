@@ -31,7 +31,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         }
     }
 
-    public void Secondary(ConnectionService connectionService) { }
+    public void Secondary(ConnectionService? connectionService) { }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
         var imageName = State switch {

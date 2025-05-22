@@ -153,7 +153,7 @@
                                         TextColor="Black"
                                         TextSize="15"
                                         SelectedItem="{Binding Id, Mode=TwoWay}"
-                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}}, Path=SelectableButtons}"
+                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}},x:DataType='local:ButtonActionsGridViewModel', Path=SelectableButtons}"
                                         Placeholder="Select a Button"/>
 
                                     <components:ButtonStateControl

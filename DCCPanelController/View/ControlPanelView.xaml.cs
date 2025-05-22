@@ -19,7 +19,7 @@ using UIKit;
 namespace DCCPanelController.View;
 
 [ObservableObject]
-internal sealed partial class ControlPanelView {
+public partial class ControlPanelView {
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
@@ -670,17 +670,11 @@ internal sealed partial class ControlPanelView {
     }
     #endregion
 
-    private async Task<string> RenderSchematicToBase64Image() => Convert.ToBase64String(await RenderSchematicToImageStream(MainGrid) ?? []);
-    public async Task<byte[]?> RenderSchematicToImageStream() => await RenderSchematicToImageStream(MainGrid);
-    private async Task<byte[]?> RenderSchematicToImageStream(IView view) {
-        var image = await view.CaptureAsync();
-        if (image is null) return null;
-        
-        using (var stream = new MemoryStream()) {
-            await image.CopyToAsync(stream);
-            return stream.ToArray();
-        }
-        return null;
+    public async Task<string> GetThumbnailAsync() {
+        DesignMode = false;
+        ShowGrid = false;
+        DrawPanel(true);
+        return await this.RenderSchematicToBase64ImageAsync();
     }
 }
 

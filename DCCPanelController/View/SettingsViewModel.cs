@@ -36,7 +36,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
 
-        if (ConnectionService.IsConnected) ConnectionService.Disconnect();
+        if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
         
@@ -94,7 +94,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
     public void SaveSettings() {
         SaveConnectionDetails();
-        Profile.Save();
+        Profile.SaveAsync();
     }
 
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
@@ -143,7 +143,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
             try {
                 IsBusy = true;
                 SaveConnectionDetails();
-                var result = await ConnectionService.Connect(Settings.ActiveConnection());
+                var result = await ConnectionService.ConnectAsync(Settings.ActiveConnection());
                 if (result.IsFailure) {
                     AddMessage("Connection Failed.");
                     foreach (var error in result.Errors) AddMessage(error.Message);
@@ -152,7 +152,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
                     await Task.Delay(1000);
                     if (ConnectionService.IsConnected) {
                         AddMessage("Connected Successfully.");
-                        await ConnectionService.Disconnect();
+                        await ConnectionService.DisconnectAsync();
                     } else {
                         AddMessage("Connection Failed.");
                     }
@@ -161,7 +161,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
                 AddMessage("Unable to Connect.");
             } finally {
                 ConnectionService.ConnectionMessage -= ClientOnMessageReceived;
-                ConnectionService?.Disconnect();
+                ConnectionService?.DisconnectAsync();
                 IsBusy = false;
             }
             OnPropertyChanged(nameof(ConnectLabel));

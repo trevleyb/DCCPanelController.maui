@@ -11,7 +11,7 @@ public class TestDataModel {
         var profile = new Profile("testProfile");
         BuildTestDataModel(profile);
         ValidateTestDataModel(profile);
-        profile.Save();
+        profile.SaveAsync();
         var loadedStorage = JsonRepository.Load();
         ValidateTestDataModel(loadedStorage);
     }

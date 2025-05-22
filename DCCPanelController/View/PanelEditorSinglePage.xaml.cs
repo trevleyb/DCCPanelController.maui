@@ -7,7 +7,7 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
-public partial class PanelEditorPage {
+public partial class PanelEditorSinglePage {
     private readonly ToolbarItem _addPanelToolbar = new() { Text = "Add Panel", IconImageSource = "plus_circle.png" };
     private readonly ConnectionService? _connectionService;
     private readonly ToolbarItem _deletePanelToolbar = new() { Text = "Delete Panel", IconImageSource = "trash_2.png" };
@@ -29,9 +29,9 @@ public partial class PanelEditorPage {
     private readonly ToolbarItem _panelUploadToolbar = new() { Text = "Upload Panel", IconImageSource = "upload.png" };
     private readonly ToolbarItem _spacerToolbar = new() { Text = "", IsEnabled = false };
     private readonly ToolbarItem _toggleFullscreenToolbar = new() { Text = "Toggle Fullscreen" };
-    private PanelEditorViewModel? _viewModel;
+    private PanelEditorSinglePageViewModel? _viewModel;
 
-    public PanelEditorPage(PanelEditorViewModel viewModel, ConnectionService connectionService) {
+    public PanelEditorSinglePage(PanelEditorSinglePageViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
         _connectionService = connectionService;
         _connectionService.ConnectionChanged += (sender, args) => _panelConnectionToolbar.IconImageSource = args.ConnectionIcon; 
@@ -41,6 +41,7 @@ public partial class PanelEditorPage {
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
+        if (_viewModel is { } vm && sender is ControlPanelView view) vm.SelectedView = view ?? null; 
         if (sender is ITileInteractive interactiveTile) {
             if (e.TapCount == 1) interactiveTile.Interact(_connectionService);
             if (e.TapCount == 2) interactiveTile.Secondary(_connectionService);
@@ -49,7 +50,7 @@ public partial class PanelEditorPage {
 
     protected override void OnBindingContextChanged() {
         base.OnBindingContextChanged();
-        if (BindingContext is PanelEditorViewModel { } vm) {
+        if (BindingContext is PanelEditorSinglePageViewModel { } vm) {
             _viewModel = vm;
             PanelListView.SelectedItem = vm.SelectedPanel;
             PanelView.TileSelected += (sender, e) => {
@@ -150,7 +151,7 @@ public partial class PanelEditorPage {
     ///     In Design/Edit mode, toolbar items include commands for managing tiles like deleting and editing properties.
     ///     In View mode, toolbar items include commands for managing panels like adding, editing, and deleting panels.
     ///     This method dynamically adjusts the available toolbar options based on the
-    ///     <see cref="PanelEditorViewModel.DesignMode" /> property.
+    ///     <see cref="DesignMode" /> property.
     /// </remarks>
     private void UpdateToolbarItems() {
         ToolbarItems.Clear();
