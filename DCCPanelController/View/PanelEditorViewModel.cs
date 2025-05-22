@@ -50,6 +50,10 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
         IsFullScreen = false;
     }
 
+    private async Task SaveAsync() {
+        Profile.Save();
+    }
+    
     /// <summary>
     ///     Adds a new panel to the collection. The newly created panel becomes the selected panel.
     ///     Updates the profile to persist the changes.
@@ -61,7 +65,7 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
     public void AddPanel() {
         SelectedPanel = Panels.CreatePanel();
         Panels.Add(SelectedPanel);
-        Profile.Save();
+        SaveAsync();
     }
 
     /// <summary>
@@ -83,7 +87,7 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
                 Panels.Remove(SelectedPanel);
                 RefreshSortOrder();
                 SelectedPanel = Panels.First();
-                Profile.Save();
+                await SaveAsync();
             }
         } catch (Exception e) {
             Console.WriteLine($"Error Deleting Panel: {e.Message}");
@@ -120,7 +124,7 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
     public void ExitEditMode() {
         GridVisible = false;
         DesignMode = false;
-        Profile.Save();
+        SaveAsync();
     }
 
     public void ToggleGrid() {
@@ -187,6 +191,7 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
                 var panel = Panels.UploadPanel(jsonString);
                 if (panel is not null) {
                     await DisplayAlert("Success", $"Uploaded Panel: {panel.Id ?? ""}");
+                    await SaveAsync();
                 } else {
                     await DisplayAlert("Error", "Unable to upload the provided file as a Panel.");
                 }
@@ -220,13 +225,13 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
     public async Task EditTilePropertiesAsync(Entity entity) {
         Console.WriteLine($"Launching the Properties page for '{entity.EntityName}'");
         await DynamicPageLauncher.ShowDynamicPropertyPageAsync([entity]);
-        Profile.Save();
+        await SaveAsync();
     }
 
     public async Task EditTilePropertiesAsync(List<Entity> entities) {
         Console.WriteLine("Launching the Properties page for multiple Entities");
         await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entities);
-        Profile.Save();
+        await SaveAsync();
     }
 
     public async void EditPanelProperties() {
@@ -240,7 +245,7 @@ public partial class PanelEditorViewModel : ConnectionViewModel {
     public async Task EditPanelPropertiesAsync() {
         if (SelectedPanel is { } panel) {
             await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
-            Profile.Save();
+            await SaveAsync();
             PropertiesChanged = true;
         }
     }

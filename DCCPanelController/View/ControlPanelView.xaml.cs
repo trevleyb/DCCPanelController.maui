@@ -669,6 +669,19 @@ internal sealed partial class ControlPanelView {
         return tilesInGrid.Any();
     }
     #endregion
+
+    private async Task<string> RenderSchematicToBase64Image() => Convert.ToBase64String(await RenderSchematicToImageStream(MainGrid) ?? []);
+    public async Task<byte[]?> RenderSchematicToImageStream() => await RenderSchematicToImageStream(MainGrid);
+    private async Task<byte[]?> RenderSchematicToImageStream(IView view) {
+        var image = await view.CaptureAsync();
+        if (image is null) return null;
+        
+        using (var stream = new MemoryStream()) {
+            await image.CopyToAsync(stream);
+            return stream.ToArray();
+        }
+        return null;
+    }
 }
 
 public class TileSelectedEventArgs(HashSet<ITile> tiles, int tapCount) : EventArgs {

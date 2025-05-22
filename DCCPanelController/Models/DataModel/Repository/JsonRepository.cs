@@ -16,11 +16,11 @@ public static class JsonRepository {
     /// </param>
     /// <exception cref="ArgumentNullException">Thrown when the provided storage is null.</exception>
     /// <exception cref="Exception">Thrown if an error occurs during the serialization or saving process.</exception>
-    public static void Save(Profile profile, string profileName = "default") {
+    public static async Task SaveAsync(Profile profile, string profileName = "default") {
         using (new CodeTimer("Save JSON File")) {
             try {
                 var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
-                SaveToFile(GetStorageFilePath(profileName), jsonString);
+                await SaveToFileAsync(GetStorageFilePath(profileName), jsonString);
             } catch (Exception ex) {
                 Console.WriteLine($"Unable to SAVE Data: {ex.Message}");
             }
@@ -33,11 +33,11 @@ public static class JsonRepository {
     /// <param name="fileName">The name of the file to save the JSON data to. Cannot be null, empty, or whitespace.</param>
     /// <param name="jsonString">The JSON string content to write to the file. Cannot be null or empty.</param>
     /// <exception cref="ArgumentNullException">Thrown when the provided file name is null, empty, or whitespace.</exception>
-    private static void SaveToFile(string fileName, string jsonString) {
+    private static async Task SaveToFileAsync(string fileName, string jsonString) {
         if (string.IsNullOrEmpty(jsonString)) return;
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(fileName));
         Console.WriteLine($"Saving to {fileName}");
-        File.WriteAllText(fileName, jsonString);
+        File.WriteAllTextAsync(fileName, jsonString);
     }
     #endregion
 

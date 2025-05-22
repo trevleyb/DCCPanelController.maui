@@ -22,6 +22,8 @@ public partial class Panel : ObservableObject, IEntityID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+
+    public string Base64Image { get; set; } = string.Empty;
     
     [JsonIgnore] public Panels? Panels { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
@@ -47,6 +49,12 @@ public partial class Panel : ObservableObject, IEntityID {
         }
     }
 
+    [JsonIgnore] 
+    public ImageSource? Thumbnail => 
+        string.IsNullOrWhiteSpace(Base64Image) 
+            ? null 
+            : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
+    
     public string GenerateID() {
         return EntityID.NextPanelID(Panels ?? []);
     }
