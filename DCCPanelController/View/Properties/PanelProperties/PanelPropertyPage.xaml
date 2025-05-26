@@ -6,10 +6,9 @@
     xmlns:panelProperties="clr-namespace:DCCPanelController.View.PanelProperties"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <!-- <ContentPage.ToolbarItems> -->
-    <!--     <ToolbarItem Clicked="ClosePropertyPage" IconImageSource="info.png"/> -->
-    <!--     <ToolbarItem Clicked="ClosePropertyPage" Text="Close"/> -->
-    <!-- </ContentPage.ToolbarItems> -->
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Clicked="ClosePropertyPage" Text="Close"/>
+    </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid HorizontalOptions="Fill" Margin="5">

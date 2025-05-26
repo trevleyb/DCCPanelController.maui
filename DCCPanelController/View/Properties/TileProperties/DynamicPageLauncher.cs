@@ -16,10 +16,9 @@ public static class DynamicPageLauncher {
                     var navPage = new DynamicPropertyPage(entities);
 #if IOS
                     navPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
-                    
 #endif
                     await navigation.PushModalAsync(navPage);
-                    //await navPage.PageClosed;
+                    await navPage.PageClosed;
                     return;
                 }
             }

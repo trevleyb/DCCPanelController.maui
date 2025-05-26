@@ -47,7 +47,7 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine(e.PropertyName);
+        Console.WriteLine($"Panel Editor Property Changed {e.PropertyName}");
         switch (e.PropertyName) {
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;

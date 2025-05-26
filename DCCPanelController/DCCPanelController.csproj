@@ -386,7 +386,6 @@
 
     <ItemGroup>
         <Folder Include="Models\ViewModel\Actions\"/>
-        <Folder Include="View\Properties\" />
     </ItemGroup>
 
     <ItemGroup>

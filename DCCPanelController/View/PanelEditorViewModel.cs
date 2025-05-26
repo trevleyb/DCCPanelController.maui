@@ -35,7 +35,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
 
-    private INavigation _navigation;
+    private readonly INavigation _navigation;
     public string Title => Panel?.Title ?? "Panel";
     
     public double ScreenWidth   = 100;
@@ -84,7 +84,12 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
         if (Panel is { } panel && _navigation is {} navigation) {
-            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel, navigation, ScreenWidth, ScreenHeight);
+            Console.WriteLine("Launching");
+            //await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel, navigation, ScreenWidth, ScreenHeight);
+            var navPage = new PanelPropertyPage(panel);
+            await navigation.PushModalAsync(navPage);
+            //await navPage.PageClosed;
+            Console.WriteLine("Returned");
         }
     }
 

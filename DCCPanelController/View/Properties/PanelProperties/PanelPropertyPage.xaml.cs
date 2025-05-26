@@ -1,8 +1,7 @@
 using DCCPanelController.Models.DataModel;
-#if IOS
-using UIKit;
-using UIModalPresentationStyle = UIKit.UIModalPresentationStyle;
-#endif
+using Microsoft.Maui.Controls.Platform;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace DCCPanelController.View.PanelProperties;
 
@@ -13,6 +12,9 @@ public partial class PanelPropertyPage : ContentPage {
 
     public PanelPropertyPage(Panel panel) {
         InitializeComponent();
+#if IOS
+        this.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+#endif
         var propertyDetails = new PanelPropertyBase(panel);
         Properties.Children.Add(propertyDetails);
         BindingContext = propertyDetails.BindingContext;
@@ -20,11 +22,12 @@ public partial class PanelPropertyPage : ContentPage {
     }
 
     protected override void OnDisappearing() {
-        base.OnDisappearing();
-        _closeTcs.TrySetResult(true); // or return data as needed
+         base.OnDisappearing();
+         //_closeTcs.TrySetResult(true); // or return data as needed
     }
     
-    // private void ClosePropertyPage(object? sender, EventArgs? e) {
-    //     Navigation.PopAsync(true);
-    // }
+    private async void ClosePropertyPage(object? sender, EventArgs? e) {
+         await Navigation.PopModalAsync(true);
+         //_closeTcs.TrySetResult(true);
+    }
 }

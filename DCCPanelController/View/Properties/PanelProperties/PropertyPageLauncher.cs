@@ -7,32 +7,31 @@ using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 namespace DCCPanelController.View.PanelProperties;
 
 public static class PropertyPageLauncher {
-    
     public static async Task ShowPanelPropertyPageAsync(Panel panel, INavigation navigation, double width, double height) {
-        if (DeviceInfo.Platform == DevicePlatform.iOS) {
-            if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                if (width < height) {
-                    // On iPhone or a small device, so use a Navigation
-                    var navPage = new PanelPropertyPage(panel);
-// #if IOS
-//                     navPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
-// #endif
-                    await navigation.PushAsync(navPage);
-                    //await navPage.PageClosed;
-                    return;
-                }
-            }
-        }
+        //if (DeviceInfo.Platform == DevicePlatform.iOS) {
+            //if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+            // On iPhone or a small device, so use a Navigation
+            var navPage = new PanelPropertyPage(panel);
+#if IOS
+            navPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+#endif
+            await navigation.PushModalAsync(navPage);
+            await navPage.PageClosed;
+            return;
+
+            //}
+        //}
 
         // Default otherwise to a popup window
         if (App.Current.Windows[0].Page is { } mainPage) {
             var popPage = new PanelPropertyPopup(panel);
             await mainPage.ShowPopupAsync(popPage);
+
             //await popPage.PageClosed;
         }
         return;
     }
-    
+
     [Obsolete]
     public static async Task ShowPanelPropertyPageAsync(Panel panel) {
         // -------------------------------------------------------------------------------
