@@ -19,9 +19,16 @@ public partial class PanelEditor : ContentPage {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.GridVisible = true;
         _viewModel.EditMode = EditModeEnum.Move;
-
         PanelView.TileSelected += PanelViewOnTileSelected;
         BindingContext = _viewModel;
+    }
+
+    protected override void OnSizeAllocated(double width, double height) {
+        base.OnSizeAllocated(width, height);
+        if (_viewModel is { } vm) {
+            vm.ScreenHeight = height;
+            vm.ScreenWidth = width;
+        }
     }
 
     protected override async void OnDisappearing() {

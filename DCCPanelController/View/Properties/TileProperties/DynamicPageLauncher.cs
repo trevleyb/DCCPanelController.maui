@@ -7,6 +7,34 @@ using NavigationPage = Microsoft.Maui.Controls.NavigationPage;
 namespace DCCPanelController.View.DynamicProperties;
 
 public static class DynamicPageLauncher {
+    
+    public static async Task ShowDynamicPropertyPageAsync(List<Entity> entities, INavigation navigation, double width, double height) {
+        if (DeviceInfo.Platform == DevicePlatform.iOS) {
+            if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+                if (width < height) {
+                    // On iPhone or a small device, so use a Navigation
+                    var navPage = new DynamicPropertyPage(entities);
+#if IOS
+                    navPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
+                    
+#endif
+                    await navigation.PushModalAsync(navPage);
+                    //await navPage.PageClosed;
+                    return;
+                }
+            }
+        }
+
+        // Default otherwise to a popup window
+        if (App.Current.Windows[0].Page is { } mainPage) {
+            var popPage = new DynamicPropertyPopup(entities);
+            await mainPage.ShowPopupAsync(popPage);
+            //await popPage.PageClosed;
+        }
+        return;
+    }
+    
+    [Obsolete]
     public static async Task ShowDynamicPropertyPageAsync(List<Entity> entities) {
         // -------------------------------------------------------------------------------
         if (DeviceInfo.Idiom == DeviceIdiom.Phone && DeviceInfo.Platform == DevicePlatform.iOS) {

@@ -13,15 +13,17 @@ using DCCPanelController.View.PanelProperties;
 
 namespace DCCPanelController.View;
 
-public partial class PanelEditorViewerViewModel : ConnectionViewModel {
+public partial class PanelViewerViewModel : ConnectionViewModel {
     private Panel? _draggedPanel;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _isPanelSelected;
     
-    public event EventHandler<ViewerEventArgs>? ViewerAction;
+    public INavigation? NavigationService;
+    public double ScreenWidth   = 100;
+    public double ScreenHeight  = 100;
     
-    public PanelEditorViewerViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
+    public PanelViewerViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
         Panels = Profile.Panels;
         PropertyChanged += OnPropertyChanged;
@@ -100,15 +102,17 @@ public partial class PanelEditorViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task EditPanelAsync() {
-        if (SelectedPanel is { } panel) {
-            OnViewerAction(new ViewerEventArgs(panel,ViewerActionType.Edit));
+        if (SelectedPanel is { } panel && NavigationService is { } navigation) {
+            var editorPage = new PanelEditor(panel);
+            await navigation.PushAsync(editorPage);
+            await editorPage.PageClosed;
         }
     }
 
     [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
-        if (SelectedPanel is { } panel) {
-            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
+        if (SelectedPanel is { } panel && NavigationService is {} navigation) {
+            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel, navigation, ScreenWidth, ScreenHeight);;
             await SaveAsync();
         }
     }
@@ -169,13 +173,4 @@ public partial class PanelEditorViewerViewModel : ConnectionViewModel {
     }
     #endregion
 
-    protected virtual void OnViewerAction(ViewerEventArgs e) {
-        ViewerAction?.Invoke(this, e);
-    }
-}
-
-public enum ViewerActionType { Edit }
-public class ViewerEventArgs(Panel panel, ViewerActionType type) : EventArgs {
-    public Panel Panel { get; set; } = panel;
-    public ViewerActionType Type { get; set; } = type;
 }

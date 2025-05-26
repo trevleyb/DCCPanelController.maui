@@ -8,32 +8,18 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
-public partial class PanelEditorViewer {
+public partial class PanelViewer {
     private readonly ConnectionService? _connectionService;
-    private PanelEditorViewerViewModel? _viewModel;
+    private PanelViewerViewModel? _viewModel;
 
-    public PanelEditorViewer(PanelEditorViewerViewModel viewModel, ConnectionService connectionService) {
+    public PanelViewer(PanelViewerViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
         _connectionService = connectionService;
         _viewModel = viewModel;
-        _viewModel.ViewerAction += ViewModelOnViewerAction;
+        _viewModel.NavigationService = Navigation;
         BindingContext = viewModel;
     }
-
-    private async void ViewModelOnViewerAction(object? sender, ViewerEventArgs e) {
-        switch (e.Type) {
-        case ViewerActionType.Edit:
-            if (e.Panel is { } panel) {
-                var editorPage = new PanelEditor(panel);
-                await Navigation.PushAsync(editorPage);
-                await editorPage.PageClosed;
-            }
-            break;
-        default:
-            break;
-        }
-    }
-
+    
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
         SetLayoutSpan(width, height);
@@ -41,7 +27,11 @@ public partial class PanelEditorViewer {
 
     private void SetLayoutSpan(double width, double height) {
         if (PanelsLayout == null || PanelsCollectionView == null) return;
-
+        if (_viewModel is null) return;
+        
+        _viewModel.ScreenHeight = height;
+        _viewModel.ScreenWidth = width;
+        
         if (DeviceInfo.Platform == DevicePlatform.iOS) {
             if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
                 if (width < height) {

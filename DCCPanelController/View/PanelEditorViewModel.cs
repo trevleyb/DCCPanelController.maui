@@ -5,7 +5,9 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
+using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
+using DCCPanelController.View.PanelProperties;
 
 namespace DCCPanelController.View;
 
@@ -36,14 +38,14 @@ public partial class PanelEditorViewModel : ObservableObject {
     private INavigation _navigation;
     public string Title => Panel?.Title ?? "Panel";
     
+    public double ScreenWidth   = 100;
+    public double ScreenHeight  = 100;
+    
     public PanelEditorViewModel(Panel panel, INavigation navigation) {
         _panel = panel;
         _navigation = navigation;
     }
     
-    [RelayCommand]
-    private async Task EditTileAsync() {}
-
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
@@ -80,6 +82,16 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    private async Task ShowPropertiesAsync() {}
-    
+    public async Task EditPanelPropertiesAsync() {
+        if (Panel is { } panel && _navigation is {} navigation) {
+            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel, navigation, ScreenWidth, ScreenHeight);
+        }
+    }
+
+    [RelayCommand]
+    private async Task EditTilePropertiesAsync() {
+        if (_navigation is {} navigation) {
+            await DynamicPageLauncher.ShowDynamicPropertyPageAsync(SelectedEntities, navigation, ScreenWidth, ScreenHeight);;
+        }
+    }
 }

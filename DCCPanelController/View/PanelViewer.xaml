@@ -6,9 +6,9 @@
              xmlns:view="clr-namespace:DCCPanelController.View"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
-             Title="Panels Viewer"
-             x:DataType="view:PanelEditorViewerViewModel"
-             x:Class="DCCPanelController.View.PanelEditorViewer">
+             Title="Panels"
+             x:DataType="view:PanelViewerViewModel"
+             x:Class="DCCPanelController.View.PanelViewer">
 
     <ContentPage.Resources>
 
@@ -50,19 +50,21 @@
 
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer
+                            x:DataType="view:PanelViewerViewModel"
                             NumberOfTapsRequired="2"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=EditPanelCommand}"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=EditPanelCommand}"
                             CommandParameter="{Binding}"/>
-
                         <DragGestureRecognizer
-                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelCommand}"
+                            x:DataType="view:PanelViewerViewModel"
+                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelCommand}"
                             DragStartingCommandParameter="{Binding}"/>
                         <DropGestureRecognizer
-                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelLeaveCommand}"
+                            x:DataType="view:PanelViewerViewModel"
+                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelLeaveCommand}"
                             DragLeaveCommandParameter="{Binding}"
-                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelOverCommand}"
+                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelOverCommand}"
                             DragOverCommandParameter="{Binding}"
-                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DropPanelCommand}"
+                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DropPanelCommand}"
                             DropCommandParameter="{Binding}"/>
                     </Grid.GestureRecognizers>
 
@@ -90,21 +92,25 @@
                         <Label Text="{Binding Description}" HorizontalOptions="Center" FontSize="10" TextColor="Gray"/>
                     </StackLayout>
 
+                    <!-- Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, x:DataType='view:PanelEditorViewModel', Path=EditPanelCommand}" -->
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer
+                            x:DataType="view:PanelViewerViewModel"
                             NumberOfTapsRequired="2"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=EditPanelCommand}"
+                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=EditPanelCommand}"
                             CommandParameter="{Binding}"/>
 
                         <DragGestureRecognizer
-                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelCommand}"
+                            x:DataType="view:PanelViewerViewModel"
+                            DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelCommand}"
                             DragStartingCommandParameter="{Binding}"/>
                         <DropGestureRecognizer
-                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelLeaveCommand}"
+                            x:DataType="view:PanelViewerViewModel"
+                            DragLeaveCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelLeaveCommand}"
                             DragLeaveCommandParameter="{Binding}"
-                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DragPanelOverCommand}"
+                            DragOverCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelOverCommand}"
                             DragOverCommandParameter="{Binding}"
-                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewerViewModel}}, x:DataType='view:PanelEditorViewerViewModel', Path=DropPanelCommand}"
+                            DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DropPanelCommand}"
                             DropCommandParameter="{Binding}"/>
                     </Grid.GestureRecognizers>
 
@@ -121,6 +127,8 @@
                      Command="{Binding Path=DeletePanelCommand}"/>
         <ToolbarItem Text="Edit" IsEnabled="{Binding IsPanelSelected}" IconImageSource="edit.png"
                      Command="{Binding Path=EditPanelCommand}"/>
+        <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="settings.png"
+                     Command="{Binding Path=EditPanelPropertiesCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

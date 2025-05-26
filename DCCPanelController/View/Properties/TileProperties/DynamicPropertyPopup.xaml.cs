@@ -10,6 +10,10 @@ namespace DCCPanelController.View.DynamicProperties;
 ///     Popup Page is used for iPad and MacCatalst
 /// </summary>
 public partial class DynamicPropertyPopup : Popup {
+    
+    private readonly TaskCompletionSource<bool> _closeTcs = new TaskCompletionSource<bool>();
+    public Task<bool> PageClosed => _closeTcs.Task;
+
     public DynamicPropertyPopup(Entity entity, string? propertyName = null) {
         InitializeComponent();
         BindingContext = new DynamicPropertyPageViewModel([entity], propertyName, PropertyContainer);
@@ -24,6 +28,7 @@ public partial class DynamicPropertyPopup : Popup {
         if (BindingContext is DynamicPropertyPageViewModel viewModel) {
             viewModel.ApplyChangesToAllEntities();
         }
+        _closeTcs.TrySetResult(true); // or return data as needed
         Close();
     }
 }

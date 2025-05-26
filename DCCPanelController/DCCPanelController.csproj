@@ -340,7 +340,7 @@
             <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\PanelEditorSinglePageViewModel.cs">
-            <DependentUpon>PanelEditorPagePage.xaml</DependentUpon>
+            <DependentUpon>PanelEditorSinglePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TileSelectors\FloatingTileSelector.xaml.cs">
             <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
@@ -376,8 +376,8 @@
         <Compile Update="View\BlocksViewModel.cs">
           <DependentUpon>BlocksPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\PanelEditorViewerViewModel.cs">
-          <DependentUpon>PanelEditorViewer.xaml</DependentUpon>
+        <Compile Update="View\PanelViewerViewModel.cs">
+          <DependentUpon>PanelViewer.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\PanelEditorViewModel.cs">
           <DependentUpon>PanelEditor.xaml</DependentUpon>
@@ -386,12 +386,21 @@
 
     <ItemGroup>
         <Folder Include="Models\ViewModel\Actions\"/>
+        <Folder Include="View\Properties\" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="..\DCCClients.Jmri\DCCClients.Jmri.csproj" />
         <ProjectReference Include="..\DCCClients.WiThrottle\DCCClients.WiThrottle.csproj" />
         <ProjectReference Include="..\DCCClients\DCCClients.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="View\Properties\PanelProperties\PanelPropertyBase.xaml" />
+      <AdditionalFiles Include="View\Properties\PanelProperties\PanelPropertyPage.xaml" />
+      <AdditionalFiles Include="View\Properties\PanelProperties\PanelPropertyPopup.xaml" />
+      <AdditionalFiles Include="View\Properties\TileProperties\DynamicPropertyPage.xaml" />
+      <AdditionalFiles Include="View\Properties\TileProperties\DynamicPropertyPopup.xaml" />
     </ItemGroup>
 
 </Project>
