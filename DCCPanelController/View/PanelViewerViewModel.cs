@@ -122,11 +122,11 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
         if (result) {
             // Properties were applied and closed (e.g., "Done" or "Close" was hit)
-            System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
+            Console.WriteLine("Properties applied successfully.");
             await SaveAsync();
         } else {
             // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
-            System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
+            Console.WriteLine("Properties view dismissed.");
         }
     }
 

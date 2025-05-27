@@ -108,12 +108,12 @@ public class SvgImageManager {
         try {
             using var stream = SvgImages.ExecutingAssembly.GetManifestResourceStream(resourceName);
             if (stream == null) {
-                Debug.WriteLine($"Could not find the image resource: '{resourceName}'");
+                Console.WriteLine($"Could not find the image resource: '{resourceName}'");
                 throw new FileNotFoundException("Resource not found.", resourceName);
             }
             return XDocument.Load(stream);
         } catch (Exception ex) {
-            Debug.WriteLine($"Failed to load the SVG image: '{resourceName}' with {ex.Message}");
+            Console.WriteLine($"Failed to load the SVG image: '{resourceName}' with {ex.Message}");
             throw new FileLoadException("Failed to load the SVG image.", ex);
         }
     }

@@ -35,7 +35,7 @@ public static class ObjectCloner {
 
                     return copiedArray;
                 } catch (Exception e) {
-                    Debug.WriteLine($"Unable to clone '{type}': {e.Message}");
+                    Console.WriteLine($"Unable to clone '{type}': {e.Message}");
                     throw;
                 }
             }
@@ -52,7 +52,7 @@ public static class ObjectCloner {
 
                 return copiedList;
             } catch (Exception e) {
-                Debug.WriteLine($"Unable to clone '{type}': {e.Message}");
+                Console.WriteLine($"Unable to clone '{type}': {e.Message}");
                 throw;
             }
         }
@@ -70,7 +70,7 @@ public static class ObjectCloner {
 
             return copy;
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to clone '{type}': {e.Message}");
+            Console.WriteLine($"Unable to clone '{type}': {e.Message}");
             throw;
         }
     }
@@ -149,7 +149,7 @@ public static class ObjectCloner {
                     property.SetValue(original, modifiedValue);
                 }
             } else {
-                Debug.WriteLine("Not a property");
+                Console.WriteLine("Not a property");
             }
         }
     }

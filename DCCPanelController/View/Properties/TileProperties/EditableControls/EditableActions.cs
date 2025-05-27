@@ -20,10 +20,10 @@ public class EditableButtonActions(string label, string description = "", int or
                 };
             }
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Action {e.Message}");
+            Console.WriteLine($"Unable to create a Action {e.Message}");
             return null;
         }
-        Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
+        Console.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
     }
 }
@@ -42,11 +42,11 @@ public class EditableTurnoutActions(string label, string description = "", int o
                 };
             }
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Action {e.Message}");
+            Console.WriteLine($"Unable to create a Action {e.Message}");
             return null;
         }
 
-        Debug.WriteLine("Creating an Action but no valid Action attributes were found.");
+        Console.WriteLine("Creating an Action but no valid Action attributes were found.");
         return null;
     }
 }

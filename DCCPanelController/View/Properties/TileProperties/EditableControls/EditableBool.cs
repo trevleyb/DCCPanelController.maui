@@ -15,7 +15,7 @@ public class EditableBool(string label, string description = "", int order = 0, 
             cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Bool switch {e.Message}");
+            Console.WriteLine($"Unable to create a Bool switch {e.Message}");
             return null;
         }
     }

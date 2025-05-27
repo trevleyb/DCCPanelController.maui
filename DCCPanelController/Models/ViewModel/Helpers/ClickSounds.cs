@@ -22,7 +22,7 @@ public static class ClickSounds {
             ClickSoundPlayers?.Add(filename, clickSoundPlayer);
             return clickSoundPlayer;
         } catch (Exception ex) {
-            Debug.WriteLine($"Error loading sound file: {filename}: {ex.Message}");
+            Console.WriteLine($"Error loading sound file: {filename}: {ex.Message}");
             return null;
         }
     }

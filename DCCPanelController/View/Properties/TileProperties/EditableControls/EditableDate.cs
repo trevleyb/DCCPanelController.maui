@@ -16,7 +16,7 @@ public class EditableDate(string label, string description = "", int order = 0, 
             cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Date: {e.Message}");
+            Console.WriteLine($"Unable to create a Date: {e.Message}");
             return null;
         }
     }

@@ -76,7 +76,7 @@ namespace DCCPanelController.View.Properties {
                 double currentActualHeight = popupContentBorder.Height;
 
                 if (currentActualWidth <= 0 || currentActualHeight <= 0) {
-                    System.Diagnostics.Debug.WriteLine($"PropertyPopup: Warning - Read invalid actual dimensions ({currentActualWidth}x{currentActualHeight}). Falling back to MinPopup constants to lock size.");
+                    Console.WriteLine($"PropertyPopup: Warning - Read invalid actual dimensions ({currentActualWidth}x{currentActualHeight}). Falling back to MinPopup constants to lock size.");
 
                     // Fallback to MinPopupWidth/Height if reading actual dimensions failed
                     currentActualWidth = MinPopupWidth;
@@ -97,7 +97,7 @@ namespace DCCPanelController.View.Properties {
                 popupContentBorder.MinimumWidthRequest = lockedWidth;
                 popupContentBorder.MinimumHeightRequest = lockedHeight;
 
-                System.Diagnostics.Debug.WriteLine($"PropertyPopup: Initial size captured and locked to Width={lockedWidth}, Height={lockedHeight}");
+                Console.WriteLine($"PropertyPopup: Initial size captured and locked to Width={lockedWidth}, Height={lockedHeight}");
             });
         }
 

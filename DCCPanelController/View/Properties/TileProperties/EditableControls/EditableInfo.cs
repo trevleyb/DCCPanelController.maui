@@ -11,7 +11,7 @@ public class EditableInfo(string label, string description = "", int order = 0, 
             cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Info type: {e.Message}");
+            Console.WriteLine($"Unable to create a Info type: {e.Message}");
             return null;
         }
     }

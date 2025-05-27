@@ -22,7 +22,7 @@ public static class ImageHelper {
             MemoryStream imageDecodeStream = new(imageBytes);
             return ImageSource.FromStream(() => imageDecodeStream) ?? null;
         } catch (Exception ex) {
-            Debug.WriteLine($"Unable to convert Image from Base64: {ex.Message}");
+            Console.WriteLine($"Unable to convert Image from Base64: {ex.Message}");
             return null;
         }
     }

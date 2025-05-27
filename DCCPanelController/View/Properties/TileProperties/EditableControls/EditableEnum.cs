@@ -12,7 +12,7 @@ public class EditableButtonSize(string label, string description = "", int order
             var items = new[] { ButtonSizeEnum.Normal, ButtonSizeEnum.Large };
             return CreateRadioGroupForEnums("Button Size", items, owner, info, propertyModified);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Button Size Enum:  {e.Message}");
+            Console.WriteLine($"Unable to create a Button Size Enum:  {e.Message}");
             return null;
         }
     }
@@ -25,7 +25,7 @@ public class EditableAlignment(string label, string description = "", int order 
             var items = new[] { TextAlignment.Start, TextAlignment.Center, TextAlignment.End };
             return CreateRadioGroupForEnums("Alignment", items, owner, info, propertyModified);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Alignment Enum:  {e.Message}");
+            Console.WriteLine($"Unable to create a Alignment Enum:  {e.Message}");
             return null;
         }
     }
@@ -38,7 +38,7 @@ public class EditableAspectRatio(string label, string description = "", int orde
             var items = new[] { Aspect.Center, Aspect.AspectFit, Aspect.AspectFill };
             return CreateRadioGroupForEnums("Aspect Ratio", items, owner, info, propertyModified);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Aspect Ratio Enum:  {e.Message}");
+            Console.WriteLine($"Unable to create a Aspect Ratio Enum:  {e.Message}");
             return null;
         }
     }
@@ -51,7 +51,7 @@ public class EditableTrackType(string label, string description = "", int order 
             var items = new[] { TrackTypeEnum.MainLine, TrackTypeEnum.BranchLine };
             return CreateRadioGroupForEnums("Track Type", items, owner, info, propertyModified);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Track Type Enum:  {e.Message}");
+            Console.WriteLine($"Unable to create a Track Type Enum:  {e.Message}");
             return null;
         }
     }
@@ -64,7 +64,7 @@ public class EditableTrackAttribute(string label, string description = "", int o
             var items = new[] { TrackAttributeEnum.Normal, TrackAttributeEnum.Dashed };
             return CreateRadioGroupForEnums("Track Attribute", items, owner, info, propertyModified);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Track Attribute Enum:  {e.Message}");
+            Console.WriteLine($"Unable to create a Track Attribute Enum:  {e.Message}");
             return null;
         }
     }
@@ -77,7 +77,7 @@ public class EditableTrackTerminator(string label, string description = "", int 
             var items = new[] { TrackTerminatorEnum.Arrow, TrackTerminatorEnum.Lines };
             return CreateRadioGroupForEnums("Terminator", items, owner, info, propertyModified);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Track Terminator Enum:  {e.Message}");
+            Console.WriteLine($"Unable to create a Track Terminator Enum:  {e.Message}");
             return null;
         }
     }

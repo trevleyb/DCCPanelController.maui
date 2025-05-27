@@ -32,6 +32,7 @@ public static class PropertyDisplayService {
 #endif
             await navigation.PushModalAsync(propertySheetPage);
             result = await propertySheetPage.PageClosedTask;
+            Console.WriteLine($"PropertyDisplayService:PageSheet Closed with Result={result}");
         } else {
             // For iPad, Mac, Windows, Android tablets, or landscape iPhone
             var propertyPopup = new PropertyPopup(viewModel);
@@ -39,13 +40,14 @@ public static class PropertyDisplayService {
             // The PropertyPopup.ShowAsync handles showing and awaiting closure
             // This is a simplified call. You might need to pass the current page.
             if (App.Current.Windows[0].Page is { } mainPage) {
-                mainPage.ShowPopup(propertyPopup);
+                await mainPage.ShowPopupAsync(propertyPopup);
                 result = await propertyPopup.PopupClosedTask;
+                Console.WriteLine($"PropertyDisplayService:Popup Closed with Result={result}");
             } else {
                 // Fallback or error handling if MainPage is not available
                 // For simplicity, we'll assume MainPage is available.
                 // In a real app, you might need more robust handling.
-                System.Diagnostics.Debug.WriteLine("Error: MainPage not available for showing popup.");
+                Console.WriteLine("PropertyDisplayService: Error: MainPage not available for showing popup.");
                 return false; // Or throw an exception
             }
         }

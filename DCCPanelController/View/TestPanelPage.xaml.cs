@@ -53,10 +53,10 @@ public partial class TestPanelPage : ContentPage {
 
         if (result) {
             // Properties were applied and closed (e.g., "Done" or "Close" was hit)
-            System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
+            Console.WriteLine("Properties applied successfully.");
         } else {
             // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
-            System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
+            Console.WriteLine("Properties view dismissed.");
         }
     }
 
@@ -70,10 +70,10 @@ public partial class TestPanelPage : ContentPage {
 
         if (result) {
             // Properties were applied and closed (e.g., "Done" or "Close" was hit)
-            System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
+            Console.WriteLine("Properties applied successfully.");
         } else {
             // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
-            System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
+            Console.WriteLine("Properties view dismissed.");
         }
     }
     
@@ -87,10 +87,10 @@ public partial class TestPanelPage : ContentPage {
 
         if (result) {
             // Properties were applied and closed (e.g., "Done" or "Close" was hit)
-            System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
+            Console.WriteLine("Properties applied successfully.");
         } else {
             // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
-            System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
+            Console.WriteLine("Properties view dismissed.");
         }
     }
 

@@ -220,7 +220,7 @@ public abstract class DropDownBoxBase : ContentView, IDisposable {
                 _arrowImage.Behaviors.Add(new IconTintColorBehavior { TintColor = DropdownImageTint });
             }
         } catch {
-            Debug.WriteLine($"Error setting dropdown image source: {(isOpen ? DropdownOpenImageSource : DropdownClosedImageSource)}");
+            Console.WriteLine($"Error setting dropdown image source: {(isOpen ? DropdownOpenImageSource : DropdownClosedImageSource)}");
         }
     }
 

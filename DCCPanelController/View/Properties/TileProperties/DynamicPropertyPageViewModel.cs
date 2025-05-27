@@ -34,7 +34,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     public Task ApplyChangesAsync() {
-        System.Diagnostics.Debug.WriteLine($"Applying changes: Panel Name = {Title}");
+        Console.WriteLine($"Applying changes: Panel Name = {Title}");
         return Task.CompletedTask;
     }
 

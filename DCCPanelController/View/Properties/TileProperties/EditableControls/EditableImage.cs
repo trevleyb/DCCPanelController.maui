@@ -57,7 +57,7 @@ public class EditableImage(string label, string description = "", int order = 0,
             stack.Children.Add(horizontal);
             return CreateGroupCell(stack, 150);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create an Image: {e.Message}");
+            Console.WriteLine($"Unable to create an Image: {e.Message}");
             return null;
         }
     }

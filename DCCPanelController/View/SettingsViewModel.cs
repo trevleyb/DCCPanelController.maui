@@ -214,7 +214,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
             AddMessage($"Found {Servers.Count} Servers");
         } catch (Exception ex) {
             AddMessage($"Unable to search for Servers of type {CurrentSettings?.Settings?.Type ?? "withrottle"}");
-            Debug.WriteLine($"Unable to get Settings: {ex.Message}");
+            Console.WriteLine($"Unable to get Settings: {ex.Message}");
             await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
         } finally {
             IsBusy = false;

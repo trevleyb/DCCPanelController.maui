@@ -12,7 +12,7 @@ public class EditableButton(string label, string description = "", int order = 0
         //     cell.SetBinding(Switch.IsToggledProperty, new Binding(value.Info.Name) { Source = value.Owner, Mode = BindingMode.TwoWay });
         //     return cell;
         // } catch (Exception e) {
-        //     Debug.WriteLine($"Unable to create a Bool switch {e.Message}");
+        //     Console.WriteLine($"Unable to create a Bool switch {e.Message}");
         //     return null;
         // }
     }

@@ -266,7 +266,7 @@ public class JmriClient {
     private async Task<string> FetchInitialDataWithRetriesAsync(string endpoint, int maxRetries = 3, int delayMilliseconds = 1000) {
         for (var attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                Debug.WriteLine($"{_jmriUrl}{endpoint}");
+                Console.WriteLine($"{_jmriUrl}{endpoint}");
                 return await HttpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
             } catch (Exception ex) {
                 Console.WriteLine($"Attempt {attempt + 1} to fetch {endpoint} failed: {ex.Message}");

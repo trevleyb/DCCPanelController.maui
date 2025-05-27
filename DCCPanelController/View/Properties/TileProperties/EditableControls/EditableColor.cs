@@ -21,7 +21,7 @@ public class EditableColor(string label, string description = "", int order = 0,
             cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Color: {e.Message}");
+            Console.WriteLine($"Unable to create a Color: {e.Message}");
             return null;
         }
     }

@@ -52,7 +52,7 @@ public class EditableInt(string label, string description = "", int order = 0, s
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Int: {e.Message}");
+            Console.WriteLine($"Unable to create a Int: {e.Message}");
             return null;
         }
     }

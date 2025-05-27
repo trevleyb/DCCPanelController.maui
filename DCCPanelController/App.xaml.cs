@@ -17,7 +17,7 @@ public partial class App : Application {
 
     private void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
         Console.WriteLine("Binding Failed: " + (e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI") + " | " + (e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum") + " | " + (e?.Binding?.ToString() ?? "?Binding") + " | " + (e?.Message ?? "?Message") + " | " + (e?.Binding?.GetType().Name ?? "?BindingType"));
-        Debug.WriteLine("Binding Failed: " + (e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI") + " | " + (e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum") + " | " + (e?.Binding?.ToString() ?? "?Binding") + " | " + (e?.Message ?? "?Message") + " | " + (e?.Binding?.GetType().Name ?? "?BindingType"));
+        Console.WriteLine("Binding Failed: " + (e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI") + " | " + (e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum") + " | " + (e?.Binding?.ToString() ?? "?Binding") + " | " + (e?.Message ?? "?Message") + " | " + (e?.Binding?.GetType().Name ?? "?BindingType"));
     }
 
     protected override Window CreateWindow(IActivationState? activationState) {

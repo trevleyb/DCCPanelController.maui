@@ -624,18 +624,18 @@ public partial class ControlPanelView {
                             break;
 
                         default:
-                            Debug.WriteLine($"ERROR: Invalid source: '{source}'");
+                            Console.WriteLine($"ERROR: Invalid source: '{source}'");
                             break;
                         }
                     }
                 } else {
-                    Debug.WriteLine("ERROR: Item clashes with existing track");
+                    Console.WriteLine("ERROR: Item clashes with existing track");
                 }
             } else {
-                Debug.WriteLine("ERROR: Invalid grid position");
+                Console.WriteLine("ERROR: Invalid grid position");
             }
         } catch (Exception ex) {
-            Debug.WriteLine("ERROR: Error dropping item: " + ex.Message);
+            Console.WriteLine("ERROR: Error dropping item: " + ex.Message);
         }
 
         _lastDragCol = 0;

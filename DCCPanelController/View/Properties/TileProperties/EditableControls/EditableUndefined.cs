@@ -13,7 +13,7 @@ public class EditableUndefined(string label = "undefined", string description = 
                 VerticalOptions = LayoutOptions.Center
             };
         } catch (Exception e) {
-            Debug.WriteLine($"Unable to create a Bool switch {e.Message}");
+            Console.WriteLine($"Unable to create a Bool switch {e.Message}");
             return null;
         }
     }

@@ -19,7 +19,7 @@ public class MyPanelViewModel : IPropertiesViewModel {
     }
 
     public Task ApplyChangesAsync() {
-        System.Diagnostics.Debug.WriteLine($"Applying changes: Panel Name = {PanelName}");
+        Console.WriteLine($"Applying changes: Panel Name = {PanelName}");
         return Task.CompletedTask;
     }
 
