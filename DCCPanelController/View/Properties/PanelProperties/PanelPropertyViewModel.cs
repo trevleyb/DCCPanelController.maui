@@ -2,16 +2,17 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
+using YourAppNamespace.ViewModels;
 
 namespace DCCPanelController.View.PanelProperties;
 
-public partial class PanelPropertyViewModel : BaseViewModel {
+public partial class PanelPropertyViewModel : BaseViewModel, IPropertiesViewModel {
     [ObservableProperty] private Panel _panel;
-    [ObservableProperty] private string _propertyName;
-    
+    [ObservableProperty] private string _title;
+
     public PanelPropertyViewModel(Panel panel) {
         Panel = panel;
-        PropertyName = panel.Id ?? "Panel Properties";
+        Title = $"{panel.Id} Properties" ?? "Panel Properties";
     }
 
     [RelayCommand]
@@ -55,4 +56,15 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         }
         return false;
     }
+
+    public Task ApplyChangesAsync() {
+        System.Diagnostics.Debug.WriteLine($"Applying changes: Panel Name = {Title}");
+        return Task.CompletedTask;
+    }
+
+    public Microsoft.Maui.Controls.View CreatePropertiesView() {
+        var propPage = new PanelPropertyBase(Panel);
+        return propPage;
+    }
 }
+    

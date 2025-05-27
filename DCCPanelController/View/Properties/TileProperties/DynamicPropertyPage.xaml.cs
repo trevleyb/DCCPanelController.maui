@@ -13,14 +13,14 @@ public partial class DynamicPropertyPage : ContentPage {
     private readonly TaskCompletionSource<bool> _closeTcs = new TaskCompletionSource<bool>();
     public Task<bool> PageClosed => _closeTcs.Task;
     
-    public DynamicPropertyPage(List<Entity> entities, string? propertyName = null) {
+    public DynamicPropertyPage(List<Entity> entities, string? properxtyName = null) {
         InitializeComponent();
-        BindingContext = new DynamicPropertyPageViewModel(entities, propertyName, PropertyContainer);
+        BindingContext = new DynamicPropertyPageViewModel(entities, PropertyContainer);
     }
 
     public DynamicPropertyPage(Entity entity, string? propertyName = null) {
         InitializeComponent();
-        BindingContext = new DynamicPropertyPageViewModel([entity], propertyName, PropertyContainer);
+        BindingContext = new DynamicPropertyPageViewModel([entity], PropertyContainer);
     }
 
     protected override void OnDisappearing() {

@@ -9,28 +9,52 @@ using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.DynamicProperties.Attributes;
 using DCCPanelController.View.DynamicProperties.EditableControls;
+using YourAppNamespace.ViewModels;
 
 namespace DCCPanelController.View.DynamicProperties;
 
-public partial class DynamicPropertyPageViewModel : BaseViewModel {
+public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
     private readonly ConcurrentDictionary<string, bool> _modifiedProperties = new();
     [ObservableProperty] private List<Entity> _entities;
     [ObservableProperty] private Entity _entity;
-    [ObservableProperty] private string _propertyName;
     [ObservableProperty] private Entity? _proxyEntity;
+    [ObservableProperty] private string _title;
 
-    public DynamicPropertyPageViewModel(List<Entity> entities, string? propertyName, StackBase propertyContainer) {
+    private StackBase? _stackBase = null;
+
+    [Obsolete("Here for backwards compatibility. Remove ASAP")]
+    public DynamicPropertyPageViewModel(List<Entity> entities, StackBase? stackBase = null) : this(entities) {
+        _stackBase = stackBase;
+    }
+
+    public DynamicPropertyPageViewModel(Entity entity) : this([entity]) { }
+    public DynamicPropertyPageViewModel(List<Entity> entities) {
         Entities = entities;
         Entity = entities.FirstOrDefault() ?? throw new Exception("No entities found");
 
         if (entities.Count == 1) {
-            PropertyName = propertyName ?? (string.IsNullOrEmpty(Entity.EntityName) ? "Track" : $"{Entity.EntityName}");
+            Title = string.IsNullOrEmpty(Entity.EntityName) ? "Tile Properties" : $"{Entity.EntityName}";
         } else {
-            PropertyName = propertyName ?? $"Multiple Tiles ({entities.Count})";
+            Title = $"Multiple Tiles ({entities.Count})";
         }
-        BuildProperties(propertyContainer, entities);
     }
 
+    public Task ApplyChangesAsync() {
+        System.Diagnostics.Debug.WriteLine($"Applying changes: Panel Name = {Title}");
+        return Task.CompletedTask;
+    }
+
+    public Microsoft.Maui.Controls.View CreatePropertiesView() {
+        _stackBase ??= new VerticalStackLayout();
+        if (Entities.Count == 1) {
+            BuildPropertiesForSingleEntity(_stackBase, Entities[0]);
+        } else {
+            BuildPropertiesForMultipleEntities(_stackBase, Entities);
+            _modifiedProperties.Clear();
+        }
+        return _stackBase;
+    }
+    
     /// <summary>
     ///     Determines if a property has been explicitly modified by the user
     /// </summary>
@@ -65,22 +89,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
                     }
                 }
             }
-        }
-    }
-
-    /// <summary>
-    ///     This is the main method that iterates over all the properties in the given ITrack and builds up a dynamic
-    ///     collection of the editable properties that the track contains.
-    ///     It uses attributes attached to the ITrack properties, and each of the properties knows how to create an
-    ///     IView which allows the editing or viewing of that given property.
-    /// </summary>
-    private void BuildProperties(StackBase tableView, List<Entity> entities) {
-        tableView.Children.Clear();
-        if (entities.Count == 1) {
-            BuildPropertiesForSingleEntity(tableView, entities[0]);
-        } else {
-            BuildPropertiesForMultipleEntities(tableView, entities);
-            _modifiedProperties.Clear();
         }
     }
 
@@ -347,4 +355,5 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel {
         public DynamicPropertyPageViewModel? PropertyViewModel { get; set; }
         public object OriginalBindingContext { get; set; } = "";
     }
+
 }

@@ -10,6 +10,7 @@ using DCCPanelController.Services;
 using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.PanelProperties;
+using DCCPanelController.View.Properties;
 
 namespace DCCPanelController.View;
 
@@ -111,9 +112,20 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
-        if (SelectedPanel is { } panel && NavigationService is {} navigation) {
-            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel, navigation, ScreenWidth, ScreenHeight);;
+        if (NavigationService is null) return;
+        if (SelectedPanel is null) return;
+        
+        var panelViewModel = new PanelPropertyViewModel(SelectedPanel);
+        bool result = await PropertyDisplayService.ShowPropertiesAsync(
+            NavigationService, panelViewModel, ScreenWidth, ScreenHeight);
+
+        if (result) {
+            // Properties were applied and closed (e.g., "Done" or "Close" was hit)
+            System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
             await SaveAsync();
+        } else {
+            // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
+            System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
         }
     }
 

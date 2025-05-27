@@ -16,12 +16,12 @@ public partial class DynamicPropertyPopup : Popup {
 
     public DynamicPropertyPopup(Entity entity, string? propertyName = null) {
         InitializeComponent();
-        BindingContext = new DynamicPropertyPageViewModel([entity], propertyName, PropertyContainer);
+        BindingContext = new DynamicPropertyPageViewModel([entity], PropertyContainer);
     }
 
     public DynamicPropertyPopup(List<Entity> entities, string? propertyName = null) {
         InitializeComponent();
-        BindingContext = new DynamicPropertyPageViewModel(entities, propertyName, PropertyContainer);
+        BindingContext = new DynamicPropertyPageViewModel(entities, PropertyContainer);
     }
 
     private void ClosePropertyPage(object? sender, EventArgs? e) {
