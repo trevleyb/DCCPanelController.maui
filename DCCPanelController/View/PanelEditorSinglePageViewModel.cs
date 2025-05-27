@@ -8,7 +8,6 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
-using DCCPanelController.View.PanelProperties;
 
 namespace DCCPanelController.View;
 
@@ -232,14 +231,14 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
 
     public async Task EditTilePropertiesAsync(Entity entity) {
         Console.WriteLine($"Launching the Properties page for '{entity.EntityName}'");
-        await DynamicPageLauncher.ShowDynamicPropertyPageAsync([entity]);
-        await SaveAsync();
+        //await DynamicPageLauncher.ShowDynamicPropertyPageAsync([entity]);
+        //await SaveAsync();
     }
 
     public async Task EditTilePropertiesAsync(List<Entity> entities) {
         Console.WriteLine("Launching the Properties page for multiple Entities");
-        await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entities);
-        await SaveAsync();
+        //await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entities);
+        //await SaveAsync();
     }
 
     public async void EditPanelProperties() {
@@ -252,8 +251,8 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
 
     public async Task EditPanelPropertiesAsync() {
         if (SelectedPanel is { } panel) {
-            await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
-            await SaveAsync();
+            //await PropertyPageLauncher.ShowPanelPropertyPageAsync(panel);
+            //await SaveAsync();
             PropertiesChanged = true;
         }
     }

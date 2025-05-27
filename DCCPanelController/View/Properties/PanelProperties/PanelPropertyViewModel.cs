@@ -2,9 +2,8 @@ using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
-using YourAppNamespace.ViewModels;
 
-namespace DCCPanelController.View.PanelProperties;
+namespace DCCPanelController.View.Properties.PanelProperties;
 
 public partial class PanelPropertyViewModel : BaseViewModel, IPropertiesViewModel {
     [ObservableProperty] private Panel _panel;
@@ -63,7 +62,7 @@ public partial class PanelPropertyViewModel : BaseViewModel, IPropertiesViewMode
     }
 
     public Microsoft.Maui.Controls.View CreatePropertiesView() {
-        var propPage = new PanelPropertyBase(Panel);
+        var propPage = new PanelPropertyPage(Panel);
         return propPage;
     }
 }

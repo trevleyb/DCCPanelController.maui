@@ -19,10 +19,6 @@
             ContentTemplate="{DataTemplate view:PanelViewer}"
             Icon="panels.png"
             Title="Viewer"/>
-        <ShellContent
-            ContentTemplate="{DataTemplate view:TestPanelPage}"
-            Icon="panels.png"
-            Title="Test"/>
         <Tab Title="Settings" Icon="settings.png">
             <ShellContent
                 ContentTemplate="{DataTemplate view:InstructionsPage}"

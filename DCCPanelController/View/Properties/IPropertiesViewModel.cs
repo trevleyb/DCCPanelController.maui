@@ -1,6 +1,4 @@
-using System.Threading.Tasks;
-
-namespace YourAppNamespace.ViewModels
+namespace DCCPanelController.View.Properties
 {
     public interface IPropertiesViewModel
     {
@@ -11,6 +9,6 @@ namespace YourAppNamespace.ViewModels
 
         // This method would be responsible for creating the actual UI for the properties.
         // The View returned would be placed into the PropertySheetPage or PropertyPopup.
-        View CreatePropertiesView(); 
+        Microsoft.Maui.Controls.View CreatePropertiesView(); 
     }
 }

@@ -397,12 +397,4 @@
         <ProjectReference Include="..\DCCClients\DCCClients.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-      <AdditionalFiles Include="View\Properties\PanelProperties\PanelPropertyBase.xaml" />
-      <AdditionalFiles Include="View\Properties\PanelProperties\PanelPropertyPage.xaml" />
-      <AdditionalFiles Include="View\Properties\PanelProperties\PanelPropertyPopup.xaml" />
-      <AdditionalFiles Include="View\Properties\TileProperties\DynamicPropertyPage.xaml" />
-      <AdditionalFiles Include="View\Properties\TileProperties\DynamicPropertyPopup.xaml" />
-    </ItemGroup>
-
 </Project>

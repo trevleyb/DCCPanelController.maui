@@ -1,37 +1,32 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:properties="clr-namespace:DCCPanelController.View.Properties"
+             x:DataType="properties:IPropertiesViewModel"
              x:Class="DCCPanelController.View.Properties.PropertySheetPage"
-             Title="{Binding ViewModel.Title}">
+             Title="{Binding Title}">
     <!-- Use a Grid as the root layout for the page content -->
     <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="*" Padding="20">
 
         <!-- Row 0: Title Label -->
         <Label Grid.Row="0"
-               Text="{Binding ViewModel.Title}"
+               Text="{Binding Title}"
                FontSize="Large"
                FontAttributes="Bold"
                HorizontalOptions="Center" />
 
-        <!-- Row 1: Separator BoxView -->
         <BoxView Grid.Row="1"
                  HeightRequest="1"
                  BackgroundColor="{StaticResource Primary}"
                  Margin="0,10,0,10" /> <!-- Adjusted margin for spacing within the Grid structure -->
             
-        <!-- Row 2: Scrollable Content Area that fills available space -->
         <ScrollView Grid.Row="2"
                     VerticalOptions="FillAndExpand">
-            <!-- The Grid here ensures ContentView can expand if its content is smaller,
-                 or provide a container if ContentView itself doesn't expand. -->
             <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                <ContentView x:Name="PropertyViewContainer" 
-                             HorizontalOptions="FillAndExpand" 
-                             VerticalOptions="FillAndExpand" />
+                <ContentView x:Name="PropertyViewContainer" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
             </Grid>
         </ScrollView>
             
-        <!-- Row 3: Close Button, always at the bottom -->
         <Button Grid.Row="3"
                 Style="{StaticResource ButtonOutline}"
                 Text="Close" 

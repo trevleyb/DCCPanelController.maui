@@ -9,8 +9,8 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
-using DCCPanelController.View.PanelProperties;
 using DCCPanelController.View.Properties;
+using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
 

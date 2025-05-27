@@ -4,7 +4,6 @@
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
-using YourAppNamespace.ViewModels;
 using Application = Microsoft.Maui.Controls.Application;
 
 namespace DCCPanelController.View.Properties;

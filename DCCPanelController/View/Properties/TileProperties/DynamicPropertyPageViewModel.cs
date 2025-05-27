@@ -9,9 +9,8 @@ using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.DynamicProperties.Attributes;
 using DCCPanelController.View.DynamicProperties.EditableControls;
-using YourAppNamespace.ViewModels;
 
-namespace DCCPanelController.View.DynamicProperties;
+namespace DCCPanelController.View.Properties.TileProperties;
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
     private readonly ConcurrentDictionary<string, bool> _modifiedProperties = new();
@@ -31,12 +30,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     public DynamicPropertyPageViewModel(List<Entity> entities) {
         Entities = entities;
         Entity = entities.FirstOrDefault() ?? throw new Exception("No entities found");
-
-        if (entities.Count == 1) {
-            Title = string.IsNullOrEmpty(Entity.EntityName) ? "Tile Properties" : $"{Entity.EntityName}";
-        } else {
-            Title = $"Multiple Tiles ({entities.Count})";
-        }
+        Title = entities.Count == 1 ? $"{Entity.EntityName}" : $"Multiple Tiles ({entities.Count})";
     }
 
     public Task ApplyChangesAsync() {

@@ -1,5 +1,4 @@
 // Assuming IPropertiesViewModel is here
-using YourAppNamespace.ViewModels;
 
 namespace DCCPanelController.View.Properties {
     public partial class PropertySheetPage : ContentPage {
@@ -10,7 +9,7 @@ namespace DCCPanelController.View.Properties {
         public PropertySheetPage(IPropertiesViewModel viewModel) {
             InitializeComponent();
             ViewModel = viewModel;
-            BindingContext = this; // To bind to ViewModel.Title in XAML's Page Title
+            BindingContext = ViewModel; // To bind to ViewModel.Title in XAML's Page Title
             PropertyViewContainer.Content = ViewModel.CreatePropertiesView();
         }
 
