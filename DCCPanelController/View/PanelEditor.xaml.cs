@@ -8,6 +8,7 @@ namespace DCCPanelController.View;
 public partial class PanelEditor : ContentPage {
     private readonly PanelEditorViewModel _viewModel;
     private readonly TaskCompletionSource<bool> _closeTcs = new TaskCompletionSource<bool>();
+    private bool _isPushingModal = false; // Flag to track modal presentation
     public Task<bool> PageClosed => _closeTcs.Task;
 
     public PanelEditor(Panel panel) {
@@ -19,6 +20,7 @@ public partial class PanelEditor : ContentPage {
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.GridVisible = true;
         _viewModel.EditMode = EditModeEnum.Move;
+        _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
         
         BindingContext = _viewModel;
         PanelView.TileSelected += PanelViewOnTileSelected;
@@ -26,25 +28,37 @@ public partial class PanelEditor : ContentPage {
 
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
-        if (_viewModel is { } vm) {
-            vm.ScreenHeight = height;
-            vm.ScreenWidth = width;
-        }
+        _viewModel.ScreenHeight = height;
+        _viewModel.ScreenWidth = width;
     }
 
+    private void OnBeginPushModal() {
+        _isPushingModal = true;
+    }
+    
     protected override async void OnDisappearing() {
         base.OnDisappearing();
-        var panel = _viewModel.Panel;
-        if (panel is not null) {
-            panel.Base64Image = await PanelView.GetThumbnailAsync();
-            _viewModel?.Panel?.Panels?.Profile?.SaveAsync();
+
+        if (_isPushingModal) {
+            Console.WriteLine($"PanelEditor: OnDisappearing Skipped as Pushing Modal");
+            _isPushingModal = false;
+        } else {
+            Console.WriteLine($"PanelEditor: OnDisappearing Processed as Exiting");
+            if (_viewModel.Panel is {} panel) {
+                try {
+                    panel.Base64Image = await PanelView.GetThumbnailAsync();
+                    _viewModel?.Panel?.Panels?.Profile?.SaveAsync();
+                } catch (Exception ex) {
+                    Console.WriteLine($"Error exiting Panel and capturing Panel Image: {ex.Message}");
+                }
+            }
+            _closeTcs.TrySetResult(true); // or return data as needed
         }
-        _closeTcs.TrySetResult(true); // or return data as needed
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection(); 
-        OnPropertyChanged(nameof(_viewModel.HasSelectedEntities));;
+        //OnPropertyChanged(nameof(_viewModel.HasSelectedEntities));;
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

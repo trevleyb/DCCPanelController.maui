@@ -43,6 +43,7 @@ public partial class ControlPanelView {
 
     private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is ControlPanelView control) {
+            Console.WriteLine($"Design Mode Changed from {oldValue} to {newValue}");
             control.ShowGrid = control.DesignMode;
             control.DynamicGrid.GestureRecognizers.Clear();
             if (control.DesignMode) {
@@ -60,7 +61,7 @@ public partial class ControlPanelView {
                 tapRecogniser.Tapped += control.DynamicGridTapped;
                 control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
             } 
-            control.DrawPanel(true);
+            control.DrawPanel(false);
         }
     }
 

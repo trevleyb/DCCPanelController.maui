@@ -38,10 +38,10 @@
                         Margin="5"
                         BackgroundColor="Transparent"
                         DesignMode="true"
-                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=TwoWay}"
+                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
                         Grid.Column="0"
                         HorizontalOptions="Fill"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=TwoWay}"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
                         VerticalOptions="Fill"
                         x:Name="PanelView"/>
                 </Grid>

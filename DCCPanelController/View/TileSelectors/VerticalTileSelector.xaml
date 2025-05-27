@@ -8,21 +8,9 @@
     xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Grid WidthRequest="48">
+    <Grid WidthRequest="48" Margin="0,5,0,5">
         <ScrollView Orientation="Vertical">
             <VerticalStackLayout>
-                <Grid>
-                    <HorizontalStackLayout HorizontalOptions="Center" Margin="5,15,5,15">
-                        <Border
-                            BackgroundColor="Gainsboro"
-                            HeightRequest="12"
-                            HorizontalOptions="Center"
-                            Margin="0,0,2,0"
-                            Stroke="{StaticResource Gray500}"
-                            VerticalOptions="Center"
-                            WidthRequest="12"/>
-                    </HorizontalStackLayout>
-                </Grid>
                 <CollectionView
                     ItemSizingStrategy="MeasureAllItems"
                     ItemsSource="{Binding Tiles}"

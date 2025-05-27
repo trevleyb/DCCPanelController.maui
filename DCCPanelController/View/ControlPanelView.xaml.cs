@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -87,15 +88,24 @@ public partial class ControlPanelView {
         DrawPanel(true);
     }
 
-    private void DrawPanel(bool forceRefresh = false) {
+    private void DrawPanel(bool forceRefresh = false, 
+                           [CallerMemberName]  string memberName = "",
+                           [CallerFilePath]    string sourceFilePath = "",
+                           [CallerLineNumber]  int sourceLineNumber = 0) {
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
+        Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
+        Console.WriteLine($"**DrawPanel: Panel={(Panel is null ? "Null" : "Set")} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
+        Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
+        
         if (Panel is null) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
+        ClearAllSelectedTiles();
+        
         using (new CodeTimer($"Draw Panel: {Panel.Title}/{Panel.Id}")) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
@@ -119,8 +129,8 @@ public partial class ControlPanelView {
                     DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
                 }
             }
-            DrawGrid();
             AddEntitiesToGrid(Panel);
+            DrawGrid();
         }
     }
 
@@ -176,7 +186,6 @@ public partial class ControlPanelView {
 
     private static void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
-
         // TODO: Maybe this code draws the current path???
     }
 

@@ -38,7 +38,8 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     private readonly INavigation _navigation;
     public string Title => Panel?.Title ?? "Panel";
-
+    public event Action? OnBeginPushModal;
+    
     public double ScreenWidth = 100;
     public double ScreenHeight = 100;
 
@@ -46,7 +47,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         _panel = panel;
         _navigation = navigation;
     }
-
+        
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
@@ -96,6 +97,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         try {
             if (Panel is { } panel && _navigation is { } navigation) {
                 Console.WriteLine("Panel Properties Editor: Launching");
+                OnBeginPushModal?.Invoke();
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
                 Console.WriteLine("Panel Properties Editor: Closed");
@@ -109,6 +111,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task EditTilePropertiesAsync() {
         try {
             if (_navigation is { } navigation && SelectedEntities?.Count > 0) {
+                OnBeginPushModal?.Invoke();
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
             }

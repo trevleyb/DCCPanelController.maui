@@ -25,12 +25,6 @@
                 Stroke="{StaticResource Gray500}"
                 StrokeShape="RoundRectangle 10,10,10,10"
                 StrokeThickness="2">
-                <Border.Shadow>
-                    <Shadow
-                        Brush="{StaticResource Gray500}"
-                        Offset="5,5"
-                        Opacity="0.7"/>
-                </Border.Shadow>
                 <ScrollView Orientation="Horizontal">
                     <HorizontalStackLayout>
                         <Grid WidthRequest="25">
