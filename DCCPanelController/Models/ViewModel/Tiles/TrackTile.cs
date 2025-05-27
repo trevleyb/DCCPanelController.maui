@@ -37,7 +37,7 @@ public abstract class TrackTile : Tile {
         canvas.HorizontalOptions = LayoutOptions.Fill;
         canvas.VerticalOptions = LayoutOptions.Fill;
         canvas.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
-        canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: this));
+        canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, source: this));
         canvas.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
 
         var absoluteLayout = new AbsoluteLayout();

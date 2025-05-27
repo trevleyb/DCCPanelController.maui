@@ -6,7 +6,7 @@
                x:DataType="properties:IPropertiesViewModel"
                x:Name="Popup"
                x:Class="DCCPanelController.View.Properties.PropertyPopup"
-               CanBeDismissedByTappingOutsideOfPopup="True">
+               CanBeDismissedByTappingOutsideOfPopup="False">
 
     <Border x:Name="PopupBorder"
             StrokeThickness="2" Stroke="{StaticResource Primary}" 

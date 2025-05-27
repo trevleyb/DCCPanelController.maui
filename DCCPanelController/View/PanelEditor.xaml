@@ -10,16 +10,14 @@
              x:Class="DCCPanelController.View.PanelEditor">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Edit"        x:Name="EditToolbar"    IsEnabled="{Binding HasSelectedEntities}" IconImageSource="edit.png" Command="{Binding Path=EditTilePropertiesCommand}"/>
-        <ToolbarItem Text="Rotate"      x:Name="RotateToolbar"  IsEnabled="{Binding HasSelectedEntities}" IconImageSource="rotate_cw.png" Command="{Binding Path=RotateTileCommand}"/>
-        <ToolbarItem Text="Delete"      x:Name="DeleteToolbar"  IsEnabled="{Binding HasSelectedEntities}" IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
         <ToolbarItem Text="Mode"        x:Name="ModeToolbar"        IconImageSource="move.png" Command="{Binding Path=SwitchModeCommand}"/>
+        <ToolbarItem Text="Rotate"      x:Name="RotateToolbar"      IsEnabled="{Binding HasSelectedEntities}" IconImageSource="rotate_cw.png" Command="{Binding Path=RotateTileCommand}"/>
+        <ToolbarItem Text="Delete"      x:Name="DeleteToolbar"      IsEnabled="{Binding HasSelectedEntities}" IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
+        <ToolbarItem Text="Edit"        x:Name="EditToolbar"        IconImageSource="edit.png" Command="{Binding Path=EditPropertiesCommand}"/>
         <ToolbarItem Text="Grid"        x:Name="GridToolbar"        IconImageSource="grid_off.png" Command="{Binding Path=ToggleGridCommand}"/>
-        <ToolbarItem Text="Properties"  x:Name="PropertiesToolbar"  IconImageSource="settings.png" Command="{Binding Path=EditPanelPropertiesCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        
         <Grid
             BackgroundColor="White"
             ColumnDefinitions="*,auto"

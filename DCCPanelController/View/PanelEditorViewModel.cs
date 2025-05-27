@@ -14,14 +14,13 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
-    
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
     private Panel? _panel;
 
     [ObservableProperty] private bool _gridVisible;
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
@@ -29,7 +28,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SingleEntitySelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     private ObservableCollection<ITile> _selectedTiles = [];
-    
+
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
@@ -39,15 +38,15 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     private readonly INavigation _navigation;
     public string Title => Panel?.Title ?? "Panel";
-    
-    public double ScreenWidth   = 100;
-    public double ScreenHeight  = 100;
-    
+
+    public double ScreenWidth = 100;
+    public double ScreenHeight = 100;
+
     public PanelEditorViewModel(Panel panel, INavigation navigation) {
         _panel = panel;
         _navigation = navigation;
     }
-    
+
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
@@ -84,38 +83,37 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    public async Task EditPanelPropertiesAsync() {
-        if (Panel is { } panel && _navigation is {} navigation) {
-            Console.WriteLine("Panel Properties Editor: Launching");
-            var propertiesViewModel = new PanelPropertyViewModel(panel);
-            bool result = await PropertyDisplayService.ShowPropertiesAsync(
-                navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
+    public async Task EditPropertiesAsync() {
+        if (SelectedEntities?.Count > 0) {
+            await EditTilePropertiesAsync();
+        } else {
+            await EditPanelPropertiesAsync();
+        }
+    }
 
-            if (result) {
-                // Properties were applied and closed (e.g., "Done" or "Close" was hit)
-                System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
-            } else {
-                // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
-                System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
+    [RelayCommand]
+    public async Task EditPanelPropertiesAsync() {
+        try {
+            if (Panel is { } panel && _navigation is { } navigation) {
+                Console.WriteLine("Panel Properties Editor: Launching");
+                var propertiesViewModel = new PanelPropertyViewModel(panel);
+                await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
+                Console.WriteLine("Panel Properties Editor: Closed");
             }
-            Console.WriteLine("Panel Properties Editor: Closed");
+        } catch (Exception ex) {
+            Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
         }
     }
 
     [RelayCommand]
     private async Task EditTilePropertiesAsync() {
-        if (_navigation is {} navigation && SelectedEntities?.Count > 0) {
-            var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
-            bool result = await PropertyDisplayService.ShowPropertiesAsync(
-                navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
-
-            if (result) {
-                // Properties were applied and closed (e.g., "Done" or "Close" was hit)
-                System.Diagnostics.Debug.WriteLine("Properties applied successfully.");
-            } else {
-                // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
-                System.Diagnostics.Debug.WriteLine("Properties view dismissed.");
+        try {
+            if (_navigation is { } navigation && SelectedEntities?.Count > 0) {
+                var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
+                await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
             }
+        } catch (Exception ex) {
+            Console.WriteLine("Error Launching Tile Properties Page: " + ex.Message);
         }
     }
 }

@@ -28,6 +28,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
         Panels = Profile.Panels;
         PropertyChanged += OnPropertyChanged;
+        SelectedPanel = Panels.FirstOrDefault();
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
