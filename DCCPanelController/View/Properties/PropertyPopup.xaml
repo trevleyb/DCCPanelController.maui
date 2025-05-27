@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               x:Class="DCCPanelController.View.Properties.PropertyPopup"
+               CanBeDismissedByTappingOutsideOfPopup="True">
+    <Border x:Name="PopupBorder"
+            StrokeThickness="1" Stroke="LightGray" 
+            BackgroundColor="White" Padding="0"
+            WidthRequest="500"
+            HeightRequest="500"
+            HorizontalOptions="Center" 
+            VerticalOptions="Center">
+
+        <!-- Use a Grid as the root layout for the page content -->
+        <Grid RowDefinitions="Auto, Auto, *, Auto" ColumnDefinitions="*" Padding="20">
+
+            <!-- Row 0: Title Label -->
+            <Label Grid.Row="0"
+                   Text="{Binding ViewModel.Title}"
+                   FontSize="Large"
+                   FontAttributes="Bold"
+                   HorizontalOptions="Center" />
+
+            <!-- Row 1: Separator BoxView -->
+            <BoxView Grid.Row="1"
+                     HeightRequest="1"
+                     BackgroundColor="{StaticResource Primary}"
+                     Margin="0,10,0,10" /> <!-- Adjusted margin for spacing within the Grid structure -->
+            
+            <ScrollView Grid.Row="2"
+                        Padding="15"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
+                <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <ContentView x:Name="PropertyViewContainer" 
+                                 HorizontalOptions="Fill" 
+                                 VerticalOptions="Fill" />
+                </Grid>
+            </ScrollView>
+            
+            <!-- Row 3: Close Button, always at the bottom -->
+            <Button Grid.Row="3"
+                    Style="{StaticResource ButtonOutline}"
+                    WidthRequest="200"
+                    Text="Close" 
+                    Clicked="CloseButton_Clicked" 
+                    Margin="0,15,0,0" 
+                    VerticalOptions="End" 
+                    HorizontalOptions="Fill"/>
+        </Grid>
+    </Border>
+</toolkit:Popup>

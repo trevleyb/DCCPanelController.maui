@@ -24,6 +24,13 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
+        
+        <StackLayout>
+            <Button Text="Test Properties Automatic" Clicked="Auto_Button_OnClicked"/>
+            <Button Text="Test Properties Page" Clicked="Prop_Button_OnClicked"/>
+            <Button Text="Test Properties Popup" Clicked="Popup_Button_OnClicked"/>
+        
+        
         <RefreshView IsRefreshing="{Binding IsRefreshing}">
             <Grid
                 BackgroundColor="White"
@@ -50,5 +57,6 @@
                 </Grid>
             </Grid>
         </RefreshView>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

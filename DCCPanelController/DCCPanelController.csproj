@@ -382,6 +382,9 @@
         <Compile Update="View\PanelEditorViewModel.cs">
           <DependentUpon>PanelEditor.xaml</DependentUpon>
         </Compile>
+        <Compile Update="View\MyPanelViewModel.cs">
+          <DependentUpon>TestPanelPage.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
