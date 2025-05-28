@@ -1,13 +1,11 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients;
-using DCCClients.Jmri.JMRI.DataBlocks;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
-using DCCPanelController.View.Helpers;
+using DCCPanelController.View.Properties;
 
 namespace DCCPanelController.View;
 
@@ -25,6 +23,10 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+
+    public double ScreenWidth = 100;
+    public double ScreenHeight = 100;
+    public INavigation Navigation;
     
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile,connectionService) {
         Turnouts = Profile.Turnouts;
@@ -80,18 +82,22 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         SetLabels();
     }
 
-    [RelayCommand]
-    private async Task EditTurnoutAsync(Turnout? turnout) {
-        await NavigateToEditTurnoutAsync(turnout);
-        OnPropertyChanged(nameof(Turnouts));
-        await Profile.SaveAsync();
-    }
+    //[RelayCommand]
+    //private async Task EditTurnoutAsync(Turnout? turnout) {
+    //    if (turnout is not null) {
+    //        await NavigateToEditTurnoutAsync(turnout);
+    //        OnPropertyChanged(nameof(Turnouts));
+    //        await Profile.SaveAsync();
+    //    }
+    //}
 
     [RelayCommand]
-    private async Task DeleteTurnoutAsync(Turnout Turnout) {
-        Turnouts.Remove(Turnout);
-        OnPropertyChanged(nameof(Turnouts));
-        await Profile.SaveAsync();
+    private async Task DeleteTurnoutAsync(Turnout? turnout) {
+        if (turnout is not null) {
+            Turnouts.Remove(turnout);
+            OnPropertyChanged(nameof(Turnouts));
+            await Profile.SaveAsync();
+        }
     }
 
     [RelayCommand]
@@ -103,41 +109,55 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             Default = TurnoutStateEnum.Closed,
             IsEditable = true
         };
-
-        var result = await NavigateToEditTurnoutAsync(turnout);
-        if (result is not null) Turnouts.Add(result);
-        OnPropertyChanged(nameof(Turnouts));
+        Turnouts.Add(turnout);
+        await EditTurnoutAsync(turnout);
         await Profile.SaveAsync();
+        OnPropertyChanged(nameof(Turnouts));
     }
 
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
-        if (turnout == null) return;
-        if (!string.IsNullOrEmpty(turnout.DccAddress) && IsConnected) {
-            await ConnectionService?.SendTurnoutCmdAsync(turnout.Name ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
+        if (turnout is not null) {
+            if (!string.IsNullOrEmpty(turnout.DccAddress) && IsConnected) {
+                await ConnectionService?.SendTurnoutCmdAsync(turnout.Name ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
+            }
+            OnPropertyChanged(nameof(Turnouts));
         }
-        OnPropertyChanged(nameof(Turnouts));
     }
     
-    public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
-        if (turnout is null) return null;
-
-        var mainPage = App.Current.Windows[0].Page;
-        if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
-
-        var editPage = new TurnoutsEditView(turnout, ConnectionService);
-        var tcs = new TaskCompletionSource<Turnout?>();
-
-        if (editPage.ViewModel != null) {
-            editPage.ViewModel.OnSaveCompleted += turnoutResult => {
-                tcs.SetResult(turnoutResult);
-                mainPage.Navigation.PopModalAsync();
-            };
+    [RelayCommand]
+    public async Task EditTurnoutAsync(Turnout? turnout) {
+        try {
+            if (turnout is not null && Navigation is {  } navigation) {
+                var turnoutsEditViewModel = new TurnoutsEditViewModel(turnout, ConnectionService);
+                await PropertyDisplayService.ShowPropertiesAsync (navigation, turnoutsEditViewModel, ScreenWidth, ScreenHeight);
+                await Profile.SaveAsync();
+                OnPropertyChanged(nameof(Turnouts));
+            }
+        } catch (Exception ex) {
+            Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
         }
-
-        await mainPage.Navigation.PushModalAsync(editPage);
-        return await tcs.Task;
     }
+    
+    // public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
+    //     if (turnout is null) return null;
+    //
+    //     var mainPage = App.Current.Windows[0].Page;
+    //     if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
+    //
+    //     var editPage = new TurnoutsEditView(turnout, ConnectionService);
+    //     var tcs = new TaskCompletionSource<Turnout?>();
+    //
+    //     if (editPage.ViewModel != null) {
+    //         editPage.ViewModel.OnSaveCompleted += turnoutResult => {
+    //             tcs.SetResult(turnoutResult);
+    //             mainPage.Navigation.PopModalAsync();
+    //         };
+    //     }
+    //
+    //     await mainPage.Navigation.PushModalAsync(editPage);
+    //     return await tcs.Task;
+    // }
 
     [RelayCommand]
     private async Task ClearAllAsync() {

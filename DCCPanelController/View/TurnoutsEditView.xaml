@@ -1,113 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ContentPage
+<ContentView
     BackgroundColor="Transparent"
     x:Class="DCCPanelController.View.TurnoutsEditView"
     x:DataType="view:TurnoutsEditViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel">
 
-    <Grid
-        HorizontalOptions="Center"
-        Padding="10"
-        VerticalOptions="Center">
-        <Border
-            BackgroundColor="White"
-            HorizontalOptions="Center"
-            Margin="10"
-            Padding="10"
-            Stroke="{StaticResource Primary}"
-            StrokeThickness="1"
-            VerticalOptions="Center">
-            <VerticalStackLayout>
-                <Label
-                    FontAttributes="Bold"
-                    FontSize="Large"
-                    Margin="0,0,0,0"
-                    Text="Turnout Properties"
+    <StackLayout>
+        <HorizontalStackLayout>
+            <Label
+                WidthRequest="175"
+                Text="ID (User Name)"
+                VerticalOptions="Center"/>
+            <Border
+                WidthRequest="175"
+                HorizontalOptions="Start"
+                StrokeShape="RoundRectangle 10"
+                Stroke="{StaticResource Primary}"
+                Padding="10,0,5,0"
+                Margin="0,5,0,5"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                <Entry
+                    IsEnabled="{Binding Turnout.IsEditable}"
+                    Style="{StaticResource PanelEntry}"
+                    HorizontalOptions="Start"
+                    Text="{Binding Turnout.Name}"
                     VerticalOptions="Center"/>
-
-                <BoxView
-                    BackgroundColor="{StaticResource Primary}"
-                    HeightRequest="2"
-                    HorizontalOptions="Fill"
-                    Margin="0,5,0,0"/>
-
-                <StackLayout>
-                    <Grid ColumnDefinitions="150,300" RowDefinitions="30,30,30,10,35,35">
-                        <Label
-                            Grid.Column="0"
-                            Grid.Row="1"
-                            HeightRequest="25"
-                            HorizontalOptions="Start"
-                            Text="ID (User Name)"
-                            VerticalOptions="Center"/>
-                        <Entry
-                            Grid.Column="1"
-                            Grid.Row="1"
-                            HeightRequest="25"
-                            HorizontalOptions="Start"
-                            Text="{Binding UserName}"
-                            VerticalOptions="Center"
-                            WidthRequest="300"/>
-                        <Label
-                            Grid.Column="0"
-                            Grid.Row="2"
-                            HeightRequest="25"
-                            HorizontalOptions="Start"
-                            Text="System Name (DCC Address)"
-                            VerticalOptions="Center"/>
-                        <Entry
-                            Grid.Column="1"
-                            Grid.Row="2"
-                            HeightRequest="25"
-                            HorizontalOptions="Start"
-                            Text="{Binding DccAddress}"
-                            VerticalOptions="Center"
-                            WidthRequest="100"/>
-                        <Label
-                            Grid.Column="0"
-                            Grid.Row="4"
-                            HorizontalOptions="Start"
-                            Text="Current State"
-                            VerticalOptions="Center"
-                            Width="100"/>
-                        <components:TurnoutStateControl
-                            CanToggleState="True"
-                            Grid.Column="1"
-                            Grid.Row="4"
-                            HorizontalOptions="Start"
-                            State="{Binding CurrentState}"
-                            StateChangedCommand="{Binding ToggleTurnoutStateCommand}"
-                            Turnout="{Binding Turnout}"/>
-                        <Label
-                            Grid.Column="0"
-                            Grid.Row="5"
-                            HorizontalOptions="Start"
-                            Text="Default State"
-                            VerticalOptions="Center"
-                            Width="100"/>
-                        <components:TurnoutStateControl
-                            CanToggleState="True"
-                            Grid.Column="1"
-                            Grid.Row="5"
-                            HorizontalOptions="Start"
-                            State="{Binding DefaultState}"
-                            StateChangedCommand="{Binding ToggleTurnoutDefaultStateCommand}"
-                            Turnout="{Binding Turnout}"/>
-                    </Grid>
-                    <StackLayout
-                        HorizontalOptions="Center"
-                        Margin="0,20,0,0"
-                        Orientation="Horizontal"
-                        Spacing="20">
-                        <Button Command="{Binding SaveCommand}" Text="Save"/>
-                        <Button Command="{Binding CancelCommand}" Text="Cancel"/>
-                    </StackLayout>
-                </StackLayout>
-            </VerticalStackLayout>
-        </Border>
-    </Grid>
-</ContentPage>
+            </Border>
+        </HorizontalStackLayout>
+        
+        <HorizontalStackLayout>
+            <Label
+                WidthRequest="175"
+                HorizontalOptions="Start"
+                Text="System Name/Address"
+                VerticalOptions="Center"/>
+            <Border
+                WidthRequest="175"
+                HorizontalOptions="Start"
+                StrokeShape="RoundRectangle 10"
+                Stroke="{StaticResource Primary}"
+                Padding="10,0,5,0"
+                Margin="0,5,0,5"
+                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+            <Entry
+                IsEnabled="{Binding Turnout.IsEditable}"
+                Style="{StaticResource PanelEntry}"
+                HorizontalOptions="Start"
+                Text="{Binding Turnout.DccAddress}"
+                VerticalOptions="Center"
+                WidthRequest="100"/>
+            </Border>
+        </HorizontalStackLayout>
+        
+        <HorizontalStackLayout HeightRequest="40">
+            <Label
+                WidthRequest="170"
+                HorizontalOptions="Start"
+                Text="Current State"
+                VerticalOptions="Center"
+                Width="100"/>
+            <components:TurnoutStateControl
+                CanToggleState="True"
+                HorizontalOptions="Start"
+                State="{Binding Turnout.State}"
+                StateChangedCommand="{Binding ToggleTurnoutStateCommand}"
+                Turnout="{Binding Turnout}"/>
+        </HorizontalStackLayout>
+        <HorizontalStackLayout HeightRequest="40">
+            <Label
+                WidthRequest="170"
+                HorizontalOptions="Start"
+                Text="Default State"
+                VerticalOptions="Center"
+                Width="100"/>
+            <components:TurnoutStateControl
+                CanToggleState="True"
+                HorizontalOptions="Start"
+                State="{Binding Turnout.Default}"
+                StateChangedCommand="{Binding ToggleTurnoutDefaultStateCommand}"
+                Turnout="{Binding Turnout}"/>
+        </HorizontalStackLayout>
+    </StackLayout>
+</ContentView>

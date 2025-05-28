@@ -20,7 +20,7 @@
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="*,250,100"
+            ColumnDefinitions="auto,*,100"
             HorizontalOptions="Fill"
             Padding="5">
             <Button

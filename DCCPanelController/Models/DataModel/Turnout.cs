@@ -10,17 +10,12 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Turnout : ObservableObject {
-    [ObservableProperty] private string? _dccAddress;
-    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
-
     [ObservableProperty] private string? _id;
-    [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private string? _name;
+    [ObservableProperty] private string? _dccAddress;
+    [ObservableProperty] private bool _isEditable;
+    [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
-    /// <summary>
-    ///     Represents a Turnout with its current state.
-    ///     This is controlled by data that comes in via the Withrottle Interface
-    /// </summary>
     public Turnout() { }
 }

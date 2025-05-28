@@ -21,150 +21,148 @@
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
-    <StackLayout x:Name="MainStackLayout">
-        <Grid
-            ColumnDefinitions="*,250,150"
-            HorizontalOptions="Fill"
-            Padding="5">
-            <Button
-                Grid.Column="0"
-                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                CommandParameter="ID"
-                HorizontalOptions="Start"
-                Style="{StaticResource ButtonLabel}"
-                Text="{Binding ColumnLabelID}"/>
-            <Button
-                Grid.Column="1"
-                HorizontalOptions="Start"
-                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                CommandParameter="DCCAddress"
-                Style="{StaticResource ButtonLabel}"
-                Text="DCC Address"/>
-            <Button
-                Grid.Column="2"
-                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                CommandParameter="State"
-                HorizontalOptions="Start"
-                Style="{StaticResource ButtonLabel}"
-                Text="{Binding ColumnLabelState}"/>
-        </Grid>
-
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="1"
-            HorizontalOptions="FillAndExpand"/>
-
-        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshTurnoutsCommand}" >
-            <Grid VerticalOptions="FillAndExpand">
-                <CollectionView ItemsSource="{Binding Turnouts}" SelectionMode="None">
-                    <CollectionView.EmptyView>
-                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Turnout data available"/>
-                            </StackLayout>
+    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshTurnoutsCommand}">
+        <Grid VerticalOptions="FillAndExpand">
+            <CollectionView ItemsSource="{Binding Turnouts}" SelectionMode="None">
+                <CollectionView.Header>
+                    <StackLayout>
+                        <Grid
+                            ColumnDefinitions="auto,*,150"
+                            HorizontalOptions="Fill"
+                            Padding="5">
+                            <Button
+                                Grid.Column="0"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                CommandParameter="ID"
+                                HorizontalOptions="Start"
+                                Style="{StaticResource ButtonLabel}"
+                                Text="{Binding ColumnLabelID}"
+                                Margin="10,0,10,0"/> 
+                            <Button
+                                Grid.Column="1"
+                                HorizontalOptions="Start"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                CommandParameter="DCCAddress"
+                                Style="{StaticResource ButtonLabel}"
+                                Text="DCC Address"/>
+                            <Button
+                                Grid.Column="2"
+                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                CommandParameter="State"
+                                HorizontalOptions="Start"
+                                Style="{StaticResource ButtonLabel}"
+                                Text="{Binding ColumnLabelState}"/>
                         </Grid>
-                    </CollectionView.EmptyView>
+                        <!-- This is your existing BoxView separator -->
+                        <BoxView
+                            BackgroundColor="{StaticResource Primary}"
+                            HeightRequest="1"
+                            HorizontalOptions="FillAndExpand"/>
+                    </StackLayout>
+                </CollectionView.Header>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="dataModel:Turnout">
-                            <SwipeView>
-                                <SwipeView.RightItems>
-                                    <SwipeItems>
+                <CollectionView.EmptyView>
+                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                            <Label Text="No Turnout data available"/>
+                        </StackLayout>
+                    </Grid>
+                </CollectionView.EmptyView>
 
-                                        <!--  Edit SwipeItem  -->
-                                        <SwipeItemView
-                                            BackgroundColor="LightGreen"
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=EditTurnoutCommand}"
-                                            CommandParameter="{Binding}">
-                                            <StackLayout Orientation="Horizontal" Padding="10">
-                                                <Image
-                                                    HeightRequest="24"
-                                                    Source="edit.png"
-                                                    WidthRequest="24"/>
-                                                <Label
-                                                    Padding="10,0,0,0"
-                                                    Text="Edit"
-                                                    VerticalOptions="Center"/>
-                                            </StackLayout>
-                                        </SwipeItemView>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dataModel:Turnout">
+                        <!-- ... your ItemTemplate remains the same ... -->
+                        <SwipeView>
+                            <SwipeView.RightItems>
+                                <SwipeItems>
 
-                                        <!--  Delete SwipeItem  -->
-                                        <SwipeItemView BackgroundColor="LightCoral">
-                                            <SwipeItemView.Command>
-                                                <Binding
-                                                    Path="DeleteTurnoutCommand"
-                                                    Source="{RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}"
-                                                    x:DataType="view:TurnoutsViewModel"/>
-                                            </SwipeItemView.Command>
-                                            <SwipeItemView.CommandParameter>
-                                                <Binding/>
-                                            </SwipeItemView.CommandParameter>
-                                            <StackLayout Orientation="Horizontal" Padding="10">
-                                                <Image
-                                                    HeightRequest="24"
-                                                    Source="trash_2.png"
-                                                    WidthRequest="24"/>
-                                                <Label
-                                                    Padding="10,0,0,0"
-                                                    Text="Delete"
-                                                    VerticalOptions="Center"/>
-                                            </StackLayout>
-                                        </SwipeItemView>
-
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
-
-                                <SwipeView.Content>
-                                    <StackLayout x:DataType="dataModel:Turnout">
-                                        <Grid ColumnDefinitions="*,250,150" Padding="5">
-                                            <Grid.GestureRecognizers>
-                                                <TapGestureRecognizer
-                                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}"
-                                                    CommandParameter="{Binding .}"/>
-                                            </Grid.GestureRecognizers>
-
+                                    <!--  Edit SwipeItem  -->
+                                    <SwipeItemView
+                                        BackgroundColor="LightGreen"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=EditTurnoutCommand}"
+                                        CommandParameter="{Binding}">
+                                        <StackLayout Orientation="Horizontal" Padding="10">
+                                            <Image
+                                                HeightRequest="24"
+                                                Source="edit.png"
+                                                WidthRequest="24"/>
                                             <Label
-                                                Grid.Column="0"
-                                                HorizontalOptions="Start"
-                                                LineBreakMode="NoWrap"
-                                                Margin="10,0,10,0"
-                                                Style="{StaticResource MediumLabel}"
-                                                Text="{Binding Id}"
+                                                Padding="10,0,0,0"
+                                                Text="Edit"
                                                 VerticalOptions="Center"/>
+                                        </StackLayout>
+                                    </SwipeItemView>
+
+                                    <!--  Delete SwipeItem  -->
+                                    <SwipeItemView BackgroundColor="LightCoral">
+                                        <SwipeItemView.Command>
+                                            <Binding
+                                                Path="DeleteTurnoutCommand"
+                                                Source="{RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}"
+                                                x:DataType="view:TurnoutsViewModel"/>
+                                        </SwipeItemView.Command>
+                                        <SwipeItemView.CommandParameter>
+                                            <Binding/>
+                                        </SwipeItemView.CommandParameter>
+                                        <StackLayout Orientation="Horizontal" Padding="10">
+                                            <Image
+                                                HeightRequest="24"
+                                                Source="trash_2.png"
+                                                WidthRequest="24"/>
                                             <Label
-                                                Grid.Column="1"
-                                                FontAttributes="Bold"
-                                                Style="{StaticResource MediumLabel}"
-                                                Text="{Binding DccAddress}"
+                                                Padding="10,0,0,0"
+                                                Text="Delete"
                                                 VerticalOptions="Center"/>
+                                        </StackLayout>
+                                    </SwipeItemView>
 
-                                            <components:TurnoutStateControl
-                                                CanToggleState="true"
-                                                Grid.Column="2"
-                                                Margin="0,0,10,0"
-                                                State="{Binding State}"
-                                                StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
-                                                Turnout="{Binding .}"/>
-                                        </Grid>
+                                </SwipeItems>
+                            </SwipeView.RightItems>
 
-                                        <BoxView
-                                            BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="1"
-                                            HorizontalOptions="FillAndExpand"/>
-                                    </StackLayout>
-                                </SwipeView.Content>
-                            </SwipeView>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Grid>
-        </RefreshView>
-        <!--
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="1"
-            HorizontalOptions="FillAndExpand" />
-        -->
-    </StackLayout>
+                            <SwipeView.Content>
+                                <StackLayout x:DataType="dataModel:Turnout">
+                                    <Grid ColumnDefinitions="auto,*,150" Padding="5">
+                                        <Grid.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}"
+                                                CommandParameter="{Binding .}"/>
+                                        </Grid.GestureRecognizers>
+
+                                        <Label
+                                            Grid.Column="0"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="NoWrap"
+                                            Margin="10,0,10,0"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Name}"
+                                            VerticalOptions="Center"/>
+                                        <Label
+                                            Grid.Column="1"
+                                            FontAttributes="Bold"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding DccAddress}"
+                                            VerticalOptions="Center"/>
+
+                                        <components:TurnoutStateControl
+                                            CanToggleState="true"
+                                            Grid.Column="2"
+                                            Margin="0,0,10,0"
+                                            State="{Binding State}"
+                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
+                                            Turnout="{Binding .}"/>
+                                    </Grid>
+
+                                    <BoxView
+                                        BackgroundColor="{StaticResource Primary}"
+                                        HeightRequest="1"
+                                        HorizontalOptions="FillAndExpand"/>
+                                </StackLayout>
+                            </SwipeView.Content>
+                        </SwipeView>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+    </RefreshView>
 
 </ContentPage>

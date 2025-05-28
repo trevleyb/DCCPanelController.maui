@@ -88,7 +88,6 @@ public partial class PanelPropertyViewModel : BaseViewModel, IPropertiesViewMode
     }
 
     public Task ApplyChangesAsync() {
-        Console.WriteLine($"Applying changes: Panel Name = {Title}");
         return Task.CompletedTask;
     }
 
