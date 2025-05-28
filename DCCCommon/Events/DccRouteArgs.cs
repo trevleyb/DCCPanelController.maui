@@ -1,4 +1,4 @@
-namespace DCCClients.Events;
+namespace DCCCommon.Events;
 
 public class DccRouteArgs(string dccAddress, string routeId, bool isActive) : EventArgs {
     public string DccAddress { get; } = dccAddress;

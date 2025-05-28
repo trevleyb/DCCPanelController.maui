@@ -1,10 +1,10 @@
 using System.Collections.Concurrent;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using DCCClients.Common;
+using DCCCommon.Common;
 using Makaretu.Dns;
 
-namespace DCCClients.Discovery;
+namespace DCCCommon.Discovery;
 
 public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     private MulticastService? _mdns;

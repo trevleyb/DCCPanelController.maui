@@ -1,4 +1,4 @@
-namespace DCCClients.Events;
+namespace DCCCommon.Events;
 
 public enum ConnectionStatus {
     Connected,

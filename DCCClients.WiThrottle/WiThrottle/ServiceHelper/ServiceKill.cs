@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
-using DCCClients.Common;
-using Result = DCCClients.Common.Result;
+using DCCCommon.Common;
+using Result = DCCCommon.Common.Result;
 
 namespace DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 

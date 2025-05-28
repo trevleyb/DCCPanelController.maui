@@ -2,12 +2,12 @@ using System.Data;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
-using DCCClients.Common;
+using DCCCommon.Common;
 using DCCClients.WiThrottle.WiThrottle.Client.Commands;
 using DCCClients.WiThrottle.WiThrottle.Client.Events;
 using DCCClients.WiThrottle.WiThrottle.Client.Messages;
 using DCCClients.WiThrottle.WiThrottle.Helpers;
-using Result = DCCClients.Common.Result;
+using Result = DCCCommon.Common.Result;
 using Timer = System.Timers.Timer;
 
 namespace DCCClients.WiThrottle.WiThrottle.Client;

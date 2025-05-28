@@ -2,7 +2,7 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCPanelController", "DCCPanelController\DCCPanelController.csproj", "{E1D9373F-6622-41EE-9617-ED6921FC73E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClients", "DCCClients\DCCClients.csproj", "{E69F9A7B-9709-4088-8ACC-69AFA5B84D92}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCCommon", "DCCCommon\DCCCommon.csproj", "{E69F9A7B-9709-4088-8ACC-69AFA5B84D92}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClients.WiThrottle", "DCCClients.WiThrottle\DCCClients.WiThrottle.csproj", "{D9D3B2A3-5278-48D2-B74D-BF485EB0D4B8}"
 EndProject

@@ -391,7 +391,7 @@
     <ItemGroup>
         <ProjectReference Include="..\DCCClients.Jmri\DCCClients.Jmri.csproj" />
         <ProjectReference Include="..\DCCClients.WiThrottle\DCCClients.WiThrottle.csproj" />
-        <ProjectReference Include="..\DCCClients\DCCClients.csproj"/>
+        <ProjectReference Include="..\DCCCommon\DCCCommon.csproj" />
     </ItemGroup>
 
 </Project>

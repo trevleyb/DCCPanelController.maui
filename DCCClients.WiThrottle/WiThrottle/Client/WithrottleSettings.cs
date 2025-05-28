@@ -1,3 +1,5 @@
+using DCCCommon;
+
 namespace DCCClients.WiThrottle.WiThrottle.Client;
 
 public class WithrottleSettings : DccSettings, IDccSettings {

@@ -1,8 +1,9 @@
 using DCCClients;
-using DCCClients.Common;
-using DCCClients.Events;
+using DCCCommon.Common;
+using DCCCommon.Events;
 using DCCClients.Jmri;
 using DCCClients.WiThrottle;
+using DCCCommon;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
@@ -189,7 +190,7 @@ public class ConnectionService : IDccClientCommands {
     public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) => await _client?.SendTurnoutCmdAsync(dccAddress, thrown)!;
     public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) => await _client?.SendRouteCmdAsync(dccAddress, active)!;
     public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) => await _client?.SendSignalCmdAsync(dccAddress, aspect)!;
-    public void ForceRefresh(string? type = "all") => _client?.ForceRefresh(type);
+    public async Task<IResult> ForceRefresh(string? type = "all") => await _client?.ForceRefreshAsync(type)!;
 }
 
 public class ConnectionChangedEvent : EventArgs {

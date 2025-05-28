@@ -1,5 +1,5 @@
-using DCCClients.Common;
-using DCCClients.Events;
+using DCCCommon.Common;
+using DCCCommon.Events;
 using DCCClients.WiThrottle;
 using DCCClients.WiThrottle.WiThrottle.Client;
 

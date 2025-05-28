@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using DCCClients.Common;
+using DCCCommon.Common;
 
-namespace DCCClients.Discovery;
+namespace DCCCommon.Discovery;
 
 public interface INetworkServiceDiscovery : IDisposable {
     Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,

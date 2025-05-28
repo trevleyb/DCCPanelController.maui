@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients;
-using DCCClients.Events;
+using DCCCommon.Events;
 using DCCClients.Interfaces;
 using DCCClients.Jmri.JMRI;
 using DCCClients.WiThrottle.WiThrottle.Client;

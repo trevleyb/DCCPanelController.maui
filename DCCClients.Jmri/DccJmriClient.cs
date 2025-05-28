@@ -1,7 +1,8 @@
-using DCCClients.Common;
-using DCCClients.Events;
+using DCCCommon.Common;
+using DCCCommon.Events;
 using DCCClients.Jmri.JMRI;
 using DCCClients.Jmri.JMRI.EventArgs;
+using DCCCommon;
 
 namespace DCCClients.Jmri;
 
@@ -71,7 +72,7 @@ public class DccJmriClient : DccClient, IDccClient {
             return Result.Fail(new Error("Failed to reconnect to JMRI server").CausedBy(ex));
         }
     }
-
+    
     /// <summary>
     ///     Disconnects from the JMRI server and releases related resources.
     /// </summary>
@@ -140,8 +141,8 @@ public class DccJmriClient : DccClient, IDccClient {
         }
     }
 
-    public void ForceRefresh(string? type) {
-        _jmriClient?.ForceRefresh(type);
+    public async Task<IResult> ForceRefreshAsync(string? type = null) {
+        return await _jmriClient?.ForceRefreshAsync(type)!;
     }
 
     #region Event Handlers

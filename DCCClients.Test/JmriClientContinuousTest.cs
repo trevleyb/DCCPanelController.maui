@@ -1,5 +1,5 @@
-using DCCClients.Common;
-using DCCClients.Events;
+using DCCCommon.Common;
+using DCCCommon.Events;
 using DCCClients.Jmri;
 using DCCClients.Jmri.JMRI;
 

@@ -1,3 +1,5 @@
+using DCCCommon;
+
 namespace DCCClients.Jmri.JMRI;
 
 public class JmriSettings : DccSettings, IDccSettings {

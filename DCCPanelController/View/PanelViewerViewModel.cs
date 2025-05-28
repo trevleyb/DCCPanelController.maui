@@ -1,14 +1,9 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
-using DCCPanelController.View.DynamicProperties;
-using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 

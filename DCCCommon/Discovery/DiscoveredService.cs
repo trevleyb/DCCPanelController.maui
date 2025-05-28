@@ -3,7 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets; // Required for AddressFamily
 
-namespace DCCClients.Discovery;
+namespace DCCCommon.Discovery;
 
     public class DiscoveredService
     {

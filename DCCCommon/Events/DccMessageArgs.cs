@@ -1,4 +1,4 @@
-namespace DCCClients.Events;
+namespace DCCCommon.Events;
 
 public class DccMessageArgs(string messageType, string message) : EventArgs {
     public string MessageType { get; } = messageType;

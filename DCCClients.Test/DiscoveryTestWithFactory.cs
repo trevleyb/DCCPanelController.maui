@@ -1,5 +1,5 @@
-using DCCClients.Common;
-using DCCClients.Discovery;
+using DCCCommon.Common;
+using DCCCommon.Discovery;
 
 namespace DCCClients.Test;
 

@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCClients;
-using DCCClients.Interfaces;
+using DCCCommon;
 
 namespace DCCPanelController.Models.DataModel;
 

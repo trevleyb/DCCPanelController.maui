@@ -1,9 +1,10 @@
-using DCCClients.Common;
-using DCCClients.Events;
 using DCCClients.WiThrottle.WiThrottle.Client;
 using DCCClients.WiThrottle.WiThrottle.Client.Commands;
 using DCCClients.WiThrottle.WiThrottle.Client.Events;
 using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
+using DCCCommon;
+using DCCCommon.Common;
+using DCCCommon.Events;
 
 namespace DCCClients.WiThrottle;
 
@@ -52,8 +53,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     /// <summary>
     /// Creates a new Client instance. Can be overridden in tests to provide a mock.
     /// </summary>
-    protected virtual Client CreateClient(WithrottleSettings settings)
-    {
+    protected virtual Client CreateClient(WithrottleSettings settings) {
         return new Client(settings);
     }
 
@@ -63,10 +63,15 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
         try {
+            await DisconnectAsync();
             return await ConnectAsync();
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to reconnect to the Withrottle server.").CausedBy(ex));
         }
+    }
+
+    public Task<IResult> ForceRefreshAsync(string? type = null) {
+        return ReconnectAsync();
     }
 
     /// <summary>
@@ -122,7 +127,11 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return Result.Fail("Withrottle does not support signal commands.");
     }
 
-    public void ForceRefresh(string? type) { }
+    public async Task ForceRefresh(string? type) {
+        // Force refresh for WiThrottle requires that we disconnect and re-connect
+        // as the turnout and route data is ONLY sent on initialisation. 
+        await ReconnectAsync();
+    }
 
     private async Task<IResult<ServiceInfo?>> FindServices() {
         var services = await ServiceFinder.FindServices("_withrottle._tcp");

@@ -1,7 +1,7 @@
 using System.Net;
-using DCCClients.Common;
+using DCCCommon.Common;
 
-namespace DCCClients.Discovery {
+namespace DCCCommon.Discovery {
     /// <summary>
     /// Factory for creating service discovery instances
     /// </summary>

@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients.Jmri.JMRI.DataBlocks;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 
@@ -87,6 +86,6 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
                 if (command.CanExecute(Turnout)) command.Execute(Turnout);
             }
         }
-        OnPropertyChanged(nameof(JmriTurnout));
+        OnPropertyChanged(nameof(Turnout));
     }
 }

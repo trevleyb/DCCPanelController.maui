@@ -1,4 +1,4 @@
-namespace DCCClients.Events;
+namespace DCCCommon.Events;
 
 public class DccOccupancyArgs(string dccAddress, string blockId, bool isOccupied) : EventArgs {
     public string DccAddress { get; } = dccAddress;

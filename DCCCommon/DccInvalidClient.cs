@@ -1,5 +1,5 @@
-using DCCClients.Common;
-using DCCClients.Interfaces;
+using DCCCommon;
+using DCCCommon.Common;
 
 namespace DCCClients;
 
@@ -27,11 +27,19 @@ public class DccInvalidClient : DccClient, IDccClient {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
+    public async Task<IResult> ForceRefreshAsync(string? type = null) {
+        return Result.Fail(new Error("Invalid Client not currently implemented"));
+    }
+
     /// <summary>
     ///     Disconnects from the service and releases related resources.
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public async Task<IResult> DisconnectAsync() {
+        return Result.Fail(new Error("Invalid Client not currently implemented"));
+    }
+
+    public async Task<IResult> ForceRefreshAsync() {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 

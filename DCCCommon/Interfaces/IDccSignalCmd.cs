@@ -1,3 +1,3 @@
-namespace DCCClients.Interfaces;
+namespace DCCCommon.Interfaces;
 
 public interface IDccSignalCmd { }

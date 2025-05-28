@@ -1,6 +1,6 @@
-using DCCClients.Common;
+using DCCCommon.Common;
 
-namespace DCCClients.Events;
+namespace DCCCommon.Events;
 
 public class DccSignalArgs(string signalId, string aspect) : EventArgs {
     public string SignalId { get; } = signalId;

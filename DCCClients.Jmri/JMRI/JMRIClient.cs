@@ -2,9 +2,10 @@ using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using DCCClients.Common;
+using DCCCommon.Common;
 using DCCClients.Jmri.JMRI.Commands;
 using DCCClients.Jmri.JMRI.EventArgs;
+using DCCCommon;
 
 namespace DCCClients.Jmri.JMRI;
 
@@ -75,7 +76,7 @@ public class JmriClient {
         }
     }
 
-    public void ForceRefresh(string? type) {
+    public async Task<IResult> ForceRefreshAsync(string? type = null) {
         switch (type?.ToLower() ?? "all") {
         case "turnout" or "turnouts": _previousTurnoutStates.Clear(); break;
         case "route" or "routes":     _previousRouteStates.Clear(); break;
@@ -90,6 +91,7 @@ public class JmriClient {
             _previousSignalStates.Clear();
             break;
         }
+        return Result.Ok();
     }
 
     public virtual async Task<IResult> StartMonitoringAsync() {

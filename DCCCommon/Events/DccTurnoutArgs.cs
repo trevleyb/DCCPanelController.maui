@@ -1,4 +1,4 @@
-namespace DCCClients.Events;
+namespace DCCCommon.Events;
 
 public class DccTurnoutArgs(string dccAddress, string turnoutId, bool isThrown) : EventArgs {
     public string DccAddress { get; } = dccAddress;

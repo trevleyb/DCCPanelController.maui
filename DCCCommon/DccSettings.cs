@@ -1,4 +1,4 @@
-namespace DCCClients;
+namespace DCCCommon;
 
 public class DccSettings : IDccSettings {
     public string Name { get; set; } = "Unknown";
