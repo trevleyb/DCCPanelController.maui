@@ -96,11 +96,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     public async Task EditPanelPropertiesAsync() {
         try {
             if (Panel is { } panel && _navigation is { } navigation) {
-                Console.WriteLine("Panel Properties Editor: Launching");
                 OnBeginPushModal?.Invoke();
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
-                Console.WriteLine("Panel Properties Editor: Closed");
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);

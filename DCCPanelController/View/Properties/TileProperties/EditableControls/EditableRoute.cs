@@ -13,7 +13,7 @@ public class EditableRouteAttribute(string label, string description = "", int o
             var cell = new PopUpListBox {
                 ItemsSource = routes,
                 IsEnabled = routes.Count > 0,
-                Placeholder = "Select a Route",
+                Placeholder = routes.Count > 0 ? "Select a Route" : "No available routes",
                 HorizontalOptions = LayoutOptions.Start
             };
             cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });

@@ -16,7 +16,7 @@ public class EditableBlockAttribute(string label, string description = "", int o
                     WidthRequest = width,
                     ItemsSource = blocks,
                     IsEnabled = blocks.Count > 0,
-                    Title = "Select a Occupancy Block",
+                    Title = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
                     HorizontalOptions = LayoutOptions.Start
                 };
                 picker.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
@@ -30,7 +30,7 @@ public class EditableBlockAttribute(string label, string description = "", int o
                     TextSize = 9,
                     ItemsSource = blocks,
                     IsEnabled = blocks.Count > 0,
-                    Placeholder = "Select a Occupancy Block",
+                    Placeholder = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
                     HorizontalOptions = LayoutOptions.Start
                 };
                 cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });

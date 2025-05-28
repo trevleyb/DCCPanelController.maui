@@ -4,13 +4,29 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.View.Properties.PanelProperties;
 
 public partial class PanelPropertyPage : ContentView {
-    public PanelPropertyPage(Panel panel) {
+    private readonly PanelPropertyViewModel _viewModel;
+
+    public PanelPropertyPage(PanelPropertyViewModel viewModel) {
         InitializeComponent();
-        BindingContext = new Properties.PanelProperties.PanelPropertyViewModel(panel);
-        RowsStepper.Minimum = GetMaxRows(panel);
-        ColsStepper.Minimum = GetMaxCols(panel);
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
+        RowsStepper.Minimum = GetMaxRows(_viewModel.Panel);
+        ColsStepper.Minimum = GetMaxCols(_viewModel.Panel);
     }
-    
+
+    private void PanelPropertyPage_SizeChanged(object sender, EventArgs e) {
+        UpdateSpanBasedOnSize(Width);
+    }
+
+    private void UpdateSpanBasedOnSize(double currentWidth) {
+        if (currentWidth > 0) {
+            var newSpan = currentWidth < 480 ? 1 : 2;
+            if (_viewModel.ColorGridSpan != newSpan) {
+                _viewModel.ColorGridSpan = newSpan;
+            }
+        }
+    }
+
     private void Order_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (sender is Entry field) {
             if (int.TryParse(e.NewTextValue, out var order)) {

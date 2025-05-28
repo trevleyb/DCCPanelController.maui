@@ -1,13 +1,20 @@
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Tests;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
+using DCCPanelController.View.Properties.PanelProperties;
 
 namespace DCCPanelController.View;
 
 public partial class TestPanelPage : ContentPage {
+    private Panel panel;
     public TestPanelPage() {
         InitializeComponent();
         BindingContext = new TestPanelPageModel();
+
+        var panels = new Panels();
+        panel = panels.CreatePanel();
+        panel.Id = "Test Panel";
     }
 
     protected override void OnBindingContextChanged() {
@@ -44,7 +51,7 @@ public partial class TestPanelPage : ContentPage {
     }
 
     private async void Prop_Button_OnClicked(object? sender, EventArgs e) {
-        var panelViewModel = new Properties.Testing.MyPanelViewModel("Test Panel Name");
+        var panelViewModel = new PanelPropertyViewModel(panel);
         bool result = await PropertyDisplayService.ShowPropertiesAsync(
             Navigation,
             panelViewModel,
@@ -61,7 +68,7 @@ public partial class TestPanelPage : ContentPage {
     }
 
     private async void Popup_Button_OnClicked(object? sender, EventArgs e) {
-        var panelViewModel = new Properties.Testing.MyPanelViewModel("Test Panel Name");
+        var panelViewModel = new PanelPropertyViewModel(panel);
         bool result = await PropertyDisplayService.ShowPropertiesAsync(
             Navigation,
             panelViewModel,
@@ -78,7 +85,7 @@ public partial class TestPanelPage : ContentPage {
     }
     
     private async void Auto_Button_OnClicked(object? sender, EventArgs e) {
-        var panelViewModel = new Properties.Testing.MyPanelViewModel("Test Panel Name");
+        var panelViewModel = new PanelPropertyViewModel(panel);
         bool result = await PropertyDisplayService.ShowPropertiesAsync(
             Navigation,
             panelViewModel,

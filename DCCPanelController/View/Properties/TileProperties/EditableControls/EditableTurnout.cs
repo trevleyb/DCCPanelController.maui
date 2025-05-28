@@ -16,7 +16,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                     WidthRequest = width,
                     ItemsSource = turnouts,
                     IsEnabled = turnouts.Count > 0,
-                    Title = "Select a Turnout",
+                    Title = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
                     HorizontalOptions = LayoutOptions.Start
                 };
                 picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
@@ -30,7 +30,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                     TextSize = 9,
                     ItemsSource = turnouts,
                     IsEnabled = turnouts.Count > 0,
-                    Placeholder = "Select a Turnout",
+                    Placeholder = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
                     HorizontalOptions = LayoutOptions.Start
                 };
                 cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });

@@ -40,10 +40,8 @@ public partial class PanelEditor : ContentPage {
         base.OnDisappearing();
 
         if (_isPushingModal) {
-            Console.WriteLine($"PanelEditor: OnDisappearing Skipped as Pushing Modal");
             _isPushingModal = false;
         } else {
-            Console.WriteLine($"PanelEditor: OnDisappearing Processed as Exiting");
             if (_viewModel.Panel is {} panel) {
                 try {
                     panel.Base64Image = await PanelView.GetThumbnailAsync();
@@ -58,11 +56,9 @@ public partial class PanelEditor : ContentPage {
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection(); 
-        //OnPropertyChanged(nameof(_viewModel.HasSelectedEntities));;
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Panel Editor Property Changed {e.PropertyName}");
         switch (e.PropertyName) {
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;

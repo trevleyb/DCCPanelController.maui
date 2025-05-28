@@ -7,23 +7,18 @@ namespace DCCPanelController.View.Properties {
         public IPropertiesViewModel ViewModel { get; }
 
         public PropertySheetPage(IPropertiesViewModel viewModel) {
-            Console.WriteLine($"PropertySheetPage: Initialising");
             InitializeComponent();
-            Console.WriteLine($"PropertySheetPage: Initialised");
             ViewModel = viewModel;
             BindingContext = ViewModel; // To bind to ViewModel.Title in XAML's Page Title
             PropertyViewContainer.Content = ViewModel.CreatePropertiesView();
-            Console.WriteLine($"PropertySheetPage: Constructor Exited");
         }
 
         private async Task HandleClosingActionsAsync() {
-            Console.WriteLine($"PropertySheetPage: HandleClosingActions");
             await ViewModel.ApplyChangesAsync();
             _pageClosedTcs.TrySetResult(true);
         }
 
         protected override async void OnDisappearing() {
-            Console.WriteLine($"PropertySheetPage: OnDisappearing");
             base.OnDisappearing();
 
             // This ensures actions are taken if dismissed by gesture (iOS PageSheet)
@@ -33,11 +28,9 @@ namespace DCCPanelController.View.Properties {
         }
 
         private async void DoneButton_Clicked(object sender, EventArgs e) {
-            Console.WriteLine($"PropertySheetPage: Done Button Pressed");
             if (!_pageClosedTcs.Task.IsCompleted) { // Prevent double execution
                 await HandleClosingActionsAsync();
             }
-
             if (Navigation.ModalStack.Contains(this)) {
                 await Navigation.PopModalAsync();
             }

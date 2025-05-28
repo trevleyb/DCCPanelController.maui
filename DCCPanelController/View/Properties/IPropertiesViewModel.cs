@@ -1,14 +1,9 @@
-namespace DCCPanelController.View.Properties
-{
-    public interface IPropertiesViewModel
-    {
-        string Title { get; }
-        Task ApplyChangesAsync();
-        // You can add more common properties or methods here, 
-        // e.g., IsDirty, CancelChangesAsync, etc.
+using static DCCPanelController.View.Properties.PropertyDisplayService;
 
-        // This method would be responsible for creating the actual UI for the properties.
-        // The View returned would be placed into the PropertySheetPage or PropertyPopup.
-        Microsoft.Maui.Controls.View CreatePropertiesView(); 
-    }
+namespace DCCPanelController.View.Properties;
+
+public interface IPropertiesViewModel {
+    string Title { get; }
+    Task ApplyChangesAsync();
+    Microsoft.Maui.Controls.View CreatePropertiesView();
 }

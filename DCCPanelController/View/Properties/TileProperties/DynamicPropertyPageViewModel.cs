@@ -251,7 +251,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         tableExpander.IsExpanded = true;
 
         var stackLayout = new StackLayout {
-            Margin = new Thickness(0),
+            Margin = new Thickness(-5,1,1,0),
             BackgroundColor = Colors.White
         };
         tableExpander.Content = stackLayout;
@@ -304,7 +304,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     private static (IView?, IList<IView>?) CreateGroup(string groupKey, bool isFirst) {
         var scrollGroup = new ScrollView();
         var tableGroup = new StackLayout {
-            Margin = new Thickness(0, isFirst ? 0 : 10, 0, 0)
+            Margin = new Thickness(0, 10, 0, 0)
         };
 
         if (!string.IsNullOrWhiteSpace(groupKey)) {
@@ -323,13 +323,18 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     /// <returns>A <see cref="Label" /> instance configured with the specified group key as its text and styled accordingly.</returns>
     private static Label GroupHeading(string groupKey) {
         return new Label {
-            Text = groupKey,
+            Text = FormatLabel(groupKey),
             TextColor = StyleColor.Get("Primary"),
             FontSize = 18,
             Margin = new Thickness(0, 0, 0, 0)
         };
     }
 
+    private static string FormatLabel(string groupKey) {
+        if (groupKey.EndsWith("s")) return groupKey;
+        return string.IsNullOrEmpty(groupKey) ? "Properties" : $"{groupKey} properties";
+    }
+    
     /// <summary>
     ///     Creates a visual divider element to separate groups or sections within the property views.
     /// </summary>

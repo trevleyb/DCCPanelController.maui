@@ -15,8 +15,8 @@ namespace DCCPanelController.View.Properties {
 
         // Define margins and absolute minimum/maximum dimensions
         private const double ScreenMarginForPopup = 40;
-        private const double MinPopupWidth = 280;
-        private const double MinPopupHeight = 300; // Adjusted slightly, can be tuned
+        private const double MinPopupWidth = 500;
+        private const double MinPopupHeight = 400; 
 
         private bool _initialSizeLocked = false;
 

@@ -92,13 +92,14 @@ public partial class ControlPanelView {
                            [CallerMemberName]  string memberName = "",
                            [CallerFilePath]    string sourceFilePath = "",
                            [CallerLineNumber]  int sourceLineNumber = 0) {
+
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
-        Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
-        Console.WriteLine($"**DrawPanel: Panel={(Panel is null ? "Null" : "Set")} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
-        Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
+        //Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
+        //Console.WriteLine($"**DrawPanel: Panel={(Panel is null ? "Null" : "Set")} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
+        //Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
         
         if (Panel is null) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;

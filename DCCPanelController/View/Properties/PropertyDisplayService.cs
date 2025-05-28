@@ -36,7 +36,7 @@ public static class PropertyDisplayService {
         } else {
             // For iPad, Mac, Windows, Android tablets, or landscape iPhone
             var propertyPopup = new PropertyPopup(viewModel);
-
+            
             // The PropertyPopup.ShowAsync handles showing and awaiting closure
             // This is a simplified call. You might need to pass the current page.
             if (App.Current.Windows[0].Page is { } mainPage) {
