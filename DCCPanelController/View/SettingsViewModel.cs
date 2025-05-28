@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -20,7 +21,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
     public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
 
     [ObservableProperty] private string _name = "withrottle";
-    [ObservableProperty] private string _ipAddress = "localhost";
+    [ObservableProperty] private string _ipAddress = "0.0.0.0";
     [ObservableProperty] private int _port = 12090;
     [ObservableProperty] private string _protocol = "http";
     [ObservableProperty] private string _url = "http://localhost:12090";
@@ -28,7 +29,8 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
     public bool IsJmriServer { get; set; }
     public bool IsWiThrottle { get; set; }
-    
+
+    [ObservableProperty] private IDccSettings? _selectedServer;
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
@@ -42,7 +44,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
         if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
-
+        PropertyChanged += OnPropertyChanged;
         Name = Profile.ActiveConnectionInfo?.Name ?? "default";
         if (Profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
             Name = jmriSettings.Name;
@@ -62,6 +64,14 @@ public partial class SettingsViewModel : ConnectionViewModel {
             Url = wiThrottleSettings.Url;
             IsWiThrottle = true;
             IsJmriServer = false;
+        }
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(SelectedServer) && SelectedServer is not null) {
+            Name = SelectedServer.Name;
+            IpAddress = SelectedServer.Address;
+            Port = SelectedServer.Port;
         }
     }
 
@@ -148,7 +158,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
         Messages.Clear();
         AddMessage("Attempting to connect/disconnect to Service");
         SaveSettings();
-        
+
         try {
             IsBusy = true;
             var result = await ConnectionService.ConnectAsync(Settings.ActiveConnection());
@@ -198,42 +208,35 @@ public partial class SettingsViewModel : ConnectionViewModel {
     [RelayCommand]
     public async Task RefreshServersAsync() {
         if (IsBusy) return;
+        Messages.Clear();
         AddMessage("Attempting to scan for Available Servers");
         Servers.Clear();
         OnPropertyChanged(nameof(Servers));
 
         try {
             IsBusy = true;
-            var serverDiscovery = DCCClients.Discovery.ServiceDiscoveryFactory.DiscoverServices(CurrentSettings?.Settings?.Type ?? "");
-            var servers = await serverDiscovery.DiscoverServersAsync();
-
-            if (servers is { Count: > 0 }) {
-                Console.WriteLine($"Found {servers.Count} Servers");
-                foreach (var server in servers) {
+            var result = await DCCClients.Discovery.DiscoverServices.SearchForServicesByTypeAsync(CurrentSettings?.Settings?.Type ?? "");
+            if (result is { IsSuccess: true, Value.Count: > 0 }) {
+                var servicesFound = result.Value;
+                foreach (var server in servicesFound) {
                     Console.WriteLine($"Found Server: {server.HostName}");
                     Servers.Add(new DccSettings() {
-                        Name = server.HostName,
-                        Url = server.GetUrl(),
+                        Name = server.FriendlyName,
+                        Address = server?.Addresses?.FirstOrDefault()?.ToString() ?? "0.0.0.0",
+                        Port = server?.Port ?? 12080,
                         Type = CurrentSettings?.Settings?.Type ?? "unknown"
                     });
+                    AddMessage($"Found {Servers.Count} Servers");
                 }
+            } else {
+                AddMessage($"{result.Message}");
             }
-            AddMessage($"Found {Servers.Count} Servers");
         } catch (Exception ex) {
-            AddMessage($"Unable to search for Servers of type {CurrentSettings?.Settings?.Type ?? "withrottle"}");
-            Console.WriteLine($"Unable to get Settings: {ex.Message}");
-            await Shell.Current.DisplayAlert("Error! Cannot get Settings States", ex.Message, "OK");
+            Console.WriteLine($"Unable to Refresh Servers: {ex.Message}");
         } finally {
             IsBusy = false;
             IsRefreshing = false;
         }
-    }
-
-    [RelayCommand]
-    public void SelectWiServer(WithrottleSettings? server) {
-        if (server == null) return;
-        IpAddress = server.Address;
-        Port = server.Port;
     }
 
     /// <summary>

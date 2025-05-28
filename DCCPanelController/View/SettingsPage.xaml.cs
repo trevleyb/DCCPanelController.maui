@@ -9,7 +9,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     public SettingsPage(SettingsViewModel viewModel) {
         InitializeComponent();
-        _viewModel = viewModel; //MauiProgram.ServiceHelper.GetService<SettingsViewModel>();
+        _viewModel = viewModel; 
         if (_viewModel?.CurrentSettings?.Settings is { } current) {
             if (current.Type == "jmri") {
                 JmriServerButton.IsChecked = true;
@@ -20,32 +20,13 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                 WiThrottleServerButton.IsChecked = true;
             }
         }
+        Task.Run(() => _viewModel!.RefreshServersAsync());
         BindingContext = _viewModel;
     }
 
     protected override void OnDisappearing() {
         base.OnDisappearing();
         _viewModel?.SaveSettings();
-    }
-
-    private void OnLabelTapped(object sender, EventArgs args) {
-        if (_lastGridSelected is not null) {
-            foreach (var item in _lastGridSelected.Children) {
-                if (item is Label oldLabel) {
-                    oldLabel.TextColor = Colors.Black;
-                }
-            }
-        }
-
-        if (sender is Grid grid) {
-            foreach (var item in grid.Children) {
-                if (item is Label newLabel) {
-                    newLabel.TextColor = Colors.Green;
-                }
-            }
-
-            _lastGridSelected = grid;
-        }
     }
 
     private void OnEntryFocused(object sender, FocusEventArgs e) {
@@ -132,11 +113,17 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private async void JmriServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
-        _viewModel?.SetNewConnectionMethod("jmri");
+        if (_viewModel is { } vm) {
+            vm.SetNewConnectionMethod("jmri");
+            await vm.RefreshServersAsync();
+        }
     }
 
-    private void WiThrottleServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
-        _viewModel?.SetNewConnectionMethod("withrottle");
+    private async void WiThrottleServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
+        if (_viewModel is { } vm) {
+            vm.SetNewConnectionMethod("withrottle");
+            await vm.RefreshServersAsync();
+        }
     }
 
     private void Protocol_OnTextChanged(object? sender, TextChangedEventArgs e) {

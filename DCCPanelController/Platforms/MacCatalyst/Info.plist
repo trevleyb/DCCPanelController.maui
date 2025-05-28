@@ -39,8 +39,14 @@
         <key>NSBonjourServices</key>
         <array>
             <string>_http._tcp</string>
+            <string>_jmri._tcp</string>
+            <string>_jmri-json._tcp</string>
             <string>_withrottle._tcp</string>
             <string>_service._tcp</string>
         </array>
+        <key>com.apple.security.network.client</key>
+        <true/>
+        <key>com.apple.security.network.server</key>
+        <true/>
     </dict>
 </plist>

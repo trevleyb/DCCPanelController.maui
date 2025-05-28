@@ -27,7 +27,7 @@
                 <CollectionView.Header>
                     <StackLayout>
                         <Grid
-                            ColumnDefinitions="auto,*,150"
+                            ColumnDefinitions="*,100,100"
                             HorizontalOptions="Fill"
                             Padding="5">
                             <Button
@@ -44,7 +44,7 @@
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                                 CommandParameter="DCCAddress"
                                 Style="{StaticResource ButtonLabel}"
-                                Text="DCC Address"/>
+                                Text="Address"/>
                             <Button
                                 Grid.Column="2"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
@@ -121,7 +121,7 @@
 
                             <SwipeView.Content>
                                 <StackLayout x:DataType="dataModel:Turnout">
-                                    <Grid ColumnDefinitions="auto,*,150" Padding="5">
+                                    <Grid ColumnDefinitions="*,100,100" Padding="5">
                                         <Grid.GestureRecognizers>
                                             <TapGestureRecognizer
                                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}"

@@ -137,8 +137,8 @@ public class ConnectionService : IDccClientCommands {
             Console.WriteLine($"Turnout Updated {turnout.Name} is now {turnout.State}");
         } else if (_profile is not null && _profile.Turnouts is not null) {
             turnout = new Turnout {
-                Name = e.TurnoutId,
-                Id = e.TurnoutId,
+                Name = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
+                Id = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
                 DccAddress = e.DccAddress,
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
             };

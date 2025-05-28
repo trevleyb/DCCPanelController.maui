@@ -14,7 +14,7 @@
         <HorizontalStackLayout>
             <Label
                 WidthRequest="175"
-                Text="ID (User Name)"
+                Text="Name"
                 VerticalOptions="Center"/>
             <Border
                 WidthRequest="175"

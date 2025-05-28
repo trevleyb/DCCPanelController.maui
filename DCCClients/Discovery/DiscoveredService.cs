@@ -1,86 +1,71 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.Sockets; // Required for AddressFamily
 
-namespace DCCClients.Discovery
-{
-    /// <summary>
-    /// Represents a discovered network service
-    /// </summary>
-    public class DiscoveredService {
-        /// <summary>
-        /// The instance name of the service
-        /// </summary>
+namespace DCCClients.Discovery;
+
+    public class DiscoveredService
+    {
         public string InstanceName { get; set; } = string.Empty;
-        
-        /// <summary>
-        /// The hostname of the service
-        /// </summary>
+
+        public string FriendlyName { get; set; } = string.Empty;
+
         public string HostName { get; set; } = string.Empty;
-        
-        /// <summary>
-        /// The port number of the service
-        /// </summary>
+
         public int Port { get; set; }
+
+        public string ServiceType { get; set; } = string.Empty;
+
+        public IPAddress Address => Addresses.FirstOrDefault(n => n.AddressFamily == AddressFamily.InterNetwork) ?? new IPAddress(0);
         
-        /// <summary>
-        /// The service type (e.g., "_http._tcp.local")
-        /// </summary>
-        public string ServiceType { get; set; }  = string.Empty;
-        
-        /// <summary>
-        /// IP addresses associated with the service
-        /// </summary>
-        public List<IPAddress> Addresses { get; init; } = [];
-        
-        /// <summary>
-        /// TXT record values associated with the service
-        /// </summary>
-        public List<string> TxtRecords { get; set; } = [];
-        
-        public IPAddress Address => Addresses.Count > 0 ? Addresses[0] : new IPAddress(0);
-        
-        /// <summary>
-        /// Gets the URL for this service
-        /// </summary>
-        /// <param name="preferIPv4">Whether to prefer IPv4 addresses over IPv6</param>
-        /// <returns>The URL for this service</returns>
-        public string GetUrl(bool preferIPv4 = true)
+        public List<IPAddress> Addresses { get; set; } = new List<IPAddress>();
+
+        public Dictionary<string, string> TxtRecords { get; set; } = new Dictionary<string, string>();
+
+        public string? GetUrl(bool preferIPv4 = true)
         {
-            string hostAddress = HostName;
-            
-            // Use IP address if available
-            if (Addresses.Count > 0)
+            if (Port == 0) return null;
+
+            string? targetAddress = null;
+
+            if (Addresses.Any())
             {
+                IPAddress? selectedIp = null;
                 if (preferIPv4)
                 {
-                    var ipv4 = Addresses.Find(a => a.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork);
-                    if (ipv4 != null)
-                    {
-                        hostAddress = ipv4.ToString();
-                    }
-                    else
-                    {
-                        hostAddress = Addresses[0].ToString();
-                    }
+                    selectedIp = Addresses.FirstOrDefault(a => a.AddressFamily == AddressFamily.InterNetwork);
                 }
-                else
+                selectedIp ??= Addresses.FirstOrDefault(); // Fallback to any address
+
+                if (selectedIp != null)
                 {
-                    hostAddress = Addresses[0].ToString();
+                    targetAddress = selectedIp.ToString();
                 }
             }
-            else
+
+            if (string.IsNullOrEmpty(targetAddress) && !string.IsNullOrEmpty(HostName))
             {
-                // Remove trailing dot from hostname if present
-                if (hostAddress.EndsWith("."))
-                {
-                    hostAddress = hostAddress.Substring(0, hostAddress.Length - 1);
-                }
+                targetAddress = HostName.TrimEnd('.'); // Use hostname if no IP, might need DNS
             }
-            
-            // Determine protocol based on service type
-            string protocol = ServiceType.Contains("_http") ? "http" : "tcp";
-            
-            return $"{protocol}://{hostAddress}:{Port}";
+
+            if (string.IsNullOrEmpty(targetAddress)) return null;
+
+            string protocol = "http"; // Default
+            if (ServiceType.Contains("._tcp", StringComparison.OrdinalIgnoreCase))
+            {
+                if (ServiceType.StartsWith("_https", StringComparison.OrdinalIgnoreCase) || ServiceType.Contains("._https", StringComparison.OrdinalIgnoreCase)) protocol = "https";
+                else if (ServiceType.StartsWith("_ftp", StringComparison.OrdinalIgnoreCase) || ServiceType.Contains("._ftp", StringComparison.OrdinalIgnoreCase)) protocol = "ftp";
+                // Add more specific protocol mappings if needed for other known services
+            }
+            // For generic TCP services, a "tcp://" scheme isn't standard for URLs.
+            // The application layer protocol (like http, ftp, etc.) is what defines the scheme.
+
+            return $"{protocol}://{targetAddress}:{Port}";
+        }
+
+        public override string ToString()
+        {
+            return $"Instance: {InstanceName}, Host: {HostName}, Port: {Port}, IPs: {string.Join(", ", Addresses.Select(a => a.ToString()))}, URL: {GetUrl() ?? "N/A"}";
         }
     }
-}

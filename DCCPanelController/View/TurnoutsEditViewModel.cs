@@ -32,8 +32,8 @@ public partial class TurnoutsEditViewModel : BaseViewModel, IPropertiesViewModel
     
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
-        if (!string.IsNullOrEmpty(Turnout.Id)) {
-            ConnectionService?.SendTurnoutCmdAsync(Turnout.Id, Turnout.State == TurnoutStateEnum.Thrown);
+        if (!string.IsNullOrEmpty(Turnout.DccAddress)) {
+            ConnectionService?.SendTurnoutCmdAsync(Turnout.DccAddress, Turnout.State == TurnoutStateEnum.Thrown);
             OnPropertyChanged(nameof(Turnout.State));
             OnPropertyChanged(nameof(Turnout));
         }
@@ -41,11 +41,11 @@ public partial class TurnoutsEditViewModel : BaseViewModel, IPropertiesViewModel
 
     [RelayCommand]
     private async Task ToggleTurnoutDefaultStateAsync() {
-        Turnout.Default = Turnout.Default switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed
-        };
+        // Turnout.Default = Turnout.Default switch {
+        //     TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+        //     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+        //     _                       => TurnoutStateEnum.Closed
+        // };
         OnPropertyChanged(nameof(Turnout.Default));
         OnPropertyChanged(nameof(Turnout));
     }
