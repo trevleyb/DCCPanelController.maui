@@ -64,6 +64,7 @@ public static class ServiceFinder {
         } finally {
             sd.Mdns.Stop();
         }
+        await Task.CompletedTask;
         return foundServices;
     }
 

@@ -15,6 +15,7 @@ public class DccInvalidClient : DccClient, IDccClient {
     /// <param name="settings">The settings required to configure the connection, such as server address and port.</param>
     /// <returns>Returns a result indicating the success or failure of the connection attempt.</returns>
     public async Task<IResult> ConnectAsync() {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
@@ -23,10 +24,12 @@ public class DccInvalidClient : DccClient, IDccClient {
     /// </summary>
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public async Task<IResult> ForceRefreshAsync(string? type = null) {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
@@ -35,30 +38,34 @@ public class DccInvalidClient : DccClient, IDccClient {
     /// </summary>
     /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public async Task<IResult> DisconnectAsync() {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public async Task<IResult> ForceRefreshAsync() {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public bool IsConnected => false;
 
     public async Task<IResult> SendCmdAsync(string message) {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
     public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
+        await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
-
-    public void ForceRefresh(string? type) {}
 }

@@ -90,6 +90,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
             }
         }
         _client = null;
+        await Task.CompletedTask;
         return Result.Ok();
     }
 
@@ -100,6 +101,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
+        await Task.CompletedTask;
         return Result.Ok();
     }
 
@@ -110,6 +112,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
+        await Task.CompletedTask;
         return Result.Ok();
     }
 
@@ -120,10 +123,12 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
+        await Task.CompletedTask;
         return Result.Ok();
     }
 
     public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
+        await Task.CompletedTask;
         return Result.Fail("Withrottle does not support signal commands.");
     }
 
