@@ -96,11 +96,12 @@ public class DccJmriClient : DccClient, IDccClient {
         try {
             if (!IsConnected) return Result.Fail(new Error("Not connected to JMRI server"));
             OnMessageReceived(new DccMessageArgs("Command", message));
-            return Result.Ok();
         }
         catch (Exception ex) {
             return Result.Fail(new Error("Failed to send command to JMRI server").CausedBy(ex));
         }
+        await Task.CompletedTask;
+        return Result.Ok();
     }
 
     public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {

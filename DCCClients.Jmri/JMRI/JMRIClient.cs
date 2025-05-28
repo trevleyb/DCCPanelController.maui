@@ -91,6 +91,7 @@ public class JmriClient {
             _previousSignalStates.Clear();
             break;
         }
+        await Task.CompletedTask;
         return Result.Ok();
     }
 

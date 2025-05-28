@@ -27,7 +27,11 @@ public class OccupancyEventArgs : System.EventArgs {
             IsOccupied = occupancyData.Data.State == 2;
             State = IsOccupied ? "OCCUPIED" : "FREE";
         } catch (Exception ex) {
-            Console.WriteLine(ex.Message);
+            TrainId = "unknown";
+            Identifier = "Unknown";
+            IsOccupied = false;
+            State = IsOccupied ? "OCCUPIED" : "FREE";
+            Console.WriteLine($"Could not parse Occupancy Data: {ex.Message}");
         }
     }
 }
