@@ -26,7 +26,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     public double ScreenWidth = 100;
     public double ScreenHeight = 100;
-    public INavigation Navigation;
+    public INavigation? Navigation;
     
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile,connectionService) {
         Turnouts = Profile.Turnouts;
@@ -82,15 +82,6 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         SetLabels();
     }
 
-    //[RelayCommand]
-    //private async Task EditTurnoutAsync(Turnout? turnout) {
-    //    if (turnout is not null) {
-    //        await NavigateToEditTurnoutAsync(turnout);
-    //        OnPropertyChanged(nameof(Turnouts));
-    //        await Profile.SaveAsync();
-    //    }
-    //}
-
     [RelayCommand]
     private async Task DeleteTurnoutAsync(Turnout? turnout) {
         if (turnout is not null) {
@@ -139,31 +130,11 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         }
     }
     
-    // public async Task<Turnout?> NavigateToEditTurnoutAsync(Turnout? turnout) {
-    //     if (turnout is null) return null;
-    //
-    //     var mainPage = App.Current.Windows[0].Page;
-    //     if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
-    //
-    //     var editPage = new TurnoutsEditView(turnout, ConnectionService);
-    //     var tcs = new TaskCompletionSource<Turnout?>();
-    //
-    //     if (editPage.ViewModel != null) {
-    //         editPage.ViewModel.OnSaveCompleted += turnoutResult => {
-    //             tcs.SetResult(turnoutResult);
-    //             mainPage.Navigation.PopModalAsync();
-    //         };
-    //     }
-    //
-    //     await mainPage.Navigation.PushModalAsync(editPage);
-    //     return await tcs.Task;
-    // }
-
     [RelayCommand]
     private async Task ClearAllAsync() {
         IsBusy = true;
         try {
-            if (await AskUserToConfirm("Reset all Turnouts?", "This wll remove all Tunrouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
+            if (await AskUserToConfirm("Reset all Turnouts?", "This wll remove all Turnouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
                 var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
                 foreach (var turnout in removeTurnouts) {
                     Profile.Turnouts.Remove(turnout);

@@ -11,14 +11,12 @@
     <ContentPage.Content>
         <ScrollView>
             <VerticalStackLayout>
-                <VerticalStackLayout>
-                    <Label Margin="10,10,10,10" Style="{StaticResource LargeLabel}" Text="DCC Panel Controller"
-                           FontAttributes="Bold" FontSize="24"/>
-                    <Label Margin="10,10,10,10" Style="{StaticResource MediumLabel}">
-                    </Label>
-                    <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}" Text="SubHeading"/>
-                    <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Bla Bla Bla</Label>
-                    <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">Bla Bla Bla</Label>
+                <VerticalStackLayout Margin="10,5,10,5">
+                    <Label Style="{StaticResource LargeLabel}" Text="DCC Panel Controller"
+                    TextColor="{StaticResource Primary}"    FontAttributes="Bold" FontSize="24"/>
+                    <!-- <Label Style="{StaticResource LargeLabel}" Text="SubHeading"/> -->
+                    <!-- <Label Style="{StaticResource MediumLabel}">Bla Bla Bla</Label> -->
+                    <!-- <Label Style="{StaticResource MediumLabel}">Bla Bla Bla</Label> -->
                 </VerticalStackLayout>
 
                 <VerticalStackLayout>

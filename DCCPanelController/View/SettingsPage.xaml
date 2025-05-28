@@ -30,9 +30,9 @@
             TextColor="{StaticResource Primary}"/>
 
         <HorizontalStackLayout Margin="20,20,0,0">
-            <RadioButton GroupName="ServerType" Content="JMRI Server"
+            <RadioButton GroupName="ServerType" Content="JMRI Server" IsChecked="{Binding IsJmriServer}"
                          CheckedChanged="JmriServerButton_OnCheckedChanged" x:Name="JmriServerButton"/>
-            <RadioButton GroupName="ServerType" Content="WiThrottle Server"
+            <RadioButton GroupName="ServerType" Content="WiThrottle Server" IsChecked="{Binding IsWiThrottle}"
                          CheckedChanged="WiThrottleServerButton_OnCheckedChanged" x:Name="WiThrottleServerButton"/>
         </HorizontalStackLayout>
 
@@ -81,7 +81,7 @@
                         Padding="10,0,5,0"
                         Margin="0,5,0,5" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                         <Entry
-                            Focused="OnEntryFocused" HorizontalTextAlignment="Center" Text="{Binding IpAddress2}">
+                            Focused="OnEntryFocused" Style="{StaticResource PanelEntry}" HorizontalTextAlignment="Center" Text="{Binding IpAddress2}">
                             <Entry.Behaviors>
                                 <view:EntryValidationBehavior/>
                             </Entry.Behaviors>
@@ -96,7 +96,7 @@
                         Padding="10,0,5,0"
                         Margin="0,5,0,5" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                         <Entry
-                            Focused="OnEntryFocused" HorizontalTextAlignment="Center" Text="{Binding IpAddress3}">
+                            Focused="OnEntryFocused" Style="{StaticResource PanelEntry}" HorizontalTextAlignment="Center" Text="{Binding IpAddress3}">
                             <Entry.Behaviors>
                                 <view:EntryValidationBehavior/>
                             </Entry.Behaviors>
@@ -111,7 +111,7 @@
                         Padding="10,0,5,0"
                         Margin="0,5,0,5" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                         <Entry
-                            Focused="OnEntryFocused" HorizontalTextAlignment="Center" Text="{Binding IpAddress4}">
+                            Focused="OnEntryFocused" Style="{StaticResource PanelEntry}" HorizontalTextAlignment="Center" Text="{Binding IpAddress4}">
                             <Entry.Behaviors>
                                 <view:EntryValidationBehavior/>
                             </Entry.Behaviors>
@@ -128,6 +128,7 @@
                         Padding="10,0,5,0"
                         Margin="0,5,0,5" BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                         <Entry
+                            Style="{StaticResource PanelEntry}"
                             Focused="OnEntryFocused"
                             HorizontalTextAlignment="Center"
                             Text="{Binding Port}"/>
@@ -271,9 +272,8 @@
                 BackgroundColor="{StaticResource Primary}"
                 HeightRequest="1"
                 HorizontalOptions="FillAndExpand"/>
-            <ScrollView>
+            <ScrollView VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">
                 <CollectionView
-                    HeightRequest="300"
                     ItemsSource="{Binding Messages}"
                     ItemsUpdatingScrollMode="KeepLastItemInView"
                     x:Name="MessagesList">
@@ -282,8 +282,7 @@
                             <HorizontalStackLayout>
                                 <Label
                                     Style="{StaticResource MediumLabel}"
-                                    Text="{Binding TimeStamp}"
-                                    WidthRequest="200"/>
+                                    Text="{Binding TimeStamp}" Margin="0,0,5,0"/>
                                 <Label Style="{StaticResource MediumLabel}"
                                        Text="{Binding Message}"/>
                             </HorizontalStackLayout>
