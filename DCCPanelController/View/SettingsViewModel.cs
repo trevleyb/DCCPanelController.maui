@@ -28,20 +28,21 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
+
     public bool ShowWiServers => !ShowMessages;
 
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-
         if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
-        
+
         Name = Profile.ActiveConnectionInfo?.Name ?? "default";
         if (Profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+            Name = jmriSettings.Name;
             IpAddress = jmriSettings.Address;
             Port = jmriSettings.Port;
             Protocol = jmriSettings.Protocol;
@@ -49,6 +50,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
         }
 
         if (Profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+            Name = wiThrottleSettings.Name;
             IpAddress = wiThrottleSettings.Address;
             Port = wiThrottleSettings.Port;
             Protocol = wiThrottleSettings.Protocol;
@@ -60,14 +62,6 @@ public partial class SettingsViewModel : ConnectionViewModel {
         get => Settings?.BackgroundColor ?? Colors.White;
         set {
             Settings.BackgroundColor = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public bool IsDemoMode {
-        get => Settings?.UseConnection ?? false;
-        set {
-            Settings.UseConnection = value;
             OnPropertyChanged();
         }
     }
@@ -101,7 +95,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
     // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
         Console.WriteLine($"Connection Changed: {e.Status}");
-        ConnectLabel = e.Status == ConnectionStatus.Connected ? "Testing" : "Test Connection"; 
+        ConnectLabel = e.Status == ConnectionStatus.Connected ? "Testing" : "Test Connection";
         OnPropertyChanged(nameof(ConnectLabel));
     }
 
@@ -136,38 +130,36 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task ConnectAsync() {
-        if (!IsDemoMode) {
-            Messages.Clear();
-            AddMessage("Attempting to connect/disconnect to Service");
+        Messages.Clear();
+        AddMessage("Attempting to connect/disconnect to Service");
 
-            try {
-                IsBusy = true;
-                SaveConnectionDetails();
-                var result = await ConnectionService.ConnectAsync(Settings.ActiveConnection());
-                if (result.IsFailure) {
-                    AddMessage("Connection Failed.");
-                    foreach (var error in result.Errors) AddMessage(error.Message);
+        try {
+            IsBusy = true;
+            SaveConnectionDetails();
+            var result = await ConnectionService.ConnectAsync(Settings.ActiveConnection());
+            if (result.IsFailure) {
+                AddMessage("Connection Failed.");
+                foreach (var error in result.Errors) AddMessage(error.Message);
+            } else {
+                ConnectionService.ConnectionMessage += ClientOnMessageReceived;
+                await Task.Delay(1000);
+                if (ConnectionService.IsConnected) {
+                    AddMessage("Connected Successfully.");
+                    await ConnectionService.DisconnectAsync();
                 } else {
-                    ConnectionService.ConnectionMessage += ClientOnMessageReceived;
-                    await Task.Delay(1000);
-                    if (ConnectionService.IsConnected) {
-                        AddMessage("Connected Successfully.");
-                        await ConnectionService.DisconnectAsync();
-                    } else {
-                        AddMessage("Connection Failed.");
-                    }
+                    AddMessage("Connection Failed.");
                 }
-            } catch {
-                AddMessage("Unable to Connect.");
-            } finally {
-                ConnectionService.ConnectionMessage -= ClientOnMessageReceived;
-                ConnectionService?.DisconnectAsync();
-                IsBusy = false;
             }
-            OnPropertyChanged(nameof(ConnectLabel));
-            OnPropertyChanged(nameof(Messages));
+        } catch {
+            AddMessage("Unable to Connect.");
+        } finally {
+            ConnectionService.ConnectionMessage -= ClientOnMessageReceived;
+            ConnectionService?.DisconnectAsync();
             IsBusy = false;
         }
+        OnPropertyChanged(nameof(ConnectLabel));
+        OnPropertyChanged(nameof(Messages));
+        IsBusy = false;
     }
 
     private void ClientOnMessageReceived(object? sender, ConnectionMessageEvent e) {
@@ -247,7 +239,6 @@ public partial class SettingsViewModel : ConnectionViewModel {
     /// <param name="value">the value to set</param>
     /// <returns>The full IPAddress</returns>
     private string SetIpAddressParts(int part, string value, [CallerMemberName] string? propertyName = null) {
-        if (IpAddress == null) return "0";
         if (string.IsNullOrEmpty(value)) return IpAddress;
         var parts = IpAddress.Split('.');
 

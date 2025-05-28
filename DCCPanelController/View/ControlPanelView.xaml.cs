@@ -107,7 +107,7 @@ public partial class ControlPanelView {
 
         ClearAllSelectedTiles();
         
-        using (new CodeTimer($"Draw Panel: {Panel.Title}/{Panel.Id}")) {
+        using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}")) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
             _viewHeight = _gridSize * Rows;

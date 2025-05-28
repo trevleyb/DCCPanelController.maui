@@ -56,7 +56,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             if (!result) return; // Exit if the user cancels the delete operation
             Panels.Remove(SelectedPanel);
             RefreshSortOrder();
-            SelectedPanel = Panels.First();
+            SelectedPanel = Panels.FirstOrDefault();
             await SaveAsync();
         }
         OnPropertyChanged(nameof(Panels));

@@ -246,7 +246,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         expanderTitle.Children.Add(GroupHeading(groupKey));
         expanderHeading.Children.Add(expanderTitle);
         expanderHeading.Children.Add(GroupDivider());
-        tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 0, 0);
+        tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 0, 10);
         tableExpander.Header = expanderHeading;
         tableExpander.IsExpanded = true;
 

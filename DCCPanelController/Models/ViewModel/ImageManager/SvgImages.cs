@@ -19,7 +19,6 @@ public static class SvgImages {
     }
 
     private static void BuildAvailableImages() {
-        Console.WriteLine("Building Available Images");
         AddImage("Unknown", "Track_Unknown");
 
         AddImage("Text", "Track_Text");
@@ -70,8 +69,6 @@ public static class SvgImages {
         AddImage("RightTurnoutUnknown", "Track_Turnout_Right", "**XD**S*"); // Support all 8 rotations
         AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight", "**XD**S*");
         AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging", "**XD**S*");
-
-        Console.WriteLine($"Done Building Available Images with count={Images.Count}");
     }
 
     public static SvgImage GetImage(string name, int direction = 0) {
