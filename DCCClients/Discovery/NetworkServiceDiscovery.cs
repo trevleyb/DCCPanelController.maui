@@ -17,7 +17,6 @@ namespace DCCClients.Discovery {
         private readonly Dictionary<string,DiscoveredService> _discoveredServices = [];
         private readonly Lock _lock = new();
         private bool _isDisposed;
-        private int _count = 0;
 
         /// <summary>
         /// Creates a new instance of the NetworkServiceDiscovery class
@@ -27,16 +26,17 @@ namespace DCCClients.Discovery {
             _sd = new ServiceDiscovery(_mdns);
             _sd.ServiceInstanceDiscovered += OnServiceInstanceDiscovered;
             _mdns.Start();
-            _count = 0;
         }
 
         /// <summary>
         /// Handles service instance discovery events
         /// </summary>
         private void OnServiceInstanceDiscovered(object? sender, ServiceInstanceDiscoveryEventArgs e) {
+            Console.WriteLine($"Service Discovery: Instance Discovered");
             lock (_lock) {
                 if (e.Message is {   } message && e.RemoteEndPoint.AddressFamily == AddressFamily.InterNetwork) {
                     foreach (var answer in message.Answers) {
+                        Console.WriteLine($"Service Discovery: {answer}");
                         if (answer is ARecord { Type: DnsType.A }) {
                             var address = $"{e.RemoteEndPoint.Address}:{e.RemoteEndPoint.Port}";
                             if (!_discoveredServices.ContainsKey(address)) {

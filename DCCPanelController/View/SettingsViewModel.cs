@@ -26,8 +26,8 @@ public partial class SettingsViewModel : ConnectionViewModel {
     [ObservableProperty] private string _url = "http://localhost:12090";
     [ObservableProperty] private string _connectLabel = "Test Connection";
 
-    [ObservableProperty] private bool _isJmriServer;
-    [ObservableProperty] private bool _isWiThrottle;
+    public bool IsJmriServer { get; set; }
+    public bool IsWiThrottle { get; set; }
     
     [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];

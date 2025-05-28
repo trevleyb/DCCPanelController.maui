@@ -67,7 +67,6 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to reconnect to the Withrottle server.").CausedBy(ex));
         }
-        return Result.Fail(new Error("Unable to reconnect as no connection was established."));
     }
 
     /// <summary>
@@ -127,8 +126,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
 
     private async Task<IResult<ServiceInfo?>> FindServices() {
         var services = await ServiceFinder.FindServices("_withrottle._tcp");
-        if (services.Count == 0) return Result<ServiceInfo>.Fail(new Error("Unable to find a WiThrottle server."));
-        return Result<ServiceInfo>.Ok(services[0]);
+        if (services.Count == 0) return Result<ServiceInfo?>.Fail(new Error("Unable to find a WiThrottle server."));
+        return Result<ServiceInfo?>.Ok(services[0]);
     }
 
     /// <summary>
