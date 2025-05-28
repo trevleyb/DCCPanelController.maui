@@ -16,8 +16,6 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
-        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
-        <ToolbarItem Command="{Binding AddTurnoutCommand}" IconImageSource="plus_circle.png"/>
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
@@ -72,61 +70,60 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="dataModel:Turnout">
                         <!-- ... your ItemTemplate remains the same ... -->
-                        <SwipeView>
-                            <SwipeView.RightItems>
-                                <SwipeItems>
-
-                                    <!--  Edit SwipeItem  -->
-                                    <SwipeItemView
-                                        BackgroundColor="LightGreen"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=EditTurnoutCommand}"
-                                        CommandParameter="{Binding}">
-                                        <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image
-                                                HeightRequest="24"
-                                                Source="edit.png"
-                                                WidthRequest="24"/>
-                                            <Label
-                                                Padding="10,0,0,0"
-                                                Text="Edit"
-                                                VerticalOptions="Center"/>
-                                        </StackLayout>
-                                    </SwipeItemView>
-
-                                    <!--  Delete SwipeItem  -->
-                                    <SwipeItemView BackgroundColor="LightCoral">
-                                        <SwipeItemView.Command>
-                                            <Binding
-                                                Path="DeleteTurnoutCommand"
-                                                Source="{RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}"
-                                                x:DataType="view:TurnoutsViewModel"/>
-                                        </SwipeItemView.Command>
-                                        <SwipeItemView.CommandParameter>
-                                            <Binding/>
-                                        </SwipeItemView.CommandParameter>
-                                        <StackLayout Orientation="Horizontal" Padding="10">
-                                            <Image
-                                                HeightRequest="24"
-                                                Source="trash_2.png"
-                                                WidthRequest="24"/>
-                                            <Label
-                                                Padding="10,0,0,0"
-                                                Text="Delete"
-                                                VerticalOptions="Center"/>
-                                        </StackLayout>
-                                    </SwipeItemView>
-
-                                </SwipeItems>
-                            </SwipeView.RightItems>
-
-                            <SwipeView.Content>
+                        <!-- <SwipeView> -->
+                        <!--     <SwipeView.RightItems> -->
+                        <!--         <SwipeItems> -->
+                        <!-- -->
+                        <!--             ~1~  Edit SwipeItem  @1@ -->
+                        <!--             <SwipeItemView -->
+                        <!--                 BackgroundColor="LightGreen" -->
+                        <!--                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=EditTurnoutCommand}" -->
+                        <!--                 CommandParameter="{Binding}"> -->
+                        <!--                 <StackLayout Orientation="Horizontal" Padding="10"> -->
+                        <!--                     <Image -->
+                        <!--                         HeightRequest="24" -->
+                        <!--                         Source="edit.png" -->
+                        <!--                         WidthRequest="24"/> -->
+                        <!--                     <Label -->
+                        <!--                         Padding="10,0,0,0" -->
+                        <!--                         Text="Edit" -->
+                        <!--                         VerticalOptions="Center"/> -->
+                        <!--                 </StackLayout> -->
+                        <!--             </SwipeItemView> -->
+                        <!-- -->
+                        <!--             ~1~  Delete SwipeItem  @1@ -->
+                        <!--             <SwipeItemView BackgroundColor="LightCoral"> -->
+                        <!--                 <SwipeItemView.Command> -->
+                        <!--                     <Binding -->
+                        <!--                         Path="DeleteTurnoutCommand" -->
+                        <!--                         Source="{RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}" -->
+                        <!--                         x:DataType="view:TurnoutsViewModel"/> -->
+                        <!--                 </SwipeItemView.Command> -->
+                        <!--                 <SwipeItemView.CommandParameter> -->
+                        <!--                     <Binding/> -->
+                        <!--                 </SwipeItemView.CommandParameter> -->
+                        <!--                 <StackLayout Orientation="Horizontal" Padding="10"> -->
+                        <!--                     <Image -->
+                        <!--                         HeightRequest="24" -->
+                        <!--                         Source="trash_2.png" -->
+                        <!--                         WidthRequest="24"/> -->
+                        <!--                     <Label -->
+                        <!--                         Padding="10,0,0,0" -->
+                        <!--                         Text="Delete" -->
+                        <!--                         VerticalOptions="Center"/> -->
+                        <!--                 </StackLayout> -->
+                        <!--             </SwipeItemView> -->
+                        <!-- -->
+                        <!--         </SwipeItems> -->
+                        <!--     </SwipeView.RightItems> -->
+                            <!-- <SwipeView.Content> -->
                                 <StackLayout x:DataType="dataModel:Turnout">
                                     <Grid ColumnDefinitions="*,100,100" Padding="5">
-                                        <Grid.GestureRecognizers>
-                                            <TapGestureRecognizer
-                                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}"
-                                                CommandParameter="{Binding .}"/>
-                                        </Grid.GestureRecognizers>
+                                        <!-- <Grid.GestureRecognizers> -->
+                                        <!--     <TapGestureRecognizer -->
+                                        <!--         Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}" -->
+                                        <!--         CommandParameter="{Binding .}"/> -->
+                                        <!-- </Grid.GestureRecognizers> -->
 
                                         <Label
                                             Grid.Column="0"
@@ -157,8 +154,8 @@
                                         HeightRequest="1"
                                         HorizontalOptions="FillAndExpand"/>
                                 </StackLayout>
-                            </SwipeView.Content>
-                        </SwipeView>
+                        <!--     </SwipeView.Content> -->
+                        <!-- </SwipeView> -->
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
