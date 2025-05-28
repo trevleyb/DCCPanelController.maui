@@ -11,7 +11,8 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:interfaces="clr-namespace:DCCCommon.Interfaces;assembly=DCCCommon"
-    xmlns:dccClients="clr-namespace:DCCCommon;assembly=DCCCommon">
+    xmlns:dccClients="clr-namespace:DCCCommon;assembly=DCCCommon"
+    xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon">
 
     <ContentPage.Resources>
         <ResourceDictionary/>
@@ -216,7 +217,7 @@
                                 </CollectionView.EmptyView>
 
                                 <CollectionView.ItemTemplate>
-                                    <DataTemplate x:DataType="dccClients:IDccSettings">
+                                    <DataTemplate x:DataType="discovery:DiscoveredService">
                                         <StackLayout>
                                             <Grid ColumnDefinitions="48,*">
                                                 <Label
@@ -232,7 +233,7 @@
                                                     LineBreakMode="NoWrap"
                                                     Margin="0,5,0,5"
                                                     Style="{StaticResource MediumLabel}"
-                                                    Text="{Binding Name}"
+                                                    Text="{Binding FriendlyName}"
                                                     VerticalOptions="Center"
                                                     x:Name="SelectedServerText"/>
                                             </Grid>
@@ -288,9 +289,6 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="view:SettingsMessage">
                                 <HorizontalStackLayout>
-                                    <!-- <Label -->
-                                    <!--     Style="{StaticResource MediumLabel}" -->
-                                    <!--     Text="{Binding TimeStamp}" Margin="0,0,5,0"/> -->
                                     <Label Style="{StaticResource MediumLabel}"
                                            Text="{Binding Message}"/>
                                 </HorizontalStackLayout>

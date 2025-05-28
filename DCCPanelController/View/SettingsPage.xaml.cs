@@ -5,7 +5,6 @@ namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private readonly SettingsViewModel? _viewModel;
-    private Grid? _lastGridSelected;
 
     public SettingsPage(SettingsViewModel viewModel) {
         InitializeComponent();

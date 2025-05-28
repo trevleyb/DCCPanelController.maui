@@ -1,15 +1,13 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients;
 using DCCCommon.Events;
-using DCCClients.Interfaces;
 using DCCClients.Jmri.JMRI;
 using DCCClients.WiThrottle.WiThrottle.Client;
-using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
+using DCCCommon.Discovery;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
@@ -30,8 +28,8 @@ public partial class SettingsViewModel : ConnectionViewModel {
     public bool IsJmriServer { get; set; }
     public bool IsWiThrottle { get; set; }
 
-    [ObservableProperty] private IDccSettings? _selectedServer;
-    [ObservableProperty] private ObservableCollection<IDccSettings> _servers = [];
+    [ObservableProperty] private DiscoveredService? _selectedServer;
+    [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
     [ObservableProperty]
@@ -69,8 +67,8 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(SelectedServer) && SelectedServer is not null) {
-            Name = SelectedServer.Name;
-            IpAddress = SelectedServer.Address;
+            Name = SelectedServer.FriendlyName;
+            IpAddress = SelectedServer.Address.ToString();
             Port = SelectedServer.Port;
         }
     }
@@ -215,19 +213,11 @@ public partial class SettingsViewModel : ConnectionViewModel {
 
         try {
             IsBusy = true;
-            var result = await DCCClients.Discovery.DiscoverServices.SearchForServicesByTypeAsync(CurrentSettings?.Settings?.Type ?? "");
+            var result = await DiscoverServices.SearchForServicesByTypeAsync(CurrentSettings?.Settings?.Type ?? "");
             if (result is { IsSuccess: true, Value.Count: > 0 }) {
-                var servicesFound = result.Value;
-                foreach (var server in servicesFound) {
-                    Console.WriteLine($"Found Server: {server.HostName}");
-                    Servers.Add(new DccSettings() {
-                        Name = server.FriendlyName,
-                        Address = server?.Addresses?.FirstOrDefault()?.ToString() ?? "0.0.0.0",
-                        Port = server?.Port ?? 12080,
-                        Type = CurrentSettings?.Settings?.Type ?? "unknown"
-                    });
-                    AddMessage($"Found {Servers.Count} Servers");
-                }
+                var servicesFound = result.Value.ToObservableCollection();
+                Servers = new ObservableCollection<DiscoveredService>(servicesFound);
+                AddMessage($"Found {Servers.Count} Servers");
             } else {
                 AddMessage($"{result.Message}");
             }
