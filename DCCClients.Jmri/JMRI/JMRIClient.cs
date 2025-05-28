@@ -2,10 +2,10 @@ using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using DCCCommon.Common;
 using DCCClients.Jmri.JMRI.Commands;
 using DCCClients.Jmri.JMRI.EventArgs;
-using DCCCommon;
+using DCCCommon.Client;
+using DCCCommon.Common;
 
 namespace DCCClients.Jmri.JMRI;
 

@@ -1,7 +1,7 @@
-using DCCCommon.Common;
-using DCCCommon.Events;
 using DCCClients.Jmri;
 using DCCClients.Jmri.JMRI;
+using DCCCommon.Common;
+using DCCCommon.Events;
 
 namespace DCCClients.Test;
 

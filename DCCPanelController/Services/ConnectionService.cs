@@ -1,9 +1,9 @@
 using DCCClients;
-using DCCCommon.Common;
-using DCCCommon.Events;
 using DCCClients.Jmri;
 using DCCClients.WiThrottle;
-using DCCCommon;
+using DCCCommon.Client;
+using DCCCommon.Common;
+using DCCCommon.Events;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;

@@ -6,41 +6,40 @@ namespace DCCClients.Jmri.JMRI.DataBlocks; // Root structure that contains the t
 public class JmriOccupancyData
 {
     [JsonPropertyName("type")]
-    public string Type { get; set; }
-    
+    public required string Type { get; set; }
+
     [JsonPropertyName("data")]
-    public JmriOccupancy Data { get; set; }
+    public required JmriOccupancy Data { get; set; } 
 }
 
 // The actual block with all its properties
-public class JmriOccupancy
-{
+public class JmriOccupancy {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     
     [JsonPropertyName("userName")]
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     
     [JsonPropertyName("comment")]
-    public string Comment { get; set; }
-    
+    public string Comment { get; set; } = string.Empty;
+
     [JsonPropertyName("properties")]
-    public List<object> Properties { get; set; }
+    public List<object> Properties { get; set; } = [];
     
     [JsonPropertyName("state")]
     public int State { get; set; }
     
     [JsonPropertyName("value")]
-    public object Value { get; set; }
+    public object? Value { get; set; } 
     
     [JsonPropertyName("sensor")]
-    public object Sensor { get; set; }
+    public object? Sensor { get; set; }
     
     [JsonPropertyName("reporter")]
-    public object Reporter { get; set; }
+    public object? Reporter { get; set; }
     
     [JsonPropertyName("speed")]
-    public string Speed { get; set; }
+    public string Speed { get; set; } = string.Empty;
     
     [JsonPropertyName("curvature")]
     public int Curvature { get; set; }
@@ -56,7 +55,7 @@ public class JmriOccupancy
     
     [JsonPropertyName("speedLimit")]
     public double SpeedLimit { get; set; }
-    
+
     [JsonPropertyName("denied")]
-    public List<object> Denied { get; set; }
+    public List<object> Denied { get; set; } = [];
 }

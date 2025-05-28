@@ -1,4 +1,4 @@
-using DCCCommon;
+using DCCCommon.Client;
 
 namespace DCCClients.WiThrottle.WiThrottle.Client;
 

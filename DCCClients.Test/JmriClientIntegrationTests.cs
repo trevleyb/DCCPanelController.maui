@@ -1,8 +1,7 @@
-using DCCCommon.Common;
-using DCCCommon.Events;
 using DCCClients.Jmri;
 using DCCClients.Jmri.JMRI;
 using DCCClients.WiThrottle.WiThrottle.Client;
+using DCCCommon.Events;
 
 namespace DCCClients.Test;
 

@@ -10,8 +10,6 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:interfaces="clr-namespace:DCCCommon.Interfaces;assembly=DCCCommon"
-    xmlns:dccClients="clr-namespace:DCCCommon;assembly=DCCCommon"
     xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon">
 
     <ContentPage.Resources>

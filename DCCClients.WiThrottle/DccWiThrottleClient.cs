@@ -2,7 +2,7 @@ using DCCClients.WiThrottle.WiThrottle.Client;
 using DCCClients.WiThrottle.WiThrottle.Client.Commands;
 using DCCClients.WiThrottle.WiThrottle.Client.Events;
 using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
-using DCCCommon;
+using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
 

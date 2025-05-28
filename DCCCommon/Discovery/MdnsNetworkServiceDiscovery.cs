@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using DCCCommon.Common;
 using Makaretu.Dns;

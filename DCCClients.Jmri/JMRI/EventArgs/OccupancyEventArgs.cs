@@ -5,9 +5,9 @@ namespace DCCClients.Jmri.JMRI.EventArgs;
 
 public class OccupancyEventArgs : System.EventArgs {
     public string Identifier { get; set; }
-    public bool IsOccupied { get; set; }
     public string State { get; set; }
     public string TrainId { get; set; }
+    public bool IsOccupied { get; set; }
     public string? Metadata { get; set; }
     
     public OccupancyEventArgs(string trainId, string identifier, bool isOccupied, string? metadata) {

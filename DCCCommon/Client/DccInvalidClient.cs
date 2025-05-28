@@ -1,7 +1,6 @@
-using DCCCommon;
 using DCCCommon.Common;
 
-namespace DCCClients;
+namespace DCCCommon.Client;
 
 public class DccInvalidClient : DccClient, IDccClient {
     private IDccSettings? _settings;

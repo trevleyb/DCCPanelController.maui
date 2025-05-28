@@ -6,29 +6,29 @@ namespace DCCClients.Jmri.JMRI.DataBlocks; // Root structure that contains the t
 public class JmriSignalMastData
 {
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public required string Type { get; set; }
     
     [JsonPropertyName("data")]
-    public JmriSignalMast Data { get; set; }
+    public required JmriSignalMast Data { get; set; }
 }
 
 // The signal mast with its properties
 public class JmriSignalMast
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     
     [JsonPropertyName("userName")]
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     
     [JsonPropertyName("comment")]
-    public string Comment { get; set; }
+    public string Comment { get; set; } = string.Empty;
     
     [JsonPropertyName("properties")]
-    public List<object> Properties { get; set; }
+    public List<object>? Properties { get; set; }
     
     [JsonPropertyName("aspect")]
-    public string Aspect { get; set; }
+    public string Aspect { get; set; } = string.Empty;
     
     [JsonPropertyName("lit")]
     public bool Lit { get; set; }
@@ -37,5 +37,5 @@ public class JmriSignalMast
     public bool Held { get; set; }
     
     [JsonPropertyName("state")]
-    public string State { get; set; }
+    public string State { get; set; } = string.Empty;
 }

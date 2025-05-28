@@ -6,26 +6,26 @@ namespace DCCClients.Jmri.JMRI.DataBlocks; // Root structure that contains the t
 public class JmriRouteData
 {
     [JsonPropertyName("type")]
-    public string Type { get; set; }
+    public required string Type { get; set; }
     
     [JsonPropertyName("data")]
-    public JmriRoute Data { get; set; }
+    public required JmriRoute Data { get; set; }
 }
 
 // The route with its properties
 public class JmriRoute
 {
     [JsonPropertyName("name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     
     [JsonPropertyName("userName")]
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     
     [JsonPropertyName("comment")]
-    public string Comment { get; set; }
+    public string Comment { get; set; } = string.Empty;
     
     [JsonPropertyName("properties")]
-    public List<object> Properties { get; set; }
+    public List<object>? Properties { get; set; }
     
     [JsonPropertyName("state")]
     public int State { get; set; }

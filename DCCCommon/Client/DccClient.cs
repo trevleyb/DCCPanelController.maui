@@ -1,7 +1,6 @@
-using DCCCommon.Common;
 using DCCCommon.Events;
 
-namespace DCCCommon;
+namespace DCCCommon.Client;
 
 public abstract class DccClient {
     

@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using DCCClients;
 using DCCClients.Jmri.JMRI;
 using DCCClients.WiThrottle.WiThrottle.Client;
-using DCCCommon;
+using DCCCommon.Client;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 

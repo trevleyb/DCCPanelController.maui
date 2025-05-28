@@ -1,4 +1,3 @@
-using System.Net;
 using DCCCommon.Common;
 
 namespace DCCCommon.Discovery {

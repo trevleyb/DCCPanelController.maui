@@ -1,7 +1,7 @@
-using DCCCommon.Common;
-using DCCCommon.Events;
 using DCCClients.WiThrottle;
 using DCCClients.WiThrottle.WiThrottle.Client;
+using DCCCommon.Common;
+using DCCCommon.Events;
 
 namespace DCCClients.Test;
 
