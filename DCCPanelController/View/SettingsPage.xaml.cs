@@ -10,14 +10,8 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         InitializeComponent();
         _viewModel = viewModel;
         if (_viewModel?.CurrentSettings?.Settings is { } current) {
-            if (current.Type == "jmri") {
-                JmriServerButton.IsChecked = true;
-                WiThrottleServerButton.IsChecked = false;
-            }
-            if (current.Type == "withrottle") {
-                JmriServerButton.IsChecked = false;
-                WiThrottleServerButton.IsChecked = true;
-            }
+            _viewModel.IsJmriServer = current.Type == "jmri";
+            _viewModel.IsWiThrottle = current.Type == "withrottle";
         }
         Task.Run(() => _viewModel!.RefreshServersAsync());
         BindingContext = _viewModel;
@@ -111,16 +105,16 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         return await reader.ReadToEndAsync();
     }
 
-    private async void JmriServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel is { } vm) {
-            vm.SetNewConnectionMethod("jmri");
-            await vm.RefreshServersAsync();
-        }
+    private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
+        if (sender is RadioButton { Value: string { } value }) SetServerSelected(value);
+    }
+    private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
+        if (sender is RadioButton { Value: string { } value }) SetServerSelected(value);
     }
 
-    private async void WiThrottleServerButton_OnCheckedChanged(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel is { } vm) {
-            vm.SetNewConnectionMethod("withrottle");
+    private async void SetServerSelected(string serverType) {
+        if (_viewModel is { } vm && vm.IsNotBusy && !string.IsNullOrEmpty(serverType)) {
+            vm.SetNewConnectionMethod(serverType);
             await vm.RefreshServersAsync();
         }
     }
@@ -170,4 +164,5 @@ public class EntryValidationBehavior : Behavior<Entry> {
             }
         }
     }
+
 }

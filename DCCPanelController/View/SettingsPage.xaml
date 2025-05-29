@@ -29,13 +29,19 @@
             TextColor="{StaticResource Primary}"/>
 
         <HorizontalStackLayout Margin="20,20,0,0">
-            <RadioButton GroupName="ServerType" Content="JMRI Server" IsChecked="{Binding IsJmriServer}"
-                         CheckedChanged="JmriServerButton_OnCheckedChanged" x:Name="JmriServerButton"/>
-            <RadioButton GroupName="ServerType" Content="WiThrottle Server" IsChecked="{Binding IsWiThrottle}"
-                         CheckedChanged="WiThrottleServerButton_OnCheckedChanged" x:Name="WiThrottleServerButton"/>
+            <RadioButton Value="jmri"  
+                         GroupName="ServerType" 
+                         Content="JMRI Server" 
+                         IsChecked="{Binding IsJmriServer}"
+                         CheckedChanged="CheckChanged_Jmri"/>
+            <RadioButton Value="withrottle" 
+                         GroupName="ServerType" 
+                         Content="WiThrottle Server" 
+                         IsChecked="{Binding IsWiThrottle}" 
+                         CheckedChanged="CheckChanged_WiThrottle"/>
         </HorizontalStackLayout>
 
-        <VerticalStackLayout Margin="20,0,0,0">
+        <VerticalStackLayout Margin="20,0,0,0" IsEnabled="{Binding IsNotBusy}">
             <VerticalStackLayout Margin="10,0,10,0">
                 <Label Style="{StaticResource SmallLabel}" HorizontalOptions="Start" VerticalOptions="Start"
                        Text="Client Identifier (unique name for this Device)"/>

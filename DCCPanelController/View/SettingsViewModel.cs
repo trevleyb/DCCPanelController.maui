@@ -38,25 +38,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
         PropertyChanged += OnPropertyChanged;
         Name = Profile.ActiveConnectionInfo?.Name ?? "default";
-        if (Profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
-            Name = jmriSettings.Name;
-            IpAddress = jmriSettings.Address;
-            Port = jmriSettings.Port;
-            Protocol = jmriSettings.Protocol;
-            Url = jmriSettings.Url;
-            IsWiThrottle = false;
-            IsJmriServer = true;
-        }
-
-        if (Profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
-            Name = wiThrottleSettings.Name;
-            IpAddress = wiThrottleSettings.Address;
-            Port = wiThrottleSettings.Port;
-            Protocol = wiThrottleSettings.Protocol;
-            Url = wiThrottleSettings.Url;
-            IsWiThrottle = true;
-            IsJmriServer = false;
-        }
+        LoadConnectionDetailsFromActiveProfile();
     }
 
     public Settings Settings => Profile.Settings;
@@ -96,15 +78,25 @@ public partial class SettingsViewModel : ConnectionViewModel {
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(SelectedServer) && SelectedServer is not null) {
-            Name = SelectedServer.FriendlyName;
-            IpAddress = SelectedServer.Address.ToString();
-            Port = SelectedServer.Port;
+        Console.WriteLine($"Property Changed: {e.PropertyName}");
+        switch (e.PropertyName) {
+        case nameof(SelectedServer):
+            if (SelectedServer is not null) {
+                IpAddress = SelectedServer.Address.ToString();
+                Port = SelectedServer.Port;
+            }
+            break;
+        case nameof(IpAddress):
+            SetSelectedServer();
+            break;
+        case nameof(Port):
+            SetSelectedServer();
+            break;
         }
     }
 
     public void SaveSettings() {
-        SaveConnectionDetails();
+        SaveConnectionDetailsToActiveProfile();
         Profile.SaveAsync();
     }
 
@@ -117,24 +109,37 @@ public partial class SettingsViewModel : ConnectionViewModel {
     }
 
     public void SetNewConnectionMethod(string type) {
-        switch (type) {
-        case "jmri":
-            IsWiThrottle = false;
-            IsJmriServer = true;
-            Profile.ActiveConnectionInfo.Settings = new JmriSettings();
-            SaveConnectionDetails();
-            break;
-
-        case "withrottle":
-            IsWiThrottle = true;
-            IsJmriServer = false;
-            Profile.ActiveConnectionInfo.Settings = new WithrottleSettings();
-            SaveConnectionDetails();
-            break;
-        }
+        Profile.ActiveConnectionInfo.Settings = type switch {
+            "jmri"       => new JmriSettings(),
+            "withrottle" => new WithrottleSettings(),
+            _ => throw new ApplicationException("Invalid Connection Type")
+        };
+        SaveConnectionDetailsToActiveProfile();
     }
 
-    public void SaveConnectionDetails() {
+    private void LoadConnectionDetailsFromActiveProfile() {
+        if (Profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
+            Name = jmriSettings.Name;
+            IpAddress = jmriSettings.Address;
+            Port = jmriSettings.Port;
+            Protocol = jmriSettings.Protocol;
+            Url = jmriSettings.Url;
+            IsWiThrottle = false;
+            IsJmriServer = true;
+        }
+
+        if (Profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
+            Name = wiThrottleSettings.Name;
+            IpAddress = wiThrottleSettings.Address;
+            Port = wiThrottleSettings.Port;
+            Protocol = wiThrottleSettings.Protocol;
+            Url = wiThrottleSettings.Url;
+            IsWiThrottle = true;
+            IsJmriServer = false;
+        }
+    }
+    
+    public void SaveConnectionDetailsToActiveProfile() {
         if (Profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
             jmriSettings.Name = Name;
             jmriSettings.Address = IpAddress;
@@ -149,8 +154,19 @@ public partial class SettingsViewModel : ConnectionViewModel {
             wiThrottleSettings.Protocol = Protocol;
             wiThrottleSettings.Url = GenerateUrl();
         }
+        SetSelectedServer();
     }
 
+    private void SetSelectedServer() {
+        SelectedServer = null;
+        foreach (var server in Servers) {
+            if (server.Address.ToString().Equals(IpAddress) && server.Port.Equals(Port)) {
+                SelectedServer = server;
+                break;
+            }
+        }
+    }
+    
     private string GenerateUrl() {
         return string.IsNullOrEmpty(Url) || Url.Contains("0.0.0.0") ? $"{Protocol}://{IpAddress}:{Port}" : Url;
     }
@@ -212,9 +228,8 @@ public partial class SettingsViewModel : ConnectionViewModel {
         if (IsBusy) return;
         Messages.Clear();
         AddMessage("Attempting to scan for Available Servers");
-        Servers.Clear();
-        OnPropertyChanged(nameof(Servers));
-
+        SelectedServer = null;
+        
         try {
             IsBusy = true;
             var result = await DiscoverServices.SearchForServicesByTypeAsync(CurrentSettings?.Settings?.Type ?? "");
@@ -230,6 +245,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
         } finally {
             IsBusy = false;
             IsRefreshing = false;
+            SetSelectedServer();
         }
     }
 
@@ -263,7 +279,6 @@ public partial class SettingsViewModel : ConnectionViewModel {
                 OnPropertyChanged(propertyName);
                 OnPropertyChanged(nameof(IpAddress));
             }
-
             return IpAddress ?? "0.0.0.0";
         }
         return "0";
