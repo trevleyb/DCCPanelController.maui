@@ -44,6 +44,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task RefreshTurnoutsAsync() {
         try {
             IsBusy = true;
+            Profile.Turnouts.Clear();
             await ConnectionService.ForceRefresh();
         } catch (Exception ex){
             Console.WriteLine($"Unable to force refresh the turnouts: {ex.Message}");
