@@ -144,85 +144,25 @@
         <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.70" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
-        <PackageReference Include="SkiaSharp" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp" Version="3.116.1" />
+        <PackageReference Include="SkiaSharp.Views" Version="3.116.1" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.116.1" />
         <PackageReference Include="Svg.Skia" Version="3.0.3" />
-        <PackageReference Include="FreakyControls" Version="0.5.7" />
     </ItemGroup>
 
-    <!--
-<ItemGroup>
-<None Remove="Resources\TrackPieces\Sample.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Sample.svg" />
-<None Remove="Resources\TrackPieces\Track_Angle.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Angle.svg" />
-<None Remove="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Arrow.svg" />
-<None Remove="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Continuation_Lines.svg" />
-<None Remove="Resources\TrackPieces\Track_Angle_Cross.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Cross.svg" />
-<None Remove="Resources\TrackPieces\Track_Angle_Terminator.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Angle_Terminator.svg" />
-<None Remove="Resources\TrackPieces\Track_Button.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Button.svg" />
-<None Remove="Resources\TrackPieces\Track_Button_Corner.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Button_Corner.svg" />
-<None Remove="Resources\TrackPieces\Track_Compass.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Compass.svg" />
-<None Remove="Resources\TrackPieces\Track_Corner_Left.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left.svg" />
-<None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Arrow.svg" />
-<None Remove="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Left_Continuation_Lines.svg" />
-<None Remove="Resources\TrackPieces\Track_Corner_Right.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right.svg" />
-<None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Arrow.svg" />
-<None Remove="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Corner_Right_Continuation_Lines.svg" />
-<None Remove="Resources\TrackPieces\Track_Image.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Image.svg" />
-<None Remove="Resources\TrackPieces\Track_Label.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Label.svg" />
-<None Remove="Resources\TrackPieces\Track_Points.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Points.svg" />
-<None Remove="Resources\TrackPieces\Track_Straight.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Straight.svg" />
-<None Remove="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Arrow.svg" />
-<None Remove="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Continuation_Lines.svg" />
-<None Remove="Resources\TrackPieces\Track_Straight_Cross.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Cross.svg" />
-<None Remove="Resources\TrackPieces\Track_Straight_Terminator.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Straight_Terminator.svg" />
-<None Remove="Resources\TrackPieces\Track_Threeway.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Threeway.svg" />
-<None Remove="Resources\TrackPieces\Track_Threeway_Left.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Left.svg" />
-<None Remove="Resources\TrackPieces\Track_Threeway_Right.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Right.svg" />
-<None Remove="Resources\TrackPieces\Track_Threeway_Straight.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Threeway_Straight.svg" />
-<None Remove="Resources\TrackPieces\Track_Turnout_Left.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left.svg" />
-<None Remove="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Diverging.svg" />
-<None Remove="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Left_Straight.svg" />
-<None Remove="Resources\TrackPieces\Track_Turnout_Right.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right.svg" />
-<None Remove="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Diverging.svg" />
-<None Remove="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Turnout_Right_Straight.svg" />
-<None Remove="Resources\TrackPieces\Track_Unknown.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Unknown.svg" />
-<None Remove="Resources\TrackPieces\Track_Text.svg" />
-<EmbeddedResource Include="Resources\TrackPieces\Track_Text.svg" />
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
+        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.116.1" />
     </ItemGroup>
--->
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
+        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.116.1" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.116.1" />
+    </ItemGroup>
+
 
     <ItemGroup>
         <MauiXaml Update="View\Components\ColorPickerButton.xaml">
@@ -393,5 +333,5 @@
         <ProjectReference Include="..\DCCClients.WiThrottle\DCCClients.WiThrottle.csproj" />
         <ProjectReference Include="..\DCCCommon\DCCCommon.csproj" />
     </ItemGroup>
-
+    
 </Project>

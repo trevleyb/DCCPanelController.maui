@@ -217,7 +217,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
             if (result is { IsSuccess: true, Value.Count: > 0 }) {
                 var servicesFound = result.Value.ToObservableCollection();
                 Servers = new ObservableCollection<DiscoveredService>(servicesFound);
-                AddMessage($"Found {Servers.Count} Servers");
+                AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "S" : "")}");
             } else {
                 AddMessage($"{result.Message}");
             }
