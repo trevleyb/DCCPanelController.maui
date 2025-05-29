@@ -8,16 +8,6 @@ namespace DCCClients.Test;
 [TestFixture]
 [Category("Integration")]
 public class JmriClientContinuousTest {
-    private DccJmriClient _client = null!;
-    private JmriSettings _settings = null!;
-
-    // Event tracking variables
-    private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
-    private List<DccRouteArgs> _receivedRouteEvents = new();
-    private List<DccOccupancyArgs> _receivedOccupancyEvents = new();
-    private List<DccSignalArgs> _receivedSignalEvents = new();
-    private List<DccMessageArgs> _receivedMessages = new();
-
     [OneTimeSetUp]
     public void OneTimeSetUp() {
         var jmriUrl = Environment.GetEnvironmentVariable("JMRI_SERVER_URL");
@@ -52,6 +42,16 @@ public class JmriClientContinuousTest {
     public void TearDown() {
         _client.DisconnectAsync();
     }
+
+    private DccJmriClient _client = null!;
+    private JmriSettings _settings = null!;
+
+    // Event tracking variables
+    private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
+    private List<DccRouteArgs> _receivedRouteEvents = new();
+    private List<DccOccupancyArgs> _receivedOccupancyEvents = new();
+    private List<DccSignalArgs> _receivedSignalEvents = new();
+    private List<DccMessageArgs> _receivedMessages = new();
 
     [Test]
     public async Task ConnectAsync_ShouldConnectToJmriServer() {
@@ -96,7 +96,7 @@ public class JmriClientContinuousTest {
         await Task.Delay(2000);
 
         // Get a turnout ID from received events if available
-        string turnoutId = "LT1"; // Default fallback
+        var turnoutId = "LT1"; // Default fallback
         if (_receivedTurnoutEvents.Count > 0) {
             turnoutId = _receivedTurnoutEvents[0].TurnoutId;
         }
@@ -125,7 +125,7 @@ public class JmriClientContinuousTest {
         await Task.Delay(2000);
 
         // Get a route ID from received events if available
-        string routeId = "IR1"; // Default fallback
+        var routeId = "IR1"; // Default fallback
         if (_receivedRouteEvents.Count > 0) {
             routeId = _receivedRouteEvents[0].RouteId;
         }
@@ -154,7 +154,7 @@ public class JmriClientContinuousTest {
         await Task.Delay(2000);
 
         // Get a signal ID from received events if available
-        string signalId = "IH1"; // Default fallback
+        var signalId = "IH1"; // Default fallback
         if (_receivedSignalEvents.Count > 0) {
             signalId = _receivedSignalEvents[0].SignalId;
         }

@@ -10,11 +10,16 @@
              x:Class="DCCPanelController.View.PanelEditor">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Mode"        x:Name="ModeToolbar"        IconImageSource="move.png" Command="{Binding Path=SwitchModeCommand}"/>
-        <ToolbarItem Text="Rotate"      x:Name="RotateToolbar"      IsEnabled="{Binding HasSelectedEntities}" IconImageSource="rotate_cw.png" Command="{Binding Path=RotateTileCommand}"/>
-        <ToolbarItem Text="Delete"      x:Name="DeleteToolbar"      IsEnabled="{Binding HasSelectedEntities}" IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
-        <ToolbarItem Text="Edit"        x:Name="EditToolbar"        IconImageSource="edit.png" Command="{Binding Path=EditPropertiesCommand}"/>
-        <ToolbarItem Text="Grid"        x:Name="GridToolbar"        IconImageSource="grid_off.png" Command="{Binding Path=ToggleGridCommand}"/>
+        <ToolbarItem Text="Mode" x:Name="ModeToolbar" IconImageSource="move.png"
+                     Command="{Binding Path=SwitchModeCommand}"/>
+        <ToolbarItem Text="Rotate" x:Name="RotateToolbar" IsEnabled="{Binding HasSelectedEntities}"
+                     IconImageSource="rotate_cw.png" Command="{Binding Path=RotateTileCommand}"/>
+        <ToolbarItem Text="Delete" x:Name="DeleteToolbar" IsEnabled="{Binding HasSelectedEntities}"
+                     IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
+        <ToolbarItem Text="Edit" x:Name="EditToolbar" IconImageSource="edit.png"
+                     Command="{Binding Path=EditPropertiesCommand}"/>
+        <ToolbarItem Text="Grid" x:Name="GridToolbar" IconImageSource="grid_off.png"
+                     Command="{Binding Path=ToggleGridCommand}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -24,7 +29,7 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-        <Border
+            <Border
                 BackgroundColor="WhiteSmoke"
                 Grid.Column="0"
                 Stroke="#FFF5F5F5"
@@ -60,6 +65,6 @@
                 </Border>
             </Grid>
         </Grid>
-        
+
     </ContentPage.Content>
 </ContentPage>

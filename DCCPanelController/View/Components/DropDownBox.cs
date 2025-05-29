@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Diagnostics;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;

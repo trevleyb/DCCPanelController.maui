@@ -1,9 +1,7 @@
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCClients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -46,7 +44,6 @@ public partial class ControlPanelView {
         BindingContext = this;
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
-        
     }
 
     public int Rows => Panel?.Rows ?? 1;
@@ -61,6 +58,7 @@ public partial class ControlPanelView {
         };
 
     public event EventHandler<TileSelectedEventArgs>? TileSelected;
+
     private void OnTileSelected(int tapCount) {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
@@ -88,11 +86,10 @@ public partial class ControlPanelView {
         DrawPanel(true);
     }
 
-    private void DrawPanel(bool forceRefresh = false, 
-                           [CallerMemberName]  string memberName = "",
-                           [CallerFilePath]    string sourceFilePath = "",
-                           [CallerLineNumber]  int sourceLineNumber = 0) {
-
+    private void DrawPanel(bool forceRefresh = false,
+                           [CallerMemberName] string memberName = "",
+                           [CallerFilePath] string sourceFilePath = "",
+                           [CallerLineNumber] int sourceLineNumber = 0) {
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -100,13 +97,13 @@ public partial class ControlPanelView {
         //Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
         //Console.WriteLine($"**DrawPanel: Panel={(Panel is null ? "Null" : "Set")} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
         //Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
-        
+
         if (Panel is null) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
         ClearAllSelectedTiles();
-        
+
         using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}")) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
@@ -187,6 +184,7 @@ public partial class ControlPanelView {
 
     private static void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
+
         // TODO: Maybe this code draws the current path???
     }
 
@@ -221,12 +219,12 @@ public partial class ControlPanelView {
                         OnTileSelected(_tapCount);
                     }
                 }
-            } else {
-                // if (sender is ITileInteractive interactiveTile) {
-                //     if (_tapCount == 1) interactiveTile.Interact(Client);
-                //     if (_tapCount == 2) interactiveTile.Secondary(Client);
-                // }
             }
+
+            // if (sender is ITileInteractive interactiveTile) {
+            //     if (_tapCount == 1) interactiveTile.Interact(Client);
+            //     if (_tapCount == 2) interactiveTile.Secondary(Client);
+            // }
             _tapCount = 0;
         } catch (Exception ex) {
             Console.WriteLine($"Tap Tile failed due to: {ex.Message}");
@@ -330,6 +328,13 @@ public partial class ControlPanelView {
         }
         Console.WriteLine($"Could not determine the Grid Position from the point provided: {point.ToString()}");
         return null;
+    }
+
+    public async Task<string> GetThumbnailAsync() {
+        DesignMode = false;
+        ShowGrid = false;
+        DrawPanel(true);
+        return await this.RenderSchematicToBase64ImageAsync();
     }
 
     #region Draw Grid when in Design Mode
@@ -679,13 +684,6 @@ public partial class ControlPanelView {
         return tilesInGrid.Any();
     }
     #endregion
-
-    public async Task<string> GetThumbnailAsync() {
-        DesignMode = false;
-        ShowGrid = false;
-        DrawPanel(true);
-        return await this.RenderSchematicToBase64ImageAsync();
-    }
 }
 
 public class TileSelectedEventArgs(HashSet<ITile> tiles, int tapCount) : EventArgs {

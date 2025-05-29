@@ -1,4 +1,3 @@
-using DCCClients;
 using DCCClients.Jmri;
 using DCCClients.WiThrottle;
 using DCCCommon.Client;
@@ -12,9 +11,9 @@ using Route = DCCPanelController.Models.DataModel.Route;
 namespace DCCPanelController.Services;
 
 public class ConnectionService : IDccClientCommands {
-    
-    private readonly Profile _profile;
     private readonly ConnectionInfo? _connectionInfo;
+
+    private readonly Profile _profile;
     private IDccClient? _client;
 
     public ConnectionService(Profile profile) {
@@ -22,12 +21,29 @@ public class ConnectionService : IDccClientCommands {
         _connectionInfo = profile.ActiveConnectionInfo;
     }
 
+    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
+
+    public bool IsConnected => _client is { IsConnected: true };
+
+    public async Task<IResult> SendCmdAsync(string message) {
+        return await _client?.SendCmdAsync(message)!;
+    }
+
+    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
+        return await _client?.SendTurnoutCmdAsync(dccAddress, thrown)!;
+    }
+
+    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
+        return await _client?.SendRouteCmdAsync(dccAddress, active)!;
+    }
+
+    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
+        return await _client?.SendSignalCmdAsync(dccAddress, aspect)!;
+    }
+
     public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
 
-    public bool IsConnected => (_client is { IsConnected: true }); 
-    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
-    
     public async Task<IResult> ToggleConnectionAsync() {
         if (IsConnected) {
             await DisconnectAsync();
@@ -35,7 +51,7 @@ public class ConnectionService : IDccClientCommands {
         }
         return await ConnectAsync(_connectionInfo);
     }
-    
+
     public async Task DisconnectAsync() {
         Console.WriteLine("Disconnecting");
         if (_client is not null) {
@@ -59,7 +75,7 @@ public class ConnectionService : IDccClientCommands {
             Console.WriteLine($"Connection Failed: {ex.Message}");
             OnConnectionChanged();
             return Result.Fail("Unable to connect to the server.", ex);
-        }     
+        }
     }
 
     private async Task<IResult> ConnectHelper(ConnectionInfo? connection = null) {
@@ -67,24 +83,24 @@ public class ConnectionService : IDccClientCommands {
         // This will then return the active connection.
         // --------------------------------------------------------------------------
         if (_client is { IsConnected: true }) return Result.Ok();
-        if (connection is {Settings : null }) return Result.Fail("No Connection Details provided.");
+        if (connection is { Settings: null }) return Result.Fail("No Connection Details provided.");
         ArgumentNullException.ThrowIfNull(connection);
-        
+
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
         _client = CreateClient(connection.Settings);
         if (_client is null) return Result.Fail("Unable to create a Client instance.");
-        
+
         var result = await _client.ConnectAsync();
         if (result.IsFailure) return Result.Fail("Unable to connect to the specified server.");
-        
-        _client.ConnectionStateChanged  += OnConnectionChanged;
-        _client.MessageReceived         += ClientOnMessageReceived;
-        _client.OccupancyMsgReceived    += DccClientOnOccupancyMsgReceived;
-        _client.TurnoutMsgReceived      += DccClientOnTurnoutMsgReceived;
-        _client.RouteMsgReceived        += DccClientOnRouteMsgReceived;
-        _client.SignalMsgReceived       += DccClientOnSignalMsgReceived;
-        
+
+        _client.ConnectionStateChanged += OnConnectionChanged;
+        _client.MessageReceived += ClientOnMessageReceived;
+        _client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
+        _client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
+        _client.RouteMsgReceived += DccClientOnRouteMsgReceived;
+        _client.SignalMsgReceived += DccClientOnSignalMsgReceived;
+
         return Result.Ok("Connected to the Server.");
     }
 
@@ -92,19 +108,19 @@ public class ConnectionService : IDccClientCommands {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { Status = isConnected });
     }
-    
+
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
-        ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message});
+        ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message });
     }
 
-    private static IDccClient?CreateClient(IDccSettings settings) {
+    private static IDccClient? CreateClient(IDccSettings settings) {
         return settings.Type.ToLowerInvariant() switch {
             "withrottle" => new DccWiThrottleClient(settings),
             "jmri"       => new DccJmriClient(settings),
             _            => null
         };
     }
-    
+
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
         Route? route = null;
         route ??= _profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
@@ -147,7 +163,7 @@ public class ConnectionService : IDccClientCommands {
             Console.WriteLine($"Turnout Added {turnout.Name} is now {turnout.State}");
         }
     }
-    
+
     private void DccClientOnOccupancyMsgReceived(object? sender, DccOccupancyArgs e) {
         Block? block = null;
         block ??= _profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
@@ -165,7 +181,7 @@ public class ConnectionService : IDccClientCommands {
             Console.WriteLine($"Block Added {block.Name} is now {(block.IsOccupied ? "OCCUPIED" : "FREE")}");
         }
     }
-    
+
     private void DccClientOnSignalMsgReceived(object? sender, DccSignalArgs e) {
         Signal? signal = null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
@@ -186,11 +202,9 @@ public class ConnectionService : IDccClientCommands {
         }
     }
 
-    public async Task<IResult> SendCmdAsync(string message) => await _client?.SendCmdAsync(message)!;
-    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) => await _client?.SendTurnoutCmdAsync(dccAddress, thrown)!;
-    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) => await _client?.SendRouteCmdAsync(dccAddress, active)!;
-    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) => await _client?.SendSignalCmdAsync(dccAddress, aspect)!;
-    public async Task<IResult> ForceRefresh(string? type = "all") => await _client?.ForceRefreshAsync(type)!;
+    public async Task<IResult> ForceRefresh(string? type = "all") {
+        return await _client?.ForceRefreshAsync(type)!;
+    }
 }
 
 public class ConnectionChangedEvent : EventArgs {

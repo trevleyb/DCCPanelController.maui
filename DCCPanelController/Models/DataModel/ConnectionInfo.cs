@@ -1,5 +1,4 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCClients;
 using DCCCommon.Client;
 
 namespace DCCPanelController.Models.DataModel;

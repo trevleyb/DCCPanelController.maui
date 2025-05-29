@@ -95,18 +95,16 @@ public class Result<T> : IResult<T> {
 
 // Non-generic Result for cases where no data needs to be returned
 public class Result : IResult {
-    private readonly IReadOnlyCollection<IError> _errors;
-    
-    private Result(bool isSuccess, string? message, IEnumerable<IError>? errors) { 
+    private Result(bool isSuccess, string? message, IEnumerable<IError>? errors) {
         IsSuccess = isSuccess;
         Message = message;
-        _errors = new ReadOnlyCollection<IError>(errors?.ToList() ?? []);
+        Errors = new ReadOnlyCollection<IError>(errors?.ToList() ?? []);
     }
 
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
     public string? Message { get; }
-    public IReadOnlyCollection<IError> Errors => _errors;
+    public IReadOnlyCollection<IError> Errors { get; }
 
     // Static methods for success and failure
     public static IResult Ok(string? message = null) {
@@ -140,7 +138,7 @@ public class Result : IResult {
     public static IResult Fail(string message, Exception exception) {
         return new Result(false, null, [new Error(message, exception)]);
     }
-    
+
     public override string ToString() {
         if (IsSuccess) {
             return Message != null ? $"Success: {Message}" : "Success";

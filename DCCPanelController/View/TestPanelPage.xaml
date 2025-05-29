@@ -24,39 +24,39 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        
+
         <StackLayout>
             <Button Text="Test Properties Automatic" Clicked="Auto_Button_OnClicked"/>
             <Button Text="Test Properties Page" Clicked="Prop_Button_OnClicked"/>
             <Button Text="Test Properties Popup" Clicked="Popup_Button_OnClicked"/>
-        
-        
-        <RefreshView IsRefreshing="{Binding IsRefreshing}">
-            <Grid
-                BackgroundColor="White"
-                ColumnDefinitions="*,auto"
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
 
+
+            <RefreshView IsRefreshing="{Binding IsRefreshing}">
                 <Grid
                     BackgroundColor="White"
-                    Grid.Column="0"
+                    ColumnDefinitions="*,auto"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
-                    <view:ControlPanelView
-                        BackgroundColor="Transparent"
-                        DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=DesignMode}"
-                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=EditMode}"
+
+                    <Grid
+                        BackgroundColor="White"
+                        Grid.Column="0"
                         HorizontalOptions="Fill"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=Panel}"
-                        VerticalOptions="Fill"
-                        x:Name="PanelView"/>
+                        VerticalOptions="Fill">
+                        <view:ControlPanelView
+                            BackgroundColor="Transparent"
+                            DesignMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=DesignMode}"
+                            EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=EditMode}"
+                            HorizontalOptions="Fill"
+                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:TestPanelPageModel}}, x:DataType=view:TestPanelPageModel, Path=Panel}"
+                            VerticalOptions="Fill"
+                            x:Name="PanelView"/>
+                    </Grid>
+                    <Grid Grid.Column="1" IsVisible="{Binding DesignMode, Mode=TwoWay}">
+                        <tileSelectors:VerticalTileSelector HorizontalOptions="Center"/>
+                    </Grid>
                 </Grid>
-                <Grid Grid.Column="1" IsVisible="{Binding DesignMode, Mode=TwoWay}">
-                    <tileSelectors:VerticalTileSelector HorizontalOptions="Center"/>
-                </Grid>
-            </Grid>
-        </RefreshView>
+            </RefreshView>
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

@@ -15,7 +15,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="refresh_cw.png"/>
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
@@ -35,7 +36,7 @@
                                 HorizontalOptions="Start"
                                 Style="{StaticResource ButtonLabel}"
                                 Text="{Binding ColumnLabelID}"
-                                Margin="10,0,10,0"/> 
+                                Margin="10,0,10,0"/>
                             <Button
                                 Grid.Column="1"
                                 HorizontalOptions="Start"
@@ -116,44 +117,44 @@
                         <!-- -->
                         <!--         </SwipeItems> -->
                         <!--     </SwipeView.RightItems> -->
-                            <!-- <SwipeView.Content> -->
-                                <StackLayout x:DataType="dataModel:Turnout">
-                                    <Grid ColumnDefinitions="*,100,100" Padding="5">
-                                        <!-- <Grid.GestureRecognizers> -->
-                                        <!--     <TapGestureRecognizer -->
-                                        <!--         Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}" -->
-                                        <!--         CommandParameter="{Binding .}"/> -->
-                                        <!-- </Grid.GestureRecognizers> -->
+                        <!-- <SwipeView.Content> -->
+                        <StackLayout x:DataType="dataModel:Turnout">
+                            <Grid ColumnDefinitions="*,100,100" Padding="5">
+                                <!-- <Grid.GestureRecognizers> -->
+                                <!--     <TapGestureRecognizer -->
+                                <!--         Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}" -->
+                                <!--         CommandParameter="{Binding .}"/> -->
+                                <!-- </Grid.GestureRecognizers> -->
 
-                                        <Label
-                                            Grid.Column="0"
-                                            HorizontalOptions="Start"
-                                            LineBreakMode="NoWrap"
-                                            Margin="10,0,10,0"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding Name}"
-                                            VerticalOptions="Center"/>
-                                        <Label
-                                            Grid.Column="1"
-                                            FontAttributes="Bold"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding DccAddress}"
-                                            VerticalOptions="Center"/>
+                                <Label
+                                    Grid.Column="0"
+                                    HorizontalOptions="Start"
+                                    LineBreakMode="NoWrap"
+                                    Margin="10,0,10,0"
+                                    Style="{StaticResource MediumLabel}"
+                                    Text="{Binding Name}"
+                                    VerticalOptions="Center"/>
+                                <Label
+                                    Grid.Column="1"
+                                    FontAttributes="Bold"
+                                    Style="{StaticResource MediumLabel}"
+                                    Text="{Binding DccAddress}"
+                                    VerticalOptions="Center"/>
 
-                                        <components:TurnoutStateControl
-                                            CanToggleState="true"
-                                            Grid.Column="2"
-                                            Margin="0,0,10,0"
-                                            State="{Binding State}"
-                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
-                                            Turnout="{Binding .}"/>
-                                    </Grid>
+                                <components:TurnoutStateControl
+                                    CanToggleState="true"
+                                    Grid.Column="2"
+                                    Margin="0,0,10,0"
+                                    State="{Binding State}"
+                                    StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
+                                    Turnout="{Binding .}"/>
+                            </Grid>
 
-                                    <BoxView
-                                        BackgroundColor="{StaticResource Primary}"
-                                        HeightRequest="1"
-                                        HorizontalOptions="FillAndExpand"/>
-                                </StackLayout>
+                            <BoxView
+                                BackgroundColor="{StaticResource Primary}"
+                                HeightRequest="1"
+                                HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
                         <!--     </SwipeView.Content> -->
                         <!-- </SwipeView> -->
                     </DataTemplate>

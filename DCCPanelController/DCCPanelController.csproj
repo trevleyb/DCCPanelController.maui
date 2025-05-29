@@ -135,32 +135,32 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.70" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.70"/>
         <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0"/>
         <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.0"/>
         <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
-        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.70" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.70"/>
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
-        <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
-        <PackageReference Include="SkiaSharp" Version="3.116.1" />
-        <PackageReference Include="SkiaSharp.Views" Version="3.116.1" />
-        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1" />
-        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.116.1" />
-        <PackageReference Include="Svg.Skia" Version="3.0.3" />
+        <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0"/>
+        <PackageReference Include="SkiaSharp" Version="3.116.1"/>
+        <PackageReference Include="SkiaSharp.Views" Version="3.116.1"/>
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1"/>
+        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.116.1"/>
+        <PackageReference Include="Svg.Skia" Version="3.0.3"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
-        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.116.1" />
+        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.116.1"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
-        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.116.1" />
+        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.116.1"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.116.1" />
+        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.116.1"/>
     </ItemGroup>
 
 
@@ -211,7 +211,7 @@
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\BlocksPage.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
 
@@ -310,17 +310,17 @@
             <DependentUpon>SettingsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\BlocksPage.xaml.cs">
-          <DependentUpon>BlocksPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>BlocksPage.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\BlocksViewModel.cs">
-          <DependentUpon>BlocksPage.xaml</DependentUpon>
+            <DependentUpon>BlocksPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\PanelViewerViewModel.cs">
-          <DependentUpon>PanelViewer.xaml</DependentUpon>
+            <DependentUpon>PanelViewer.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\PanelEditorViewModel.cs">
-          <DependentUpon>PanelEditor.xaml</DependentUpon>
+            <DependentUpon>PanelEditor.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 
@@ -329,9 +329,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DCCClients.Jmri\DCCClients.Jmri.csproj" />
-        <ProjectReference Include="..\DCCClients.WiThrottle\DCCClients.WiThrottle.csproj" />
-        <ProjectReference Include="..\DCCCommon\DCCCommon.csproj" />
+        <ProjectReference Include="..\DCCClients.Jmri\DCCClients.Jmri.csproj"/>
+        <ProjectReference Include="..\DCCClients.WiThrottle\DCCClients.WiThrottle.csproj"/>
+        <ProjectReference Include="..\DCCCommon\DCCCommon.csproj"/>
     </ItemGroup>
-    
+
 </Project>

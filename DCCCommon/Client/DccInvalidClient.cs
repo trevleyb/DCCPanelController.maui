@@ -42,11 +42,6 @@ public class DccInvalidClient : DccClient, IDccClient {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
-    public async Task<IResult> ForceRefreshAsync() {
-        await Task.CompletedTask;
-        return Result.Fail(new Error("Invalid Client not currently implemented"));
-    }
-
     public bool IsConnected => false;
 
     public async Task<IResult> SendCmdAsync(string message) {
@@ -65,6 +60,11 @@ public class DccInvalidClient : DccClient, IDccClient {
     }
 
     public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
+        await Task.CompletedTask;
+        return Result.Fail(new Error("Invalid Client not currently implemented"));
+    }
+
+    public async Task<IResult> ForceRefreshAsync() {
         await Task.CompletedTask;
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }

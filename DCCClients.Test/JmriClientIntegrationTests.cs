@@ -1,6 +1,5 @@
 using DCCClients.Jmri;
 using DCCClients.Jmri.JMRI;
-using DCCClients.WiThrottle.WiThrottle.Client;
 using DCCCommon.Events;
 
 namespace DCCClients.Test;
@@ -8,16 +7,6 @@ namespace DCCClients.Test;
 [TestFixture]
 [Category("Integration")]
 public class JmriClientIntegrationTests {
-    private DccJmriClient _client = null!;
-    private JmriSettings _settings = null!;
-
-    // Event tracking variables
-    private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
-    private List<DccRouteArgs> _receivedRouteEvents = new();
-    private List<DccOccupancyArgs> _receivedOccupancyEvents = new();
-    private List<DccSignalArgs> _receivedSignalEvents = new();
-    private List<DccMessageArgs> _receivedMessages = new();
-
     [OneTimeSetUp]
     public void OneTimeSetUp() {
         var jmriUrl = Environment.GetEnvironmentVariable("JMRI_SERVER_URL");
@@ -41,13 +30,22 @@ public class JmriClientIntegrationTests {
         _receivedMessages = new List<DccMessageArgs>();
 
         // Subscribe to events
-        _client.TurnoutMsgReceived   += ClientOnTurnoutMsgReceived;
-        _client.RouteMsgReceived     += ClientOnRouteMsgReceived;
+        _client.TurnoutMsgReceived += ClientOnTurnoutMsgReceived;
+        _client.RouteMsgReceived += ClientOnRouteMsgReceived;
         _client.OccupancyMsgReceived += ClientOnOccupancyMsgReceived;
-        _client.SignalMsgReceived    += ClientOnSignalMsgReceived;
-        _client.MessageReceived      += ClientOnMessageReceived; 
-       
+        _client.SignalMsgReceived += ClientOnSignalMsgReceived;
+        _client.MessageReceived += ClientOnMessageReceived;
     }
+
+    private DccJmriClient _client = null!;
+    private JmriSettings _settings = null!;
+
+    // Event tracking variables
+    private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
+    private List<DccRouteArgs> _receivedRouteEvents = new();
+    private List<DccOccupancyArgs> _receivedOccupancyEvents = new();
+    private List<DccSignalArgs> _receivedSignalEvents = new();
+    private List<DccMessageArgs> _receivedMessages = new();
 
     private void ClientOnMessageReceived(object? sender, DccMessageArgs args) {
         _receivedMessages.Add(args);
@@ -84,7 +82,7 @@ public class JmriClientIntegrationTests {
         Assert.That(_client.IsConnected, Is.True, "Client should be connected");
 
         // Wait a bit to receive initial events
-        
+
         var startTime = DateTime.Now;
         var endTime = startTime.AddMinutes(0.5);
         while (DateTime.Now < endTime) {
@@ -92,7 +90,7 @@ public class JmriClientIntegrationTests {
             Console.WriteLine($"Waiting for events: {elapsed.Minutes:00}:{elapsed.Seconds:00} {_receivedMessages.Count} messages, {_receivedTurnoutEvents.Count} turnouts, {_receivedRouteEvents.Count} routes, {_receivedOccupancyEvents.Count} occupancies, {_receivedSignalEvents.Count} signals");
             await Task.Delay(5000);
         }
-        
+
         var disconnected = _client.DisconnectAsync();
         Assert.That(_client.IsConnected, Is.False, "Client should be disconnected");
     }

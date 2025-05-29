@@ -11,14 +11,14 @@ namespace DCCPanelController.View;
 
 public partial class PanelViewerViewModel : ConnectionViewModel {
     private Panel? _draggedPanel;
+    [ObservableProperty] private bool _isPanelSelected;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Panel? _selectedPanel;
-    [ObservableProperty] private bool _isPanelSelected;
-    
+
     public INavigation? NavigationService;
-    public double ScreenWidth   = 100;
-    public double ScreenHeight  = 100;
-    
+    public double ScreenHeight = 100;
+    public double ScreenWidth = 100;
+
     public PanelViewerViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
         Panels = Profile.Panels;
@@ -35,8 +35,8 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     private async Task SaveAsync() {
         await Profile.SaveAsync();
     }
-    
-    [RelayCommand] 
+
+    [RelayCommand]
     private async Task AddPanelAsync() {
         SelectedPanel = Panels.CreatePanel();
         Panels.Add(SelectedPanel);
@@ -44,7 +44,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         OnPropertyChanged(nameof(Panels));
     }
 
-    [RelayCommand] 
+    [RelayCommand]
     private async Task DeletePanelAsync() {
         if (SelectedPanel is not null) {
             var result = await AskUserToConfirm("Delete Panel?", $"Are you sure you want to delete the panel '{SelectedPanel.Id}'");
@@ -55,8 +55,8 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             await SaveAsync();
         }
         OnPropertyChanged(nameof(Panels));
-    } 
-    
+    }
+
     [RelayCommand] private async Task DuplicatePanelAsync() {
         if (SelectedPanel != null) {
             var cloned = Panels.CreatePanelFrom(SelectedPanel);
@@ -64,7 +64,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             OnPropertyChanged(nameof(Panels));
         }
     }
-    
+
     [RelayCommand]
     public async Task DownloadPanelAsync() {
         try {
@@ -110,9 +110,9 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     public async Task EditPanelPropertiesAsync() {
         if (NavigationService is null) return;
         if (SelectedPanel is null) return;
-        
+
         var panelViewModel = new PanelPropertyViewModel(SelectedPanel);
-        bool result = await PropertyDisplayService.ShowPropertiesAsync(
+        var result = await PropertyDisplayService.ShowPropertiesAsync(
             NavigationService, panelViewModel, ScreenWidth, ScreenHeight);
 
         if (result) {
@@ -180,5 +180,4 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         OnPropertyChanged(nameof(Panels));
     }
     #endregion
-
 }

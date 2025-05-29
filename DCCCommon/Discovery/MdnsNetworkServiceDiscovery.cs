@@ -6,18 +6,76 @@ using Makaretu.Dns;
 namespace DCCCommon.Discovery;
 
 public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
-    private MulticastService? _mdns;
-    private ServiceDiscovery? _sd;
     private readonly ConcurrentDictionary<string, DiscoveredService> _discoveredServicesCache = new();
     private readonly Lock _initializationLock = new();
     private TaskCompletionSource<bool>? _discoveryCompletionSource;
+    private MulticastService? _mdns;
+    private ServiceDiscovery? _sd;
 
-    public MdnsNetworkServiceDiscovery() { }
+    public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
+                                                                              TimeSpan timeout,
+                                                                              CancellationToken cancellationToken = default) {
+        return await DiscoverServicesAsync(serviceType, "", timeout, cancellationToken);
+    }
+
+    public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
+                                                                              string subType,
+                                                                              TimeSpan timeout,
+                                                                              CancellationToken cancellationToken = default) {
+        if (string.IsNullOrWhiteSpace(serviceType)) throw new ArgumentNullException(nameof(serviceType));
+
+        var queryServiceType = serviceType.Trim();
+        var querySubType = subType.Trim().ToLower();
+
+        lock (_initializationLock) _discoveredServicesCache.Clear();
+        _discoveryCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        StartMdnsListener();
+
+        if (_sd == null || _mdns == null) { // Also check _mdns
+            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: ServiceDiscovery component or MulticastService failed to initialize.");
+        }
+
+        try {
+            _sd.QueryServiceInstances(queryServiceType);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            var delayTask = Task.Delay(timeout, linkedCts.Token);
+
+            // We don't strictly need _discoveryCompletionSource.Task if we're just waiting for the timeout
+            // The events will populate the cache in the background.
+            // await Task.WhenAny(_discoveryCompletionSource.Task, delayTask);
+            await delayTask; // Simply wait for the timeout or cancellation
+
+            if (cancellationToken.IsCancellationRequested) {
+                return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Discovery cancelled by token.");
+            }
+        } catch (OperationCanceledException) {
+            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Discovery operation was cancelled.");
+        } catch (Exception ex) {
+            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Error during service discovery", ex);
+        }
+
+        var values = _discoveredServicesCache.Values
+                                             .Where(s => (s.ServiceType.Equals(queryServiceType, StringComparison.OrdinalIgnoreCase) ||
+                                                          s.ServiceType.Equals(queryServiceType + ".local", StringComparison.OrdinalIgnoreCase)) &&
+                                                         (querySubType == "" || (s?.HostName?.ToLower()?.Contains(querySubType) ?? false)) &&
+                                                         !string.IsNullOrEmpty(s.HostName) &&
+                                                         s.Port > 0 &&
+                                                         s.Addresses.Any())
+                                             .ToList();
+
+        return values.Count > 0 ? Result<List<DiscoveredService>>.Ok(values) : Result<List<DiscoveredService>>.Fail("No available services found.");
+    }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 
     private void EnsureComponentsInitialized() {
         lock (_initializationLock) {
             if (_mdns == null || _sd == null) {
-                _mdns = new MulticastService() {
+                _mdns = new MulticastService {
                     IgnoreDuplicateMessages = true
                 };
                 _sd = new ServiceDiscovery(_mdns);
@@ -110,7 +168,7 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
 
             if (serviceToUpdate == null) continue;
 
-            bool currentServiceUpdated = false;
+            var currentServiceUpdated = false;
             switch (record) {
             case SRVRecord srv:
                 if (serviceToUpdate.InstanceName == srv.Name.ToString()) {
@@ -175,66 +233,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
 
         // The serviceUpdated flag wasn't driving any specific logic after the loop,
         // so its direct utility here is minimal unless used for more granular TaskCompletionSource logic.
-    }
-
-    public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
-                                                                              TimeSpan timeout,
-                                                                              CancellationToken cancellationToken = default) 
-        => await DiscoverServicesAsync(serviceType, "", timeout, cancellationToken);
-
-    public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
-                                                                              string subType,
-                                                                              TimeSpan timeout,
-                                                                              CancellationToken cancellationToken = default) {
-        
-        if (string.IsNullOrWhiteSpace(serviceType)) throw new ArgumentNullException(nameof(serviceType));
-
-        var queryServiceType = serviceType.Trim();
-        var querySubType = subType.Trim().ToLower();
-
-        lock (_initializationLock) _discoveredServicesCache.Clear();
-        _discoveryCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        StartMdnsListener();
-
-        if (_sd == null || _mdns == null) { // Also check _mdns
-            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: ServiceDiscovery component or MulticastService failed to initialize.");
-        }
-        
-        try {
-            _sd.QueryServiceInstances(queryServiceType);
-            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-            var delayTask = Task.Delay(timeout, linkedCts.Token);
-
-            // We don't strictly need _discoveryCompletionSource.Task if we're just waiting for the timeout
-            // The events will populate the cache in the background.
-            // await Task.WhenAny(_discoveryCompletionSource.Task, delayTask);
-            await delayTask; // Simply wait for the timeout or cancellation
-
-            if (cancellationToken.IsCancellationRequested) {
-                return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Discovery cancelled by token.");
-            } 
-        } catch (OperationCanceledException) {
-            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Discovery operation was cancelled.");
-        } catch (Exception ex) {
-            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Error during service discovery",ex);
-        }
-
-        var values = _discoveredServicesCache.Values
-                   .Where(s => (s.ServiceType.Equals(queryServiceType, StringComparison.OrdinalIgnoreCase) ||
-                                s.ServiceType.Equals(queryServiceType + ".local", StringComparison.OrdinalIgnoreCase)) &&
-                                (querySubType == "" || (s?.HostName?.ToLower()?.Contains(querySubType) ?? false) ) &&
-                               !string.IsNullOrEmpty(s.HostName) &&
-                               s.Port > 0 &&
-                               s.Addresses.Any())
-                   .ToList();
-
-        return values.Count > 0 ? Result<List<DiscoveredService>>.Ok(values) : Result<List<DiscoveredService>>.Fail("No available services found.");
-    }
-
-    public void Dispose() {
-        Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     private void Dispose(bool disposing) {

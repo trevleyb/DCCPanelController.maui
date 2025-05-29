@@ -10,7 +10,29 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.View;
 
 public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
+    [ObservableProperty] private bool _designMode;
     private Panel? _draggedPanel;
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+    [ObservableProperty] private bool _gridVisible;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
+    private bool _isFullScreen;
+
+    [ObservableProperty] private Panels _panels;
+    [ObservableProperty] private bool _propertiesChanged;
+
+    [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
+    [NotifyPropertyChangedFor(nameof(PanelTitle))]
+    [ObservableProperty] private Panel? _selectedPanel;
+
+    public PanelEditorSinglePageViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
+        ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
+        Panels = Profile.Panels;
+        SelectedPanel = Panels.FirstOrDefault();
+        IsFullScreen = false;
+    }
 
     public HashSet<ITile> SelectedTiles { get; set; } = new();
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
@@ -25,33 +47,11 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
     public bool IsPanelSelected => SelectedPanel is not null;
     public bool NoPanelSelected => !IsPanelSelected;
     public ControlPanelView? SelectedView { get; set; }
-    
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(IsNotFullScreen))]
-    private bool _isFullScreen;
-
-    [ObservableProperty] private bool _designMode;
-    [ObservableProperty] private bool _gridVisible;
-    [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private bool _propertiesChanged;
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
-
-    [NotifyPropertyChangedFor(nameof(IsPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(NoPanelSelected))]
-    [NotifyPropertyChangedFor(nameof(PanelTitle))]
-    [ObservableProperty] private Panel? _selectedPanel;
-
-    public PanelEditorSinglePageViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
-        Panels = Profile.Panels;
-        SelectedPanel = Panels.FirstOrDefault();
-        IsFullScreen = false;
-    }
 
     private async Task SaveAsync() {
         await Profile.SaveAsync();
     }
-    
+
     /// <summary>
     ///     Adds a new panel to the collection. The newly created panel becomes the selected panel.
     ///     Updates the profile to persist the changes.
@@ -173,7 +173,7 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
             }
         }
     }
-    
+
     [RelayCommand]
     public async Task DownloadPanelAsync() {
         try {
@@ -229,12 +229,14 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
 
     public async Task EditTilePropertiesAsync(Entity entity) {
         Console.WriteLine($"Launching the Properties page for '{entity.EntityName}'");
+
         //await DynamicPageLauncher.ShowDynamicPropertyPageAsync([entity]);
         //await SaveAsync();
     }
 
     public async Task EditTilePropertiesAsync(List<Entity> entities) {
         Console.WriteLine("Launching the Properties page for multiple Entities");
+
         //await DynamicPageLauncher.ShowDynamicPropertyPageAsync(entities);
         //await SaveAsync();
     }
@@ -255,7 +257,9 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
         }
     }
 
-    public new async Task ToggleConnectionAsync() => await base.ToggleConnectionAsync();
+    public new async Task ToggleConnectionAsync() {
+        await base.ToggleConnectionAsync();
+    }
 
     [RelayCommand]
     private async Task SelectionChangedAsync() {

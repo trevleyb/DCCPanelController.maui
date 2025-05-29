@@ -1,6 +1,4 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Models.DataModel;
-using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 

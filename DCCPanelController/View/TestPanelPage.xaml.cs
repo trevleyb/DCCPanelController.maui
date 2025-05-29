@@ -7,7 +7,8 @@ using DCCPanelController.View.Properties.PanelProperties;
 namespace DCCPanelController.View;
 
 public partial class TestPanelPage : ContentPage {
-    private Panel panel;
+    private readonly Panel panel;
+
     public TestPanelPage() {
         InitializeComponent();
         BindingContext = new TestPanelPageModel();
@@ -52,7 +53,7 @@ public partial class TestPanelPage : ContentPage {
 
     private async void Prop_Button_OnClicked(object? sender, EventArgs e) {
         var panelViewModel = new PanelPropertyViewModel(panel);
-        bool result = await PropertyDisplayService.ShowPropertiesAsync(
+        var result = await PropertyDisplayService.ShowPropertiesAsync(
             Navigation,
             panelViewModel,
             Width,
@@ -69,7 +70,7 @@ public partial class TestPanelPage : ContentPage {
 
     private async void Popup_Button_OnClicked(object? sender, EventArgs e) {
         var panelViewModel = new PanelPropertyViewModel(panel);
-        bool result = await PropertyDisplayService.ShowPropertiesAsync(
+        var result = await PropertyDisplayService.ShowPropertiesAsync(
             Navigation,
             panelViewModel,
             Width,
@@ -83,14 +84,14 @@ public partial class TestPanelPage : ContentPage {
             Console.WriteLine("Properties view dismissed.");
         }
     }
-    
+
     private async void Auto_Button_OnClicked(object? sender, EventArgs e) {
         var panelViewModel = new PanelPropertyViewModel(panel);
-        bool result = await PropertyDisplayService.ShowPropertiesAsync(
+        var result = await PropertyDisplayService.ShowPropertiesAsync(
             Navigation,
             panelViewModel,
             Width,
-            Height, PropertyDisplayService.ShowPropertiesType.Automatic);
+            Height);
 
         if (result) {
             // Properties were applied and closed (e.g., "Done" or "Close" was hit)
@@ -100,5 +101,4 @@ public partial class TestPanelPage : ContentPage {
             Console.WriteLine("Properties view dismissed.");
         }
     }
-
 }

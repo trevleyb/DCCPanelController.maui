@@ -87,8 +87,6 @@
                         </VisualState.Setters>
                     </VisualState>
                     <VisualState x:Name="Focused">
-                        <VisualState.Setters>
-                        </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
             </VisualStateGroupList>

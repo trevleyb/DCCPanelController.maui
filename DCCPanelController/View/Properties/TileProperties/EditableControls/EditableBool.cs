@@ -1,4 +1,3 @@
-using System.Diagnostics;
 using System.Reflection;
 using DCCPanelController.Helpers;
 using Switch = Microsoft.Maui.Controls.Switch;

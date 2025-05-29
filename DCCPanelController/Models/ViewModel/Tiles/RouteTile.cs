@@ -1,4 +1,3 @@
-using DCCClients;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -28,7 +27,7 @@ public class RouteTile : Tile, ITileInteractive {
             _                       => RouteStateEnum.Unknown
         };
 
-        if (connectionService is not null && Entity is RouteEntity { Route.Id: {} id } routeEntity) {
+        if (connectionService is not null && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
             connectionService.SendRouteCmdAsync(id, State != RouteStateEnum.Inactive);
         }
     }

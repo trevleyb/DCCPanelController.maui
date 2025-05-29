@@ -9,8 +9,8 @@ using Turnout = DCCPanelController.Models.DataModel.Turnout;
 namespace DCCPanelController.View;
 
 public partial class TurnoutsEditViewModel : BaseViewModel, IPropertiesViewModel {
-    [ObservableProperty] private Turnout _turnout;
     [ObservableProperty] private string _title;
+    [ObservableProperty] private Turnout _turnout;
 
     public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
         Turnout = turnout;
@@ -20,7 +20,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel, IPropertiesViewModel
 
     private ConnectionService ConnectionService { get; }
     private IDccClient? Client { get; set; }
-    
+
     public Task ApplyChangesAsync() {
         return Task.CompletedTask;
     }
@@ -29,7 +29,7 @@ public partial class TurnoutsEditViewModel : BaseViewModel, IPropertiesViewModel
         var propPage = new TurnoutsEditView(this);
         return propPage;
     }
-    
+
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
         if (!string.IsNullOrEmpty(Turnout.DccAddress)) {

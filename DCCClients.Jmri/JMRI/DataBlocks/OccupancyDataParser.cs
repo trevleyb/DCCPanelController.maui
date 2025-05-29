@@ -5,7 +5,7 @@ namespace DCCClients.Jmri.JMRI.DataBlocks; // Root structure that contains the t
 public static class OccupancyParser {
     public static JmriOccupancyData? ParseBlockData(string jsonString) {
         // The string appears to have a prefix "ValueKind = Object : " that we need to remove
-        string cleanedJson = jsonString;
+        var cleanedJson = jsonString;
 
         // Check if the string contains the prefix and remove it
         if (cleanedJson.Contains("ValueKind = Object : ")) {

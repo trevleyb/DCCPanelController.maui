@@ -1,10 +1,7 @@
 using System.Collections.Specialized;
-using DCCClients;
-using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
@@ -60,8 +57,8 @@ public partial class ControlPanelView {
                 var tapRecogniser = new TapGestureRecognizer();
                 tapRecogniser.Tapped += control.DynamicGridTapped;
                 control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
-            } 
-            control.DrawPanel(false);
+            }
+            control.DrawPanel();
         }
     }
 

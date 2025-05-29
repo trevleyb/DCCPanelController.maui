@@ -1,8 +1,6 @@
-using System.Diagnostics;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
-using DCCClients.Jmri.JMRI.Commands;
 using DCCClients.Jmri.JMRI.EventArgs;
 using DCCCommon.Client;
 using DCCCommon.Common;
@@ -15,22 +13,13 @@ public class JmriClient {
     };
 
     private readonly string _jmriUrl;
-    private readonly Dictionary<string, string> _previousTurnoutStates = new();
-    private readonly Dictionary<string, string> _previousRouteStates = new();
     private readonly Dictionary<string, string> _previousOccupancyStates = new();
+    private readonly Dictionary<string, string> _previousRouteStates = new();
     private readonly Dictionary<string, string> _previousSignalStates = new();
+    private readonly Dictionary<string, string> _previousTurnoutStates = new();
 
     private CancellationTokenSource? _cancellationTokenSource;
     private IWebSocket _webSocket = new WebSocketWrapper();
-
-    // Configuration properties
-    public int ConnectionTimeoutSeconds { get; set; } = 10;
-    public int MaxConnectionRetries { get; set; } = 5;
-    public int PollingIntervalMs { get; set; } = 5000;
-    public int ReconnectionDelayMs { get; set; } = 2000;
-
-    // Event to notify about connection status changes
-    public event EventHandler<ConnectionStatusEventArgs>? ConnectionStatusChanged;
 
     public JmriClient(IDccSettings settings) {
         if (settings is JmriSettings info) {
@@ -38,8 +27,17 @@ public class JmriClient {
         } else throw new ArgumentException("Invalid settings provided.");
     }
 
+    // Configuration properties
+    public int ConnectionTimeoutSeconds { get; set; } = 10;
+    public int MaxConnectionRetries { get; set; } = 5;
+    public int PollingIntervalMs { get; set; } = 5000;
+    public int ReconnectionDelayMs { get; set; } = 2000;
+
     public Func<HttpClient> HttpClientFactory { get; set; } = () => new HttpClient();
     public Func<IWebSocket> WebSocketFactory { get; set; } = () => new WebSocketWrapper();
+
+    // Event to notify about connection status changes
+    public event EventHandler<ConnectionStatusEventArgs>? ConnectionStatusChanged;
 
     public event EventHandler<TurnoutEventArgs>? TurnoutChanged;
     public event EventHandler<RouteEventArgs>? RouteChanged;
@@ -66,9 +64,9 @@ public class JmriClient {
         try {
             using var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
             var response = await HttpClient.GetAsync($"{_jmriUrl}/json", cancellationToken.Token);
-            return response.IsSuccessStatusCode 
-                ? Result.Ok("JMRI server connection successful") 
-                : Result.Fail($"JMRI server returned status code: {response.StatusCode }");
+            return response.IsSuccessStatusCode
+                ? Result.Ok("JMRI server connection successful")
+                : Result.Fail($"JMRI server returned status code: {response.StatusCode}");
         } catch (TaskCanceledException) {
             return Result.Fail($"Connection to JMRI server timed out after {ConnectionTimeoutSeconds} seconds");
         } catch (Exception ex) {
@@ -132,10 +130,11 @@ public class JmriClient {
 
                 // Send a Hello command to the server
                 // -------------------------------------------------------------------
-                var command = BuildJmriMessage("hello", "get", new Dictionary<string, object> { });
+                var command = BuildJmriMessage("hello", "get", new Dictionary<string, object>());
                 var result = await SendAndRecvAsync(command);
-                Console.WriteLine(result.Value);;
-                
+                Console.WriteLine(result.Value);
+                ;
+
                 RaiseConnectionStatusChanged(true, "WebSocket connected successfully");
                 return Result.Ok("WebSocket connected successfully");
             } catch (Exception ex) {
@@ -238,7 +237,7 @@ public class JmriClient {
                                          string? identifierField = "name",
                                          string? stateField = "state") where T : class {
         try {
-            var currentData = await FetchInitialDataWithRetriesAsync(endpoint, maxRetries: 1);
+            var currentData = await FetchInitialDataWithRetriesAsync(endpoint, 1);
             if (string.IsNullOrEmpty(currentData)) return;
 
             var items = JsonDocument.Parse(currentData).RootElement;
@@ -308,7 +307,7 @@ public class JmriClient {
             var command = BuildJmriMessage("turnout", "post", new Dictionary<string, object> {
                 { "type", "turnout" },
                 { "name", identifier },
-                { "state", thrown ? 4 : 2}
+                { "state", thrown ? 4 : 2 }
             });
             return await SendAndRecvAsync(command);
         } catch (Exception ex) {
@@ -346,10 +345,10 @@ public class JmriClient {
         var sendResponse = await SendCommandAsync(command);
         if (!sendResponse.IsSuccess) {
             Console.WriteLine($"Failed to send command: {sendResponse.Message}");
-            return Result<string>.Fail("Failed to send message.");       
+            return Result<string>.Fail("Failed to send message.");
         }
 
-        var recvResponse = await RecvResponseAsync(100);
+        var recvResponse = await RecvResponseAsync();
         if (!recvResponse.IsSuccess) {
             Console.WriteLine($"Failed to receive response: {recvResponse.Message}");
             return Result<string>.Fail("Failed to receive response.");
@@ -370,14 +369,15 @@ public class JmriClient {
             return Result<string>.Fail($"Failed to send command: {ex.Message}", ex);
         }
     }
-    
+
     private async Task<IResult> SendCommandAsync(string command, int? timeoutMs = 100) {
         try {
             if (_webSocket.State != WebSocketState.Open) return Result.Fail("WebSocket is not connected");
             var json = JsonSerializer.Serialize(command);
             var bytes = Encoding.ASCII.GetBytes(command);
             var timeout = new CancellationTokenSource(timeoutMs ?? 100);
-            await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, timeout.Token);;
+            await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, timeout.Token);
+            ;
             Console.WriteLine($"Json Send Message: {Encoding.Default.GetString(bytes)}");
             return Result.Ok("Command sent successfully");
         } catch (Exception ex) {
@@ -408,7 +408,7 @@ public class JmriClient {
     private void RaiseConnectionStatusChanged(bool isConnected, string message) {
         ConnectionStatusChanged?.Invoke(this, new ConnectionStatusEventArgs(isConnected, message));
     }
-    
+
     public static string BuildJmriMessage(string type, string? method, Dictionary<string, object>? parameters) {
         var message = new Dictionary<string, object?> { ["type"] = type };
         if (method is not null) message["method"] = method;
@@ -420,13 +420,13 @@ public class JmriClient {
 }
 
 public class ConnectionStatusEventArgs : System.EventArgs {
-    public bool IsConnected { get; }
-    public string Message { get; }
-    public DateTime Timestamp { get; }
-
     public ConnectionStatusEventArgs(bool isConnected, string message) {
         IsConnected = isConnected;
         Message = message;
         Timestamp = DateTime.Now;
     }
+
+    public bool IsConnected { get; }
+    public string Message { get; }
+    public DateTime Timestamp { get; }
 }

@@ -34,14 +34,14 @@ public partial class PanelEditorSinglePage {
     public PanelEditorSinglePage(PanelEditorSinglePageViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
         _connectionService = connectionService;
-        _connectionService.ConnectionChanged += (sender, args) => _panelConnectionToolbar.IconImageSource = args.ConnectionIcon; 
+        _connectionService.ConnectionChanged += (sender, args) => _panelConnectionToolbar.IconImageSource = args.ConnectionIcon;
         _viewModel = viewModel;
         BindingContext = viewModel;
         PanelView.TileSelected += PanelViewOnTileSelected;
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
-        if (_viewModel is { } vm && sender is ControlPanelView view) vm.SelectedView = view ?? null; 
+        if (_viewModel is { } vm && sender is ControlPanelView view) vm.SelectedView = view ?? null;
         if (sender is ITileInteractive interactiveTile) {
             if (e.TapCount == 1) interactiveTile.Interact(_connectionService);
             if (e.TapCount == 2) interactiveTile.Secondary(_connectionService);

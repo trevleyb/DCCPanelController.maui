@@ -8,19 +8,10 @@ namespace DCCClients.Test;
 [TestFixture]
 [Category("Integration")]
 public class WiThrottleClientIntegrationTests {
-    private DccWiThrottleClient _client = null!;
-    private WithrottleSettings _settings = null!;
-
-    // Event tracking variables
-    private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
-    private List<DccRouteArgs> _receivedRouteEvents = new();
-    private List<DccMessageArgs> _receivedMessages = new();
-    private List<DccStateChangedArgs> _receivedErrors = new();
-
     [OneTimeSetUp]
     public void OneTimeSetUp() {
-        var wiThrottleAddress = "localhost";    //Environment.GetEnvironmentVariable("WITHROTTLE_SERVER_ADDRESS");
-        var wiThrottlePortStr = "12090";        //Environment.GetEnvironmentVariable("WITHROTTLE_SERVER_PORT");
+        var wiThrottleAddress = "localhost"; //Environment.GetEnvironmentVariable("WITHROTTLE_SERVER_ADDRESS");
+        var wiThrottlePortStr = "12090";     //Environment.GetEnvironmentVariable("WITHROTTLE_SERVER_PORT");
 
         if (string.IsNullOrEmpty(wiThrottleAddress) || string.IsNullOrEmpty(wiThrottlePortStr)) {
             Assert.Ignore("WITHROTTLE_SERVER_ADDRESS or WITHROTTLE_SERVER_PORT environment variables not set. Skipping integration tests.");
@@ -53,6 +44,15 @@ public class WiThrottleClientIntegrationTests {
     public void TearDown() {
         _client.DisconnectAsync();
     }
+
+    private DccWiThrottleClient _client = null!;
+    private WithrottleSettings _settings = null!;
+
+    // Event tracking variables
+    private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
+    private List<DccRouteArgs> _receivedRouteEvents = new();
+    private List<DccMessageArgs> _receivedMessages = new();
+    private List<DccStateChangedArgs> _receivedErrors = new();
 
     [Test]
     public async Task ConnectAsync_ShouldConnectToWiThrottleServer() {
@@ -122,7 +122,7 @@ public class WiThrottleClientIntegrationTests {
         await Task.Delay(2000);
 
         // Get a turnout ID from received events if available
-        string turnoutId = "LT1"; // Default fallback
+        var turnoutId = "LT1"; // Default fallback
         if (_receivedTurnoutEvents.Count > 0) {
             turnoutId = _receivedTurnoutEvents[0].TurnoutId;
         }
@@ -150,7 +150,7 @@ public class WiThrottleClientIntegrationTests {
         await Task.Delay(2000);
 
         // Get a route ID from received events if available
-        string routeId = "IR1"; // Default fallback
+        var routeId = "IR1"; // Default fallback
         if (_receivedRouteEvents.Count > 0) {
             routeId = _receivedRouteEvents[0].RouteId;
         }

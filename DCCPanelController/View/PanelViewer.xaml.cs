@@ -1,16 +1,10 @@
-using System.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
-using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
 public partial class PanelViewer {
     private readonly ConnectionService? _connectionService;
-    private PanelViewerViewModel? _viewModel;
+    private readonly PanelViewerViewModel? _viewModel;
 
     public PanelViewer(PanelViewerViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
@@ -19,7 +13,7 @@ public partial class PanelViewer {
         _viewModel.NavigationService = Navigation;
         BindingContext = viewModel;
     }
-    
+
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
         SetLayoutSpan(width, height);
@@ -28,15 +22,15 @@ public partial class PanelViewer {
     private void SetLayoutSpan(double width, double height) {
         if (PanelsLayout == null || PanelsCollectionView == null) return;
         if (_viewModel is null) return;
-        
+
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
-        
+
         if (DeviceInfo.Platform == DevicePlatform.iOS) {
             if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
                 if (width < height) {
                     PanelsLayout.Span = 1;
-                    PanelsCollectionView.ItemTemplate = (DataTemplate)this.Resources["HorizontalTemplate"];
+                    PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["HorizontalTemplate"];
                 } else {
                     SetWideScreenLayout(width);
                 }
@@ -46,9 +40,8 @@ public partial class PanelViewer {
         } else {
             SetWideScreenLayout(width);
         }
-
     }
-    
+
     private void SetWideScreenLayout(double width) {
         PanelsLayout.Span = width switch {
             > 1000 => 4,
@@ -56,6 +49,6 @@ public partial class PanelViewer {
             > 400  => 2,
             _      => 1
         };
-        PanelsCollectionView.ItemTemplate = (DataTemplate)this.Resources["VerticalTemplate"];
+        PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["VerticalTemplate"];
     }
 }

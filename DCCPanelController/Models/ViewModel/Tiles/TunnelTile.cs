@@ -1,5 +1,4 @@
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 

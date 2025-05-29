@@ -13,7 +13,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding RefreshRoutesCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding RefreshRoutesCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="refresh_cw.png"/>
         <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
 

@@ -5,6 +5,9 @@ using DCCPanelController.View.DynamicProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TrackEntity : Entity {
+    [ObservableProperty] [property: EditableBlock("Block", "", 5, "Track")]
+    private string? _occupancyBlock;
+
     [ObservableProperty] [property: EditableOpacity("Opacity", "", 5, "Track")]
     private double _opacity = 1.0;
 
@@ -22,9 +25,6 @@ public abstract partial class TrackEntity : Entity {
     [property: EditableTrackType("Track Type", "", 5, "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
 
-    [ObservableProperty] [property: EditableBlock("Block", "", 5, "Track")]
-    private string? _occupancyBlock;
-    
     protected TrackEntity() { }
     protected TrackEntity(Panel panel) : base(panel) { }
 

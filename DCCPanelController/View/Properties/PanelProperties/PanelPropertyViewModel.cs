@@ -7,19 +7,28 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.View.Properties.PanelProperties;
 
 public partial class PanelPropertyViewModel : BaseViewModel, IPropertiesViewModel {
+    [ObservableProperty] private int _colorGridSpan = 2; // Default to 2 columns
     [ObservableProperty] private Panel _panel;
     [ObservableProperty] private string _title;
-    [ObservableProperty] private int _colorGridSpan = 2; // Default to 2 columns
 
-    public ObservableCollection<ColorSettingItemViewModel> ColorSettings { get; }
-    public PropertyDisplayService.ShowPropertiesType ShowPropertiesType { get; set; }
-    
     public PanelPropertyViewModel(Panel panel) {
         Panel = panel;
         Title = $"{panel.Id} Properties" ?? "Panel Properties";
 
         ColorSettings = new ObservableCollection<ColorSettingItemViewModel>();
         InitializeColorSettings();
+    }
+
+    public ObservableCollection<ColorSettingItemViewModel> ColorSettings { get; }
+    public PropertyDisplayService.ShowPropertiesType ShowPropertiesType { get; set; }
+
+    public Task ApplyChangesAsync() {
+        return Task.CompletedTask;
+    }
+
+    public Microsoft.Maui.Controls.View CreatePropertiesView() {
+        var propPage = new PanelPropertyPage(this);
+        return propPage;
     }
 
     private void InitializeColorSettings() {
@@ -85,14 +94,5 @@ public partial class PanelPropertyViewModel : BaseViewModel, IPropertiesViewMode
             return result;
         }
         return false;
-    }
-
-    public Task ApplyChangesAsync() {
-        return Task.CompletedTask;
-    }
-
-    public Microsoft.Maui.Controls.View CreatePropertiesView() {
-        var propPage = new PanelPropertyPage(this);
-        return propPage;
     }
 }

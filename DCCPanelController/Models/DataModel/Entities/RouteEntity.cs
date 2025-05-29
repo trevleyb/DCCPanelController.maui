@@ -23,7 +23,7 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
 
     [JsonIgnore]
     public Route? Route => Parent?.Route(RouteID);
-    
+
     public override Entity Clone() {
         return new RouteEntity(this);
     }

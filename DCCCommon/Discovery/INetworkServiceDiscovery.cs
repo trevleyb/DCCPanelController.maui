@@ -11,5 +11,4 @@ public interface INetworkServiceDiscovery : IDisposable {
     Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
                                                                  TimeSpan timeout,
                                                                  CancellationToken cancellationToken = default);
-
 }

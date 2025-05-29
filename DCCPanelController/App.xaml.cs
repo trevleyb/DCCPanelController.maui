@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using DCCPanelController.View;
+﻿using DCCPanelController.View;
 using Microsoft.Maui.Controls.Xaml.Diagnostics;
 
 namespace DCCPanelController;

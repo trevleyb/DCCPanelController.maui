@@ -10,8 +10,8 @@ public class EditableTurnoutAttribute(string label, string description = "", int
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var turnouts = profile.Turnouts.Select(t => t.Id).ToList();
-            
-            #if IOS || ANDROID
+
+#if IOS || ANDROID
                 var picker = new Picker {
                     WidthRequest = width,
                     ItemsSource = turnouts,
@@ -22,22 +22,21 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                 picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
                 picker.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
                 return CreateGroupCell(picker);
-            #else
-                var cell = new DropDownListBox() {
-                    WidthRequest = width,
-                    DropDownWidth = dropDownWidth,
-                    DropDownHeight = dropDownHeight, 
-                    TextSize = 9,
-                    ItemsSource = turnouts,
-                    IsEnabled = turnouts.Count > 0,
-                    Placeholder = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
-                    HorizontalOptions = LayoutOptions.Start
-                };
-                cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-                cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
-                return CreateGroupCell(cell);
-            #endif
-
+#else
+            var cell = new DropDownListBox {
+                WidthRequest = width,
+                DropDownWidth = dropDownWidth,
+                DropDownHeight = dropDownHeight,
+                TextSize = 9,
+                ItemsSource = turnouts,
+                IsEnabled = turnouts.Count > 0,
+                Placeholder = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
+                HorizontalOptions = LayoutOptions.Start
+            };
+            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
+            return CreateGroupCell(cell);
+#endif
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Turnout: {e.Message}");
             return null;

@@ -17,9 +17,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     [ObservableProperty] private List<Entity> _entities;
     [ObservableProperty] private Entity _entity;
     [ObservableProperty] private Entity? _proxyEntity;
-    [ObservableProperty] private string _title;
 
-    private StackBase? _stackBase = null;
+    private StackBase? _stackBase;
+    [ObservableProperty] private string _title;
 
     [Obsolete("Here for backwards compatibility. Remove ASAP")]
     public DynamicPropertyPageViewModel(List<Entity> entities, StackBase? stackBase = null) : this(entities) {
@@ -27,6 +27,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     public DynamicPropertyPageViewModel(Entity entity) : this([entity]) { }
+
     public DynamicPropertyPageViewModel(List<Entity> entities) {
         Entities = entities;
         Entity = entities.FirstOrDefault() ?? throw new Exception("No entities found");
@@ -48,7 +49,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         }
         return _stackBase;
     }
-    
+
     /// <summary>
     ///     Determines if a property has been explicitly modified by the user
     /// </summary>
@@ -251,7 +252,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         tableExpander.IsExpanded = true;
 
         var stackLayout = new StackLayout {
-            Margin = new Thickness(-5,1,1,0),
+            Margin = new Thickness(-5, 1, 1, 0),
             BackgroundColor = Colors.White
         };
         tableExpander.Content = stackLayout;
@@ -334,7 +335,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         if (groupKey.EndsWith("s")) return groupKey;
         return string.IsNullOrEmpty(groupKey) ? "Properties" : $"{groupKey} properties";
     }
-    
+
     /// <summary>
     ///     Creates a visual divider element to separate groups or sections within the property views.
     /// </summary>
@@ -354,5 +355,4 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         public DynamicPropertyPageViewModel? PropertyViewModel { get; set; }
         public object OriginalBindingContext { get; set; } = "";
     }
-
 }

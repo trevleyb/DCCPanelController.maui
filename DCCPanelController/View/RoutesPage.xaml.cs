@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 

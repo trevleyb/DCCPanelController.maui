@@ -10,8 +10,6 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
     [ObservableProperty] public List<string> _availableButtons;
     [ObservableProperty] private ButtonActions _buttonPanelActions;
 
-    public List<string> SelectableButtons => BuildSelectableButtons();
-
     public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
         ActionContext = context;
         AvailableButtons = availableButtons;
@@ -20,6 +18,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsButtonContext));
         OnPropertyChanged(nameof(ControlHeight));
     }
+
+    public List<string> SelectableButtons => BuildSelectableButtons();
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;

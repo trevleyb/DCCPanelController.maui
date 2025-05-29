@@ -15,18 +15,14 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityID {
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
     [ObservableProperty] private int _sortOrder;
-    
-    [JsonIgnore] public Panels? Panels { get; set; }
-    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
 
     [JsonConstructor]
     private Panel() {
@@ -38,6 +34,10 @@ public partial class Panel : ObservableObject, IEntityID {
         Id = GenerateID();
     }
 
+    [JsonIgnore] public Panels? Panels { get; set; }
+    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
+
     [JsonIgnore]
     public string Title {
         get {
@@ -48,35 +48,69 @@ public partial class Panel : ObservableObject, IEntityID {
         }
     }
 
-    [JsonIgnore] 
-    public ImageSource? Thumbnail => 
-        string.IsNullOrWhiteSpace(Base64Image) 
-            ? null 
+    [JsonIgnore]
+    public ImageSource? Thumbnail =>
+        string.IsNullOrWhiteSpace(Base64Image)
+            ? null
             : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
-    
+
+    public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
+    public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
+    public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
+    public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
+
     public string GenerateID() {
         return EntityID.NextPanelID(Panels ?? []);
     }
 
-    public Entity? GetEntityAtPosition(int x, int y) => Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
-    public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
-    public List<T> GetPanelEntitiesWithID<T>() where T : Entity => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.EntityName)).ToList() ?? [];
-    public List<T> GetAllEntitiesByType<T>() where T : Entity   => Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
-    public List<T> GetAllEntitiesWithID<T>() where T : Entity   => Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
-    public ButtonEntity? GetButtonEntity(string id)             => GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
-    public TurnoutEntity? GetTurnoutEntity(string id)           => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.TurnoutID == id) ?? null;
-    public RouteEntity? GetRouteEntity(string id)               => GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
+    public Entity? GetEntityAtPosition(int x, int y) {
+        return Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
+    }
 
-    public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
-    public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
-    public ObservableCollection<Turnout> Turnouts=> Panels?.Profile?.Turnouts ?? [];
-    public ObservableCollection<Signal> Signals=> Panels?.Profile?.Signals ?? [];
+    public List<T> GetPanelEntitiesByType<T>() where T : Entity {
+        return Entities.OfType<T>().ToList() ?? [];
+    }
 
-    public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
-    public Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
-    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
-    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id,StringComparison.InvariantCultureIgnoreCase));
-    
+    public List<T> GetPanelEntitiesWithID<T>() where T : Entity {
+        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.EntityName)).ToList() ?? [];
+    }
+
+    public List<T> GetAllEntitiesByType<T>() where T : Entity {
+        return Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
+    }
+
+    public List<T> GetAllEntitiesWithID<T>() where T : Entity {
+        return Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
+    }
+
+    public ButtonEntity? GetButtonEntity(string id) {
+        return GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    }
+
+    public TurnoutEntity? GetTurnoutEntity(string id) {
+        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.TurnoutID == id) ?? null;
+    }
+
+    public RouteEntity? GetRouteEntity(string id) {
+        return GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
+    }
+
+    public Block? Block(string id) {
+        return Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Route? Route(string id) {
+        return Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Turnout? Turnout(string id) {
+        return Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Signal? Signal(string id) {
+        return Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;
         Entities.Add(entity);

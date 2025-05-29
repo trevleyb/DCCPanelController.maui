@@ -4,12 +4,6 @@ using DCCClients.Jmri.JMRI.DataBlocks;
 namespace DCCClients.Jmri.JMRI.EventArgs;
 
 public class OccupancyEventArgs : System.EventArgs {
-    public string Identifier { get; set; }
-    public string State { get; set; }
-    public string TrainId { get; set; }
-    public bool IsOccupied { get; set; }
-    public string? Metadata { get; set; }
-    
     public OccupancyEventArgs(string trainId, string identifier, bool isOccupied, string? metadata) {
         Identifier = identifier;
         IsOccupied = isOccupied;
@@ -34,4 +28,10 @@ public class OccupancyEventArgs : System.EventArgs {
             Console.WriteLine($"Could not parse Occupancy Data: {ex.Message}");
         }
     }
+
+    public string Identifier { get; set; }
+    public string State { get; set; }
+    public string TrainId { get; set; }
+    public bool IsOccupied { get; set; }
+    public string? Metadata { get; set; }
 }

@@ -51,13 +51,6 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     }
 
     /// <summary>
-    /// Creates a new Client instance. Can be overridden in tests to provide a mock.
-    /// </summary>
-    protected virtual Client CreateClient(WithrottleSettings settings) {
-        return new Client(settings);
-    }
-
-    /// <summary>
     ///     Attempts to reconnect to the WiThrottle server using the existing client connection.
     /// </summary>
     /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
@@ -130,6 +123,13 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
         await Task.CompletedTask;
         return Result.Fail("Withrottle does not support signal commands.");
+    }
+
+    /// <summary>
+    ///     Creates a new Client instance. Can be overridden in tests to provide a mock.
+    /// </summary>
+    protected virtual Client CreateClient(WithrottleSettings settings) {
+        return new Client(settings);
     }
 
     public async Task ForceRefresh(string? type) {

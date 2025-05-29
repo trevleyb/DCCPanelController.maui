@@ -4,28 +4,26 @@
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
-using Application = Microsoft.Maui.Controls.Application;
 
 namespace DCCPanelController.View.Properties;
 
 public static class PropertyDisplayService {
-    
-    public enum ShowPropertiesType {Automatic, PropertySheet, PopUpWindow}
-    
+    public enum ShowPropertiesType { Automatic, PropertySheet, PopUpWindow }
+
     public static async Task<bool> ShowPropertiesAsync(INavigation navigation,
                                                        IPropertiesViewModel viewModel,
                                                        double currentDisplayWidth,  // Pass the current display width
                                                        double currentDisplayHeight, // Pass the current display height
-                                                       ShowPropertiesType showPropertiesType = ShowPropertiesType.Automatic)
-    {
+                                                       ShowPropertiesType showPropertiesType = ShowPropertiesType.Automatic) {
         var result = false;
 
         // Determine if it's an iPhone-like device in portrait
         var usePageSheet = DeviceInfo.Platform == DevicePlatform.iOS &&
                            DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
-                           //currentDisplayWidth < currentDisplayHeight; // Basic portrait check
 
-        if ((usePageSheet && showPropertiesType == ShowPropertiesType.Automatic) || showPropertiesType == ShowPropertiesType.PropertySheet) {
+        //currentDisplayWidth < currentDisplayHeight; // Basic portrait check
+
+        if (usePageSheet && showPropertiesType == ShowPropertiesType.Automatic || showPropertiesType == ShowPropertiesType.PropertySheet) {
             var propertySheetPage = new PropertySheetPage(viewModel);
 #if IOS
             propertySheetPage.On<iOS>().SetModalPresentationStyle(UIModalPresentationStyle.PageSheet);
@@ -36,7 +34,7 @@ public static class PropertyDisplayService {
         } else {
             // For iPad, Mac, Windows, Android tablets, or landscape iPhone
             var propertyPopup = new PropertyPopup(viewModel);
-            
+
             // The PropertyPopup.ShowAsync handles showing and awaiting closure
             // This is a simplified call. You might need to pass the current page.
             if (App.Current.Windows[0].Page is { } mainPage) {

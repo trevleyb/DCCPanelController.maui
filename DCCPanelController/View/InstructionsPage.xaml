@@ -13,7 +13,7 @@
             <VerticalStackLayout>
                 <VerticalStackLayout Margin="10,5,10,5">
                     <Label Style="{StaticResource LargeLabel}" Text="DCC Panel Controller"
-                    TextColor="{StaticResource Primary}"    FontAttributes="Bold" FontSize="24"/>
+                           TextColor="{StaticResource Primary}" FontAttributes="Bold" FontSize="24"/>
                     <!-- <Label Style="{StaticResource LargeLabel}" Text="SubHeading"/> -->
                     <!-- <Label Style="{StaticResource MediumLabel}">Bla Bla Bla</Label> -->
                     <!-- <Label Style="{StaticResource MediumLabel}">Bla Bla Bla</Label> -->
@@ -34,14 +34,14 @@
                     </Label>
                     <HorizontalStackLayout>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">The state of a turnout is automatically updated when you connect using the connect button </Label>
-                        <Image Source="wifi.png"></Image>
+                        <Image Source="wifi.png"/>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}"> or disconnect </Label>
-                        <Image Source="wifi_off.png"></Image>
+                        <Image Source="wifi_off.png"/>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">but turnouts deleted on the server will not be reflected automatically. </Label>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">To refresh all turnout data (leaving manually added turnouts) use the delete and refresh button </Label>
-                        <Image Source="delete.png"></Image>
+                        <Image Source="delete.png"/>
                     </HorizontalStackLayout>
                     <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}" Text="Routes (all systems)"/>
                     <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">
@@ -49,7 +49,7 @@
                     </Label>
                     <HorizontalStackLayout>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">To refresh all route data use the delete and refresh button </Label>
-                        <Image Source="delete.png"></Image>
+                        <Image Source="delete.png"/>
                     </HorizontalStackLayout>
                     <Label Margin="10,20,10,5" Style="{StaticResource LargeLabel}"
                            Text="Blocks (Occupancy) (JMRI Only)"/>
@@ -58,7 +58,7 @@
                     </Label>
                     <HorizontalStackLayout>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">To refresh all block (occupancy) data use the delete and refresh button </Label>
-                        <Image Source="delete.png"></Image>
+                        <Image Source="delete.png"/>
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
             </VerticalStackLayout>

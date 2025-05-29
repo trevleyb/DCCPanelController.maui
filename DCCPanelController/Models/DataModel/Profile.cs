@@ -11,22 +11,22 @@ namespace DCCPanelController.Models.DataModel;
 ///     profiles. Need to build a selector to select a profile in the future.
 /// </summary>
 public partial class Profile : ObservableObject {
-    [ObservableProperty] private string _profileName;
-    [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<Block> _blocks;
+    [ObservableProperty] private Panels _panels;
+    [ObservableProperty] private string _profileName;
     [ObservableProperty] private ObservableCollection<Route> _routes;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<Signal> _signals;
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName) {
         _profileName = profileName;
-        Panels      = new Panels();
-        Settings    = new Settings();
-        Blocks      = new ObservableCollection<Block>();
-        Turnouts    = new ObservableCollection<Turnout>();
-        Routes      = new ObservableCollection<Route>();
-        Signals     = new ObservableCollection<Signal>();
+        Panels = new Panels();
+        Settings = new Settings();
+        Blocks = new ObservableCollection<Block>();
+        Turnouts = new ObservableCollection<Turnout>();
+        Routes = new ObservableCollection<Route>();
+        Signals = new ObservableCollection<Signal>();
         _panels.Profile = this;
     }
 
@@ -39,7 +39,7 @@ public partial class Profile : ObservableObject {
     public Route? Route(string id) {
         return Routes.FirstOrDefault(r => r.Id == id);
     }
-    
+
     public Signal? Signal(string id) {
         return Signals.FirstOrDefault(s => s.Id == id);
     }
@@ -66,7 +66,7 @@ public partial class Profile : ObservableObject {
     ///     collection and performs necessary validation or adjustments by invoking their respective parent-checking logic.
     /// </summary>
     public void FixLoadedPanels() {
-        Panels.Profile = this;        
+        Panels.Profile = this;
         foreach (var panel in Panels) {
             panel.Panels = Panels;
             panel.CheckEntityParents();

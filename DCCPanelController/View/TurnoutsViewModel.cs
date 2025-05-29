@@ -10,29 +10,28 @@ using DCCPanelController.View.Properties;
 namespace DCCPanelController.View;
 
 public partial class TurnoutsViewModel : ConnectionViewModel {
-    private bool _isAscending;
-    private string _sortColumn = "";
-    
     private const string LabelID = "ID";
     private const string LabelName = "Turnout";
     private const string LabelState = "State";
     private const string LabelAddress = "DCC Address";
-    
+
     [ObservableProperty] private string _columnLabelAddress = LabelAddress;
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
+    private bool _isAscending;
+    private string _sortColumn = "";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    public INavigation? Navigation;
+    public double ScreenHeight = 100;
 
     public double ScreenWidth = 100;
-    public double ScreenHeight = 100;
-    public INavigation? Navigation;
-    
-    public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile,connectionService) {
+
+    public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Turnouts = Profile.Turnouts;
         SetLabels();
     }
-    
+
     private void SetLabels() {
         ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
@@ -46,7 +45,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             IsBusy = true;
             Profile.Turnouts.Clear();
             await ConnectionService.ForceRefresh();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Console.WriteLine($"Unable to force refresh the turnouts: {ex.Message}");
         } finally {
             IsBusy = false;
@@ -116,13 +115,13 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             OnPropertyChanged(nameof(Turnouts));
         }
     }
-    
+
     [RelayCommand]
     public async Task EditTurnoutAsync(Turnout? turnout) {
         try {
-            if (turnout is not null && Navigation is {  } navigation) {
+            if (turnout is not null && Navigation is { } navigation) {
                 var turnoutsEditViewModel = new TurnoutsEditViewModel(turnout, ConnectionService);
-                await PropertyDisplayService.ShowPropertiesAsync (navigation, turnoutsEditViewModel, ScreenWidth, ScreenHeight);
+                await PropertyDisplayService.ShowPropertiesAsync(navigation, turnoutsEditViewModel, ScreenWidth, ScreenHeight);
                 await Profile.SaveAsync();
                 OnPropertyChanged(nameof(Turnouts));
             }
@@ -130,7 +129,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
         }
     }
-    
+
     [RelayCommand]
     private async Task ClearAllAsync() {
         IsBusy = true;

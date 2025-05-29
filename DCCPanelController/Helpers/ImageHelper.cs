@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace DCCPanelController.Helpers;
 
 public static class ImageHelper {

@@ -6,9 +6,8 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Models.DataModel;
 
 public sealed class Panels : ObservableCollection<Panel> {
-
     [JsonIgnore] public Profile? Profile { get; set; }
-    
+
     public Panel CreatePanel() {
         return new Panel(this);
     }

@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients;
 using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -11,9 +10,6 @@ using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEn
 namespace DCCPanelController.View;
 
 public partial class RoutesViewModel : ConnectionViewModel {
-    private bool _isAscending;
-    private string _sortColumn = "";
-
     private const string LabelID = "ID";
     private const string LabelName = "Route";
     private const string LabelState = "State";
@@ -21,7 +17,9 @@ public partial class RoutesViewModel : ConnectionViewModel {
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
+    private bool _isAscending;
     [ObservableProperty] private ObservableCollection<Route> _routes;
+    private string _sortColumn = "";
 
     public RoutesViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile);
@@ -77,7 +75,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
         try {
             IsBusy = true;
             ConnectionService.ForceRefresh();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             Console.WriteLine($"Unable to force refresh the routes: {ex.Message}");
         } finally {
             IsBusy = false;
@@ -96,7 +94,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
             await ConnectionService.SendRouteCmdAsync(route.Id, route.State == RouteStateEnum.Active)!;
         }
     }
-    
+
     [RelayCommand]
     private async Task ClearAllAsync() {
         IsBusy = true;
@@ -113,5 +111,4 @@ public partial class RoutesViewModel : ConnectionViewModel {
             IsBusy = false;
         }
     }
-   
 }

@@ -6,25 +6,26 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.View;
 
 public partial class PanelEditor : ContentPage {
+    private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly PanelEditorViewModel _viewModel;
-    private readonly TaskCompletionSource<bool> _closeTcs = new TaskCompletionSource<bool>();
-    private bool _isPushingModal = false; // Flag to track modal presentation
-    public Task<bool> PageClosed => _closeTcs.Task;
+    private bool _isPushingModal; // Flag to track modal presentation
 
     public PanelEditor(Panel panel) {
         InitializeComponent();
-        if (panel.Cols <=0 ) panel.Cols = 18;
-        if (panel.Rows <=0 ) panel.Rows = 10;
-        
+        if (panel.Cols <= 0) panel.Cols = 18;
+        if (panel.Rows <= 0) panel.Rows = 10;
+
         _viewModel = new PanelEditorViewModel(panel, Navigation);
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.GridVisible = true;
         _viewModel.EditMode = EditModeEnum.Move;
         _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
-        
+
         BindingContext = _viewModel;
         PanelView.TileSelected += PanelViewOnTileSelected;
     }
+
+    public Task<bool> PageClosed => _closeTcs.Task;
 
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
@@ -35,14 +36,14 @@ public partial class PanelEditor : ContentPage {
     private void OnBeginPushModal() {
         _isPushingModal = true;
     }
-    
+
     protected override async void OnDisappearing() {
         base.OnDisappearing();
 
         if (_isPushingModal) {
             _isPushingModal = false;
         } else {
-            if (_viewModel.Panel is {} panel) {
+            if (_viewModel.Panel is { } panel) {
                 try {
                     panel.Base64Image = await PanelView.GetThumbnailAsync();
                     _viewModel?.Panel?.Panels?.Profile?.SaveAsync();
@@ -55,7 +56,7 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
-        _viewModel.SelectedTiles = e.Tiles.ToObservableCollection(); 
+        _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
@@ -71,7 +72,7 @@ public partial class PanelEditor : ContentPage {
                 EditModeEnum.Move => "move.png",
                 EditModeEnum.Copy => "copy.png",
                 EditModeEnum.Size => "crop.png",
-                _                 => "move.png",
+                _                 => "move.png"
             };
             break;
         }

@@ -25,7 +25,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
             _                        => TurnoutStateEnum.Unknown
         };
 
-        if (connectionService is not null && Entity is TurnoutEntity { Turnout.DccAddress: {} address } turnoutEntity) {
+        if (connectionService is not null && Entity is TurnoutEntity { Turnout.DccAddress: { } address } turnoutEntity) {
             connectionService.SendTurnoutCmdAsync(address, State != TurnoutStateEnum.Closed);
         }
     }

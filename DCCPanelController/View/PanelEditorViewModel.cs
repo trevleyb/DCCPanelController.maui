@@ -4,8 +4,6 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Services;
-using DCCPanelController.View.DynamicProperties;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DynamicPropertyPageViewModel = DCCPanelController.View.Properties.TileProperties.DynamicPropertyPageViewModel;
@@ -14,12 +12,14 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
+    private readonly INavigation _navigation;
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+
+    [ObservableProperty] private bool _gridVisible;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
     private Panel? _panel;
-
-    [ObservableProperty] private bool _gridVisible;
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
@@ -29,25 +29,24 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     private ObservableCollection<ITile> _selectedTiles = [];
 
+    public double ScreenHeight = 100;
+
+    public double ScreenWidth = 100;
+
+    public PanelEditorViewModel(Panel panel, INavigation navigation) {
+        _panel = panel;
+        _navigation = navigation;
+    }
+
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
-
-    private readonly INavigation _navigation;
     public string Title => Panel?.Title ?? "Panel";
     public event Action? OnBeginPushModal;
-    
-    public double ScreenWidth = 100;
-    public double ScreenHeight = 100;
 
-    public PanelEditorViewModel(Panel panel, INavigation navigation) {
-        _panel = panel;
-        _navigation = navigation;
-    }
-        
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {

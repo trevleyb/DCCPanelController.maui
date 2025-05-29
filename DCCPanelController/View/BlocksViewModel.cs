@@ -1,27 +1,24 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClients;
 using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
-using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEnum;
 
 namespace DCCPanelController.View;
 
 public partial class BlocksViewModel : ConnectionViewModel {
-    private bool _isAscending;
-    private string _sortColumn = "";
-
     private const string LabelID = "ID";
     private const string LabelName = "Block";
     private const string LabelState = "Is Occupied?";
+    [ObservableProperty] private ObservableCollection<Block> _blocks;
 
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    [ObservableProperty] private ObservableCollection<Block> _blocks;
+    private bool _isAscending;
+    private string _sortColumn = "";
 
     public BlocksViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Blocks = Profile.Blocks;

@@ -8,7 +8,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     public SettingsPage(SettingsViewModel viewModel) {
         InitializeComponent();
-        _viewModel = viewModel; 
+        _viewModel = viewModel;
         if (_viewModel?.CurrentSettings?.Settings is { } current) {
             if (current.Type == "jmri") {
                 JmriServerButton.IsChecked = true;
@@ -128,12 +128,15 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private void Protocol_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
     }
+
     private void Address_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
     }
+
     private void Port_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
     }
+
     private void Url_OnTextChanged(object? sender, TextChangedEventArgs e) {
         if (_viewModel is not null) {
             try {
@@ -141,10 +144,10 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                 _viewModel.Protocol = uri.Scheme;
                 _viewModel.IpAddress = uri.Host;
                 _viewModel.Port = uri.Port;
-            } catch { /* ignored */ }
+            } catch { /* ignored */
+            }
         }
     }
-
 }
 
 public class EntryValidationBehavior : Behavior<Entry> {

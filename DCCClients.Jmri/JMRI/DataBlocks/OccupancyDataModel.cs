@@ -1,58 +1,57 @@
-using System.Text.Json;
 using System.Text.Json.Serialization;
+
 namespace DCCClients.Jmri.JMRI.DataBlocks; // Root structure that contains the turnout data
 
 // Root structure that contains the block data
-public class JmriOccupancyData
-{
+public class JmriOccupancyData {
     [JsonPropertyName("type")]
     public required string Type { get; set; }
 
     [JsonPropertyName("data")]
-    public required JmriOccupancy Data { get; set; } 
+    public required JmriOccupancy Data { get; set; }
 }
 
 // The actual block with all its properties
 public class JmriOccupancy {
     [JsonPropertyName("name")]
     public string Name { get; set; } = string.Empty;
-    
+
     [JsonPropertyName("userName")]
     public string UserName { get; set; } = string.Empty;
-    
+
     [JsonPropertyName("comment")]
     public string Comment { get; set; } = string.Empty;
 
     [JsonPropertyName("properties")]
     public List<object> Properties { get; set; } = [];
-    
+
     [JsonPropertyName("state")]
     public int State { get; set; }
-    
+
     [JsonPropertyName("value")]
-    public object? Value { get; set; } 
-    
+    public object? Value { get; set; }
+
     [JsonPropertyName("sensor")]
     public object? Sensor { get; set; }
-    
+
     [JsonPropertyName("reporter")]
     public object? Reporter { get; set; }
-    
+
     [JsonPropertyName("speed")]
     public string Speed { get; set; } = string.Empty;
-    
+
     [JsonPropertyName("curvature")]
     public int Curvature { get; set; }
-    
+
     [JsonPropertyName("direction")]
     public int Direction { get; set; }
-    
+
     [JsonPropertyName("length")]
     public double Length { get; set; }
-    
+
     [JsonPropertyName("permissive")]
     public bool Permissive { get; set; }
-    
+
     [JsonPropertyName("speedLimit")]
     public double SpeedLimit { get; set; }
 

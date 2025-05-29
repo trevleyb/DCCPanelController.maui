@@ -15,28 +15,22 @@ using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : ConnectionViewModel {
-    public Settings Settings => Profile.Settings;
-    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
+    [ObservableProperty] private string _connectLabel = "Test Connection";
+    [ObservableProperty] private string _ipAddress = "0.0.0.0";
+    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
     [ObservableProperty] private string _name = "withrottle";
-    [ObservableProperty] private string _ipAddress = "0.0.0.0";
     [ObservableProperty] private int _port = 12090;
     [ObservableProperty] private string _protocol = "http";
-    [ObservableProperty] private string _url = "http://localhost:12090";
-    [ObservableProperty] private string _connectLabel = "Test Connection";
-
-    public bool IsJmriServer { get; set; }
-    public bool IsWiThrottle { get; set; }
 
     [ObservableProperty] private DiscoveredService? _selectedServer;
     [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
-    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ShowWiServers))]
     private bool _showMessages;
 
-    public bool ShowWiServers => !ShowMessages;
+    [ObservableProperty] private string _url = "http://localhost:12090";
 
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
@@ -65,13 +59,13 @@ public partial class SettingsViewModel : ConnectionViewModel {
         }
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(SelectedServer) && SelectedServer is not null) {
-            Name = SelectedServer.FriendlyName;
-            IpAddress = SelectedServer.Address.ToString();
-            Port = SelectedServer.Port;
-        }
-    }
+    public Settings Settings => Profile.Settings;
+    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
+
+    public bool IsJmriServer { get; set; }
+    public bool IsWiThrottle { get; set; }
+
+    public bool ShowWiServers => !ShowMessages;
 
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
@@ -99,6 +93,14 @@ public partial class SettingsViewModel : ConnectionViewModel {
     public string IpAddress4 {
         get => GetIpAddressParts(4);
         set => SetIpAddressParts(4, value);
+    }
+
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(SelectedServer) && SelectedServer is not null) {
+            Name = SelectedServer.FriendlyName;
+            IpAddress = SelectedServer.Address.ToString();
+            Port = SelectedServer.Port;
+        }
     }
 
     public void SaveSettings() {
@@ -149,7 +151,9 @@ public partial class SettingsViewModel : ConnectionViewModel {
         }
     }
 
-    private string GenerateUrl() => (string.IsNullOrEmpty(Url) || Url.Contains("0.0.0.0")) ? $"{Protocol}://{IpAddress}:{Port}" : Url;
+    private string GenerateUrl() {
+        return string.IsNullOrEmpty(Url) || Url.Contains("0.0.0.0") ? $"{Protocol}://{IpAddress}:{Port}" : Url;
+    }
 
     [RelayCommand]
     private async Task ConnectAsync() {

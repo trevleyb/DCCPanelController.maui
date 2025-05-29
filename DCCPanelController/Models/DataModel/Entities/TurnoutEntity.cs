@@ -1,7 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Actions;
 using DCCPanelController.View.DynamicProperties.EditableControls;
 
@@ -15,7 +14,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
     //[ObservableProperty] [property: EditableID("ID", "", 0, "Turnout")]
     //private string _id = string.Empty;
 
-    [ObservableProperty] 
+    [ObservableProperty]
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     [ObservableProperty] [property: EditableTurnout("Turnout", "", 0, "Turnout")]
@@ -40,7 +39,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
 
     [JsonIgnore]
     public Turnout? Turnout => Parent?.Turnout(TurnoutID);
-    
+
     public override string ToString() {
         return TurnoutID;
     }

@@ -1,5 +1,3 @@
-using static DCCPanelController.View.Properties.PropertyDisplayService;
-
 namespace DCCPanelController.View.Properties;
 
 public interface IPropertiesViewModel {

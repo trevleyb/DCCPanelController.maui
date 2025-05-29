@@ -3,7 +3,6 @@ using DCCCommon.Events;
 namespace DCCCommon.Client;
 
 public abstract class DccClient {
-    
     public event EventHandler<DccStateChangedArgs>? ConnectionStateChanged;
     public event EventHandler<DccMessageArgs>? MessageReceived;
     public event EventHandler<DccTurnoutArgs>? TurnoutMsgReceived;
@@ -30,7 +29,7 @@ public abstract class DccClient {
     protected virtual void OnOccupancyMsgReceived(DccOccupancyArgs e) {
         OccupancyMsgReceived?.Invoke(this, e);
     }
-    
+
     protected virtual void OnSignalMsgReceived(DccSignalArgs e) {
         SignalMsgReceived?.Invoke(this, e);
     }

@@ -13,7 +13,7 @@ public class JmriTurnoutData {
 // The turnout with its properties
 public class JmriTurnout {
     [JsonPropertyName("name")]
-    public string Name { get; set; }= string.Empty;
+    public string Name { get; set; } = string.Empty;
 
     [JsonPropertyName("userName")]
     public string UserName { get; set; } = string.Empty;

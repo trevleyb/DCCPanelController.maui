@@ -1,6 +1,5 @@
-
-
 // ReSharper disable once CheckNamespace
+
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public enum ButtonStateEnum { Unknown, On, Off }

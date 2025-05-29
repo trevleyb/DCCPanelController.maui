@@ -12,9 +12,9 @@ public class DiscoveredService {
     public int Port { get; set; }
     public string ServiceType { get; set; } = string.Empty;
     public IPAddress Address => Addresses.FirstOrDefault(n => n.AddressFamily == AddressFamily.InterNetwork) ?? new IPAddress(0);
-    public List<IPAddress> Addresses { get; set; } = new List<IPAddress>();
-    public Dictionary<string, string> TxtRecords { get; set; } = new Dictionary<string, string>();
-    
+    public List<IPAddress> Addresses { get; set; } = new();
+    public Dictionary<string, string> TxtRecords { get; set; } = new();
+
     public string? GetUrl(bool preferIPv4 = true) {
         if (Port == 0) return null;
 
@@ -38,7 +38,7 @@ public class DiscoveredService {
 
         if (string.IsNullOrEmpty(targetAddress)) return null;
 
-        string protocol = "http"; // Default
+        var protocol = "http"; // Default
         if (ServiceType.Contains("._tcp", StringComparison.OrdinalIgnoreCase)) {
             if (ServiceType.StartsWith("_https", StringComparison.OrdinalIgnoreCase) || ServiceType.Contains("._https", StringComparison.OrdinalIgnoreCase)) protocol = "https";
             else if (ServiceType.StartsWith("_ftp", StringComparison.OrdinalIgnoreCase) || ServiceType.Contains("._ftp", StringComparison.OrdinalIgnoreCase)) protocol = "ftp";
