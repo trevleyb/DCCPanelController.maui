@@ -11,23 +11,23 @@ namespace DCCPanelController.Models.DataModel;
 ///     profiles. Need to build a selector to select a profile in the future.
 /// </summary>
 public partial class Profile : ObservableObject {
-    [ObservableProperty] private ObservableCollection<Block> _blocks;
     [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private string _profileName;
+    [ObservableProperty] private ObservableCollection<Block> _blocks;
     [ObservableProperty] private ObservableCollection<Route> _routes;
-    [ObservableProperty] private Settings _settings;
     [ObservableProperty] private ObservableCollection<Signal> _signals;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private string _profileName;
+    [ObservableProperty] private Settings _settings;
 
     public Profile(string profileName) {
         _profileName = profileName;
         Panels = new Panels();
+        Panels.Profile = this;
         Settings = new Settings();
         Blocks = new ObservableCollection<Block>();
         Turnouts = new ObservableCollection<Turnout>();
         Routes = new ObservableCollection<Route>();
         Signals = new ObservableCollection<Signal>();
-        _panels.Profile = this;
     }
 
     [JsonIgnore] public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection();

@@ -37,7 +37,7 @@ public partial class SettingsViewModel : ConnectionViewModel {
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
         PropertyChanged += OnPropertyChanged;
-        Name = Profile.ActiveConnectionInfo?.Name ?? "default";
+        Name = Profile.ActiveConnectionInfo?.Name ?? DeviceInfo.Name;
         LoadConnectionDetailsFromActiveProfile();
     }
 
@@ -226,26 +226,33 @@ public partial class SettingsViewModel : ConnectionViewModel {
     [RelayCommand]
     public async Task RefreshServersAsync() {
         if (IsBusy) return;
-        Messages.Clear();
-        AddMessage("Attempting to scan for Available Servers");
-        SelectedServer = null;
-        
-        try {
-            IsBusy = true;
-            var result = await DiscoverServices.SearchForServicesByTypeAsync(CurrentSettings?.Settings?.Type ?? "");
-            if (result is { IsSuccess: true, Value.Count: > 0 }) {
-                var servicesFound = result.Value.ToObservableCollection();
-                Servers = new ObservableCollection<DiscoveredService>(servicesFound);
-                AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "S" : "")}");
-            } else {
-                AddMessage($"{result.Message}");
+
+        var serverType = CurrentSettings?.Settings?.Type;
+        if (!string.IsNullOrEmpty(serverType)) {
+            Messages.Clear();
+            AddMessage("Attempting to scan for Available Servers");
+            Servers.Clear();
+            SelectedServer = null;
+
+            try {
+                IsBusy = true;
+                var result = await DiscoverServices.SearchForServicesByTypeAsync(serverType);
+                if (result is { IsSuccess: true, Value.Count: > 0 }) {
+                    var servicesFound = result.Value.ToObservableCollection();
+                    Servers = new ObservableCollection<DiscoveredService>(servicesFound);
+                    AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "S" : "")}");
+                } else {
+                    AddMessage($"{result.Message}");
+                }
+            } catch (Exception ex) {
+                Console.WriteLine($"Unable to Refresh Servers: {ex.Message}");
+            } finally {
+                IsBusy = false;
+                IsRefreshing = false;
+                IsJmriServer = serverType.Equals("jmri");
+                IsWiThrottle = serverType.Equals("withrottle");
+                SetSelectedServer();
             }
-        } catch (Exception ex) {
-            Console.WriteLine($"Unable to Refresh Servers: {ex.Message}");
-        } finally {
-            IsBusy = false;
-            IsRefreshing = false;
-            SetSelectedServer();
         }
     }
 
