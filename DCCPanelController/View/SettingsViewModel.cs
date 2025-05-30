@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClients.Jmri.JMRI;
 using DCCClients.WiThrottle.WiThrottle.Client;
+using DCCCommon.Client;
 using DCCCommon.Discovery;
 using DCCCommon.Events;
 using DCCPanelController.Models.DataModel;
@@ -16,39 +17,32 @@ namespace DCCPanelController.View;
 
 public partial class SettingsViewModel : ConnectionViewModel {
     [ObservableProperty] private string _connectLabel = "Test Connection";
-    [ObservableProperty] private string _ipAddress = "0.0.0.0";
-    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-
-    [ObservableProperty] private string _name = "withrottle";
-    [ObservableProperty] private int _port = 12090;
-    [ObservableProperty] private string _protocol = "http";
-
+    [ObservableProperty] private bool   _isResetNameAvailable;
+    
     [ObservableProperty] private DiscoveredService? _selectedServer;
     [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
+    [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
 
-    [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(ShowWiServers))]
-    private bool _showMessages;
+    [ObservableProperty] private Settings _settings;
+    [ObservableProperty] private ConnectionInfo _connectionInfo;
+    [ObservableProperty] private IDccSettings? _connectionSettings;
+    
+    //public Settings Settings => Profile.Settings;
+    //public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
 
-    [ObservableProperty] private string _url = "http://localhost:12090";
-
+    public bool IsJmriServer { get; set; }
+    public bool IsWiThrottle { get; set; }
+    
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
         PropertyChanged += OnPropertyChanged;
-        Name = Profile.ActiveConnectionInfo?.Name ?? DeviceInfo.Name;
-        LoadConnectionDetailsFromActiveProfile();
+        Settings = profile.Settings;
+        ConnectionInfo = Settings.ActiveConnection;
+        ConnectionSettings = ConnectionInfo.Settings;
     }
-
-    public Settings Settings => Profile.Settings;
-    public ConnectionInfo? CurrentSettings => Settings.ActiveConnection();
-
-    public bool IsJmriServer { get; set; }
-    public bool IsWiThrottle { get; set; }
-
-    public bool ShowWiServers => !ShowMessages;
-
+    
     public Color BackgroundColor {
         get => Settings?.BackgroundColor ?? Colors.White;
         set {
@@ -78,28 +72,36 @@ public partial class SettingsViewModel : ConnectionViewModel {
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Property Changed: {e.PropertyName}");
         switch (e.PropertyName) {
+        case nameof(ConnectionInfo.Name):
+            IsResetNameAvailable = ConnectionInfo.Name != DeviceInfo.Name;
+            break;
         case nameof(SelectedServer):
-            if (SelectedServer is not null) {
-                IpAddress = SelectedServer.Address.ToString();
-                Port = SelectedServer.Port;
+            if (SelectedServer is not null && ConnectionSettings is not null) {
+                ConnectionSettings.Address = SelectedServer.Address.ToString();
+                ConnectionSettings.Port = SelectedServer.Port;
             }
             break;
-        case nameof(IpAddress):
+        case nameof(ConnectionSettings.Address):
             SetSelectedServer();
             break;
-        case nameof(Port):
+        case nameof(ConnectionSettings.Port):
             SetSelectedServer();
             break;
         }
     }
 
-    public void SaveSettings() {
-        SaveConnectionDetailsToActiveProfile();
-        Profile.SaveAsync();
+    public async Task SaveSettings() {
+        await Profile.SaveAsync();
     }
 
+    [RelayCommand]
+    private async Task DefaultDeviceNameAsync() {
+        if (ConnectionSettings is not null) {
+            ConnectionSettings.Name = DeviceInfo.Name;
+        }
+    }
+    
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
     // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
@@ -109,77 +111,39 @@ public partial class SettingsViewModel : ConnectionViewModel {
     }
 
     public void SetNewConnectionMethod(string type) {
-        Profile.ActiveConnectionInfo.Settings = type switch {
-            "jmri"       => new JmriSettings(),
-            "withrottle" => new WithrottleSettings(),
-            _ => throw new ApplicationException("Invalid Connection Type")
-        };
-        SaveConnectionDetailsToActiveProfile();
-    }
-
-    private void LoadConnectionDetailsFromActiveProfile() {
-        if (Profile.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
-            Name = jmriSettings.Name;
-            IpAddress = jmriSettings.Address;
-            Port = jmriSettings.Port;
-            Protocol = jmriSettings.Protocol;
-            Url = jmriSettings.Url;
-            IsWiThrottle = false;
+        switch (type) {
+        case "jmri":
+            ConnectionSettings = new JmriSettings();
+            ConnectionSettings.Port = 12080;
             IsJmriServer = true;
-        }
-
-        if (Profile.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
-            Name = wiThrottleSettings.Name;
-            IpAddress = wiThrottleSettings.Address;
-            Port = wiThrottleSettings.Port;
-            Protocol = wiThrottleSettings.Protocol;
-            Url = wiThrottleSettings.Url;
+            break;
+        case "withrottle":
+            ConnectionSettings = new WithrottleSettings();
+            ConnectionSettings.Port = 12090;
             IsWiThrottle = true;
-            IsJmriServer = false;
-        }
+            break;
+        };
     }
     
-    public void SaveConnectionDetailsToActiveProfile() {
-        if (Profile?.ActiveConnectionInfo?.Settings is JmriSettings jmriSettings) {
-            jmriSettings.Name = Name;
-            jmriSettings.Address = IpAddress;
-            jmriSettings.Port = Port;
-            jmriSettings.Protocol = Protocol;
-            jmriSettings.Url = GenerateUrl();
-        }
-        if (Profile?.ActiveConnectionInfo?.Settings is WithrottleSettings wiThrottleSettings) {
-            wiThrottleSettings.Name = Name;
-            wiThrottleSettings.Address = IpAddress;
-            wiThrottleSettings.Port = Port;
-            wiThrottleSettings.Protocol = Protocol;
-            wiThrottleSettings.Url = GenerateUrl();
-        }
-        SetSelectedServer();
-    }
-
     private void SetSelectedServer() {
         SelectedServer = null;
         foreach (var server in Servers) {
-            if (server.Address.ToString().Equals(IpAddress) && server.Port.Equals(Port)) {
+            if (server.Address.ToString().Equals(ConnectionSettings?.Address) && server.Port.Equals(ConnectionSettings?.Port)) {
                 SelectedServer = server;
                 break;
             }
         }
     }
     
-    private string GenerateUrl() {
-        return string.IsNullOrEmpty(Url) || Url.Contains("0.0.0.0") ? $"{Protocol}://{IpAddress}:{Port}" : Url;
-    }
-
     [RelayCommand]
     private async Task ConnectAsync() {
         Messages.Clear();
         AddMessage("Attempting to connect/disconnect to Service");
-        SaveSettings();
+        await SaveSettings();
 
         try {
             IsBusy = true;
-            var result = await ConnectionService.ConnectAsync(Settings.ActiveConnection());
+            var result = await ConnectionService.ConnectAsync(ConnectionInfo);
             if (result.IsFailure) {
                 AddMessage("Connection Failed.");
                 foreach (var error in result.Errors) AddMessage(error.Message);
@@ -227,11 +191,10 @@ public partial class SettingsViewModel : ConnectionViewModel {
     public async Task RefreshServersAsync() {
         if (IsBusy) return;
 
-        var serverType = CurrentSettings?.Settings?.Type;
+        var serverType = ConnectionSettings?.Type;
         if (!string.IsNullOrEmpty(serverType)) {
             Messages.Clear();
             AddMessage("Attempting to scan for Available Servers");
-            Servers.Clear();
             SelectedServer = null;
 
             try {
@@ -262,9 +225,10 @@ public partial class SettingsViewModel : ConnectionViewModel {
     /// <param name="part">The part number to get where 1= first, 2=second, 3=third, 4=fourth</param>
     /// <returns>The part of the Address</returns>
     private string GetIpAddressParts(int part) {
-        var parts = IpAddress.Split('.');
+        if (string.IsNullOrEmpty(ConnectionSettings?.Address)) return "0";
+        var parts = ConnectionSettings?.Address.Split('.');
         if (part == 0) part = 1;
-        return parts.Length >= part ? parts[part - 1] : "0";
+        return parts?.Length >= part ? parts[part - 1] : "0";
     }
 
     /// <summary>
@@ -274,19 +238,21 @@ public partial class SettingsViewModel : ConnectionViewModel {
     /// <param name="value">the value to set</param>
     /// <returns>The full IPAddress</returns>
     private string SetIpAddressParts(int part, string value, [CallerMemberName] string? propertyName = null) {
-        if (string.IsNullOrEmpty(value)) return IpAddress;
-        var parts = IpAddress.Split('.');
+        if (string.IsNullOrEmpty(value)) return ConnectionSettings?.Address ?? "0";
+        var parts = ConnectionSettings?.Address.Split('.');
 
-        if (parts?.Length > 0) {
-            if (part == 0) part = 1;
-            if (parts?.Length >= part) parts[part - 1] = value;
+        if (ConnectionSettings is not null) {
+            if (parts?.Length > 0) {
+                if (part == 0) part = 1;
+                if (parts?.Length >= part) parts[part - 1] = value;
 
-            if (parts is not null) {
-                IpAddress = string.Join(".", parts);
-                OnPropertyChanged(propertyName);
-                OnPropertyChanged(nameof(IpAddress));
+                if (parts is not null) {
+                    ConnectionSettings.Address = string.Join(".", parts);
+                    OnPropertyChanged(propertyName);
+                    OnPropertyChanged(nameof(ConnectionSettings.Address));
+                }
+                return ConnectionSettings.Address ?? "0.0.0.0";
             }
-            return IpAddress ?? "0.0.0.0";
         }
         return "0";
     }

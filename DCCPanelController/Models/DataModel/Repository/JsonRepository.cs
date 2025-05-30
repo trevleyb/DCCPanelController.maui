@@ -37,7 +37,7 @@ public static class JsonRepository {
         if (string.IsNullOrEmpty(jsonString)) return;
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(fileName));
         Console.WriteLine($"Saving to {fileName}");
-        File.WriteAllTextAsync(fileName, jsonString);
+        await File.WriteAllTextAsync(fileName, jsonString);
     }
     #endregion
 

@@ -30,7 +30,7 @@ public partial class Profile : ObservableObject {
         Signals = new ObservableCollection<Signal>();
     }
 
-    [JsonIgnore] public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection();
+    [JsonIgnore] public ConnectionInfo ActiveConnectionInfo => Settings.ActiveConnection;
 
     public Turnout? Turnout(string id) {
         return Turnouts.FirstOrDefault(t => t.Id == id);

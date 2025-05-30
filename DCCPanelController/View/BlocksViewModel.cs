@@ -71,7 +71,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
     private async Task RefreshBlocksAsync() {
         try {
             IsBusy = true;
-            ConnectionService.ForceRefresh();
+            await ConnectionService.ForceRefresh();
         } catch (Exception ex) {
             Console.WriteLine($"Unable to force refresh the blocks: {ex.Message}");
         } finally {

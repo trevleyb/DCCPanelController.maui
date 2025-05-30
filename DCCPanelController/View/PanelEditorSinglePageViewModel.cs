@@ -129,7 +129,7 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
         } catch {
             // ignored
         }
-        SaveAsync();
+        await SaveAsync();
     }
 
     public void ToggleGrid() {
@@ -291,7 +291,7 @@ public partial class PanelEditorSinglePageViewModel : ConnectionViewModel {
         RefreshSortOrder();
         OnPropertyChanged(nameof(Panels));
         OnPropertyChanged(nameof(SelectedPanel));
-        Profile.SaveAsync();
+        await Profile.SaveAsync();
     }
 
     [RelayCommand]

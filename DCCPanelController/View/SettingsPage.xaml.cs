@@ -9,7 +9,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     public SettingsPage(SettingsViewModel viewModel) {
         InitializeComponent();
         _viewModel = viewModel;
-        if (_viewModel?.CurrentSettings?.Settings is { } current) {
+        if (_viewModel?.ConnectionSettings is { } current) {
             _viewModel.IsJmriServer = current.Type == "jmri";
             _viewModel.IsWiThrottle = current.Type == "withrottle";
         }
@@ -17,9 +17,9 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         BindingContext = _viewModel;
     }
 
-    protected override void OnDisappearing() {
+    protected override async void OnDisappearing() {
         base.OnDisappearing();
-        _viewModel?.SaveSettings();
+        if (_viewModel is {} vm) await vm.SaveSettings();
     }
 
     private void OnEntryFocused(object sender, FocusEventArgs e) {
@@ -108,6 +108,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
         if (sender is RadioButton { Value: string { } value }) SetServerSelected(value);
     }
+
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
         if (sender is RadioButton { Value: string { } value }) SetServerSelected(value);
     }
@@ -116,30 +117,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         if (_viewModel is { } vm && vm.IsNotBusy && !string.IsNullOrEmpty(serverType)) {
             vm.SetNewConnectionMethod(serverType);
             await vm.RefreshServersAsync();
-        }
-    }
-
-    private void Protocol_OnTextChanged(object? sender, TextChangedEventArgs e) {
-        if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
-    }
-
-    private void Address_OnTextChanged(object? sender, TextChangedEventArgs e) {
-        if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
-    }
-
-    private void Port_OnTextChanged(object? sender, TextChangedEventArgs e) {
-        if (_viewModel is not null) _viewModel.Url = $"{_viewModel.Protocol}://{_viewModel.IpAddress}:{_viewModel.Port}";
-    }
-
-    private void Url_OnTextChanged(object? sender, TextChangedEventArgs e) {
-        if (_viewModel is not null) {
-            try {
-                var uri = new Uri(_viewModel.Url);
-                _viewModel.Protocol = uri.Scheme;
-                _viewModel.IpAddress = uri.Host;
-                _viewModel.Port = uri.Port;
-            } catch { /* ignored */
-            }
         }
     }
 }

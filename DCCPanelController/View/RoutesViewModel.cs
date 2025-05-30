@@ -74,7 +74,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
     private async Task RefreshRoutesAsync() {
         try {
             IsBusy = true;
-            ConnectionService.ForceRefresh();
+            await ConnectionService.ForceRefresh();
         } catch (Exception ex) {
             Console.WriteLine($"Unable to force refresh the routes: {ex.Message}");
         } finally {
