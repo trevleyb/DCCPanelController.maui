@@ -200,7 +200,7 @@
 
                     <RefreshView VerticalOptions="Start" MinimumHeightRequest="100"
                                  Command="{Binding RefreshServersCommand}"
-                                 IsRefreshing="{Binding IsRefreshing}">
+                                 IsRefreshing="{Binding IsSearching}">
                         <Grid>
                             <ActivityIndicator
                                 Color="{StaticResource Primary}"

@@ -2,10 +2,10 @@ using System.Net.WebSockets;
 
 namespace DCCClients.Jmri.JMRI;
 
-public class WebSocketWrapper : IWebSocket {
+public class JmriWebSocket : IWebSocket {
     private readonly ClientWebSocket _clientWebSocket;
 
-    public WebSocketWrapper() {
+    public JmriWebSocket() {
         _clientWebSocket = new ClientWebSocket();
     }
 

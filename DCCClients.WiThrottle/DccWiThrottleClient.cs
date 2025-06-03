@@ -63,8 +63,21 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         }
     }
 
-    public Task<IResult> ForceRefreshAsync(string? type = null) {
-        return ReconnectAsync();
+    public async Task<IResult> ForceRefreshAsync(string? type = null) {
+        return await ReconnectAsync();
+    }
+
+    public async Task<IResult> TestConnection() {
+        try {
+            await DisconnectAsync();
+            var result = await ConnectAsync();
+            if (result.IsFailure) return result;
+            await Task.Delay(1000);
+            await DisconnectAsync();
+            return Result.Ok();
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Unable to reconnect to the Withrottle server.").CausedBy(ex));
+        }
     }
 
     /// <summary>
@@ -159,12 +172,10 @@ public class DccWiThrottleClient : DccClient, IDccClient {
             break;
 
         case TurnoutEvent turnout:
-            OnMessageReceived(new DccMessageArgs("Turnout", turnout.ToString()));
             OnTurnoutMsgReceived(new DccTurnoutArgs(turnout.SystemName, turnout.UserName, turnout.StateEnum == TurnoutStateEnum.Thrown));
             break;
 
         case RouteEvent route:
-            OnMessageReceived(new DccMessageArgs("Route", route.ToString()));
             OnRouteMsgReceived(new DccRouteArgs(route.SystemName, route.UserName, route.StateEnum == RouteStateEnum.Active));
             break;
 

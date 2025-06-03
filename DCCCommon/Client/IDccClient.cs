@@ -7,4 +7,5 @@ public interface IDccClient : IDccClientCommands, IDccClientEvents {
     Task<IResult> DisconnectAsync();
     Task<IResult> ReconnectAsync();
     Task<IResult> ForceRefreshAsync(string? type = null);
+    Task<IResult> TestConnection();
 }

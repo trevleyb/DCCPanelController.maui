@@ -19,7 +19,7 @@ public class JmriClient {
     private readonly Dictionary<string, string> _previousTurnoutStates = new();
 
     private CancellationTokenSource? _cancellationTokenSource;
-    private IWebSocket _webSocket = new WebSocketWrapper();
+    private IWebSocket _webSocket = new JmriWebSocket();
 
     public JmriClient(IDccSettings settings) {
         if (settings is JmriSettings info) {
@@ -34,7 +34,7 @@ public class JmriClient {
     public int ReconnectionDelayMs { get; set; } = 2000;
 
     public Func<HttpClient> HttpClientFactory { get; set; } = () => new HttpClient();
-    public Func<IWebSocket> WebSocketFactory { get; set; } = () => new WebSocketWrapper();
+    public Func<IWebSocket> WebSocketFactory { get; set; } = () => new JmriWebSocket();
 
     // Event to notify about connection status changes
     public event EventHandler<ConnectionStatusEventArgs>? ConnectionStatusChanged;
@@ -60,7 +60,7 @@ public class JmriClient {
         }
     }
 
-    private async Task<IResult> TestConnectionAsync() {
+    public async Task<IResult> TestConnectionAsync() {
         try {
             using var cancellationToken = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
             var response = await HttpClient.GetAsync($"{_jmriUrl}/json", cancellationToken.Token);

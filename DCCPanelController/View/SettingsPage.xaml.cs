@@ -106,17 +106,17 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (sender is RadioButton { Value: string { } value }) SetServerSelected(value);
+        if (sender is RadioButton { IsChecked: true}) SetServerSelected("jmri");
     }
 
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (sender is RadioButton { Value: string { } value }) SetServerSelected(value);
+        if (sender is RadioButton { IsChecked: true }) SetServerSelected("withrottle");
     }
 
     private async void SetServerSelected(string serverType) {
-        if (_viewModel is { } vm && vm.IsNotBusy && !string.IsNullOrEmpty(serverType)) {
-            vm.SetNewConnectionMethod(serverType);
-            await vm.RefreshServersAsync();
+        if (_viewModel is { IsNotBusy: true } && !string.IsNullOrEmpty(serverType)) {
+            _viewModel.SetNewConnectionMethod(serverType);
+            await _viewModel.RefreshServersAsync();
         }
     }
 }

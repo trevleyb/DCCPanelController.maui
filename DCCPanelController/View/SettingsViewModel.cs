@@ -18,6 +18,7 @@ namespace DCCPanelController.View;
 public partial class SettingsViewModel : ConnectionViewModel {
     [ObservableProperty] private string _connectLabel = "Test Connection";
     [ObservableProperty] private bool   _isResetNameAvailable;
+    [ObservableProperty] private bool   _isSearching;
     
     [ObservableProperty] private DiscoveredService? _selectedServer;
     [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
@@ -115,11 +116,13 @@ public partial class SettingsViewModel : ConnectionViewModel {
         case "jmri":
             ConnectionSettings = new JmriSettings();
             ConnectionSettings.Port = 12080;
+            ConnectionSettings.Type = "jmri";
             IsJmriServer = true;
             break;
         case "withrottle":
             ConnectionSettings = new WithrottleSettings();
             ConnectionSettings.Port = 12090;
+            ConnectionSettings.Type = "withrottle";
             IsWiThrottle = true;
             break;
         };
@@ -198,12 +201,13 @@ public partial class SettingsViewModel : ConnectionViewModel {
             SelectedServer = null;
 
             try {
+                IsSearching = true;
                 IsBusy = true;
                 var result = await DiscoverServices.SearchForServicesByTypeAsync(serverType);
                 if (result is { IsSuccess: true, Value.Count: > 0 }) {
                     var servicesFound = result.Value.ToObservableCollection();
                     Servers = new ObservableCollection<DiscoveredService>(servicesFound);
-                    AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "S" : "")}");
+                    AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}");
                 } else {
                     AddMessage($"{result.Message}");
                 }
@@ -211,10 +215,22 @@ public partial class SettingsViewModel : ConnectionViewModel {
                 Console.WriteLine($"Unable to Refresh Servers: {ex.Message}");
             } finally {
                 IsBusy = false;
+                IsSearching = false;
                 IsRefreshing = false;
                 IsJmriServer = serverType.Equals("jmri");
                 IsWiThrottle = serverType.Equals("withrottle");
                 SetSelectedServer();
+            }
+
+            // If we only find a single server, set it as the one. 
+            // -------------------------------------------------------------------
+            if (Servers.Count == 1) {
+                SelectedServer = Servers.FirstOrDefault();
+                if (SelectedServer is { } && ConnectionSettings is { }) {
+                    SetNewConnectionMethod(serverType);
+                    ConnectionSettings.Address = SelectedServer.Address.ToString();
+                    ConnectionSettings.Port = SelectedServer.Port;
+                }
             }
         }
     }

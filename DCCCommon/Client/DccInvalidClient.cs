@@ -33,6 +33,11 @@ public class DccInvalidClient : DccClient, IDccClient {
         return Result.Fail(new Error("Invalid Client not currently implemented"));
     }
 
+    public async Task<IResult> TestConnection() {
+        await Task.CompletedTask;
+        return Result.Fail(new Error("Invalid Client not currently implemented"));
+    }
+
     /// <summary>
     ///     Disconnects from the service and releases related resources.
     /// </summary>

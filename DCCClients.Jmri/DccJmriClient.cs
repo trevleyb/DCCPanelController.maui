@@ -134,6 +134,10 @@ public class DccJmriClient : DccClient, IDccClient {
         return await _jmriClient?.ForceRefreshAsync(type)!;
     }
 
+    public async Task<IResult> TestConnection() {
+        return await _jmriClient?.TestConnectionAsync();
+    }
+
     private void JmriClientOnConnectionStatusChanged(object? sender, ConnectionStatusEventArgs e) {
         OnConnectionStateChanged(new DccStateChangedArgs(e.IsConnected, e.Message));
         Console.WriteLine($"DccJmriClient: Connection Status Changed: {e.IsConnected} - {e.Message}");
@@ -143,23 +147,19 @@ public class DccJmriClient : DccClient, IDccClient {
     private void OnJmriTurnoutChanged(object? sender, TurnoutEventArgs e) {
         var dccAddress = e.DccAddress?.ToString() ?? e.Identifier;
         var isThrown = e.State.Equals("THROWN", StringComparison.OrdinalIgnoreCase);
-        OnMessageReceived(new DccMessageArgs("Turnout", $"Turnout {e.Identifier} state changed to {e.State}"));
         OnTurnoutMsgReceived(new DccTurnoutArgs(dccAddress, e.Identifier, isThrown));
     }
 
     private void OnJmriRouteChanged(object? sender, RouteEventArgs e) {
         var isActive = e.State.Equals("ACTIVE", StringComparison.OrdinalIgnoreCase);
-        OnMessageReceived(new DccMessageArgs("Route", $"Route {e.Identifier} state changed to {e.State}"));
         OnRouteMsgReceived(new DccRouteArgs(e.Identifier, e.Identifier, isActive));
     }
 
     private void OnJmriOccupancyChanged(object? sender, OccupancyEventArgs e) {
-        OnMessageReceived(new DccMessageArgs("Occupancy", $"Block {e.Identifier} occupancy changed to {(e.IsOccupied ? "OCCUPIED" : "FREE")}"));
         OnOccupancyMsgReceived(new DccOccupancyArgs(e.TrainId, e.Identifier, e.IsOccupied));
     }
 
     private void OnJmriSignalChanged(object? sender, SignalEventArgs e) {
-        OnMessageReceived(new DccMessageArgs("Signal", $"Signal {e.Identifier} aspect changed to {e.State}"));
         OnSignalMsgReceived(new DccSignalArgs(e.Identifier, e.State));
     }
     #endregion
