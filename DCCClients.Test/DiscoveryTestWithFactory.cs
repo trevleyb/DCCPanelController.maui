@@ -1,3 +1,4 @@
+using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Discovery;
 
@@ -14,7 +15,7 @@ public class DiscoveryTestWithFactory {
 
     [Test]
     public async Task TestFindingJmriServicesByType() {
-        var result = await DiscoverServices.SearchForServicesByTypeAsync("jmri", "jmri");
+        var result = await DiscoverServices.SearchForServicesByTypeAsync(DccClientType.Jmri, "jmri");
         Assert.That(result.IsSuccess, Is.True);
         LogFoundServices(result);
     }
@@ -28,17 +29,17 @@ public class DiscoveryTestWithFactory {
 
     [Test]
     public async Task TestFindingWiThrottleServicesByType() {
-        var result = await DiscoverServices.SearchForServicesByTypeAsync("withrottle", "jmri");
+        var result = await DiscoverServices.SearchForServicesByTypeAsync(DccClientType.WiThrottle, "jmri");
         Assert.That(result.IsSuccess, Is.True);
         LogFoundServices(result);
     }
 
-    [Test]
-    public async Task TestFindingHttpServicesByType() {
-        var result = await DiscoverServices.SearchForServicesByTypeAsync("_http._tcp", "jmri");
-        Assert.That(result.IsSuccess, Is.True);
-        LogFoundServices(result);
-    }
+    // [Test]
+    // public async Task TestFindingHttpServicesByType() {
+    //     var result = await DiscoverServices.SearchForServicesByTypeAsync("_http._tcp", "jmri");
+    //     Assert.That(result.IsSuccess, Is.True);
+    //     LogFoundServices(result);
+    // }
 
     private static void LogFoundServices(IResult<List<DiscoveredService>> result) {
         if (result.Value is { Count: > 0 } services) {

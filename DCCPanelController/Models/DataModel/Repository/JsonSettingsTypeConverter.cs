@@ -1,13 +1,13 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DCCClients.Jmri.JMRI;
-using DCCClients.WiThrottle.WiThrottle.Client;
+using DccClients.Jmri.Client;
+using DccClients.WiThrottle.Client;
 using DCCCommon.Client;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 
-public class JsonSettingsTypeConverter : JsonConverter<IDccSettings> {
-    public override IDccSettings Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
+public class JsonSettingsTypeConverter : JsonConverter<IDccClientSettings> {
+    public override IDccClientSettings Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions? options) {
         // Use the type discriminator or another property to determine the specific type
         // --------------------------------------------------------------------------------------------
         using (var document = JsonDocument.ParseValue(ref reader)) {
@@ -20,9 +20,9 @@ public class JsonSettingsTypeConverter : JsonConverter<IDccSettings> {
             // --------------------------------------------------------------------------------------------
             var rawText = root.GetRawText();
             var typeName = typeProperty.GetString();
-            IDccSettings? obj = typeName?.ToLowerInvariant() switch {
-                "withrottle" => JsonSerializer.Deserialize<WithrottleSettings>(rawText, options),
-                "jmri"       => JsonSerializer.Deserialize<JmriSettings>(rawText, options),
+            IDccClientSettings? obj = typeName?.ToLowerInvariant() switch {
+                "withrottle" => JsonSerializer.Deserialize<WiThrottleClientSettings>(rawText, options),
+                "jmri"       => JsonSerializer.Deserialize<JmriClientSettings>(rawText, options),
                 _            => throw new ArgumentOutOfRangeException($"Invalid Settings Type detected: {typeName}")
             };
             if (obj == null) throw new ApplicationException("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
@@ -30,7 +30,7 @@ public class JsonSettingsTypeConverter : JsonConverter<IDccSettings> {
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, IDccSettings value, JsonSerializerOptions options) {
+    public override void Write(Utf8JsonWriter writer, IDccClientSettings value, JsonSerializerOptions options) {
         JsonSerializer.Serialize<object>(writer, value, options);
     }
 }

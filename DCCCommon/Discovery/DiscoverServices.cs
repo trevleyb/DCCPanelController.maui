@@ -1,3 +1,4 @@
+using DCCCommon.Client;
 using DCCCommon.Common;
 
 namespace DCCCommon.Discovery;
@@ -6,11 +7,11 @@ namespace DCCCommon.Discovery;
 ///     Factory for creating service discovery instances
 /// </summary>
 public static class DiscoverServices {
-    public static async Task<IResult<List<DiscoveredService>>> SearchForServicesByTypeAsync(string type, string subtype = "") {
-        return type.ToLower() switch {
-            "jmri"       => await SearchForJmriServicesAsync(),
-            "withrottle" => await SearchForWiThrottleServicesAsync(),
-            _            => await SearchForServicesAsync(type, subtype)
+    public static async Task<IResult<List<DiscoveredService>>> SearchForServicesByTypeAsync(DccClientType type, string subtype = "") {
+        return type switch {
+            DccClientType.Jmri       => await SearchForJmriServicesAsync(),
+            DccClientType.WiThrottle => await SearchForWiThrottleServicesAsync(),
+            _                        => throw new InvalidOperationException("Invalid Service type to search for.")
         };
     }
 

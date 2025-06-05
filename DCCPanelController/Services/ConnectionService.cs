@@ -1,73 +1,56 @@
-using DCCClients.Jmri;
-using DCCClients.WiThrottle;
+using DccClients.Jmri;
+using DccClients.Jmri.Client;
+using DccClients.WiThrottle;
 using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using ConnectionInfo = DCCPanelController.Models.DataModel.ConnectionInfo;
 using Route = DCCPanelController.Models.DataModel.Route;
 
 namespace DCCPanelController.Services;
 
-public class ConnectionService : IDccClientCommands {
-    private readonly ConnectionInfo? _connectionInfo;
-
+public class ConnectionService {
+    
     private readonly Profile _profile;
-    private IDccClient? _client;
+    private readonly IDccClientSettings _clientSettings;
+    public IDccClient? Client { get; private set; }
 
     public ConnectionService(Profile profile) {
-        _profile = profile;
-        _connectionInfo = profile.ActiveConnectionInfo;
-    }
-
-    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
-
-    public bool IsConnected => _client is { IsConnected: true };
-
-    public async Task<IResult> SendCmdAsync(string message) {
-        return await _client?.SendCmdAsync(message)!;
-    }
-
-    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
-        return await _client?.SendTurnoutCmdAsync(dccAddress, thrown)!;
-    }
-
-    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
-        return await _client?.SendRouteCmdAsync(dccAddress, active)!;
-    }
-
-    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
-        return await _client?.SendSignalCmdAsync(dccAddress, aspect)!;
+        _profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
+        _clientSettings = _profile.Settings?.ClientSettings ?? new JmriClientSettings();
     }
 
     public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
+
+    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
+    public bool IsConnected => Client is { IsConnected: true };
 
     public async Task<IResult> ToggleConnectionAsync() {
         if (IsConnected) {
             await DisconnectAsync();
             return Result.Ok();
         }
-        return await ConnectAsync(_connectionInfo);
+        return await ConnectAsync(_clientSettings);
     }
 
     public async Task DisconnectAsync() {
         Console.WriteLine("Disconnecting");
-        if (_client is not null) {
-            _client.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
-            _client.RouteMsgReceived -= DccClientOnRouteMsgReceived;
-            _client.SignalMsgReceived -= DccClientOnSignalMsgReceived;
-            _client.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
-            await _client.DisconnectAsync();
+        if (Client is not null) {
+            Client.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
+            Client.RouteMsgReceived -= DccClientOnRouteMsgReceived;
+            Client.SignalMsgReceived -= DccClientOnSignalMsgReceived;
+            Client.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
+            await Client.DisconnectAsync();
         }
-        _client = null;
+        Client = null;
         OnConnectionChanged();
     }
 
-    public async Task<IResult> ConnectAsync(ConnectionInfo? connection = null) {
+    public async Task<IResult> ConnectAsync(IDccClientSettings clientSettings) {
         try {
-            var result = await ConnectHelper(connection);
+            var result = await ConnectHelperAsync(clientSettings);
             Console.WriteLine($"Connection Result: {result.IsSuccess} {result.Message}");
             OnConnectionChanged();
             return result;
@@ -78,28 +61,26 @@ public class ConnectionService : IDccClientCommands {
         }
     }
 
-    private async Task<IResult> ConnectHelper(ConnectionInfo? connection = null) {
+    private async Task<IResult> ConnectHelperAsync(IDccClientSettings clientSettings) {
         // Allow null as a parameter if we know we have already setup the connection
         // This will then return the active connection.
         // --------------------------------------------------------------------------
-        if (_client is { IsConnected: true }) return Result.Ok();
-        if (connection is { Settings: null }) return Result.Fail("No Connection Details provided.");
-        ArgumentNullException.ThrowIfNull(connection);
+        if (Client is { IsConnected              : true }) return Result.Ok();
 
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
-        _client = CreateClient(connection.Settings);
-        if (_client is null) return Result.Fail("Unable to create a Client instance.");
+        Client = CreateClient(clientSettings);
+        if (Client is null) return Result.Fail("Unable to create a Client instance.");
 
-        var result = await _client.ConnectAsync();
+        var result = await Client.ConnectAsync();
         if (result.IsFailure) return Result.Fail("Unable to connect to the specified server.");
 
-        _client.ConnectionStateChanged += OnConnectionChanged;
-        _client.MessageReceived += ClientOnMessageReceived;
-        _client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
-        _client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
-        _client.RouteMsgReceived += DccClientOnRouteMsgReceived;
-        _client.SignalMsgReceived += DccClientOnSignalMsgReceived;
+        Client.ConnectionStateChanged += OnConnectionChanged;
+        Client.MessageReceived += ClientOnMessageReceived;
+        Client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
+        Client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
+        Client.RouteMsgReceived += DccClientOnRouteMsgReceived;
+        Client.SignalMsgReceived += DccClientOnSignalMsgReceived;
 
         return Result.Ok("Connected to the Server.");
     }
@@ -114,12 +95,28 @@ public class ConnectionService : IDccClientCommands {
         ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message });
     }
 
-    private static IDccClient? CreateClient(IDccSettings settings) {
-        return settings.Type.ToLowerInvariant() switch {
-            "withrottle" => new DccWiThrottleClient(settings),
-            "jmri"       => new DccJmriClient(settings),
-            _            => null
+    private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
+        return clientSettings.Type switch {
+            DccClientType.WiThrottle => new DccWiThrottleClient(clientSettings),
+            DccClientType.Jmri       => new DccJmriClient(clientSettings),
+            _                        => null
         };
+    }
+
+    public async Task<IResult> SendCmdAsync(string message) {
+        return await Client?.SendCmdAsync(message)!;
+    }
+
+    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
+        return await Client?.SendTurnoutCmdAsync(dccAddress, thrown)!;
+    }
+
+    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
+        return await Client?.SendRouteCmdAsync(dccAddress, active)!;
+    }
+
+    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
+        return await Client?.SendSignalCmdAsync(dccAddress, aspect)!;
     }
 
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
@@ -204,7 +201,7 @@ public class ConnectionService : IDccClientCommands {
     }
 
     public async Task<IResult> ForceRefresh(string? type = "all") {
-        return await _client?.ForceRefreshAsync(type)!;
+        return await Client?.ForceRefreshAsync(type)!;
     }
 }
 

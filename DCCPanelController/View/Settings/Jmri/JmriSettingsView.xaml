@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+                           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                           xmlns:settings="clr-namespace:DCCPanelController.View.Settings"
+                           xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon"
+                           xmlns:jmri="clr-namespace:DCCPanelController.View.Settings.Jmri"
+                           x:DataType="jmri:JmriSettingsViewModel"
+                           x:Class="DCCPanelController.View.Settings.JmriSettingsView">
+
+    <VerticalStackLayout Margin="20,0,0,0" IsEnabled="{Binding IsNotBusy}" BackgroundColor="Coral">
+        <VerticalStackLayout Margin="10,0,10,0">
+            <Label Style="{StaticResource SmallLabel}" HorizontalOptions="Start" VerticalOptions="Start"
+                   Text="Device Name (unique name for this Device)"/>
+            <HorizontalStackLayout>
+                <Border
+                    WidthRequest="250"
+                    HorizontalOptions="Start"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry Text="{Binding Name}" Style="{StaticResource PanelEntry}"/>
+                </Border>
+                <ImageButton Margin="2,0,0,0" Aspect="Center"
+                             Source="target.png" WidthRequest="15" HeightRequest="15"
+                             Command="{Binding DefaultDeviceNameClickedCommand}"/>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Margin="10,10,10,0">
+            <Label Style="{StaticResource SmallLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Start"
+                   Text="Address"/>
+
+            <HorizontalStackLayout HorizontalOptions="Start" Margin="0,-25,0,0">
+                <Border
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    HeightRequest="35"
+                    WidthRequest="50"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                           HorizontalTextAlignment="Center" Text="{Binding IpAddress1}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
+                       VerticalOptions="Center"/>
+                <Border
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    HeightRequest="35"
+                    WidthRequest="50"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry
+                        Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress2}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
+                       VerticalOptions="Center"/>
+                <Border
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    HeightRequest="35"
+                    WidthRequest="50"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry
+                        Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress3}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
+                       VerticalOptions="Center"/>
+                <Border
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    HeightRequest="35"
+                    WidthRequest="50"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry
+                        Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress4}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" HorizontalOptions="Center" Margin="2,2,2,10" Text=":"
+                       TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+
+                <Border
+                    WidthRequest="75"
+                    StrokeShape="RoundRectangle 10"
+                    Stroke="{StaticResource Primary}"
+                    HeightRequest="35"
+                    Padding="10,0,5,0"
+                    Margin="0,5,0,5"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Entry
+                        Style="{StaticResource PanelEntry}"
+                        Focused="OnEntryFocused"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding Port, FallbackValue='0'}"/>
+                </Border>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <Button
+            Command="{Binding ConnectClickedCommand}"
+            HorizontalOptions="Center"
+            IsEnabled="{Binding IsNotBusy}"
+            Margin="10,0,20,20"
+            Style="{StaticResource ButtonOutline}"
+            Text="{Binding ConnectLabel}"
+            WidthRequest="150"/>
+
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="2"
+            HorizontalOptions="FillAndExpand"/>
+
+        <Grid RowDefinitions="auto,2,*">
+            <ScrollView Grid.Row="0">
+                <StackLayout>
+                    <Grid ColumnDefinitions="*,150">
+                        <Label
+                            Grid.Column="0"
+                            HorizontalOptions="Start"
+                            Style="{StaticResource MediumLabel}"
+                            TextColor="{StaticResource Primary}"
+                            VerticalOptions="Center">
+                            Available Servers :
+                        </Label>
+                        <Button
+                            BackgroundColor="{StaticResource White}"
+                            Command="{Binding RefreshServersClickedCommand}"
+                            Grid.Column="1"
+                            HorizontalOptions="End"
+                            ImageSource="refresh_cw.png"
+                            Style="{StaticResource SmallLabel}"
+                            Text="Refresh"
+                            TextColor="{StaticResource Primary}"
+                            VerticalOptions="Center"/>
+                    </Grid>
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
+
+                    <RefreshView VerticalOptions="Start" MinimumHeightRequest="100"
+                                 Command="{Binding RefreshServersClickedCommand}"
+                                 IsRefreshing="{Binding IsRefreshing}">
+                        <Grid>
+                            <ActivityIndicator
+                                Color="{StaticResource Primary}"
+                                HorizontalOptions="Fill"
+                                IsRunning="{Binding IsBusy}"
+                                IsVisible="{Binding IsBusy}"
+                                Margin="0,50,0,0"
+                                VerticalOptions="Start"/>
+
+                            <CollectionView ItemsSource="{Binding Servers}" SelectionMode="Single"
+                                            SelectedItem="{Binding SelectedServer}">
+                                <CollectionView.EmptyView>
+                                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                                        <Label IsVisible="{Binding IsNotBusy}" HorizontalOptions="Center"
+                                               Text="No Servers could be found."/>
+                                        <Label IsVisible="{Binding IsNotBusy}" HorizontalOptions="Center"
+                                               Text="Use Refresh to search for available servers"/>
+                                        <Label IsVisible="{Binding IsBusy}" HorizontalOptions="Center"
+                                               Text="Searching for available servers"/>
+                                    </StackLayout>
+                                </CollectionView.EmptyView>
+
+                                <CollectionView.ItemTemplate>
+                                    <DataTemplate x:DataType="discovery:DiscoveredService">
+                                        <StackLayout>
+                                            <Grid ColumnDefinitions="48,*">
+                                                <Label
+                                                    Grid.Column="0"
+                                                    HorizontalOptions="Start"
+                                                    Margin="5"
+                                                    Text="◉"
+                                                    VerticalOptions="Center"
+                                                    x:Name="SelectedServerTick"/>
+                                                <Label
+                                                    Grid.Column="1"
+                                                    HorizontalOptions="Start"
+                                                    LineBreakMode="NoWrap"
+                                                    Margin="0,5,0,5"
+                                                    Style="{StaticResource MediumLabel}"
+                                                    Text="{Binding FriendlyName}"
+                                                    VerticalOptions="Center"
+                                                    x:Name="SelectedServerText"/>
+                                            </Grid>
+                                            <BoxView
+                                                BackgroundColor="{StaticResource Primary}"
+                                                HeightRequest="0.5"
+                                                HorizontalOptions="FillAndExpand"/>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </CollectionView.ItemTemplate>
+                            </CollectionView>
+                        </Grid>
+                    </RefreshView>
+                </StackLayout>
+            </ScrollView>
+        </Grid>
+    </VerticalStackLayout>
+
+</ContentView>

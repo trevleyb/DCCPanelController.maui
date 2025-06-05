@@ -1,5 +1,5 @@
-using DCCClients.WiThrottle;
-using DCCClients.WiThrottle.WiThrottle.Client;
+using DccClients.WiThrottle;
+using DccClients.WiThrottle.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
 
@@ -20,12 +20,12 @@ public class WiThrottleClientIntegrationTests {
         if (!int.TryParse(wiThrottlePortStr, out var wiThrottlePort)) {
             Assert.Ignore("WITHROTTLE_SERVER_PORT environment variable is not a valid integer. Skipping integration tests.");
         }
-        _settings = new WithrottleSettings("IntegrationTest", wiThrottleAddress, wiThrottlePort);
+        _clientSettings = new WiThrottleClientSettings("IntegrationTest", wiThrottleAddress, wiThrottlePort);
     }
 
     [SetUp]
     public void Setup() {
-        _client = new DccWiThrottleClient(_settings);
+        _client = new DccWiThrottleClient(_clientSettings);
 
         // Clear event tracking
         _receivedTurnoutEvents = new List<DccTurnoutArgs>();
@@ -46,7 +46,7 @@ public class WiThrottleClientIntegrationTests {
     }
 
     private DccWiThrottleClient _client = null!;
-    private WithrottleSettings _settings = null!;
+    private WiThrottleClientSettings _clientSettings = null!;
 
     // Event tracking variables
     private List<DccTurnoutArgs> _receivedTurnoutEvents = new();

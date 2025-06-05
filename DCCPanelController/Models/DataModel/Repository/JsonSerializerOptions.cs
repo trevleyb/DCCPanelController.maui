@@ -1,4 +1,5 @@
 using System.Text.Json;
+using DCCCommon.Client;
 using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel.Repository;
@@ -10,6 +11,7 @@ public static class JsonOptions {
             new JsonSettingsTypeConverter(),
             new JsonTrackTypeConverter(),
             new MauiColorJsonConverter(),
+            new JsonEnumToStringConverter<DccClientType>(),
             new JsonEnumToStringConverter<Aspect>(),
             new JsonEnumToStringConverter<FontWeight>(),
             new JsonEnumToStringConverter<TextAlignment>(),

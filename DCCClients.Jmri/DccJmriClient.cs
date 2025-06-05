@@ -1,18 +1,20 @@
-using DCCClients.Jmri.JMRI;
-using DCCClients.Jmri.JMRI.EventArgs;
+using DccClients.Jmri.Client;
+using DccClients.Jmri.EventArgs;
 using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
 
-namespace DCCClients.Jmri;
+namespace DccClients.Jmri;
 
-public class DccJmriClient : DccClient, IDccClient {
-    private readonly JmriSettings? _settings;
+public class DccJmriClient : DccClientBase, IDccClient {
+    private readonly Client.JmriClientSettings? _settings;
     private bool _isConnected;
     private JmriClient? _jmriClient;
 
-    public DccJmriClient(IDccSettings? settings) {
-        _settings = settings as JmriSettings ?? throw new ArgumentException("Invalid settings provided.");
+    public static DccClientType Type => DccClientType.Jmri;
+    
+    public DccJmriClient(IDccClientSettings? settings) {
+        _settings = settings as Client.JmriClientSettings ?? throw new ArgumentException("Invalid settings provided.");
     }
 
     /// <summary>
@@ -134,8 +136,8 @@ public class DccJmriClient : DccClient, IDccClient {
         return await _jmriClient?.ForceRefreshAsync(type)!;
     }
 
-    public async Task<IResult> TestConnection() {
-        return await _jmriClient?.TestConnectionAsync();
+    public async Task<IResult> TestConnectionAsync() {
+        return await _jmriClient?.TestConnectionAsync()!;
     }
 
     private void JmriClientOnConnectionStatusChanged(object? sender, ConnectionStatusEventArgs e) {

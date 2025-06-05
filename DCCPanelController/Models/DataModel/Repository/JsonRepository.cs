@@ -150,14 +150,21 @@ public static class JsonRepository {
         }
     }
 
+    public static string DownloadProfile(Profile profile) {
+        try {
+            return JsonSerializer.Serialize(profile, JsonOptions.Options);
+        } catch (Exception ex) {
+            Console.WriteLine("Could not deserialize Profile. Trying to Reload Existing" + ex.Message);
+            return string.Empty;
+        }
+    }
+
     /// <summary>
     ///     Reads and deserializes the JSON data from the provided file to create and return a Storage object.
     /// </summary>
-    /// <param name="profileName">The path of the JSON file containing the settings data to be uploaded.</param>
-    /// <returns>A Storage object populated with the data from the JSON file, or a new Storage object if deserialization fails.</returns>
-    public static Profile UploadSettings(string profileName) {
+    public static Profile UploadSettings(string jsonString) {
         try {
-            return LoadFromJson(profileName);
+            return LoadFromJson(jsonString);
         } catch (Exception ex) {
             Console.WriteLine("Could not deserialize settings. Trying to Reload Existing" + ex.Message);
             return Load();

@@ -16,8 +16,8 @@ public partial class ConnectionViewModel : BaseViewModel {
         };
     }
 
-    protected Profile Profile { get; }
-    protected ConnectionService ConnectionService { get; }
+    public Profile Profile { get; set; }
+    public ConnectionService ConnectionService { get; }
 
     public bool IsConnected => ConnectionService.IsConnected;
     public string ConnectionIcon => ConnectionService.ConnectionIcon;

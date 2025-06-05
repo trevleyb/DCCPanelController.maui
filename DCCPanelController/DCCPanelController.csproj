@@ -213,6 +213,12 @@
         <MauiXaml Update="View\BlocksPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\Settings\Jmri\JmriSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\Settings\WiThrottle\WiThrottleSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -322,10 +328,18 @@
         <Compile Update="View\PanelEditorViewModel.cs">
             <DependentUpon>PanelEditor.xaml</DependentUpon>
         </Compile>
+        <Compile Update="View\Settings\Jmri\JmriSettingsView.xaml.cs">
+          <DependentUpon>JmriSettingsView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\Settings\WiThrottle\WiThrottleSettingsView.xaml.cs">
+          <DependentUpon>WiThrottleSettingsView.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\ViewModel\Actions\"/>
+        <Folder Include="Models\ViewModel\Actions\" />
     </ItemGroup>
 
     <ItemGroup>

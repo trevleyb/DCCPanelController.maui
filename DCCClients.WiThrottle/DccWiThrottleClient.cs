@@ -1,19 +1,21 @@
-using DCCClients.WiThrottle.WiThrottle.Client;
-using DCCClients.WiThrottle.WiThrottle.Client.Commands;
-using DCCClients.WiThrottle.WiThrottle.Client.Events;
-using DCCClients.WiThrottle.WiThrottle.ServiceHelper;
+using DccClients.WiThrottle.Client;
+using DccClients.WiThrottle.Client.Commands;
+using DccClients.WiThrottle.Client.Events;
+using DccClients.WiThrottle.ServiceHelper;
 using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
 
-namespace DCCClients.WiThrottle;
+namespace DccClients.WiThrottle;
 
-public class DccWiThrottleClient : DccClient, IDccClient {
-    private readonly WithrottleSettings? _settings;
-    private Client? _client;
+public class DccWiThrottleClient : DccClientBase, IDccClient {
+    private readonly WiThrottleClientSettings? _settings;
+    private Client.Client? _client;
 
-    public DccWiThrottleClient(IDccSettings? settings) {
-        _settings = settings as WithrottleSettings ?? throw new ArgumentException("Invalid settings provided.");
+    public static DccClientType Type => DccClientType.WiThrottle;
+
+    public DccWiThrottleClient(IDccClientSettings? settings) {
+        _settings = settings as WiThrottleClientSettings ?? throw new ArgumentException("Invalid settings provided.");
     }
 
     public bool IsConnected => _client is not null && _client.IsRunning;
@@ -30,10 +32,6 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         // Validate that we have an address for the WiService. If not, try and find one. 
         // ------------------------------------------------------------------------------------------
         if (string.IsNullOrEmpty(_settings.Address) || _settings.Port == 0 || _settings.Address == "0.0.0.0") {
-            //var service = await FindServices();
-            //if (service.IsFailure) return service; 
-            //_settings.Address = service?.Value?.WithrottleSettings?.Address ?? string.Empty;
-            //_settings.Port = service?.Value?.WithrottleSettings?.Port ?? 12090;
             _settings.Address = "192.168.68.54";
             _settings.Port = 12090;
         }
@@ -67,7 +65,7 @@ public class DccWiThrottleClient : DccClient, IDccClient {
         return await ReconnectAsync();
     }
 
-    public async Task<IResult> TestConnection() {
+    public async Task<IResult> TestConnectionAsync() {
         try {
             await DisconnectAsync();
             var result = await ConnectAsync();
@@ -141,8 +139,8 @@ public class DccWiThrottleClient : DccClient, IDccClient {
     /// <summary>
     ///     Creates a new Client instance. Can be overridden in tests to provide a mock.
     /// </summary>
-    protected virtual Client CreateClient(WithrottleSettings settings) {
-        return new Client(settings);
+    protected virtual Client.Client CreateClient(WiThrottleClientSettings clientSettings) {
+        return new Client.Client(clientSettings);
     }
 
     public async Task ForceRefresh(string? type) {

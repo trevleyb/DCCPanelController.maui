@@ -16,7 +16,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         set => SetField(ref field, value);
     } = TurnoutStateEnum.Unknown;
 
-    public void Interact(ConnectionService? connectionService) {
+    public async void Interact(ConnectionService? connectionService) {
         ClickSounds.PlayTurnoutClickSound();
         State = State switch {
             TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,

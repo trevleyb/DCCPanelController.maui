@@ -1,5 +1,5 @@
-using DCCClients.Jmri;
-using DCCClients.Jmri.JMRI;
+using DccClients.Jmri;
+using DccClients.Jmri.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
 
@@ -13,14 +13,14 @@ public class JmriClientContinuousTest {
         var jmriUrl = Environment.GetEnvironmentVariable("JMRI_SERVER_URL");
         if (string.IsNullOrEmpty(jmriUrl)) jmriUrl = "http://localhost:12080";
 
-        _settings = new JmriSettings {
+        _clientSettings = new JmriClientSettings {
             Name = "IntegrationTest"
         };
     }
 
     [SetUp]
     public void Setup() {
-        _client = new DccJmriClient(_settings);
+        _client = new DccJmriClient(_clientSettings);
 
         // Clear event tracking
         _receivedTurnoutEvents = new List<DccTurnoutArgs>();
@@ -43,7 +43,7 @@ public class JmriClientContinuousTest {
     }
 
     private DccJmriClient _client = null!;
-    private JmriSettings _settings = null!;
+    private JmriClientSettings _clientSettings = null!;
 
     // Event tracking variables
     private List<DccTurnoutArgs> _receivedTurnoutEvents = new();
