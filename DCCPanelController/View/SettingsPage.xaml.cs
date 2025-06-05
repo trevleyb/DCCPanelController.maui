@@ -55,7 +55,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                     var loadedJson = await LoadJsonFromFile(fileName);
                     var profile = JsonRepository.UploadSettings(loadedJson);
                     vm.Profile = profile;
-                    vm.SaveSettings();
+                    await vm.SaveSettings();
                     await DisplayAlert("Success", "File Loaded.", "OK");
                 } else {
                     throw new Exception("File could not be loaded.");

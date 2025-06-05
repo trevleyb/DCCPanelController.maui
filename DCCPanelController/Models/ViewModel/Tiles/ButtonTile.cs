@@ -18,7 +18,7 @@ public class ButtonTile : Tile, ITileInteractive {
         set => SetField(ref field, value);
     } = ButtonStateEnum.Unknown;
 
-    public void Interact(ConnectionService? connectionService) {
+    public async Task Interact(ConnectionService? connectionService) {
         ClickSounds.PlayButtonClickSound();
         State = State switch {
             ButtonStateEnum.Unknown => ButtonStateEnum.On,
@@ -28,7 +28,7 @@ public class ButtonTile : Tile, ITileInteractive {
         };
     }
 
-    public void Secondary(ConnectionService? connectionService) { }
+    public async Task Secondary(ConnectionService? connectionService) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {

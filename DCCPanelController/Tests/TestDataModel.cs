@@ -7,13 +7,17 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Tests;
 
 public class TestDataModel {
-    public void LoadAndSaveDataModel() {
-        var profile = new Profile("testProfile");
-        BuildTestDataModel(profile);
-        ValidateTestDataModel(profile);
-        profile.SaveAsync();
-        var loadedStorage = JsonRepository.Load();
-        ValidateTestDataModel(loadedStorage);
+    public async void LoadAndSaveDataModel() {
+        try {
+            var profile = new Profile("testProfile");
+            BuildTestDataModel(profile);
+            ValidateTestDataModel(profile);
+            await profile.SaveAsync();
+            var loadedStorage = JsonRepository.Load();
+            ValidateTestDataModel(loadedStorage);
+        } catch (Exception ex) {
+            Debug.Fail("Exception thrown:",ex.Message);
+        }
     }
 
     private void BuildTestDataModel(Profile storage) {

@@ -18,7 +18,7 @@ public class RouteTile : Tile, ITileInteractive {
         set => SetField(ref field, value);
     } = RouteStateEnum.Unknown;
 
-    public void Interact(ConnectionService? connectionService) {
+    public async Task Interact(ConnectionService? connectionService) {
         ClickSounds.PlayButtonClickSound();
         State = State switch {
             RouteStateEnum.Unknown  => RouteStateEnum.Active,
@@ -28,11 +28,11 @@ public class RouteTile : Tile, ITileInteractive {
         };
 
         if (connectionService is not null && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
-            connectionService.SendRouteCmdAsync(id, State != RouteStateEnum.Inactive);
+            await connectionService.SendRouteCmdAsync(id, State != RouteStateEnum.Inactive);
         }
     }
 
-    public void Secondary(ConnectionService? connectionService) { }
+    public async Task Secondary(ConnectionService? connectionService) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is RouteEntity button) {

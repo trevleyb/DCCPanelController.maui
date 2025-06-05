@@ -285,9 +285,6 @@
         <Compile Update="View\TestPanelViewModel.cs">
             <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\PanelEditorSinglePageViewModel.cs">
-            <DependentUpon>PanelEditorSinglePage.xaml</DependentUpon>
-        </Compile>
         <Compile Update="View\TileSelectors\FloatingTileSelector.xaml.cs">
             <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
             <SubType>Code</SubType>
