@@ -38,6 +38,14 @@ public partial class SettingsViewModel : ConnectionViewModel {
         }
     }
 
+    public string ProfileName {
+        get => Profile.ProfileName;
+        set {
+            Profile.ProfileName = value;
+            OnPropertyChanged();
+        }
+    }
+
     [RelayCommand]
     public async Task SaveSettingsAsync() {
         await Profile.SaveAsync();

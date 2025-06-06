@@ -18,11 +18,8 @@
         <ShellContent
             ContentTemplate="{DataTemplate view:PanelViewer}"
             Icon="panels.png"
-            Title="Viewer"/>
+            Title="Panel Editor"/>
         <Tab Title="Settings" Icon="settings.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate view:InstructionsPage}"
-                Title="Instructions"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:SettingsPage}"
                 Icon="settings.png"
@@ -36,6 +33,12 @@
             <ShellContent
                 ContentTemplate="{DataTemplate view:BlocksPage}"
                 Title="Blocks"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:InstructionsPage}"
+                Title="Help"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:AboutPage}"
+                Title="About"/>
         </Tab>
     </FlyoutItem>
 

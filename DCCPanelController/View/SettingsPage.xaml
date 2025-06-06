@@ -22,45 +22,45 @@
         <ToolbarItem Clicked="Download_OnClicked" IconImageSource="download.png"/>
     </ContentPage.ToolbarItems>
 
-    <Grid RowDefinitions="auto,auto,*,70">
-        <StackLayout Margin="10,10,20,20" Grid.Row="0">
-            <Label
-                Text="Profile Settings:"
-                Margin="10,10,20,0"
-                Style="{StaticResource LargeLabel}"
-                TextColor="{StaticResource Primary}"/>
+    <Grid RowDefinitions="auto,100,*,70">
+        <StackLayout Margin="10,10,10,10" Grid.Row="0">
+            <Label Text="Profile Settings:" Margin="10,10,20,0" Style="{StaticResource LargeLabel}"
+                   TextColor="{StaticResource Primary}"/>
+            <StackLayout Margin="10,10,10,10">
+                <HorizontalStackLayout>
+                    <Label Text="Profile Name" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
+                           VerticalOptions="Center" WidthRequest="130"/>
+                    <Entry Text="{Binding ProfileName}" WidthRequest="150" HorizontalOptions="Start"
+                           Style="{StaticResource PanelEntry}"/>
+                </HorizontalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Background Color" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
+                           VerticalOptions="Center" WidthRequest="130"/>
+                    <components:ColorPickerButton
+                        AllowsNoColor="true"
+                        HeightRequest="35"
+                        BorderColor="{StaticResource Primary}"
+                        BorderWidth="2"
+                        SelectedColor="{Binding BackgroundColor}"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Start"
+                        WidthRequest="150"/>
+                </HorizontalStackLayout>
+            </StackLayout>
 
-            <Grid Margin="10,10,10,10"  
-                  ColumnDefinitions="Auto,*" VerticalOptions="Center">
-                <Label Grid.Column="0"
-                       Text="Background Color"
-                       Style="{StaticResource MediumLabel}"
-                       VerticalOptions="Center"
-                       WidthRequest="130"/>
-                <components:ColorPickerButton
-                    Grid.Column="1"
-                    AllowsNoColor="true"
-                    HeightRequest="35"
-                    BorderColor="{StaticResource Primary}"
-                    BorderWidth="2"
-                    SelectedColor="{Binding BackgroundColor}"
-                    VerticalOptions="Center"
-                    HorizontalOptions="Start"
-                    WidthRequest="150"/>
-            </Grid>
-            <BoxView Margin="10,10,20,10" 
+            <BoxView Margin="10,10,20,10"
                      BackgroundColor="{StaticResource Primary}"
                      HeightRequest="1"
                      HorizontalOptions="FillAndExpand"/>
         </StackLayout>
-        <StackLayout Grid.Row="1">
+        <StackLayout Grid.Row="1" Margin="20,0,10,0">
             <Label
                 Text="Server Connection Details:"
-                Margin="20,0,10,0"
+
                 Style="{StaticResource LargeLabel}"
                 TextColor="{StaticResource Primary}"/>
 
-            <HorizontalStackLayout Margin="20,20,0,0">
+            <HorizontalStackLayout Margin="0,10,0,0">
                 <RadioButton Value="jmri"
                              GroupName="ServerType"
                              Content="JMRI Server"
@@ -72,40 +72,41 @@
                              IsChecked="{Binding IsWiThrottle}"
                              CheckedChanged="CheckChanged_WiThrottle"/>
             </HorizontalStackLayout>
-            <ScrollView VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">
-                <ContentView x:Name="SettingsView"/>
-            </ScrollView>
         </StackLayout>
-        
-            <StackLayout Margin="10,10,20,0" Grid.Row="2">
-                <BoxView Margin="10,10,20,0" 
-                         BackgroundColor="{StaticResource Primary}"
-                         HeightRequest="1"
-                         HorizontalOptions="FillAndExpand"/>
-                <Grid ColumnDefinitions="*,150">
-                    <Label
-                        Grid.Column="0"
-                        HorizontalOptions="Start"
-                        Style="{StaticResource MediumLabel}"
-                        TextColor="{StaticResource Primary}"
-                        VerticalOptions="Center">
-                        Server Messages :
-                    </Label>
-                    <Button
-                        BackgroundColor="{StaticResource White}"
-                        Command="{Binding ClearMessagesCommand}"
-                        Grid.Column="1"
-                        HorizontalOptions="End"
-                        ImageSource="trash_2.png"
-                        Style="{StaticResource SmallLabel}"
-                        Text="Clear"
-                        TextColor="{StaticResource Primary}"
-                        VerticalOptions="Center"/>
-                </Grid>
-                <BoxView
-                    BackgroundColor="{StaticResource Primary}"
-                    HeightRequest="1"
-                    HorizontalOptions="FillAndExpand"/>
+
+        <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">
+            <StackLayout>
+                <ContentView x:Name="SettingsView"/>
+                <StackLayout Margin="10,10,10,0">
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
+                    <Grid ColumnDefinitions="*,150">
+                        <Label
+                            Grid.Column="0"
+                            HorizontalOptions="Start"
+                            Style="{StaticResource MediumLabel}"
+                            TextColor="{StaticResource Primary}"
+                            VerticalOptions="Center">
+                            Server Messages :
+                        </Label>
+                        <Button
+                            BackgroundColor="{StaticResource White}"
+                            Command="{Binding ClearMessagesCommand}"
+                            Grid.Column="1"
+                            HorizontalOptions="End"
+                            ImageSource="trash_2.png"
+                            Style="{StaticResource SmallLabel}"
+                            Text="Clear"
+                            TextColor="{StaticResource Primary}"
+                            VerticalOptions="Center"/>
+                    </Grid>
+
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
                     <CollectionView
                         ItemsSource="{Binding Messages}"
                         ItemsUpdatingScrollMode="KeepLastItemInView"
@@ -119,8 +120,11 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
+                </StackLayout>
             </StackLayout>
-            <Button Grid.Row="3"
+        </ScrollView>
+
+        <Button Grid.Row="3"
                 Command="{Binding SaveSettingsCommand}"
                 HorizontalOptions="Center"
                 VerticalOptions="Center"

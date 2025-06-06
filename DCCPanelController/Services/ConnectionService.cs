@@ -100,6 +100,13 @@ public class ConnectionService {
         return Result.Ok("Disconnected OK.");
     }
 
+    private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
+        return clientSettings.Type switch {
+            DccClientType.WiThrottle => new DccWiThrottleClient(clientSettings),
+            DccClientType.Jmri       => new DccJmriClient(clientSettings),
+            _                        => null
+        };
+    }
     
     private void OnConnectionChanged(object? sender = null, EventArgs? e = null) {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
@@ -109,14 +116,6 @@ public class ConnectionService {
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
         Console.WriteLine($"ClientOnMessageReceived called");
         ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message });
-    }
-
-    private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
-        return clientSettings.Type switch {
-            DccClientType.WiThrottle => new DccWiThrottleClient(clientSettings),
-            DccClientType.Jmri       => new DccJmriClient(clientSettings),
-            _                        => null
-        };
     }
 
     public async Task<IResult> SendCmdAsync(string message) {
