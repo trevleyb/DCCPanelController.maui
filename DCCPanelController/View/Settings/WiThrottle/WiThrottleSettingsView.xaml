@@ -200,14 +200,6 @@
                              Command="{Binding RefreshServersClickedCommand}"
                              IsRefreshing="{Binding IsRefreshing}">
                     <Grid>
-                        <ActivityIndicator
-                            Color="{StaticResource Primary}"
-                            HorizontalOptions="Fill"
-                            IsRunning="{Binding IsBusy}"
-                            IsVisible="{Binding IsBusy}"
-                            Margin="0,50,0,0"
-                            VerticalOptions="Start"/>
-
                         <CollectionView ItemsSource="{Binding Servers}" SelectionMode="Single"
                                         SelectionChanged="SelectableItemsView_OnSelectionChanged">
                             <CollectionView.EmptyView>

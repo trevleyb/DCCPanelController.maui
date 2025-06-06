@@ -15,7 +15,7 @@ public class TurnoutEventArgs : System.EventArgs {
     public TurnoutEventArgs(string jsonString) {
         var turnoutData = TurnoutParser.ParseTurnoutData(jsonString);
         if (turnoutData is null) throw new DataException("Invalid JSON object for Turnout: " + jsonString);
-        Identifier = turnoutData.Data.UserName;
+        Identifier = turnoutData.Data.Name;
         DccAddress = turnoutData.Data.Name.ConvertToDCCAddress();
         State = turnoutData.Data.State == 4 ? "THROWN" : "CLOSED";
         Inverted = turnoutData.Data.Inverted;

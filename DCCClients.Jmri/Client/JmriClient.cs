@@ -9,7 +9,7 @@ namespace DccClients.Jmri.Client;
 
 public class JmriClient {
     private static readonly HttpClient HttpClient = new() {
-        Timeout = TimeSpan.FromSeconds(10)
+        Timeout = TimeSpan.FromSeconds(5)
     };
 
     private readonly string _jmriUrl;

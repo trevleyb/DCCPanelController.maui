@@ -13,7 +13,7 @@
             <VerticalStackLayout>
                 <VerticalStackLayout Margin="10,5,10,5">
                     <Label Style="{StaticResource LargeLabel}" Text="DCC Panel Controller"
-                           TextColor="{StaticResource Primary}" FontAttributes="Bold" FontSize="24"/>
+                           TextColor="{StaticResource Primary}" FontSize="24"/>
                     <!-- <Label Style="{StaticResource LargeLabel}" Text="SubHeading"/> -->
                     <!-- <Label Style="{StaticResource MediumLabel}">Bla Bla Bla</Label> -->
                     <!-- <Label Style="{StaticResource MediumLabel}">Bla Bla Bla</Label> -->
@@ -21,7 +21,7 @@
 
                 <VerticalStackLayout>
                     <Label Margin="10,10,10,10" Style="{StaticResource LargeLabel}"
-                           Text="Options Information and Instructions" FontAttributes="Bold" FontSize="24"/>
+                           Text="Options Information and Instructions"/>
                     <Label Margin="10,10,10,10" Style="{StaticResource MediumLabel}">
                         The tabs on this page allow you to view data that has been downloaded from your DCC System (JMRI, WiThrottle). When you connect to a DCC System, it will interogate data for Turnouts, Blocks (Occupancy), Routes and Signal Masts and will store this information within the Panel Controller. This information is used when configuring turnouts, blocks and routes as a reference to these are required for operating the layout.
                     </Label>

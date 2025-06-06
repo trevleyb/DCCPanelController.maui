@@ -13,7 +13,7 @@ public class SignalEventArgs : System.EventArgs {
     public SignalEventArgs(string jsonString) {
         var signalData = SignalMastParser.ParseSignalMastData(jsonString);
         if (signalData is null) throw new DataException("Invalid JSON object for SignalMast: " + jsonString);
-        Identifier = signalData.Data.UserName;
+        Identifier = signalData.Data.Name;
         State = signalData.Data.State;
     }
 

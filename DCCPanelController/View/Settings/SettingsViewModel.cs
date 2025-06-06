@@ -38,18 +38,26 @@ public partial class SettingsViewModel : Base.BaseViewModel {
             if (result.IsFailure) {
                 RaiseSettingsMessage("Connection Failed.");
                 foreach (var error in result.Errors) RaiseSettingsMessage(error.Message);
+                var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";            
+                await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
                 _connectionService.ConnectionMessage += ClientOnMessageReceived;
                 await Task.Delay(1000);
                 if (_connectionService.IsConnected) {
                     RaiseSettingsMessage("Connected Successfully.");
                     await _connectionService.DisconnectAsync();
+                    await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
                 } else {
                     RaiseSettingsMessage("Connection Failed.");
+                    var message = $"Unable to connect to the server. Check settings.";            
+                    await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
                 }
             }
-        } catch {
+        } catch (Exception ex) {
             RaiseSettingsMessage("Unable to Connect.");
+            RaiseSettingsMessage(ex.Message);
+            var message = $"Unable to connect to the server due to {ex.Message}";            
+            await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
         } finally {
             _connectionService.ConnectionMessage -= ClientOnMessageReceived;
             _connectionService?.DisconnectAsync();

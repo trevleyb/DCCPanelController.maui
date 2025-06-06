@@ -256,12 +256,21 @@
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}"
-        TargetType="Label"
-        x:Key="MediumLabel">
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="MediumLabel">
         <Setter Property="FontSize" Value="14"/>
     </Style>
 
+    <Style
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="FieldLabel">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="OpenSansLight"></Setter>
+    </Style>
+
+    <Style
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="FieldLabelItalic">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontFamily" Value="OpenSansLightItalic"></Setter>
+    </Style>
 
     <Style
         BasedOn="{StaticResource BaseLabel}"
@@ -272,10 +281,9 @@
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}"
-        TargetType="Label"
-        x:Key="LargeLabel">
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="LargeLabel">
         <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontFamily" Value="OpenSansBold"></Setter>
     </Style>
 
     <Style TargetType="ActivityIndicator">

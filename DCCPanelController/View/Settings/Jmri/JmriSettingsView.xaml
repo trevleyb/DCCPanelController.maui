@@ -156,7 +156,7 @@
                         </Entry.Behaviors>
                     </Entry>
                 </Border>
-                <Label FontSize="48" HorizontalOptions="Center" Margin="2,2,2,10" Text=":"
+                <Label FontSize="14" HorizontalOptions="Center" Margin="2,2,2,2" Text=" port "
                        TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
 
                 <Border
@@ -221,14 +221,6 @@
                              Command="{Binding RefreshServersClickedCommand}"
                              IsRefreshing="{Binding IsRefreshing}">
                     <Grid>
-                        <ActivityIndicator
-                            Color="{StaticResource Primary}"
-                            HorizontalOptions="Fill"
-                            IsRunning="{Binding IsBusy}"
-                            IsVisible="{Binding IsBusy}"
-                            Margin="0,50,0,0"
-                            VerticalOptions="Start"/>
-
                         <CollectionView
                             SelectionMode="Single"
                             SelectionChanged="SelectableItemsView_OnSelectionChanged"

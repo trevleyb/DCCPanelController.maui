@@ -14,7 +14,7 @@ public class RouteEventArgs : System.EventArgs {
     public RouteEventArgs(string jsonString) {
         var routeData = RouteParser.ParseRouteData(jsonString);
         if (routeData is null) throw new DataException("Invalid JSON object for Route: " + jsonString);
-        Identifier = routeData.Data.UserName;
+        Identifier = routeData.Data.Name;
         State = routeData.Data.State == 0 ? "ACTIVE" : "INACTIVE";
     }
 

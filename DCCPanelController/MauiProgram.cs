@@ -13,10 +13,7 @@ public static class MauiProgram {
     public static MauiApp CreateMauiApp() {
         var builder = MauiApp.CreateBuilder();
         builder.UseMauiApp<App>()
-               .ConfigureFonts(fonts => {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-                })
+               .ConfigureFonts(RegisterAllFonts)
                .ConfigureMauiHandlers(handlers => { })
                .UseSkiaSharp()
                .UseMauiCommunityToolkit()
@@ -108,4 +105,58 @@ public static class MauiProgram {
             return ServiceProvider.GetRequiredService<T>();
         }
     }
+    
+    private static void RegisterAllFonts(IFontCollection fonts) {
+        var fontDefinitions = new[] {
+            "OpenSans-SemiBoldItalic",
+            "OpenSans-SemiBold",
+            "OpenSans-Regular",
+            "OpenSans-MediumItalic",
+            "OpenSans-Medium",
+            "OpenSans-LightItalic",
+            "OpenSans-Light",
+            "OpenSans-Italic",
+            "OpenSans-ExtraBoldItalic",
+            "OpenSans-ExtraBold",
+            "OpenSans-BoldItalic",
+            "OpenSans-Bold",
+            "OpenSans_SemiCondensed-SemiBoldItalic",
+            "OpenSans_SemiCondensed-SemiBold",
+            "OpenSans_SemiCondensed-Regular",
+            "OpenSans_SemiCondensed-MediumItalic",
+            "OpenSans_SemiCondensed-Medium",
+            "OpenSans_SemiCondensed-LightItalic",
+            "OpenSans_SemiCondensed-Light",
+            "OpenSans_SemiCondensed-Italic",
+            "OpenSans_SemiCondensed-ExtraBoldItalic",
+            "OpenSans_SemiCondensed-ExtraBold",
+            "OpenSans_SemiCondensed-BoldItalic",
+            "OpenSans_SemiCondensed-Bold",
+            "OpenSans_Condensed-SemiBoldItalic",
+            "OpenSans_Condensed-SemiBold",
+            "OpenSans_Condensed-Regular",
+            "OpenSans_Condensed-MediumItalic",
+            "OpenSans_Condensed-Medium",
+            "OpenSans_Condensed-LightItalic",
+            "OpenSans_Condensed-Light",
+            "OpenSans_Condensed-Italic",
+            "OpenSans_Condensed-ExtraBoldItalic",
+            "OpenSans_Condensed-ExtraBold",
+            "OpenSans_Condensed-BoldItalic",
+            "OpenSans_Condensed-Bold",
+            "OpenSans",
+        };
+
+        foreach (var fontBase in fontDefinitions) {
+            try {
+                var fontFile = $"{fontBase}.ttf";
+                var fontName = fontBase.Replace("-", "").Replace("_","");
+                fonts.AddFont(fontFile, fontName);
+            }
+            catch (Exception ex) {
+                System.Diagnostics.Debug.WriteLine($"Failed to register font {fontBase}: {ex.Message}");
+            }
+        }
+    }
+
 }

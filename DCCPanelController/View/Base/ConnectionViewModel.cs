@@ -25,7 +25,8 @@ public partial class ConnectionViewModel : BaseViewModel {
     protected async Task ToggleConnectionAsync() {
         var result = await ConnectionService.ToggleConnectionAsync();
         if (result.IsFailure) {
-            await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", $"Unable to connect to the server due to {result.Message}");
+            var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";            
+            await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
         }
     }
 }
