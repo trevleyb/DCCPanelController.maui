@@ -7,7 +7,10 @@ public partial class ColorPickerButton : ContentView {
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty DefaultColorProperty = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
-
+    public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty BorderWidthProperty = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
+    
     public ColorPickerButton() {
         InitializeComponent();
         BindingContext = this;
@@ -38,6 +41,30 @@ public partial class ColorPickerButton : ContentView {
         set {
             SetValue(AllowsNoColorProperty, value);
             OnPropertyChanged(nameof(AllowsNoColorProperty)); // Update DisplayText when the color changes
+        }
+    }
+
+    public Color? BorderColor {
+        get => (Color)GetValue(BorderColorProperty);
+        set {
+            SetValue(BorderColorProperty, value);
+            OnPropertyChanged(nameof(BorderColorProperty)); // Update DisplayText when the color changes
+        }
+    }
+
+    public int BorderWidth {
+        get => (int)GetValue(BorderWidthProperty);
+        set {
+            SetValue(BorderWidthProperty, value);
+            OnPropertyChanged(nameof(BorderWidthProperty)); // Update DisplayText when the color changes
+        }
+    }
+    
+    public int CornerRadius {
+        get => (int)GetValue(CornerRadiusProperty);
+        set {
+            SetValue(CornerRadiusProperty, value);
+            OnPropertyChanged(nameof(CornerRadiusProperty)); // Update DisplayText when the color changes
         }
     }
 

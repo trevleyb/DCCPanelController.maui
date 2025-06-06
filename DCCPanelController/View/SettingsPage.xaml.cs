@@ -3,41 +3,54 @@ using CommunityToolkit.Maui.Storage;
 using DccClients.Jmri.Client;
 using DccClients.WiThrottle.Client;
 using DCCCommon.Client;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Settings;
+using DCCPanelController.View.Settings.Jmri;
+using DCCPanelController.View.Settings.WiThrottle;
 
 namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
+    private Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     private readonly SettingsViewModel? _viewModel;
+    private IRaisesSettingsMessage? _settingsView = null;
 
     public SettingsPage(SettingsViewModel viewModel) {
         _viewModel = viewModel;
         ArgumentNullException.ThrowIfNull(_viewModel);
-        
         BindingContext = _viewModel;
+        PropertyChanged += OnPropertyChanged;
         InitializeComponent();
+        
         switch (_viewModel?.Settings?.ClientSettings?.Type) {
-            case DccClientType.Jmri: 
-                _viewModel!.IsJmriServer = true;
-                _viewModel!.IsWiThrottle = false;
-                break;
-            case DccClientType.WiThrottle: 
-                _viewModel!.IsJmriServer = false;
-                _viewModel!.IsWiThrottle = true;
-                break;
-            default:
-                _viewModel!.IsJmriServer = true;
-                _viewModel!.IsWiThrottle = false;
-                break;
+        case DccClientType.Jmri:
+            CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri, _viewModel?.Settings?.ClientSettings);
+            _viewModel!.IsJmriServer = true;
+            _viewModel!.IsWiThrottle = false;
+            break;
+
+        case DccClientType.WiThrottle:
+            CheckSettingsCache<JmriClientSettings>(DccClientType.WiThrottle, _viewModel?.Settings?.ClientSettings);
+            _viewModel!.IsJmriServer = false;
+            _viewModel!.IsWiThrottle = true;
+            break;
+
+        default:
+            CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri, _viewModel?.Settings?.ClientSettings);
+            _viewModel!.IsJmriServer = true;
+            _viewModel!.IsWiThrottle = false;
+            break;
         }
     }
 
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
+
     protected override async void OnDisappearing() {
         base.OnDisappearing();
-        if (_viewModel is {} vm) await vm.SaveSettings();
+        if (_viewModel is { } vm) await _viewModel.Profile.SaveAsync();
     }
-    
+
     private void About_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
     }
@@ -55,11 +68,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
                     var loadedJson = await LoadJsonFromFile(fileName);
                     var profile = JsonRepository.UploadSettings(loadedJson);
                     vm.Profile = profile;
-                    await vm.SaveSettings();
+                    await vm.SaveSettingsAsync();
                     await DisplayAlert("Success", "File Loaded.", "OK");
                 } else {
                     throw new Exception("File could not be loaded.");
-                 }
+                }
             }
         } catch (Exception ex) {
             await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
@@ -111,25 +124,77 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel?.Settings?.ClientSettings?.Type != DccClientType.Jmri) LoadSettingsPage();   
+        if (_viewModel is {IsJmriServer: true} ) {
+            _viewModel.Settings.ClientSettings = CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri);
+            SetSettingsView(new JmriSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService));
+        } 
     }
 
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel?.Settings?.ClientSettings?.Type != DccClientType.WiThrottle) LoadSettingsPage();    
+        if (_viewModel is {IsWiThrottle: true} ) {
+            _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleClientSettings>(DccClientType.WiThrottle);
+            SetSettingsView(new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService));
+        } 
     }
 
     private void LoadSettingsPage() {
-        if (_viewModel is not null) {
-            if (_viewModel.IsJmriServer && _viewModel is {Settings: not null} ) {
-                if (_viewModel.Settings.ClientSettings is not JmriClientSettings) _viewModel.Settings.ClientSettings = new JmriClientSettings(); 
-                var view = new JmriSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
-                SettingsView.Content = view;
+        if (_viewModel?.Settings is null) return;
+
+        ContentView? view = null;
+
+        if (_viewModel.IsJmriServer) {
+            _viewModel.Settings.ClientSettings = CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri);
+            view = new JmriSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
+        } else if (_viewModel.IsWiThrottle) {
+            _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleClientSettings>(DccClientType.WiThrottle);
+            view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
+        }
+        if (view is not null) SetSettingsView(view);
+    }
+
+    private void SetSettingsView(ContentView view) {
+        if (_settingsView is not null) {
+            _settingsView.OnSettingsMessage -= SettingsViewOnOnSettingsMessage;
+            _settingsView.PropertyChanged -= SettingsViewOnPropertyChanged;
+        }
+        
+        _settingsView = view as IRaisesSettingsMessage;
+        if (_settingsView is not null) {
+            _settingsView.PropertyChanged += SettingsViewOnPropertyChanged;
+            _settingsView.OnSettingsMessage += SettingsViewOnOnSettingsMessage;
+        }
+        SettingsView.Content = view;
+        _viewModel?.ClearMessagesCommand.Execute(null);
+    }
+
+    private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        OnPropertyChanged();
+    }
+
+    private async void SettingsViewOnOnSettingsMessage(object? sender, Settings.SettingsMessage e) {
+        try {
+            if (_viewModel is { } vm) {
+                if (e.Clear) await vm.ClearMessagesAsync();
+                vm.AddMessage(e.Message);
             }
-            if (_viewModel.IsWiThrottle && _viewModel is {Settings: not null} ) {
-                if (_viewModel.Settings.ClientSettings is not WiThrottleClientSettings) _viewModel.Settings.ClientSettings = new WiThrottleClientSettings(); 
-                var view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
-                SettingsView.Content = view;
+        } catch (Exception ex) {
+            Console.WriteLine($"SettingsViewOnSettings: {ex.Message}");
+        }
+    }
+
+    private IDccClientSettings CheckSettingsCache<T>(DccClientType type, IDccClientSettings? settings = null) where T : IDccClientSettings, new() {
+        try {
+            if (_settingsCache.TryGetValue(type, out var cache)) return cache;
+            if (settings is not null && settings.Type == type) {
+                _settingsCache[settings.Type] = settings;
+                return settings;
             }
+            var newSettings = new T();
+            _settingsCache[type] = newSettings;
+            return newSettings;
+        } catch (Exception ex) {
+            Console.WriteLine($"CheckSettings: {ex.Message}");
+            return new T();
         }
     }
 }

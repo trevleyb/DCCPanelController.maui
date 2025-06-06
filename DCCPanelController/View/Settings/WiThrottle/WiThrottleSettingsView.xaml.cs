@@ -1,32 +1,39 @@
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using CommunityToolkit.Maui.Core.Extensions;
-using CommunityToolkit.Mvvm.Input;
-using DccClients.WiThrottle.Client;
 using DCCCommon.Client;
 using DCCCommon.Discovery;
 using DCCPanelController.Services;
-using DCCPanelController.View.Settings.WiThrottle;
-using Microsoft.Maui.Controls;
+using DCCPanelController.View.Settings.Jmri;
 
-namespace DCCPanelController.View.Settings;
+namespace DCCPanelController.View.Settings.WiThrottle;
 
-public partial class WiThrottleSettingsView : ContentView {
+public partial class WiThrottleSettingsView : ContentView, IRaisesSettingsMessage {
+    
+    public event EventHandler<SettingsMessage>? OnSettingsMessage;
+
     public WiThrottleSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
         var viewModel = new WiThrottleSettingsViewModel(settings, connectionService);
         BindingContext = viewModel;
         InitializeComponent();
+        
+        // Propagate any messages from the underlying setting module 
+        // so the parent can access these and show them in the UI
+        // ---------------------------------------------------------------
+        viewModel.OnSettingsMessage += (sender, message) => OnSettingsMessage?.Invoke(sender, message);
+        viewModel.PropertyChanged += (sender, args) => OnPropertyChanged(args.PropertyName);
+
     }
     
     public void OnEntryFocused(object sender, FocusEventArgs e) {
         if (sender is Entry entry) {
             entry.CursorPosition = 0;
             entry.SelectionLength = entry.Text?.Length ?? 0;
+        }
+    }
+    
+    private void SelectableItemsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
+        var selected = e?.CurrentSelection?.FirstOrDefault() ?? null;
+        if (selected is DiscoveredService service && BindingContext is WiThrottleSettingsViewModel viewModel) {
+            viewModel.Address = service?.Address.ToString() ?? "0.0.0.0";
+            viewModel.Port = service?.Port ?? 12080;
         }
     }
 

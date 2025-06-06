@@ -22,16 +22,15 @@ public partial class SettingsViewModel : BaseViewModel {
     public event EventHandler<SettingsMessage>? OnSettingsMessage;
 
     [ObservableProperty] private string _connectLabel = "Test Connection";
-    [ObservableProperty] private DiscoveredService? _selectedServer;
     [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
     
     protected SettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) {
         _settings = settings;
         _connectionService = connectionService;
     }
-
+    
     [RelayCommand]
-    private async Task OnConnectClickedAsync() {
+    protected async Task OnConnectClickedAsync() {
         RaiseSettingsMessage("Attempting to connect/disconnect to Service", true);
         try {
             IsBusy = true;
@@ -65,9 +64,9 @@ public partial class SettingsViewModel : BaseViewModel {
     }
 
     [RelayCommand] 
-    private async Task OnRefreshServersClickedAsync() {
+    protected async Task OnRefreshServersClickedAsync() {
         if (IsBusy) return;
-        SelectedServer = null;
+        Servers.Clear();
         try {
             IsRefreshing = true;
             IsBusy = true;
@@ -75,12 +74,13 @@ public partial class SettingsViewModel : BaseViewModel {
             if (result is { IsSuccess: true, Value.Count: > 0 }) {
                 var servicesFound = result.Value.ToObservableCollection();
                 Servers = new ObservableCollection<DiscoveredService>(servicesFound);
-                RaiseSettingsMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}");
+                RaiseSettingsMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}", true);
             } else {
-                RaiseSettingsMessage($"{result.Message}");
+                RaiseSettingsMessage($"{result.Message}", true);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Unable to Refresh Servers: {ex.Message}");
+            RaiseSettingsMessage("Unable to Refresh Servers", true);
+            RaiseSettingsMessage(ex.Message);
         } finally {
             IsBusy = false;
             IsRefreshing = false;
@@ -91,24 +91,19 @@ public partial class SettingsViewModel : BaseViewModel {
         if (string.IsNullOrEmpty(address)) return "0";
         var parts = address.Split('.');
         if (part == 0) part = 1;
-        return parts?.Length >= part ? parts[part - 1] : "0";
+        var partStr = parts?.Length >= part ? parts[part - 1] : "0";
+        return partStr;
     }
 
     protected string SetIpAddressParts(int part, string value, string address, [CallerMemberName] string? propertyName = null) {
         if (string.IsNullOrEmpty(value)) return address ?? "0";
         var parts = address.Split('.');
-
         if (parts?.Length > 0) {
             if (part == 0) part = 1;
             if (parts?.Length >= part) parts[part - 1] = value;
-
-            if (parts is not null) {
-                address = string.Join(".", parts);
-                OnPropertyChanged(propertyName);
-            }
-            return address ?? "0.0.0.0";
+            if (parts is not null && parts.Length == 4) address = string.Join(".", parts);
         }
-        return "0";
+        return address ?? "0.0.0.0";
     }
 
 }

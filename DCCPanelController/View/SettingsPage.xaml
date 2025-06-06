@@ -10,7 +10,8 @@
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon">
+    xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components">
 
     <ContentPage.Resources>
         <ResourceDictionary/>
@@ -21,73 +22,112 @@
         <ToolbarItem Clicked="Download_OnClicked" IconImageSource="download.png"/>
     </ContentPage.ToolbarItems>
 
-    <StackLayout>
-        <Label
-            Text="Server Connection Details:"
-            Margin="10,10,20,0"
-            Style="{StaticResource LargeLabel}"
-            TextColor="{StaticResource Primary}"/>
+    <Grid RowDefinitions="auto,auto,*,70">
+        <StackLayout Margin="10,10,20,20" Grid.Row="0">
+            <Label
+                Text="Profile Settings:"
+                Margin="10,10,20,0"
+                Style="{StaticResource LargeLabel}"
+                TextColor="{StaticResource Primary}"/>
 
-        <HorizontalStackLayout Margin="20,20,0,0">
-            <RadioButton Value="jmri"
-                         GroupName="ServerType"
-                         Content="JMRI Server"
-                         IsChecked="{Binding IsJmriServer}"
-                         CheckedChanged="CheckChanged_Jmri"/>
-            <RadioButton Value="withrottle"
-                         GroupName="ServerType"
-                         Content="WiThrottle Server"
-                         IsChecked="{Binding IsWiThrottle}"
-                         CheckedChanged="CheckChanged_WiThrottle"/>
-        </HorizontalStackLayout>
-
-        <ContentView x:Name="SettingsView"/>
-
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="2"
-            HorizontalOptions="FillAndExpand"/>
-
-        <StackLayout>
-            <Grid ColumnDefinitions="*,150">
-                <Label
-                    Grid.Column="0"
-                    HorizontalOptions="Start"
-                    Style="{StaticResource MediumLabel}"
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center">
-                    Server Messages :
-                </Label>
-                <Button
-                    BackgroundColor="{StaticResource White}"
-                    Command="{Binding ClearMessagesCommand}"
+            <Grid Margin="10,10,10,10"  
+                  ColumnDefinitions="Auto,*" VerticalOptions="Center">
+                <Label Grid.Column="0"
+                       Text="Background Color"
+                       Style="{StaticResource MediumLabel}"
+                       VerticalOptions="Center"
+                       WidthRequest="130"/>
+                <components:ColorPickerButton
                     Grid.Column="1"
-                    HorizontalOptions="End"
-                    ImageSource="trash_2.png"
-                    Style="{StaticResource SmallLabel}"
-                    Text="Clear"
-                    TextColor="{StaticResource Primary}"
-                    VerticalOptions="Center"/>
+                    AllowsNoColor="true"
+                    HeightRequest="35"
+                    BorderColor="{StaticResource Primary}"
+                    BorderWidth="2"
+                    SelectedColor="{Binding BackgroundColor}"
+                    VerticalOptions="Center"
+                    HorizontalOptions="Start"
+                    WidthRequest="150"/>
             </Grid>
-            <BoxView
-                BackgroundColor="{StaticResource Primary}"
-                HeightRequest="1"
-                HorizontalOptions="FillAndExpand"/>
-            <ScrollView VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">
-                <CollectionView
-                    ItemsSource="{Binding Messages}"
-                    ItemsUpdatingScrollMode="KeepLastItemInView"
-                    x:Name="MessagesList">
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="view:SettingsMessage">
-                            <HorizontalStackLayout>
-                                <Label Style="{StaticResource MediumLabel}"
-                                       Text="{Binding Message}"/>
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </ScrollView>
+            <BoxView Margin="10,10,20,10" 
+                     BackgroundColor="{StaticResource Primary}"
+                     HeightRequest="1"
+                     HorizontalOptions="FillAndExpand"/>
         </StackLayout>
-    </StackLayout>
+        <StackLayout Grid.Row="1">
+            <Label
+                Text="Server Connection Details:"
+                Margin="20,0,10,0"
+                Style="{StaticResource LargeLabel}"
+                TextColor="{StaticResource Primary}"/>
+
+            <HorizontalStackLayout Margin="20,20,0,0">
+                <RadioButton Value="jmri"
+                             GroupName="ServerType"
+                             Content="JMRI Server"
+                             IsChecked="{Binding IsJmriServer}"
+                             CheckedChanged="CheckChanged_Jmri"/>
+                <RadioButton Value="withrottle"
+                             GroupName="ServerType"
+                             Content="WiThrottle Server"
+                             IsChecked="{Binding IsWiThrottle}"
+                             CheckedChanged="CheckChanged_WiThrottle"/>
+            </HorizontalStackLayout>
+            <ContentView x:Name="SettingsView"/>
+        </StackLayout>
+        
+            <StackLayout Margin="10,10,20,0" Grid.Row="2">
+                <BoxView Margin="10,10,20,0" 
+                         BackgroundColor="{StaticResource Primary}"
+                         HeightRequest="1"
+                         HorizontalOptions="FillAndExpand"/>
+                <Grid ColumnDefinitions="*,150">
+                    <Label
+                        Grid.Column="0"
+                        HorizontalOptions="Start"
+                        Style="{StaticResource MediumLabel}"
+                        TextColor="{StaticResource Primary}"
+                        VerticalOptions="Center">
+                        Server Messages :
+                    </Label>
+                    <Button
+                        BackgroundColor="{StaticResource White}"
+                        Command="{Binding ClearMessagesCommand}"
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        ImageSource="trash_2.png"
+                        Style="{StaticResource SmallLabel}"
+                        Text="Clear"
+                        TextColor="{StaticResource Primary}"
+                        VerticalOptions="Center"/>
+                </Grid>
+                <BoxView
+                    BackgroundColor="{StaticResource Primary}"
+                    HeightRequest="1"
+                    HorizontalOptions="FillAndExpand"/>
+                <ScrollView VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">
+                    <CollectionView
+                        ItemsSource="{Binding Messages}"
+                        ItemsUpdatingScrollMode="KeepLastItemInView"
+                        x:Name="MessagesList">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="view:SettingsMessage">
+                                <HorizontalStackLayout>
+                                    <Label Style="{StaticResource MediumLabel}"
+                                           Text="{Binding Message}"/>
+                                </HorizontalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </ScrollView>
+            </StackLayout>
+            <Button Grid.Row="3"
+                Command="{Binding SaveSettingsCommand}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                IsEnabled="{Binding IsNotBusy}"
+                Margin="0,0,0,0"
+                Style="{StaticResource ButtonOutline}"
+                Text="Save Settings"
+                WidthRequest="150"/>
+    </Grid>
 </ContentPage>

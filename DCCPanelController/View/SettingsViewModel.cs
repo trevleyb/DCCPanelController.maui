@@ -21,9 +21,12 @@ public partial class SettingsViewModel : ConnectionViewModel {
    
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
+        PropertyChanged += OnPropertyChanged;
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
     }
+
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     public Models.DataModel.Settings Settings => Profile.Settings;
     
@@ -35,8 +38,11 @@ public partial class SettingsViewModel : ConnectionViewModel {
         }
     }
 
-    public async Task SaveSettings() {
+    [RelayCommand]
+    public async Task SaveSettingsAsync() {
         await Profile.SaveAsync();
+        await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
+
     }
     
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 

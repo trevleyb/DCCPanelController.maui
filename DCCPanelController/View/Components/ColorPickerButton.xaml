@@ -10,10 +10,10 @@
     <Grid>
         <Button
             BackgroundColor="{Binding ActiveColor}"
-            BorderColor="{StaticResource Gray500}"
-            BorderWidth="1"
+            BorderColor="{Binding BorderColor}"
+            BorderWidth="{Binding BorderWidth}"
             Command="{Binding ShowDropdownCommand}"
-            CornerRadius="10"
+            CornerRadius="{Binding CornerRadius}"
             Grid.Column="0"/>
 
         <Label
@@ -32,7 +32,7 @@
             CornerRadius="21"
             Grid.Column="0"
             HorizontalOptions="End"
-            IsVisible="{Binding AllowsNoColor}"
+            IsVisible="{Binding ShowClearColorButton}"
             Margin="0,0,-5,0"
             Scale="0.5"
             Source="x_circle.png"
