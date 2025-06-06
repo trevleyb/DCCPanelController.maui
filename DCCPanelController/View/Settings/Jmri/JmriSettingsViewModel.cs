@@ -31,6 +31,14 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
         }
     }
 
+    public double PollingInterval {
+        get => Settings.PollingInterval;
+        set {
+            Settings.PollingInterval = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string Address {
         get => Settings.Address;
         set {

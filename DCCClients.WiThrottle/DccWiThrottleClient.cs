@@ -12,7 +12,7 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
     private readonly WiThrottleClientSettings? _settings;
     private Client.Client? _client;
 
-    public static DccClientType Type => DccClientType.WiThrottle;
+    public DccClientType Type => DccClientType.WiThrottle;
 
     public DccWiThrottleClient(IDccClientSettings? settings) {
         _settings = settings as WiThrottleClientSettings ?? throw new ArgumentException("Invalid settings provided.");

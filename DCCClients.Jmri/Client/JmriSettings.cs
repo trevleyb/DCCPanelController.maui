@@ -9,6 +9,7 @@ public partial class JmriClientSettings : ObservableObject, IDccClientSettings {
     [ObservableProperty] private string _address = "localhost";
     [ObservableProperty] private int _port = 12080;
     [ObservableProperty] private string _protocol = "http";
+    [ObservableProperty] private double _pollingInterval = 5.0;
 
     public DccClientType Type => DccClientType.Jmri;
     public string Url => $"{Protocol}://{Address}:{Port}";

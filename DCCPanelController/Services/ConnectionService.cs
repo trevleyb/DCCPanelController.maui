@@ -65,8 +65,9 @@ public class ConnectionService {
         // Allow null as a parameter if we know we have already setup the connection
         // This will then return the active connection.
         // --------------------------------------------------------------------------
-        if (Client is { IsConnected              : true }) return Result.Ok();
-
+        if (Client is { IsConnected : true } && Client.Type == clientSettings.Type ) return Result.Ok();
+        if (Client is { IsConnected : true }) await DisconnectHelperAsync();
+                
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
         Client = CreateClient(clientSettings);
@@ -85,6 +86,21 @@ public class ConnectionService {
         return Result.Ok("Connected to the Server.");
     }
 
+    private async Task<IResult> DisconnectHelperAsync() {
+        if (Client is { }) {
+            if (Client.IsConnected) await Client.DisconnectAsync();
+            Client.ConnectionStateChanged -= OnConnectionChanged;
+            Client.MessageReceived -= ClientOnMessageReceived;
+            Client.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
+            Client.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
+            Client.RouteMsgReceived -= DccClientOnRouteMsgReceived;
+            Client.SignalMsgReceived -= DccClientOnSignalMsgReceived;
+            Client = null;
+        }
+        return Result.Ok("Disconnected OK.");
+    }
+
+    
     private void OnConnectionChanged(object? sender = null, EventArgs? e = null) {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { Status = isConnected });

@@ -11,7 +11,7 @@ public class DccJmriClient : DccClientBase, IDccClient {
     private bool _isConnected;
     private JmriClient? _jmriClient;
 
-    public static DccClientType Type => DccClientType.Jmri;
+    public DccClientType Type => DccClientType.Jmri;
     
     public DccJmriClient(IDccClientSettings? settings) {
         _settings = settings as Client.JmriClientSettings ?? throw new ArgumentException("Invalid settings provided.");

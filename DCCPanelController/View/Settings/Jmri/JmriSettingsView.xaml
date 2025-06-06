@@ -6,10 +6,12 @@
              xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon"
              xmlns:jmri="clr-namespace:DCCPanelController.View.Settings.Jmri"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
              x:DataType="jmri:JmriSettingsViewModel"
              x:Class="DCCPanelController.View.Settings.Jmri.JmriSettingsView">
 
     <ContentView.Resources>
+        <converters:StepValueConverter x:Key="StepConverter" Step="0.25" />
         <Style x:Key="SelectableItemStyle" TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
@@ -61,6 +63,22 @@
 
                 </ImageButton>
             </HorizontalStackLayout>
+        </VerticalStackLayout>
+        <VerticalStackLayout Margin="10,10,10,0">
+            <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
+                   Text="Monitor Layout Changes Polling in Seconds"/>
+                <HorizontalStackLayout>
+                    <Slider HorizontalOptions="Start" WidthRequest="130" Maximum="10" Minimum="0.50" Value="{Binding PollingInterval, Mode=TwoWay, Converter={StaticResource StepConverter}}"/>
+                    <Border
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="{StaticResource Primary}"
+                        HeightRequest="35"
+                        WidthRequest="120"
+                        Margin="5,5,0,5"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                    <Label VerticalOptions="Center" HorizontalOptions="Center" Text="{Binding PollingInterval, StringFormat='{0:F2} seconds'}" Style="{StaticResource MediumLabel}"/>
+                    </Border>
+                </HorizontalStackLayout>
         </VerticalStackLayout>
 
         <VerticalStackLayout Margin="10,10,10,0">

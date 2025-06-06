@@ -24,13 +24,15 @@ public class JmriClient {
     public JmriClient(IDccClientSettings clientSettings) {
         if (clientSettings is JmriClientSettings info) {
             _jmriUrl = info.Url.TrimEnd('/');
+            var pollInterval = Convert.ToInt32(info.PollingInterval * 1000);
+            PollingIntervalMs = int.Min(int.Max(500, pollInterval),10000); 
         } else throw new ArgumentException("Invalid settings provided.");
     }
 
     // Configuration properties
     public int ConnectionTimeoutSeconds { get; set; } = 10;
     public int MaxConnectionRetries { get; set; } = 5;
-    public int PollingIntervalMs { get; set; } = 5000;
+    public int PollingIntervalMs { get; set; }
     public int ReconnectionDelayMs { get; set; } = 2000;
 
     public Func<HttpClient> HttpClientFactory { get; set; } = () => new HttpClient();

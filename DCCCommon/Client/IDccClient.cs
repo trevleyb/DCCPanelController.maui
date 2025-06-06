@@ -15,6 +15,7 @@ public interface IDccClient {
     Task<IResult> SendRouteCmdAsync(string dccAddress, bool active);
     Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect);
 
+    DccClientType Type { get; }
     bool IsConnected { get; }
     bool IsDisconnected => !IsConnected;
     

@@ -31,7 +31,7 @@ public partial class SettingsViewModel : BaseViewModel {
     
     [RelayCommand]
     protected async Task OnConnectClickedAsync() {
-        RaiseSettingsMessage("Attempting to connect/disconnect to Service", true);
+        RaiseSettingsMessage($"Attempting to connect/disconnect to Service ({_settings.Type})", true);
         try {
             IsBusy = true;
             var result = await _connectionService.ConnectAsync(_settings);
