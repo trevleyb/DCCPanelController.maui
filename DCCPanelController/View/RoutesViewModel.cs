@@ -9,7 +9,7 @@ using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEn
 
 namespace DCCPanelController.View;
 
-public partial class RoutesViewModel : ConnectionViewModel {
+public partial class RoutesViewModel : Base.ConnectionViewModel {
     private const string LabelID = "ID";
     private const string LabelName = "Route";
     private const string LabelState = "State";
@@ -99,7 +99,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
     private async Task ClearAllAsync() {
         IsBusy = true;
         try {
-            if (await AskUserToConfirm("Reset all Routes?", "This wll remove all Routes previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
+            if (await DisplayAlertHelper.DisplayAlertYesNoAsync("Reset all Routes?", "This wll remove all Routes previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
                 for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) {
                     Profile.Routes.RemoveAt(ptr - 1);
                     OnPropertyChanged(nameof(Routes));

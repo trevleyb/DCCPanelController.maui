@@ -8,7 +8,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
-public partial class BlocksViewModel : ConnectionViewModel {
+public partial class BlocksViewModel : Base.ConnectionViewModel {
     private const string LabelID = "ID";
     private const string LabelName = "Block";
     private const string LabelState = "Is Occupied?";
@@ -83,7 +83,7 @@ public partial class BlocksViewModel : ConnectionViewModel {
     private async Task ClearAllAsync() {
         IsBusy = true;
         try {
-            if (await AskUserToConfirm("Reset all Blocks?", "This wll remove all Blocks previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
+            if (await DisplayAlertHelper.DisplayAlertYesNoAsync("Reset all Blocks?", "This wll remove all Blocks previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
                 for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) {
                     Profile.Blocks.RemoveAt(ptr - 1);
                     OnPropertyChanged(nameof(Blocks));

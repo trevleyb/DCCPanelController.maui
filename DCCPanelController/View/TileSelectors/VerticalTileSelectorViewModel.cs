@@ -8,7 +8,7 @@ using DCCPanelController.Models.ViewModel.Tiles;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public partial class VerticalTileSelectorViewModel : BaseViewModel {
+public partial class VerticalTileSelectorViewModel : Base.BaseViewModel {
     private readonly Panels _symbolPanels;
     [ObservableProperty] private double _gridSize = 32;
     [ObservableProperty] private ObservableCollection<Tile> _tiles = new();

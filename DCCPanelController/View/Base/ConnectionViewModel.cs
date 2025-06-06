@@ -2,15 +2,14 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View;
+namespace DCCPanelController.View.Base;
 
 public partial class ConnectionViewModel : BaseViewModel {
     protected ConnectionViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         ConnectionService = connectionService;
-        OnPropertyChanged(nameof(IsConnected));
-        OnPropertyChanged(nameof(ConnectionIcon));
         ConnectionService.ConnectionChanged += (sender, args) => {
+            Console.WriteLine($"ConnectionViewModel: Connection State Changed to {args.Status} and IsConnected={args.IsConnected}");
             OnPropertyChanged(nameof(IsConnected));
             OnPropertyChanged(nameof(ConnectionIcon));
         };
@@ -24,19 +23,9 @@ public partial class ConnectionViewModel : BaseViewModel {
 
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {
-        await ConnectionService.ToggleConnectionAsync();
-    }
-
-    protected async Task<bool> AskUserToConfirm(string title, string message) {
-        if (App.Current.Windows[0].Page is { } window) {
-            var result = await window.DisplayAlert(
-                title,
-                message,
-                "Yes",
-                "No"
-            );
-            return result;
+        var result = await ConnectionService.ToggleConnectionAsync();
+        if (result.IsFailure) {
+            await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", $"Unable to connect to the server due to {result.Message}");
         }
-        return false;
     }
 }

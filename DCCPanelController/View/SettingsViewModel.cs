@@ -14,13 +14,12 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
-public partial class SettingsViewModel : ConnectionViewModel {
+public partial class SettingsViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _isJmriServer;
     [ObservableProperty] private bool _isWiThrottle;
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
    
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        if (ConnectionService.IsConnected) ConnectionService.DisconnectAsync();
         PropertyChanged += OnPropertyChanged;
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
@@ -50,7 +49,6 @@ public partial class SettingsViewModel : ConnectionViewModel {
     public async Task SaveSettingsAsync() {
         await Profile.SaveAsync();
         await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
-
     }
     
     // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 

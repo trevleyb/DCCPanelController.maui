@@ -5,7 +5,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
-public partial class OperateViewModel : ConnectionViewModel {
+public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private string _connectionIcon = "wifi.png";
     [ObservableProperty] private Panel? _selectedPanel;
     [ObservableProperty] private bool _showGrid;

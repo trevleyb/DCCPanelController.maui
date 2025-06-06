@@ -5,6 +5,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
+using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties;
 
 namespace DCCPanelController.View;
@@ -134,7 +135,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task ClearAllAsync() {
         IsBusy = true;
         try {
-            if (await AskUserToConfirm("Reset all Turnouts?", "This wll remove all Turnouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
+            if (await DisplayAlertHelper.DisplayAlertYesNoAsync("Reset all Turnouts?", "This wll remove all Turnouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
                 var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
                 foreach (var turnout in removeTurnouts) {
                     Profile.Turnouts.Remove(turnout);

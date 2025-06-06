@@ -5,7 +5,7 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
-public partial class TestPanelPageModel : BaseViewModel {
+public partial class TestPanelPageModel : Base.BaseViewModel {
     [ObservableProperty] private bool _designMode;
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
     [ObservableProperty] private Panel? _panel;

@@ -12,7 +12,7 @@ using DCCPanelController.View.DynamicProperties.EditableControls;
 
 namespace DCCPanelController.View.Properties.TileProperties;
 
-public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
+public partial class DynamicPropertyPageViewModel : Base.BaseViewModel, IPropertiesViewModel {
     private readonly ConcurrentDictionary<string, bool> _modifiedProperties = new();
     [ObservableProperty] private List<Entity> _entities;
     [ObservableProperty] private Entity _entity;

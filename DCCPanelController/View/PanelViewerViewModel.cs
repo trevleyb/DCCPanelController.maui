@@ -9,7 +9,7 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 
 namespace DCCPanelController.View;
 
-public partial class PanelViewerViewModel : ConnectionViewModel {
+public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     private Panel? _draggedPanel;
     [ObservableProperty] private bool _isPanelSelected;
     [ObservableProperty] private Panels _panels;
@@ -47,7 +47,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task DeletePanelAsync() {
         if (SelectedPanel is not null) {
-            var result = await AskUserToConfirm("Delete Panel?", $"Are you sure you want to delete the panel '{SelectedPanel.Id}'");
+            var result = await DisplayAlertHelper.DisplayAlertYesNoAsync("Delete Panel?", $"Are you sure you want to delete the panel '{SelectedPanel.Id}'");
             if (!result) return; // Exit if the user cancels the delete operation
             Panels.Remove(SelectedPanel);
             RefreshSortOrder();
@@ -72,7 +72,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 var panelAsJson = panel.DownloadPanel();
                 var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
                 Console.WriteLine(location);
-                await DisplayAlert("Panel Saved", location ?? "");
+                await DisplayAlertHelper.DisplayOkAlertAsync("Panel Saved", location ?? "");
             }
         } catch (Exception ex) {
             Console.WriteLine("Unable to save the panel: " + ex.Message);
@@ -86,10 +86,10 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             if (!string.IsNullOrEmpty(jsonString)) {
                 var panel = Panels.UploadPanel(jsonString);
                 if (panel is not null) {
-                    await DisplayAlert("Success", $"Uploaded Panel: {panel.Id ?? ""}");
+                    await DisplayAlertHelper.DisplayOkAlertAsync("Success", $"Uploaded Panel: {panel.Id ?? ""}");
                     await SaveAsync();
                 } else {
-                    await DisplayAlert("Error", "Unable to upload the provided file as a Panel.");
+                    await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");
                 }
             }
         } catch (Exception ex) {
@@ -116,21 +116,13 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             NavigationService, panelViewModel, ScreenWidth, ScreenHeight);
 
         if (result) {
-            // Properties were applied and closed (e.g., "Done" or "Close" was hit)
             Console.WriteLine("Properties applied successfully.");
             await SaveAsync();
         } else {
-            // Properties dialog was dismissed without explicit apply (e.g., tap outside popup)
             Console.WriteLine("Properties view dismissed.");
         }
     }
-
-    private async Task DisplayAlert(string title, string message) {
-        if (App.Current.Windows[0].Page is { } window) {
-            await window.DisplayAlert(title, message, "OK");
-        }
-    }
-
+    
     #region Drag and Drop Support for Panels
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {

@@ -8,7 +8,7 @@ using DCCPanelController.Models.ViewModel.Tiles;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public partial class FloatingTileSelectorViewModel : BaseViewModel {
+public partial class FloatingTileSelectorViewModel : Base.BaseViewModel {
     [ObservableProperty] private double _gridSize = 32;
     [ObservableProperty] private double _height;
     [ObservableProperty] private double _lastX;

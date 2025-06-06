@@ -11,7 +11,7 @@ using Microsoft.Maui.Controls;
 
 namespace DCCPanelController.View.Settings;
 
-public partial class SettingsViewModel : BaseViewModel {
+public partial class SettingsViewModel : Base.BaseViewModel {
 
     protected IDccClientSettings _settings;
     protected ConnectionService _connectionService;

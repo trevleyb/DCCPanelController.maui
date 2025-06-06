@@ -41,7 +41,7 @@
                         HeightRequest="35"
                         BorderColor="{StaticResource Primary}"
                         BorderWidth="2"
-                        SelectedColor="{Binding BackgroundColor}"
+                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsViewModel}}, Path=BackgroundColor, Mode=TwoWay}"
                         VerticalOptions="Center"
                         HorizontalOptions="Start"
                         WidthRequest="150"/>

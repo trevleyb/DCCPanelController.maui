@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace DCCPanelController.View;
+namespace DCCPanelController.View.Base;
 
 public partial class BaseViewModel : ObservableObject {
     [ObservableProperty]

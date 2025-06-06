@@ -1,3 +1,3 @@
 namespace DCCPanelController.View;
 
-public class InstructionsViewModel : BaseViewModel { }
+public class InstructionsViewModel : Base.BaseViewModel { }

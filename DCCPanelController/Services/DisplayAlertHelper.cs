@@ -12,4 +12,8 @@ public static class DisplayAlertHelper {
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");
         return await mainPage.DisplayAlert(title, message, accept, cancel);
     }
+
+    public static async Task<bool> DisplayAlertOkCancelAsync(string title, string message) => await DisplayAlertAsync(title, message, "OK", "Cancel");
+    public static async Task<bool> DisplayAlertYesNoAsync(string title, string message) => await DisplayAlertAsync(title, message, "Yes", "No");
+
 }
