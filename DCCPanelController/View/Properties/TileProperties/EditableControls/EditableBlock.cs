@@ -2,11 +2,11 @@ using System.Reflection;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.View.Components;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableBlockAttribute(string label, string description = "", int order = 0, string? group = null, int width = 250, int dropDownWidth = 300, int dropDownHeight = 200)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var blocks = profile.Blocks.Select(t => t.Id).ToList();
@@ -19,8 +19,14 @@ public class EditableBlockAttribute(string label, string description = "", int o
                     Title = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
                     HorizontalOptions = LayoutOptions.Start
                 };
-                picker.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-                picker.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
+                picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+                picker.PropertyChanged += (sender, args) => {
+                    if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) {
+                        if (sender is Picker dropDown) {
+                            SetModified(dropDown.SelectedItem != Value);
+                        }
+                    }
+                };
                 return CreateGroupCell(picker);
 #else
             var cell = new DropDownListBox {
@@ -34,7 +40,14 @@ public class EditableBlockAttribute(string label, string description = "", int o
                 HorizontalOptions = LayoutOptions.Start
             };
             cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
+            cell.PropertyChanged += (sender, args) => {
+                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) {
+                    if (sender is DropDownBoxBase dropDown) {
+                        SetModified(dropDown.SelectedItem != Value);
+                    }
+                }
+            };
+
             return CreateGroupCell(cell);
 #endif
         } catch (Exception e) {

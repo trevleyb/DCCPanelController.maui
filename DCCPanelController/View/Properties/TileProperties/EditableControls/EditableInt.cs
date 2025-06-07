@@ -1,14 +1,14 @@
 using System.Globalization;
 using System.Reflection;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableInt(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
     public int MinValue { get; set; } = 0;   // used for Int (Minimum Value)
     public int MaxValue { get; set; } = 999; // used for Int (Maximum Value)
 
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
@@ -24,7 +24,6 @@ public class EditableInt(string label, string description = "", int order = 0, s
             };
 
             dataCell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-
             var stepperUpDown = new Stepper {
                 Minimum = 0,  // Define the stepper min value if needed
                 Maximum = 90, // Define the stepper max value if needed
@@ -39,14 +38,12 @@ public class EditableInt(string label, string description = "", int order = 0, s
             }
 
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
-
             dataCell.TextChanged += (s, e) => {
-                propertyModified?.Invoke(info.Name);
                 if (int.TryParse(e.NewTextValue, out var parsedValue)) {
+                    SetModified(Value?.ToString() != e.NewTextValue);
                     stepperUpDown.Value = parsedValue;
                 }
             };
-
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);

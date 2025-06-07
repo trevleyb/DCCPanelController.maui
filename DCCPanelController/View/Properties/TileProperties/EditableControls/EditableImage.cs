@@ -2,11 +2,11 @@ using System.Reflection;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableImage(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var stack = new StackLayout {
                 Orientation = StackOrientation.Vertical,
@@ -84,6 +84,7 @@ public class EditableImage(string label, string description = "", int order = 0,
             var base64String = Convert.ToBase64String(fileBytes);
             image.Source = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(base64String)));
             PropertyHelper.SetPropertyValue<string>(owner, info.Name, base64String);
+            SetModified(true);
         } catch (Exception ex) {
             // Handle any errors
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"Unable to load Image: {ex.Message}");
@@ -114,6 +115,7 @@ public class EditableImage(string label, string description = "", int order = 0,
             var base64String = Convert.ToBase64String(fileBytes);
             image.Source = ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(base64String)));
             PropertyHelper.SetPropertyValue<string>(owner, info.Name, base64String);
+            SetModified(true);
         } catch (Exception ex) {
             // Handle any errors
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"Unable to load Image: {ex.Message}");

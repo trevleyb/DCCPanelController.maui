@@ -2,11 +2,11 @@ using System.Reflection;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.View.Components;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableRouteAttribute(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var routes = profile.Routes.ToList();
@@ -17,7 +17,9 @@ public class EditableRouteAttribute(string label, string description = "", int o
                 HorizontalOptions = LayoutOptions.Start
             };
             cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
+            cell.PropertyChanged += (sender, args) => {
+                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) SetModified(true);
+            };
             return CreateGroupCell(cell);
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Route: {e.Message}");

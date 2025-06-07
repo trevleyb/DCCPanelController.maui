@@ -1,11 +1,11 @@
 using System.Globalization;
 using System.Reflection;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableOpacity(string label, string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
@@ -31,14 +31,12 @@ public class EditableOpacity(string label, string description = "", int order = 
             stepperUpDown.ValueChanged += (s, e) => {
                 dataCell.Text = dataCell.Text = ConvertOpacityToPercentage(stepperUpDown.Value);
                 info.SetValue(owner, stepperUpDown.Value);
-                Console.WriteLine($"Stepper Value Changed: {stepperUpDown.Value} = {dataCell.Text}");
             };
 
             dataCell.TextChanged += (s, e) => {
-                propertyModified?.Invoke(info.Name);
                 stepperUpDown.Value = ConvertToPercentageToOpacity(dataCell.Text);
                 info.SetValue(owner, stepperUpDown.Value);
-                Console.WriteLine($"Stepper Text Changed: {stepperUpDown.Value} = {dataCell.Text}");
+                SetModified(Math.Abs((double)(Value ?? 0.00) - stepperUpDown.Value) > 0.00);
             };
 
             cell.Children.Add(stepperUpDown);

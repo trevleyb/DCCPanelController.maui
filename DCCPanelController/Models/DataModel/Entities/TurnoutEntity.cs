@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Actions;
-using DCCPanelController.View.DynamicProperties.EditableControls;
+using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;

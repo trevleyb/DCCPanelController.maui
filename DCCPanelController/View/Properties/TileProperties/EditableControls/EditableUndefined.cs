@@ -1,10 +1,10 @@
 using System.Reflection;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableUndefined(string label = "undefined", string description = "", int order = 0, string? group = null)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object? owner, PropertyInfo? info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object? owner, PropertyInfo? info) {
         try {
             return new Label {
                 Text = Label,

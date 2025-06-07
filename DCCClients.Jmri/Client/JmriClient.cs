@@ -128,15 +128,11 @@ public class JmriClient {
                 var wsUri = $"{_jmriUrl}/json".Replace("http", "ws");
                 using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
                 await _webSocket.ConnectAsync(new Uri(wsUri), timeoutCts.Token);
-                Console.WriteLine("WebSocket connected successfully.");
 
                 // Send a Hello command to the server
                 // -------------------------------------------------------------------
                 var command = BuildJmriMessage("hello", "get", new Dictionary<string, object>());
                 var result = await SendAndRecvAsync(command);
-                Console.WriteLine(result.Value);
-                ;
-
                 RaiseConnectionStatusChanged(true, "WebSocket connected successfully");
                 return Result.Ok("WebSocket connected successfully");
             } catch (Exception ex) {
@@ -144,7 +140,6 @@ public class JmriClient {
                 retryCount++;
 
                 if (retryCount < MaxConnectionRetries) {
-                    Console.WriteLine($"WebSocket connection attempt {retryCount} failed: {ex.Message}. Retrying...");
                     await Task.Delay(ReconnectionDelayMs * retryCount); // Increasing delay for each retry
                 }
             }
@@ -161,10 +156,8 @@ public class JmriClient {
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Terminating Connection", CancellationToken.None);
             }
             _webSocket.Dispose();
-            Console.WriteLine("WebSocket disconnected.");
             RaiseConnectionStatusChanged(false, "WebSocket disconnected");
         } catch (Exception ex) {
-            // Don't throw - just log the error
             Console.WriteLine($"WebSocket disconnect failed: {ex.Message}");
         }
     }
@@ -203,12 +196,9 @@ public class JmriClient {
         }
 
         await DisconnectWebSocketAsync();
-        Console.WriteLine("MonitorWebSocketAsync stopped.");
     }
 
     private async Task ListenForEventsAsync(CancellationToken token) {
-        Console.WriteLine("Starting polling for state changes...");
-
         while (!token.IsCancellationRequested) {
             try {
                 if (_webSocket.State == WebSocketState.Open) {
@@ -220,15 +210,12 @@ public class JmriClient {
 
                 await Task.Delay(PollingIntervalMs, token);
             } catch (OperationCanceledException) {
-                Console.WriteLine("Polling task canceled.");
                 break;
             } catch (Exception ex) {
                 Console.WriteLine($"Error in polling: {ex.Message}");
                 await Task.Delay(ReconnectionDelayMs, token);
             }
         }
-
-        Console.WriteLine("ListenForEventsAsync stopped.");
     }
 
     private async Task PollForChanges<T>(string endpoint,
@@ -270,16 +257,12 @@ public class JmriClient {
     private async Task<string> FetchInitialDataWithRetriesAsync(string endpoint, int maxRetries = 3, int delayMilliseconds = 1000) {
         for (var attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                Console.WriteLine($"{_jmriUrl}{endpoint}");
                 return await HttpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
             } catch (Exception ex) {
-                Console.WriteLine($"Attempt {attempt + 1} to fetch {endpoint} failed: {ex.Message}");
                 if (attempt == maxRetries - 1) throw; // Rethrow on final attempt
             }
-
             await Task.Delay(delayMilliseconds * (int)Math.Pow(2, attempt)); // Exponential backoff
         }
-
         return string.Empty; // Fallback (should not be reached)
     }
 
@@ -365,7 +348,6 @@ public class JmriClient {
             var timeout = new CancellationTokenSource(timeoutMs ?? 100);
             var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), timeout.Token);
             var response = Encoding.UTF8.GetString(buffer, 0, result.Count);
-            Console.WriteLine($"Json Recv Message: {response}");
             return Result<string>.Ok(response, "Response received successfully");
         } catch (Exception ex) {
             return Result<string>.Fail($"Failed to send command: {ex.Message}", ex);
@@ -379,8 +361,6 @@ public class JmriClient {
             var bytes = Encoding.ASCII.GetBytes(command);
             var timeout = new CancellationTokenSource(timeoutMs ?? 100);
             await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, timeout.Token);
-            ;
-            Console.WriteLine($"Json Send Message: {Encoding.Default.GetString(bytes)}");
             return Result.Ok("Command sent successfully");
         } catch (Exception ex) {
             return Result.Fail($"Failed to send command: {ex.Message}", ex);

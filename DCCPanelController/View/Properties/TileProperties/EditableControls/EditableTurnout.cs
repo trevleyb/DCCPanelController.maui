@@ -2,11 +2,11 @@ using System.Reflection;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.View.Components;
 
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null, int width = 250, int dropDownWidth = 300, int dropDownHeight = 200)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    public IView? CreateView(object owner, PropertyInfo info, Action<string>? propertyModified = null) {
+    public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var turnouts = profile.Turnouts.Select(t => t.Id).ToList();
@@ -20,7 +20,10 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                     HorizontalOptions = LayoutOptions.Start
                 };
                 picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-                picker.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
+                picker.PropertyChanged += (sender, args) => {
+                    if (args.PropertyName == nameof(Picker.SelectedItem)) SetModified(true);
+                };
+
                 return CreateGroupCell(picker);
 #else
             var cell = new DropDownListBox {
@@ -34,7 +37,9 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                 HorizontalOptions = LayoutOptions.Start
             };
             cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            cell.PropertyChanged += (_, _) => propertyModified?.Invoke(info.Name);
+            cell.PropertyChanged += (sender, args) => {
+                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) SetModified(true);
+            };
             return CreateGroupCell(cell);
 #endif
         } catch (Exception e) {

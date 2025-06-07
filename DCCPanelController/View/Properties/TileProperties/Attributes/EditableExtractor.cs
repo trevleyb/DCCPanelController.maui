@@ -1,7 +1,7 @@
 using System.Reflection;
-using DCCPanelController.View.DynamicProperties.EditableControls;
+using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
-namespace DCCPanelController.View.DynamicProperties.Attributes;
+namespace DCCPanelController.View.Properties.TileProperties.Attributes;
 
 public static class EditableExtractor {
     public static List<(PropertyInfo Property, IEditableProperty Metadata)> GetEditableProperties(object entity) {

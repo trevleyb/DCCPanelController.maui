@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -14,6 +15,22 @@ public abstract class TrackTile : Tile {
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
         VisualProperties.Add(nameof(TrackEntity.TrackColor));
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
+        VisualProperties.Add(nameof(IsOccupied));
+        VisualProperties.Add(nameof(IsPath));
+        
+        if (Entity is TrackEntity { Occupancy: {} occupancy }) {
+            IsOccupied = occupancy.IsOccupied;
+            occupancy.PropertyChanged += OccupancyOnPropertyChanged;
+        }
+    }
+
+    private void OccupancyOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        Console.WriteLine($"Occupancy Changed:");
+        if (Entity is TrackEntity { Occupancy: {} occupancy }) {
+            Console.WriteLine($"Occupancy Changed: {occupancy.IsOccupied} @ {occupancy.State}");
+            IsOccupied = occupancy.IsOccupied;
+            OnPropertyChanged(nameof(HighlightColor));
+        }
     }
 
     public Color HighlightColor {

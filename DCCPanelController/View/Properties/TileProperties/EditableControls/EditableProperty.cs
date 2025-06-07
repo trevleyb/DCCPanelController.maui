@@ -1,12 +1,18 @@
-namespace DCCPanelController.View.DynamicProperties.EditableControls;
+using System.ComponentModel;
+using System.Runtime.CompilerServices;
+
+namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 [AttributeUsage(AttributeTargets.Property)]
-public abstract class EditableProperty(string label, string description = "", int order = 0, string? group = null) : Attribute {
+public abstract class EditableProperty(string label, string description = "", int order = 0, string? group = null) : Attribute, INotifyPropertyChanged {
+    
     public string Label { get; } = label;              // Label/Prompt for the property
     public string Description { get; } = description;  // Description of the property
     public string Group { get; } = group ?? "General"; // Group to which this property belongs
     public int Order { get; } = order;                 // Order within the group
-
+    public object? Value { get; set; } = null;         // Initial Value or display Value
+    public bool IsModified { get; set; } = false;      // Has this been modified?
+    
     protected IView CreateGroupCell(IView view, int? height = null) {
         var grid = new Grid();
         grid.MinimumHeightRequest = height ?? 43;
@@ -21,13 +27,13 @@ public abstract class EditableProperty(string label, string description = "", in
         if (!string.IsNullOrWhiteSpace(Label)) {
             var label = new Label {
                 Text = Label,
-                TextColor = Colors.DimGray,
                 FontSize = 15,
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
                 Margin = new Thickness(5, 5, 5, 5)
             };
+            label.SetBinding(Microsoft.Maui.Controls.Label.TextColorProperty, new Binding(nameof(ModifiedTextColor)) { Source = this, Mode = BindingMode.OneWay });
             grid.Children.Add(label);
             grid.SetColumn(label, 0);
             grid.SetRow(label, 0);
@@ -51,6 +57,19 @@ public abstract class EditableProperty(string label, string description = "", in
         grid.SetColumn(boxView, 0);
         grid.SetRow(boxView, 1);
         grid.SetColumnSpan(boxView, 2);
+        IsModified = false;
         return grid;
+    }
+
+    protected void SetModified(bool isModified) {
+        IsModified = isModified;
+        OnPropertyChanged(nameof(IsModified));
+        OnPropertyChanged(nameof(ModifiedTextColor));
+    }
+    public Color ModifiedTextColor => IsModified ? Colors.Crimson : Colors.DimGray;
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
