@@ -96,13 +96,13 @@
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Active">
+                                                Value="Set">
                                                 <Setter Property="Source" Value="route_active.png"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Inactive">
+                                                Value="Set">
                                                 <Setter Property="Source" Value="route_inactive.png"/>
                                             </DataTrigger>
                                             <DataTrigger

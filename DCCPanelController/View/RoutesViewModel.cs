@@ -91,7 +91,7 @@ public partial class RoutesViewModel : Base.ConnectionViewModel {
             _                       => RouteStateEnum.Active
         };
         if (!string.IsNullOrEmpty(route.Id) && IsConnected) {
-            await ConnectionService.SendRouteCmdAsync(route.Id, route.State == RouteStateEnum.Active)!;
+            await ConnectionService.SendRouteCmdAsync(route, route.State == RouteStateEnum.Active)!;
         }
     }
 

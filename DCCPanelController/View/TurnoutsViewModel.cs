@@ -60,7 +60,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         if (!_isAscending) {
             sortedTurnout = columnName.ToLower() switch {
                 "name"       => Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList(),
-                "dccaddress" => Turnouts.OrderBy<Turnout, string>(x => x.DccAddress ?? "").ToList(),
+                "dccaddress" => Turnouts.OrderBy<Turnout, string>(x => x.DccAddress.ToString() ).ToList(),
                 "id"         => Turnouts.OrderBy<Turnout, string>(x => x.Id ?? "").ToList(),
                 "state"      => Turnouts.OrderBy<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
                 _            => Turnouts.ToList<Turnout>()
@@ -69,7 +69,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             sortedTurnout = columnName.ToLower() switch {
                 "name"       => Turnouts.OrderByDescending<Turnout, string>(x => x.Name ?? "").ToList(),
                 "id"         => Turnouts.OrderByDescending<Turnout, string>(x => x.Id ?? "").ToList(),
-                "dccaddress" => Turnouts.OrderByDescending<Turnout, string>(x => x.DccAddress ?? "").ToList(),
+                "dccaddress" => Turnouts.OrderByDescending<Turnout, string>(x => x.DccAddress.ToString()).ToList(),
                 "state"      => Turnouts.OrderByDescending<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
                 _            => Turnouts.ToList<Turnout>()
             };
@@ -110,8 +110,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout is not null) {
-            if (!string.IsNullOrEmpty(turnout.DccAddress) && IsConnected) {
-                await ConnectionService?.SendTurnoutCmdAsync(turnout.Name ?? "", turnout.State == TurnoutStateEnum.Thrown)!;
+            if (IsConnected) {
+                await ConnectionService?.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
             }
             OnPropertyChanged(nameof(Turnouts));
         }

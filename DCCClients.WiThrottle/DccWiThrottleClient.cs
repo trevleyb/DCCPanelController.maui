@@ -109,10 +109,10 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool isThrown) {
+    public async Task<IResult> SendTurnoutCmdAsync(DccClientCmdProp properties, bool isThrown) {
         try {
-            Console.WriteLine($"Sending turnout command: {dccAddress} - {isThrown}");
-            _client?.SendMessage(new TurnoutCommand(dccAddress, isThrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
+            Console.WriteLine($"Sending turnout command: {properties.SystemName} - {isThrown}");
+            _client?.SendMessage(new TurnoutCommand(properties.SystemName, isThrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
@@ -120,10 +120,10 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool isActive) {
+    public async Task<IResult> SendRouteCmdAsync(DccClientCmdProp properties, bool isActive) {
         try {
-            Console.WriteLine($"Sending route command: {dccAddress} - {isActive}");
-            _client?.SendMessage(new RouteCommand(dccAddress));
+            Console.WriteLine($"Sending route command: {properties.SystemName} - {isActive}");
+            _client?.SendMessage(new RouteCommand(properties.SystemName));
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
@@ -131,7 +131,7 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
+    public async Task<IResult> SendSignalCmdAsync(DccClientCmdProp properties, SignalAspectEnum aspect) {
         await Task.CompletedTask;
         return Result.Fail("Withrottle does not support signal commands.");
     }

@@ -11,9 +11,9 @@ public interface IDccClient {
     Task<IResult> TestConnectionAsync();
     
     Task<IResult> SendCmdAsync(string message);
-    Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown);
-    Task<IResult> SendRouteCmdAsync(string dccAddress, bool active);
-    Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect);
+    Task<IResult> SendTurnoutCmdAsync(DccClientCmdProp properties, bool thrown);
+    Task<IResult> SendRouteCmdAsync(DccClientCmdProp properties, bool active);
+    Task<IResult> SendSignalCmdAsync(DccClientCmdProp properties, SignalAspectEnum aspect);
 
     DccClientType Type { get; }
     bool IsConnected { get; }

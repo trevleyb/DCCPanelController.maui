@@ -4,6 +4,7 @@ using DccClients.WiThrottle;
 using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Events;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using Route = DCCPanelController.Models.DataModel.Route;
@@ -13,12 +14,10 @@ namespace DCCPanelController.Services;
 public class ConnectionService {
     
     private readonly Profile _profile;
-    private readonly IDccClientSettings _clientSettings;
     public IDccClient? Client { get; private set; }
 
     public ConnectionService(Profile profile) {
         _profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
-        _clientSettings = _profile.Settings?.ClientSettings ?? new JmriClientSettings();
     }
 
     public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
@@ -27,12 +26,21 @@ public class ConnectionService {
     public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
     public bool IsConnected => Client is { IsConnected: true };
 
+    public IDccClientSettings Settings {
+        get {
+            ArgumentNullException.ThrowIfNull(_profile,"Profile cannot be unset. Fatal Error.");
+            ArgumentNullException.ThrowIfNull(_profile.Settings,"Settings cannot be unset. Fatal Error.");
+            if (_profile.Settings.ClientSettings is null) return new JmriClientSettings();
+            return _profile.Settings.ClientSettings;
+        }
+    }
+    
     public async Task<IResult> ToggleConnectionAsync() {
         if (IsConnected) {
             await DisconnectAsync();
             return Result.Ok();
         }
-        return await ConnectAsync(_clientSettings);
+        return await ConnectAsync(Settings);
     }
 
     public async Task DisconnectAsync() {
@@ -122,16 +130,28 @@ public class ConnectionService {
         return await Client?.SendCmdAsync(message)!;
     }
 
-    public async Task<IResult> SendTurnoutCmdAsync(string dccAddress, bool thrown) {
-        return await Client?.SendTurnoutCmdAsync(dccAddress, thrown)!;
+    public async Task<IResult> SendTurnoutCmdAsync(Turnout? turnout, bool thrown) {
+        if (turnout is not null) {
+            var properties = new DccClientCmdProp(turnout.Name ?? "", turnout.Id ?? "", turnout.DccAddress);
+            return await Client?.SendTurnoutCmdAsync(properties, thrown)!;
+        }
+        return Result.Fail("No turnout provided.");
     }
 
-    public async Task<IResult> SendRouteCmdAsync(string dccAddress, bool active) {
-        return await Client?.SendRouteCmdAsync(dccAddress, active)!;
+    public async Task<IResult> SendRouteCmdAsync(Route? route, bool active) {
+        if (route is not null) {
+            var properties = new DccClientCmdProp(route.Name ?? "", route.Id ?? "", 0);
+            return await Client?.SendRouteCmdAsync(properties, active)!;
+        }
+        return Result.Fail("No route provided.");
     }
 
-    public async Task<IResult> SendSignalCmdAsync(string dccAddress, SignalAspectEnum aspect) {
-        return await Client?.SendSignalCmdAsync(dccAddress, aspect)!;
+    public async Task<IResult> SendSignalCmdAsync(Signal? signal, SignalAspectEnum aspect) {
+        if (signal is not null) {
+            var properties = new DccClientCmdProp(signal.Name ?? "", signal.Id ?? "", signal.DccAddress);
+            return await Client?.SendSignalCmdAsync(properties, aspect)!;
+        }
+        return Result.Fail("No signal provided.");
     }
 
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
@@ -160,8 +180,6 @@ public class ConnectionService {
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Id == e.DccAddress) ?? null;
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.TurnoutId) ?? null;
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.DccAddress == e.TurnoutId) ?? null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.DccAddress == e.DccAddress) ?? null;
         if (turnout is not null) {
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
             Console.WriteLine($"Turnout Updated {turnout.Name} is now {turnout.State}");
@@ -169,7 +187,7 @@ public class ConnectionService {
             turnout = new Turnout {
                 Name = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
                 Id = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
-                DccAddress = e.DccAddress,
+                DccAddress = e.DccAddress.FromDccAddressString(),
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
             };
             _profile.Turnouts.Add(turnout);
@@ -199,7 +217,7 @@ public class ConnectionService {
         Signal? signal = null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress == e.SignalId) ?? null;
+        signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress.ToString() == e.SignalId) ?? null;
         if (signal is not null) {
             signal.Aspect = e.Aspect;
             Console.WriteLine($"Signal Updated {signal.Name} is now {signal.Aspect}");
@@ -207,7 +225,7 @@ public class ConnectionService {
             signal = new Signal {
                 Name = e.SignalId,
                 Id = e.SignalId,
-                DccAddress = e.SignalId,
+                DccAddress = e.SignalId.FromDccAddressString(),
                 Aspect = e.Aspect
             };
             _profile.Signals.Add(signal);

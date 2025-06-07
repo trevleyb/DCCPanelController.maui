@@ -10,7 +10,7 @@ namespace DCCPanelController.Models.DataModel;
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Signal : ObservableObject {
     [ObservableProperty] private string _aspect = "Off";
-    [ObservableProperty] private string _dccAddress;
+    [ObservableProperty] private int _dccAddress;
 
     [ObservableProperty] private string? _id;
     [ObservableProperty] private bool _isEditable;
@@ -21,6 +21,6 @@ public partial class Signal : ObservableObject {
     ///     This is controlled by data that comes in via the Withrottle Interface
     /// </summary>
     public Signal() {
-        _dccAddress = string.Empty;
+        _dccAddress = 0;
     }
 }
