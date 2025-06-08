@@ -60,7 +60,7 @@ public static class JsonRepository {
     public static Profile Load(string profileName = "default") {
         var others = Profiles;
         var filePath = GetStorageFilePath(profileName);
-        using (new CodeTimer("Load JSON File")) {
+        using (new CodeTimer("Load JSON File",false)) {
             try {
                 if (File.Exists(filePath)) {
                     try {

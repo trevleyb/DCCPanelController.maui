@@ -13,7 +13,7 @@ public static class SvgImages {
 
     static SvgImages() {
         AvailableSymbols = BuildAvailableSymbols();
-        using (new CodeTimer("Building Image Cache")) {
+        using (new CodeTimer("Building Image Cache",false)) {
             BuildAvailableImages();
         }
     }

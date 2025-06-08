@@ -20,9 +20,9 @@ public abstract class TrackTile : Tile {
         if (Entity is TrackEntity { Occupancy: {} occupancy }) {
             if (occupancy.Id == entity?.Occupancy?.Id) IsOccupied = occupancy.IsOccupied;
             occupancy.PropertyChanged += (sender, args) => {
-                Console.WriteLine($"Occupancy Changed: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
+                //Console.WriteLine($"Occupancy Changed: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
                 if (occupancy.Id == entity?.Occupancy?.Id) {
-                    Console.WriteLine($"Occupancy MATCHED: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
+                    //Console.WriteLine($"Occupancy MATCHED: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
                     IsOccupied = occupancy.IsOccupied;
                 }
             };
@@ -50,7 +50,7 @@ public abstract class TrackTile : Tile {
         canvas.HorizontalOptions = LayoutOptions.Fill;
         canvas.VerticalOptions = LayoutOptions.Fill;
         canvas.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
-        canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, source: this));
+        //canvas.SetBinding(BackgroundColorProperty, new Binding(nameof(HighlightColor), BindingMode.OneWay, source: this));
         canvas.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
 
         var absoluteLayout = new AbsoluteLayout();
@@ -102,6 +102,14 @@ public abstract class TrackTile : Tile {
                 style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
                 break;
             }
+
+            if (IsPath && DisplayMode == TileDisplayMode.Normal) {
+                var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
+                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());            
+            } else if (IsOccupied && DisplayMode == TileDisplayMode.Normal) {
+                var color = Entity.Parent?.OccupiedColor ?? Colors.Tomato.WithAlpha(HighlightColorAlpha);
+                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());            
+            } 
         }
         return style;
     }

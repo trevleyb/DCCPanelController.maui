@@ -65,8 +65,7 @@ public partial class ControlPanelView {
         TileTapped?.Invoke(this, new TileTappedEventArgs(tile, tapCount));
     }
 
-    private void OnTileSelected(int tapCount, [CallerMemberName] string? caller = "") {
-        Console.WriteLine($"OnTileSelected Called from [{caller}]");
+    private void OnTileSelected(int tapCount) {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
 
@@ -111,7 +110,7 @@ public partial class ControlPanelView {
 
         ClearAllSelectedTiles();
 
-        using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}")) {
+        using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}",false)) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
             _viewHeight = _gridSize * Rows;

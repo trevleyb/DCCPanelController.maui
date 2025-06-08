@@ -13,7 +13,6 @@ public partial class ConnectionViewModel : BaseViewModel {
         Profile = profile;
         ConnectionService = connectionService;
         ConnectionService.ConnectionChanged += (sender, args) => {
-            Console.WriteLine($"ConnectionViewModel: Connection State Changed to {args.Status} and IsConnected={args.IsConnected}");
             IsConnected = args.IsConnected;
             OnPropertyChanged(nameof(IsConnected));
             OnPropertyChanged(nameof(ConnectionIcon));

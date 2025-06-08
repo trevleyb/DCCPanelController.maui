@@ -44,9 +44,9 @@ public partial class SvgImage : ObservableObject {
 
     public SvgImage ApplyStyle(SvgStyle style) {
         foreach (var element in style.Elements) {
-            foreach (var styleAttribute in element.Value.Attributes) {
+           foreach (var styleAttribute in element.Value.Attributes) {
                 ApplyElementStyle(element.Key, styleAttribute.Key, styleAttribute.Value);
-            }
+           }
         }
         return this;
     }
@@ -74,9 +74,9 @@ public partial class SvgImage : ObservableObject {
     public void ApplyElementStyle(string elementName, string attributeName, string attributeValue) {
         // Get back all the elements that have an ID = the element name provided (such as "border")
         // -----------------------------------------------------------------------------------------
-        foreach (var element in ImageManager.FindElements(elementName)) {
+        var elements = ImageManager.FindElements(elementName);
+        foreach (var element in elements) {
             var elementType = ImageManager.ElementType(element);
-
             //Console.WriteLine($"Applying {attributeName} = {attributeValue} to {elementName} with type {elementType}");
 
             _ = elementType switch {

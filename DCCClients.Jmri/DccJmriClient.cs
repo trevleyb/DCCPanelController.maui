@@ -167,7 +167,6 @@ public class DccJmriClient : DccClientBase, IDccClient {
 
     private void JmriClientOnConnectionStatusChanged(object? sender, ConnectionStatusEventArgs e) {
         OnConnectionStateChanged(new DccStateChangedArgs(e.IsConnected, e.Message));
-        Console.WriteLine($"DccJmriClient: Connection Status Changed: {e.IsConnected} - {e.Message}");
     }
 
     #region Event Handlers
