@@ -162,7 +162,6 @@ public class ConnectionService {
     }
 
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
-        Console.WriteLine($"ClientOnMessageReceived called");
         ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message });
     }
 
