@@ -82,7 +82,7 @@
                         WidthRequest="120"
                         Margin="5,5,0,5"
                         BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                    <Label VerticalOptions="Center" HorizontalOptions="Center" Text="{Binding PollingInterval, StringFormat='{0:F2} seconds'}" Style="{StaticResource MediumLabel}"/>
+                    <Label VerticalOptions="Center" HorizontalOptions="Center" Text="{Binding Settings.PollingInterval, StringFormat='{0:F2} seconds'}" Style="{StaticResource MediumLabel}"/>
                     </Border>
                 </HorizontalStackLayout>
         </VerticalStackLayout>

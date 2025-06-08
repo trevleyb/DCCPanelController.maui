@@ -9,7 +9,7 @@ namespace DCCPanelController.View.Settings.WiThrottle;
 
 public partial class WiThrottleSettingsViewModel: SettingsViewModel {
     
-    [ObservableProperty] private WiThrottleClientSettings _settings;
+    [ObservableProperty] new private WiThrottleClientSettings _settings;
 
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         Settings = base._settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");

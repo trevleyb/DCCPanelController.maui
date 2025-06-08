@@ -258,7 +258,7 @@ public class JmriClient {
         for (var attempt = 0; attempt < maxRetries; attempt++) {
             try {
                 return await HttpClient.GetStringAsync($"{_jmriUrl}{endpoint}");
-            } catch (Exception ex) {
+            } catch {
                 if (attempt == maxRetries - 1) throw; // Rethrow on final attempt
             }
             await Task.Delay(delayMilliseconds * (int)Math.Pow(2, attempt)); // Exponential backoff

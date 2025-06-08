@@ -9,7 +9,7 @@ namespace DCCPanelController.View.Settings.Jmri;
 
 public partial class JmriSettingsViewModel : SettingsViewModel {
 
-    [ObservableProperty] private JmriClientSettings _settings;
+    [ObservableProperty] new private JmriClientSettings _settings;
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         Settings = _settings as JmriClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
