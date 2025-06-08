@@ -202,7 +202,6 @@ public class ConnectionService {
         route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
         if (route is not null) {
             route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
-            Console.WriteLine($"Route Updated {route.Name} is now {route.State}");
         } else {
             route = new Route {
                 Id = e.RouteId,
@@ -210,7 +209,6 @@ public class ConnectionService {
                 State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive
             };
             _profile.Routes.Add(route);
-            Console.WriteLine($"Route Added {route.Name} is now {route.State}");
         }
     }
 
@@ -222,7 +220,6 @@ public class ConnectionService {
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
         if (turnout is not null) {
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
-            Console.WriteLine($"Turnout Updated {turnout.Name} is now {turnout.State}");
         } else if (_profile is not null && _profile.Turnouts is not null) {
             turnout = new Turnout {
                 Name = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
@@ -231,7 +228,6 @@ public class ConnectionService {
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
             };
             _profile.Turnouts.Add(turnout);
-            Console.WriteLine($"Turnout Added {turnout.Name} is now {turnout.State}");
         }
     }
 
@@ -241,7 +237,6 @@ public class ConnectionService {
         block ??= _profile?.Blocks?.FirstOrDefault(x => x.Name == e.BlockId) ?? null;
         if (block is not null) {
             block.IsOccupied = e.IsOccupied;
-            Console.WriteLine($"Block Updated {block.Name} is now {(block.IsOccupied ? "OCCUPIED" : "FREE")}");
         } else if (_profile is not null && _profile.Blocks is not null) {
             block = new Block {
                 Name = e.BlockId,
@@ -249,7 +244,6 @@ public class ConnectionService {
                 IsOccupied = e.IsOccupied
             };
             _profile.Blocks.Add(block);
-            Console.WriteLine($"Block Added {block.Name} is now {(block.IsOccupied ? "OCCUPIED" : "FREE")}");
         }
     }
 
@@ -260,7 +254,6 @@ public class ConnectionService {
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress.ToString() == e.SignalId) ?? null;
         if (signal is not null) {
             signal.Aspect = e.Aspect;
-            Console.WriteLine($"Signal Updated {signal.Name} is now {signal.Aspect}");
         } else if (_profile is not null && _profile.Signals is not null) {
             signal = new Signal {
                 Name = e.SignalId,
@@ -269,7 +262,6 @@ public class ConnectionService {
                 Aspect = e.Aspect
             };
             _profile.Signals.Add(signal);
-            Console.WriteLine($"Signal Added {signal.Name} with aspect {signal.Aspect}");
         }
     }
 

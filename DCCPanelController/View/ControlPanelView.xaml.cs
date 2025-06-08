@@ -8,6 +8,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
@@ -153,7 +154,7 @@ public partial class ControlPanelView {
     /// </summary>
     /// <returns>Returns an instance of the created tile or null if it could not create one. </returns>
     private ITile? AddEntityToGrid(Entity entity) {
-        var tile = TileFactory.CreateTile(entity, _gridSize);
+        var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
         if (tile is ContentView view) {
             view.ClassId = entity.Guid.ToString();
             SetTileGestures(tile);

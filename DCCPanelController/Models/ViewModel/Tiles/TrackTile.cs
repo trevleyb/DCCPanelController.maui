@@ -17,26 +17,22 @@ public abstract class TrackTile : Tile {
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
         VisualProperties.Add(nameof(IsOccupied));
         VisualProperties.Add(nameof(IsPath));
-        
         if (Entity is TrackEntity { Occupancy: {} occupancy }) {
-            IsOccupied = occupancy.IsOccupied;
-            occupancy.PropertyChanged += OccupancyOnPropertyChanged;
-        }
-    }
-
-    private void OccupancyOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine($"Occupancy Changed:");
-        if (Entity is TrackEntity { Occupancy: {} occupancy }) {
-            Console.WriteLine($"Occupancy Changed: {occupancy.IsOccupied} @ {occupancy.State}");
-            IsOccupied = occupancy.IsOccupied;
-            OnPropertyChanged(nameof(HighlightColor));
+            if (occupancy.Id == entity?.Occupancy?.Id) IsOccupied = occupancy.IsOccupied;
+            occupancy.PropertyChanged += (sender, args) => {
+                Console.WriteLine($"Occupancy Changed: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
+                if (occupancy.Id == entity?.Occupancy?.Id) {
+                    Console.WriteLine($"Occupancy MATCHED: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
+                    IsOccupied = occupancy.IsOccupied;
+                }
+            };
         }
     }
 
     public Color HighlightColor {
         get {
-            if (IsPath) return Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
-            if (IsOccupied) return Colors.Tomato.WithAlpha(HighlightColorAlpha);
+            if (IsPath && DisplayMode == TileDisplayMode.Normal) return Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
+            if (IsOccupied && DisplayMode == TileDisplayMode.Normal) return Colors.Tomato.WithAlpha(HighlightColorAlpha);
             return Colors.Transparent;
         }
     }

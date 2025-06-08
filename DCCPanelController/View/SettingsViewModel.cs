@@ -29,6 +29,7 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
     [RelayCommand]
     public async Task SaveSettingsAsync() {
         await Profile.SaveAsync();
+        await ConnectionService.ForceRefresh();
         await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
     }
     

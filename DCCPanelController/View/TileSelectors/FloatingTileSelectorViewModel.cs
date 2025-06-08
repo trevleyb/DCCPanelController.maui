@@ -59,7 +59,7 @@ public partial class FloatingTileSelectorViewModel : Base.BaseViewModel {
     private void AddTile(Entity entity) {
         entity.Width = 1;
         entity.Height = 1;
-        var tile = TileFactory.CreateTile(entity, GridSize);
+        var tile = TileFactory.CreateTile(entity, GridSize, TileDisplayMode.Symbol);
         if (tile is Tile view) Tiles.Add(view);
     }
 }

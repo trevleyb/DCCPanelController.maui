@@ -9,13 +9,13 @@ public abstract class Tile : ContentView, ITile {
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor = 0.75f;
 
+    protected readonly TileDisplayMode DisplayMode;
+    protected bool HaveVisualPropertiesChanged;
+    protected HashSet<string> VisualProperties { get; } = [];
+
     private const int DebounceDelay = 50;
     private CancellationTokenSource? _debounceRebuildCts;
     private Dictionary<string, object?> _propertyCache = [];
-
-    public TileDisplayMode DisplayMode = TileDisplayMode.Normal;
-
-    protected bool HaveVisualPropertiesChanged;
 
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
@@ -30,9 +30,6 @@ public abstract class Tile : ContentView, ITile {
         VisualProperties.Add(nameof(Entity.Row));
         SetContent();
     }
-
-    protected HashSet<string> VisualProperties { get; } = [];
-    protected HashSet<string> VisualPropertiesChanged { get; } = [];
 
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
@@ -72,12 +69,12 @@ public abstract class Tile : ContentView, ITile {
     private void SetContent() {
         if (DisplayMode == TileDisplayMode.Normal) SetNormalContent();
         if (DisplayMode == TileDisplayMode.Symbol) SetSymbolContent();
+        if (DisplayMode == TileDisplayMode.Design) SetNormalContent();
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
             HaveVisualPropertiesChanged = true;
-            VisualPropertiesChanged.Add(property);
         }
         RebuildIfNecessary();
     }
@@ -90,8 +87,7 @@ public abstract class Tile : ContentView, ITile {
     ///     This method listens for changes in visual properties and schedules a delayed execution to rebuild the tile content
     ///     if necessary.
     ///     The debouncing mechanism ensures that multiple rapid changes are processed efficiently. The content is only updated
-    ///     if the
-    ///     visual properties have changed.
+    ///     if the visual properties have changed.
     /// </remarks>
     private void RebuildIfNecessary() {
         _debounceRebuildCts?.Cancel();
@@ -99,14 +95,20 @@ public abstract class Tile : ContentView, ITile {
         var token = _debounceRebuildCts.Token;
 
         Task.Delay(DebounceDelay, token)
-            .ContinueWith(t => {
+            .ContinueWith(async t => {
                  if (t.IsCanceled) return;
-                 if (HaveVisualPropertiesChanged) {
-                     SetContent();
-                     HaveVisualPropertiesChanged = false; // Reset flag
-                     VisualPropertiesChanged.Clear();
+                 try {
+                     // Ensure we're on the UI thread for UI updates
+                     await MainThread.InvokeOnMainThreadAsync(() => {
+                         if (HaveVisualPropertiesChanged) {
+                             SetContent();
+                             HaveVisualPropertiesChanged = false; // Reset flag
+                         } 
+                     });
+                 } catch (Exception ex) {
+                     Console.WriteLine($"Error rebuilding tile: {ex.Message}");
                  }
-             }, TaskScheduler.FromCurrentSynchronizationContext());
+             }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
     }
 
     /// <summary>
@@ -137,5 +139,5 @@ public abstract class Tile : ContentView, ITile {
 }
 
 public enum TileDisplayMode {
-    Normal, Symbol
+    Normal, Symbol, Design
 }
