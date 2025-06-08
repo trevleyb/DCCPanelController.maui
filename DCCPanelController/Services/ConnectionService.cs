@@ -25,8 +25,7 @@ public class ConnectionService {
 
     public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
-
-    public bool IsConnected => Client is { IsConnected: true };
+    private bool IsConnected => Client is { IsConnected: true };
 
     public IDccClientSettings Settings {
         get {

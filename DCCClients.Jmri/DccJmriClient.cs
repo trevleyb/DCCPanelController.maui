@@ -37,17 +37,10 @@ public class DccJmriClient : DccClientBase, IDccClient {
             _jmriClient.SignalChanged += OnJmriSignalChanged;
             _jmriClient.ConnectionStatusChanged += JmriClientOnConnectionStatusChanged;
 
-            // Initialize the client and fetch initial data
-            var initialised = await _jmriClient.InitializeAsync();
-            if (initialised.IsFailure) {
-                OnConnectionStateChanged(new DccStateChangedArgs(false, "Failed to initialise JMRI client."));
-                return initialised;
-            }
-
-            var monitoring = await _jmriClient.StartMonitoringAsync();
-            if (monitoring.IsFailure) {
-                OnConnectionStateChanged(new DccStateChangedArgs(false, "Failed to start monitoring JMRI client."));
-                return monitoring;
+            var result = await _jmriClient.Open();
+            if (result.IsFailure) {
+                OnConnectionStateChanged(new DccStateChangedArgs(false, $"Failed to initialise JMRI client: {result.Message}."));
+                return result;
             }
 
             OnConnectionStateChanged(new DccStateChangedArgs(true, "Connected to JMRI server."));

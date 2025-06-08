@@ -1,35 +1,37 @@
 using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
-    private readonly OperateViewModel _viewModel;
     private bool _tabBarState = true;
 
     public OperatePage(OperateViewModel viewModel) {
+        BindingContext = viewModel;
         InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
-        PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
+        //PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
         SetTabBarState(true);
     }
 
-    protected override void OnAppearing() {
-        base.OnAppearing();
-        PanelCarousel.ItemsSource = null;
-        PanelCarousel.ItemsSource = _viewModel.Panels;
-        PanelCarousel.CurrentItem = _viewModel.SelectedPanel;
-    }
+    // private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {
+    //     Console.WriteLine($"Panel Carousel Item Changed. Sender={sender?.GetType()}");
+    //     if (BindingContext is OperateViewModel viewModel) {
+    //         //Title = viewModel.SetActivePanel(PanelCarousel.CurrentItem as Panel);
+    //         OnPropertyChanged(nameof(viewModel.SelectedPanel));
+    //     }
+    // }
 
-    private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {
-        if (e.CurrentItem is not null) { }
+    private void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
-            Title = viewModel.SetActivePanel(PanelCarousel.CurrentItem as Panel);
-            OnPropertyChanged(nameof(viewModel.SelectedPanel));
+            if (e.Tile is ITileInteractive { } tile) {
+                if (e.IsSingleTap) tile.Interact(viewModel.ConnectionService);
+                if (e.IsDoubleTap) tile.Secondary(viewModel.ConnectionService);
+            }
         }
     }
-
+    
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new InstructionsPage());
     }
@@ -52,9 +54,5 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         }
 
         _tabBarState = state;
-    }
-
-    private void ToggleGrid(object? sender, EventArgs e) {
-        _viewModel.ShowGrid = !_viewModel.ShowGrid;
     }
 }

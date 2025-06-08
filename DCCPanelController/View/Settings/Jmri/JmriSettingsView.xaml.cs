@@ -30,8 +30,8 @@ public partial class JmriSettingsView : ContentView, IRaisesSettingsMessage {
     private void SelectableItemsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
         var selected = e?.CurrentSelection?.FirstOrDefault() ?? null;
         if (selected is DiscoveredService service && BindingContext is JmriSettingsViewModel viewModel) {
-            viewModel.Address = service?.Address.ToString() ?? "0.0.0.0";
-            viewModel.Port = service?.Port ?? 12080;
+            viewModel.JmriSettings.Address = service?.Address.ToString() ?? "0.0.0.0";
+            viewModel.JmriSettings.Port = service?.Port ?? 12080;
         }
     }
 }

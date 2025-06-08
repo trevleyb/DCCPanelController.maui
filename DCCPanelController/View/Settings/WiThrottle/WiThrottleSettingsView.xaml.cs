@@ -32,8 +32,8 @@ public partial class WiThrottleSettingsView : ContentView, IRaisesSettingsMessag
     private void SelectableItemsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
         var selected = e?.CurrentSelection?.FirstOrDefault() ?? null;
         if (selected is DiscoveredService service && BindingContext is WiThrottleSettingsViewModel viewModel) {
-            viewModel.Address = service?.Address.ToString() ?? "0.0.0.0";
-            viewModel.Port = service?.Port ?? 12080;
+            viewModel.WiThrottleSettings.Address = service?.Address.ToString() ?? "0.0.0.0";
+            viewModel.WiThrottleSettings.Port = service?.Port ?? 12080;
         }
     }
 

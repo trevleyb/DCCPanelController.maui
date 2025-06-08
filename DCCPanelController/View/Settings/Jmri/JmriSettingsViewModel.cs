@@ -9,10 +9,10 @@ namespace DCCPanelController.View.Settings.Jmri;
 
 public partial class JmriSettingsViewModel : SettingsViewModel {
 
-    [ObservableProperty] new private JmriClientSettings _settings;
+    [ObservableProperty] private JmriClientSettings _jmriSettings;
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
-        Settings = _settings as JmriClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
+        JmriSettings = _settings as JmriClientSettings ?? throw new InvalidOperationException();
     }
 
     private async Task InitializeAsync() {
@@ -21,15 +21,16 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
 
     [RelayCommand]
     private async Task OnDefaultDeviceNameClickedAsync() {
-        Settings.Name = DeviceInfo.Name;
+        JmriSettings.Name = DeviceInfo.Name;
     }
 
-    public bool ManualSettings => !Settings.SetAutomatically;
+    
+    public bool ManualSettings => !JmriSettings.SetAutomatically;
     
     public string Address {
-        get => Settings.Address;
+        get => JmriSettings.Address;
         set {
-            Settings.Address = value;
+            JmriSettings.Address = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(IpAddress1));
             OnPropertyChanged(nameof(IpAddress2));
@@ -38,46 +39,38 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
         }
     }
 
-    public int Port {
-        get => Settings.Port;
-        set {
-            Settings.Port = value;
-            OnPropertyChanged();
-        }
-    }
-
     public string IpAddress1 {
-        get => GetIpAddressParts(1, Settings.Address);
+        get => GetIpAddressParts(1, JmriSettings.Address);
         set {
             var address = SetIpAddressParts(1, value, Address);
-            Settings.Address = address;
+            JmriSettings.Address = address;
             OnPropertyChanged();
         }
     }
 
     public string IpAddress2 {
-        get => GetIpAddressParts(2, Settings.Address);
+        get => GetIpAddressParts(2, JmriSettings.Address);
         set {
             var address = SetIpAddressParts(2, value, Address);
-            Settings.Address = address;
+            JmriSettings.Address = address;
             OnPropertyChanged();
         }
     }
 
     public string IpAddress3 {
-        get => GetIpAddressParts(3, Settings.Address);
+        get => GetIpAddressParts(3, JmriSettings.Address);
         set {
             var address = SetIpAddressParts(3, value, Address);
-            Settings.Address = address;
+            JmriSettings.Address = address;
             OnPropertyChanged();
         }
     }
 
     public string IpAddress4 {
-        get => GetIpAddressParts(4, Settings.Address);
+        get => GetIpAddressParts(4, JmriSettings.Address);
         set {
             var address = SetIpAddressParts(4, value, Address);
-            Settings.Address = address;
+            JmriSettings.Address = address;
             OnPropertyChanged();
         }
     }

@@ -46,6 +46,14 @@ public partial class PanelEditorViewModel : ObservableObject {
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public string Title => Panel?.Title ?? "Panel";
     public event Action? OnBeginPushModal;
+    public event Action? OnBeginPopModal;
+
+    [RelayCommand]
+    public async Task SaveAsync() {
+        if (Panel?.Panels?.Profile is { } profile) {
+            await profile.SaveAsync();
+        }
+    }
 
     [RelayCommand]
     private async Task RotateTileAsync() {
@@ -98,6 +106,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 OnBeginPushModal?.Invoke();
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
+                OnBeginPopModal?.Invoke();
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
@@ -111,6 +120,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 OnBeginPushModal?.Invoke();
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
+                OnBeginPopModal?.Invoke();
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Tile Properties Page: " + ex.Message);

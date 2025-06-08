@@ -46,6 +46,21 @@ public class JmriClient {
     public event EventHandler<OccupancyEventArgs>? OccupancyChanged;
     public event EventHandler<SignalEventArgs>? SignalChanged;
 
+    public async Task<IResult> Open() {
+        // Initialize the client and fetch initial data
+        var initialised = await InitializeAsync();
+        if (initialised.IsFailure) return initialised;
+        var monitoring = await StartMonitoringAsync();
+        if (monitoring.IsFailure) return monitoring;
+        return Result.Ok();
+    }
+
+    public async Task Close() {
+        if (_cancellationTokenSource is not null) {
+            await _cancellationTokenSource?.CancelAsync()!;
+        }
+    }
+    
     public async Task<IResult> InitializeAsync() {
         try {
             // Clear any previous existing states
@@ -194,7 +209,6 @@ public class JmriClient {
                 await Task.Delay(ReconnectionDelayMs, token);
             }
         }
-
         await DisconnectWebSocketAsync();
     }
 
@@ -355,6 +369,42 @@ public class JmriClient {
     }
 
     private async Task<IResult> SendCommandAsync(string command, int? timeoutMs = 100) {
+        const int maxRetries = 3; // Original attempt + 1 retry
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                if (_webSocket.State != WebSocketState.Open) {
+                    var reconnectResult = await ConnectWebSocketAsync();
+                    if (reconnectResult.IsFailure) {
+                        if (attempt == maxRetries - 1) {
+                            return Result.Fail($"WebSocket reconnection failed: {reconnectResult.Message}");
+                        }
+                        continue; 
+                    }
+                }
+            
+                var json = JsonSerializer.Serialize(command);
+                var bytes = Encoding.ASCII.GetBytes(command);
+                var timeout = new CancellationTokenSource(timeoutMs ?? 100);
+                await _webSocket.SendAsync(bytes, WebSocketMessageType.Text, true, timeout.Token);
+                return Result.Ok("Command sent successfully");
+            } 
+            catch (WebSocketException ex) when (attempt < maxRetries - 1) {
+                // WebSocket error occurred, try to reconnect on next iteration
+                Console.WriteLine($"WebSocket error on attempt {attempt + 1}: {ex.Message}. Retrying...");
+            }
+            catch (OperationCanceledException ex) when (attempt < maxRetries - 1) {
+                // Timeout occurred, try to reconnect on next iteration
+                Console.WriteLine($"Timeout on attempt {attempt + 1}: {ex.Message}. Retrying...");
+            }
+            catch (Exception ex) {
+                return Result.Fail($"Failed to send command: {ex.Message}", ex);
+            }
+        }
+    
+        return Result.Fail($"Failed to send command after {maxRetries} attempts");
+    }
+    
+    private async Task<IResult> SendCommandAsyncNoRetry(string command, int? timeoutMs = 100) {
         try {
             if (_webSocket.State != WebSocketState.Open) return Result.Fail("WebSocket is not connected");
             var json = JsonSerializer.Serialize(command);

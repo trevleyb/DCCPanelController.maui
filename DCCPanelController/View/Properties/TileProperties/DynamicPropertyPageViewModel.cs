@@ -15,7 +15,7 @@ namespace DCCPanelController.View.Properties.TileProperties;
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
     private readonly StackBase _container = new VerticalStackLayout();
-    private readonly ConcurrentDictionary<string, (PropertyInfo Property, IEditableProperty Metadata)> _properties = [];
+    private List<(PropertyInfo Property, IEditableProperty Metadata)> _properties = [];
     [ObservableProperty] private Entity _proxyEntity;
     [ObservableProperty] private List<Entity> _entities;
     [ObservableProperty] private string _title;
@@ -45,7 +45,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     private void FindCommonProperties(List<Entity> entities) {
-        _properties.Clear();
+        var commonProperties = new List<(PropertyInfo Property, IEditableProperty Metadata)>();
         var firstEntityProperties = EditableExtractor.GetEditableProperties(entities[0]);
 
         foreach (var property in firstEntityProperties) {
@@ -79,9 +79,19 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             if (isCommonProperty) {
                 Console.WriteLine($"Found Common Property [{property.Property.Name}] with Value={commonValue ?? "Blank"}");
                 property.Metadata.Value = commonValue;
-                _properties[propertyName] = property;
+                commonProperties.Add(property);
             }
         }
+        
+        // Finally, sort the properties and store them so they can be used
+        // by the other parts of the system
+        // --------------------------------------------------------------
+        var sorted = commonProperties
+                    .OrderBy(item => item.Metadata.Order)
+                    .ThenBy(item => item.Metadata.Group)
+                    .ToList();
+        
+        _properties = sorted;
     }
 
     private void BuildCommonPropertyUI(List<Entity> entities) {
@@ -96,7 +106,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         (IView? Group, IList<IView>? Container) groupContainer = (null, null);
 
         var lastGroup = "*";
-        foreach (var property in _properties.Values) {
+        foreach (var property in _properties) {
             var propertyName = property.Property.Name;
 
             // Create a group container if the group has changed
@@ -123,7 +133,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     public async Task ApplyChangesToAllEntities() {
-        foreach (var modifiedProperty in _properties.Values) {
+        foreach (var modifiedProperty in _properties) {
             var propertyName = modifiedProperty.Property.Name;
             var properties = EditableExtractor.GetEditableProperties(ProxyEntity);
             var property = properties.FirstOrDefault(p => p.Property.Name == propertyName).Property;

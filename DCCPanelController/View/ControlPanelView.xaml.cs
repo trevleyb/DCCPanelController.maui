@@ -58,8 +58,14 @@ public partial class ControlPanelView {
         };
 
     public event EventHandler<TileSelectedEventArgs>? TileSelected;
+    public event EventHandler<TileSelectedEventArgs>? TileTapped;
 
-    private void OnTileSelected(int tapCount) {
+    private void OnTileTapped(ITile tile, int tapCount) {
+        TileTapped?.Invoke(this, new TileTappedEventArgs(tile, tapCount));
+    }
+
+    private void OnTileSelected(int tapCount, [CallerMemberName] string? caller = "") {
+        Console.WriteLine($"OnTileSelected Called from [{caller}]");
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
 
@@ -219,12 +225,9 @@ public partial class ControlPanelView {
                         OnTileSelected(_tapCount);
                     }
                 }
+            } else {
+                if (sender is ITile tile) OnTileTapped(tile, _tapCount);
             }
-
-            // if (sender is ITileInteractive interactiveTile) {
-            //     if (_tapCount == 1) interactiveTile.Interact(Client);
-            //     if (_tapCount == 2) interactiveTile.Secondary(Client);
-            // }
             _tapCount = 0;
         } catch (Exception ex) {
             Console.WriteLine($"Tap Tile failed due to: {ex.Message}");
@@ -684,12 +687,4 @@ public partial class ControlPanelView {
         return tilesInGrid.Any();
     }
     #endregion
-}
-
-public class TileSelectedEventArgs(HashSet<ITile> tiles, int tapCount) : EventArgs {
-    public HashSet<ITile> Tiles { get; set; } = tiles;
-    public ITile? Tile => Tiles.FirstOrDefault();
-    public int TapCount { get; set; } = tapCount;
-    public bool IsSingleTap => TapCount == 1;
-    public bool IsDoubleTap => TapCount == 2;
 }

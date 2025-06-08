@@ -40,6 +40,7 @@ public static class PropertyDisplayService {
             if (App.Current.Windows[0].Page is { } mainPage) {
                 await mainPage.ShowPopupAsync(propertyPopup);
                 result = await propertyPopup.PopupClosedTask;
+                propertyPopup?.Close();
                 Console.WriteLine($"PropertyDisplayService:Popup Closed with Result={result}");
             } else {
                 // Fallback or error handling if MainPage is not available

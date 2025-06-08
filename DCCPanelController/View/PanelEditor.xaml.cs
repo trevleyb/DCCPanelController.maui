@@ -16,13 +16,14 @@ public partial class PanelEditor : ContentPage {
         if (panel.Rows <= 0) panel.Rows = 10;
 
         _viewModel = new PanelEditorViewModel(panel, Navigation);
-        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.GridVisible = true;
         _viewModel.EditMode = EditModeEnum.Move;
+        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
+        _viewModel.OnBeginPopModal += OnBeginPopModal; // Subscribe to the custom event
+        PanelView.TileSelected += PanelViewOnTileSelected;
 
         BindingContext = _viewModel;
-        PanelView.TileSelected += PanelViewOnTileSelected;
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -37,6 +38,10 @@ public partial class PanelEditor : ContentPage {
         _isPushingModal = true;
     }
 
+    private void OnBeginPopModal() {
+        _isPushingModal = false;
+    }
+
     protected override async void OnDisappearing() {
         base.OnDisappearing();
 
@@ -46,7 +51,11 @@ public partial class PanelEditor : ContentPage {
             if (_viewModel.Panel is { } panel) {
                 try {
                     panel.Base64Image = await PanelView.GetThumbnailAsync();
-                    _viewModel?.Panel?.Panels?.Profile?.SaveAsync();
+                    await _viewModel.SaveAsync();
+                    _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+                    _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
+                    _viewModel.OnBeginPopModal -= OnBeginPopModal;   // Subscribe to the custom event
+                    PanelView.TileSelected -= PanelViewOnTileSelected;
                 } catch (Exception ex) {
                     Console.WriteLine($"Error exiting Panel and capturing Panel Image: {ex.Message}");
                 }

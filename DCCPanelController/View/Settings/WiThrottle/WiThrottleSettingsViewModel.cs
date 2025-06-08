@@ -9,23 +9,23 @@ namespace DCCPanelController.View.Settings.WiThrottle;
 
 public partial class WiThrottleSettingsViewModel: SettingsViewModel {
     
-    [ObservableProperty] new private WiThrottleClientSettings _settings;
+    [ObservableProperty] private WiThrottleClientSettings _wiThrottleSettings;
 
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
-        Settings = base._settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
+        _wiThrottleSettings = _settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
     }
     
     [RelayCommand]
     private async Task OnDefaultDeviceNameClickedAsync() {
-        Settings.Name = DeviceInfo.Name;
+        WiThrottleSettings.Name = DeviceInfo.Name;
     }
     
-    public bool ManualSettings => !Settings.SetAutomatically;
+    public bool ManualSettings => !WiThrottleSettings.SetAutomatically;
 
     public string Address {
-        get => Settings.Address;
+        get => WiThrottleSettings.Address;
         set {
-            Settings.Address = value;
+            WiThrottleSettings.Address = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(IpAddress1));
             OnPropertyChanged(nameof(IpAddress2));
@@ -35,46 +35,38 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
         }
     }
 
-    public int Port {
-        get => Settings.Port;
-        set {
-            Settings.Port = value;
-            OnPropertyChanged();
-        }
-    }
-
     public string IpAddress1 {
-        get => GetIpAddressParts(1, Settings.Address);
+        get => GetIpAddressParts(1, WiThrottleSettings.Address);
         set {
             var address = SetIpAddressParts(1, value, Address);
-            Settings.Address = address;
+            WiThrottleSettings.Address = address;
             OnPropertyChanged();
         }
     }
 
     public string IpAddress2 {
-        get => GetIpAddressParts(2, Settings.Address);
+        get => GetIpAddressParts(2, WiThrottleSettings.Address);
         set {
             var address = SetIpAddressParts(2, value, Address);
-            Settings.Address = address;
+            WiThrottleSettings.Address = address;
             OnPropertyChanged();
         }
     }
 
     public string IpAddress3 {
-        get => GetIpAddressParts(3, Settings.Address);
+        get => GetIpAddressParts(3, WiThrottleSettings.Address);
         set {
             var address = SetIpAddressParts(3, value, Address);
-            Settings.Address = address;
+            WiThrottleSettings.Address = address;
             OnPropertyChanged();
         }
     }
 
     public string IpAddress4 {
-        get => GetIpAddressParts(4, Settings.Address);
+        get => GetIpAddressParts(4, WiThrottleSettings.Address);
         set {
             var address = SetIpAddressParts(4, value, Address);
-            Settings.Address = address;
+            WiThrottleSettings.Address = address;
             OnPropertyChanged();
         }
     }
