@@ -1,13 +1,15 @@
+using System.Dynamic;
 using DccClients.Jmri.Client;
 using DccClients.Jmri.EventArgs;
 using DCCCommon.Client;
 using DCCCommon.Common;
+using DCCCommon.Discovery;
 using DCCCommon.Events;
 
 namespace DccClients.Jmri;
 
 public class DccJmriClient : DccClientBase, IDccClient {
-    private readonly Client.JmriClientSettings? _settings;
+    private JmriClientSettings? _settings;
     private bool _isConnected;
     private JmriClient? _jmriClient;
 
@@ -17,10 +19,12 @@ public class DccJmriClient : DccClientBase, IDccClient {
         _settings = settings as Client.JmriClientSettings ?? throw new ArgumentException("Invalid settings provided.");
     }
 
-    /// <summary>
-    ///     Establishes a connection to the JMRI server using the provided settings.
-    /// </summary>
-    /// <returns>Returns a result indicating the success or failure of the connection attempt.</returns>
+    public async Task<IResult> ConnectAsync(IDccClientSettings? settings) {
+        if (settings is not JmriClientSettings jmriSettings) return Result.Fail("Invalid settings provided.");
+        _settings = jmriSettings;
+        return await ConnectAsync();
+    }
+
     public async Task<IResult> ConnectAsync() {
         try {
             ArgumentNullException.ThrowIfNull(_settings);
@@ -54,10 +58,6 @@ public class DccJmriClient : DccClientBase, IDccClient {
         }
     }
 
-    /// <summary>
-    ///     Attempts to reconnect to the JMRI server using the existing client connection.
-    /// </summary>
-    /// <returns>Returns a result indicating the success or failure of the reconnection attempt.</returns>
     public async Task<IResult> ReconnectAsync() {
         try {
             if (_jmriClient != null) await DisconnectAsync();
@@ -68,10 +68,6 @@ public class DccJmriClient : DccClientBase, IDccClient {
         }
     }
 
-    /// <summary>
-    ///     Disconnects from the JMRI server and releases related resources.
-    /// </summary>
-    /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public async Task<IResult> DisconnectAsync() {
         OnConnectionStateChanged(new DccStateChangedArgs(false, "Disconnected from JMRI server"));
         try {
@@ -86,6 +82,46 @@ public class DccJmriClient : DccClientBase, IDccClient {
 
     public bool IsConnected => _isConnected && _jmriClient != null;
 
+    public async Task<IResult> ValidateConnectionAsync() {
+        try {
+            var result = await ConnectAsync(_settings);
+            if (result.IsFailure) return result;
+            await Task.Delay(1000);
+            if (IsConnected) {
+                await DisconnectAsync();
+                return Result.Ok("Successfully connected to the server.");
+            } else {
+                return Result.Fail($"Unable to connect to the server. Check settings.");
+            }
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Unable to connect to the server.").CausedBy(ex));
+        }
+    }
+
+    public async Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync() {
+        var findSettings = _settings ?? new JmriClientSettings();
+        
+        var findServers = await FindAvailableServicesAsync();
+        if (findServers.IsFailure) return Result<IDccClientSettings?>.Fail("No available servers could be found.");
+        
+        var firstServer = findServers?.Value?.FirstOrDefault();
+        if (firstServer is null) return Result<IDccClientSettings?>.Fail("Unable to set connection automatically. No WiThrottle servers found."); 
+        
+        findSettings.Address = firstServer.Address.ToString();
+        findSettings.Port = firstServer.Port;
+        return Result<IDccClientSettings?>.Ok(findSettings);
+    }
+    
+    public async Task<IResult<List<DiscoveredService>>> FindAvailableServicesAsync() {
+        try {
+            var result = await DiscoverServices.SearchForServicesByTypeAsync(DccClientType.Jmri);
+            if (result is { IsSuccess: true, Value.Count: > 0 }) return result;
+        } catch (Exception ex) {
+            return Result<List<DiscoveredService>>.Fail(new Error("Unable to find a WiThrottle server.").CausedBy(ex));
+        }
+        return Result<List<DiscoveredService>>.Fail("Unable to find a WiThrottle server.");
+    }
+    
     public async Task<IResult> SendCmdAsync(string message) {
         try {
             if (!IsConnected) return Result.Fail(new Error("Not connected to JMRI server"));
@@ -134,10 +170,6 @@ public class DccJmriClient : DccClientBase, IDccClient {
 
     public async Task<IResult> ForceRefreshAsync(string? type = null) {
         return await _jmriClient?.ForceRefreshAsync(type)!;
-    }
-
-    public async Task<IResult> TestConnectionAsync() {
-        return await _jmriClient?.TestConnectionAsync()!;
     }
 
     private void JmriClientOnConnectionStatusChanged(object? sender, ConnectionStatusEventArgs e) {

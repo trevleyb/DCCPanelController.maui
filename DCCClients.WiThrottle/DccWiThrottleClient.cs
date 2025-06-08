@@ -4,12 +4,13 @@ using DccClients.WiThrottle.Client.Events;
 using DccClients.WiThrottle.ServiceHelper;
 using DCCCommon.Client;
 using DCCCommon.Common;
+using DCCCommon.Discovery;
 using DCCCommon.Events;
 
 namespace DccClients.WiThrottle;
 
 public class DccWiThrottleClient : DccClientBase, IDccClient {
-    private readonly WiThrottleClientSettings? _settings;
+    private WiThrottleClientSettings? _settings;
     private Client.Client? _client;
 
     public DccClientType Type => DccClientType.WiThrottle;
@@ -20,11 +21,12 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
 
     public bool IsConnected => _client is not null && _client.IsRunning;
 
-    /// <summary>
-    ///     Establishes a connection to the WiThrottle server using the provided settings.
-    /// </summary>
-    /// <param name="settings">The settings required to configure the connection, such as server address and port.</param>
-    /// <returns>Returns a result indicating the success or failure of the connection attempt.</returns>
+    public async Task<IResult> ConnectAsync(IDccClientSettings? settings) {
+        if (settings is not WiThrottleClientSettings withrottleSettings) return Result.Fail("Invalid settings provided.");
+        _settings = withrottleSettings;
+        return await ConnectAsync();
+    }
+
     public async Task<IResult> ConnectAsync() {
         ArgumentNullException.ThrowIfNull(_settings);
         if (_client is not null && _client.IsRunning) return Result.Ok("A connection is already established.");
@@ -65,23 +67,6 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return await ReconnectAsync();
     }
 
-    public async Task<IResult> TestConnectionAsync() {
-        try {
-            await DisconnectAsync();
-            var result = await ConnectAsync();
-            if (result.IsFailure) return result;
-            await Task.Delay(1000);
-            await DisconnectAsync();
-            return Result.Ok();
-        } catch (Exception ex) {
-            return Result.Fail(new Error("Unable to reconnect to the Withrottle server.").CausedBy(ex));
-        }
-    }
-
-    /// <summary>
-    ///     Disconnects from the service and releases related resources.
-    /// </summary>
-    /// <returns>A result indicating success or failure of the disconnect operation.</returns>
     public async Task<IResult> DisconnectAsync() {
         try {
             _client?.Disconnect();
@@ -98,6 +83,46 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
+    public async Task<IResult> ValidateConnectionAsync() {
+        try {
+            var result = await ConnectAsync(_settings);
+            if (result.IsFailure) return result;
+            await Task.Delay(1000);
+            if (IsConnected) {
+                await DisconnectAsync();
+                return Result.Ok("Successfully connected to the server.");
+            } else {
+                return Result.Fail($"Unable to connect to the server. Check settings.");
+            }
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Unable to connect to the server.").CausedBy(ex));
+        }
+    }
+
+    public async Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync() {
+        var findSettings = _settings ?? new WiThrottleClientSettings();
+        
+        var findServers = await FindAvailableServicesAsync();
+        if (findServers.IsFailure) return Result<IDccClientSettings?>.Fail("No available servers could be found.");
+        
+        var firstServer = findServers?.Value?.FirstOrDefault();
+        if (firstServer is null) return Result<IDccClientSettings?>.Fail("Unable to set connection automatically. No WiThrottle servers found."); 
+        
+        findSettings.Address = firstServer.Address.ToString();
+        findSettings.Port = firstServer.Port;
+        return Result<IDccClientSettings?>.Ok(findSettings);
+    }
+    
+    public async Task<IResult<List<DiscoveredService>>> FindAvailableServicesAsync() {
+        try {
+            var result = await DiscoverServices.SearchForServicesByTypeAsync(DccClientType.WiThrottle);
+            if (result is { IsSuccess: true, Value.Count: > 0 }) return result;
+        } catch (Exception ex) {
+            return Result<List<DiscoveredService>>.Fail(new Error("Unable to find a WiThrottle server.").CausedBy(ex));
+        }
+        return Result<List<DiscoveredService>>.Fail("Unable to find a WiThrottle server.");
+    }
+    
     public async Task<IResult> SendCmdAsync(string message) {
         try {
             Console.WriteLine($"Sending command: {message}");

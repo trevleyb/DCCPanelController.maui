@@ -1,15 +1,20 @@
-﻿using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Base;
 
 public partial class ConnectionViewModel : BaseViewModel {
+
+    [ObservableProperty] private bool _isConnected = false;
+    
     protected ConnectionViewModel(Profile profile, ConnectionService connectionService) {
         Profile = profile;
         ConnectionService = connectionService;
         ConnectionService.ConnectionChanged += (sender, args) => {
             Console.WriteLine($"ConnectionViewModel: Connection State Changed to {args.Status} and IsConnected={args.IsConnected}");
+            IsConnected = args.IsConnected;
             OnPropertyChanged(nameof(IsConnected));
             OnPropertyChanged(nameof(ConnectionIcon));
         };
@@ -17,9 +22,7 @@ public partial class ConnectionViewModel : BaseViewModel {
 
     public Profile Profile { get; set; }
     public ConnectionService ConnectionService { get; }
-
-    public bool IsConnected => ConnectionService.IsConnected;
-    public string ConnectionIcon => ConnectionService.ConnectionIcon;
+    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
 
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {

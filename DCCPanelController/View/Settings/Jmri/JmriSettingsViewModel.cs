@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DccClients.Jmri.Client;
 using DCCCommon.Client;
@@ -8,7 +9,7 @@ namespace DCCPanelController.View.Settings.Jmri;
 
 public partial class JmriSettingsViewModel : SettingsViewModel {
 
-    protected JmriClientSettings Settings;
+    [ObservableProperty] private JmriClientSettings _settings;
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         Settings = _settings as JmriClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
@@ -22,23 +23,9 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
     private async Task OnDefaultDeviceNameClickedAsync() {
         Settings.Name = DeviceInfo.Name;
     }
+
+    public bool ManualSettings => !Settings.SetAutomatically;
     
-    public string Name {
-        get => Settings.Name;
-        set {
-            Settings.Name = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public double PollingInterval {
-        get => Settings.PollingInterval;
-        set {
-            Settings.PollingInterval = value;
-            OnPropertyChanged();
-        }
-    }
-
     public string Address {
         get => Settings.Address;
         set {

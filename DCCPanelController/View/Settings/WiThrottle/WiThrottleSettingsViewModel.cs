@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DccClients.WiThrottle.Client;
 using DCCCommon.Client;
@@ -7,7 +8,8 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.Settings.WiThrottle;
 
 public partial class WiThrottleSettingsViewModel: SettingsViewModel {
-    protected WiThrottleClientSettings Settings;
+    
+    [ObservableProperty] private WiThrottleClientSettings _settings;
 
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         Settings = base._settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
@@ -18,13 +20,7 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
         Settings.Name = DeviceInfo.Name;
     }
     
-    public string Name {
-        get => Settings.Name;
-        set {
-            Settings.Name = value;
-            OnPropertyChanged();
-        }
-    }
+    public bool ManualSettings => !Settings.SetAutomatically;
 
     public string Address {
         get => Settings.Address;

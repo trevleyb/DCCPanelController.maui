@@ -9,7 +9,7 @@ public abstract class DccClientBase {
     public event EventHandler<DccRouteArgs>? RouteMsgReceived;
     public event EventHandler<DccOccupancyArgs>? OccupancyMsgReceived;
     public event EventHandler<DccSignalArgs>? SignalMsgReceived;
-
+    
     protected virtual void OnConnectionStateChanged(DccStateChangedArgs e) {
         ConnectionStateChanged?.Invoke(this, e);
     }

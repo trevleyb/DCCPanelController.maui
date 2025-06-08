@@ -18,32 +18,13 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _isJmriServer;
     [ObservableProperty] private bool _isWiThrottle;
     [ObservableProperty] private ObservableCollection<SettingsMessage> _messages = [];
-   
+    
     public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        PropertyChanged += OnPropertyChanged;
         ConnectionService.ConnectionChanged += ConnectionServiceOnConnectionChanged;
         ConnectionService.ConnectionMessage += ClientOnMessageReceived;
     }
 
-    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
-
     public Models.DataModel.Settings Settings => Profile.Settings;
-    
-    public Color BackgroundColor {
-        get => Settings?.BackgroundColor ?? Colors.White;
-        set {
-            Settings.BackgroundColor = value;
-            OnPropertyChanged();
-        }
-    }
-
-    public string ProfileName {
-        get => Profile.ProfileName;
-        set {
-            Profile.ProfileName = value;
-            OnPropertyChanged();
-        }
-    }
 
     [RelayCommand]
     public async Task SaveSettingsAsync() {
@@ -51,8 +32,6 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
         await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
     }
     
-    // If the state of the Connect Changes, then we need to notify the UI that a change has occured. 
-    // ---------------------------------------------------------------------------------------------
     private void ConnectionServiceOnConnectionChanged(object? sender, ConnectionChangedEvent e) {
         Console.WriteLine($"Connection Changed: {e.Status}");
     }

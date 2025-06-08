@@ -3,6 +3,7 @@ using DccClients.Jmri.Client;
 using DccClients.WiThrottle;
 using DCCCommon.Client;
 using DCCCommon.Common;
+using DCCCommon.Discovery;
 using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -13,25 +14,55 @@ namespace DCCPanelController.Services;
 
 public class ConnectionService {
     
+    private bool _isInitialized = false;
     private readonly Profile _profile;
     public IDccClient? Client { get; private set; }
 
     public ConnectionService(Profile profile) {
         _profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
+        _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
     public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
 
-    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
     public bool IsConnected => Client is { IsConnected: true };
 
     public IDccClientSettings Settings {
         get {
-            ArgumentNullException.ThrowIfNull(_profile,"Profile cannot be unset. Fatal Error.");
-            ArgumentNullException.ThrowIfNull(_profile.Settings,"Settings cannot be unset. Fatal Error.");
-            if (_profile.Settings.ClientSettings is null) return new JmriClientSettings();
-            return _profile.Settings.ClientSettings;
+            ArgumentNullException.ThrowIfNull(_profile,"Profile must be set. Fatal Error.");
+            ArgumentNullException.ThrowIfNull(_profile.Settings,"Settings must exist. Fatal Error.");
+            return _profile.Settings.ClientSettings ?? new JmriClientSettings();
+        }
+    }
+    
+    private async Task InitializeConnectionAsync() {
+        if (_isInitialized) return;
+        try {
+            if (_profile.Settings.ConnectOnStartup) {
+                Console.WriteLine("Starting background connection...");
+                var checkConnection = await ValidateConnectionAsync(Settings);
+                if (checkConnection.IsFailure && Settings.SetAutomatically) {
+                    Console.WriteLine("Connection validation failed. Attempting to find first available connection.");
+                    var client = CreateClient(Settings);
+                    if (client is not null) {
+                        var findFirst = await client.GetAutomaticConnectionDetailsAsync();
+                        if (findFirst is { IsSuccess: true, Value: not null }) {
+                            Console.WriteLine("Found available server and setting connection details.");
+                           _profile.Settings.ClientSettings = findFirst.Value;
+                        }
+                    }
+                } 
+                var result = await ConnectAsync(Settings);
+                if (result.IsSuccess) {
+                    Console.WriteLine("Background connection successful");
+                } else {
+                    Console.WriteLine($"Background connection failed: {result.Message}");
+                }
+                _isInitialized = true;
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Background connection error: {ex.Message}");
         }
     }
     
@@ -66,6 +97,16 @@ public class ConnectionService {
             Console.WriteLine($"Connection Failed: {ex.Message}");
             OnConnectionChanged();
             return Result.Fail("Unable to connect to the server.", ex);
+        }
+    }
+
+    public async Task<IResult> ValidateConnectionAsync(IDccClientSettings clientSettings) {
+        try {
+            var client = CreateClient(clientSettings);
+            if (client is null) return Result.Fail("Unable to create a Client instance.");
+            return await client.ValidateConnectionAsync();
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Unable to connect to the server.").CausedBy(ex));
         }
     }
 
