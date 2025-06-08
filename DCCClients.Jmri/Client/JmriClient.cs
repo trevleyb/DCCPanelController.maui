@@ -144,10 +144,29 @@ public class JmriClient {
                 using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeoutSeconds));
                 await _webSocket.ConnectAsync(new Uri(wsUri), timeoutCts.Token);
 
+                // Expect a Hello message from the server
+                // -------------------------------------------------------------------
+                var serverHelloResult = await RecvResponseAsync(timeoutMs: 5000); 
+                if (serverHelloResult.IsFailure) {
+                    var errorMsg = $"Failed to receive server's hello message: {serverHelloResult.Message}";
+                    Console.WriteLine(errorMsg); // Or use a proper logger
+                    throw new Exception(errorMsg);
+                } else {
+                    Console.WriteLine($"Received HELLO from Server: {serverHelloResult.Value}");
+                }
+                
                 // Send a Hello command to the server
                 // -------------------------------------------------------------------
-                var command = BuildJmriMessage("hello", "get", new Dictionary<string, object>());
-                var result = await SendAndRecvAsync(command);
+                var clientHelloCmd = BuildJmriMessage("hello", null, new Dictionary<string, object> { { "clientName", "DccPanelController" }, { "version", "1.0" } });
+                var sendClientHelloResult = await SendCommandAsync(clientHelloCmd); // Just send
+                if (sendClientHelloResult.IsFailure) {
+                    var errorMsg = $"Failed to send client hello: {sendClientHelloResult?.Message}";
+                    Console.WriteLine(errorMsg);
+                    throw new Exception(errorMsg);
+                } else {
+                    Console.WriteLine($"Sent HELLO to Server: {sendClientHelloResult?.Message}");
+                }
+                
                 RaiseConnectionStatusChanged(true, "WebSocket connected successfully");
                 return Result.Ok("WebSocket connected successfully");
             } catch (Exception ex) {
