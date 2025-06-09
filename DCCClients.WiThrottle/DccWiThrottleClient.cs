@@ -6,12 +6,13 @@ using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Discovery;
 using DCCCommon.Events;
+using DCCCommon.Helpers;
 
 namespace DccClients.WiThrottle;
 
 public class DccWiThrottleClient : DccClientBase, IDccClient {
     private WiThrottleClientSettings? _settings;
-    private Client.Client? _client;
+    private Client.WithrottleClient? _client;
 
     public DccClientType Type => DccClientType.WiThrottle;
 
@@ -134,10 +135,10 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendTurnoutCmdAsync(DccClientCmdProp properties, bool isThrown) {
+    public async Task<IResult> SendTurnoutCmdAsync(string turnout, bool isThrown) {
         try {
-            Console.WriteLine($"Sending turnout command: {properties.SystemName} - {isThrown}");
-            _client?.SendMessage(new TurnoutCommand(properties.SystemName, isThrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
+            Console.WriteLine($"Sending turnout command: {turnout} - {isThrown}");
+            _client?.SendMessage(new TurnoutCommand(turnout, isThrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
@@ -145,10 +146,10 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendRouteCmdAsync(DccClientCmdProp properties, bool isActive) {
+    public async Task<IResult> SendRouteCmdAsync(string route, bool isActive) {
         try {
-            Console.WriteLine($"Sending route command: {properties.SystemName} - {isActive}");
-            _client?.SendMessage(new RouteCommand(properties.SystemName));
+            Console.WriteLine($"Sending route command: {route} - {isActive}");
+            _client?.SendMessage(new RouteCommand(route));
         } catch (Exception ex) {
             return Result.Fail(new Error("Unable to send command to the Withrottle server.").CausedBy(ex));
         }
@@ -156,7 +157,7 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendSignalCmdAsync(DccClientCmdProp properties, SignalAspectEnum aspect) {
+    public async Task<IResult> SendSignalCmdAsync(string signal, SignalAspectEnum aspect) {
         await Task.CompletedTask;
         return Result.Fail("Withrottle does not support signal commands.");
     }
@@ -164,8 +165,8 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
     /// <summary>
     ///     Creates a new Client instance. Can be overridden in tests to provide a mock.
     /// </summary>
-    protected virtual Client.Client CreateClient(WiThrottleClientSettings clientSettings) {
-        return new Client.Client(clientSettings);
+    protected virtual Client.WithrottleClient CreateClient(WiThrottleClientSettings clientSettings) {
+        return new Client.WithrottleClient(clientSettings);
     }
 
     public async Task ForceRefresh(string? type) {
@@ -195,11 +196,20 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
             break;
 
         case TurnoutEvent turnout:
-            OnTurnoutMsgReceived(new DccTurnoutArgs(turnout.SystemName, turnout.UserName, turnout.StateEnum == TurnoutStateEnum.Thrown));
+            OnTurnoutMsgReceived(new DccTurnoutArgs() {
+                TurnoutId = turnout.SystemName,
+                Username = turnout.UserName,
+                DccAddress = turnout.SystemName.ConvertToDCCAddress(),
+                IsThrown = turnout.StateEnum == TurnoutStateEnum.Thrown
+            });
             break;
 
         case RouteEvent route:
-            OnRouteMsgReceived(new DccRouteArgs(route.SystemName, route.UserName, route.StateEnum == RouteStateEnum.Active));
+            OnRouteMsgReceived(new DccRouteArgs() {
+               RouteId  = route.SystemName, 
+               UserName = route.UserName, 
+               IsActive = route.StateEnum == RouteStateEnum.Active
+            });
             break;
 
         default:

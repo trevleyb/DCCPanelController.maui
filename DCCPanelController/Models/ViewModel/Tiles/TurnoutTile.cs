@@ -11,9 +11,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         if (Entity is TurnoutEntity { Turnout: {} turnout }) {
             if (turnout.Id == entity?.Turnout?.Id) State = turnout.State; 
             turnout.PropertyChanged += (sender, args) => { 
-                //Console.WriteLine($"Turnout property was Changed: {turnout.Id}:{turnout.Name} is {turnout.State}  {args.PropertyName}");
                 if (turnout.Id == entity?.Turnout?.Id) {
-                    //Console.WriteLine($"Turnout MATCHED: {turnout.Id}:{turnout.Name} {turnout.State}");
                     State = turnout.State;
                 }
             };

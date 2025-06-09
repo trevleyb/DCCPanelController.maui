@@ -24,9 +24,6 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
         JmriSettings.Name = DeviceInfo.Name;
     }
 
-    
-    public bool ManualSettings => !JmriSettings.SetAutomatically;
-    
     public string Address {
         get => JmriSettings.Address;
         set {

@@ -1,8 +1,8 @@
 namespace DCCCommon.Events;
 
-public class DccRouteArgs(string dccAddress, string routeId, bool isActive) : EventArgs {
-    public string DccAddress { get; } = dccAddress;
-    public string RouteId { get; } = routeId;
-    public bool IsActive { get; } = isActive;
+public class DccRouteArgs : EventArgs {
+    public required string RouteId { get; init; }
+    public required string UserName { get; init; }
+    public bool IsActive { get; init; }
     public bool IsInActive => !IsActive;
 }

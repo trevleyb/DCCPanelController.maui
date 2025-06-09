@@ -132,8 +132,7 @@ public class WiThrottleClientIntegrationTests {
         _receivedMessages.Clear();
 
         // Act - Send turnout command
-        var cmdProperties = new DccClientCmdProp(turnoutId, turnoutId, 0);
-        var result = await _client.SendTurnoutCmdAsync(cmdProperties, true);
+        var result = await _client.SendTurnoutCmdAsync(turnoutId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending turnout command should succeed");
@@ -161,8 +160,7 @@ public class WiThrottleClientIntegrationTests {
         _receivedMessages.Clear();
 
         // Act - Send route command
-        var cmdProperties = new DccClientCmdProp(routeId, routeId, 0);
-        var result = await _client.SendRouteCmdAsync(cmdProperties, true);
+        var result = await _client.SendRouteCmdAsync(routeId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending route command should succeed");
@@ -180,8 +178,7 @@ public class WiThrottleClientIntegrationTests {
         await _client.ConnectAsync();
 
         // Act
-        var cmdProperties = new DccClientCmdProp("IH1", "IH1", 0);
-        var result = await _client.SendSignalCmdAsync(cmdProperties, SignalAspectEnum.Red);
+        var result = await _client.SendSignalCmdAsync("IH1", SignalAspectEnum.Red);
 
         // Assert
         Assert.That(result.IsSuccess, Is.False, "Sending signal command should fail");

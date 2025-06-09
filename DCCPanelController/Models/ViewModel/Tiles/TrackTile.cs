@@ -20,9 +20,7 @@ public abstract class TrackTile : Tile {
         if (Entity is TrackEntity { Occupancy: {} occupancy }) {
             if (occupancy.Id == entity?.Occupancy?.Id) IsOccupied = occupancy.IsOccupied;
             occupancy.PropertyChanged += (sender, args) => {
-                Console.WriteLine($"Occupancy Changed: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
                 if (occupancy.Id == entity?.Occupancy?.Id) {
-                    Console.WriteLine($"Occupancy MATCHED: {occupancy.Id}:{occupancy.Name} {occupancy.IsOccupied} @ {occupancy.State}");
                     IsOccupied = occupancy.IsOccupied;
                 }
             };

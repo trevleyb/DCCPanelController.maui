@@ -1,8 +1,8 @@
 namespace DCCCommon.Events;
 
-public class DccOccupancyArgs(string dccAddress, string blockId, bool isOccupied) : EventArgs {
-    public string DccAddress { get; } = dccAddress;
-    public string BlockId { get; } = blockId;
-    public bool IsOccupied { get; } = isOccupied;
+public class DccOccupancyArgs: EventArgs {
+    public required string BlockId { get; init;}
+    public required string UserName { get; init; }
+    public bool IsOccupied { get; init;}
     public bool IsFree => !IsOccupied;
 }

@@ -20,8 +20,6 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
         WiThrottleSettings.Name = DeviceInfo.Name;
     }
     
-    public bool ManualSettings => !WiThrottleSettings.SetAutomatically;
-
     public string Address {
         get => WiThrottleSettings.Address;
         set {

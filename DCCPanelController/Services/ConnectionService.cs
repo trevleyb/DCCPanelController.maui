@@ -39,23 +39,18 @@ public class ConnectionService {
         if (_isInitialized) return;
         try {
             if (_profile.Settings.ConnectOnStartup) {
-                Console.WriteLine("Starting background connection...");
                 var checkConnection = await ValidateConnectionAsync(Settings);
                 if (checkConnection.IsFailure && Settings.SetAutomatically) {
-                    Console.WriteLine("Connection validation failed. Attempting to find first available connection.");
                     var client = CreateClient(Settings);
                     if (client is not null) {
                         var findFirst = await client.GetAutomaticConnectionDetailsAsync();
                         if (findFirst is { IsSuccess: true, Value: not null }) {
-                            Console.WriteLine("Found available server and setting connection details.");
                            _profile.Settings.ClientSettings = findFirst.Value;
                         }
                     }
                 } 
                 var result = await ConnectAsync(Settings);
-                if (result.IsSuccess) {
-                    Console.WriteLine("Background connection successful");
-                } else {
+                if (!result.IsSuccess) {
                     Console.WriteLine($"Background connection failed: {result.Message}");
                 }
                 _isInitialized = true;
@@ -74,15 +69,16 @@ public class ConnectionService {
     }
 
     public async Task DisconnectAsync() {
-        Console.WriteLine("Disconnecting");
-        if (Client is not null) {
+        if (Client is { }) {
+            if (Client.IsConnected) await Client.DisconnectAsync();
+            Client.ConnectionStateChanged -= OnConnectionChanged;
+            Client.MessageReceived -= ClientOnMessageReceived;
+            Client.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
             Client.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
             Client.RouteMsgReceived -= DccClientOnRouteMsgReceived;
             Client.SignalMsgReceived -= DccClientOnSignalMsgReceived;
-            Client.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
-            await Client.DisconnectAsync();
+            Client = null;
         }
-        Client = null;
         OnConnectionChanged();
     }
 
@@ -114,7 +110,7 @@ public class ConnectionService {
         // This will then return the active connection.
         // --------------------------------------------------------------------------
         if (Client is { IsConnected : true } && Client.Type == clientSettings.Type ) return Result.Ok();
-        if (Client is { IsConnected : true }) await DisconnectHelperAsync();
+        if (Client is { IsConnected : true }) await DisconnectAsync();
                 
         // Attempt to connect to the Service provided and return the client
         // --------------------------------------------------------------------------
@@ -132,20 +128,6 @@ public class ConnectionService {
         Client.SignalMsgReceived += DccClientOnSignalMsgReceived;
 
         return Result.Ok("Connected to the Server.");
-    }
-
-    private async Task<IResult> DisconnectHelperAsync() {
-        if (Client is { }) {
-            if (Client.IsConnected) await Client.DisconnectAsync();
-            Client.ConnectionStateChanged -= OnConnectionChanged;
-            Client.MessageReceived -= ClientOnMessageReceived;
-            Client.OccupancyMsgReceived -= DccClientOnOccupancyMsgReceived;
-            Client.TurnoutMsgReceived -= DccClientOnTurnoutMsgReceived;
-            Client.RouteMsgReceived -= DccClientOnRouteMsgReceived;
-            Client.SignalMsgReceived -= DccClientOnSignalMsgReceived;
-            Client = null;
-        }
-        return Result.Ok("Disconnected OK.");
     }
 
     private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
@@ -170,25 +152,22 @@ public class ConnectionService {
     }
 
     public async Task<IResult> SendTurnoutCmdAsync(Turnout? turnout, bool thrown) {
-        if (turnout is not null) {
-            var properties = new DccClientCmdProp(turnout.Name ?? "", turnout.Id ?? "", turnout.DccAddress);
-            return await Client?.SendTurnoutCmdAsync(properties, thrown)!;
+        if (turnout is {Id: not null }) {
+            return await Client?.SendTurnoutCmdAsync(turnout.Id, thrown)!;
         }
         return Result.Fail("No turnout provided.");
     }
 
     public async Task<IResult> SendRouteCmdAsync(Route? route, bool active) {
-        if (route is not null) {
-            var properties = new DccClientCmdProp(route.Name ?? "", route.Id ?? "", 0);
-            return await Client?.SendRouteCmdAsync(properties, active)!;
+        if (route is { Id: not null }) {
+            return await Client?.SendRouteCmdAsync(route.Id, active)!;
         }
         return Result.Fail("No route provided.");
     }
 
     public async Task<IResult> SendSignalCmdAsync(Signal? signal, SignalAspectEnum aspect) {
-        if (signal is not null) {
-            var properties = new DccClientCmdProp(signal.Name ?? "", signal.Id ?? "", signal.DccAddress);
-            return await Client?.SendSignalCmdAsync(properties, aspect)!;
+        if (signal is { Id: not null }) {
+            return await Client?.SendSignalCmdAsync(signal.Id, aspect)!;
         }
         return Result.Fail("No signal provided.");
     }
@@ -196,15 +175,13 @@ public class ConnectionService {
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
         Route? route = null;
         route ??= _profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
-        route ??= _profile.Routes.FirstOrDefault(x => x.Id == e.DccAddress) ?? null;
-        route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.RouteId) ?? null;
-        route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
+        route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.UserName) ?? null;
         if (route is not null) {
             route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
         } else {
             route = new Route {
                 Id = e.RouteId,
-                Name = e.DccAddress,
+                Name = e.UserName,
                 State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive
             };
             _profile.Routes.Add(route);
@@ -214,16 +191,14 @@ public class ConnectionService {
     private void DccClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
         Turnout? turnout = null;
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Id == e.TurnoutId) ?? null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Id == e.DccAddress) ?? null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.TurnoutId) ?? null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.DccAddress) ?? null;
+        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.Username) ?? null;
         if (turnout is not null) {
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
         } else if (_profile is not null && _profile.Turnouts is not null) {
             turnout = new Turnout {
-                Name = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
-                Id = string.IsNullOrEmpty(e.TurnoutId) ? e.DccAddress : e.TurnoutId,
-                DccAddress = e.DccAddress.FromDccAddressString(),
+                Id = e.TurnoutId,
+                Name = e.Username,
+                DccAddress = e.TurnoutId.FromDccAddressString(),
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
             };
             _profile.Turnouts.Add(turnout);
@@ -233,13 +208,13 @@ public class ConnectionService {
     private void DccClientOnOccupancyMsgReceived(object? sender, DccOccupancyArgs e) {
         Block? block = null;
         block ??= _profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
-        block ??= _profile?.Blocks?.FirstOrDefault(x => x.Name == e.BlockId) ?? null;
+        block ??= _profile?.Blocks?.FirstOrDefault(x => x.Name == e.UserName) ?? null;
         if (block is not null) {
             block.IsOccupied = e.IsOccupied;
         } else if (_profile is not null && _profile.Blocks is not null) {
             block = new Block {
-                Name = e.BlockId,
                 Id = e.BlockId,
+                Name = e.UserName,
                 IsOccupied = e.IsOccupied
             };
             _profile.Blocks.Add(block);
@@ -250,13 +225,12 @@ public class ConnectionService {
         Signal? signal = null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.DccAddress.ToString() == e.SignalId) ?? null;
         if (signal is not null) {
             signal.Aspect = e.Aspect;
         } else if (_profile is not null && _profile.Signals is not null) {
             signal = new Signal {
-                Name = e.SignalId,
                 Id = e.SignalId,
+                Name = e.SignalId,
                 DccAddress = e.SignalId.FromDccAddressString(),
                 Aspect = e.Aspect
             };

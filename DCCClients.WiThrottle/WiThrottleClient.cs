@@ -12,15 +12,15 @@ using Timer = System.Timers.Timer;
 
 namespace DccClients.WiThrottle.Client;
 
-public class Client {
+public class WithrottleClient {
     private readonly WiThrottleClientSettings _wiThrottleClientSettings;
     private TcpClient? _client;
     private Timer? _heartbeatTimer;
     private NetworkStream? _stream;
-    public Client(string address, int port) : this(new WiThrottleClientSettings(address, port)) { }
-    public Client(string name, string address, int port) : this(new WiThrottleClientSettings(name, address, port)) { }
+    public WithrottleClient(string address, int port) : this(new WiThrottleClientSettings(address, port)) { }
+    public WithrottleClient(string name, string address, int port) : this(new WiThrottleClientSettings(name, address, port)) { }
 
-    public Client(WiThrottleClientSettings wiThrottleClientSettings) {
+    public WithrottleClient(WiThrottleClientSettings wiThrottleClientSettings) {
         _wiThrottleClientSettings = wiThrottleClientSettings;
     }
 

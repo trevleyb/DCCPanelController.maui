@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using DCCCommon.Common;
 using DCCCommon.Discovery;
 using DCCCommon.Events;
@@ -7,13 +8,12 @@ namespace DCCCommon.Client;
 public interface IDccClient {
     Task<IResult> ConnectAsync();
     Task<IResult> DisconnectAsync();
-    Task<IResult> ReconnectAsync();
     Task<IResult> ForceRefreshAsync(string? type = null);
     
     Task<IResult> SendCmdAsync(string message);
-    Task<IResult> SendTurnoutCmdAsync(DccClientCmdProp properties, bool thrown);
-    Task<IResult> SendRouteCmdAsync(DccClientCmdProp properties, bool active);
-    Task<IResult> SendSignalCmdAsync(DccClientCmdProp properties, SignalAspectEnum aspect);
+    Task<IResult> SendTurnoutCmdAsync(string turnout, bool thrown);
+    Task<IResult> SendRouteCmdAsync(string route, bool active);
+    Task<IResult> SendSignalCmdAsync(string signal, SignalAspectEnum aspect);
 
     Task<IResult<List<DiscoveredService>>> FindAvailableServicesAsync();
     Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync();

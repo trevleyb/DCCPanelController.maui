@@ -11,7 +11,10 @@ public partial class WiThrottleClientSettings : ObservableObject, IDccClientSett
     [ObservableProperty] private string _address = "localhost";
     [ObservableProperty] private int _port = 12080;
     [ObservableProperty] private string _protocol = "http";
-    [ObservableProperty] private bool _setAutomatically;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SetManually))]
+    private bool _setAutomatically;
+    public bool SetManually => !SetAutomatically;
     
     public DccClientType Type => DccClientType.WiThrottle;
     public string Url => $"{Protocol}://{Address}:{Port}";

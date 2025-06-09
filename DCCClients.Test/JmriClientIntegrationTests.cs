@@ -58,12 +58,12 @@ public class JmriClientIntegrationTests {
 
     private void ClientOnOccupancyMsgReceived(object? sender, DccOccupancyArgs args) {
         _receivedOccupancyEvents.Add(args);
-        Console.WriteLine($"Occupancy=>{args.DccAddress}@{args.BlockId} IsFree={args.IsFree} Occupied={args.IsOccupied}");
+        Console.WriteLine($"Occupancy=>{args.UserName}@{args.BlockId} IsFree={args.IsFree} Occupied={args.IsOccupied}");
     }
 
     private void ClientOnRouteMsgReceived(object? sender, DccRouteArgs args) {
         _receivedRouteEvents.Add(args);
-        Console.WriteLine($"Route=>{args.DccAddress}@{args.RouteId} IsActive={args.IsActive} IsInactive={args.IsInActive}");
+        Console.WriteLine($"Route=>{args.UserName}@{args.RouteId} IsActive={args.IsActive} IsInactive={args.IsInActive}");
     }
 
     private void ClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs args) {

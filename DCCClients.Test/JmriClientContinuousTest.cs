@@ -105,8 +105,7 @@ public class JmriClientContinuousTest {
         _receivedMessages.Clear();
 
         // Act - Send turnout command
-        var cmdProperties = new DccClientCmdProp(turnoutId, turnoutId, 0);
-        var result = await _client.SendTurnoutCmdAsync(cmdProperties, true);
+        var result = await _client.SendTurnoutCmdAsync(turnoutId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending turnout command should succeed");
@@ -135,8 +134,7 @@ public class JmriClientContinuousTest {
         _receivedMessages.Clear();
 
         // Act - Send route command
-        var cmdProperties = new DccClientCmdProp(routeId, routeId, 0);
-        var result = await _client.SendRouteCmdAsync(cmdProperties, true);
+        var result = await _client.SendRouteCmdAsync(routeId, true);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending route command should succeed");
@@ -165,8 +163,7 @@ public class JmriClientContinuousTest {
         _receivedMessages.Clear();
 
         // Act - Send signal command
-        var cmdProperties = new DccClientCmdProp(signalId, signalId, 0);
-        var result = await _client.SendSignalCmdAsync(cmdProperties, SignalAspectEnum.Red);
+        var result = await _client.SendSignalCmdAsync(signalId, SignalAspectEnum.Red);
 
         // Assert
         Assert.That(result.IsSuccess, Is.True, "Sending signal command should succeed");

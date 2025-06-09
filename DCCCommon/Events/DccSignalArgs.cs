@@ -1,6 +1,6 @@
 namespace DCCCommon.Events;
 
-public class DccSignalArgs(string signalId, string aspect) : EventArgs {
-    public string SignalId { get; } = signalId;
-    public string Aspect { get; } = aspect;
+public class DccSignalArgs : EventArgs {
+    public required string SignalId { get; init; }
+    public required string Aspect { get; init; }
 }

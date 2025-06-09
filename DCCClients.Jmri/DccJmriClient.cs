@@ -30,7 +30,7 @@ public class DccJmriClient : DccClientBase, IDccClient {
         try {
             ArgumentNullException.ThrowIfNull(_settings);
             _jmriClient?.Dispose();
-            _jmriClient = new JmriClient(_settings.Address, _settings.Port, ReconnectDelay);
+            _jmriClient = new JmriClient(_settings.Address, _settings.Port, _settings.PollingInterval, ReconnectDelay);
 
             // Subscribe to JMRI client events so we can translate them to
             // common events used across the system
@@ -49,14 +49,12 @@ public class DccJmriClient : DccClientBase, IDccClient {
             var elapsed = 0;
 
             while (elapsed < timeoutMs) {
-                Console.WriteLine($"Waiting for Connection: {_jmriClient.ConnectionState}");
                 var state = _jmriClient.ConnectionState;
                 if (state == ConnectionStateEnum.Connected || state == ConnectionStateEnum.Disconnected) break;
                 if (state != ConnectionStateEnum.Initialising) break;
                 await Task.Delay(delayMs);
                 elapsed += delayMs;
             }
-            Console.WriteLine($"Finished waiting: {_jmriClient.ConnectionState}");
 
             // Check final state after timeout or successful initialization
             var finalState = _jmriClient.ConnectionState;
@@ -151,23 +149,23 @@ public class DccJmriClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> SendTurnoutCmdAsync(DccClientCmdProp properties, bool thrown) {
+    public async Task<IResult> SendTurnoutCmdAsync(string turnout, bool thrown) {
         try {
             if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
-            OnMessageReceived(new DccMessageArgs("Turnout", $"Setting turnout {properties.SystemName} to {(thrown ? "THROWN" : "CLOSED")}"));
-            await _jmriClient.SetTurnoutStateAsync(properties.SystemName, thrown);
+            OnMessageReceived(new DccMessageArgs("Turnout", $"Setting turnout {turnout} to {(thrown ? "THROWN" : "CLOSED")}"));
+            await _jmriClient.SetTurnoutStateAsync(turnout, thrown);
             return Result.Ok();
         } catch (Exception ex) {
             return Result.Fail(new Error("Failed to send turnout command to JMRI server").CausedBy(ex));
         }
     }
 
-    public async Task<IResult> SendRouteCmdAsync(DccClientCmdProp properties, bool active) {
+    public async Task<IResult> SendRouteCmdAsync(string route, bool active) {
         try {
             if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
-            OnMessageReceived(new DccMessageArgs("Route", $"Setting route {properties.SystemName} to {(active ? "ACTIVE" : "INACTIVE")}"));
+            OnMessageReceived(new DccMessageArgs("Route", $"Setting route {route} to {(active ? "ACTIVE" : "INACTIVE")}"));
             if (active) {
-                await _jmriClient.SetRouteStateAsync(properties.SystemName, active);
+                await _jmriClient.SetRouteStateAsync(route, active);
             }
             return Result.Ok();
         } catch (Exception ex) {
@@ -175,11 +173,11 @@ public class DccJmriClient : DccClientBase, IDccClient {
         }
     }
 
-    public async Task<IResult> SendSignalCmdAsync(DccClientCmdProp properties, SignalAspectEnum aspect) {
+    public async Task<IResult> SendSignalCmdAsync(string signal, SignalAspectEnum aspect) {
         try {
             if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
-            OnMessageReceived(new DccMessageArgs("Signal", $"Setting signal {properties.SystemName} to aspect {aspect}"));
-            await _jmriClient.SetSignalAppearanceAsync(properties.SystemName, aspect.ToString());
+            OnMessageReceived(new DccMessageArgs("Signal", $"Setting signal {signal} to aspect {aspect}"));
+            await _jmriClient.SetSignalAppearanceAsync(signal, aspect.ToString());
             return Result.Ok();
         } catch (Exception ex) {
             return Result.Fail(new Error("Failed to send signal command to JMRI server").CausedBy(ex));
@@ -199,24 +197,39 @@ public class DccJmriClient : DccClientBase, IDccClient {
     }
     
     private void OnJmriConnectionStatusChanged(object? sender, JmriConnectionChangedEventArgs e) {
-        Console.WriteLine($"JMRI Connect State Changed: Connected={e.ConnectionState} Message={e.Message} Called={e.CallerDetails}");
         OnConnectionStateChanged(new DccStateChangedArgs(e.IsConnected, e.Message));
     }
     
     private void OnJmriTurnoutChanged(object? sender, JmriTurnoutEventArgs e) {
-        OnTurnoutMsgReceived(new DccTurnoutArgs(e.UserName, e.Name, e.State == 4));
+        OnTurnoutMsgReceived(new DccTurnoutArgs() {
+            TurnoutId = e.Name,
+            Username = e.UserName,
+            DccAddress = e.Name.ConvertToDCCAddress(),
+            IsThrown = e.State == 4
+        });
     }
 
     private void OnJmriRouteChanged(object? sender, JmriRouteEventArgs e) {
-        OnRouteMsgReceived(new DccRouteArgs(e.UserName, e.Name, e.State == 2));
+        OnRouteMsgReceived(new DccRouteArgs() {
+            RouteId = e.Name,
+            UserName = e.UserName,
+            IsActive = e.State == 2
+        });
     }
 
     private void OnJmriOccupancyChanged(object? sender, JmriBlockEventArgs e) {
-        OnOccupancyMsgReceived(new DccOccupancyArgs(e.UserName, e.Name, e.State == 2));
+        OnOccupancyMsgReceived(new DccOccupancyArgs() {
+            BlockId = e.Name,
+            UserName = e.UserName,
+            IsOccupied = e.State == 2
+        });
     }
 
     private void OnJmriSignalChanged(object? sender, JmriSignalEventArgs e) {
-        OnSignalMsgReceived(new DccSignalArgs(e.UserName, e.Appearance));
+        OnSignalMsgReceived(new DccSignalArgs() {
+            SignalId = e.Name,
+            Aspect = e.Appearance
+        });
     }
     #endregion
 }

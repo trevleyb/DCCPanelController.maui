@@ -10,7 +10,10 @@ public partial class JmriClientSettings : ObservableObject, IDccClientSettings {
     [ObservableProperty] private int _port = 12080;
     [ObservableProperty] private string _protocol = "http";
     [ObservableProperty] private double _pollingInterval = 5.0;
-    [ObservableProperty] private bool _setAutomatically;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SetManually))]
+    private bool _setAutomatically;
+    public bool SetManually => !SetAutomatically;
     
     public DccClientType Type => DccClientType.Jmri;
     public string Url => $"{Protocol}://{Address}:{Port}";
