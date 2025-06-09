@@ -214,7 +214,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
                     if (!svc.Addresses.Contains(aaaa.Address)) {
                         svc.Addresses.Add(aaaa.Address);
                         currentServiceUpdated = true;
-                        Console.WriteLine($"MdnsNetworkServiceDiscovery: AAAA Record for {svc.HostName} (Instance: {svc.InstanceName}) -> IP: {aaaa.Address}");
                     }
                 }
                 break;

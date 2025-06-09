@@ -1,4 +1,4 @@
-namespace DccClients.Jmri.Helpers;
+namespace DCCCommon.Helpers;
 
 public static class Extensions {
     public static int ConvertToDCCAddress(this string dccLabel) {
