@@ -13,15 +13,15 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     private ServiceDiscovery? _sd;
 
     public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
-                                                                              TimeSpan timeout,
-                                                                              CancellationToken cancellationToken = default) {
+                  TimeSpan timeout,
+                  CancellationToken cancellationToken = default) {
         return await DiscoverServicesAsync(serviceType, "", timeout, cancellationToken);
     }
 
     public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
-                                                                              string subType,
-                                                                              TimeSpan timeout,
-                                                                              CancellationToken cancellationToken = default) {
+              string subType,
+              TimeSpan timeout,
+              CancellationToken cancellationToken = default) {
         if (string.IsNullOrWhiteSpace(serviceType)) throw new ArgumentNullException(nameof(serviceType));
 
         var queryServiceType = serviceType.Trim();
@@ -92,13 +92,9 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
         // meaning it's safe to call even if already started.
         if (_mdns != null) {
             try {
-                Console.WriteLine("MdnsNetworkServiceDiscovery: Starting mDNS listener...");
                 _mdns.Start(); // Safe to call
-                Console.WriteLine("MdnsNetworkServiceDiscovery: mDNS listener started.");
             } catch (SocketException se) when (se.SocketErrorCode == SocketError.AddressAlreadyInUse) {
                 Console.WriteLine($"MdnsNetworkServiceDiscovery: mDNS port (5353) is already in use. Assuming another mDNS service is running. {se.Message}");
-
-                // This might be acceptable if another process (like system's mDNSResponder) is handling mDNS.
             } catch (Exception ex) {
                 Console.WriteLine($"MdnsNetworkServiceDiscovery: Error starting mDNS listener: {ex.Message}");
                 throw; // Rethrow if it's a critical failure
@@ -107,7 +103,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     }
 
     private void OnServiceInstanceDiscovered(object? sender, ServiceInstanceDiscoveryEventArgs e) {
-        Console.WriteLine($"MdnsNetworkServiceDiscovery: Instance Discovered Event - {e.ServiceInstanceName}");
         ProcessDnsMessage(e.Message, e.ServiceInstanceName);
     }
 
@@ -176,7 +171,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
                         serviceToUpdate.Port = srv.Port;
                         serviceToUpdate.HostName = srv.Target.ToString().TrimEnd('.');
                         currentServiceUpdated = true;
-                        Console.WriteLine($"MdnsNetworkServiceDiscovery: SRV for {serviceToUpdate.InstanceName} -> Host: {serviceToUpdate.HostName}, Port: {serviceToUpdate.Port}");
                     }
                 }
                 break;
@@ -207,7 +201,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
                     if (!svc.Addresses.Contains(a.Address)) {
                         svc.Addresses.Add(a.Address);
                         currentServiceUpdated = true;
-                        Console.WriteLine($"MdnsNetworkServiceDiscovery: A Record for {svc.HostName} (Instance: {svc.InstanceName}) -> IP: {a.Address}");
                     }
                 }
                 break;
@@ -228,7 +221,7 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
             }
             if (currentServiceUpdated) {
                 currentServiceUpdated = false;
-            } // If you need the overall flag
+            } 
         }
 
         // The serviceUpdated flag wasn't driving any specific logic after the loop,
@@ -246,7 +239,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
 
                     // The Stop() method of Makaretu.Dns.MulticastService is idempotent
                     try {
-                        Console.WriteLine("MdnsNetworkServiceDiscovery: Stopping mDNS listener on dispose...");
                         _mdns.Stop(); // Safe to call
                     } catch (Exception ex) {
                         Console.WriteLine($"MdnsNetworkServiceDiscovery: Error stopping mDNS on dispose: {ex.Message}");
