@@ -427,7 +427,6 @@ public class JmriClient : IDisposable {
         if (!string.IsNullOrEmpty(message) && _webSocket?.State == WebSocketState.Open) {
             var bytes = Encoding.UTF8.GetBytes(message);
             try {
-                Console.WriteLine($"SENDING: {message}");
                 await _webSocket.SendAsync(new ArraySegment<byte>(bytes), WebSocketMessageType.Text, true, CancellationToken.None);
             } catch (Exception ex) {
                 Console.WriteLine($"Failed to send message to server: {ex.Message}");
