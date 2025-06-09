@@ -5,10 +5,8 @@ using DCCPanelController.View.Settings.Jmri;
 
 namespace DCCPanelController.View.Settings.WiThrottle;
 
-public partial class WiThrottleSettingsView : ContentView, IRaisesSettingsMessage {
+public partial class WiThrottleSettingsView : ContentView {
     
-    public event EventHandler<SettingsMessage>? OnSettingsMessage;
-
     public WiThrottleSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
         var viewModel = new WiThrottleSettingsViewModel(settings, connectionService);
         BindingContext = viewModel;
@@ -17,9 +15,7 @@ public partial class WiThrottleSettingsView : ContentView, IRaisesSettingsMessag
         // Propagate any messages from the underlying setting module 
         // so the parent can access these and show them in the UI
         // ---------------------------------------------------------------
-        viewModel.OnSettingsMessage += (sender, message) => OnSettingsMessage?.Invoke(sender, message);
         viewModel.PropertyChanged += (sender, args) => OnPropertyChanged(args.PropertyName);
-
     }
     
     public void OnEntryFocused(object sender, FocusEventArgs e) {

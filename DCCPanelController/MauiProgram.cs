@@ -49,6 +49,7 @@ public static class MauiProgram {
         services.AddTransientViewAndModel<TurnoutsPage, TurnoutsViewModel>();
         services.AddTransientViewAndModel<BlocksPage, BlocksViewModel>();
         services.AddTransientViewAndModel<SettingsPage, SettingsViewModel>();
+        services.AddTransientViewAndModel<ServerMessagesPage, ServerMessagesViewModel>();
 
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);

@@ -4,12 +4,14 @@ using CommunityToolkit.Mvvm.Input;
 using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
-using RouteStateEnum = DCCPanelController.Models.DataModel.Entities.RouteStateEnum;
+using DCCPanelController.View.Base;
+using DCCPanelController.View.Properties;
 
 namespace DCCPanelController.View;
 
-public partial class RoutesViewModel : Base.ConnectionViewModel {
+public partial class RoutesViewModel : ConnectionViewModel {
     private const string LabelID = "ID";
     private const string LabelName = "Route";
     private const string LabelState = "State";
@@ -17,9 +19,9 @@ public partial class RoutesViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private string _columnLabelID = LabelID;
     [ObservableProperty] private string _columnLabelName = LabelName;
     [ObservableProperty] private string _columnLabelState = LabelState;
-    private bool _isAscending;
     [ObservableProperty] private ObservableCollection<Route> _routes;
     private string _sortColumn = "";
+    private bool _isAscending;
 
     public RoutesViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile);

@@ -15,11 +15,6 @@ public partial class SettingsViewModel : Base.BaseViewModel {
     protected readonly IDccClientSettings Settings;
     protected readonly ConnectionService ConnectionService;
 
-    private void RaiseSettingsMessage(SettingsMessage message) => OnSettingsMessage?.Invoke(this, message);
-    private void RaiseSettingsMessage(string message, bool clear = false) => OnSettingsMessage?.Invoke(this, new SettingsMessage(message, clear));
-
-    public event EventHandler<SettingsMessage>? OnSettingsMessage;
-
     [ObservableProperty] private string _connectLabel = "Test Connection";
     [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
 
@@ -30,35 +25,31 @@ public partial class SettingsViewModel : Base.BaseViewModel {
 
     [RelayCommand]
     protected async Task OnConnectClickedAsync() {
-        RaiseSettingsMessage($"Attempting to connect/disconnect to Service ({Settings.Type})", true);
+        ConnectionService.AddMessage($"Attempting to connect/disconnect to Service ({Settings.Type})");
         try {
             IsBusy = true;
             var reconnect = ConnectionService.IsConnected;
             if (reconnect) await ConnectionService.DisconnectAsync();
             var result = await ConnectionService.ValidateConnectionAsync(Settings);
             if (result.IsFailure) {
-                RaiseSettingsMessage("Connection Failed.");
-                foreach (var error in result.Errors) RaiseSettingsMessage(error.Message);
+                ConnectionService.AddMessage("Connection Failed.","ERROR");
+                foreach (var error in result.Errors) ConnectionService.AddMessage(error.Message,"ERROR");
                 var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
                 if (reconnect) await ConnectionService.ConnectAsync(Settings);
-                RaiseSettingsMessage("Connected Successfully.");
+                ConnectionService.AddMessage("Connected Successfully.");
                 await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
             }
         } catch (Exception ex) {
-            RaiseSettingsMessage("Unable to Connect.");
-            RaiseSettingsMessage(ex.Message);
+            ConnectionService.AddMessage("Unable to Connect.");
+            ConnectionService.AddMessage(ex.Message);
             var message = $"Unable to connect to the server due to {ex.Message}";
             await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
         } finally {
             IsBusy = false;
         }
         IsBusy = false;
-    }
-
-    private void ClientOnMessageReceived(object? sender, ConnectionMessageEvent e) {
-        RaiseSettingsMessage(e.Message);
     }
 
     [RelayCommand]
@@ -72,13 +63,13 @@ public partial class SettingsViewModel : Base.BaseViewModel {
             if (result is { IsSuccess: true, Value.Count: > 0 }) {
                 var servicesFound = result.Value.ToObservableCollection();
                 Servers = new ObservableCollection<DiscoveredService>(servicesFound);
-                RaiseSettingsMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}", true);
+                ConnectionService.AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}");
             } else {
-                RaiseSettingsMessage($"{result.Message}", true);
+                ConnectionService.AddMessage($"{result.Message}");
             }
         } catch (Exception ex) {
-            RaiseSettingsMessage("Unable to Refresh Servers", true);
-            RaiseSettingsMessage(ex.Message);
+            ConnectionService.AddMessage("Unable to Refresh Servers");
+            ConnectionService.AddMessage(ex.Message);
         } finally {
             IsBusy = false;
             IsRefreshing = false;

@@ -1,9 +1,11 @@
+using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DccClients.Jmri;
 using DccClients.Jmri.Client;
 using DccClients.WiThrottle;
 using DCCCommon.Client;
 using DCCCommon.Common;
-using DCCCommon.Discovery;
 using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -12,60 +14,76 @@ using Route = DCCPanelController.Models.DataModel.Route;
 
 namespace DCCPanelController.Services;
 
-public class ConnectionService {
-    
-    private bool _isInitialized = false;
+public partial class ConnectionService : ObservableObject {
+    private const int MaxServerMessages = 500;
+
     private readonly Profile _profile;
-    public IDccClient? Client { get; private set; }
+    private IDccClient? Client { get; set; }
+    private IDccClientSettings Settings => _profile.Settings.ClientSettings ?? new JmriClientSettings();
+
+    public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
+    public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
+    public bool IsConnected => Client is { IsConnected: true };
+
+    [ObservableProperty] private ObservableCollection<ServerMessage> _serverMessages = [];
 
     public ConnectionService(Profile profile) {
         _profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
         _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
-    public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
-    public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
-    public bool IsConnected => Client is { IsConnected: true };
-
-    public IDccClientSettings Settings {
-        get {
-            ArgumentNullException.ThrowIfNull(_profile,"Profile must be set. Fatal Error.");
-            ArgumentNullException.ThrowIfNull(_profile.Settings,"Settings must exist. Fatal Error.");
-            return _profile.Settings.ClientSettings ?? new JmriClientSettings();
-        }
-    }
-    
     private async Task InitializeConnectionAsync() {
-        if (_isInitialized) return;
         try {
-            if (_profile.Settings.ConnectOnStartup) {
-                var checkConnection = await ValidateConnectionAsync(Settings);
-                if (checkConnection.IsFailure && Settings.SetAutomatically) {
-                    var client = CreateClient(Settings);
-                    if (client is not null) {
-                        var findFirst = await client.GetAutomaticConnectionDetailsAsync();
-                        if (findFirst is { IsSuccess: true, Value: not null }) {
-                           _profile.Settings.ClientSettings = findFirst.Value;
-                        }
-                    }
-                } 
-                var result = await ConnectAsync(Settings);
-                if (!result.IsSuccess) {
-                    Console.WriteLine($"Background connection failed: {result.Message}");
-                }
-                _isInitialized = true;
-            }
+            if (_profile.Settings.ConnectOnStartup) await ConnectAsync(Settings);
         } catch (Exception ex) {
-            Console.WriteLine($"Background connection error: {ex.Message}");
+            Console.WriteLine($"Initialisation connection error: {ex.Message}");
         }
     }
-    
+
     public async Task<IResult> ToggleConnectionAsync() {
         if (IsConnected) {
             await DisconnectAsync();
             return Result.Ok();
         }
         return await ConnectAsync(Settings);
+    }
+
+    public async Task<IResult> ConnectAsync(IDccClientSettings clientSettings) {
+        try {
+            // Allow null as a parameter if we know we have already setup the connection
+            // This will then return the active connection.
+            // --------------------------------------------------------------------------
+            if (Client is { IsConnected : true }) await DisconnectAsync();
+
+            // Attempt to connect to the Service provided and return the client
+            // --------------------------------------------------------------------------
+            Client = CreateClient(clientSettings);
+            if (Client is null) return Result.Fail("Unable to create a Client instance.");
+
+            if (Settings.SetAutomatically) {
+                var findFirst = await Client.GetAutomaticConnectionDetailsAsync();
+                if (findFirst is { IsSuccess: true, Value: not null }) {
+                    _profile.Settings.ClientSettings = findFirst.Value;
+                }
+            }
+
+            var connectResult = await ConnectAsync(Settings);
+            if (connectResult.IsFailure) return Result.Fail("Unable to connect to the specified server.");
+
+            Client.ConnectionStateChanged += OnConnectionChanged;
+            Client.MessageReceived += ClientOnMessageReceived;
+            Client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
+            Client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
+            Client.RouteMsgReceived += DccClientOnRouteMsgReceived;
+            Client.SignalMsgReceived += DccClientOnSignalMsgReceived;
+
+            OnConnectionChanged();
+            return connectResult;
+        } catch (Exception ex) {
+            Console.WriteLine($"Connection Failed: {ex.Message}");
+            OnConnectionChanged();
+            return Result.Fail("Unable to connect to the server.", ex);
+        }
     }
 
     public async Task DisconnectAsync() {
@@ -82,17 +100,12 @@ public class ConnectionService {
         OnConnectionChanged();
     }
 
-    public async Task<IResult> ConnectAsync(IDccClientSettings clientSettings) {
-        try {
-            var result = await ConnectHelperAsync(clientSettings);
-            Console.WriteLine($"Connection Result: {result.IsSuccess} {result.Message}");
-            OnConnectionChanged();
-            return result;
-        } catch (Exception ex) {
-            Console.WriteLine($"Connection Failed: {ex.Message}");
-            OnConnectionChanged();
-            return Result.Fail("Unable to connect to the server.", ex);
-        }
+    private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
+        return clientSettings.Type switch {
+            DccClientType.WiThrottle => new DccWiThrottleClient(clientSettings),
+            DccClientType.Jmri       => new DccJmriClient(clientSettings),
+            _                        => null
+        };
     }
 
     public async Task<IResult> ValidateConnectionAsync(IDccClientSettings clientSettings) {
@@ -105,60 +118,32 @@ public class ConnectionService {
         }
     }
 
-    private async Task<IResult> ConnectHelperAsync(IDccClientSettings clientSettings) {
-        // Allow null as a parameter if we know we have already setup the connection
-        // This will then return the active connection.
-        // --------------------------------------------------------------------------
-        if (Client is { IsConnected : true } && Client.Type == clientSettings.Type ) return Result.Ok();
-        if (Client is { IsConnected : true }) await DisconnectAsync();
-                
-        // Attempt to connect to the Service provided and return the client
-        // --------------------------------------------------------------------------
-        Client = CreateClient(clientSettings);
-        if (Client is null) return Result.Fail("Unable to create a Client instance.");
-
-        var result = await Client.ConnectAsync();
-        if (result.IsFailure) return Result.Fail("Unable to connect to the specified server.");
-
-        Client.ConnectionStateChanged += OnConnectionChanged;
-        Client.MessageReceived += ClientOnMessageReceived;
-        Client.OccupancyMsgReceived += DccClientOnOccupancyMsgReceived;
-        Client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
-        Client.RouteMsgReceived += DccClientOnRouteMsgReceived;
-        Client.SignalMsgReceived += DccClientOnSignalMsgReceived;
-
-        return Result.Ok("Connected to the Server.");
-    }
-
-    private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
-        return clientSettings.Type switch {
-            DccClientType.WiThrottle => new DccWiThrottleClient(clientSettings),
-            DccClientType.Jmri       => new DccJmriClient(clientSettings),
-            _                        => null
-        };
-    }
-    
     private void OnConnectionChanged(object? sender = null, EventArgs? e = null) {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
+        AddMessage($"Server Connection Changed to {(IsConnected ? "Connected" : "Disconnected")}","Connection");
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { Status = isConnected });
     }
 
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
+        AddMessage($"{e.Message}","Message");
         ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message });
     }
 
     public async Task<IResult> SendCmdAsync(string message) {
+        AddMessage($"{message}","Command");
         return await Client?.SendCmdAsync(message)!;
     }
 
     public async Task<IResult> SendTurnoutCmdAsync(Turnout? turnout, bool thrown) {
-        if (turnout is {Id: not null }) {
+        AddMessage($"Set {turnout?.Id} to '{turnout?.State}'","Turnout");
+        if (turnout is { Id: not null }) {
             return await Client?.SendTurnoutCmdAsync(turnout.Id, thrown)!;
         }
         return Result.Fail("No turnout provided.");
     }
 
     public async Task<IResult> SendRouteCmdAsync(Route? route, bool active) {
+        AddMessage($"Set {route?.Id} to '{route?.State}'","Route");
         if (route is { Id: not null }) {
             return await Client?.SendRouteCmdAsync(route.Id, active)!;
         }
@@ -166,6 +151,7 @@ public class ConnectionService {
     }
 
     public async Task<IResult> SendSignalCmdAsync(Signal? signal, SignalAspectEnum aspect) {
+        AddMessage($"Set {signal?.Id} to {signal?.Aspect}","Signal");
         if (signal is { Id: not null }) {
             return await Client?.SendSignalCmdAsync(signal.Id, aspect)!;
         }
@@ -173,6 +159,8 @@ public class ConnectionService {
     }
 
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
+        AddMessage($"Received Route {e.RouteId} with state {(e.IsActive ? "'Active'" : "'Inactive'")}","Route");
+
         Route? route = null;
         route ??= _profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
         route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.UserName) ?? null;
@@ -189,6 +177,8 @@ public class ConnectionService {
     }
 
     private void DccClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
+        AddMessage($"Received Turnout {e.TurnoutId} with state {(e.IsClosed ? "'Closed'" : "'Thrown'")}","Turnout");
+        
         Turnout? turnout = null;
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Id == e.TurnoutId) ?? null;
         turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.Username) ?? null;
@@ -206,6 +196,8 @@ public class ConnectionService {
     }
 
     private void DccClientOnOccupancyMsgReceived(object? sender, DccOccupancyArgs e) {
+        AddMessage($"Received Occupancy {e.BlockId} with state {(e.IsOccupied ? "'Occupied'" : "'Free'")}","Occupancy");
+
         Block? block = null;
         block ??= _profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
         block ??= _profile?.Blocks?.FirstOrDefault(x => x.Name == e.UserName) ?? null;
@@ -222,6 +214,8 @@ public class ConnectionService {
     }
 
     private void DccClientOnSignalMsgReceived(object? sender, DccSignalArgs e) {
+        AddMessage($"Received Signal {e.SignalId} with aspect '{e.Aspect}'","Signal");
+
         Signal? signal = null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
         signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
@@ -241,6 +235,21 @@ public class ConnectionService {
     public async Task<IResult> ForceRefresh(string? type = "all") {
         return await Client?.ForceRefreshAsync(type)!;
     }
+
+    [RelayCommand]
+    public void ClearMessages() {
+        ServerMessages.Clear();
+        OnPropertyChanged(nameof(ServerMessages));
+    }
+
+    public void AddMessage(string message, string operation = "") {
+        var msg = new ServerMessage(message, operation);
+        ServerMessages.Insert(0, msg);
+        while (ServerMessages.Count > MaxServerMessages) {
+            ServerMessages.RemoveAt(ServerMessages.Count - 1);
+        }
+        OnPropertyChanged(nameof(ServerMessages));
+    }
 }
 
 public class ConnectionChangedEvent : EventArgs {
@@ -251,4 +260,10 @@ public class ConnectionChangedEvent : EventArgs {
 
 public class ConnectionMessageEvent : EventArgs {
     public string Message { get; init; } = string.Empty;
+}
+
+public partial class ServerMessage(string message, string operation = "") : ObservableObject {
+    [ObservableProperty] private string _message = message;
+    [ObservableProperty] private string _operation = operation;
+    [ObservableProperty] private DateTime _timeStamp = DateTime.Now;
 }

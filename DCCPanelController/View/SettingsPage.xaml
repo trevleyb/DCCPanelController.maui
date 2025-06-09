@@ -11,7 +11,8 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon"
-    xmlns:components="clr-namespace:DCCPanelController.View.Components">
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:services="clr-namespace:DCCPanelController.Services">
 
     <ContentPage.Resources>
         <ResourceDictionary/>
@@ -113,7 +114,7 @@
                         </Label>
                         <Button
                             BackgroundColor="{StaticResource White}"
-                            Command="{Binding ClearMessagesCommand}"
+                            Command="{Binding ConnectionService.ClearMessagesCommand}"
                             Grid.Column="1"
                             HorizontalOptions="End"
                             ImageSource="trash_2.png"
@@ -128,11 +129,11 @@
                         HeightRequest="1"
                         HorizontalOptions="FillAndExpand"/>
                     <CollectionView
-                        ItemsSource="{Binding Messages}"
+                        ItemsSource="{Binding ConnectionService.ServerMessages}"
                         ItemsUpdatingScrollMode="KeepLastItemInView"
                         x:Name="MessagesList">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="view:SettingsMessage">
+                            <DataTemplate x:DataType="services:ServerMessage">
                                 <HorizontalStackLayout>
                                     <Label Style="{StaticResource MediumLabel}"
                                            Text="{Binding Message}"/>

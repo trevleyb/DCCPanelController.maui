@@ -4,19 +4,12 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.Jmri;
 
-public partial class JmriSettingsView : ContentView, IRaisesSettingsMessage {
+public partial class JmriSettingsView : ContentView{
     
-    public event EventHandler<SettingsMessage>? OnSettingsMessage;
-
     public JmriSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
         var viewModel = new JmriSettingsViewModel(settings, connectionService);
         BindingContext = viewModel;
         InitializeComponent();
-        
-        // Propagate any messages from the underlying setting module 
-        // so the parent can access these and show them in the UI
-        // ---------------------------------------------------------------
-        viewModel.OnSettingsMessage += (sender, message) => OnSettingsMessage?.Invoke(sender, message);
         viewModel.PropertyChanged += (sender, args) => OnPropertyChanged(args.PropertyName);
     }
 

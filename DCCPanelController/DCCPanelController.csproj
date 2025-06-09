@@ -219,6 +219,9 @@
         <MauiXaml Update="View\Settings\WiThrottle\WiThrottleSettingsView.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\ServerMessagePage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -332,6 +335,13 @@
         <Compile Update="View\Settings\WiThrottle\WiThrottleSettingsView.xaml.cs">
           <DependentUpon>WiThrottleSettingsView.xaml</DependentUpon>
           <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\ServerMessagePage.xaml.cs">
+          <DependentUpon>ServerMessage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\ServerMessagePagesViewModel.cs">
+          <DependentUpon>ServerMessagePage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

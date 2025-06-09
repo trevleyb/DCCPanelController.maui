@@ -14,7 +14,6 @@ namespace DCCPanelController.View;
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     private readonly SettingsViewModel? _viewModel;
-    private IRaisesSettingsMessage? _settingsView = null;
 
     public SettingsPage(SettingsViewModel viewModel) {
         _viewModel = viewModel;
@@ -124,17 +123,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel is {IsJmriServer: true} ) {
-            _viewModel.Settings.ClientSettings = CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri);
-            SetSettingsView(new JmriSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService));
-        } 
+        if (_viewModel is {IsJmriServer: true} ) LoadSettingsPage();
     }
 
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel is {IsWiThrottle: true} ) {
-            _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleClientSettings>(DccClientType.WiThrottle);
-            SetSettingsView(new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService));
-        } 
+        if (_viewModel is {IsWiThrottle: true} ) LoadSettingsPage();
     }
 
     private void LoadSettingsPage() {
@@ -149,37 +142,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleClientSettings>(DccClientType.WiThrottle);
             view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
         }
-        if (view is not null) SetSettingsView(view);
-    }
-
-    private void SetSettingsView(ContentView view) {
-        if (_settingsView is not null) {
-            _settingsView.OnSettingsMessage -= SettingsViewOnOnSettingsMessage;
-            _settingsView.PropertyChanged -= SettingsViewOnPropertyChanged;
-        }
-        
-        _settingsView = view as IRaisesSettingsMessage;
-        if (_settingsView is not null) {
-            _settingsView.PropertyChanged += SettingsViewOnPropertyChanged;
-            _settingsView.OnSettingsMessage += SettingsViewOnOnSettingsMessage;
-        }
-        SettingsView.Content = view;
-        _viewModel?.ClearMessagesCommand.Execute(null);
+        if (view is not null) SettingsView.Content = view;
     }
 
     private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         OnPropertyChanged();
-    }
-
-    private async void SettingsViewOnOnSettingsMessage(object? sender, Settings.SettingsMessage e) {
-        try {
-            if (_viewModel is { } vm) {
-                if (e.Clear) await vm.ClearMessagesAsync();
-                vm.AddMessage(e.Message);
-            }
-        } catch (Exception ex) {
-            Console.WriteLine($"SettingsViewOnSettings: {ex.Message}");
-        }
     }
 
     private IDccClientSettings CheckSettingsCache<T>(DccClientType type, IDccClientSettings? settings = null) where T : IDccClientSettings, new() {

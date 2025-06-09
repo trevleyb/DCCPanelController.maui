@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    IconImageSource="route_active.png"
+    Title="Server Messages"
+    ios:Page.UseSafeArea="False"
+    x:Class="DCCPanelController.View.ServerMessagesPage"
+    x:DataType="view:ServerMessagesViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:services="clr-namespace:DCCPanelController.Services">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
+    </ContentPage.ToolbarItems>
+
+    <StackLayout x:Name="MainStackLayout">
+        <Grid
+            ColumnDefinitions="150,250,*"
+            HorizontalOptions="Fill"
+            Padding="5">
+            <Button
+                Grid.Column="0"
+                HorizontalOptions="CenterAndExpand"
+                Margin="-5,0,0,0"
+                Style="{StaticResource ButtonLabel}"
+                Text="Date"/>
+            <Button
+                Grid.Column="1"
+                Style="{StaticResource ButtonLabel}"
+                Text="Operation"/>
+            <Button
+                Grid.Column="2"
+                Style="{StaticResource ButtonLabel}"
+                Text="Message"/>
+        </Grid>
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"/>
+        <RefreshView IsRefreshing="{Binding IsBusy}">
+            <Grid Padding="5" VerticalOptions="FillAndExpand">
+                <CollectionView ItemsSource="{Binding ConnectionService.ServerMessages}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label Text="No Server Messages available"/>
+                            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="services:ServerMessage">
+                            <StackLayout Padding="0">
+                                <Grid ColumnDefinitions="150,250,*" Padding="5">
+                                    <Label
+                                        Grid.Column="0"
+                                        HorizontalOptions="Start"
+                                        LineBreakMode="NoWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding TimeStamp}"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="1"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Operation}"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        Grid.Column="2"
+                                        HorizontalOptions="Fill"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Message}"
+                                        VerticalOptions="Center"/>
+                                </Grid>
+                                <BoxView
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="1"
+                                    HorizontalOptions="FillAndExpand"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"/>
+    </StackLayout>
+
+</ContentPage>
