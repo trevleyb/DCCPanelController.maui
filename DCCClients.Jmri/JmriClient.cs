@@ -13,7 +13,7 @@ public class JmriClient : IDisposable {
     private readonly string _serverUrl;
     private readonly int _reconnectDelayMs;
     private readonly Lock _connectionLock = new();
-
+    
     private ClientWebSocket? _webSocket;
     private CancellationTokenSource? _cancellationTokenSource;
     private Task? _connectionTask;
@@ -21,6 +21,8 @@ public class JmriClient : IDisposable {
     
     private bool _isHandshakeComplete = false;
     private TaskCompletionSource<bool>? _handshakeCompletion;
+
+    private Timer? _heartbeatTimer;
 
     // Collections to store current-state
     private readonly ConcurrentDictionary<string, JmriTurnoutEventArgs> _turnouts = new();
@@ -64,6 +66,8 @@ public class JmriClient : IDisposable {
 
     public async Task DisconnectAsync() {
         ConnectionState = ConnectionStateEnum.Disconnected;
+        StopHeartbeat();
+        
         if (_cancellationTokenSource is not null) {
             await _cancellationTokenSource.CancelAsync();
         }
@@ -288,12 +292,36 @@ public class JmriClient : IDisposable {
             ConnectionEstablished?.Invoke(this, hello );
             _isHandshakeComplete = true;
             _handshakeCompletion?.SetResult(true);
+            StartHeartbeat(hello.Heartbeat);
             OnConnectionStateChanged(ConnectionState, $"Connection to JMRI has been established.");
             return true;
         }
         return false;
     }
+    
+    private void StartHeartbeat(int heartbeatInterval) {
+        _heartbeatTimer?.Dispose();
+        if (heartbeatInterval > 0) {
+            Console.WriteLine($"Start Heartbeat: {heartbeatInterval / 1000} seconds");
+            _heartbeatTimer = new Timer(SendHeartbeat, null, heartbeatInterval, heartbeatInterval);
+        }
+    }
 
+    private void StopHeartbeat() {
+        Console.WriteLine($"Stop Heartbeat.");
+        _heartbeatTimer?.Dispose();
+        _heartbeatTimer = null;
+    }
+
+    private async void SendHeartbeat(object? state) {
+        try {
+            Console.WriteLine($"Sending Heatbeat to Server...");
+            await SendCommandAsync(new { type = "ping" });
+        } catch (Exception ex){
+            Console.WriteLine($"Could not send heartbeat: {ex.Message}");
+        }
+    }
+    
     private bool ProcessErrorMessage(JsonElement root) {
         if (!root.TryGetProperty("data", out var dataElement)) return false;
         var code = dataElement.GetStringProperty("code");
