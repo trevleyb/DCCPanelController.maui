@@ -12,7 +12,7 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
     [ObservableProperty] private WiThrottleClientSettings _wiThrottleSettings;
 
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
-        _wiThrottleSettings = _settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
+        _wiThrottleSettings = Settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
     }
     
     [RelayCommand]

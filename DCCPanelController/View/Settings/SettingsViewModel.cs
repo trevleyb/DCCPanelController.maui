@@ -12,10 +12,9 @@ using Microsoft.Maui.Controls;
 namespace DCCPanelController.View.Settings;
 
 public partial class SettingsViewModel : Base.BaseViewModel {
+    protected readonly IDccClientSettings Settings;
+    protected readonly ConnectionService ConnectionService;
 
-    protected IDccClientSettings _settings;
-    protected ConnectionService _connectionService;
-  
     private void RaiseSettingsMessage(SettingsMessage message) => OnSettingsMessage?.Invoke(this, message);
     private void RaiseSettingsMessage(string message, bool clear = false) => OnSettingsMessage?.Invoke(this, new SettingsMessage(message, clear));
 
@@ -23,31 +22,34 @@ public partial class SettingsViewModel : Base.BaseViewModel {
 
     [ObservableProperty] private string _connectLabel = "Test Connection";
     [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
-    
+
     protected SettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) {
-        _settings = settings;
-        _connectionService = connectionService;
+        Settings = settings;
+        ConnectionService = connectionService;
     }
-    
+
     [RelayCommand]
     protected async Task OnConnectClickedAsync() {
-        RaiseSettingsMessage($"Attempting to connect/disconnect to Service ({_settings.Type})", true);
+        RaiseSettingsMessage($"Attempting to connect/disconnect to Service ({Settings.Type})", true);
         try {
             IsBusy = true;
-            var result = await _connectionService.ValidateConnectionAsync(_settings);
+            var reconnect = ConnectionService.IsConnected;
+            if (reconnect) await ConnectionService.DisconnectAsync();
+            var result = await ConnectionService.ValidateConnectionAsync(Settings);
             if (result.IsFailure) {
                 RaiseSettingsMessage("Connection Failed.");
                 foreach (var error in result.Errors) RaiseSettingsMessage(error.Message);
-                var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";            
+                var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
-                    RaiseSettingsMessage("Connected Successfully.");
-                    await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
+                if (reconnect) await ConnectionService.ConnectAsync(Settings);
+                RaiseSettingsMessage("Connected Successfully.");
+                await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
             }
         } catch (Exception ex) {
             RaiseSettingsMessage("Unable to Connect.");
             RaiseSettingsMessage(ex.Message);
-            var message = $"Unable to connect to the server due to {ex.Message}";            
+            var message = $"Unable to connect to the server due to {ex.Message}";
             await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
         } finally {
             IsBusy = false;
@@ -59,14 +61,14 @@ public partial class SettingsViewModel : Base.BaseViewModel {
         RaiseSettingsMessage(e.Message);
     }
 
-    [RelayCommand] 
+    [RelayCommand]
     protected async Task OnRefreshServersClickedAsync() {
         if (IsBusy) return;
         Servers.Clear();
         try {
             IsRefreshing = true;
             IsBusy = true;
-            var result = await DiscoverServices.SearchForServicesByTypeAsync(_settings.Type);
+            var result = await DiscoverServices.SearchForServicesByTypeAsync(Settings.Type);
             if (result is { IsSuccess: true, Value.Count: > 0 }) {
                 var servicesFound = result.Value.ToObservableCollection();
                 Servers = new ObservableCollection<DiscoveredService>(servicesFound);
@@ -82,7 +84,7 @@ public partial class SettingsViewModel : Base.BaseViewModel {
             IsRefreshing = false;
         }
     }
-    
+
     protected string GetIpAddressParts(int part, string address) {
         if (string.IsNullOrEmpty(address)) return "0";
         var parts = address.Split('.');
@@ -101,5 +103,4 @@ public partial class SettingsViewModel : Base.BaseViewModel {
         }
         return address ?? "0.0.0.0";
     }
-
 }

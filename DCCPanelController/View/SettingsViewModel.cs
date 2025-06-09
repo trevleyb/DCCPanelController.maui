@@ -28,8 +28,10 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     public async Task SaveSettingsAsync() {
+        var reconnect = ConnectionService.IsConnected;
+        if (reconnect) await ConnectionService.DisconnectAsync();
         await Profile.SaveAsync();
-        await ConnectionService.ForceRefresh();
+        if (Settings is {ClientSettings: not null}  && reconnect ) ConnectionService.ConnectAsync(Settings.ClientSettings);
         await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
     }
     

@@ -12,7 +12,7 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
     [ObservableProperty] private JmriClientSettings _jmriSettings;
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
-        JmriSettings = _settings as JmriClientSettings ?? throw new InvalidOperationException();
+        JmriSettings = Settings as JmriClientSettings ?? throw new InvalidOperationException();
     }
 
     private async Task InitializeAsync() {
