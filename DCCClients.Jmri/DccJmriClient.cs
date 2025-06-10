@@ -29,15 +29,15 @@ public class DccJmriClient : DccClientBase, IDccClient {
     public async Task<IResult> ConnectAsync() {
         try {
             ArgumentNullException.ThrowIfNull(_settings);
-            _jmriClient?.Dispose();
-            _jmriClient = new JmriClient(_settings.Address, _settings.Port, _settings.PollingInterval, ReconnectDelay);
+            await DisconnectAsync();
 
-            // Subscribe to JMRI client events so we can translate them to
-            // common events used across the system
+            _jmriClient = new JmriClient(_settings.Address, _settings.Port, _settings.PollingInterval, ReconnectDelay);
             _jmriClient.TurnoutChanged  += OnJmriTurnoutChanged;
             _jmriClient.RouteChanged    += OnJmriRouteChanged;
             _jmriClient.SignalChanged   += OnJmriSignalChanged;
             _jmriClient.BlockChanged    += OnJmriOccupancyChanged;
+            _jmriClient.SensorChanged   += OnJmriSensorChanged;
+            _jmriClient.LightChanged    += OnJmriLightChanged;
             _jmriClient.ConnectionStateChanged += OnJmriConnectionStatusChanged;
             _jmriClient.ConnectionEstablished += OnJmriConnectionEstablished;
             
@@ -88,8 +88,19 @@ public class DccJmriClient : DccClientBase, IDccClient {
     public async Task<IResult> DisconnectAsync() {
         OnConnectionStateChanged(new DccStateChangedArgs(false, "Disconnected from JMRI server"));
         try {
-            if (_jmriClient != null) await _jmriClient.DisconnectAsync();
-            _jmriClient = null;
+            if (_jmriClient != null) {
+                await _jmriClient.DisconnectAsync();
+                _jmriClient.TurnoutChanged          -= OnJmriTurnoutChanged;
+                _jmriClient.RouteChanged            -= OnJmriRouteChanged;
+                _jmriClient.SignalChanged           -= OnJmriSignalChanged;
+                _jmriClient.BlockChanged            -= OnJmriOccupancyChanged;
+                _jmriClient.SensorChanged           -= OnJmriSensorChanged;
+                _jmriClient.LightChanged            -= OnJmriLightChanged;
+                _jmriClient.ConnectionStateChanged  -= OnJmriConnectionStatusChanged;
+                _jmriClient.ConnectionEstablished   -= OnJmriConnectionEstablished;
+                _jmriClient?.Dispose();
+                _jmriClient = null;
+            }
             return Result.Ok();
         } catch (Exception ex) {
             return Result.Fail(new Error("Failed to disconnect from JMRI server").CausedBy(ex));
@@ -195,6 +206,28 @@ public class DccJmriClient : DccClientBase, IDccClient {
         }
     }
 
+    public async Task<IResult> SendLightCmdAsync(string light, bool active) {
+        try {
+            if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
+            OnMessageReceived(new DccMessageArgs("Light", $"Setting light {light} to {(active ? "'On'" : "'Off'")}"));
+            await _jmriClient.SetLightStateAsync(light, active);
+            return Result.Ok();
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Failed to send light command to JMRI server").CausedBy(ex));
+        }
+    }
+
+    public async Task<IResult> SendSensorCmdAsync(string sensor, bool isOccupied) {
+        try {
+            if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
+            OnMessageReceived(new DccMessageArgs("Sensor", $"Setting sensor {sensor} to {(isOccupied ? "'Occupied'" : "'Free'")}"));
+            await _jmriClient.SetSensorStateAsync(sensor, isOccupied);
+            return Result.Ok();
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Failed to send sensor command to JMRI server").CausedBy(ex));
+        }
+    }
+
     public async Task<IResult> ForceRefreshAsync(string? type = null) {
         if (_jmriClient is { } client) await client.DisconnectAsync();
         var result = await ConnectAsync();
@@ -202,7 +235,7 @@ public class DccJmriClient : DccClientBase, IDccClient {
     }
 
     #region Event Handlers
-    private void OnJmriConnectionEstablished(object? sender, JmriInitialisedEventArgs e) {
+    private void OnJmriConnectionEstablished(object? sender, JmriHandshakeEventArgs e) {
         var message = $"JMRI Connection established. Version={e.JmriVersion} Railroad={e.Railroad}";
         OnMessageReceived(new DccMessageArgs("Initialised", message));
     }
@@ -234,6 +267,22 @@ public class DccJmriClient : DccClientBase, IDccClient {
             UserName = e.UserName,
             Sensor = e.SensorName,
             IsOccupied = e.State == 2
+        });
+    }
+
+    private void OnJmriSensorChanged(object? sender, JmriSensorEventArgs e) {
+        OnSensorMsgReceived(new DccSensorArgs() {
+            SensorId = e.Name,
+            UserName = e.UserName,
+            IsOccupied = e.State == 2
+        });
+    }
+
+    private void OnJmriLightChanged(object? sender, JmriLightEventArgs e) {
+        OnLightMsgReceived(new DccLightArgs() {
+            LightId = e.Name,
+            UserName = e.UserName,
+            IsOn = e.State == 2
         });
     }
 

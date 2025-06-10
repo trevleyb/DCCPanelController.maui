@@ -14,7 +14,9 @@ public interface IDccClient {
     Task<IResult> SendTurnoutCmdAsync(string turnout, bool thrown);
     Task<IResult> SendRouteCmdAsync(string route, bool active);
     Task<IResult> SendSignalCmdAsync(string signal, SignalAspectEnum aspect);
+    Task<IResult> SendLightCmdAsync(string light, bool isActive);
     Task<IResult> SendBlockCmdAsync(string block, bool isOccupied);
+    Task<IResult> SendSensorCmdAsync(string sensor, bool isOccupied);
 
     Task<IResult<List<DiscoveredService>>> FindAvailableServicesAsync();
     Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync();
@@ -30,5 +32,7 @@ public interface IDccClient {
     event EventHandler<DccRouteArgs> RouteMsgReceived;
     event EventHandler<DccOccupancyArgs> OccupancyMsgReceived;
     event EventHandler<DccSignalArgs> SignalMsgReceived;
+    event EventHandler<DccSensorArgs> SensorMsgReceived;
+    event EventHandler<DccLightArgs> LightMsgReceived;
 
 }

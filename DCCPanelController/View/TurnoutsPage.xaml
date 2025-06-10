@@ -52,6 +52,7 @@
         <Grid VerticalOptions="FillAndExpand">
             <CollectionView ItemsSource="{Binding Turnouts}" SelectedItem="{Binding SelectedTurnout}"
                             SelectionMode="Single">
+                
                 <CollectionView.Header>
                     <StackLayout>
                         <Grid
@@ -92,7 +93,8 @@
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <Label Text="No Turnout data available"/>
+                            <Label IsVisible="{Binding IsSupported}" Text="No Turnout data available. Press Refresh."/>
+                            <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Turnouts."/>
                         </StackLayout>
                     </Grid>
                 </CollectionView.EmptyView>

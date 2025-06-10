@@ -222,6 +222,12 @@
         <MauiXaml Update="View\ServerMessagePage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\LightsPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\SensorsPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -342,6 +348,20 @@
         </Compile>
         <Compile Update="View\ServerMessagePagesViewModel.cs">
           <DependentUpon>ServerMessagePage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\LightsPage.xaml.cs">
+          <DependentUpon>LightsPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\SensorsPage.xaml.cs">
+          <DependentUpon>SensorsPage.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\SensorsViewModel.cs">
+          <DependentUpon>SensorsPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\LightsViewModel.cs">
+          <DependentUpon>LightsPage.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

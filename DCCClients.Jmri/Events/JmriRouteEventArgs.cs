@@ -4,8 +4,8 @@ using DccClients.Jmri.Helpers;
 
 namespace DccClients.Jmri.Events;
 
-public class JmriRouteEventArgs : System.EventArgs {
-    public string Name { get; private set; } = string.Empty;
+public class JmriRouteEventArgs : JmriEventArgs<JmriRouteEventArgs>, IJmriEventArgs, IJmriProcessor<JmriRouteEventArgs> {
+    public string Name { get; private init; } = string.Empty;
     public string UserName { get; private set; } = string.Empty;
     public string Comment { get; private set; } = string.Empty;
     public int State { get; private set; } // 2=Active, 4=Inactive
@@ -20,5 +20,10 @@ public class JmriRouteEventArgs : System.EventArgs {
             State = dataElement.GetIntProperty("state"),
             Comment = dataElement.GetStringProperty("comment")
         };
+    }
+
+    public static bool HasChanged(JmriRouteEventArgs? existingItem, JmriRouteEventArgs newItem) {
+        return existingItem == null ||
+               existingItem?.State != newItem.State;
     }
 }

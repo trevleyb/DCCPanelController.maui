@@ -2,10 +2,10 @@
 
 <ContentPage
     IconImageSource="route_active.png"
-    Title="Routes List"
+    Title="Lights List"
     ios:Page.UseSafeArea="False"
-    x:Class="DCCPanelController.View.RoutesPage"
-    x:DataType="view:RoutesViewModel"
+    x:Class="DCCPanelController.View.LightsPage"
+    x:DataType="view:LightsViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
@@ -13,7 +13,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding RefreshRoutesCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding RefreshLightsCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
         <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
@@ -47,28 +47,30 @@
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
-        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshRoutesCommand}">
+        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshLightsCommand}">
+
             <Grid Padding="5" VerticalOptions="FillAndExpand">
-                <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
+                <CollectionView ItemsSource="{Binding Lights}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label IsVisible="{Binding IsSupported}" Text="No Route data available. Press Refresh."/>
-                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Routes."/>
+                                <Label IsVisible="{Binding IsSupported}" Text="No Light data available. Press Refresh."/>
+                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Lights."/>
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>
 
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="dataModel:Route">
+                        <DataTemplate x:DataType="dataModel:Light">
                             <StackLayout Padding="0">
                                 <Grid ColumnDefinitions="150,*,100" Padding="5">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
-                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, Path=ToggleLightStateCommand}"
                                             CommandParameter="{Binding .}"
-                                            x:DataType="{x:Type view:RoutesViewModel}"/>
+                                            x:DataType="{x:Type view:LightsViewModel}"/>
                                     </Grid.GestureRecognizers>
+
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
@@ -89,25 +91,19 @@
                                         HeightRequest="32"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center"
-                                        WidthRequest="32">
+                                        WidthRequest="42">
                                         <Image.Triggers>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Active">
-                                                <Setter Property="Source" Value="route_active.png"/>
+                                                Value="true">
+                                                <Setter Property="Source" Value="block_occupied.png"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Inactive">
-                                                <Setter Property="Source" Value="route_inactive.png"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Image"
-                                                Value="Unknown">
-                                                <Setter Property="Source" Value="route_unknown.png"/>
+                                                Value="false">
+                                                <Setter Property="Source" Value="block_free.png"/>
                                             </DataTrigger>
                                         </Image.Triggers>
                                     </Image>
@@ -121,20 +117,14 @@
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
-                                                Value="Active">
-                                                <Setter Property="TextColor" Value="Green"/>
-                                            </DataTrigger>
-                                            <DataTrigger
-                                                Binding="{Binding State}"
-                                                TargetType="Label"
-                                                Value="Inactive">
+                                                Value="true">
                                                 <Setter Property="TextColor" Value="Red"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
-                                                Value="Unknown">
-                                                <Setter Property="TextColor" Value="Grey"/>
+                                                Value="false">
+                                                <Setter Property="TextColor" Value="Green"/>
                                             </DataTrigger>
                                         </Label.Triggers>
                                     </Label>

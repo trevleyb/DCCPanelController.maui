@@ -18,6 +18,8 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private ObservableCollection<Route> _routes;
     [ObservableProperty] private ObservableCollection<Signal> _signals;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
+    [ObservableProperty] private ObservableCollection<Light> _lights;
 
     public Profile(string profileName) {
         _profileName = profileName;
@@ -28,6 +30,8 @@ public partial class Profile : ObservableObject {
         Turnouts = new ObservableCollection<Turnout>();
         Routes = new ObservableCollection<Route>();
         Signals = new ObservableCollection<Signal>();
+        Sensors = new ObservableCollection<Sensor>();
+        Lights = new ObservableCollection<Light>();
     }
 
     public Turnout? Turnout(string id) {

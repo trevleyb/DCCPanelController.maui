@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCCommon.Client;
 using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -26,12 +27,17 @@ public partial class RoutesViewModel : ConnectionViewModel {
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
     [ObservableProperty] private ObservableCollection<Route> _routes;
+
     private string _sortColumn = "";
     private bool _isAscending;
+
+    public bool IsSupported { get; private set; }
+    public bool IsNotSupported => !IsSupported;
 
     public RoutesViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile);
         Routes = Profile.Routes;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Routes) ?? false;
         SetLabels();
     }
 

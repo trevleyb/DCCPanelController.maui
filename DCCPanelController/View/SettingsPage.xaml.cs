@@ -40,6 +40,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             _viewModel!.IsWiThrottle = false;
             break;
         }
+        _viewModel.SetCapabilities(_viewModel?.Settings?.ClientSettings);
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
@@ -142,6 +143,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
         }
         if (view is not null) SettingsView.Content = view;
+        _viewModel.SetCapabilities(_viewModel.Settings.ClientSettings);
     }
 
     private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

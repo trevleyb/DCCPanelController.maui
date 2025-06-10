@@ -33,14 +33,16 @@ public class JmriClient : IDisposable {
     private readonly ConcurrentDictionary<string, JmriRouteEventArgs> _routes = new();
     private readonly ConcurrentDictionary<string, JmriSensorEventArgs> _sensors = new();
     private readonly ConcurrentDictionary<string, JmriBlockEventArgs> _blocks = new();
-
+    private readonly ConcurrentDictionary<string, JmriLightEventArgs> _lights = new();
+    
     // Events
-    public event EventHandler<JmriInitialisedEventArgs>? ConnectionEstablished;
+    public event EventHandler<JmriHandshakeEventArgs>? ConnectionEstablished;
     public event EventHandler<JmriConnectionChangedEventArgs>? ConnectionStateChanged;
     public event EventHandler<JmriTurnoutEventArgs>? TurnoutChanged;
     public event EventHandler<JmriSignalEventArgs>? SignalChanged;
     public event EventHandler<JmriRouteEventArgs>? RouteChanged;
     public event EventHandler<JmriSensorEventArgs>? SensorChanged;
+    public event EventHandler<JmriLightEventArgs>? LightChanged;
     public event EventHandler<JmriBlockEventArgs>? BlockChanged;
 
     // Public accessors for current-state
@@ -49,11 +51,11 @@ public class JmriClient : IDisposable {
     public IReadOnlyDictionary<string, JmriRouteEventArgs> Routes => _routes;
     public IReadOnlyDictionary<string, JmriSensorEventArgs> Sensors => _sensors;
     public IReadOnlyDictionary<string, JmriBlockEventArgs> Blocks => _blocks;
-
+    public IReadOnlyDictionary<string, JmriLightEventArgs> Lights => _lights;
+    
     public ConnectionStateEnum ConnectionState { get; private set; }
 
     public JmriClient(string serverHost = "localhost", int serverPort = 12080, double refreshMs = 5.0, int reconnectDelayMs = 5000) : this(serverHost, serverPort, (int)(refreshMs * 1000), reconnectDelayMs) { }
-
     public JmriClient(string serverHost = "localhost", int serverPort = 12080, int refreshMs = 1000, int reconnectDelayMs = 5000) {
         _serverUrl = $"ws://{serverHost}:{serverPort}/json/";
         _reconnectDelayMs = reconnectDelayMs;
@@ -75,6 +77,9 @@ public class JmriClient : IDisposable {
         StopRefreshTimer();
         ConnectionState = ConnectionStateEnum.Disconnected;
 
+        // Send a goodbye message to the server
+        await SendCommandAsync(JmriHandshakeEventArgs.GoodbyeMessage);
+        
         if (_cancellationTokenSource is not null) {
             await _cancellationTokenSource.CancelAsync();
         }
@@ -155,6 +160,7 @@ public class JmriClient : IDisposable {
             new { type = "signalHead", method = "list" },
             new { type = "route", method = "list" },
             new { type = "sensor", method = "list" },
+            new { type = "light", method = "list" },
             new { type = "block", method = "list" }
         };
 
@@ -202,14 +208,15 @@ public class JmriClient : IDisposable {
                 var type = typeElement.GetString();
                 if (string.IsNullOrEmpty(type)) continue;
                 var isValidMessage = type.ToLowerInvariant() switch {
-                    "turnout"    => ProcessTurnoutMessage(item),
-                    "signalHead" => ProcessSignalMessage(item),
-                    "route"      => ProcessRouteMessage(item),
-                    "sensor"     => ProcessSensorMessage(item),
-                    "block"      => ProcessBlockMessage(item),
+                    "turnout"    => JmriTurnoutEventArgs.ProcessMessage(item, _turnouts, TurnoutChanged), 
+                    "signalHead" => JmriSignalEventArgs.ProcessMessage(item, _signals, SignalChanged),
+                    "route"      => JmriRouteEventArgs.ProcessMessage(item, _routes, RouteChanged),
+                    "sensor"     => JmriSensorEventArgs.ProcessMessage(item, _sensors, SensorChanged),
+                    "block"      => JmriBlockEventArgs.ProcessMessage(item, _blocks, BlockChanged),
+                    "light"      => JmriLightEventArgs.ProcessMessage(item, _lights, LightChanged),
                     "hello"      => ProcessHelloMessage(item),
                     "error"      => ProcessErrorMessage(item),
-                    "pong"       => ProcessPongMessage(item),
+                    "pong"       => true,
                     _            => false
                 };
                 if (!isValidMessage) {
@@ -230,74 +237,8 @@ public class JmriClient : IDisposable {
         return items;
     }
 
-    private bool ProcessTurnoutMessage(JsonElement root) {
-        if (JmriTurnoutEventArgs.Create(root) is { } turnout) {
-            var existingTurnout = _turnouts.GetValueOrDefault(turnout.Name);
-            _turnouts[turnout.Name] = turnout;
-            if (existingTurnout == null || existingTurnout.State != turnout.State) {
-                TurnoutChanged?.Invoke(this, turnout);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private bool ProcessSignalMessage(JsonElement root) {
-        if (JmriSignalEventArgs.Create(root) is { } signal) {
-            var existingSignal = _signals.GetValueOrDefault(signal.Name);
-            _signals[signal.Name] = signal;
-
-            if (existingSignal == null || existingSignal.Appearance != signal.Appearance ||
-                existingSignal.Lit != signal.Lit || existingSignal.Held != signal.Held) {
-                SignalChanged?.Invoke(this, signal);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private bool ProcessRouteMessage(JsonElement root) {
-        if (JmriRouteEventArgs.Create(root) is { } route) {
-            var existingRoute = _routes.GetValueOrDefault(route.Name);
-            _routes[route.Name] = route;
-
-            if (existingRoute == null || existingRoute.State != route.State) {
-                RouteChanged?.Invoke(this, route);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private bool ProcessSensorMessage(JsonElement root) {
-        if (JmriSensorEventArgs.Create(root) is { } sensor) {
-            var existingSensor = _sensors.GetValueOrDefault(sensor.Name);
-            _sensors[sensor.Name] = sensor;
-
-            if (existingSensor == null || existingSensor.State != sensor.State) {
-                SensorChanged?.Invoke(this, sensor);
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private bool ProcessBlockMessage(JsonElement root) {
-        if (JmriBlockEventArgs.Create(root) is { } block) {
-            var existingBlock = _blocks.GetValueOrDefault(block.Name);
-            _blocks[block.Name] = block;
-
-            if (existingBlock == null || existingBlock.State != block.State ||
-                existingBlock.Value != block.Value || existingBlock.Allocated != block.Allocated) {
-                BlockChanged?.Invoke(this, block);
-            }
-            return true;
-        }
-        return false;
-    }
-
     private bool ProcessHelloMessage(JsonElement root) {
-        if (JmriInitialisedEventArgs.Create(root) is { } hello) {
+        if (JmriHandshakeEventArgs.Create(root) is { } hello) {
             ConnectionEstablished?.Invoke(this, hello);
             _isHandshakeComplete = true;
             _handshakeCompletion?.SetResult(true);
@@ -306,6 +247,14 @@ public class JmriClient : IDisposable {
             return true;
         }
         return false;
+    }
+
+    private bool ProcessErrorMessage(JsonElement root) {
+        if (!root.TryGetProperty("data", out var dataElement)) return false;
+        var code = dataElement.GetIntProperty("code");
+        var message = dataElement.GetStringProperty("message");
+        Console.WriteLine($"JMRI Raised an error: {code} => {message}");
+        return true;
     }
 
     private void StartHeartbeat(int heartbeatInterval) {
@@ -351,20 +300,7 @@ public class JmriClient : IDisposable {
             Console.WriteLine($"Could not send refresh command: {ex.Message}");
         }
     }
-
-    private bool ProcessErrorMessage(JsonElement root) {
-        if (!root.TryGetProperty("data", out var dataElement)) return false;
-        var code = dataElement.GetIntProperty("code");
-        var message = dataElement.GetStringProperty("message");
-        Console.WriteLine($"JMRI Raised an error: {code} => {message}");
-        return true;
-    }
-
-    private bool ProcessPongMessage(JsonElement root) {
-        // Nothing to do for a Pong message
-        return true;
-    }
-
+    
     public async Task SetTurnoutStateAsync(string turnoutID, bool thrown) {
         var command = BuildJmriMessage("turnout", "post", new Dictionary<string, object> {
             { "type", "turnout" },
@@ -391,6 +327,24 @@ public class JmriClient : IDisposable {
         await SendCommandAsync(command);
     }
 
+    public async Task SetSensorStateAsync(string sensorID, bool active) {
+        var command = BuildJmriMessage("sensor", "post", new Dictionary<string, object> {
+            { "type", "sensor" },
+            { "name", sensorID },
+            { "action", active ? 2 : 4 }
+        });
+        await SendCommandAsync(command);
+    }
+
+    public async Task SetLightStateAsync(string lightID, bool active) {
+        var command = BuildJmriMessage("light", "post", new Dictionary<string, object> {
+            { "type", "light" },
+            { "name", lightID },
+            { "action", active ? 2 : 4 }
+        });
+        await SendCommandAsync(command);
+    }
+    
     public async Task SetBlockValueAsync(string blockID, string value) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
@@ -399,7 +353,7 @@ public class JmriClient : IDisposable {
         });
         await SendCommandAsync(command);
     }
-
+    
     public async Task SetBlockAllocatedAsync(string blockID, bool allocated) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },

@@ -9,55 +9,56 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
-public partial class BlocksViewModel : Base.ConnectionViewModel {
+public partial class SensorsViewModel : Base.ConnectionViewModel {
     private const string _labelID = "System Name";
-    private const string _labelName = "Block";
+    private const string _labelName = "Sensor";
     private const string _labelState = "Is Occupied?";
 
     public string LabelID => _labelID;
     public string LabelName => _labelName;
     public string LabelState => _labelState;
 
-    [ObservableProperty] private ObservableCollection<Block> _blocks;
+    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
+
     private bool _isAscending;
     private string _sortColumn = "";
 
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
-    
-    public BlocksViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Blocks = Profile.Blocks;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Blocks) ?? false;
+
+    public SensorsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
+        Sensors = Profile.Sensors;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Sensors) ?? false;
         SetLabels();
     }
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
-        List<Block> sortedBlocks;
+        List<Sensor> sorted;
         if (!_isAscending) {
-            sortedBlocks = columnName switch {
-                _labelName  => Blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList(),
-                _labelID    => Blocks.OrderBy<Block, string>(x => x.Id ?? "").ToList(),
-                _labelState => Blocks.OrderBy<Block, bool>(x => x.IsOccupied).ToList(),
-                _           => Blocks.ToList<Block>()
+            sorted = columnName switch {
+                _labelName  => Sensors.OrderBy<Sensor, string>(x => x.Name ?? "").ToList(),
+                _labelID    => Sensors.OrderBy<Sensor, string>(x => x.Id ?? "").ToList(),
+                _labelState => Sensors.OrderBy<Sensor, bool>(x => x.State).ToList(),
+                _           => Sensors.ToList<Sensor>()
             };
         } else {
-            sortedBlocks = columnName switch {
-                _labelName  => Blocks.OrderByDescending<Block, string>(x => x.Name ?? "").ToList(),
-                _labelID    => Blocks.OrderByDescending<Block, string>(x => x.Id ?? "").ToList(),
-                _labelState => Blocks.OrderByDescending<Block, bool>(x => x.IsOccupied).ToList(),
-                _           => Blocks.ToList<Block>()
+            sorted = columnName switch {
+                _labelName  => Sensors.OrderByDescending<Sensor, string>(x => x.Name ?? "").ToList(),
+                _labelID    => Sensors.OrderByDescending<Sensor, string>(x => x.Id ?? "").ToList(),
+                _labelState => Sensors.OrderByDescending<Sensor, bool>(x => x.State).ToList(),
+                _           => Sensors.ToList<Sensor>()
             };
         }
 
-        Blocks = new ObservableCollection<Block>(sortedBlocks);
+        Sensors = new ObservableCollection<Sensor>(sorted);
 
         _sortColumn = columnName;
         _isAscending = !_isAscending;
-        OnPropertyChanged(nameof(Blocks));
+        OnPropertyChanged(nameof(Sensors));
         SetLabels();
     }
 
@@ -68,21 +69,20 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     }
 
     [RelayCommand]
-    public async Task ToggleBlockState(Block? block) {
-        if (block == null) return;
-        block.IsOccupied = !block.IsOccupied;
-        if (!string.IsNullOrEmpty(block.Id) && IsConnected) {
-            await ConnectionService.SendBlockCmdAsync(block, block.IsOccupied )!;
+    public async Task ToggleSensorState(Sensor? sensor) {
+        if (sensor == null) return;
+        sensor.State = !sensor.State;
+        if (!string.IsNullOrEmpty(sensor.Id) && IsConnected) {
+            await ConnectionService.SendSensorCmdAsync(sensor, sensor.State )!;
         }
     }
     
     [RelayCommand]
-    private async Task RefreshBlocksAsync() {
+    private async Task RefreshSensorsAsync() {
         IsBusy = true;
         try {
-            for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) {
+            for (var ptr = Profile.Sensors.Count; ptr > 0; ptr--) {
                 Profile.Blocks.RemoveAt(ptr - 1);
-                OnPropertyChanged(nameof(Blocks));
             }
             await ConnectionService.ForceRefresh();
         } catch { /* ignored */

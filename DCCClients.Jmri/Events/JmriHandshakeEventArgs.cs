@@ -3,7 +3,8 @@ using DccClients.Jmri.Helpers;
 
 namespace DccClients.Jmri.Events;
 
-public class JmriInitialisedEventArgs : System.EventArgs {
+public class JmriHandshakeEventArgs : EventArgs, IJmriEventArgs{
+    public string Name => Railroad;
     public string JmriVersion { get; private set; } = string.Empty;
     public string JsonVersion { get; private set; } = string.Empty;
     public string Version { get; private set; } = string.Empty;
@@ -12,11 +13,11 @@ public class JmriInitialisedEventArgs : System.EventArgs {
     public string Profile { get; private set; } = string.Empty;
     public int Heartbeat { get; private set; } = 0;
 
-    private JmriInitialisedEventArgs() { }
+    private JmriHandshakeEventArgs() { }
 
-    public static JmriInitialisedEventArgs? Create(JsonElement root) {
+    public static JmriHandshakeEventArgs? Create(JsonElement root) {
         if (!root.TryGetProperty("data", out var dataElement)) return null;
-        return new JmriInitialisedEventArgs() {
+        return new JmriHandshakeEventArgs() {
             JmriVersion = dataElement.GetStringProperty("JMRI"),
             JsonVersion = dataElement.GetStringProperty("json"),
             Version = dataElement.GetStringProperty("version"),
@@ -33,6 +34,13 @@ public class JmriInitialisedEventArgs : System.EventArgs {
             client = "JMRI Layout Controller",
             version = "1.0",
         });
+    
+    public static string? GoodbyeMessage =>
+        JsonSerializer.Serialize(new {
+            type = "goodbye"
+        });
+
+    
 }
 
 /*

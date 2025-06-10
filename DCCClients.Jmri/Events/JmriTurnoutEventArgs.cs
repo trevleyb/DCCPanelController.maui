@@ -4,8 +4,8 @@ using DccClients.Jmri.Helpers;
 
 namespace DccClients.Jmri.Events;
 
-public class JmriTurnoutEventArgs : System.EventArgs {
-    public string Name { get; private set; } = string.Empty;
+public class JmriTurnoutEventArgs : JmriEventArgs<JmriTurnoutEventArgs>, IJmriEventArgs, IJmriProcessor<JmriTurnoutEventArgs> {
+    public string Name { get; private init; } = string.Empty;
     public string UserName { get; private set; } = string.Empty;
     public string Comment { get; private set; } = string.Empty;
     public int State { get; private set; } // 2=Closed, 4=Thrown
@@ -23,4 +23,9 @@ public class JmriTurnoutEventArgs : System.EventArgs {
             Inverted = dataElement.GetBoolProperty("inverted")
         };
     }
-}
+
+    public static bool HasChanged(JmriTurnoutEventArgs? existingItem, JmriTurnoutEventArgs newItem) {
+        return existingItem == null || 
+               existingItem?.State != newItem.State;
+    }
+} 

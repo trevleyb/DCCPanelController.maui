@@ -33,6 +33,12 @@
             <ShellContent
                 ContentTemplate="{DataTemplate view:BlocksPage}"
                 Title="Blocks"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:SensorsPage}"
+                Title="Sensors"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:LightsPage}"
+                Title="Lights"/>
         </Tab>
         <Tab Title="Settings" Icon="settings.png">
             <ShellContent

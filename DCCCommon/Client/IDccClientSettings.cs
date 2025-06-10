@@ -7,4 +7,5 @@ public interface IDccClientSettings {
     DccClientType Type { get; }
     bool SetAutomatically { get; }
     bool SupportsManualEntries { get; }
+    List<DccClientCapabilities> Capabilities { get; }
 }

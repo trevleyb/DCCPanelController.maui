@@ -54,7 +54,8 @@
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Occupancy Block data available"/>
+                                <Label IsVisible="{Binding IsSupported}" Text="No Occupancy Block data available. Press Refresh."/>
+                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Occupancy Blocks."/>
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>

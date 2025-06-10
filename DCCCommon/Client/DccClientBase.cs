@@ -9,6 +9,8 @@ public abstract class DccClientBase {
     public event EventHandler<DccRouteArgs>? RouteMsgReceived;
     public event EventHandler<DccOccupancyArgs>? OccupancyMsgReceived;
     public event EventHandler<DccSignalArgs>? SignalMsgReceived;
+    public event EventHandler<DccSensorArgs>? SensorMsgReceived;
+    public event EventHandler<DccLightArgs>? LightMsgReceived;
     
     protected virtual void OnConnectionStateChanged(DccStateChangedArgs e) {
         ConnectionStateChanged?.Invoke(this, e);
@@ -33,4 +35,13 @@ public abstract class DccClientBase {
     protected virtual void OnSignalMsgReceived(DccSignalArgs e) {
         SignalMsgReceived?.Invoke(this, e);
     }
+    
+    protected virtual void OnSensorMsgReceived(DccSensorArgs e) {
+        SensorMsgReceived?.Invoke(this, e);
+    }
+
+    protected virtual void OnLightMsgReceived(DccLightArgs e) {
+        LightMsgReceived?.Invoke(this, e);
+    }
+
 }

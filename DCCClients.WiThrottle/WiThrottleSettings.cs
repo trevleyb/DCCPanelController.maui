@@ -28,10 +28,13 @@ public partial class WiThrottleClientSettings : ObservableObject, IDccClientSett
         Port = port;
     }
 
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public Guid Id { get; init; } = Guid.NewGuid();
     public string GetNameMessage => $"N{Name}";
     public string GetHardwareMessage => $"HU{Id.ToString()}";
     public override string ToString() {
         return $"SystemName: {Name}, Address: {Address}, Port: {Port}";
     }
+    
+    public List<DccClientCapabilities> Capabilities => [DccClientCapabilities.Turnouts, DccClientCapabilities.Routes];
+
 }

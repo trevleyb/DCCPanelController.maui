@@ -4,8 +4,8 @@ using DccClients.Jmri.Helpers;
 
 namespace DccClients.Jmri.Events;
 
-public class JmriSignalEventArgs : System.EventArgs {
-    public string Name { get; private set; } = string.Empty;
+public class JmriSignalEventArgs : JmriEventArgs<JmriSignalEventArgs>, IJmriEventArgs, IJmriProcessor<JmriSignalEventArgs> {
+    public string Name { get; private init; } = string.Empty;
     public string UserName { get; private set; } = string.Empty;
     public string Appearance { get; private set; } = string.Empty;
     public bool Lit { get; private set; }
@@ -23,4 +23,13 @@ public class JmriSignalEventArgs : System.EventArgs {
             Held = dataElement.GetBoolProperty("held")
         };
     }
+
+    public static bool HasChanged(JmriSignalEventArgs? existingItem, JmriSignalEventArgs newItem) {
+        return existingItem == null || 
+               existingItem.Appearance != newItem.Appearance ||
+               existingItem.Lit != newItem.Lit || 
+               existingItem.Held != newItem.Held;
+
+    }
+
 }

@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCCommon.Client;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -29,17 +30,22 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+
+    public INavigation? Navigation;
     private bool _isAscending;
     private string _sortColumn = "";
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-    public INavigation? Navigation;
+
+    public bool IsSupported { get; private set; }
+    public bool IsNotSupported => !IsSupported;
 
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Turnouts = Profile.Turnouts;
-        CanAddTurnout = profile?.Settings?.ClientSettings?.SupportsManualEntries == true;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Turnouts) ?? false;
+        CanAddTurnout = profile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {
                 IsTurnoutSelected = SelectedTurnout != null;

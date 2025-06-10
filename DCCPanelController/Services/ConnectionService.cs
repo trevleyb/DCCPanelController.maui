@@ -169,6 +169,22 @@ public partial class ConnectionService : ObservableObject {
         return Result.Fail("No signal provided.");
     }
 
+    public async Task<IResult> SendLightCmdAsync(Light? light, bool isActive) {
+        AddMessage($"Set {light?.Id} to {(isActive ? "'On'" : "'Off'")}","Light");
+        if (light is { Id: not null }) {
+            return await Client?.SendLightCmdAsync(light.Id, isActive)!;
+        }
+        return Result.Fail("No light provided.");
+    }
+
+    public async Task<IResult> SendSensorCmdAsync(Sensor? sensor, bool isActive) {
+        AddMessage($"Set {sensor?.Id} to {(isActive ? "'On'" : "'Off'")}","Sensor");
+        if (sensor is { Id: not null }) {
+            return await Client?.SendSensorCmdAsync(sensor.Id, isActive)!;
+        }
+        return Result.Fail("No sensor provided.");
+    }
+
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
         AddMessage($"Received Route {e.RouteId} with state {(e.IsActive ? "'Active'" : "'Inactive'")}","Route");
 

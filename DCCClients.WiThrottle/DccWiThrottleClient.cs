@@ -157,6 +157,16 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
+    public async Task<IResult> SendLightCmdAsync(string signal, bool isActive) {
+        await Task.CompletedTask;
+        return Result.Fail("Withrottle does not support light commands.");
+    }
+
+    public async Task<IResult> SendSensorCmdAsync(string sensor, bool isOccupied) {
+        await Task.CompletedTask;
+        return Result.Fail("Withrottle does not support sensor commands.");
+    }
+
     public async Task<IResult> SendBlockCmdAsync(string block, bool isOccupied) {
         await Task.CompletedTask;
         return Result.Fail("Withrottle does not support block commands.");
