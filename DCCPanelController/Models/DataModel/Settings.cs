@@ -8,5 +8,6 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Settings : ObservableObject {
     [ObservableProperty] private Color _backgroundColor = Colors.White;
     [ObservableProperty] private bool _connectOnStartup = true;
-    [ObservableProperty] private IDccClientSettings? _clientSettings = new JmriClientSettings();
+    [ObservableProperty] private bool _setTurnoutStatesOnStartup = true;
+    [ObservableProperty] private IDccClientSettings? _clientSettings = new UnknownSettings();
 }

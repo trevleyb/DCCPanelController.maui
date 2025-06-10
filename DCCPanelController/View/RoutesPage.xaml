@@ -13,21 +13,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding RefreshRoutesCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="refresh_cw.png"/>
-        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
-
+        <ToolbarItem Command="{Binding RefreshRoutesCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="auto,*,80"
+            ColumnDefinitions="150,*,100"
             HorizontalOptions="Fill"
             Padding="5">
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="ID"
+                CommandParameter="{Binding LabelID}"
                 Grid.Column="0"
                 HorizontalOptions="CenterAndExpand"
                 Margin="-5,0,0,0"
@@ -35,13 +32,13 @@
                 Text="{Binding ColumnLabelID}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="SystemName"
+                CommandParameter="{Binding LabelName}"
                 Grid.Column="1"
                 Style="{StaticResource ButtonLabel}"
                 Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="State"
+                CommandParameter="{Binding LabelState}"
                 Grid.Column="2"
                 Style="{StaticResource ButtonLabel}"
                 Text="{Binding ColumnLabelState}"/>
@@ -64,7 +61,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Route">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="*,250,80" Padding="5">
+                                <Grid ColumnDefinitions="150,*,100" Padding="5">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, Path=ToggleRoutesStateCommand}"
@@ -96,13 +93,13 @@
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Set">
+                                                Value="Active">
                                                 <Setter Property="Source" Value="route_active.png"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
-                                                Value="Set">
+                                                Value="Inactive">
                                                 <Setter Property="Source" Value="route_inactive.png"/>
                                             </DataTrigger>
                                             <DataTrigger

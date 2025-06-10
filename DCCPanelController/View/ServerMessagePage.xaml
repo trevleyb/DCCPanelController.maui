@@ -14,12 +14,12 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="150,250,*"
+            ColumnDefinitions="150,150,*"
             HorizontalOptions="Fill"
             Padding="5">
             <Button
@@ -55,7 +55,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="services:ServerMessage">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,250,*" Padding="5">
+                                <Grid ColumnDefinitions="150,150,*" Padding="5">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"

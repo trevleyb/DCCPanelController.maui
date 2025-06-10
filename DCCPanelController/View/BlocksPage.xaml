@@ -13,20 +13,18 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding RefreshBlocksCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="refresh_cw.png"/>
-        <ToolbarItem Command="{Binding ClearAllCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Command="{Binding RefreshBlocksCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="auto,*,100"
+            ColumnDefinitions="150,*,100"
             HorizontalOptions="Fill"
             Padding="5">
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="ID"
+                CommandParameter="{Binding LabelID}"
                 Grid.Column="0"
                 HorizontalOptions="CenterAndExpand"
                 Margin="-5,0,0,0"
@@ -34,13 +32,13 @@
                 Text="{Binding ColumnLabelID}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="SystemName"
+                CommandParameter="{Binding LabelName}"
                 Grid.Column="1"
                 Style="{StaticResource ButtonLabel}"
                 Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
-                CommandParameter="Is Occupied"
+                CommandParameter="{Binding LabelState}"
                 Grid.Column="2"
                 Style="{StaticResource ButtonLabel}"
                 Text="{Binding ColumnLabelState}"/>
@@ -56,7 +54,7 @@
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Route data available"/>
+                                <Label Text="No Occupancy Block data available"/>
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>
@@ -64,7 +62,14 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Block">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="*,250,100" Padding="5">
+                                <Grid ColumnDefinitions="150,*,100" Padding="5">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, Path=ToggleBlockStateCommand}"
+                                            CommandParameter="{Binding .}"
+                                            x:DataType="{x:Type view:BlocksViewModel}"/>
+                                    </Grid.GestureRecognizers>
+
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"

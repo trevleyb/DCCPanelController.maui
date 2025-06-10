@@ -10,6 +10,7 @@ using DccClients.Jmri.Helpers;
 namespace DccClients.Jmri;
 
 public class JmriClient : IDisposable {
+    private const int MinimumRefreshMs = 250;
     private readonly string _serverUrl;
     private readonly int _reconnectDelayMs;
     private readonly int _refreshMs;
@@ -53,20 +54,20 @@ public class JmriClient : IDisposable {
 
     public JmriClient(string serverHost = "localhost", int serverPort = 12080, double refreshMs = 5.0, int reconnectDelayMs = 5000) : this(serverHost, serverPort, (int)(refreshMs * 1000), reconnectDelayMs) { }
 
-    public JmriClient(string serverHost = "localhost", int serverPort = 12080, int refreshMs = 5000, int reconnectDelayMs = 5000) {
+    public JmriClient(string serverHost = "localhost", int serverPort = 12080, int refreshMs = 1000, int reconnectDelayMs = 5000) {
         _serverUrl = $"ws://{serverHost}:{serverPort}/json/";
         _reconnectDelayMs = reconnectDelayMs;
-        _refreshMs = int.Max(refreshMs,500);  // Don't do this more than once per second (forced)
+        _refreshMs = int.Max(refreshMs, MinimumRefreshMs);
     }
 
     public async Task ConnectAsync() {
         lock (_connectionLock) {
             if (_connectionTask is { IsCompleted: false }) return;
-
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
             _connectionTask = MaintainConnectionAsync(_cancellationTokenSource.Token);
         }
+        await Task.CompletedTask;
     }
 
     public async Task DisconnectAsync() {
@@ -364,46 +365,46 @@ public class JmriClient : IDisposable {
         return true;
     }
 
-    public async Task SetTurnoutStateAsync(string turnoutName, bool thrown) {
+    public async Task SetTurnoutStateAsync(string turnoutID, bool thrown) {
         var command = BuildJmriMessage("turnout", "post", new Dictionary<string, object> {
             { "type", "turnout" },
-            { "name", turnoutName },
+            { "name", turnoutID },
             { "state", thrown ? 4 : 2 }
         });
         await SendCommandAsync(command);
     }
 
-    public async Task SetSignalAppearanceAsync(string signalName, string appearance) {
+    public async Task SetSignalAppearanceAsync(string signalID, string appearance) {
         var command = BuildJmriMessage("signalMast", "post", new Dictionary<string, object> {
-            { "name", signalName },
+            { "name", signalID },
             { "set", appearance }
         });
         await SendCommandAsync(command);
     }
 
-    public async Task SetRouteStateAsync(string routeName, bool active) {
+    public async Task SetRouteStateAsync(string routeID, bool active) {
         var command = BuildJmriMessage("route", "post", new Dictionary<string, object> {
             { "type", "route" },
-            { "name", routeName },
-            { "action", "set" }
+            { "name", routeID },
+            { "state", active ? 2 : 4 }
         });
         await SendCommandAsync(command);
     }
 
-    public async Task SetBlockValueAsync(string blockName, string value) {
+    public async Task SetBlockValueAsync(string blockID, string value) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
-            { "name", blockName },
+            { "name", blockID },
             { "action", value }
         });
         await SendCommandAsync(command);
     }
 
-    public async Task SetBlockAllocatedAsync(string blockName, bool allocated) {
+    public async Task SetBlockAllocatedAsync(string blockID, bool allocated) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
-            { "name", blockName },
-            { "action", allocated ? "set" : "unset" }
+            { "name", blockID },
+            { "state", allocated ? 2 : 4 }
         });
         await SendCommandAsync(command);
     }
@@ -422,7 +423,7 @@ public class JmriClient : IDisposable {
             await SendMessageAsync(jsonSerialisedCommand);
         }
     }
-    
+
     private async Task SendMessageAsync(string? message) {
         if (!string.IsNullOrEmpty(message) && _webSocket?.State == WebSocketState.Open) {
             var bytes = Encoding.UTF8.GetBytes(message);

@@ -15,6 +15,7 @@ public partial class WiThrottleClientSettings : ObservableObject, IDccClientSett
     [NotifyPropertyChangedFor(nameof(SetManually))]
     private bool _setAutomatically;
     public bool SetManually => !SetAutomatically;
+    public bool SupportsManualEntries => true;
     
     public DccClientType Type => DccClientType.WiThrottle;
     public string Url => $"{Protocol}://{Address}:{Port}";

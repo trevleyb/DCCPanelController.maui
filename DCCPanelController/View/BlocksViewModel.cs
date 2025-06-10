@@ -9,14 +9,19 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View;
 
 public partial class BlocksViewModel : Base.ConnectionViewModel {
-    private const string LabelID = "ID";
-    private const string LabelName = "Block";
-    private const string LabelState = "Is Occupied?";
+    private const string _labelID = "System Name";
+    private const string _labelName = "Block";
+    private const string _labelState = "Is Occupied?";
+
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+
     [ObservableProperty] private ObservableCollection<Block> _blocks;
 
-    [ObservableProperty] private string _columnLabelID = LabelID;
-    [ObservableProperty] private string _columnLabelName = LabelName;
-    [ObservableProperty] private string _columnLabelState = LabelState;
+    [ObservableProperty] private string _columnLabelID = _labelID;
+    [ObservableProperty] private string _columnLabelName = _labelName;
+    [ObservableProperty] private string _columnLabelState = _labelState;
     private bool _isAscending;
     private string _sortColumn = "";
 
@@ -38,18 +43,18 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     private async Task SortByColumnAsync(string columnName) {
         List<Block> sortedBlocks;
         if (!_isAscending) {
-            sortedBlocks = columnName.ToLower() switch {
-                "name"  => Blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList(),
-                "id"    => Blocks.OrderBy<Block, string>(x => x.Id ?? "").ToList(),
-                "state" => Blocks.OrderBy<Block, bool>(x => x.IsOccupied).ToList(),
-                _       => Blocks.ToList<Block>()
+            sortedBlocks = columnName switch {
+                _labelName  => Blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList(),
+                _labelID    => Blocks.OrderBy<Block, string>(x => x.Id ?? "").ToList(),
+                _labelState => Blocks.OrderBy<Block, bool>(x => x.IsOccupied).ToList(),
+                _           => Blocks.ToList<Block>()
             };
         } else {
-            sortedBlocks = columnName.ToLower() switch {
-                "name"  => Blocks.OrderByDescending<Block, string>(x => x.Name ?? "").ToList(),
-                "id"    => Blocks.OrderByDescending<Block, string>(x => x.Id ?? "").ToList(),
-                "state" => Blocks.OrderByDescending<Block, bool>(x => x.IsOccupied).ToList(),
-                _       => Blocks.ToList<Block>()
+            sortedBlocks = columnName switch {
+                _labelName  => Blocks.OrderByDescending<Block, string>(x => x.Name ?? "").ToList(),
+                _labelID    => Blocks.OrderByDescending<Block, string>(x => x.Id ?? "").ToList(),
+                _labelState => Blocks.OrderByDescending<Block, bool>(x => x.IsOccupied).ToList(),
+                _           => Blocks.ToList<Block>()
             };
         }
 
@@ -62,34 +67,29 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     }
 
     private void SetLabels() {
-        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = LabelState + (_sortColumn.Equals("Is Occupied") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelID = LabelID + (_sortColumn.Equals(_labelID) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = LabelName + (_sortColumn.Equals(_labelName) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelState = LabelState + (_sortColumn.Equals(_labelState) ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand]
-    private async Task RefreshBlocksAsync() {
-        try {
-            IsBusy = true;
-            await ConnectionService.ForceRefresh();
-        } catch (Exception ex) {
-            Console.WriteLine($"Unable to force refresh the blocks: {ex.Message}");
-        } finally {
-            IsBusy = false;
+    public async Task ToggleBlockState(Block? block) {
+        if (block == null) return;
+        block.IsOccupied = !block.IsOccupied;
+        if (!string.IsNullOrEmpty(block.Id) && IsConnected) {
+            await ConnectionService.SendBlockCmdAsync(block, block.IsOccupied )!;
         }
     }
-
+    
     [RelayCommand]
-    private async Task ClearAllAsync() {
+    private async Task RefreshBlocksAsync() {
         IsBusy = true;
         try {
-            if (await DisplayAlertHelper.DisplayAlertYesNoAsync("Reset all Blocks?", "This wll remove all Blocks previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
-                for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) {
-                    Profile.Blocks.RemoveAt(ptr - 1);
-                    OnPropertyChanged(nameof(Blocks));
-                }
-                await RefreshBlocksAsync();
+            for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) {
+                Profile.Blocks.RemoveAt(ptr - 1);
+                OnPropertyChanged(nameof(Blocks));
             }
+            await RefreshBlocksAsync();
         } catch { /* ignored */
         } finally {
             IsBusy = false;

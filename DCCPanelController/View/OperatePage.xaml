@@ -9,7 +9,8 @@
     xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -18,7 +19,7 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
         <ToolbarItem
             Clicked="HideUnHideTabBar"
             IconImageSource="maximize_2.png"
@@ -43,11 +44,13 @@
                 </CarouselView.ItemsSource>
 
                 <CarouselView.EmptyView>
-                    <ContentView>
+                    <ContentView HorizontalOptions="Center" VerticalOptions="Center">
                         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                            <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
                             <Label
                                 Style="{StaticResource LargeLabel}"
-                                FontFamily="OpenSansExtraBold"
+                                FontFamily="OpenSansBold"
+                                FontSize="24"
                                 HorizontalOptions="Center"
                                 Margin="0,20,0,10"
                                 Text="Welcome to the DCC Model Layout Panel Controller App"
@@ -56,9 +59,19 @@
                                 Style="{StaticResource LargeLabel}"
                                 FontFamily="OpenSansLight"
                                 HorizontalOptions="Center"
-                                Margin="0,10,0,10"
-                                Text="No Panels are currently defined. Add a new panel to get started."
+                                Margin="0,10,0,0"
+                                LineBreakMode="WordWrap"
+                                Text="This is the Operate page where you can control your layout."
                                 VerticalOptions="Center"/>
+                            <Label
+                                Style="{StaticResource LargeLabel}"
+                                LineBreakMode="WordWrap"
+                                FontFamily="OpenSansLight"
+                                HorizontalOptions="Center"
+                                Margin="0,0,10,0"
+                                Text="Currently, no Panels are defined. Use the Panel Editor to add a Panel. "
+                                VerticalOptions="Center"/>
+                            
                             <HorizontalStackLayout
                                 HorizontalOptions="Center"
                                 Margin="0"

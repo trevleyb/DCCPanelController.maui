@@ -5,6 +5,7 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Block : ObservableObject {
     [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
+    [ObservableProperty] private string? _sensor;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(State))]

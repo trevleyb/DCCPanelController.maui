@@ -157,6 +157,11 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         return Result.Ok();
     }
 
+    public async Task<IResult> SendBlockCmdAsync(string block, bool isOccupied) {
+        await Task.CompletedTask;
+        return Result.Fail("Withrottle does not support block commands.");
+    }
+
     public async Task<IResult> SendSignalCmdAsync(string signal, SignalAspectEnum aspect) {
         await Task.CompletedTask;
         return Result.Fail("Withrottle does not support signal commands.");

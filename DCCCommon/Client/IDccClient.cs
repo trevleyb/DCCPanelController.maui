@@ -14,6 +14,7 @@ public interface IDccClient {
     Task<IResult> SendTurnoutCmdAsync(string turnout, bool thrown);
     Task<IResult> SendRouteCmdAsync(string route, bool active);
     Task<IResult> SendSignalCmdAsync(string signal, SignalAspectEnum aspect);
+    Task<IResult> SendBlockCmdAsync(string block, bool isOccupied);
 
     Task<IResult<List<DiscoveredService>>> FindAvailableServicesAsync();
     Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync();

@@ -160,6 +160,17 @@ public class DccJmriClient : DccClientBase, IDccClient {
         }
     }
 
+    public async Task<IResult> SendBlockCmdAsync(string block, bool isOccupied) {
+        try {
+            if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
+            OnMessageReceived(new DccMessageArgs("Block", $"Setting block {block} to {(isOccupied ? "Occupied" : "Free")}"));
+            await _jmriClient.SetBlockAllocatedAsync(block, isOccupied);
+            return Result.Ok();
+        } catch (Exception ex) {
+            return Result.Fail(new Error("Failed to send block command to JMRI server").CausedBy(ex));
+        }
+    }
+    
     public async Task<IResult> SendRouteCmdAsync(string route, bool active) {
         try {
             if (!IsConnected || _jmriClient == null) return Result.Fail(new Error("Not connected to JMRI server"));
@@ -221,6 +232,7 @@ public class DccJmriClient : DccClientBase, IDccClient {
         OnOccupancyMsgReceived(new DccOccupancyArgs() {
             BlockId = e.Name,
             UserName = e.UserName,
+            Sensor = e.SensorName,
             IsOccupied = e.State == 2
         });
     }

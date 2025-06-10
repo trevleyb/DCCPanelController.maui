@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCCommon.Client;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 
@@ -16,11 +17,13 @@ public partial class ConnectionViewModel : BaseViewModel {
             IsConnected = args.IsConnected;
             OnPropertyChanged(nameof(IsConnected));
             OnPropertyChanged(nameof(ConnectionIcon));
+            OnPropertyChanged(nameof(IsConnectionAvailable));
         };
     }
 
     public Profile Profile { get; set; }
     public ConnectionService ConnectionService { get; }
+    public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.Type != DccClientType.Unknown; 
     public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
 
     [RelayCommand]

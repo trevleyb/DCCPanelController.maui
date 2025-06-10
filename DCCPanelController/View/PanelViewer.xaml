@@ -138,10 +138,10 @@
             <CollectionView.EmptyView>
                 <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
                     <StackLayout HorizontalOptions="Fill" VerticalOptions="Center">
-                        <Label FontAttributes="Bold" FontSize="12" HorizontalOptions="Center"
+                        <Label Style="{StaticResource LargeLabel}" HorizontalOptions="Center"
                                Text="No Panels were found."/>
                         <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0">
-                            <Label FontSize="12" Text="Please use" VerticalOptions="Center"/>
+                            <Label Style="{StaticResource MediumLabel}" Text="Please use" VerticalOptions="Center"/>
                             <ImageButton
                                 Command="{Binding AddPanelCommand}"
                                 Margin="-5,0,-5,0"
@@ -152,7 +152,7 @@
                                 </Image.Behaviors>
                             </ImageButton>
                             <Label
-                                FontSize="12"
+                                Style="{StaticResource MediumLabel}"
                                 Text="to add a new Panel."
                                 VerticalOptions="Center"/>
                         </HorizontalStackLayout>

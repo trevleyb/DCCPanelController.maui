@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCCommon.Client;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Properties;
@@ -11,11 +12,15 @@ namespace DCCPanelController.View;
 public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesViewModel {
     [ObservableProperty] private string _title;
     [ObservableProperty] private Turnout _turnout;
+    [ObservableProperty] private bool _isServerControlled;
+    [ObservableProperty] private bool _isManualControlled;
 
     public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
         Turnout = turnout;
         ConnectionService = connectionService;
         Title = Turnout?.Name ?? "Turnout Properties";
+        IsServerControlled = Turnout?.IsEditable == false;
+        IsManualControlled = Turnout?.IsEditable == true ;
     }
 
     private ConnectionService ConnectionService { get; }
@@ -39,11 +44,6 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesView
 
     [RelayCommand]
     private async Task ToggleTurnoutDefaultStateAsync() {
-        Turnout.Default = Turnout.Default switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed
-        };
         OnPropertyChanged(nameof(Turnout.Default));
         OnPropertyChanged(nameof(Turnout));
     }

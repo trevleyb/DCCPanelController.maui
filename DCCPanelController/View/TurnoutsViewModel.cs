@@ -11,43 +11,61 @@ using DCCPanelController.View.Properties;
 namespace DCCPanelController.View;
 
 public partial class TurnoutsViewModel : ConnectionViewModel {
-    private const string LabelID = "ID";
-    private const string LabelName = "Turnout";
-    private const string LabelState = "State";
-    private const string LabelAddress = "DCC Address";
+    private const string _labelID = "System Name";
+    private const string _labelName = "User Name";
+    private const string _labelState = "State";
+    private const string _labelAddress = "DCC Address";
 
-    [ObservableProperty] private string _columnLabelAddress = LabelAddress;
-    [ObservableProperty] private string _columnLabelID = LabelID;
-    [ObservableProperty] private string _columnLabelName = LabelName;
-    [ObservableProperty] private string _columnLabelState = LabelState;
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+    public string LabelAddress => _labelAddress;
+
+    [ObservableProperty] private bool _isTurnoutSelected;
+    [ObservableProperty] private Turnout? _selectedTurnout;
+    [ObservableProperty] private bool _canAddTurnout;
+
+    [ObservableProperty] private string _columnLabelAddress = _labelAddress;
+    [ObservableProperty] private string _columnLabelID = _labelID;
+    [ObservableProperty] private string _columnLabelName = _labelName;
+    [ObservableProperty] private string _columnLabelState = _labelState;
     private bool _isAscending;
     private string _sortColumn = "";
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
     public INavigation? Navigation;
-    public double ScreenHeight = 100;
 
+    public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Turnouts = Profile.Turnouts;
+        CanAddTurnout = profile?.Settings?.ClientSettings?.SupportsManualEntries == true;
+        PropertyChanged += (sender, args) => {
+            if (args.PropertyName == nameof(SelectedTurnout)) {
+                IsTurnoutSelected = SelectedTurnout != null;
+            }
+        };
         SetLabels();
     }
 
     private void SetLabels() {
-        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelAddress = LabelAddress + (_sortColumn.Equals("DCCAddress") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelID = LabelID + (_sortColumn.Equals(LabelID) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = LabelName + (_sortColumn.Equals(LabelName) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelState = LabelState + (_sortColumn.Equals(LabelState) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelAddress = LabelAddress + (_sortColumn.Equals(LabelAddress) ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand]
     private async Task RefreshTurnoutsAsync() {
+        IsBusy = true;
         try {
-            IsBusy = true;
-            Profile.Turnouts.Clear();
-            await ConnectionService.ForceRefresh();
-        } catch (Exception ex) {
-            Console.WriteLine($"Unable to force refresh the turnouts: {ex.Message}");
+            var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
+            foreach (var turnout in removeTurnouts) {
+                Profile.Turnouts.Remove(turnout);
+            }
+            await RefreshTurnoutsAsync();
+            OnPropertyChanged(nameof(Turnouts));
+        } catch { /* ignored */
         } finally {
             IsBusy = false;
         }
@@ -58,23 +76,22 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         List<Turnout> sortedTurnout;
 
         if (!_isAscending) {
-            sortedTurnout = columnName.ToLower() switch {
-                "name"       => Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList(),
-                "dccaddress" => Turnouts.OrderBy<Turnout, string>(x => x.DccAddress.ToString() ).ToList(),
-                "id"         => Turnouts.OrderBy<Turnout, string>(x => x.Id ?? "").ToList(),
-                "state"      => Turnouts.OrderBy<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
-                _            => Turnouts.ToList<Turnout>()
+            sortedTurnout = columnName switch {
+                _labelName    => Turnouts.OrderBy<Turnout, string>(x => x.Name ?? "").ToList(),
+                _labelAddress => Turnouts.OrderBy<Turnout, string>(x => x.DccAddress.ToString()).ToList(),
+                _labelID      => Turnouts.OrderBy<Turnout, string>(x => x.Id ?? "").ToList(),
+                _labelState   => Turnouts.OrderBy<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
+                _             => Turnouts.ToList<Turnout>()
             };
         } else {
-            sortedTurnout = columnName.ToLower() switch {
-                "name"       => Turnouts.OrderByDescending<Turnout, string>(x => x.Name ?? "").ToList(),
-                "id"         => Turnouts.OrderByDescending<Turnout, string>(x => x.Id ?? "").ToList(),
-                "dccaddress" => Turnouts.OrderByDescending<Turnout, string>(x => x.DccAddress.ToString()).ToList(),
-                "state"      => Turnouts.OrderByDescending<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
-                _            => Turnouts.ToList<Turnout>()
+            sortedTurnout = columnName switch {
+                _labelName    => Turnouts.OrderByDescending<Turnout, string>(x => x.Name ?? "").ToList(),
+                _labelID      => Turnouts.OrderByDescending<Turnout, string>(x => x.Id ?? "").ToList(),
+                _labelAddress => Turnouts.OrderByDescending<Turnout, string>(x => x.DccAddress.ToString()).ToList(),
+                _labelState   => Turnouts.OrderByDescending<Turnout, TurnoutStateEnum>(x => x.State).ToList(),
+                _             => Turnouts.ToList<Turnout>()
             };
         }
-
         _sortColumn = columnName;
         _isAscending = !_isAscending;
 
@@ -85,6 +102,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task DeleteTurnoutAsync(Turnout? turnout) {
+        turnout ??= SelectedTurnout;
         if (turnout is not null) {
             Turnouts.Remove(turnout);
             OnPropertyChanged(nameof(Turnouts));
@@ -119,6 +137,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task EditTurnoutAsync(Turnout? turnout) {
+        turnout ??= SelectedTurnout;
         try {
             if (turnout is not null && Navigation is { } navigation) {
                 var turnoutsEditViewModel = new TurnoutsEditViewModel(turnout, ConnectionService);
@@ -128,24 +147,6 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
-        }
-    }
-
-    [RelayCommand]
-    private async Task ClearAllAsync() {
-        IsBusy = true;
-        try {
-            if (await DisplayAlertHelper.DisplayAlertYesNoAsync("Reset all Turnouts?", "This wll remove all Turnouts previously loaded from a Server (leaving manually added Turnouts) and reload them from the Connected Server. Are you sure you want to do this?")) {
-                var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
-                foreach (var turnout in removeTurnouts) {
-                    Profile.Turnouts.Remove(turnout);
-                    OnPropertyChanged(nameof(Turnouts));
-                }
-                await RefreshTurnoutsAsync();
-            }
-        } catch { /* ignored */
-        } finally {
-            IsBusy = false;
         }
     }
 }

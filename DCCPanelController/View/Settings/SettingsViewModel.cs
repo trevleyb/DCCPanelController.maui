@@ -25,19 +25,20 @@ public partial class SettingsViewModel : Base.BaseViewModel {
 
     [RelayCommand]
     protected async Task OnConnectClickedAsync() {
-        ConnectionService.AddMessage($"Attempting to connect/disconnect to Service ({Settings.Type})");
+        ConnectionService.AddMessage($"Testing server connection: ({Settings.Type})");
         try {
             IsBusy = true;
             var reconnect = ConnectionService.IsConnected;
             if (reconnect) await ConnectionService.DisconnectAsync();
-            var result = await ConnectionService.ValidateConnectionAsync(Settings);
+
+            var result = await ConnectionService.ConnectAsync(Settings);
             if (result.IsFailure) {
-                ConnectionService.AddMessage("Connection Failed.","ERROR");
+                ConnectionService.AddMessage($"Unable to connect: {result.Message}","ERROR");
                 foreach (var error in result.Errors) ConnectionService.AddMessage(error.Message,"ERROR");
                 var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
-                if (reconnect) await ConnectionService.ConnectAsync(Settings);
+                if (!reconnect) await ConnectionService.DisconnectAsync();
                 ConnectionService.AddMessage("Connected Successfully.");
                 await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
             }

@@ -2,6 +2,9 @@
 
 <Shell
     FlyoutBehavior="Disabled"
+    Shell.TabBarBackgroundColor="{StaticResource Primary}"
+    Shell.TabBarForegroundColor="{StaticResource Primary}"
+    Shell.TabBarUnselectedColor="White"
     Title="DCC Panel Controller"
     iOsSpecific:Page.UseSafeArea="True"
     x:Class="DCCPanelController.View.MainPageTabbed"
@@ -10,7 +13,7 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <FlyoutItem FlyoutDisplayOptions="AsMultipleItems">
+    <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
         <ShellContent
             ContentTemplate="{DataTemplate view:OperatePage}"
             Icon="control.png"
@@ -19,11 +22,8 @@
             ContentTemplate="{DataTemplate view:PanelViewer}"
             Icon="panels.png"
             Title="Panel Editor"/>
-        <Tab Title="Settings" Icon="settings.png">
-            <ShellContent
-                ContentTemplate="{DataTemplate view:SettingsPage}"
-                Icon="settings.png"
-                Title="Settings"/>
+        
+        <Tab Title="Tables" Icon="turnouts.png">
             <ShellContent
                 ContentTemplate="{DataTemplate view:TurnoutsPage}"
                 Title="Turnouts"/>
@@ -33,16 +33,22 @@
             <ShellContent
                 ContentTemplate="{DataTemplate view:BlocksPage}"
                 Title="Blocks"/>
+        </Tab>
+        <Tab Title="Settings" Icon="settings.png">
+            <ShellContent
+                ContentTemplate="{DataTemplate view:SettingsPage}"
+                Title="Settings"/>
+            <ShellContent
+                ContentTemplate="{DataTemplate view:ServerMessagesPage}"
+                Title="Server Messages"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:InstructionsPage}"
                 Title="Help"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:AboutPage}"
                 Title="About"/>
-            <ShellContent
-                ContentTemplate="{DataTemplate view:ServerMessagesPage}"
-                Title="Server Messages"/>
         </Tab>
+
     </FlyoutItem>
 
 </Shell>

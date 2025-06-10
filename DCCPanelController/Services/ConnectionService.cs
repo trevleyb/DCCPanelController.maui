@@ -17,24 +17,22 @@ namespace DCCPanelController.Services;
 public partial class ConnectionService : ObservableObject {
     private const int MaxServerMessages = 500;
 
-    private readonly Profile _profile;
+    [ObservableProperty] private Profile _profile;
     private IDccClient? Client { get; set; }
-    private IDccClientSettings Settings => _profile.Settings.ClientSettings ?? new JmriClientSettings();
-
-    public event EventHandler<ConnectionMessageEvent>? ConnectionMessage;
+    private IDccClientSettings Settings => Profile.Settings.ClientSettings ?? new UnknownSettings();
     public event EventHandler<ConnectionChangedEvent>? ConnectionChanged;
     public bool IsConnected => Client is { IsConnected: true };
 
     [ObservableProperty] private ObservableCollection<ServerMessage> _serverMessages = [];
 
     public ConnectionService(Profile profile) {
-        _profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
+        Profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
         _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
     private async Task InitializeConnectionAsync() {
         try {
-            if (_profile.Settings.ConnectOnStartup) await ConnectAsync(Settings);
+            if (Profile.Settings.ConnectOnStartup) await ConnectAsync(Settings);
         } catch (Exception ex) {
             Console.WriteLine($"Initialisation connection error: {ex.Message}");
         }
@@ -58,16 +56,19 @@ public partial class ConnectionService : ObservableObject {
             // Attempt to connect to the Service provided and return the client
             // --------------------------------------------------------------------------
             Client = CreateClient(clientSettings);
-            if (Client is null) return Result.Fail("Unable to create a Client instance.");
+            if (Client is null) {
+                OnConnectionChanged();
+                return Result.Fail("Unable to create a Client instance.");
+            }
 
             if (Settings.SetAutomatically) {
                 var findFirst = await Client.GetAutomaticConnectionDetailsAsync();
                 if (findFirst is { IsSuccess: true, Value: not null }) {
-                    _profile.Settings.ClientSettings = findFirst.Value;
+                    Profile.Settings.ClientSettings = findFirst.Value;
                 }
             }
 
-            var connectResult = await ConnectAsync(Settings);
+            var connectResult = await Client.ConnectAsync();
             if (connectResult.IsFailure) return Result.Fail("Unable to connect to the specified server.");
 
             Client.ConnectionStateChanged += OnConnectionChanged;
@@ -78,6 +79,7 @@ public partial class ConnectionService : ObservableObject {
             Client.SignalMsgReceived += DccClientOnSignalMsgReceived;
 
             OnConnectionChanged();
+            await SetTurnoutsToDefaultState();
             return connectResult;
         } catch (Exception ex) {
             Console.WriteLine($"Connection Failed: {ex.Message}");
@@ -100,22 +102,24 @@ public partial class ConnectionService : ObservableObject {
         OnConnectionChanged();
     }
 
+    public async Task SetTurnoutsToDefaultState() {
+        if (Profile.Settings.SetTurnoutStatesOnStartup) {
+            if (Client is { IsConnected: true } ) {
+                foreach (var turnout in Profile.Turnouts) {
+                    if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout?.Id)) {
+                        await Client.SendTurnoutCmdAsync(turnout.Id, turnout.State == TurnoutStateEnum.Thrown)!;;
+                    }
+                }
+            }
+        }
+    }
+
     private static IDccClient? CreateClient(IDccClientSettings clientSettings) {
         return clientSettings.Type switch {
             DccClientType.WiThrottle => new DccWiThrottleClient(clientSettings),
             DccClientType.Jmri       => new DccJmriClient(clientSettings),
             _                        => null
         };
-    }
-
-    public async Task<IResult> ValidateConnectionAsync(IDccClientSettings clientSettings) {
-        try {
-            var client = CreateClient(clientSettings);
-            if (client is null) return Result.Fail("Unable to create a Client instance.");
-            return await client.ValidateConnectionAsync();
-        } catch (Exception ex) {
-            return Result.Fail(new Error("Unable to connect to the server.").CausedBy(ex));
-        }
     }
 
     private void OnConnectionChanged(object? sender = null, EventArgs? e = null) {
@@ -126,7 +130,6 @@ public partial class ConnectionService : ObservableObject {
 
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
         AddMessage($"{e.Message}","Message");
-        ConnectionMessage?.Invoke(this, new ConnectionMessageEvent { Message = e.Message });
     }
 
     public async Task<IResult> SendCmdAsync(string message) {
@@ -150,6 +153,14 @@ public partial class ConnectionService : ObservableObject {
         return Result.Fail("No route provided.");
     }
 
+    public async Task<IResult> SendBlockCmdAsync(Block? block, bool isOccupied) {
+        AddMessage($"Set {block?.Id} to '{(isOccupied ? "Occupied" : "Free")}'","Block");
+        if (block is { Sensor: not null }) {
+            return await Client?.SendBlockCmdAsync(block.Sensor, isOccupied)!;
+        }
+        return Result.Fail("No block(sensor) provided.");
+    }
+    
     public async Task<IResult> SendSignalCmdAsync(Signal? signal, SignalAspectEnum aspect) {
         AddMessage($"Set {signal?.Id} to {signal?.Aspect}","Signal");
         if (signal is { Id: not null }) {
@@ -162,8 +173,8 @@ public partial class ConnectionService : ObservableObject {
         AddMessage($"Received Route {e.RouteId} with state {(e.IsActive ? "'Active'" : "'Inactive'")}","Route");
 
         Route? route = null;
-        route ??= _profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
-        route ??= _profile.Routes.FirstOrDefault(x => x.Name == e.UserName) ?? null;
+        route ??= Profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
+        route ??= Profile.Routes.FirstOrDefault(x => x.Name == e.UserName) ?? null;
         if (route is not null) {
             route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
         } else {
@@ -172,7 +183,7 @@ public partial class ConnectionService : ObservableObject {
                 Name = e.UserName,
                 State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive
             };
-            _profile.Routes.Add(route);
+            Profile.Routes.Add(route);
         }
     }
 
@@ -180,18 +191,18 @@ public partial class ConnectionService : ObservableObject {
         AddMessage($"Received Turnout {e.TurnoutId} with state {(e.IsClosed ? "'Closed'" : "'Thrown'")}","Turnout");
         
         Turnout? turnout = null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Id == e.TurnoutId) ?? null;
-        turnout ??= _profile?.Turnouts?.FirstOrDefault(x => x.Name == e.Username) ?? null;
+        turnout ??= Profile?.Turnouts?.FirstOrDefault(x => x.Id == e.TurnoutId) ?? null;
+        turnout ??= Profile?.Turnouts?.FirstOrDefault(x => x.Name == e.Username) ?? null;
         if (turnout is not null) {
             turnout.State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown;
-        } else if (_profile is not null && _profile.Turnouts is not null) {
+        } else if (Profile is not null && Profile.Turnouts is not null) {
             turnout = new Turnout {
                 Id = e.TurnoutId,
                 Name = e.Username,
                 DccAddress = e.TurnoutId.FromDccAddressString(),
                 State = e.IsClosed ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown
             };
-            _profile.Turnouts.Add(turnout);
+            Profile.Turnouts.Add(turnout);
         }
     }
 
@@ -199,17 +210,18 @@ public partial class ConnectionService : ObservableObject {
         AddMessage($"Received Occupancy {e.BlockId} with state {(e.IsOccupied ? "'Occupied'" : "'Free'")}","Occupancy");
 
         Block? block = null;
-        block ??= _profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
-        block ??= _profile?.Blocks?.FirstOrDefault(x => x.Name == e.UserName) ?? null;
+        block ??= Profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
+        block ??= Profile?.Blocks?.FirstOrDefault(x => x.Name == e.UserName) ?? null;
         if (block is not null) {
             block.IsOccupied = e.IsOccupied;
-        } else if (_profile is not null && _profile.Blocks is not null) {
+        } else if (Profile is not null && Profile.Blocks is not null) {
             block = new Block {
                 Id = e.BlockId,
                 Name = e.UserName,
+                Sensor = e.Sensor,
                 IsOccupied = e.IsOccupied
             };
-            _profile.Blocks.Add(block);
+            Profile.Blocks.Add(block);
         }
     }
 
@@ -217,18 +229,18 @@ public partial class ConnectionService : ObservableObject {
         AddMessage($"Received Signal {e.SignalId} with aspect '{e.Aspect}'","Signal");
 
         Signal? signal = null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
-        signal ??= _profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
+        signal ??= Profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
+        signal ??= Profile?.Signals?.FirstOrDefault(x => x.Name == e.SignalId) ?? null;
         if (signal is not null) {
             signal.Aspect = e.Aspect;
-        } else if (_profile is not null && _profile.Signals is not null) {
+        } else if (Profile is not null && Profile.Signals is not null) {
             signal = new Signal {
                 Id = e.SignalId,
                 Name = e.SignalId,
                 DccAddress = e.SignalId.FromDccAddressString(),
                 Aspect = e.Aspect
             };
-            _profile.Signals.Add(signal);
+            Profile.Signals.Add(signal);
         }
     }
 
@@ -255,11 +267,6 @@ public partial class ConnectionService : ObservableObject {
 public class ConnectionChangedEvent : EventArgs {
     public ConnectionStatus Status { get; init; }
     public bool IsConnected => Status == ConnectionStatus.Connected;
-    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
-}
-
-public class ConnectionMessageEvent : EventArgs {
-    public string Message { get; init; } = string.Empty;
 }
 
 public partial class ServerMessage(string message, string operation = "") : ObservableObject {

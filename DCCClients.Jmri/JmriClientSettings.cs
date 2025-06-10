@@ -14,6 +14,7 @@ public partial class JmriClientSettings : ObservableObject, IDccClientSettings {
     [NotifyPropertyChangedFor(nameof(SetManually))]
     private bool _setAutomatically;
     public bool SetManually => !SetAutomatically;
+    public bool SupportsManualEntries => false;
     
     public DccClientType Type => DccClientType.Jmri;
     public string Url => $"{Protocol}://{Address}:{Port}";

@@ -36,8 +36,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             break;
 
         default:
-            CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri, _viewModel?.Settings?.ClientSettings);
-            _viewModel!.IsJmriServer = true;
+            _viewModel!.IsJmriServer = false;
             _viewModel!.IsWiThrottle = false;
             break;
         }
@@ -105,7 +104,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private static async Task<string> PromptUserForSaveLocation() {
-        var result = await FolderPicker.PickAsync(new CancellationToken());
+        var result = await FolderPicker.PickAsync(CancellationToken.None);
         result.EnsureSuccess();
         return result.Folder.Path ?? string.Empty;
     }

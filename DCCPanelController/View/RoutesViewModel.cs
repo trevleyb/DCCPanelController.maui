@@ -12,13 +12,19 @@ using DCCPanelController.View.Properties;
 namespace DCCPanelController.View;
 
 public partial class RoutesViewModel : ConnectionViewModel {
-    private const string LabelID = "ID";
-    private const string LabelName = "Route";
-    private const string LabelState = "State";
+    private const string _labelID = "System Name";
+    private const string _labelName = "User Name";
+    private const string _labelState = "State";
+    private const string _labelAddress = "DCC Address";
 
-    [ObservableProperty] private string _columnLabelID = LabelID;
-    [ObservableProperty] private string _columnLabelName = LabelName;
-    [ObservableProperty] private string _columnLabelState = LabelState;
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+    public string LabelAddress => _labelAddress;
+
+    [ObservableProperty] private string _columnLabelID = _labelID;
+    [ObservableProperty] private string _columnLabelName = _labelName;
+    [ObservableProperty] private string _columnLabelState = _labelState;
     [ObservableProperty] private ObservableCollection<Route> _routes;
     private string _sortColumn = "";
     private bool _isAscending;
@@ -43,18 +49,18 @@ public partial class RoutesViewModel : ConnectionViewModel {
         List<Route> sortedRoutes;
 
         if (!_isAscending) {
-            sortedRoutes = columnName.ToLower() switch {
-                "name"  => Routes.OrderBy<Route, string>(x => x.Name ?? "").ToList(),
-                "id"    => Routes.OrderBy<Route, string>(x => x.Id ?? "").ToList(),
-                "state" => Routes.OrderBy<Route, RouteStateEnum>(x => x.State).ToList(),
-                _       => Routes.ToList<Route>()
+            sortedRoutes = columnName switch {
+                _labelName  => Routes.OrderBy<Route, string>(x => x.Name ?? "").ToList(),
+                _labelID    => Routes.OrderBy<Route, string>(x => x.Id ?? "").ToList(),
+                _labelState => Routes.OrderBy<Route, RouteStateEnum>(x => x.State).ToList(),
+                _           => Routes.ToList<Route>()
             };
         } else {
             sortedRoutes = columnName.ToLower() switch {
-                "name"  => Routes.OrderByDescending<Route, string>(x => x.Name ?? "").ToList(),
-                "id"    => Routes.OrderByDescending<Route, string>(x => x.Id ?? "").ToList(),
-                "state" => Routes.OrderByDescending<Route, RouteStateEnum>(x => x.State).ToList(),
-                _       => Routes.ToList<Route>()
+                _labelName  => Routes.OrderByDescending<Route, string>(x => x.Name ?? "").ToList(),
+                _labelID    => Routes.OrderByDescending<Route, string>(x => x.Id ?? "").ToList(),
+                _labelState => Routes.OrderByDescending<Route, RouteStateEnum>(x => x.State).ToList(),
+                _           => Routes.ToList<Route>()
             };
         }
 
@@ -67,18 +73,21 @@ public partial class RoutesViewModel : ConnectionViewModel {
     }
 
     private void SetLabels() {
-        ColumnLabelID = LabelID + (_sortColumn.Equals("ID") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelName = LabelName + (_sortColumn.Equals("SystemName") ? _isAscending.GetSortDirection() : "");
-        ColumnLabelState = LabelState + (_sortColumn.Equals("State") ? _isAscending.GetSortDirection() : "");
+        ColumnLabelID = LabelID + (_sortColumn.Equals(_labelID) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelName = LabelName + (_sortColumn.Equals(_labelName) ? _isAscending.GetSortDirection() : "");
+        ColumnLabelState = LabelState + (_sortColumn.Equals(_labelState) ? _isAscending.GetSortDirection() : "");
     }
 
     [RelayCommand]
     private async Task RefreshRoutesAsync() {
+        IsBusy = true;
         try {
-            IsBusy = true;
-            await ConnectionService.ForceRefresh();
-        } catch (Exception ex) {
-            Console.WriteLine($"Unable to force refresh the routes: {ex.Message}");
+            for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) {
+                Profile.Routes.RemoveAt(ptr - 1);
+                OnPropertyChanged(nameof(Routes));
+            }
+            await RefreshRoutesAsync();
+        } catch { /* ignored */
         } finally {
             IsBusy = false;
         }
@@ -86,31 +95,14 @@ public partial class RoutesViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task ToggleRoutesState(Route? route) {
-        if (route == null) return;
+        if (route == null) return; 
         route.State = route.State switch {
             RouteStateEnum.Active   => RouteStateEnum.Inactive,
             RouteStateEnum.Inactive => RouteStateEnum.Active,
             _                       => RouteStateEnum.Active
         };
         if (!string.IsNullOrEmpty(route.Id) && IsConnected) {
-            await ConnectionService.SendRouteCmdAsync(route, route.State == RouteStateEnum.Active)!;
-        }
-    }
-
-    [RelayCommand]
-    private async Task ClearAllAsync() {
-        IsBusy = true;
-        try {
-            if (await DisplayAlertHelper.DisplayAlertYesNoAsync("Reset all Routes?", "This wll remove all Routes previously loaded from a Server and reload them from the Connected Server. Are you sure you want to do this?")) {
-                for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) {
-                    Profile.Routes.RemoveAt(ptr - 1);
-                    OnPropertyChanged(nameof(Routes));
-                }
-                await RefreshRoutesAsync();
-            }
-        } catch { /* ignored */
-        } finally {
-            IsBusy = false;
+            await ConnectionService.SendRouteCmdAsync(route, true)!;
         }
     }
 }

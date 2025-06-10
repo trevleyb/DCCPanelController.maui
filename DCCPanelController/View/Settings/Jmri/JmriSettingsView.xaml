@@ -148,7 +148,7 @@
                         </Entry.Behaviors>
                     </Entry>
                 </Border>
-                <Label FontSize="14" HorizontalOptions="Center" Margin="2,2,2,2" Text=" port "
+                <Label FontSize="48" HorizontalOptions="Center" Margin="2,-5,2,2" Text=":"
                        TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
 
                 <Border
@@ -168,17 +168,17 @@
             </HorizontalStackLayout>
         </VerticalStackLayout>
 
-        <VerticalStackLayout Margin="10,20,10,0">
+        <VerticalStackLayout Margin="10,-10,10,0">
             <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
-                   Text="Monitor Layout Changes Polling in Seconds"/>
+                   Text="Monitor Layout Changes : Polling in Seconds"/>
             <HorizontalStackLayout>
-                <Slider HorizontalOptions="Start" WidthRequest="130" Maximum="10" Minimum="0.50" Value="{Binding JmriSettings.PollingInterval, Mode=TwoWay, Converter={StaticResource StepConverter}}"/>
+                <Slider HorizontalOptions="Start" WidthRequest="200" Maximum="10" Minimum="0.50" Value="{Binding JmriSettings.PollingInterval, Mode=TwoWay, Converter={StaticResource StepConverter}}"/>
                 <Border
                     StrokeShape="RoundRectangle 10"
                     Stroke="{StaticResource Primary}"
                     HeightRequest="35"
                     WidthRequest="120"
-                    Margin="5,5,0,5"
+                    Margin="25,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                     <Label VerticalOptions="Center" HorizontalOptions="Center" Text="{Binding JmriSettings.PollingInterval, StringFormat='{0:F2} seconds'}" Style="{StaticResource MediumLabel}"/>
                 </Border>
