@@ -237,38 +237,66 @@
 
     <Style TargetType="Label" x:Key="BaseLabel">
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="TextColor"
-                Value="{AppThemeBinding Light={StaticResource LabelText}, Dark={StaticResource LabelTextDark}}"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LabelText}, Dark={StaticResource LabelTextDark}}"/>
     </Style>
 
     <Style
         BasedOn="{StaticResource BaseLabel}"
         TargetType="Label"
         x:Key="MicroLabel">
-        <Setter Property="FontSize" Value="10"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="10"
+                         Tablet="12"
+                         Desktop="12" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style
         BasedOn="{StaticResource BaseLabel}"
         TargetType="Label"
         x:Key="SmallLabel">
-        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="12"
+                         Tablet="18"
+                         Desktop="18" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="MediumLabel">
-        <Setter Property="FontSize" Value="14"/>
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label" 
+        x:Key="MediumLabel">
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="14"
+                         Tablet="20"
+                         Desktop="18" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style
         BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="FieldLabel">
-        <Setter Property="FontSize" Value="14"/>
         <Setter Property="FontFamily" Value="OpenSansLight"></Setter>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="12"
+                         Tablet="18"
+                         Desktop="18" />
+            </Setter.Value>
+        </Setter>
+
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="FieldLabelItalic">
-        <Setter Property="FontSize" Value="12"/>
+        BasedOn="{StaticResource FieldLabel}" TargetType="Label" x:Key="FieldLabelItalic">
         <Setter Property="FontFamily" Value="OpenSansLightItalic"></Setter>
     </Style>
 
@@ -281,9 +309,18 @@
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}" TargetType="Label" x:Key="LargeLabel">
-        <Setter Property="FontSize" Value="20"/>
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label" 
+        x:Key="LargeLabel">
         <Setter Property="FontFamily" Value="OpenSansBold"></Setter>
+        <Setter Property="FontSize">
+            <Setter.Value>
+                <OnIdiom x:TypeArguments="x:Double"
+                         Phone="16"
+                         Tablet="24"
+                         Desktop="18" />
+            </Setter.Value>
+        </Setter>
+
     </Style>
 
     <Style TargetType="ActivityIndicator">
