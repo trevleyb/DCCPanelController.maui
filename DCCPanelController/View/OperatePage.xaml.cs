@@ -7,22 +7,29 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private bool _tabBarState = true;
+    private DisplayOrientation _lastOrientation;
 
     public OperatePage(OperateViewModel viewModel) {
         BindingContext = viewModel;
         InitializeComponent();
-        //PanelCarousel.CurrentItemChanged += PanelCarouselOnCurrentItemChanged;
+        _lastOrientation = DeviceDisplay.Current.MainDisplayInfo.Orientation;
+        DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
         SetTabBarState(true);
     }
 
-    // private void PanelCarouselOnCurrentItemChanged(object? sender, CurrentItemChangedEventArgs e) {
-    //     Console.WriteLine($"Panel Carousel Item Changed. Sender={sender?.GetType()}");
-    //     if (BindingContext is OperateViewModel viewModel) {
-    //         //Title = viewModel.SetActivePanel(PanelCarousel.CurrentItem as Panel);
-    //         OnPropertyChanged(nameof(viewModel.SelectedPanel));
-    //     }
-    // }
-
+    private void OnMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
+    {
+        if (e.DisplayInfo.Orientation != _lastOrientation) {
+            _lastOrientation = e.DisplayInfo.Orientation;
+            MainThread.BeginInvokeOnMainThread(() => {
+                // Force EmptyView refresh
+                var currentEmptyView = PanelCarousel.EmptyView;
+                PanelCarousel.EmptyView = null;
+                PanelCarousel.EmptyView = currentEmptyView;
+            });
+        }
+    }
+    
     private void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
             if (e.Tile is ITileInteractive { } tile) {
@@ -43,16 +50,11 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void SetTabBarState(bool state) {
         if (state) {
             Shell.SetTabBarIsVisible(this, true);
-
-            //IndicatorView.IsVisible = true;
             HideUnHide.IconImageSource = "maximize_2.png";
         } else {
             Shell.SetTabBarIsVisible(this, false);
-
-            //IndicatorView.IsVisible = false;
             HideUnHide.IconImageSource = "minimize_2.png";
         }
-
         _tabBarState = state;
     }
 }

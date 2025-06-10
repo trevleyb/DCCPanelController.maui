@@ -45,32 +45,36 @@
 
                 <CarouselView.EmptyView>
                     <ContentView HorizontalOptions="Center" VerticalOptions="Center">
+                        <ScrollView>
                         <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
                             <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
                             <Label
                                 Style="{StaticResource LargeLabel}"
                                 FontFamily="OpenSansBold"
                                 HorizontalOptions="Center"
+                                LineBreakMode="WordWrap"
+                                HorizontalTextAlignment="Center"
                                 Margin="0,20,0,10"
                                 Text="Welcome to the DCC Model Layout Panel Controller App"
                                 VerticalOptions="Center"/>
                             <Label
                                 Style="{StaticResource MediumLabel}"
+                                LineBreakMode="WordWrap"
                                 FontFamily="OpenSansLight"
                                 HorizontalOptions="Center"
+                                HorizontalTextAlignment="Center"
                                 Margin="0,10,0,0"
-                                LineBreakMode="WordWrap"
-                                Text="This is the Operate page where you can control your layout."
+                                Text="Currently, no Panels are defined. "
                                 VerticalOptions="Center"/>
                             <Label
                                 Style="{StaticResource MediumLabel}"
                                 LineBreakMode="WordWrap"
                                 FontFamily="OpenSansLight"
                                 HorizontalOptions="Center"
-                                Margin="0,0,10,0"
-                                Text="Currently, no Panels are defined. Use the Panel Editor to add a Panel. "
+                                HorizontalTextAlignment="Center"
+                                Margin="0,0,0,10"
+                                Text="Use the Panel Editor to add a Panel. "
                                 VerticalOptions="Center"/>
-                            
                             <HorizontalStackLayout
                                 HorizontalOptions="Center"
                                 Margin="0"
@@ -83,6 +87,7 @@
                                     Text="Instructions"/>
                             </HorizontalStackLayout>
                         </StackLayout>
+                        </ScrollView>
                     </ContentView>
                 </CarouselView.EmptyView>
 
