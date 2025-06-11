@@ -4,7 +4,7 @@
         <g transform="translate(80 80)">
             <g>
                 <path d="M0 48C0 21.4903 21.4903 0 48 0C74.5097 0 96 21.4903 96 48C96 74.5097 74.5097 96 48 96C21.4903 96 0 74.5097 0 48Z" fill="none" stroke-width="10" stroke="#000000" />
-                <path d="M0 45C0 20.1472 20.1472 0 45 0C69.8528 0 90 20.1472 90 45C90 69.8528 69.8528 90 45 90C20.1472 90 0 69.8528 0 45Z" fill="#f26077" fill-rule="evenodd" transform="translate(3 3)" />
+                <path d="M0 45C0 20.1472 20.1472 0 45 0C69.8528 0 90 20.1472 90 45C90 69.8528 69.8528 90 45 90C20.1472 90 0 69.8528 0 45Z" fill="#DADADA" fill-rule="evenodd" transform="translate(3 3)" />
             </g>
         </g>
         <line x1="0" y1="1" x2="43" y2="1" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(25 127)" />

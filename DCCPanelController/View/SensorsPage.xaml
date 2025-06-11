@@ -97,13 +97,13 @@
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
                                                 Value="true">
-                                                <Setter Property="Source" Value="sensor_on.png"/>
+                                                <Setter Property="Source" Value="sensor_active.png"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
                                                 Value="false">
-                                                <Setter Property="Source" Value="sensor_off.png"/>
+                                                <Setter Property="Source" Value="sensor_inactive.png"/>
                                             </DataTrigger>
                                         </Image.Triggers>
                                     </Image>
