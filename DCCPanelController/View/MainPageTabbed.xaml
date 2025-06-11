@@ -23,7 +23,7 @@
             Icon="panels.png"
             Title="Panel Editor"/>
         
-        <Tab Title="Tables" Icon="turnouts.png">
+        <Tab Title="Tables" Icon="tables.png">
             <ShellContent
                 ContentTemplate="{DataTemplate view:TurnoutsPage}"
                 Title="Turnouts"/>

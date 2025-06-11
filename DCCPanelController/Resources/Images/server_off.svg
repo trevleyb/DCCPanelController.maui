@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip_path_1">
+            <rect width="24" height="24" />
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip_path_1)">
+        <path d="M0 2C0 0.895431 0.895431 0 2 0C3.10457 0 4 0.895431 4 2C4 3.10457 3.10457 4 2 4C0.895431 4 0 3.10457 0 2Z" fill="#000000" fill-rule="evenodd" transform="translate(12 9)" />
+        <path d="M0 2C0 0.895431 0.89543 0 2 0C3.10457 0 4 0.895431 4 2C4 3.10457 3.10457 4 2 4C0.89543 4 0 3.10457 0 2Z" fill="#000000" fill-rule="evenodd" transform="translate(17 9)" />
+        <path d="M0 4L0 2C0 1.44771 0.195262 0.976311 0.585786 0.585786C0.976311 0.195262 1.44772 0 2 0L18 0C18.5523 0 19.0237 0.195262 19.4142 0.585786C19.8047 0.976311 20 1.44771 20 2L20 6C20 6.55228 19.8047 7.02369 19.4142 7.41421C19.0237 7.80474 18.5523 8 18 8L2 8C1.44772 8 0.976311 7.80474 0.585786 7.41421C0.195262 7.02369 0 6.55228 0 6L0 4Z" fill="none" stroke-width="2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(3 7)" />
+        <line x1="0" y1="1" x2="2" y2="1" fill="none" stroke-width="2" stroke="#000000" stroke-linecap="round" stroke-linejoin="round" transform="translate(7 10)" />
+        <line x1="0" y1="0" x2="24" y2="24" fill="none" stroke-width="2" stroke="#000000" stroke-linecap="square" />
+        <line x1="0" y1="0" x2="24" y2="24" fill="none" stroke-width="1" stroke="#FFFFFF" stroke-opacity="0.361" stroke-linecap="square" transform="translate(1 -1)" />
+    </g>
+</svg>

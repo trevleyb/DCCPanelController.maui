@@ -96,13 +96,13 @@
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
                                                 Value="true">
-                                                <Setter Property="Source" Value="block_occupied.png"/>
+                                                <Setter Property="Source" Value="lights_on.png"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Image"
                                                 Value="false">
-                                                <Setter Property="Source" Value="block_free.png"/>
+                                                <Setter Property="Source" Value="lights_off.png"/>
                                             </DataTrigger>
                                         </Image.Triggers>
                                     </Image>

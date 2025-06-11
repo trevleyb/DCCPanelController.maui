@@ -24,7 +24,7 @@ public partial class ConnectionViewModel : BaseViewModel {
     public Profile Profile { get; set; }
     public ConnectionService ConnectionService { get; }
     public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.Type != DccClientType.Unknown; 
-    public string ConnectionIcon => IsConnected ? "wifi.png" : "wifi_off.png";
+    public string ConnectionIcon => IsConnected ? "server_on.png" : "server_off.png";
 
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {

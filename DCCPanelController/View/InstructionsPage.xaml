@@ -34,9 +34,9 @@
                     </Label>
                     <HorizontalStackLayout>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">The state of a turnout is automatically updated when you connect using the connect button </Label>
-                        <Image Source="wifi.png"/>
+                        <Image Source="server_on.png"/>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}"> or disconnect </Label>
-                        <Image Source="wifi_off.png"/>
+                        <Image Source="server_off.png"/>
                         <Label Margin="10,5,10,5" Style="{StaticResource MediumLabel}">but turnouts deleted on the server will not be reflected automatically. </Label>
                     </HorizontalStackLayout>
                     <HorizontalStackLayout>

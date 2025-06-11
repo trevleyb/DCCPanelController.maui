@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg  style="color:#FFFFFF" width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <path d="M0 12C0 8.68629 1.17157 5.85786 3.51472 3.51472C5.85786 1.17157 8.68629 0 12 0C15.3137 0 18.1421 1.17157 20.4853 3.51472C22.8284 5.85786 24 8.68629 24 12C24 15.3137 22.8284 18.1421 20.4853 20.4853C18.1421 22.8284 15.3137 24 12 24C8.68629 24 5.85786 22.8284 3.51472 20.4853C1.17157 18.1421 0 15.3137 0 12L0 12Z" fill="#FFFFFF" fill-rule="evenodd" fill-opacity="0" stroke-width="1" stroke="#FFFFFF" stroke-opacity="0" />
+        <g>
+            <rect width="24" height="24" fill="#D3D3D3" fill-rule="evenodd" fill-opacity="0" />
+            <g fill="none" fill-rule="evenodd" transform="translate(1 2)">
+                <rect width="21" height="6" />
+                <path d="M21 0L0 0L0 6L21 6L21 0ZM1 5L1 1L20 1L20 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(1 7)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(6 7)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(11 7)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(16 7)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(1 12)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(6 12)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(11 12)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(16 12)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(1 17)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(6 17)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(11 17)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+            <g fill="none" fill-rule="evenodd" transform="translate(16 17)">
+                <rect width="6" height="6" />
+                <path d="M6 0L0 0L0 6L6 6L6 0ZM1 5L1 1L5 1L5 5L1 5Z" fill="currentcolor" fill-rule="evenodd" />
+            </g>
+        </g>
+    </g>
+</svg>

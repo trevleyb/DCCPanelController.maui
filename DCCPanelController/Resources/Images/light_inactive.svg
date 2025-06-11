@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <g transform="translate(80 80)">
+            <g>
+                <path d="M0 48C0 21.4903 21.4903 0 48 0C74.5097 0 96 21.4903 96 48C96 74.5097 74.5097 96 48 96C21.4903 96 0 74.5097 0 48Z" fill="none" stroke-width="10" stroke="#000000" />
+                <path d="M0 45C0 20.1472 20.1472 0 45 0C69.8528 0 90 20.1472 90 45C90 69.8528 69.8528 90 45 90C20.1472 90 0 69.8528 0 45Z" fill="#f26077" fill-rule="evenodd" transform="translate(3 3)" />
+            </g>
+        </g>
+        <line x1="0" y1="1" x2="43" y2="1" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(25 127)" />
+        <line x1="0" y1="1" x2="43" y2="1" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(188 127)" />
+        <line x1="1" y1="43" x2="1" y2="0" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(127 25)" />
+        <line x1="1" y1="43" x2="1" y2="0" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(127 188)" />
+        <line x1="0" y1="0" x2="30.406" y2="30.406" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(54 56)" />
+        <line x1="0" y1="0" x2="30.406" y2="30.406" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(170 171)" />
+        <line x1="0" y1="30.406" x2="30.406" y2="0" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(176 59.594)" />
+        <line x1="0" y1="30.406" x2="30.406" y2="0" fill="none" stroke-width="10" stroke="#DADADA" stroke-linecap="square" transform="translate(54 170.594)" />
+    </g>
+</svg>

@@ -335,10 +335,10 @@ public class ServerMessage(string message, string operation, SystemMessageType m
 
     public string IconSource =>
         MessageType switch {
-            SystemMessageType.Inbound  => "block_free.png",
-            SystemMessageType.Outbound => "block_occupied.png",
-            SystemMessageType.System   => "button_active.png",
-            SystemMessageType.Error    => "button_inactive.png",
-            _                          => "routes.png"
+            SystemMessageType.Inbound  => "message_in.png",
+            SystemMessageType.Outbound => "message_out.png",
+            SystemMessageType.System   => "message_system.png",
+            SystemMessageType.Error    => "message_error.png",
+            _                          => "message_system.png"
         };
 }
