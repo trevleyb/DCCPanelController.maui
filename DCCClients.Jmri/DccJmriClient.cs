@@ -7,6 +7,7 @@ using DCCCommon.Common;
 using DCCCommon.Discovery;
 using DCCCommon.Events;
 using DCCCommon.Helpers;
+using Result = DCCCommon.Common.Result;
 
 namespace DccClients.Jmri;
 

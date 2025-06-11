@@ -1,12 +1,12 @@
 using DccClients.WiThrottle.Client;
 using DccClients.WiThrottle.Client.Commands;
 using DccClients.WiThrottle.Client.Events;
-using DccClients.WiThrottle.ServiceHelper;
 using DCCCommon.Client;
 using DCCCommon.Common;
 using DCCCommon.Discovery;
 using DCCCommon.Events;
 using DCCCommon.Helpers;
+using Result = DCCCommon.Common.Result;
 
 namespace DccClients.WiThrottle;
 
@@ -188,12 +188,6 @@ public class DccWiThrottleClient : DccClientBase, IDccClient {
         // Force refresh for WiThrottle requires that we disconnect and re-connect
         // as the turnout and route data is ONLY sent on initialisation. 
         await ReconnectAsync();
-    }
-
-    private async Task<IResult<ServiceInfo?>> FindServices() {
-        var services = await ServiceFinder.FindServices("_withrottle._tcp");
-        if (services.Count == 0) return Result<ServiceInfo?>.Fail(new Error("Unable to find a WiThrottle server."));
-        return Result<ServiceInfo?>.Ok(services[0]);
     }
 
     /// <summary>

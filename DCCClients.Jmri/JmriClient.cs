@@ -239,7 +239,7 @@ public class JmriClient : IDisposable {
     }
 
     private bool ProcessGoodbyeMessage(JsonElement root) {
-        Console.WriteLine($"Goodbye message received from JMRI: {ConnectionState}");
+        OnConnectionStateChanged(ConnectionState, "Goodbye message received from JMRI, disconnecting.");
         return true;
     }
 
@@ -259,7 +259,7 @@ public class JmriClient : IDisposable {
         if (!root.TryGetProperty("data", out var dataElement)) return false;
         var code = dataElement.GetIntProperty("code");
         var message = dataElement.GetStringProperty("message");
-        Console.WriteLine($"JMRI Raised an error: {code} => {message}");
+        OnConnectionStateChanged(ConnectionState,$"JMRI Raised an error: {code} => {message}");
         return true;
     }
 
@@ -337,7 +337,7 @@ public class JmriClient : IDisposable {
         var command = BuildJmriMessage("sensor", "post", new Dictionary<string, object> {
             { "type", "sensor" },
             { "name", sensorID },
-            { "action", active ? 2 : 4 }
+            { "state", active ? 2 : 4 }
         });
         await SendCommandAsync(command);
     }
@@ -346,7 +346,7 @@ public class JmriClient : IDisposable {
         var command = BuildJmriMessage("light", "post", new Dictionary<string, object> {
             { "type", "light" },
             { "name", lightID },
-            { "action", active ? 2 : 4 }
+            { "state", active ? 2 : 4 }
         });
         await SendCommandAsync(command);
     }
@@ -355,7 +355,7 @@ public class JmriClient : IDisposable {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
             { "name", blockID },
-            { "action", value }
+            { "state", value }
         });
         await SendCommandAsync(command);
     }

@@ -60,7 +60,6 @@
                         <Grid ColumnDefinitions="120,*,100">
                             <Button
                                 Grid.Column="0"
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                                 CommandParameter="{Binding LabelID}"
                                 HorizontalOptions="Start"
                                 Style="{StaticResource ColumnLabel}"

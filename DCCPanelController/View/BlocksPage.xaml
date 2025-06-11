@@ -19,7 +19,7 @@
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="120,*,100"
+            ColumnDefinitions="150,*,120"
             HorizontalOptions="Fill">
             <Button
                 Command="{Binding SortByColumnCommand}"
@@ -61,7 +61,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Block">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="120,*,100" Padding="5">
+                                <Grid ColumnDefinitions="150,*,120" Padding="5">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, Path=ToggleBlockStateCommand}"
