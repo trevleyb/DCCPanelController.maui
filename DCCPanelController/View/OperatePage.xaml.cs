@@ -7,20 +7,28 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private bool _tabBarState = true;
-    private DisplayOrientation _lastOrientation;
+    private DisplayOrientation? _lastOrientation;
 
     public OperatePage(OperateViewModel viewModel) {
         BindingContext = viewModel;
         InitializeComponent();
-        _lastOrientation = DeviceDisplay.Current.MainDisplayInfo.Orientation;
+        _lastOrientation = null;
         DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
         SetTabBarState(true);
     }
 
-    private void OnMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e)
-    {
-        if (e.DisplayInfo.Orientation != _lastOrientation) {
-            _lastOrientation = e.DisplayInfo.Orientation;
+    protected override void OnAppearing() {
+        base.OnAppearing();
+        _lastOrientation = null;
+    }
+
+    private void OnMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e) {
+        RefreshEmptyViewOnDisplayInfoChange(e.DisplayInfo.Orientation);
+    }
+
+    private void RefreshEmptyViewOnDisplayInfoChange(DisplayOrientation orientation) {
+        if (orientation != _lastOrientation) {
+            _lastOrientation = orientation;
             MainThread.BeginInvokeOnMainThread(() => {
                 // Force EmptyView refresh
                 var currentEmptyView = PanelCarousel.EmptyView;
@@ -29,7 +37,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             });
         }
     }
-    
+
     private void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
             if (e.Tile is ITileInteractive { } tile) {

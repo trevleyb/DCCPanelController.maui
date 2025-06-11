@@ -48,7 +48,7 @@
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshSensorsCommand}">
 
-            <Grid Padding="5" VerticalOptions="FillAndExpand">
+            <Grid Padding="5" VerticalOptions="FillAndExpand" IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Sensors}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">

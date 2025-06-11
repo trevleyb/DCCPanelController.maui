@@ -26,6 +26,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
     [NotifyPropertyChangedFor(nameof(MultipleEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SingleEntitySelected))]
+    [NotifyPropertyChangedFor(nameof(SingleOrNoEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     private ObservableCollection<ITile> _selectedTiles = [];
 
@@ -41,6 +42,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
+    public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();

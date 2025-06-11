@@ -130,6 +130,10 @@
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*"/>
+        <None Remove="Models\TileImages\switch_off.svg" />
+        <EmbeddedResource Include="Models\TileImages\switch_off.svg" />
+        <None Remove="Models\TileImages\switch_on.svg" />
+        <EmbeddedResource Include="Models\TileImages\switch_on.svg" />
 
     </ItemGroup>
 

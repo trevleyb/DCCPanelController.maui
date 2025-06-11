@@ -30,7 +30,7 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid RowDefinitions="*,auto">
+        <Grid RowDefinitions="*,25">
             <CarouselView
                 BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
                 CurrentItem="{Binding SelectedPanel}"
@@ -54,7 +54,7 @@
                                 HorizontalOptions="Center"
                                 LineBreakMode="WordWrap"
                                 HorizontalTextAlignment="Center"
-                                Margin="0,20,0,10"
+                                Margin="20,20,20,10"
                                 Text="Welcome to the DCC Model Layout Panel Controller App"
                                 VerticalOptions="Center"/>
                             <Label
@@ -63,7 +63,7 @@
                                 FontFamily="OpenSansLight"
                                 HorizontalOptions="Center"
                                 HorizontalTextAlignment="Center"
-                                Margin="0,10,0,0"
+                                Margin="20,10,20,0"
                                 Text="Currently, no Panels are defined. "
                                 VerticalOptions="Center"/>
                             <Label
@@ -72,7 +72,7 @@
                                 FontFamily="OpenSansLight"
                                 HorizontalOptions="Center"
                                 HorizontalTextAlignment="Center"
-                                Margin="0,0,0,10"
+                                Margin="20,0,20,10"
                                 Text="Use the Panel Editor to add a Panel. "
                                 VerticalOptions="Center"/>
                             <HorizontalStackLayout
@@ -111,8 +111,9 @@
                 Grid.Row="1"
                 HorizontalOptions="Center"
                 IndicatorColor="DarkGrey"
-                IndicatorSize="10"
+                IndicatorSize="8"
                 Margin="0,5,0,10"
+                HideSingle="True"
                 SelectedIndicatorColor="{StaticResource Primary}"
                 VerticalOptions="Start"
                 x:Name="IndicatorView"/>

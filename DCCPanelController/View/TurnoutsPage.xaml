@@ -50,7 +50,7 @@
 
     <RefreshView IsRefreshing="{Binding IsBusy}" 
                  Command="{Binding RefreshTurnoutsCommand}">
-        <Grid>
+        <Grid  IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}">
             <CollectionView ItemsSource="{Binding Turnouts}" 
                             SelectedItem="{Binding SelectedTurnout}"
                             SelectionMode="Single">
@@ -99,7 +99,7 @@
                     <DataTemplate x:DataType="dataModel:Turnout">
                         <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout x:DataType="dataModel:Turnout">
-                                <Grid ColumnDefinitions="120,*,100" Padding="5">
+                                <Grid ColumnDefinitions="120,*,100" Padding="5" >
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"

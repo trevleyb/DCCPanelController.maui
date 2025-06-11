@@ -257,9 +257,9 @@
         <Setter Property="FontSize">
             <Setter.Value>
                 <OnIdiom x:TypeArguments="x:Double"
-                         Phone="12"
-                         Tablet="18"
-                         Desktop="18"/>
+                         Phone="10"
+                         Tablet="16"
+                         Desktop="16"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -270,8 +270,8 @@
         <Setter Property="FontSize">
             <Setter.Value>
                 <OnIdiom x:TypeArguments="x:Double"
-                         Phone="14"
-                         Tablet="20"
+                         Phone="12"
+                         Tablet="18"
                          Desktop="18"/>
             </Setter.Value>
         </Setter>
@@ -311,9 +311,9 @@
         <Setter Property="FontSize">
             <Setter.Value>
                 <OnIdiom x:TypeArguments="x:Double"
-                         Phone="16"
-                         Tablet="24"
-                         Desktop="18"/>
+                         Phone="14"
+                         Tablet="20"
+                         Desktop="20"/>
             </Setter.Value>
         </Setter>
 

@@ -6,8 +6,10 @@ namespace DCCPanelController.Helpers;
 
 public class CapabilityIcon {
     public required ImageSource IconSource { get; set; }
+    public string? Name => Enum.GetName(Capability);
     public DccClientCapabilitiesEnum Capability { get; set; }
-    public bool IsEnabled { get; set; }
+    public bool IsAvailable { get; set; }
+    public bool IsNotAvailable => !IsAvailable;
 }
 
 public partial class Capabilities : ObservableObject {
@@ -26,7 +28,7 @@ public partial class Capabilities : ObservableObject {
             CapabilityIcons.Add(new CapabilityIcon {
                 IconSource = baseIcon,
                 Capability = capability,
-                IsEnabled = isEnabled
+                IsAvailable = isEnabled
             });
         }
     }

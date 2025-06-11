@@ -32,19 +32,15 @@ public class SwitchTile : Tile, ITileInteractive {
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is SwitchEntity button) {
-            var svgImage = button.State switch {
+            var svgImage = State switch {
                 ButtonStateEnum.On => SvgImages.GetImage("switchon", Entity.Rotation),
-                _                  => SvgImages.GetImage("switchoff", Entity.Rotation)
+                ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
+                _                  => SvgImages.GetImage("switch", Entity.Rotation)
             };
             svgImage.SetAttribute(SvgElementType.Button, State switch {
                 ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
-            });
-            svgImage.SetAttribute(SvgElementType.ButtonOutline, State switch {
-                ButtonStateEnum.On  => button.Parent?.ButtonOnBorder ?? Colors.Black,
-                ButtonStateEnum.Off => button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.Parent?.ButtonOnColor ?? Colors.Gray
             });
 
             var image = new Image {

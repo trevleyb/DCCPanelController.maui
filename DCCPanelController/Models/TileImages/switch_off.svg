@@ -1,23 +1,23 @@
 <svg width="48px" height="48px" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
     <g id="LightSwitch">
         <!-- Switch body -->
-        <rect id="Border" x="10" y="8" width="28" height="32" rx="4" ry="4"
+        <rect x="10" y="8" width="28" height="32" rx="4" ry="4"
               fill="#E8E8E8" stroke="#000000" stroke-width="2"/>
 
         <!-- Switch toggle (ON position - top) -->
-        <rect x="14" y="12" width="20" height="12" rx="2" ry="2"
-              fill="#F8F9FA" stroke="#DEE2E6" stroke-width="1"/>
+        <rect x="14" y="12" width="20" height="11" rx="2" ry="2"
+              fill="#F8F9FA" stroke="#DEE2E6" stroke-width="0"/>
 
         <!-- ON label -->
         <text x="24" y="20" font-family="Arial, sans-serif" font-size="6"
               text-anchor="middle" fill="black">ON</text>
 
         <!-- Switch bottom area (inactive) -->
-        <rect id="Border" x="14" y="26" width="20" height="12" rx="2" ry="2"
-              fill="#90C418" stroke="#000000" stroke-width="1"/>
+        <rect id="Button" x="14" y="26" width="20" height="11" rx="2" ry="2"
+              fill="#90C418" stroke="#90C418" stroke-width="0"/>
 
         <!-- OFF label (inactive) -->
-        <text id="Button" x="24" y="34" font-family="Arial, sans-serif" font-size="6"
+        <text x="24" y="34" font-family="Arial, sans-serif" font-size="8"
               font-weight="bold" text-anchor="middle" fill="white">OFF</text>
     </g>
 </svg>

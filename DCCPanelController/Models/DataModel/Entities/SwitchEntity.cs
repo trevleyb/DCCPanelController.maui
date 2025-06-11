@@ -8,10 +8,11 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class SwitchEntity : Entity,  IInteractiveEntity {
 
-    [ObservableProperty] [property: EditableLightSwitch("Light", "", 0, "Light Switch")]
+    [ObservableProperty] 
+    [property: EditableLightSwitch("Light", "", 0)]
     private string _turnoutID = string.Empty;
     
-    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
+    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [JsonConstructor]
     public SwitchEntity() { }
