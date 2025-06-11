@@ -30,7 +30,7 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
 
     public LightsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Lights = Profile.Lights;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Lights) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Lights) ?? false;
         SetLabels();
     }
 

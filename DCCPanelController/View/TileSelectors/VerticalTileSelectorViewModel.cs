@@ -23,6 +23,7 @@ public partial class VerticalTileSelectorViewModel : Base.BaseViewModel {
             Tiles.Clear();
             var panel = source == null ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);
             AddTile(new ButtonEntity(panel));
+            AddTile(new SwitchEntity(panel));
             AddTile(new RouteEntity(panel));
             AddTile(new CircleLabelEntity(panel));
             AddTile(new StraightEntity(panel));

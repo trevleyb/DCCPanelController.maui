@@ -34,6 +34,10 @@ public static class SvgImages {
         AddImage("Button", "Track_Button_Corner", "********", 4, 45); // Add Buttons at NE,SE,SW,NW
         AddImage("ButtonLarge", "Track_Large_Button", 4);             // Add Buttons at N,E,S,W
 
+        AddImage("Switch",    "switch_on", 4); 
+        AddImage("SwitchOn",  "switch_on", 4); 
+        AddImage("SwitchOff", "switch_off", 4);
+        
         AddImage("Route", "Track_Route", 4);            // Add Buttons at N,E,S,W
         AddImage("RouteLarge", "Track_Route_Large", 4); // Add Buttons at N,E,S,W
 

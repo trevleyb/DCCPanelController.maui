@@ -30,7 +30,7 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     
     public BlocksViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Blocks = Profile.Blocks;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Blocks) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Blocks) ?? false;
         SetLabels();
     }
 

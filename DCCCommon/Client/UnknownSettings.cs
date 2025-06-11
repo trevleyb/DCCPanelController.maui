@@ -6,6 +6,6 @@ public partial class UnknownSettings : ObservableObject, IDccClientSettings {
     public DccClientType Type => DccClientType.Unknown;
     public bool SetAutomatically => false;
     public bool SupportsManualEntries => false;
-    public List<DccClientCapabilities> Capabilities => [];
+    public List<DccClientCapabilitiesEnum> Capabilities => [];
 
 }

@@ -37,7 +37,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
     public RoutesViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile);
         Routes = Profile.Routes;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Routes) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Routes) ?? false;
         SetLabels();
     }
 

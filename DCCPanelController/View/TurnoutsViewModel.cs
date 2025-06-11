@@ -44,7 +44,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Turnouts = Profile.Turnouts;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Turnouts) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Turnouts) ?? false;
         CanAddTurnout = profile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {

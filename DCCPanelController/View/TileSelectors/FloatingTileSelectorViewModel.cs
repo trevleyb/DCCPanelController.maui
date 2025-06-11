@@ -38,6 +38,7 @@ public partial class FloatingTileSelectorViewModel : Base.BaseViewModel {
         var tilesPanels = new Panels();
         var panel = tilesPanels.CreatePanel();
         AddTile(new ButtonEntity(panel));
+        AddTile(new SwitchEntity(panel));
         AddTile(new CompassEntity(panel));
         AddTile(new CornerEntity(panel));
         AddTile(new CornerContinuationEntity(panel));

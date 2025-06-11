@@ -35,6 +35,6 @@ public partial class WiThrottleClientSettings : ObservableObject, IDccClientSett
         return $"SystemName: {Name}, Address: {Address}, Port: {Port}";
     }
     
-    public List<DccClientCapabilities> Capabilities => [DccClientCapabilities.Turnouts, DccClientCapabilities.Routes];
+    public List<DccClientCapabilitiesEnum> Capabilities => [DccClientCapabilitiesEnum.Turnouts, DccClientCapabilitiesEnum.Routes];
 
 }

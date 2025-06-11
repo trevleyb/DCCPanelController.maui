@@ -31,7 +31,7 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
 
     public SensorsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Sensors = Profile.Sensors;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilities.Sensors) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Sensors) ?? false;
         SetLabels();
     }
 
