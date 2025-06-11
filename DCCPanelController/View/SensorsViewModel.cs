@@ -10,9 +10,9 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View;
 
 public partial class SensorsViewModel : Base.ConnectionViewModel {
-    private const string _labelID = "System Name";
+    private const string _labelID = "ID";
     private const string _labelName = "Sensor";
-    private const string _labelState = "Is Occupied?";
+    private const string _labelState = "Occupied?";
 
     public string LabelID => _labelID;
     public string LabelName => _labelName;
@@ -68,7 +68,7 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
         ColumnLabelState = LabelState + (_sortColumn.Equals(_labelState) ? _isAscending.GetSortDirection() : "");
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = false)]
     public async Task ToggleSensorState(Sensor? sensor) {
         if (sensor == null) return;
         sensor.State = !sensor.State;

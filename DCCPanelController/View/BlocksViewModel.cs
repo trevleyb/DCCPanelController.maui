@@ -10,9 +10,9 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View;
 
 public partial class BlocksViewModel : Base.ConnectionViewModel {
-    private const string _labelID = "System Name";
+    private const string _labelID = "ID";
     private const string _labelName = "Block";
-    private const string _labelState = "Is Occupied?";
+    private const string _labelState = "Occupied?";
 
     public string LabelID => _labelID;
     public string LabelName => _labelName;

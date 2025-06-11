@@ -13,81 +13,92 @@
     xmlns:services="clr-namespace:DCCPanelController.Services">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="delete.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="trash.png"/>
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}"
+                     IconImageSource="{Binding ConnectionIcon}"/>
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">
-        <Grid
-            ColumnDefinitions="150,150,*"
-            HorizontalOptions="Fill"
-            Padding="5">
-            <Button
-                Grid.Column="0"
-                HorizontalOptions="CenterAndExpand"
-                Margin="-5,0,0,0"
-                Style="{StaticResource ButtonLabel}"
-                Text="Date"/>
-            <Button
-                Grid.Column="1"
-                Style="{StaticResource ButtonLabel}"
-                Text="Operation"/>
-            <Button
-                Grid.Column="2"
-                Style="{StaticResource ButtonLabel}"
-                Text="Message"/>
-        </Grid>
-        <BoxView
-            BackgroundColor="{StaticResource Primary}"
-            HeightRequest="1"
-            HorizontalOptions="FillAndExpand"/>
-        <RefreshView IsRefreshing="{Binding IsBusy}">
-            <Grid Padding="5" VerticalOptions="FillAndExpand">
-                <CollectionView ItemsSource="{Binding ConnectionService.ServerMessages}" SelectionMode="None">
-                    <CollectionView.EmptyView>
-                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label Text="No Server Messages available"/>
-                            </StackLayout>
-                        </Grid>
-                    </CollectionView.EmptyView>
+        <Grid Padding="5" VerticalOptions="FillAndExpand">
+            <CollectionView ItemsSource="{Binding ConnectionService.ServerMessages}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                            <Label Text="There are no server messages to display"/>
+                        </StackLayout>
+                    </Grid>
+                </CollectionView.EmptyView>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="services:ServerMessage">
-                            <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,150,*" Padding="5">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="services:ServerMessage">
+                        <StackLayout Padding="0">
+                            <Grid Margin="5">
+                                <HorizontalStackLayout>
+                                    <Image Margin="-5,0,5,0" HorizontalOptions="Start" VerticalOptions="Start"  Source="{Binding IconSource}" WidthRequest="32" HeightRequest="32"/>
+                                    <StackLayout>
+                                    <HorizontalStackLayout>
+                                        <Label
+                                            WidthRequest="100"
+                                            FontAttributes="Bold"
+                                            HorizontalOptions="Fill"
+                                            LineBreakMode="WordWrap"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Operation }"
+                                            VerticalOptions="Center">
+                                            <Label.Triggers>
+                                                <DataTrigger
+                                                    Binding="{Binding MessageType}"
+                                                    TargetType="Label"
+                                                    Value="Inbound">
+                                                    <Setter Property="TextColor" Value="Green"/>
+                                                </DataTrigger>
+                                                <DataTrigger
+                                                    Binding="{Binding MessageType}"
+                                                    TargetType="Label"
+                                                    Value="Outbound">
+                                                    <Setter Property="TextColor" Value="Blue"/>
+                                                </DataTrigger>
+                                                <DataTrigger
+                                                    Binding="{Binding MessageType}"
+                                                    TargetType="Label"
+                                                    Value="System">
+                                                    <Setter Property="TextColor" Value="Black"/>
+                                                </DataTrigger>
+                                                <DataTrigger
+                                                    Binding="{Binding MessageType}"
+                                                    TargetType="Label"
+                                                    Value="Error">
+                                                    <Setter Property="TextColor" Value="Red"/>
+                                                </DataTrigger>
+                                            </Label.Triggers>
+                                        </Label>
+                                        <Label
+                                            WidthRequest="180"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="WordWrap"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding TimeStamp}"
+                                            VerticalOptions="Center"/>
+                                    </HorizontalStackLayout>
                                     <Label
-                                        Grid.Column="0"
-                                        HorizontalOptions="Start"
-                                        LineBreakMode="NoWrap"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding TimeStamp}"
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        FontAttributes="Bold"
-                                        Grid.Column="1"
-                                        HorizontalOptions="FillAndExpand"
-                                        LineBreakMode="WordWrap"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding Operation}"
-                                        VerticalOptions="Center"/>
-                                    <Label
-                                        Grid.Column="2"
+                                        Margin="0,0,0,5"
                                         HorizontalOptions="Fill"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Message}"
                                         VerticalOptions="Center"/>
-                                </Grid>
-                                <BoxView
-                                    BackgroundColor="{StaticResource Primary}"
-                                    HeightRequest="1"
-                                    HorizontalOptions="FillAndExpand"/>
-                            </StackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </Grid>
-        </RefreshView>
+                                    </StackLayout>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <BoxView
+                                BackgroundColor="{StaticResource Primary}"
+                                HeightRequest="1"
+                                HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
         <BoxView
             BackgroundColor="{StaticResource Primary}"
             HeightRequest="1"

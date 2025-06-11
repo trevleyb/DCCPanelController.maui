@@ -13,7 +13,7 @@ using DCCPanelController.View.Properties;
 namespace DCCPanelController.View;
 
 public partial class RoutesViewModel : ConnectionViewModel {
-    private const string _labelID = "System Name";
+    private const string _labelID = "ID";
     private const string _labelName = "User Name";
     private const string _labelState = "State";
     private const string _labelAddress = "DCC Address";

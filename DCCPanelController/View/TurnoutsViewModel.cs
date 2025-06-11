@@ -12,7 +12,7 @@ using DCCPanelController.View.Properties;
 namespace DCCPanelController.View;
 
 public partial class TurnoutsViewModel : ConnectionViewModel {
-    private const string _labelID = "System Name";
+    private const string _labelID = "ID";
     private const string _labelName = "User Name";
     private const string _labelState = "State";
     private const string _labelAddress = "DCC Address";
@@ -69,7 +69,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             foreach (var turnout in removeTurnouts) {
                 Profile.Turnouts.Remove(turnout);
             }
-            await RefreshTurnoutsAsync();
+            await ConnectionService.ForceRefresh();
             OnPropertyChanged(nameof(Turnouts));
         } catch { /* ignored */
         } finally {

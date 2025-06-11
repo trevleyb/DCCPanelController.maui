@@ -15,10 +15,9 @@ public class JmriLightEventArgs : JmriEventArgs<JmriLightEventArgs>, IJmriEventA
     public static JmriLightEventArgs? Create(JsonElement root) {
         if (!root.TryGetProperty("data", out var dataElement)) return null;
         return new JmriLightEventArgs() {
-            //Name = dataElement.GetStringProperty("name"),
-            //UserName = dataElement.GetStringProperty("userName"),
-            //State = dataElement.GetIntProperty("state"),
-            //Inverted = dataElement.GetBoolProperty("inverted")
+            Name = dataElement.GetStringProperty("name"),
+            UserName = dataElement.GetStringProperty("userName"),
+            State = dataElement.GetIntProperty("state"),
         };
     }
 

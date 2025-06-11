@@ -168,7 +168,7 @@
             Command="{Binding ConnectClickedCommand}"
             HorizontalOptions="Center"
             IsEnabled="{Binding IsNotBusy}"
-            Margin="10,0,20,20"
+            Margin="20,0,20,20"
             Style="{StaticResource ButtonOutline}"
             Text="{Binding ConnectLabel}"
             WidthRequest="150"/>

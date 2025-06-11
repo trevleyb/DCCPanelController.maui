@@ -214,6 +214,7 @@ public class JmriClient : IDisposable {
                     "sensor"     => JmriSensorEventArgs.ProcessMessage(item, _sensors, SensorChanged),
                     "block"      => JmriBlockEventArgs.ProcessMessage(item, _blocks, BlockChanged),
                     "light"      => JmriLightEventArgs.ProcessMessage(item, _lights, LightChanged),
+                    "goodbye"    => ProcessGoodbyeMessage(item),
                     "hello"      => ProcessHelloMessage(item),
                     "error"      => ProcessErrorMessage(item),
                     "pong"       => true,
@@ -235,6 +236,11 @@ public class JmriClient : IDisposable {
             _                    => []
         };
         return items;
+    }
+
+    private bool ProcessGoodbyeMessage(JsonElement root) {
+        Console.WriteLine($"Goodbye message received from JMRI: {ConnectionState}");
+        return true;
     }
 
     private bool ProcessHelloMessage(JsonElement root) {

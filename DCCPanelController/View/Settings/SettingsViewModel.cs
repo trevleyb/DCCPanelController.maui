@@ -25,7 +25,7 @@ public partial class SettingsViewModel : Base.BaseViewModel {
 
     [RelayCommand]
     protected async Task OnConnectClickedAsync() {
-        ConnectionService.AddMessage($"Testing server connection: ({Settings.Type})");
+        ConnectionService.AddMessage($"Testing server connection: ({Settings.Type})","System",SystemMessageType.System);;
         try {
             IsBusy = true;
             var reconnect = ConnectionService.IsConnected;
@@ -33,18 +33,18 @@ public partial class SettingsViewModel : Base.BaseViewModel {
 
             var result = await ConnectionService.ConnectAsync(Settings);
             if (result.IsFailure) {
-                ConnectionService.AddMessage($"Unable to connect: {result.Message}","ERROR");
-                foreach (var error in result.Errors) ConnectionService.AddMessage(error.Message,"ERROR");
+                ConnectionService.AddMessage($"Unable to connect: {result.Message}","ERROR",SystemMessageType.Error);
+                foreach (var error in result.Errors) ConnectionService.AddMessage(error.Message,"ERROR",SystemMessageType.Error);
                 var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
                 if (!reconnect) await ConnectionService.DisconnectAsync();
-                ConnectionService.AddMessage("Connected Successfully.");
+                ConnectionService.AddMessage("Connected Successfully.","System",SystemMessageType.System);
                 await DisplayAlertHelper.DisplayOkAlertAsync("Connected", "Successfully connected to the server.");
             }
         } catch (Exception ex) {
-            ConnectionService.AddMessage("Unable to Connect.");
-            ConnectionService.AddMessage(ex.Message);
+            ConnectionService.AddMessage("Unable to Connect.","ERROR",SystemMessageType.Error);
+            ConnectionService.AddMessage(ex.Message,"ERROR",SystemMessageType.Error);
             var message = $"Unable to connect to the server due to {ex.Message}";
             await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
         } finally {
@@ -64,13 +64,13 @@ public partial class SettingsViewModel : Base.BaseViewModel {
             if (result is { IsSuccess: true, Value.Count: > 0 }) {
                 var servicesFound = result.Value.ToObservableCollection();
                 Servers = new ObservableCollection<DiscoveredService>(servicesFound);
-                ConnectionService.AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}");
+                ConnectionService.AddMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}","System",SystemMessageType.System);
             } else {
-                ConnectionService.AddMessage($"{result.Message}");
+                ConnectionService.AddMessage($"{result.Message}","System",SystemMessageType.System);
             }
         } catch (Exception ex) {
-            ConnectionService.AddMessage("Unable to Refresh Servers");
-            ConnectionService.AddMessage(ex.Message);
+            ConnectionService.AddMessage("Unable to Refresh Servers","ERROR",SystemMessageType.Error);
+            ConnectionService.AddMessage(ex.Message,"ERROR",SystemMessageType.Error);
         } finally {
             IsBusy = false;
             IsRefreshing = false;

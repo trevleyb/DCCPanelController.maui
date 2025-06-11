@@ -1,4 +1,5 @@
-﻿using CommunityToolkit.Maui;
+﻿using System.Diagnostics;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -114,18 +115,19 @@ public static class MauiProgram {
     
     private static void RegisterAllFonts(IFontCollection fonts) {
         var fontDefinitions = new[] {
+            "OpenSans-Regular",
+            "OpenSans-Bold",
+            "OpenSans-Light",
+
             "OpenSans-SemiBoldItalic",
             "OpenSans-SemiBold",
-            "OpenSans-Regular",
             "OpenSans-MediumItalic",
             "OpenSans-Medium",
             "OpenSans-LightItalic",
-            "OpenSans-Light",
             "OpenSans-Italic",
             "OpenSans-ExtraBoldItalic",
             "OpenSans-ExtraBold",
             "OpenSans-BoldItalic",
-            "OpenSans-Bold",
             "OpenSans_SemiCondensed-SemiBoldItalic",
             "OpenSans_SemiCondensed-SemiBold",
             "OpenSans_SemiCondensed-Regular",
@@ -153,11 +155,14 @@ public static class MauiProgram {
             "OpenSans",
         };
 
+        var aliases = new List<string>();
         foreach (var fontBase in fontDefinitions) {
             try {
                 var fontFile = $"{fontBase}.ttf";
                 var fontName = fontBase.Replace("-", "").Replace("_","");
+                if (aliases.Contains(fontName)) continue;
                 fonts.AddFont(fontFile, fontName);
+                aliases.Add(fontName);
             }
             catch (Exception ex) {
                 System.Diagnostics.Debug.WriteLine($"Failed to register font {fontBase}: {ex.Message}");

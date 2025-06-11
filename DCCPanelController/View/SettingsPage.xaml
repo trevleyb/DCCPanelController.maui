@@ -100,15 +100,16 @@
                              IsChecked="{Binding IsWiThrottle}"
                              CheckedChanged="CheckChanged_WiThrottle"/>
             </HorizontalStackLayout>
-        </StackLayout>
-        <StackLayout >
-            <Label Text="Supported Capabilities" Style="{StaticResource LargeLabel}"/>
-            <RadioButton Content="Turnouts" IsEnabled="False" WidthRequest="150" IsChecked="{Binding SupportsTurnouts}"/>
-            <RadioButton Content="Routes"   IsEnabled="False" WidthRequest="150" IsChecked="{Binding SupportsRoutes}"/>
-            <RadioButton Content="Blocks"   IsEnabled="False" WidthRequest="150" IsChecked="{Binding SupportsBlocks}"/>
-            <RadioButton Content="Sensors"  IsEnabled="False" WidthRequest="150" IsChecked="{Binding SupportsSensors}"/>
-            <RadioButton Content="Signals"  IsEnabled="False" WidthRequest="150" IsChecked="{Binding SupportsSignals}"/>
-            <RadioButton Content="Lights"   IsEnabled="False" WidthRequest="150" IsChecked="{Binding SupportsLights}"/>
+            
+            <Label Text="Supported Capabilities" Style="{StaticResource MediumLabel}"/>
+            <FlexLayout AlignContent="SpaceEvenly" AlignItems="Start" >
+                <RadioButton Content="Turnouts" IsEnabled="False" IsChecked="{Binding SupportsTurnouts}"/>
+                <RadioButton Content="Routes"   IsEnabled="False" IsChecked="{Binding SupportsRoutes}"/>
+                <RadioButton Content="Blocks"   IsEnabled="False" IsChecked="{Binding SupportsBlocks}"/>
+                <RadioButton Content="Sensors"  IsEnabled="False" IsChecked="{Binding SupportsSensors}"/>
+                <RadioButton Content="Signals"  IsEnabled="False" IsChecked="{Binding SupportsSignals}"/>
+                <RadioButton Content="Lights"   IsEnabled="False" IsChecked="{Binding SupportsLights}"/>
+            </FlexLayout>
         </StackLayout>
 
         <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">

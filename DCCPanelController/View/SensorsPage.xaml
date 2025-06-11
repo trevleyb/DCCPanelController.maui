@@ -19,28 +19,27 @@
 
     <StackLayout x:Name="MainStackLayout">
         <Grid
-            ColumnDefinitions="150,*,100"
-            HorizontalOptions="Fill"
-            Padding="5">
+            ColumnDefinitions="120,*,100"
+            HorizontalOptions="Fill">
             <Button
                 Command="{Binding SortByColumnCommand}"
                 CommandParameter="{Binding LabelID}"
                 Grid.Column="0"
                 HorizontalOptions="CenterAndExpand"
-                Margin="-5,0,0,0"
-                Style="{StaticResource ButtonLabel}"
+                Margin="10,0,0,0"
+                Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelID}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
                 CommandParameter="{Binding LabelName}"
                 Grid.Column="1"
-                Style="{StaticResource ButtonLabel}"
+                Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelName}"/>
             <Button
                 Command="{Binding SortByColumnCommand}"
                 CommandParameter="{Binding LabelState}"
                 Grid.Column="2"
-                Style="{StaticResource ButtonLabel}"
+                Style="{StaticResource ColumnLabel}"
                 Text="{Binding ColumnLabelState}"/>
         </Grid>
         <BoxView
@@ -54,7 +53,7 @@
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                <Label IsVisible="{Binding IsSupported}" Text="No Sensor data available. Press Refresh."/>
+                                <Label IsVisible="{Binding IsSupported}" Text="No Sensors available."/>
                                 <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Sensors."/>
                             </StackLayout>
                         </Grid>
@@ -63,7 +62,8 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Sensor">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,100" Padding="5">
+                                <Grid ColumnDefinitions="120,*,100" Padding="5" 
+                                      IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, Path=ToggleSensorStateCommand}"
@@ -87,7 +87,7 @@
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
                                     <Image
-                                        Grid.Column="2"
+                                        Grid.Column="3"
                                         HeightRequest="32"
                                         HorizontalOptions="End"
                                         VerticalOptions="Center"
@@ -108,7 +108,7 @@
                                         </Image.Triggers>
                                     </Image>
                                     <Label
-                                        Grid.Column="3"
+                                        Grid.Column="2"
                                         HorizontalOptions="Fill"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding State}"
@@ -119,12 +119,14 @@
                                                 TargetType="Label"
                                                 Value="true">
                                                 <Setter Property="TextColor" Value="Red"/>
+                                                <Setter Property="Text" Value="Occupied"/>
                                             </DataTrigger>
                                             <DataTrigger
                                                 Binding="{Binding State}"
                                                 TargetType="Label"
                                                 Value="false">
                                                 <Setter Property="TextColor" Value="Green"/>
+                                                <Setter Property="Text" Value="Free"/>
                                             </DataTrigger>
                                         </Label.Triggers>
                                     </Label>

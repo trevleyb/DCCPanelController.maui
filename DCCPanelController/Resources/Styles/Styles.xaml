@@ -237,7 +237,8 @@
 
     <Style TargetType="Label" x:Key="BaseLabel">
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource LabelText}, Dark={StaticResource LabelTextDark}}"/>
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding Light={StaticResource LabelText}, Dark={StaticResource LabelTextDark}}"/>
     </Style>
 
     <Style
@@ -249,7 +250,7 @@
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="10"
                          Tablet="12"
-                         Desktop="12" />
+                         Desktop="12"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -263,20 +264,20 @@
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="12"
                          Tablet="18"
-                         Desktop="18" />
+                         Desktop="18"/>
             </Setter.Value>
         </Setter>
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}" TargetType="Label" 
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label"
         x:Key="MediumLabel">
         <Setter Property="FontSize">
             <Setter.Value>
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="14"
                          Tablet="20"
-                         Desktop="18" />
+                         Desktop="18"/>
             </Setter.Value>
         </Setter>
     </Style>
@@ -289,7 +290,7 @@
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="12"
                          Tablet="18"
-                         Desktop="18" />
+                         Desktop="18"/>
             </Setter.Value>
         </Setter>
 
@@ -309,7 +310,7 @@
     </Style>
 
     <Style
-        BasedOn="{StaticResource BaseLabel}" TargetType="Label" 
+        BasedOn="{StaticResource BaseLabel}" TargetType="Label"
         x:Key="LargeLabel">
         <Setter Property="FontFamily" Value="OpenSansBold"></Setter>
         <Setter Property="FontSize">
@@ -317,7 +318,7 @@
                 <OnIdiom x:TypeArguments="x:Double"
                          Phone="16"
                          Tablet="24"
-                         Desktop="18" />
+                         Desktop="18"/>
             </Setter.Value>
         </Setter>
 
@@ -347,10 +348,8 @@
     </Style>
 
     <Style TargetType="Button">
-        <Setter Property="TextColor"
-                Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}"/>
-        <Setter Property="BackgroundColor"
-                Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource PrimaryDarkText}}"/>
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
         <Setter Property="FontSize" Value="14"/>
         <Setter Property="BorderWidth" Value="0"/>
@@ -842,5 +841,43 @@
         </Setter>
     </Style>
 
+
+    <Style TargetType="Button" x:Key="ColumnLabel">
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal">
+                        <VisualState.Setters>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0,0,0,0"/>
+                            <Setter Property="VerticalOptions" Value="Center"/>
+                            <Setter Property="HorizontalOptions" Value="Start"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                            <Setter Property="BorderWidth" Value="0"/>
+                            <Setter Property="Background" Value="{StaticResource Transparent}"/>
+                            <Setter Property="BorderColor" Value="{StaticResource Transparent}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0,0,0,0"/>
+                            <Setter Property="VerticalOptions" Value="Center"/>
+                            <Setter Property="HorizontalOptions" Value="Start"/>
+                            <Setter Property="FontSize" Value="16"/>
+                            <Setter Property="TextColor" Value="{StaticResource PrimaryDisabled}"/>
+                            <Setter Property="BorderWidth" Value="0"/>
+                            <Setter Property="Background" Value="{StaticResource Transparent}"/>
+                            <Setter Property="BorderColor" Value="{StaticResource Transparent}"/>
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- <Setter Property="HeightRequest" Value="20"/> -->
+    <!-- <Setter Property="CornerRadius" Value="0"/> -->
 
 </ResourceDictionary>

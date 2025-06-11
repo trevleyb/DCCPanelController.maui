@@ -77,6 +77,8 @@ public partial class ConnectionService : ObservableObject {
             Client.TurnoutMsgReceived += DccClientOnTurnoutMsgReceived;
             Client.RouteMsgReceived += DccClientOnRouteMsgReceived;
             Client.SignalMsgReceived += DccClientOnSignalMsgReceived;
+            Client.SensorMsgReceived += DccClientOnSensorMsgReceived;
+            Client.LightMsgReceived += DccClientOnLightMsgReceived;
 
             OnConnectionChanged();
             await SetTurnoutsToDefaultState();
@@ -124,21 +126,21 @@ public partial class ConnectionService : ObservableObject {
 
     private void OnConnectionChanged(object? sender = null, EventArgs? e = null) {
         var isConnected = IsConnected ? ConnectionStatus.Connected : ConnectionStatus.Disconnected;
-        AddMessage($"Server Connection Changed to {(IsConnected ? "Connected" : "Disconnected")}","Connection");
+        AddMessage($"Server Connection Changed to {(IsConnected ? "Connected" : "Disconnected")}","Connection", SystemMessageType.System);
         ConnectionChanged?.Invoke(this, new ConnectionChangedEvent { Status = isConnected });
     }
 
     private void ClientOnMessageReceived(object? sender, DccMessageArgs e) {
-        AddMessage($"{e.Message}","Message");
+        AddMessage($"{e.Message}","Message", SystemMessageType.Inbound);
     }
 
     public async Task<IResult> SendCmdAsync(string message) {
-        AddMessage($"{message}","Command");
+        AddMessage($"{message}","Command", SystemMessageType.Outbound);
         return await Client?.SendCmdAsync(message)!;
     }
 
     public async Task<IResult> SendTurnoutCmdAsync(Turnout? turnout, bool thrown) {
-        AddMessage($"Set {turnout?.Id} to '{turnout?.State}'","Turnout");
+        AddMessage($"Set {turnout?.Id} to '{turnout?.State}'","Turnout",SystemMessageType.Outbound);
         if (turnout is { Id: not null }) {
             return await Client?.SendTurnoutCmdAsync(turnout.Id, thrown)!;
         }
@@ -146,7 +148,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> SendRouteCmdAsync(Route? route, bool active) {
-        AddMessage($"Set {route?.Id} to '{route?.State}'","Route");
+        AddMessage($"Set {route?.Id} to '{route?.State}'","Route", SystemMessageType.Outbound);
         if (route is { Id: not null }) {
             return await Client?.SendRouteCmdAsync(route.Id, active)!;
         }
@@ -154,7 +156,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> SendBlockCmdAsync(Block? block, bool isOccupied) {
-        AddMessage($"Set {block?.Id} to '{(isOccupied ? "Occupied" : "Free")}'","Block");
+        AddMessage($"Set {block?.Id} to '{(isOccupied ? "Occupied" : "Free")}'","Block", SystemMessageType.Outbound);
         if (block is { Sensor: not null }) {
             return await Client?.SendBlockCmdAsync(block.Sensor, isOccupied)!;
         }
@@ -162,7 +164,7 @@ public partial class ConnectionService : ObservableObject {
     }
     
     public async Task<IResult> SendSignalCmdAsync(Signal? signal, SignalAspectEnum aspect) {
-        AddMessage($"Set {signal?.Id} to {signal?.Aspect}","Signal");
+        AddMessage($"Set {signal?.Id} to {signal?.Aspect}","Signal", SystemMessageType.Outbound);
         if (signal is { Id: not null }) {
             return await Client?.SendSignalCmdAsync(signal.Id, aspect)!;
         }
@@ -170,7 +172,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> SendLightCmdAsync(Light? light, bool isActive) {
-        AddMessage($"Set {light?.Id} to {(isActive ? "'On'" : "'Off'")}","Light");
+        AddMessage($"Set {light?.Id} to {(isActive ? "'On'" : "'Off'")}","Light",SystemMessageType.Outbound);
         if (light is { Id: not null }) {
             return await Client?.SendLightCmdAsync(light.Id, isActive)!;
         }
@@ -178,7 +180,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task<IResult> SendSensorCmdAsync(Sensor? sensor, bool isActive) {
-        AddMessage($"Set {sensor?.Id} to {(isActive ? "'On'" : "'Off'")}","Sensor");
+        AddMessage($"Set {sensor?.Id} to {(isActive ? "'On'" : "'Off'")}","Sensor", SystemMessageType.Outbound);
         if (sensor is { Id: not null }) {
             return await Client?.SendSensorCmdAsync(sensor.Id, isActive)!;
         }
@@ -186,7 +188,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     private void DccClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
-        AddMessage($"Received Route {e.RouteId} with state {(e.IsActive ? "'Active'" : "'Inactive'")}","Route");
+        AddMessage($"Received Route {e.RouteId} with state {(e.IsActive ? "'Active'" : "'Inactive'")}","Route", SystemMessageType.Inbound);
 
         Route? route = null;
         route ??= Profile.Routes.FirstOrDefault(x => x.Id == e.RouteId) ?? null;
@@ -204,7 +206,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     private void DccClientOnTurnoutMsgReceived(object? sender, DccTurnoutArgs e) {
-        AddMessage($"Received Turnout {e.TurnoutId} with state {(e.IsClosed ? "'Closed'" : "'Thrown'")}","Turnout");
+        AddMessage($"Received Turnout {e.TurnoutId} with state {(e.IsClosed ? "'Closed'" : "'Thrown'")}","Turnout", SystemMessageType.Inbound);
         
         Turnout? turnout = null;
         turnout ??= Profile?.Turnouts?.FirstOrDefault(x => x.Id == e.TurnoutId) ?? null;
@@ -223,7 +225,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     private void DccClientOnOccupancyMsgReceived(object? sender, DccOccupancyArgs e) {
-        AddMessage($"Received Occupancy {e.BlockId} with state {(e.IsOccupied ? "'Occupied'" : "'Free'")}","Occupancy");
+        AddMessage($"Received Occupancy {e.BlockId} with state {(e.IsOccupied ? "'Occupied'" : "'Free'")}","Occupancy", SystemMessageType.Inbound);
 
         Block? block = null;
         block ??= Profile?.Blocks?.FirstOrDefault(x => x.Id == e.BlockId) ?? null;
@@ -242,7 +244,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     private void DccClientOnSignalMsgReceived(object? sender, DccSignalArgs e) {
-        AddMessage($"Received Signal {e.SignalId} with aspect '{e.Aspect}'","Signal");
+        AddMessage($"Received Signal {e.SignalId} with aspect '{e.Aspect}'","Signal", SystemMessageType.Inbound);
 
         Signal? signal = null;
         signal ??= Profile?.Signals?.FirstOrDefault(x => x.Id == e.SignalId) ?? null;
@@ -260,6 +262,44 @@ public partial class ConnectionService : ObservableObject {
         }
     }
 
+    private void DccClientOnSensorMsgReceived(object? sender, DccSensorArgs e) {
+        AddMessage($"Received Sensor {e.SensorId} with state '{(e.IsOccupied ? "Occupied" : "Free")}'","Sensor", SystemMessageType.Inbound);
+
+        Sensor? sensor = null;
+        sensor ??= Profile?.Sensors?.FirstOrDefault(x => x.Id == e.SensorId) ?? null;
+        sensor ??= Profile?.Sensors?.FirstOrDefault(x => x.Name == e.SensorId) ?? null;
+        if (sensor is not null) {
+            sensor.State = e.IsOccupied;
+        } else if (Profile is not null && Profile.Sensors is not null) {
+            sensor = new Sensor() {
+                Id = e.SensorId,
+                Name = e.UserName,
+                DccAddress = e.SensorId.FromDccAddressString(),
+                State = e.IsOccupied
+            };
+            Profile.Sensors.Add(sensor);
+        }
+    }
+
+    private void DccClientOnLightMsgReceived(object? sender, DccLightArgs e) {
+        AddMessage($"Received Light {e.LightId} with state '{(e.IsOn ? "On" : "Off")}'","Light", SystemMessageType.Inbound);
+
+        Light? light = null;
+        light ??= Profile?.Lights?.FirstOrDefault(x => x.Id == e.LightId) ?? null;
+        light ??= Profile?.Lights?.FirstOrDefault(x => x.Name == e.LightId) ?? null;
+        if (light is not null) {
+            light.State = e.IsOn;
+        } else if (Profile is not null && Profile.Lights is not null) {
+            light = new Light {
+                Id = e.LightId,
+                Name = e.UserName,
+                DccAddress = e.LightId.FromDccAddressString(),
+                State = e.IsOn
+            };
+            Profile.Lights.Add(light);
+        }
+    }
+
     public async Task<IResult> ForceRefresh(string? type = "all") {
         return await Client?.ForceRefreshAsync(type)!;
     }
@@ -270,8 +310,8 @@ public partial class ConnectionService : ObservableObject {
         OnPropertyChanged(nameof(ServerMessages));
     }
 
-    public void AddMessage(string message, string operation = "") {
-        var msg = new ServerMessage(message, operation);
+    public void AddMessage(string message, string operation, SystemMessageType msgType) {
+        var msg = new ServerMessage(message, operation,msgType);
         ServerMessages.Insert(0, msg);
         while (ServerMessages.Count > MaxServerMessages) {
             ServerMessages.RemoveAt(ServerMessages.Count - 1);
@@ -285,8 +325,20 @@ public class ConnectionChangedEvent : EventArgs {
     public bool IsConnected => Status == ConnectionStatus.Connected;
 }
 
-public partial class ServerMessage(string message, string operation = "") : ObservableObject {
-    [ObservableProperty] private string _message = message;
-    [ObservableProperty] private string _operation = operation;
-    [ObservableProperty] private DateTime _timeStamp = DateTime.Now;
+public enum SystemMessageType {Inbound, Outbound, System, Error}
+
+public class ServerMessage(string message, string operation, SystemMessageType msgType) {
+    public string Message { get; init; }= message;
+    public string Operation { get; init; }= operation;
+    public DateTime TimeStamp { get; init; }= DateTime.Now;
+    public SystemMessageType MessageType { get; init; } = msgType;
+
+    public string IconSource =>
+        MessageType switch {
+            SystemMessageType.Inbound  => "block_free.png",
+            SystemMessageType.Outbound => "block_occupied.png",
+            SystemMessageType.System   => "button_active.png",
+            SystemMessageType.Error    => "button_inactive.png",
+            _                          => "routes.png"
+        };
 }

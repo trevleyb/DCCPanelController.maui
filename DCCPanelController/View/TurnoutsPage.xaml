@@ -39,7 +39,7 @@
                         </VisualState>
                         <VisualState x:Name="Selected">
                             <VisualState.Setters>
-                                <Setter Property="BackgroundColor" Value="DarkSeaGreen"/>
+                                <Setter Property="BackgroundColor" Value="LightGrey"/>
                             </VisualState.Setters>
                         </VisualState>
                     </VisualStateGroup>
@@ -48,41 +48,38 @@
         </Style>
     </ContentPage.Resources>
 
-    <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshTurnoutsCommand}">
-        <Grid VerticalOptions="FillAndExpand">
-            <CollectionView ItemsSource="{Binding Turnouts}" SelectedItem="{Binding SelectedTurnout}"
+    <RefreshView IsRefreshing="{Binding IsBusy}" 
+                 Command="{Binding RefreshTurnoutsCommand}">
+        <Grid>
+            <CollectionView ItemsSource="{Binding Turnouts}" 
+                            SelectedItem="{Binding SelectedTurnout}"
                             SelectionMode="Single">
                 
                 <CollectionView.Header>
                     <StackLayout>
-                        <Grid
-                            ColumnDefinitions="150,*,100"
-                            HorizontalOptions="Fill"
-                            Padding="5">
+                        <Grid ColumnDefinitions="120,*,100">
                             <Button
                                 Grid.Column="0"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                                 CommandParameter="{Binding LabelID}"
                                 HorizontalOptions="Start"
-                                Style="{StaticResource ButtonLabel}"
-                                Text="{Binding ColumnLabelID}"
-                                Margin="10,0,10,0"/>
+                                Style="{StaticResource ColumnLabel}"
+                                Text="{Binding ColumnLabelID}"/>
                             <Button
                                 Grid.Column="1"
                                 HorizontalOptions="Start"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                                 CommandParameter="{Binding LabelName}"
-                                Style="{StaticResource ButtonLabel}"
+                                Style="{StaticResource ColumnLabel}"
                                 Text="{Binding ColumnLabelName}"/>
                             <Button
                                 Grid.Column="2"
                                 Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
                                 CommandParameter="{Binding LabelState}"
                                 HorizontalOptions="Start"
-                                Style="{StaticResource ButtonLabel}"
+                                Style="{StaticResource ColumnLabel}"
                                 Text="{Binding ColumnLabelState}"/>
                         </Grid>
-                        <!-- This is your existing BoxView separator -->
                         <BoxView
                             BackgroundColor="{StaticResource Primary}"
                             HeightRequest="1"
@@ -93,7 +90,7 @@
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                            <Label IsVisible="{Binding IsSupported}" Text="No Turnout data available. Press Refresh."/>
+                            <Label IsVisible="{Binding IsSupported}" Text="No Turnouts available."/>
                             <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Turnouts."/>
                         </StackLayout>
                     </Grid>
@@ -103,29 +100,23 @@
                     <DataTemplate x:DataType="dataModel:Turnout">
                         <Grid Style="{StaticResource SelectableItemStyle}">
                             <StackLayout x:DataType="dataModel:Turnout">
-                                <Grid ColumnDefinitions="150,*,100" Padding="5">
-                                    <!-- <Grid.GestureRecognizers> -->
-                                    <!--     <TapGestureRecognizer -->
-                                    <!--         Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=EditTurnoutCommand, x:DataType=view:TurnoutsViewModel}" -->
-                                    <!--         CommandParameter="{Binding .}"/> -->
-                                    <!-- </Grid.GestureRecognizers> -->
-
+                                <Grid ColumnDefinitions="120,*,100" Padding="5">
                                     <Label
                                         Grid.Column="0"
                                         HorizontalOptions="Start"
-                                        LineBreakMode="NoWrap"
-                                        Margin="10,0,10,0"
+                                        LineBreakMode="TailTruncation"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Id}"
                                         VerticalOptions="Center"/>
                                     <Label
                                         Grid.Column="1"
                                         FontAttributes="Bold"
+                                        LineBreakMode="TailTruncation"
                                         Style="{StaticResource MediumLabel}"
                                         Text="{Binding Name}"
                                         VerticalOptions="Center"/>
                                     <components:TurnoutStateControl
-                                        IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=ConnectionService.IsConnected, x:DataType=view:TurnoutsViewModel}"
+                                        IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
                                         CanToggleState="true"
                                         Grid.Column="2"
                                         Margin="0,0,10,0"
@@ -140,8 +131,6 @@
                                     HorizontalOptions="FillAndExpand"/>
                             </StackLayout>
                         </Grid>
-                        <!--     </SwipeView.Content> -->
-                        <!-- </SwipeView> -->
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>

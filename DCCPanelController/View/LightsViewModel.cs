@@ -10,9 +10,9 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View;
 
 public partial class LightsViewModel : Base.ConnectionViewModel {
-    private const string _labelID = "System Name";
+    private const string _labelID = "ID";
     private const string _labelName = "Light";
-    private const string _labelState = "Is Lit?";
+    private const string _labelState = "Lit?";
 
     public string LabelID => _labelID;
     public string LabelName => _labelName;
