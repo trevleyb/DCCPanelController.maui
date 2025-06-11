@@ -10,7 +10,7 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
 
     [ObservableProperty] 
     [property: EditableLightSwitch("Light", "", 0)]
-    private string _turnoutID = string.Empty;
+    private string _switchID = string.Empty;
     
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
@@ -24,4 +24,8 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     public override Entity Clone() {
         return new SwitchEntity(this);
     }
+    
+    [JsonIgnore]
+    public Light? Light => Parent?.Light(SwitchID);
+
 }

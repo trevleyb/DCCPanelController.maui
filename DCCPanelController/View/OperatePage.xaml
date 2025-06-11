@@ -111,9 +111,7 @@
                 Grid.Row="1"
                 HorizontalOptions="Center"
                 IndicatorColor="DarkGrey"
-                IndicatorSize="8"
-                Margin="0,5,0,10"
-                HideSingle="True"
+                IndicatorSize="10"
                 SelectedIndicatorColor="{StaticResource Primary}"
                 VerticalOptions="Start"
                 x:Name="IndicatorView"/>

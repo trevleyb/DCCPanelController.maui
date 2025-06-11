@@ -61,8 +61,10 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         if (SelectedPanel != null) {
             var cloned = Panels.CreatePanelFrom(SelectedPanel);
             Panels.Add(cloned);
-            OnPropertyChanged(nameof(Panels));
+            RefreshSortOrder();
+            await SaveAsync();
         }
+        OnPropertyChanged(nameof(Panels));
     }
 
     [RelayCommand]

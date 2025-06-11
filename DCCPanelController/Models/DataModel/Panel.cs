@@ -58,6 +58,8 @@ public partial class Panel : ObservableObject, IEntityID {
     public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
     public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
     public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
+    public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
+    public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
 
     public string GenerateID() {
         return EntityID.NextPanelID(Panels ?? []);
@@ -95,6 +97,10 @@ public partial class Panel : ObservableObject, IEntityID {
         return GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
     }
 
+    public SwitchEntity? GetSwitchEntity(string id) {
+        return GetAllEntitiesWithID<SwitchEntity>().FirstOrDefault(b => b.SwitchID == id) ?? null;
+    }
+
     public Block? Block(string id) {
         return Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
     }
@@ -111,6 +117,14 @@ public partial class Panel : ObservableObject, IEntityID {
         return Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
     }
 
+    public Sensor? Sensor(string id) {
+        return Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Light? Light(string id) {
+        return Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+    
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;
         Entities.Add(entity);
