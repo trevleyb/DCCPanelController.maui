@@ -1,6 +1,6 @@
 namespace DCCCommon.Client;
 
-public enum DccClientCapabilities {
+public enum DccClientCapabilitiesEnum {
     Turnouts,
     Routes, 
     Blocks,

@@ -12,7 +12,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
-    xmlns:services="clr-namespace:DCCPanelController.Services">
+    xmlns:services="clr-namespace:DCCPanelController.Services"
+    xmlns:helpers="clr-namespace:DCCPanelController.Helpers">
 
     <ContentPage.Resources>
         <ResourceDictionary/>
@@ -100,22 +101,38 @@
                              IsChecked="{Binding IsWiThrottle}"
                              CheckedChanged="CheckChanged_WiThrottle"/>
             </HorizontalStackLayout>
-            
+
             <Label Text="Supported Capabilities" Style="{StaticResource MediumLabel}"/>
-            <FlexLayout AlignContent="SpaceEvenly" AlignItems="Start" >
-                <RadioButton Content="Turnouts" IsEnabled="False" IsChecked="{Binding SupportsTurnouts}"/>
-                <RadioButton Content="Routes"   IsEnabled="False" IsChecked="{Binding SupportsRoutes}"/>
-                <RadioButton Content="Blocks"   IsEnabled="False" IsChecked="{Binding SupportsBlocks}"/>
-                <RadioButton Content="Sensors"  IsEnabled="False" IsChecked="{Binding SupportsSensors}"/>
-                <RadioButton Content="Signals"  IsEnabled="False" IsChecked="{Binding SupportsSignals}"/>
-                <RadioButton Content="Lights"   IsEnabled="False" IsChecked="{Binding SupportsLights}"/>
-            </FlexLayout>
+            <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}" 
+                            Margin="10,5,10,10"
+                            HeightRequest="50">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="helpers:CapabilityIcon">
+                        <Grid>
+                            <Image Source="{Binding IconSource}"
+                                   WidthRequest="40"
+                                   HeightRequest="40"
+                                   Aspect="AspectFit"/>
+                            <!-- Optional: Add a subtle border or background -->
+                            <Border StrokeShape="RoundRectangle 5"
+                                    Stroke="{Binding IsEnabled, Converter={StaticResource BoolToColorConverter}}"
+                                    StrokeThickness="1"
+                                    BackgroundColor="Transparent"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
         </StackLayout>
 
         <ScrollView Grid.Row="2" VerticalScrollBarVisibility="Always" HorizontalScrollBarVisibility="Always">
             <ContentView x:Name="SettingsView"/>
         </ScrollView>
-        
+
         <Button Grid.Row="3"
                 Command="{Binding SaveSettingsCommand}"
                 HorizontalOptions="Center"

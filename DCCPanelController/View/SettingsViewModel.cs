@@ -9,6 +9,7 @@ using DccClients.WiThrottle.Client;
 using DCCCommon.Client;
 using DCCCommon.Discovery;
 using DCCCommon.Events;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 
@@ -21,7 +22,8 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _supportsSensors;
     [ObservableProperty] private bool _supportsSignals;
     [ObservableProperty] private bool _supportsLights;
-
+    [ObservableProperty] private Capabilities _capabilities = new Capabilities();
+    
     [ObservableProperty] private bool _isJmriServer;
     [ObservableProperty] private bool _isWiThrottle;
     public Models.DataModel.Settings Settings => Profile.Settings;
@@ -37,20 +39,7 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
         await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
     }
 
-    public void SetCapabilities(IDccClientSettings? settings) {
-        SupportsTurnouts = false;
-        SupportsRoutes   = false;
-        SupportsBlocks   = false;
-        SupportsSensors  = false;
-        SupportsSignals  = false;
-        SupportsLights   = false;
-
-        if (settings == null) return;
-        SupportsTurnouts = settings.Capabilities.Contains(DccClientCapabilities.Turnouts);
-        SupportsRoutes   = settings.Capabilities.Contains(DccClientCapabilities.Routes);
-        SupportsBlocks   = settings.Capabilities.Contains(DccClientCapabilities.Blocks);
-        SupportsSensors  = settings.Capabilities.Contains(DccClientCapabilities.Sensors);
-        SupportsSignals  = settings.Capabilities.Contains(DccClientCapabilities.Signals);
-        SupportsLights   = settings.Capabilities.Contains(DccClientCapabilities.Lights);
+    public void SetCapabilities() {
+        Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
     }
 }

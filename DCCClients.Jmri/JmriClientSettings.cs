@@ -1,6 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCCommon.Client;
-using static DCCCommon.Client.DccClientCapabilities;
+using static DCCCommon.Client.DccClientCapabilitiesEnum;
 
 namespace DccClients.Jmri.Client;
 
@@ -28,7 +28,7 @@ public partial class JmriClientSettings : ObservableObject, IDccClientSettings {
         Port = port;
     }
     
-    public List<DccClientCapabilities> Capabilities => [
+    public List<DccClientCapabilitiesEnum> Capabilities => [
         Turnouts, Sensors, Blocks, Routes, Lights];
 
 }

@@ -3,6 +3,7 @@ using CommunityToolkit.Maui.Storage;
 using DccClients.Jmri.Client;
 using DccClients.WiThrottle.Client;
 using DCCCommon.Client;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Settings;
@@ -40,7 +41,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             _viewModel!.IsWiThrottle = false;
             break;
         }
-        _viewModel.SetCapabilities(_viewModel?.Settings?.ClientSettings);
+        _viewModel.SetCapabilities();
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
@@ -143,7 +144,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
         }
         if (view is not null) SettingsView.Content = view;
-        _viewModel.SetCapabilities(_viewModel.Settings.ClientSettings);
+        _viewModel.SetCapabilities();
     }
 
     private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
