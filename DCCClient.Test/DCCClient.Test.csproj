@@ -29,8 +29,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DCCClients.Jmri\DCCClients.Jmri.csproj"/>
-        <ProjectReference Include="..\DCCClients.WiThrottle\DCCClients.WiThrottle.csproj"/>
+        <ProjectReference Include="..\DCCClient.Jmri\DCCClient.Jmri.csproj" />
+        <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj" />
     </ItemGroup>
 
 </Project>
