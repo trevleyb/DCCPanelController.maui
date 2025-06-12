@@ -1,5 +1,6 @@
 using System.Data;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Timers;
 using DccClients.WiThrottle.Client.Commands;
@@ -12,20 +13,26 @@ using Timer = System.Timers.Timer;
 
 namespace DccClients.WiThrottle.Client;
 
-public class WithrottleClient {
-    private readonly WiThrottleClientSettings _wiThrottleClientSettings;
+public class WiThrottleClient {
     private TcpClient? _client;
     private Timer? _heartbeatTimer;
     private NetworkStream? _stream;
-    public WithrottleClient(string address, int port) : this(new WiThrottleClientSettings(address, port)) { }
-    public WithrottleClient(string name, string address, int port) : this(new WiThrottleClientSettings(name, address, port)) { }
 
-    public WithrottleClient(WiThrottleClientSettings wiThrottleClientSettings) {
-        _wiThrottleClientSettings = wiThrottleClientSettings;
+    private readonly string _name;
+    private readonly string _address;
+    private readonly int _port = 12090;
+    
+    public WiThrottleClient(string address, int port) : this("", address, port) { }
+    public WiThrottleClient(string name, string address, int port) {
+        _name = name;
+        _address = address;
+        _port = port;
     }
 
     public bool IsRunning { get; private set; }
-
+    public Guid Id { get; init; } = Guid.NewGuid();
+    public string GetNameMessage => $"N{_name}";
+    public string GetHardwareMessage => $"HU{Id.ToString()}";
     public bool Echo { get; set; } = true;
     public event Action<IClientEvent>? DataEvent;
     public event Action<IClientEvent>? ConnectionEvent;
@@ -75,7 +82,7 @@ public class WithrottleClient {
 
         _client = new TcpClient();
         using (var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10))) {
-            await _client.ConnectAsync((string)_wiThrottleClientSettings.Address, _wiThrottleClientSettings.Port, cts.Token);
+            await _client.ConnectAsync((string)_address, _port, cts.Token);
         }
         _stream = _client.GetStream();
         IsRunning = true;
@@ -161,8 +168,8 @@ public class WithrottleClient {
     private void SendWakeUpMessages() {
         // To initialise a connection to a WiThrottle service we need to send the following messages
         // ------------------------------------------------------------------------------------------
-        SendMessage(_wiThrottleClientSettings.GetNameMessage);
-        SendMessage(_wiThrottleClientSettings.GetHardwareMessage);
+        SendMessage(GetNameMessage);
+        SendMessage(GetHardwareMessage);
         SendMessage("*+");
     }
 

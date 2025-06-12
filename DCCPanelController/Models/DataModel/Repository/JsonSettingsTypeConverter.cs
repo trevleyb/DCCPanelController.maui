@@ -1,8 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using DccClients.Jmri.Client;
-using DccClients.WiThrottle.Client;
-using DCCCommon.Client;
+using DCCPanelController.Clients;
+using DCCPanelController.Clients.Jmri;
+using DCCPanelController.Clients.Simulator;
+using DCCPanelController.Clients.WiThrottle;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 
@@ -21,8 +22,9 @@ public class JsonSettingsTypeConverter : JsonConverter<IDccClientSettings> {
             var rawText = root.GetRawText();
             var typeName = typeProperty.GetString();
             IDccClientSettings? obj = typeName?.ToLowerInvariant() switch {
-                "withrottle" => JsonSerializer.Deserialize<WiThrottleClientSettings>(rawText, options),
-                "jmri"       => JsonSerializer.Deserialize<JmriClientSettings>(rawText, options),
+                "withrottle" => JsonSerializer.Deserialize<WiThrottleSettings>(rawText, options),
+                "jmri"       => JsonSerializer.Deserialize<JmriSettings>(rawText, options),
+                "simulator"  => JsonSerializer.Deserialize<SimulatorSettings>(rawText, options),
                 _            => throw new ArgumentOutOfRangeException($"Invalid Settings Type detected: {typeName}")
             };
             if (obj == null) throw new ApplicationException("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");

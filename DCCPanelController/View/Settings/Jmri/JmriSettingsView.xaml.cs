@@ -1,5 +1,5 @@
-using DCCCommon.Client;
 using DCCCommon.Discovery;
+using DCCPanelController.Clients;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.Jmri;

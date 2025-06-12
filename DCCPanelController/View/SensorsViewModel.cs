@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Client;
-using DCCCommon.Events;
+using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -31,7 +30,7 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
 
     public SensorsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Sensors = Profile.Sensors;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Sensors) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
     }
 
@@ -73,7 +72,7 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
         if (sensor == null) return;
         sensor.State = !sensor.State;
         if (!string.IsNullOrEmpty(sensor.Id) && IsConnected) {
-            await ConnectionService.SendSensorCmdAsync(sensor, sensor.State )!;
+            if (ConnectionService.Client is { } client) await client.SendSensorCmdAsync(sensor, sensor.State )!;
         }
     }
     
@@ -84,7 +83,7 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
             for (var ptr = Profile.Sensors.Count; ptr > 0; ptr--) {
                 Profile.Blocks.RemoveAt(ptr - 1);
             }
-            await ConnectionService.ForceRefresh();
+            if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */
         } finally {
             IsBusy = false;

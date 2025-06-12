@@ -1,0 +1,77 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
+
+namespace DCCPanelController.Models.DataModel;
+
+/// <summary>
+///     Represents a Panel or Schematic that we can display on the app to control
+/// </summary>
+public partial class Panel : ObservableObject {
+    [ObservableProperty] private Color _backgroundColor = null!;
+    [ObservableProperty] private Color _borderColor = null!;
+    [ObservableProperty] private Color _branchLineColor = null!;
+
+    [ObservableProperty] private Color _buttonBorder = null!;
+    [ObservableProperty] private Color _buttonColor = null!;
+    [ObservableProperty] private Color _buttonOffBorder = null!;
+    [ObservableProperty] private Color _buttonOffColor = null!;
+    [ObservableProperty] private Color _buttonOnBorder = null!;
+    [ObservableProperty] private Color _buttonOnColor = null!;
+
+    [ObservableProperty] private Color _continuationColor = null!;
+    [ObservableProperty] private Color _divergingColor = null!;
+    [ObservableProperty] private Color _hiddenColor = null!;
+    [ObservableProperty] private Color _mainLineColor = null!;
+    [ObservableProperty] private Color _occupiedColor = null!;
+
+    [ObservableProperty] private double _opacityAttribute = 0.35;
+    [ObservableProperty] private Color _showPathColor = null!;
+    [ObservableProperty] private Color _terminatorColor = null!;
+
+    public void CopyColorsTo(Panel target) {
+        target.BackgroundColor = BackgroundColor;
+        target.BorderColor = BorderColor;
+        target.MainLineColor = MainLineColor;
+        target.BranchLineColor = BranchLineColor;
+        target.DivergingColor = DivergingColor;
+
+        target.ButtonBorder = ButtonBorder;
+        target.ButtonColor = ButtonColor;
+        target.ButtonOffBorder = ButtonOffBorder;
+        target.ButtonOffColor = ButtonOffColor;
+        target.ButtonOnBorder = ButtonOnBorder;
+        target.ButtonOnColor = ButtonOnColor;
+
+        target.ContinuationColor = ContinuationColor;
+        target.TerminatorColor = TerminatorColor;
+        target.HiddenColor = HiddenColor;
+        target.OccupiedColor = OccupiedColor;
+        target.ShowPathColor = ShowPathColor;
+
+        target.OpacityAttribute = OpacityAttribute;
+    }
+
+    public void ResetColorsToDefaults() {
+        BackgroundColor = AppleCrayonColors.Value("Snow");
+        BorderColor = AppleCrayonColors.Value("Lead");
+        MainLineColor = AppleCrayonColors.Value("Aqua");
+        BranchLineColor = AppleCrayonColors.Value("Sky");
+        DivergingColor = AppleCrayonColors.Value("Silver");
+
+        ButtonBorder = AppleCrayonColors.Value("Ocean");
+        ButtonColor = AppleCrayonColors.Value("Aluminum");
+        ButtonOffBorder = AppleCrayonColors.Value("Ocean");
+        ButtonOffColor = AppleCrayonColors.Value("Maraschino");
+        ButtonOnBorder = AppleCrayonColors.Value("Ocean");
+        ButtonOnColor = AppleCrayonColors.Value("Fern");
+
+        ContinuationColor = AppleCrayonColors.Value("Iron");
+        TerminatorColor = AppleCrayonColors.Value("Iron");
+
+        HiddenColor = AppleCrayonColors.Value("Snow");
+        OccupiedColor = AppleCrayonColors.Value("Cayenne");
+        ShowPathColor = AppleCrayonColors.Value("Cayenne");
+
+        OpacityAttribute = 0.35;
+    }
+}

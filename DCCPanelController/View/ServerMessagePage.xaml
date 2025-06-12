@@ -10,7 +10,8 @@
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:services="clr-namespace:DCCPanelController.Services">
+    xmlns:services="clr-namespace:DCCPanelController.Services"
+    xmlns:clients="clr-namespace:DCCPanelController.Clients">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"
@@ -21,7 +22,7 @@
 
     <StackLayout x:Name="MainStackLayout">
         <Grid Padding="5" VerticalOptions="FillAndExpand">
-            <CollectionView ItemsSource="{Binding ConnectionService.ServerMessages}" SelectionMode="None">
+            <CollectionView ItemsSource="{Binding ServerMessages}" SelectionMode="None">
                 <CollectionView.EmptyView>
                     <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                         <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
@@ -31,7 +32,7 @@
                 </CollectionView.EmptyView>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="services:ServerMessage">
+                    <DataTemplate x:DataType="clients:DccClientMessage">
                         <StackLayout Padding="0">
                             <Grid Margin="5">
                                 <HorizontalStackLayout>

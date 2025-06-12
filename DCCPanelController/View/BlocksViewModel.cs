@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Client;
-using DCCCommon.Events;
+using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -30,7 +29,7 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     
     public BlocksViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Blocks = Profile.Blocks;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Blocks) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         SetLabels();
     }
 
@@ -72,7 +71,7 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
         if (block == null) return;
         block.IsOccupied = !block.IsOccupied;
         if (!string.IsNullOrEmpty(block.Id) && IsConnected) {
-            await ConnectionService.SendBlockCmdAsync(block, block.IsOccupied )!;
+            if (ConnectionService.Client is { } client) await client.SendBlockCmdAsync(block, block.IsOccupied )!;
         }
     }
     
@@ -84,7 +83,7 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
                 Profile.Blocks.RemoveAt(ptr - 1);
                 OnPropertyChanged(nameof(Blocks));
             }
-            await ConnectionService.ForceRefresh();
+            if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */
         } finally {
             IsBusy = false;

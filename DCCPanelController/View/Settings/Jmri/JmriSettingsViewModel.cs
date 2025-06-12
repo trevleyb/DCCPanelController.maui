@@ -1,18 +1,18 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DccClients.Jmri.Client;
-using DCCCommon.Client;
+using DCCPanelController.Clients;
+using DCCPanelController.Clients.Jmri;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.Jmri;
 
 public partial class JmriSettingsViewModel : SettingsViewModel {
 
-    [ObservableProperty] private JmriClientSettings _jmriSettings;
+    [ObservableProperty] private JmriSettings _jmriSettings;
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
-        JmriSettings = Settings as JmriClientSettings ?? throw new InvalidOperationException();
+        JmriSettings = Settings as JmriSettings ?? throw new InvalidOperationException();
     }
 
     private async Task InitializeAsync() {

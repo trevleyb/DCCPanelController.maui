@@ -1,18 +1,18 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DccClients.WiThrottle.Client;
-using DCCCommon.Client;
+using DCCPanelController.Clients;
+using DCCPanelController.Clients.WiThrottle;
 using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.WiThrottle;
 
 public partial class WiThrottleSettingsViewModel: SettingsViewModel {
     
-    [ObservableProperty] private WiThrottleClientSettings _wiThrottleSettings;
+    [ObservableProperty] private WiThrottleSettings _wiThrottleSettings;
 
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
-        _wiThrottleSettings = Settings as WiThrottleClientSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
+        _wiThrottleSettings = Settings as WiThrottleSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
     }
     
     [RelayCommand]

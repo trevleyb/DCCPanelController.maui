@@ -8,9 +8,9 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public abstract class TurnoutTile : TrackTile, ITileInteractive {
     protected TurnoutTile(TurnoutEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(State));
-        if (Entity is TurnoutEntity { Turnout: {} turnout }) {
-            if (turnout.Id == entity?.Turnout?.Id) State = turnout.State; 
-            turnout.PropertyChanged += (sender, args) => { 
+        if (Entity is TurnoutEntity { Turnout: { } turnout }) {
+            if (turnout.Id == entity?.Turnout?.Id) State = turnout.State;
+            turnout.PropertyChanged += (sender, args) => {
                 if (turnout.Id == entity?.Turnout?.Id) {
                     State = turnout.State;
                 }
@@ -24,16 +24,15 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
     } = TurnoutStateEnum.Unknown;
 
     public async Task Interact(ConnectionService? connectionService) {
-        ClickSounds.PlayTurnoutClickSound();
-        State = State switch {
-            TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown  => TurnoutStateEnum.Closed,
-            TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
-            _                        => TurnoutStateEnum.Unknown
-        };
-
-        if (connectionService is not null && Entity is TurnoutEntity { } turnoutEntity) {
-            await connectionService.SendTurnoutCmdAsync(turnoutEntity.Turnout, State != TurnoutStateEnum.Closed);
+        if (connectionService is not null && Entity is TurnoutEntity { Turnout: not null } turnoutEntity) {
+            ClickSounds.PlayTurnoutClickSound();
+            State = State switch {
+                TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
+                TurnoutStateEnum.Thrown  => TurnoutStateEnum.Closed,
+                TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
+                _                        => TurnoutStateEnum.Unknown
+            };
+            if (connectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnoutEntity.Turnout, State != TurnoutStateEnum.Closed);
         }
     }
 

@@ -154,6 +154,20 @@ public class JmriClient : IDisposable {
         await listenTask;
     }
 
+    public async Task ResetUpdates() {
+        
+        // To reset all data from JMRI, we clear the caches which will force the 
+        // subscription to rebuild and event all data as changed data
+        // -----------------------------------------------------------------------
+        _turnouts.Clear();
+        _signals.Clear();
+        _routes.Clear();
+        _sensors.Clear();
+        _blocks.Clear();
+        _lights.Clear();
+        await Task.CompletedTask;
+    }
+
     private async Task SubscribeToUpdatesAsync() {
         var subscriptions = new[] {
             new { type = "turnout", method = "list" },

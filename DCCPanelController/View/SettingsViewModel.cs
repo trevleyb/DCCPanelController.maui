@@ -4,11 +4,6 @@ using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DccClients.Jmri.Client;
-using DccClients.WiThrottle.Client;
-using DCCCommon.Client;
-using DCCCommon.Discovery;
-using DCCCommon.Events;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -35,7 +30,7 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
         var reconnect = ConnectionService.IsConnected;
         if (reconnect) await ConnectionService.DisconnectAsync();
         await Profile.SaveAsync();
-        if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync(Settings.ClientSettings);
+        if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
     }
 

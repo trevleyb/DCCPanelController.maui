@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Client;
-using DCCCommon.Events;
+using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -30,7 +29,7 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
 
     public LightsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Lights = Profile.Lights;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Lights) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
         SetLabels();
     }
 
@@ -71,7 +70,7 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
         if (light == null) return;
         light.State = !light.State;
         if (!string.IsNullOrEmpty(light.Id) && IsConnected) {
-            await ConnectionService.SendLightCmdAsync(light, light.State )!;
+            if (ConnectionService.Client is { } client) await client.SendLightCmdAsync(light, light.State )!;
         }
     }
     
@@ -82,7 +81,7 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
             for (var ptr = Profile.Lights.Count; ptr > 0; ptr--) {
                 Profile.Lights.RemoveAt(ptr - 1);
             }
-            await ConnectionService.ForceRefresh();
+            if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Lights));
         } catch { /* ignored */
         } finally {

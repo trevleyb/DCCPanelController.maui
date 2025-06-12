@@ -1,8 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Client;
-using DCCCommon.Events;
+using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -37,17 +36,8 @@ public partial class RoutesViewModel : ConnectionViewModel {
     public RoutesViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile);
         Routes = Profile.Routes;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Routes) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
         SetLabels();
-    }
-
-    private void ClientOnRouteMsgReceived(object? sender, DccRouteArgs e) {
-        if (Routes.Any(x => x.Id == e.RouteId)) {
-            var route = Routes.First(x => x.Id == e.RouteId);
-            route.State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive;
-        } else {
-            Routes.Add(new Route { Id = e.RouteId, State = e.IsActive ? RouteStateEnum.Active : RouteStateEnum.Inactive });
-        }
     }
 
     [RelayCommand]
@@ -92,7 +82,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
                 Profile.Routes.RemoveAt(ptr - 1);
                 OnPropertyChanged(nameof(Routes));
             }
-            await RefreshRoutesAsync();
+            if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */
         } finally {
             IsBusy = false;
@@ -108,7 +98,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
             _                       => RouteStateEnum.Active
         };
         if (!string.IsNullOrEmpty(route.Id) && IsConnected) {
-            await ConnectionService.SendRouteCmdAsync(route, true)!;
+            if (ConnectionService.Client is { } client) await client.SendRouteCmdAsync(route, true)!;
         }
     }
 }

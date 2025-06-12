@@ -1,10 +1,8 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Storage;
-using DccClients.Jmri.Client;
-using DccClients.WiThrottle.Client;
-using DCCCommon.Client;
-using DCCPanelController.Helpers;
-using DCCPanelController.Models.DataModel;
+using DCCPanelController.Clients;
+using DCCPanelController.Clients.Jmri;
+using DCCPanelController.Clients.WiThrottle;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
@@ -25,13 +23,13 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         
         switch (_viewModel?.Settings?.ClientSettings?.Type) {
         case DccClientType.Jmri:
-            CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri, _viewModel?.Settings?.ClientSettings);
+            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _viewModel?.Settings?.ClientSettings);
             _viewModel!.IsJmriServer = true;
             _viewModel!.IsWiThrottle = false;
             break;
 
         case DccClientType.WiThrottle:
-            CheckSettingsCache<JmriClientSettings>(DccClientType.WiThrottle, _viewModel?.Settings?.ClientSettings);
+            CheckSettingsCache<JmriSettings>(DccClientType.WiThrottle, _viewModel?.Settings?.ClientSettings);
             _viewModel!.IsJmriServer = false;
             _viewModel!.IsWiThrottle = true;
             break;
@@ -137,10 +135,10 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         ContentView? view = null;
 
         if (_viewModel.IsJmriServer) {
-            _viewModel.Settings.ClientSettings = CheckSettingsCache<JmriClientSettings>(DccClientType.Jmri);
+            _viewModel.Settings.ClientSettings = CheckSettingsCache<JmriSettings>(DccClientType.Jmri);
             view = new JmriSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
         } else if (_viewModel.IsWiThrottle) {
-            _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleClientSettings>(DccClientType.WiThrottle);
+            _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle);
             view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
         }
         if (view is not null) SettingsView.Content = view;

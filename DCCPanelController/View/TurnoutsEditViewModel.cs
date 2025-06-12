@@ -1,7 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Client;
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Properties;
@@ -24,7 +22,6 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesView
     }
 
     private ConnectionService ConnectionService { get; }
-    private IDccClient? Client { get; set; }
 
     public Task ApplyChangesAsync() {
         return Task.CompletedTask;
@@ -37,7 +34,7 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesView
 
     [RelayCommand]
     private async Task ToggleTurnoutStateAsync() {
-        ConnectionService?.SendTurnoutCmdAsync(Turnout, Turnout.State == TurnoutStateEnum.Thrown);
+        if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(Turnout, Turnout.State == TurnoutStateEnum.Thrown);
         OnPropertyChanged(nameof(Turnout.State));
         OnPropertyChanged(nameof(Turnout));
     }

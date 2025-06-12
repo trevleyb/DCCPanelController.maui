@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Client;
+using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -44,7 +44,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         Turnouts = Profile.Turnouts;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapabilitiesEnum.Turnouts) ?? false;
+        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
         CanAddTurnout = profile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {
@@ -69,7 +69,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             foreach (var turnout in removeTurnouts) {
                 Profile.Turnouts.Remove(turnout);
             }
-            await ConnectionService.ForceRefresh();
+            if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Turnouts));
         } catch { /* ignored */
         } finally {
@@ -135,7 +135,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task SendTurnoutStateAsync(Turnout? turnout) {
         if (turnout is not null) {
             if (IsConnected) {
-                await ConnectionService?.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
+                if (ConnectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
             }
             OnPropertyChanged(nameof(Turnouts));
         }

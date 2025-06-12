@@ -1,5 +1,5 @@
 using System.Text.Json;
-using DCCCommon.Client;
+using DCCPanelController.Clients;
 using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.DataModel.Repository;
