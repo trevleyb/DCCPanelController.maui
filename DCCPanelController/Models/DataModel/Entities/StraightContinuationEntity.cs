@@ -6,7 +6,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
-    [ObservableProperty] [property: EditableTrackTerminator("Terminator", group: "Track")]
+    [ObservableProperty] [property: EditableEnum("Terminator", group: "Track")]
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;
 
     [JsonConstructor]

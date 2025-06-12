@@ -2,6 +2,8 @@
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
+public enum SwitchStyleEnum { Switch, Light, Button }
+
 public enum ButtonStateEnum { Unknown, On, Off }
 
 public enum TurnoutStateEnum { Unknown, Closed, Thrown }

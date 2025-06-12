@@ -12,7 +12,7 @@ public abstract partial class TrackEntity : Entity {
     [ObservableProperty] [property: EditableOpacity("Opacity", "", 5, "Track")]
     private double _opacity = 1.0;
 
-    [ObservableProperty] [property: EditableTrack("Attributes", "", 5, "Track")]
+    [ObservableProperty] [property: EditableEnum("Attributes", "", 5, "Track")]
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
     [ObservableProperty] [property: EditableColor("Border Color", "", 5, "Track")]
@@ -23,7 +23,7 @@ public abstract partial class TrackEntity : Entity {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMainLine))]
-    [property: EditableTrackType("Track Type", "", 5, "Track")]
+    [property: EditableEnum("Track Type", "", 5, "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
 
     protected TrackEntity() { }

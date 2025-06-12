@@ -6,7 +6,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RouteEntity : Entity, IInteractiveEntity {
-    [ObservableProperty] [property: EditableButtonSize("Button Size")]
+    [ObservableProperty] [property: EditableEnum("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: EditableRoute("Route")]

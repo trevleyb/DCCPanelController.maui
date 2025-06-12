@@ -21,7 +21,7 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity, IRotation
     [ObservableProperty] [property: EditableInt("Font Size", "", 0, "Text")]
     private int _fontSize = 8;
 
-    [ObservableProperty] [property: EditableAlignment("Horizontal", "", 0, "Text")]
+    [ObservableProperty] [property: EditableEnum("Horizontal", "", 0, "Text")]
     private TextAlignment _horizontalJustification = TextAlignment.Center;
 
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
@@ -33,7 +33,7 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity, IRotation
     [ObservableProperty] [property: EditableColor("Text Color", "", 0, "Text")]
     private Color _textColor = Colors.Black;
 
-    [ObservableProperty] [property: EditableAlignment("Vertical", "", 0, "Text")]
+    [ObservableProperty] [property: EditableEnum("Vertical", "", 0, "Text")]
     private TextAlignment _verticalJustification = TextAlignment.Center;
 
     [JsonConstructor]

@@ -37,6 +37,7 @@ public static class SvgImages {
         AddImage("Switch",    "switch_on", 4); 
         AddImage("SwitchOn",  "switch_on", 4); 
         AddImage("SwitchOff", "switch_off", 4);
+        AddImage("Light", "light");
         
         AddImage("Route", "Track_Route", 4);            // Add Buttons at N,E,S,W
         AddImage("RouteLarge", "Track_Route_Large", 4); // Add Buttons at N,E,S,W
@@ -100,7 +101,12 @@ public static class SvgImages {
         if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
         var imageRoot = Images[name.ToLower()];
         if (!imageRoot.ContainsKey(0)) {
-            imageRoot.Add(0, new SvgReference(GetFullPathImage(filename), 0, new SvgConnections("********")));
+            var foundImage = GetFullPathImage(filename);
+            if (string.IsNullOrEmpty(foundImage)) {
+                Console.WriteLine($"Image {filename} not found");
+                return; // Not found, so don't add it to the list.'
+            }
+            imageRoot.Add(0, new SvgReference(foundImage, 0, new SvgConnections("********")));
         }
     }
 
@@ -124,7 +130,12 @@ public static class SvgImages {
             var key = start + direction * 45;
             var rotation = direction * 45;
             if (!imageRoot.ContainsKey(key)) {
-                imageRoot.Add(key, new SvgReference(GetFullPathImage(filename), rotation, new SvgConnections(connections, rotation)));
+                var foundImage = GetFullPathImage(filename);
+                if (string.IsNullOrEmpty(foundImage)) {
+                    Console.WriteLine($"Image {filename} not found");
+                    return; // Not found, so don't add it to the list.'
+                }
+                imageRoot.Add(key, new SvgReference(foundImage, rotation, new SvgConnections(connections, rotation)));
             }
         }
     }

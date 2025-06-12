@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <g transform="translate(9.007 9.958)">
+            <g>
+                <g>
+                    <path id="Button" d="M0 0L14.959 0.0140114" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(0 14.08)" />
+                    <path id="Button" d="M0 0L15.0413 0.0453606" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(14.969 14.029)" />
+                    <path id="Button" d="M0 14.024L0.0457993 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(14.958 0)" />
+                    <path id="Button" d="M1 14.0252L1 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(14.004 14.067)" />
+                </g>
+                <g transform="translate(3.008 2.076)">
+                    <path id="Button" d="M0 11.9387L11.9081 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(11.987 0.044)" />
+                    <path id="Button" d="M0 12.0314L11.9463 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(0.02 11.95)" />
+                    <path id="Button" d="M0 0L12.0281 12.025" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" />
+                    <path id="Button" d="M0 0L11.9941 11.9234" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(11.969 11.993)" />
+                </g>
+            </g>
+            <g transform="translate(5.52 4.59)">
+                <path  id="Button" d="M0 8.5C0 3.80558 3.80558 0 8.5 0C13.1944 0 17 3.80558 17 8.5C17 13.1944 13.1944 17 8.5 17C3.80558 17 0 13.1944 0 8.5Z" fill="#90C418" fill-rule="evenodd" transform="translate(1 1)" />
+                <path  id="ButtonOutline" d="M0 8.5C0 3.80557 3.80557 0 8.5 0C13.1944 0 17 3.80557 17 8.5C17 13.1944 13.1944 17 8.5 17C3.80557 17 0 13.1944 0 8.5Z" fill="none" stroke-width="2" stroke="#000000" transform="translate(1 1)" />
+                <path d="M0 9.5C0 4.25329 4.25329 0 9.5 0C14.7467 0 19 4.25329 19 9.5C19 14.7467 14.7467 19 9.5 19C4.25329 19 0 14.7467 0 9.5Z" fill="none" stroke-width="0.5" stroke="#FFFFFF" />
+            </g>
+        </g>
+    </g>
+</svg>

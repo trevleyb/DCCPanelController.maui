@@ -64,6 +64,7 @@
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
+        <EmbeddedResource Include="Models\TileImages\light.svg" />
         <MauiImage Include="Resources\Images\*"/>
         <MauiImage Include="Resources\Icons\*"/>
 

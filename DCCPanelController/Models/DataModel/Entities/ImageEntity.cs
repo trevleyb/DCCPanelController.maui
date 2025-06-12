@@ -6,7 +6,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ImageEntity : Entity, IDrawingEntity, IRotationEntity {
-    [ObservableProperty] [property: EditableAspectRatio("Aspect Ratio", group: "Image")]
+    [ObservableProperty] [property: EditableEnum("Aspect Ratio", group: "Image")]
     private Aspect _aspectRatio = Aspect.AspectFit;
 
     [ObservableProperty] [property: EditableColor("Border Color", group: "Image")]

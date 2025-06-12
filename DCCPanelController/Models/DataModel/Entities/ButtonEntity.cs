@@ -10,7 +10,7 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActi
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")]
     private ButtonActions _buttonPanelActions = [];
 
-    [ObservableProperty] [property: EditableButtonSize("Button Size")]
+    [ObservableProperty] [property: EditableEnum("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: EditableID("Button ID")]

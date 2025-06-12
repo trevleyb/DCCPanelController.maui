@@ -12,6 +12,10 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     [property: EditableLightSwitch("Light", "", 0)]
     private string _switchID = string.Empty;
     
+    [ObservableProperty] 
+    [property: EditableEnum("Use Switch", "", 0)]
+    private SwitchStyleEnum _switchStyle = SwitchStyleEnum.Light;
+
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [JsonIgnore]
