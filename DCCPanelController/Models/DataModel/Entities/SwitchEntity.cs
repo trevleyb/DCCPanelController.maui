@@ -14,6 +14,9 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
+    [JsonIgnore]
+    public Light? Light => Parent?.Light(SwitchID);
+
     [JsonConstructor]
     public SwitchEntity() { }
 
@@ -24,8 +27,5 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     public override Entity Clone() {
         return new SwitchEntity(this);
     }
-    
-    [JsonIgnore]
-    public Light? Light => Parent?.Light(SwitchID);
 
 }

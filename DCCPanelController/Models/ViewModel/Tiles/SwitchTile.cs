@@ -11,6 +11,14 @@ public class SwitchTile : Tile, ITileInteractive {
     public SwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
+        if (Entity is SwitchEntity { Light : {} light }) {
+            if (light.Id == entity?.Light?.Id) State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;  
+            light.PropertyChanged += (sender, args) => { 
+                if (light.Id == entity?.Light?.Id) {
+                    State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
+                }
+            };
+        }
     }
 
     private ButtonStateEnum State {
@@ -27,7 +35,7 @@ public class SwitchTile : Tile, ITileInteractive {
             _                       => ButtonStateEnum.Unknown
         };
         if (connectionService is not null && Entity is SwitchEntity { } switchEntity) {
-            await connectionService.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
+            await connectionService.SendLightCmdAsync(switchEntity.Light, State == ButtonStateEnum.On);
         }
     }
 
