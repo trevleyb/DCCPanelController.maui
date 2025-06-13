@@ -1,4 +1,4 @@
-namespace DCCCommon.Common;
+namespace DCCClient.Helpers;
 
 [Flags]
 public enum SignalAspectEnum {

@@ -1,7 +1,7 @@
+using DCCClient.Discovery;
+using DCCClient.Helpers;
 using DccClients.Jmri;
 using DccClients.Jmri.Events;
-using DCCCommon.Common;
-using DCCCommon.Discovery;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 

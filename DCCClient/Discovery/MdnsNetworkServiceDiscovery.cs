@@ -1,9 +1,9 @@
 using System.Collections.Concurrent;
 using System.Net.Sockets;
-using DCCCommon.Common;
+using DCCClient.Helpers;
 using Makaretu.Dns;
 
-namespace DCCCommon.Discovery;
+namespace DCCClient.Discovery;
 
 public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     private readonly ConcurrentDictionary<string, DiscoveredService> _discoveredServicesCache = new();

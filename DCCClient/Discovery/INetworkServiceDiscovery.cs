@@ -1,6 +1,6 @@
-using DCCCommon.Common;
+using DCCClient.Helpers;
 
-namespace DCCCommon.Discovery;
+namespace DCCClient.Discovery;
 
 public interface INetworkServiceDiscovery : IDisposable {
     Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,

@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Common;
+using DCCClient.Helpers;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Models.DataModel;

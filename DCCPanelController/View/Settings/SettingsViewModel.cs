@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCCommon.Discovery;
+using DCCClient.Discovery;
 using DCCPanelController.Clients;
 using DCCPanelController.Services;
 using Microsoft.Maui.Controls;

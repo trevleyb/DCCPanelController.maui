@@ -377,7 +377,7 @@
         <ProjectReference Include="..\DCCClient.Jmri\DCCClient.Jmri.csproj" />
         <ProjectReference Include="..\DCCClient.Simulator\DCCClient.Simulator.csproj" />
         <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj" />
-        <ProjectReference Include="..\DCCCommon\DCCCommon.csproj"/>
+        <ProjectReference Include="..\DCCClient\DCCClient.csproj" />
     </ItemGroup>
 
 </Project>

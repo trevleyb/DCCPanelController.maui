@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCClient.Discovery;
+using DCCClient.Helpers;
 using DCCClient.Simulator;
-using DCCCommon.Common;
-using DCCCommon.Discovery;
 using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Clients.Simulator;

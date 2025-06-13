@@ -1,6 +1,6 @@
-using DCCCommon.Common;
+using DCCClient.Helpers;
 
-namespace DCCCommon.Discovery;
+namespace DCCClient.Discovery;
 
 /// <summary>
 ///     Factory for creating service discovery instances

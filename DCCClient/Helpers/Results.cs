@@ -1,6 +1,6 @@
 using System.Collections.ObjectModel;
 
-namespace DCCCommon.Common;
+namespace DCCClient.Helpers;
 
 public interface IResult {
     bool IsSuccess { get; }

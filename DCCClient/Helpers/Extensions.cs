@@ -1,4 +1,4 @@
-namespace DCCCommon.Helpers;
+namespace DCCClient.Helpers;
 
 public static class Extensions {
     public static int ConvertToDCCAddress(this string dccLabel) {

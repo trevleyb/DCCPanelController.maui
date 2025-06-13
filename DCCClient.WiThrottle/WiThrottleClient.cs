@@ -3,12 +3,11 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Timers;
+using DCCClient.Helpers;
 using DccClients.WiThrottle.Client.Commands;
 using DccClients.WiThrottle.Client.Events;
 using DccClients.WiThrottle.Client.Messages;
 using DccClients.WiThrottle.Helpers;
-using DCCCommon.Common;
-using Result = DCCCommon.Common.Result;
 using Timer = System.Timers.Timer;
 
 namespace DccClients.WiThrottle.Client;

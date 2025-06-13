@@ -1,5 +1,5 @@
-using DCCCommon.Common;
-using DCCCommon.Discovery;
+using DCCClient.Discovery;
+using DCCClient.Helpers;
 using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Clients;
