@@ -10,7 +10,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View;
 
-public partial class SettingsViewModel : Base.ConnectionViewModel {
+public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _supportsTurnouts;
     [ObservableProperty] private bool _supportsRoutes;
     [ObservableProperty] private bool _supportsBlocks;
@@ -23,7 +23,7 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _isWiThrottle;
     public Models.DataModel.Settings Settings => Profile.Settings;
 
-    public SettingsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) { }
+    public SettingsPageViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) { }
 
     [RelayCommand]
     public async Task SaveSettingsAsync() {
@@ -35,6 +35,7 @@ public partial class SettingsViewModel : Base.ConnectionViewModel {
     }
 
     public void SetCapabilities() {
-        Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
+        if (!IsJmriServer && !IsWiThrottle) Capabilities = new Capabilities();
+        else Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
     }
 }

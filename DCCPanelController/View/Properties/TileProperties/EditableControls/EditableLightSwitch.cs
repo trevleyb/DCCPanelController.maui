@@ -11,6 +11,9 @@ public class EditableLightSwitchAttribute(string label, string description = "",
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var lights = profile.Lights.Select(t => t.Id).ToList();
 
+            _ = dropDownWidth;
+            _ = dropDownHeight;
+            
 #if IOS || ANDROID
                 var picker = new Picker {
                     WidthRequest = width,

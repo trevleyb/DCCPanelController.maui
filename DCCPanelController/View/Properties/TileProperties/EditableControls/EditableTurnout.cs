@@ -11,6 +11,9 @@ public class EditableTurnoutAttribute(string label, string description = "", int
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var turnouts = profile.Turnouts.Select(t => t.Id).ToList();
 
+            _ = dropDownWidth;
+            _ = dropDownHeight;
+            
 #if IOS || ANDROID
                 var picker = new Picker {
                     WidthRequest = width,

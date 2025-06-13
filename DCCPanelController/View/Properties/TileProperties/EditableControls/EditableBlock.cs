@@ -11,6 +11,10 @@ public class EditableBlockAttribute(string label, string description = "", int o
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var blocks = profile.Blocks.Select(t => t.Id).ToList();
 
+            _ = dropDownWidth;
+            _ = dropDownHeight;
+
+            
 #if IOS || ANDROID
                 var picker = new Picker {
                     WidthRequest = width,

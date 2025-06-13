@@ -5,7 +5,7 @@
     Title="Settings"
     iOsSpecific:Page.UseSafeArea="True"
     x:Class="DCCPanelController.View.SettingsPage"
-    x:DataType="view:SettingsViewModel"
+    x:DataType="view:SettingsPageViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
@@ -59,7 +59,7 @@
                                 HeightRequest="35"
                                 BorderColor="{StaticResource Primary}"
                                 BorderWidth="1"
-                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
+                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
                                 VerticalOptions="Center"
                                 HorizontalOptions="Start"
                                 WidthRequest="180"/>
@@ -91,12 +91,11 @@
                              HorizontalOptions="FillAndExpand"/>
                 </StackLayout>
 
-                <StackLayout Margin="20,0,0,0" Grid.Row="1">
+                <StackLayout Margin="20,0,0,0" Grid.Row="1" HeightRequest="120">
                     <Label
                         Text="Server Connection Details:"
                         Style="{StaticResource LargeLabel}"
                         TextColor="{StaticResource Primary}"/>
-                    <FlexLayout HeightRequest="100" Direction="Row" Wrap="Wrap" AlignContent="SpaceEvenly" AlignItems="Start">
                         <HorizontalStackLayout Margin="-3,0,0,0">
                             <RadioButton Value="jmri"
                                          GroupName="ServerType"
@@ -111,9 +110,9 @@
                         </HorizontalStackLayout>
 
                         <StackLayout>
-                            <Label Margin="0,-10,0,0" Text="Server Capabilities" Style="{StaticResource MicroLabel}"/>
+                            <Label Margin="10,0,0,0" Text="Server Capabilities" Style="{StaticResource MicroLabel}"/>
                             <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}"
-                                            Margin="0,0,30,0">
+                                            Margin="10,0,30,0">
                                 <CollectionView.ItemsLayout>
                                     <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
                                 </CollectionView.ItemsLayout>
@@ -167,7 +166,6 @@
                                 </CollectionView.ItemTemplate>
                             </CollectionView>
                         </StackLayout>
-                    </FlexLayout>
                 </StackLayout>
 
                 <ScrollView Margin="0,20,0,0" Grid.Row="2" VerticalScrollBarVisibility="Always"

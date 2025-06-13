@@ -54,7 +54,7 @@ public static class MauiProgram {
         services.AddTransientViewAndModel<LightsPage, LightsViewModel>();
         //services.AddTransientViewAndModel<SignalsPage, LightsViewModel>();
 
-        services.AddTransientViewAndModel<SettingsPage, SettingsViewModel>();
+        services.AddTransientViewAndModel<SettingsPage, SettingsPageViewModel>();
         services.AddTransientViewAndModel<ServerMessagesPage, ServerMessagesViewModel>();
 
         var app = builder.Build();

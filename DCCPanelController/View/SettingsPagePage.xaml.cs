@@ -12,41 +12,41 @@ namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
-    private readonly SettingsViewModel? _viewModel;
+    private readonly SettingsPageViewModel? _pageViewModel;
 
-    public SettingsPage(SettingsViewModel viewModel) {
-        _viewModel = viewModel;
-        ArgumentNullException.ThrowIfNull(_viewModel);
-        BindingContext = _viewModel;
+    public SettingsPage(SettingsPageViewModel pageViewModel) {
+        _pageViewModel = pageViewModel;
+        ArgumentNullException.ThrowIfNull(_pageViewModel);
+        BindingContext = _pageViewModel;
         PropertyChanged += OnPropertyChanged;
         InitializeComponent();
         
-        switch (_viewModel?.Settings?.ClientSettings?.Type) {
+        switch (_pageViewModel?.Settings?.ClientSettings?.Type) {
         case DccClientType.Jmri:
-            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _viewModel?.Settings?.ClientSettings);
-            _viewModel!.IsJmriServer = true;
-            _viewModel!.IsWiThrottle = false;
+            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _pageViewModel?.Settings?.ClientSettings);
+            _pageViewModel!.IsJmriServer = true;
+            _pageViewModel!.IsWiThrottle = false;
             break;
 
         case DccClientType.WiThrottle:
-            CheckSettingsCache<JmriSettings>(DccClientType.WiThrottle, _viewModel?.Settings?.ClientSettings);
-            _viewModel!.IsJmriServer = false;
-            _viewModel!.IsWiThrottle = true;
+            CheckSettingsCache<JmriSettings>(DccClientType.WiThrottle, _pageViewModel?.Settings?.ClientSettings);
+            _pageViewModel!.IsJmriServer = false;
+            _pageViewModel!.IsWiThrottle = true;
             break;
 
         default:
-            _viewModel!.IsJmriServer = false;
-            _viewModel!.IsWiThrottle = false;
+            _pageViewModel!.IsJmriServer = false;
+            _pageViewModel!.IsWiThrottle = false;
             break;
         }
-        _viewModel.SetCapabilities();
+        _pageViewModel.SetCapabilities();
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     protected override async void OnDisappearing() {
         base.OnDisappearing();
-        if (_viewModel is { } vm) await _viewModel.Profile.SaveAsync();
+        if (_pageViewModel is { } vm) await _pageViewModel.Profile.SaveAsync();
     }
 
     private void About_OnClicked(object? sender, EventArgs e) {
@@ -62,7 +62,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             var fileName = await PromptUserForConfigFile();
 
             if (!string.IsNullOrEmpty(fileName)) {
-                if (_viewModel is { Settings: not null } vm) {
+                if (_pageViewModel is { Settings: not null } vm) {
                     var loadedJson = await LoadJsonFromFile(fileName);
                     var profile = JsonRepository.UploadSettings(loadedJson);
                     vm.Profile = profile;
@@ -82,7 +82,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             var filePath = await PromptUserForSaveLocation();
 
             if (!string.IsNullOrEmpty(filePath)) {
-                if (_viewModel is { } vm) {
+                if (_pageViewModel is { } vm) {
                     var saveFile = Path.Combine(filePath, "dccpanel.settings");
                     var jsonString = JsonRepository.DownloadProfile(vm.Profile);
                     await SaveJsonToFile(saveFile, jsonString);
@@ -122,27 +122,27 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel is {IsJmriServer: true} ) LoadSettingsPage();
+        if (_pageViewModel is {IsJmriServer: true} ) LoadSettingsPage();
     }
 
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (_viewModel is {IsWiThrottle: true} ) LoadSettingsPage();
+        if (_pageViewModel is {IsWiThrottle: true} ) LoadSettingsPage();
     }
 
     private void LoadSettingsPage() {
-        if (_viewModel?.Settings is null) return;
+        if (_pageViewModel?.Settings is null) return;
 
         ContentView? view = null;
 
-        if (_viewModel.IsJmriServer) {
-            _viewModel.Settings.ClientSettings = CheckSettingsCache<JmriSettings>(DccClientType.Jmri);
-            view = new JmriSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
-        } else if (_viewModel.IsWiThrottle) {
-            _viewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle);
-            view = new WiThrottleSettingsView(_viewModel.Settings.ClientSettings, _viewModel.ConnectionService);
+        if (_pageViewModel.IsJmriServer) {
+            _pageViewModel.Settings.ClientSettings = CheckSettingsCache<JmriSettings>(DccClientType.Jmri);
+            view = new JmriSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);
+        } else if (_pageViewModel.IsWiThrottle) {
+            _pageViewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle);
+            view = new WiThrottleSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);
         }
         if (view is not null) SettingsView.Content = view;
-        _viewModel.SetCapabilities();
+        _pageViewModel.SetCapabilities();
     }
 
     private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

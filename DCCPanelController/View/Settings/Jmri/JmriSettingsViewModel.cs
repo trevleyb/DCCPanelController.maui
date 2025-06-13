@@ -13,6 +13,7 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         JmriSettings = Settings as JmriSettings ?? throw new InvalidOperationException();
+        if (string.IsNullOrEmpty(JmriSettings.Name)) JmriSettings.Name = DeviceInfo.Name;
     }
 
     private async Task InitializeAsync() {
