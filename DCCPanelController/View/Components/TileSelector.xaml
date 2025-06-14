@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Class="DCCPanelController.View.TileSelectors.TileSelector"
+    x:DataType="tileSelectors:TileSelectorViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
+    xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <Grid WidthRequest="48" Margin="0,5,0,5">
+        <ScrollView Orientation="Vertical">
+            <VerticalStackLayout>
+                <Label Text="Actions" FontFamily="OpenSansMedium" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                <BoxView
+                    Margin="8,3,8,3"
+                    BackgroundColor="DarkGray"
+                    HeightRequest="1"
+                    HorizontalOptions="FillAndExpand"/>
+
+                <CollectionView
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemsSource="{Binding Actions}"
+                    SelectionMode="None">
+
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout
+                            Orientation="Vertical"
+                            SnapPointsType="MandatorySingle"
+                            Span="1"
+                            VerticalItemSpacing="2"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="entities:Entity">
+                            <ContentView
+                                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                <Border
+                                    BackgroundColor="White"
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    HorizontalOptions="Fill"
+                                    Padding="5"
+                                    Stroke="{StaticResource Gray500}"
+                                    StrokeShape="RoundRectangle 5,5,5,5"
+                                    StrokeThickness="1"
+                                    VerticalOptions="Fill"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                    <ContentView
+                                        Content="{Binding .}"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill"
+                                        x:DataType="View">
+                                        <ContentView.GestureRecognizers>
+                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                        </ContentView.GestureRecognizers>
+                                    </ContentView>
+                                </Border>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label Text="Tracks" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                <BoxView
+                    Margin="8,3,8,3"
+                    BackgroundColor="DarkGray"
+                    HeightRequest="1"
+                    HorizontalOptions="FillAndExpand"/>
+
+                <CollectionView
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemsSource="{Binding Tracks}"
+                    SelectionMode="None">
+
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout
+                            Orientation="Vertical"
+                            SnapPointsType="MandatorySingle"
+                            Span="1"
+                            VerticalItemSpacing="2"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="entities:Entity">
+                            <ContentView
+                                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                <Border
+                                    BackgroundColor="White"
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    HorizontalOptions="Fill"
+                                    Padding="5"
+                                    Stroke="{StaticResource Gray500}"
+                                    StrokeShape="RoundRectangle 5,5,5,5"
+                                    StrokeThickness="1"
+                                    VerticalOptions="Fill"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                    <ContentView
+                                        Content="{Binding .}"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill"
+                                        x:DataType="View">
+                                        <ContentView.GestureRecognizers>
+                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                        </ContentView.GestureRecognizers>
+                                    </ContentView>
+                                </Border>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label Text="Shapes" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                <BoxView
+                    Margin="8,3,8,3"
+                    BackgroundColor="DarkGray"
+                    HeightRequest="1"
+                    HorizontalOptions="FillAndExpand"/>
+
+                <CollectionView
+                    ItemSizingStrategy="MeasureAllItems"
+                    ItemsSource="{Binding Shapes}"
+                    SelectionMode="None">
+
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout
+                            Orientation="Vertical"
+                            SnapPointsType="MandatorySingle"
+                            Span="1"
+                            VerticalItemSpacing="2"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="entities:Entity">
+                            <ContentView
+                                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                <Border
+                                    BackgroundColor="White"
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    HorizontalOptions="Fill"
+                                    Padding="5"
+                                    Stroke="{StaticResource Gray500}"
+                                    StrokeShape="RoundRectangle 5,5,5,5"
+                                    StrokeThickness="1"
+                                    VerticalOptions="Fill"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                    <ContentView
+                                        Content="{Binding .}"
+                                        HorizontalOptions="Fill"
+                                        VerticalOptions="Fill"
+                                        x:DataType="View">
+                                        <ContentView.GestureRecognizers>
+                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                        </ContentView.GestureRecognizers>
+                                    </ContentView>
+                                </Border>
+                            </ContentView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentView>

@@ -205,12 +205,6 @@
         <MauiXaml Update="View\TestPanelPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\TileSelectors\FloatingTileSelector.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
-        <MauiXaml Update="View\TileSelectors\VerticalTileSelector.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\Components\IDPicker.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -230,6 +224,9 @@
           <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\SensorsPage.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\Components\TileSelector.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -298,14 +295,6 @@
         <Compile Update="View\TestPanelViewModel.cs">
             <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\TileSelectors\FloatingTileSelector.xaml.cs">
-            <DependentUpon>FloatingTileSelector.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\TileSelectors\VerticalTileSelector.xaml.cs">
-            <DependentUpon>VerticalTileSelector.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="View\OperateViewModel.cs">
             <DependentUpon>OperatePage.xaml</DependentUpon>
         </Compile>
@@ -322,7 +311,7 @@
             <DependentUpon>IDPicker.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\SettingsPageViewModel.cs">
+        <Compile Update="View\SettingsViewModel.cs">
             <DependentUpon>SettingsPagePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\BlocksPage.xaml.cs">
@@ -366,6 +355,10 @@
         </Compile>
         <Compile Update="View\LightsViewModel.cs">
           <DependentUpon>LightsPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\Components\TileSelector.xaml.cs">
+          <DependentUpon>TileSelector.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

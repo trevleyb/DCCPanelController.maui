@@ -53,7 +53,7 @@
                             x:Name="PanelView"/>
                     </Grid>
                     <Grid Grid.Column="1" IsVisible="{Binding DesignMode, Mode=TwoWay}">
-                        <tileSelectors:VerticalTileSelector HorizontalOptions="Center"/>
+                        <tileSelectors:TileSelector HorizontalOptions="Center"/>
                     </Grid>
                 </Grid>
             </RefreshView>

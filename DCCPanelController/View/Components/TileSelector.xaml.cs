@@ -7,12 +7,12 @@ using CoreGraphics;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public partial class VerticalTileSelector {
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(VerticalTileSelector), propertyChanged: OnPanelChanged);
+public partial class TileSelector {
+    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(TileSelector), propertyChanged: OnPanelChanged);
 
-    public VerticalTileSelector() {
+    public TileSelector() {
         InitializeComponent();
-        BindingContext = new VerticalTileSelectorViewModel();
+        BindingContext = new TileSelectorViewModel();
     }
 
     public Panel? Panel {
@@ -21,12 +21,12 @@ public partial class VerticalTileSelector {
     }
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        var control = (VerticalTileSelector)bindable;
+        var control = (TileSelector)bindable;
         if (newValue != oldValue) control.ForceRefresh();
     }
 
     public void ForceRefresh() {
-        if (BindingContext is VerticalTileSelectorViewModel { } vm) {
+        if (BindingContext is TileSelectorViewModel { } vm) {
             vm.BuildTileList(Panel);
         }
     }
