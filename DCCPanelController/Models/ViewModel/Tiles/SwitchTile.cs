@@ -9,8 +9,9 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class SwitchTile : Tile, ITileInteractive {
     public SwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(State));
+        VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
+        
         if (Entity is SwitchEntity { Light : { } light }) {
             if (light.Id == entity?.Light?.Id) State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
             light.PropertyChanged += (sender, args) => {
@@ -76,6 +77,13 @@ public class SwitchTile : Tile, ITileInteractive {
     }
 
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
+        if (Entity is SwitchEntity button) {
+            return button.SwitchStyle switch {
+                SwitchStyleEnum.Light  => SvgImages.GetImage("light").AsImage(),
+                SwitchStyleEnum.Button => SvgImages.GetImage("button").AsImage(),
+                _                      => SvgImages.GetImage("switch").AsImage()
+            };
+        }
         return SvgImages.GetImage("switchon").AsImage();
     }
 }

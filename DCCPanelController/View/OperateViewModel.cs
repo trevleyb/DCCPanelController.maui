@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
@@ -11,7 +12,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showPath;
 
     public OperateViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Panels = Profile.Panels;
+        Panels = Profile.Panels.Where(p => p.Entities.Count > 0).ToObservableCollection();
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }
@@ -19,10 +20,4 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     public Color BackgroundColor => SelectedPanel?.BackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; set; }
-
-    //public string SetActivePanel(Panel? panelCarouselCurrentItem) {
-    //    SelectedPanel = panelCarouselCurrentItem;
-    //    OnPropertyChanged(nameof(BackgroundColor));
-    //    return SelectedPanel?.Id ?? "Control Panel";
-    //}
 }

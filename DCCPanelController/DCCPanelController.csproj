@@ -360,6 +360,9 @@
           <DependentUpon>TileSelector.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\Components\TileSelectorViewModel.cs">
+          <DependentUpon>TileSelector.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

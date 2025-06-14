@@ -8,157 +8,230 @@
     xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
-    <Grid WidthRequest="48" Margin="0,5,0,5">
-        <ScrollView Orientation="Vertical">
-            <VerticalStackLayout>
-                <Label Text="Actions" FontFamily="OpenSansMedium" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
-                <BoxView
-                    Margin="8,3,8,3"
-                    BackgroundColor="DarkGray"
-                    HeightRequest="1"
-                    HorizontalOptions="FillAndExpand"/>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="{Binding SelectorWidth}"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- Resize handle on the left -->
+        <BoxView 
+            Grid.Column="0"
+            BackgroundColor="LightGray" 
+            WidthRequest="4" 
+            HorizontalOptions="Start"
+            VerticalOptions="Fill"
+            x:Name="ResizeHandle">
+            <BoxView.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnResizeHandlePanUpdated"/>
+            </BoxView.GestureRecognizers>
+        </BoxView>
+        
+        <!-- Main content area -->
+        <Grid Grid.Column="0" Margin="8,5,0,5">
+            <ScrollView Orientation="Vertical">
+                <VerticalStackLayout>
+                    <Label Text="Actions" FontFamily="OpenSansMedium" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                    <BoxView
+                        Margin="8,3,8,3"
+                        BackgroundColor="DarkGray"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
+                    <CollectionView
+                        ItemSizingStrategy="MeasureAllItems"
+                        ItemsSource="{Binding Actions}"
+                        SelectionMode="None">
 
-                <CollectionView
-                    ItemSizingStrategy="MeasureAllItems"
-                    ItemsSource="{Binding Actions}"
-                    SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout
+                                Orientation="Vertical"
+                                SnapPointsType="MandatorySingle"
+                                Span="{Binding ColumnCount}"
+                                VerticalItemSpacing="2"
+                                HorizontalItemSpacing="{Binding ColumnSpacing}"/>
+                        </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout
-                            Orientation="Vertical"
-                            SnapPointsType="MandatorySingle"
-                            Span="1"
-                            VerticalItemSpacing="2"/>
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="entities:Entity">
-                            <ContentView
-                                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
-                                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
-                                <Border
-                                    BackgroundColor="White"
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:Entity">
+                                <ContentView
                                     HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
-                                    HorizontalOptions="Fill"
-                                    Padding="5"
-                                    Stroke="{StaticResource Gray500}"
-                                    StrokeShape="RoundRectangle 5,5,5,5"
-                                    StrokeThickness="1"
-                                    VerticalOptions="Fill"
                                     WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
-                                    <ContentView
-                                        Content="{Binding .}"
+                                    <Border
+                                        BackgroundColor="White"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
+                                        Padding="5"
+                                        Stroke="{StaticResource Gray500}"
+                                        StrokeShape="RoundRectangle 5,5,5,5"
+                                        StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        x:DataType="View">
-                                        <ContentView.GestureRecognizers>
-                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
-                                        </ContentView.GestureRecognizers>
-                                    </ContentView>
-                                </Border>
-                            </ContentView>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Label Text="Tracks" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
-                <BoxView
-                    Margin="8,3,8,3"
-                    BackgroundColor="DarkGray"
-                    HeightRequest="1"
-                    HorizontalOptions="FillAndExpand"/>
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
+                                        <ContentView
+                                            Content="{Binding .}"
+                                            HorizontalOptions="Fill"
+                                            VerticalOptions="Fill"
+                                            x:DataType="View">
+                                            <ContentView.GestureRecognizers>
+                                                <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                            </ContentView.GestureRecognizers>
+                                        </ContentView>
+                                    </Border>
+                                </ContentView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    
+                    <Label Text="Mainline" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                    <BoxView
+                        Margin="8,3,8,3"
+                        BackgroundColor="DarkGray"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
+                    <CollectionView
+                        ItemSizingStrategy="MeasureAllItems"
+                        ItemsSource="{Binding Tracks}"
+                        SelectionMode="None">
 
-                <CollectionView
-                    ItemSizingStrategy="MeasureAllItems"
-                    ItemsSource="{Binding Tracks}"
-                    SelectionMode="None">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout
+                                Orientation="Vertical"
+                                SnapPointsType="MandatorySingle"
+                                Span="{Binding ColumnCount}"
+                                VerticalItemSpacing="2"
+                                HorizontalItemSpacing="{Binding ColumnSpacing}"/>
+                        </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout
-                            Orientation="Vertical"
-                            SnapPointsType="MandatorySingle"
-                            Span="1"
-                            VerticalItemSpacing="2"/>
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="entities:Entity">
-                            <ContentView
-                                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
-                                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
-                                <Border
-                                    BackgroundColor="White"
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:Entity">
+                                <ContentView
                                     HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
-                                    HorizontalOptions="Fill"
-                                    Padding="5"
-                                    Stroke="{StaticResource Gray500}"
-                                    StrokeShape="RoundRectangle 5,5,5,5"
-                                    StrokeThickness="1"
-                                    VerticalOptions="Fill"
                                     WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
-                                    <ContentView
-                                        Content="{Binding .}"
+                                    <Border
+                                        BackgroundColor="White"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
+                                        Padding="5"
+                                        Stroke="{StaticResource Gray500}"
+                                        StrokeShape="RoundRectangle 5,5,5,5"
+                                        StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        x:DataType="View">
-                                        <ContentView.GestureRecognizers>
-                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
-                                        </ContentView.GestureRecognizers>
-                                    </ContentView>
-                                </Border>
-                            </ContentView>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-                <Label Text="Shapes" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
-                <BoxView
-                    Margin="8,3,8,3"
-                    BackgroundColor="DarkGray"
-                    HeightRequest="1"
-                    HorizontalOptions="FillAndExpand"/>
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
+                                        <ContentView
+                                            Content="{Binding .}"
+                                            HorizontalOptions="Fill"
+                                            VerticalOptions="Fill"
+                                            x:DataType="View">
+                                            <ContentView.GestureRecognizers>
+                                                <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                            </ContentView.GestureRecognizers>
+                                        </ContentView>
+                                    </Border>
+                                </ContentView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                    
 
-                <CollectionView
-                    ItemSizingStrategy="MeasureAllItems"
-                    ItemsSource="{Binding Shapes}"
-                    SelectionMode="None">
+                    <Label Text="Branch" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                    <BoxView
+                        Margin="8,3,8,3"
+                        BackgroundColor="DarkGray"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
+                    <CollectionView
+                        ItemSizingStrategy="MeasureAllItems"
+                        ItemsSource="{Binding Branch}"
+                        SelectionMode="None">
 
-                    <CollectionView.ItemsLayout>
-                        <GridItemsLayout
-                            Orientation="Vertical"
-                            SnapPointsType="MandatorySingle"
-                            Span="1"
-                            VerticalItemSpacing="2"/>
-                    </CollectionView.ItemsLayout>
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout
+                                Orientation="Vertical"
+                                SnapPointsType="MandatorySingle"
+                                Span="{Binding ColumnCount}"
+                                VerticalItemSpacing="2"
+                                HorizontalItemSpacing="{Binding ColumnSpacing}"/>
+                        </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="entities:Entity">
-                            <ContentView
-                                HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
-                                WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
-                                <Border
-                                    BackgroundColor="White"
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:Entity">
+                                <ContentView
                                     HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
-                                    HorizontalOptions="Fill"
-                                    Padding="5"
-                                    Stroke="{StaticResource Gray500}"
-                                    StrokeShape="RoundRectangle 5,5,5,5"
-                                    StrokeThickness="1"
-                                    VerticalOptions="Fill"
                                     WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
-                                    <ContentView
-                                        Content="{Binding .}"
+                                    <Border
+                                        BackgroundColor="White"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
+                                        Padding="5"
+                                        Stroke="{StaticResource Gray500}"
+                                        StrokeShape="RoundRectangle 5,5,5,5"
+                                        StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        x:DataType="View">
-                                        <ContentView.GestureRecognizers>
-                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
-                                        </ContentView.GestureRecognizers>
-                                    </ContentView>
-                                </Border>
-                            </ContentView>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </VerticalStackLayout>
-        </ScrollView>
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
+                                        <ContentView
+                                            Content="{Binding .}"
+                                            HorizontalOptions="Fill"
+                                            VerticalOptions="Fill"
+                                            x:DataType="View">
+                                            <ContentView.GestureRecognizers>
+                                                <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                            </ContentView.GestureRecognizers>
+                                        </ContentView>
+                                    </Border>
+                                </ContentView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                    <Label Text="Shapes" FontFamily="OpenSansMedium" Margin="0,5,0,0" HorizontalTextAlignment="Center" HorizontalOptions="Center" VerticalOptions="Center" FontSize="9"/>
+                    <BoxView
+                        Margin="8,3,8,3"
+                        BackgroundColor="DarkGray"
+                        HeightRequest="1"
+                        HorizontalOptions="FillAndExpand"/>
+                    <CollectionView
+                        ItemSizingStrategy="MeasureAllItems"
+                        ItemsSource="{Binding Shapes}"
+                        SelectionMode="None">
+
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout
+                                Orientation="Vertical"
+                                SnapPointsType="MandatorySingle"
+                                Span="{Binding ColumnCount}"
+                                VerticalItemSpacing="2"
+                                HorizontalItemSpacing="{Binding ColumnSpacing}"/>
+                        </CollectionView.ItemsLayout>
+
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="entities:Entity">
+                                <ContentView
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
+                                    <Border
+                                        BackgroundColor="White"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
+                                        HorizontalOptions="Fill"
+                                        Padding="5"
+                                        Stroke="{StaticResource Gray500}"
+                                        StrokeShape="RoundRectangle 5,5,5,5"
+                                        StrokeThickness="1"
+                                        VerticalOptions="Fill"
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
+                                        <ContentView
+                                            Content="{Binding .}"
+                                            HorizontalOptions="Fill"
+                                            VerticalOptions="Fill"
+                                            x:DataType="View">
+                                            <ContentView.GestureRecognizers>
+                                                <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                            </ContentView.GestureRecognizers>
+                                        </ContentView>
+                                    </Border>
+                                </ContentView>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </ScrollView>
+        </Grid>
     </Grid>
 </ContentView>

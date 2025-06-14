@@ -10,6 +10,9 @@ namespace DCCPanelController.View.TileSelectors;
 public partial class TileSelector {
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(TileSelector), propertyChanged: OnPanelChanged);
 
+    private double _initialWidth;
+    private double _startX;
+
     public TileSelector() {
         InitializeComponent();
         BindingContext = new TileSelectorViewModel();
@@ -28,6 +31,39 @@ public partial class TileSelector {
     public void ForceRefresh() {
         if (BindingContext is TileSelectorViewModel { } vm) {
             vm.BuildTileList(Panel);
+            vm.Panel= Panel;
+        }
+    }
+
+    private void OnResizeHandlePanUpdated(object? sender, PanUpdatedEventArgs e) {
+        if (BindingContext is not TileSelectorViewModel viewModel) return;
+        
+        switch (e.StatusType) {
+            case GestureStatus.Started:
+                ResizeHandle.Color = Colors.Black;
+                _initialWidth = viewModel.SelectorWidth;
+                _startX = e.TotalX;
+                break;
+                
+            case GestureStatus.Running:
+                ResizeHandle.Color = Colors.Black;
+                // Calculate new width (dragging left decreases width, dragging right increases)
+                double deltaX = e.TotalX - _startX;
+                double newWidth = _initialWidth - deltaX; // Subtract because we're dragging from the left edge
+                
+                // Apply minimum constraint
+                newWidth = Math.Max(32, newWidth);
+                
+                viewModel.SelectorWidth = newWidth;
+                break;
+                
+            case GestureStatus.Completed:
+            case GestureStatus.Canceled:
+                ResizeHandle.Color = Colors.LightGray;
+                // Reset tracking variables
+                _initialWidth = 0;
+                _startX = 0;
+                break;
         }
     }
 
