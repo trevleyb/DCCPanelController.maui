@@ -1,5 +1,4 @@
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -29,7 +28,7 @@ public class ButtonTile : Tile, ITileInteractive {
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
                 _                       => ButtonStateEnum.Unknown
             };
-            ActionApplyButton.ApplyButtonActions(button, State, connectionService);
+            button.ButtonPanelActions.Apply(button, connectionService);
         }
     }
 

@@ -1,5 +1,4 @@
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
@@ -14,6 +13,12 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
             turnout.PropertyChanged += (sender, args) => {
                 if (turnout.Id == entity?.Turnout?.Id) {
                     State = turnout.State;
+                    
+                    // We apply this here as the state may change through other means
+                    // and when it does change, we want to apply state.
+                    // If we trigger the change, it will event to here anyway
+                    // ------------------------------------------------------------------
+                    entity?.TurnoutPanelActions.Apply(entity,ConnectionService.Instance);
                 }
             };
         }
@@ -34,7 +39,6 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 _                        => TurnoutStateEnum.Unknown
             };
             if (connectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout.Turnout, State != TurnoutStateEnum.Closed);
-            ActionApplyTurnout.ApplyTurnoutActions(turnout, State, connectionService);
         }
     }
 

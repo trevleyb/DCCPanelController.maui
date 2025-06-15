@@ -25,6 +25,8 @@ public partial class ConnectionService : ObservableObject {
         _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
+    public static ConnectionService Instance => MauiProgram.ServiceHelper.GetService<ConnectionService>();
+
     private async Task InitializeConnectionAsync() {
         try {
             if (_profile.Settings.ConnectOnStartup) await ConnectAsync();

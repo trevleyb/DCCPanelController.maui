@@ -104,6 +104,7 @@
                                 State="Thrown"/>
 
                             <Label
+                                IsVisible="False"
                                 FontAttributes="Bold"
                                 Grid.Column="3"
                                 HorizontalOptions="Center"
@@ -176,6 +177,7 @@
                                         UnknownText="Leave-AsIs"/>
 
                                     <CheckBox
+                                        IsVisible="False"
                                         Grid.Column="3"
                                         IsChecked="{Binding Cascade}"
                                         Margin="2,0,0,0"

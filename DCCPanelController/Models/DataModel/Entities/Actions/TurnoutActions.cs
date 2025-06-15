@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
@@ -8,6 +9,30 @@ public class TurnoutActions : ObservableCollection<TurnoutAction> {
 
     public TurnoutActions(TurnoutActions buttonActions) {
         foreach (var action in buttonActions) Add(new TurnoutAction(action));
+    }
+
+    public void Apply(TurnoutEntity turnout, ConnectionService connectionService) {
+        Console.WriteLine($"Applying actions to turnout {turnout.TurnoutID} with state {turnout.State}");
+
+        foreach (var action in turnout.ButtonPanelActions) {
+            if (turnout.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
+                actionButton.State = turnout.State switch {
+                    TurnoutStateEnum.Closed => action.WhenOn,
+                    TurnoutStateEnum.Thrown => action.WhenOff,
+                    _                       => ButtonStateEnum.Unknown
+                };
+            }
+        }
+
+        foreach (var action in turnout.TurnoutPanelActions) {
+            if (turnout.Parent?.GetTurnoutEntity(action.Id) is { } actionTurnout) {
+                actionTurnout.State = turnout.State switch {
+                    TurnoutStateEnum.Closed => action.WhenClosed,
+                    TurnoutStateEnum.Thrown => action.WhenThrown,
+                    _                       => TurnoutStateEnum.Unknown
+                };
+            }
+        }
     }
 }
 

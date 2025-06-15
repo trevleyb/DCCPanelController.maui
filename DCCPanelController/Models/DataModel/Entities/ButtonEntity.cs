@@ -8,16 +8,17 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
-    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")]
-    private ButtonActions _buttonPanelActions = [];
 
-    [ObservableProperty] [property: EditableEnum("Button Size")]
-    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-
-    [ObservableProperty] [property: EditableID("Button ID")]
+    [ObservableProperty] [property: EditableID("Button ID","",0)]
     private string _id = string.Empty;
 
+    [ObservableProperty] [property: EditableEnum("Button Size","",1)]
+    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
+
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
+
+    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")]
+    private ButtonActions _buttonPanelActions = [];
 
     [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions")]
     private TurnoutActions _turnoutPanelActions = [];
