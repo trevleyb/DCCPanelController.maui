@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties.TileProperties.Attributes;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -29,9 +30,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         Entities = entities;
     }
 
-    public Task ApplyChangesAsync() {
+    public async Task ApplyChangesAsync() {
         Console.WriteLine($"Applying changes: Panel Name = {Title}");
-        return ApplyChangesToAllEntities();
+        await ApplyChangesToAllEntities();
     }
 
     public Microsoft.Maui.Controls.View CreatePropertiesView() {
@@ -51,23 +52,29 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         foreach (var property in firstEntityProperties) {
             var isCommonProperty = true;
             var commonValue = property.Property.GetValue(entities[0]);
-            var propertyName = property.Property.Name;
 
             // Check if this property exists in all other entities
             // ---------------------------------------------------
             if (entities.Count > 1) {
-                for (var i = 1; i < entities.Count; i++) {
-                    var entityProperties = EditableExtractor.GetEditableProperties(entities[i]);
-                    if (entityProperties.All(p => p.Property.Name != property.Property.Name)) {
-                        isCommonProperty = false;
-                        break;
-                    }
+                // If this property is a ButtonActions or TurnoutActions then they 
+                // cannot be considered common, so mark them as not being a common property
+                // --------------------------------------------------------------------------
+                if (property.Property.PropertyType == typeof(ButtonActions) || property.Property.PropertyType == typeof(TurnoutActions)) {
+                    isCommonProperty = false;
+                } else {
+                    for (var i = 1; i < entities.Count; i++) {
+                        var entityProperties = EditableExtractor.GetEditableProperties(entities[i]);
+                        if (entityProperties.All(p => p.Property.Name != property.Property.Name)) {
+                            isCommonProperty = false;
+                            break;
+                        }
 
-                    // Check if we have a common value for matching items
-                    // --------------------------------------------------
-                    if (commonValue is not null) {
-                        var compareValue = property.Property.GetValue(entities[i]);
-                        if (compareValue != commonValue) commonValue = null;
+                        // Check if we have a common value for matching items
+                        // --------------------------------------------------
+                        if (commonValue is not null) {
+                            var compareValue = property.Property.GetValue(entities[i]);
+                            if (compareValue != commonValue) commonValue = null;
+                        }
                     }
                 }
             }
@@ -75,14 +82,17 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             // If there is only a single property, OR we found a matching property,
             // then add this property to our common property collection.
             // If there is only a single entity, all its properties should be added.
+            //
+            // Mark all as not modified but mark ButtonActions and TurnoutActions 
+            // as modified as currently we don't know if they are modified or not. 
             // ----------------------------------------------------------------------
             if (isCommonProperty) {
-                Console.WriteLine($"Found Common Property [{property.Property.Name}] with Value={commonValue ?? "Blank"}");
                 property.Metadata.Value = commonValue;
+                property.Metadata.IsModified = false;
                 commonProperties.Add(property);
             }
         }
-        
+
         // Finally, sort the properties and store them so they can be used
         // by the other parts of the system
         // --------------------------------------------------------------
@@ -90,7 +100,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                     .OrderBy(item => item.Metadata.Order)
                     .ThenBy(item => item.Metadata.Group)
                     .ToList();
-        
+
         _properties = sorted;
     }
 
@@ -107,7 +117,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
         var lastGroup = "*";
         foreach (var property in _properties) {
-            var propertyName = property.Property.Name;
 
             // Create a group container if the group has changed
             // -------------------------------------------------------------------------------------
@@ -141,12 +150,30 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             if (property != null) {
                 var newValue = property.GetValue(ProxyEntity);
                 var oldValue = modifiedProperty.Metadata.Value;
-                if (newValue != oldValue) {
+                if (newValue != oldValue || (property.PropertyType == typeof(ButtonActions) || property.PropertyType == typeof(TurnoutActions)) ) {
                     foreach (var targetEntity in Entities) {
                         var targetProperties = EditableExtractor.GetEditableProperties(targetEntity);
                         var targetProperty = targetProperties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
+
+                        Console.WriteLine($"Applying for {targetEntity.EntityName} with {targetProperty?.Name ?? "invalid property"} = {newValue}");
+                        
                         if (targetProperty != null) {
-                            targetProperty.SetValue(targetEntity, newValue);
+                            var valueToSet = newValue;
+
+                            // Only clone if it's a reference type (excluding string)
+                            if (newValue != null &&
+                                !targetProperty.PropertyType.IsValueType &&
+                                targetProperty.PropertyType != typeof(string)) {
+                                
+                                valueToSet = newValue switch {
+                                    ICloneable cloneable            => cloneable.Clone(),
+                                    List<string> list               => new List<string>(list),
+                                    Dictionary<string, object> dict => new Dictionary<string, object>(dict),
+                                    _ => newValue
+                                };
+                            }
+
+                            targetProperty.SetValue(targetEntity, valueToSet);
                         }
                     }
                 }
@@ -235,6 +262,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
     private void AddNoCommonPropertiesMessage() => AddNoPropertiesMessage("There are no common properties between the selected track elements.");
     private void AddNoEntitiesMessage() => AddNoPropertiesMessage("There are no available properties.");
+
     private void AddNoPropertiesMessage(string message) {
         var labelTitle = new Label { FontSize = 18, Margin = new Thickness(10, 20, 10, 20), FontAttributes = FontAttributes.Bold, Text = "No Common Properties", HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
         var labelDescription = new Label { FontSize = 12, Text = message, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };

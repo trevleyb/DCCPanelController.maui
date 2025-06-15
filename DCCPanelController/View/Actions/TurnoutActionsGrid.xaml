@@ -134,19 +134,32 @@
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
-                                    <Button
-                                        Clicked="IdLabel_OnClicked"
-                                        TextColor="Black"
-                                        BackgroundColor="Transparent"
-                                        BorderColor="Transparent"
-                                        HorizontalOptions="Start"
-                                        HeightRequest="15"
-                                        Grid.Column="0"
-                                        Margin="-5,0,0,0"
-                                        Text="{Binding Id, Mode=TwoWay}"
-                                        VerticalOptions="Center"
-                                        x:Name="IdLabel"/>
+                                    <!-- <Button -->
+                                    <!--     Clicked="IdLabel_OnClicked" -->
+                                    <!--     TextColor="Black" -->
+                                    <!--     BackgroundColor="Transparent" -->
+                                    <!--     BorderColor="Transparent" -->
+                                    <!--     HorizontalOptions="Start" -->
+                                    <!--     HeightRequest="15" -->
+                                    <!--     Grid.Column="0" -->
+                                    <!--     Margin="-5,0,0,0" -->
+                                    <!--     Text="{Binding Id, Mode=TwoWay}" -->
+                                    <!--     VerticalOptions="Center" -->
+                                    <!--     x:Name="IdLabel"/> -->
 
+                                    <components:PopUpListBox
+                                        Grid.Column="0"
+                                        Margin="10,0,0,0"
+                                        HorizontalOptions="Start"
+                                        VerticalOptions="Center"
+                                        BackgroundColor="Transparent"
+                                        TextColor="Black"
+                                        TextSize="15"
+                                        HeightRequest="15"
+                                        SelectedItem="{Binding Id, Mode=TwoWay}"
+                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:TurnoutActionsGridViewModel}},Path=SelectableButtons}"
+                                        Placeholder="Select a Turnout"/>
+                                    
                                     <components:TurnoutStateControl
                                         CanSetStateUnknown="True"
                                         CanToggleState="True"

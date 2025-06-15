@@ -10,7 +10,7 @@ namespace DCCPanelController.View.Actions;
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty] private ActionsContext _actionContext;
     [ObservableProperty] private List<string> _availableTurnouts;
-    [ObservableProperty] private TurnoutActions _turnoutPanelActions;
+    public TurnoutActions TurnoutPanelActions;
 
     public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
@@ -18,6 +18,8 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         TurnoutPanelActions = turnoutPanelActions;
         RaisePropertiesChanged();
     }
+
+    public List<string> SelectableButtons => SelectableTurnouts();
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;

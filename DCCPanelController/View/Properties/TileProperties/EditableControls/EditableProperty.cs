@@ -26,6 +26,8 @@ public abstract class EditableProperty(string label, string description = "", in
         // -----------------------------------------------------------------------------
         if (!string.IsNullOrWhiteSpace(Label)) {
             var stack = new VerticalStackLayout();
+            stack.VerticalOptions = LayoutOptions.Center;
+            
             var label = new Label {
                 Text = Label,
                 FontSize = 15,
@@ -83,7 +85,7 @@ public abstract class EditableProperty(string label, string description = "", in
         OnPropertyChanged(nameof(IsModified));
         OnPropertyChanged(nameof(ModifiedTextColor));
     }
-    public Color ModifiedTextColor => IsModified ? Colors.Lime : Colors.DimGray;
+    public Color ModifiedTextColor => IsModified ? Colors.Firebrick : Colors.DimGray;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {

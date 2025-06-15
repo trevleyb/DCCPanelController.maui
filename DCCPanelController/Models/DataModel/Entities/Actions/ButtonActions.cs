@@ -4,7 +4,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
-public class ButtonActions : ObservableCollection<ButtonAction> {
+public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
 
     public ButtonActions() { }
 
@@ -34,6 +34,12 @@ public class ButtonActions : ObservableCollection<ButtonAction> {
                 };
             }
         }
+    }
+
+    public object Clone() {
+        var buttonActions = new ButtonActions();
+        foreach (var action in this) buttonActions.Add(new ButtonAction(action));
+        return buttonActions;
     }
 }
 

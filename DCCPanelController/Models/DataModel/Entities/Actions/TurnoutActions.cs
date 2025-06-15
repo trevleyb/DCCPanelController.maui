@@ -4,7 +4,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
-public class TurnoutActions : ObservableCollection<TurnoutAction> {
+public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
     public TurnoutActions() { }
 
     public TurnoutActions(TurnoutActions buttonActions) {
@@ -34,6 +34,13 @@ public class TurnoutActions : ObservableCollection<TurnoutAction> {
             }
         }
     }
+    
+    public object Clone() {
+        var turnoutActions = new TurnoutActions();
+        foreach (var action in this) turnoutActions.Add(new TurnoutAction(action));
+        return turnoutActions;
+    }
+
 }
 
 public partial class TurnoutAction : ObservableObject {
