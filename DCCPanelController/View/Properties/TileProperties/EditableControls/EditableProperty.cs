@@ -25,6 +25,7 @@ public abstract class EditableProperty(string label, string description = "", in
         // If there is a Label, then add the label to the first column. 
         // -----------------------------------------------------------------------------
         if (!string.IsNullOrWhiteSpace(Label)) {
+            var stack = new VerticalStackLayout();
             var label = new Label {
                 Text = Label,
                 FontSize = 15,
@@ -34,9 +35,25 @@ public abstract class EditableProperty(string label, string description = "", in
                 Margin = new Thickness(5, 5, 5, 5)
             };
             label.SetBinding(Microsoft.Maui.Controls.Label.TextColorProperty, new Binding(nameof(ModifiedTextColor)) { Source = this, Mode = BindingMode.OneWay });
-            grid.Children.Add(label);
-            grid.SetColumn(label, 0);
-            grid.SetRow(label, 0);
+            stack.Children.Add(label);
+
+            // If there is a description to go with the lqbel, add it under the label
+            // -----------------------------------------------------------------------------
+            if (!string.IsNullOrWhiteSpace(Description)) {
+                var desc = new Label {
+                    Text = Description,
+                    FontSize = 8,
+                    FontFamily = "OpenSansLight",
+                    LineBreakMode = LineBreakMode.MiddleTruncation,
+                    HorizontalOptions = LayoutOptions.Start,
+                    VerticalOptions = LayoutOptions.Center,
+                    Margin = new Thickness(5, -5, 5, 0)
+                };
+                stack.Children.Add(desc);
+            }
+            grid.Children.Add(stack);
+            grid.SetColumn(stack, 0);
+            grid.SetRow(stack, 0);
         }
 
         // Add the view to the 2nd column on the 1st row
@@ -66,7 +83,7 @@ public abstract class EditableProperty(string label, string description = "", in
         OnPropertyChanged(nameof(IsModified));
         OnPropertyChanged(nameof(ModifiedTextColor));
     }
-    public Color ModifiedTextColor => IsModified ? Colors.Crimson : Colors.DimGray;
+    public Color ModifiedTextColor => IsModified ? Colors.Lime : Colors.DimGray;
 
     public event PropertyChangedEventHandler? PropertyChanged;
     protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null) {

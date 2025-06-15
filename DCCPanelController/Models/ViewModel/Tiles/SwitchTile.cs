@@ -28,7 +28,7 @@ public class SwitchTile : Tile, ITileInteractive {
     } = ButtonStateEnum.Unknown;
 
     public async Task Interact(ConnectionService? connectionService) {
-        if (connectionService is not null && Entity is SwitchEntity { Light: not null } switchEntity) {
+        if (connectionService is not null && Entity is SwitchEntity switchEntity) {
             if (UseClickSounds) ClickSounds.PlayButtonClickSound();
             State = State switch {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
