@@ -8,7 +8,8 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions">
 
     <ContentView.Resources>
         <ResourceDictionary/>
@@ -124,7 +125,7 @@
 
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <ViewCell x:DataType="dataModel:ButtonAction">
+                            <ViewCell x:DataType="actions:ButtonAction">
                                 <Grid
                                     ColumnDefinitions="3*,4*,4*,3*,1*"
                                     ColumnSpacing="2"

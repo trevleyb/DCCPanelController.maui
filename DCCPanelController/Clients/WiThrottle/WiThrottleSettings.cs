@@ -16,7 +16,15 @@ public partial class WiThrottleSettings : ObservableObject, IDccClientSettings {
     public bool SupportsManualEntries => true;
     public List<DccClientCapability> Capabilities => WiThrottleProxy.Capabilities;
     public DccClientType Type => DccClientType.WiThrottle;
-    
+
+    public bool HasValidSettings {
+        get {
+            if (SetAutomatically) return true;
+            if (string.IsNullOrEmpty(Address)) return false;
+            return true;
+        }
+    }
+
     public WiThrottleSettings() : this("", "", 12090) { }
     public WiThrottleSettings(string? name, string? address, int? port) {
         Name = name ?? Environment.MachineName ?? "DCCPanelController";

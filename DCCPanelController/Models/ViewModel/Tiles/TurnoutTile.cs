@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
@@ -24,15 +25,16 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
     } = TurnoutStateEnum.Unknown;
 
     public async Task Interact(ConnectionService? connectionService) {
-        if (connectionService is not null && Entity is TurnoutEntity { Turnout: not null } turnoutEntity) {
-            ClickSounds.PlayTurnoutClickSound();
+        if (connectionService is not null && Entity is TurnoutEntity { Turnout: not null } turnout) {
+            if (UseClickSounds) ClickSounds.PlayTurnoutClickSound();
             State = State switch {
                 TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
                 TurnoutStateEnum.Thrown  => TurnoutStateEnum.Closed,
                 TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
                 _                        => TurnoutStateEnum.Unknown
             };
-            if (connectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnoutEntity.Turnout, State != TurnoutStateEnum.Closed);
+            if (connectionService.Client is { } client) await client.SendTurnoutCmdAsync(turnout.Turnout, State != TurnoutStateEnum.Closed);
+            ActionApplyTurnout.ApplyTurnoutActions(turnout, State, connectionService);
         }
     }
 

@@ -26,7 +26,7 @@ public partial class ConnectionViewModel : BaseViewModel {
 
     public Profile Profile { get; set; }
     public ConnectionService ConnectionService { get; }
-    public bool IsConnectionAvailable => true; 
+    public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false; 
     public string ConnectionIcon => IsConnected ? "server_on.png" : "server_off.png";
 
     [RelayCommand]

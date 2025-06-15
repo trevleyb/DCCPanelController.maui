@@ -10,4 +10,5 @@ public partial class SimulatorSettings : ObservableObject, IDccClientSettings {
     public bool SupportsManualEntries => true;
     public List<DccClientCapability> Capabilities => SimulatorProxy.Capabilities;
     public DccClientType Type => DccClientType.Simulator;
+    public bool HasValidSettings => true;
 }

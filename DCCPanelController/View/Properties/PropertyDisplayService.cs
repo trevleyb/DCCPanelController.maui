@@ -18,8 +18,8 @@ public static class PropertyDisplayService {
         var result = false;
 
         // Determine if it's an iPhone-like device in portrait
-        var usePageSheet = DeviceInfo.Platform == DevicePlatform.iOS &&
-                           DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
+        var usePageSheet = DeviceInfo.Platform == DevicePlatform.iOS; 
+                         //&& DeviceInfo.Current.Idiom == DeviceIdiom.Phone;
 
         //currentDisplayWidth < currentDisplayHeight; // Basic portrait check
 

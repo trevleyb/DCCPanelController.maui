@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 
 namespace DCCPanelController.View.Actions;
 

@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -19,13 +20,17 @@ public class ButtonTile : Tile, ITileInteractive {
     } = ButtonStateEnum.Unknown;
 
     public async Task Interact(ConnectionService? connectionService) {
-        ClickSounds.PlayButtonClickSound();
-        State = State switch {
-            ButtonStateEnum.Unknown => ButtonStateEnum.On,
-            ButtonStateEnum.On      => ButtonStateEnum.Off,
-            ButtonStateEnum.Off     => ButtonStateEnum.On,
-            _                       => ButtonStateEnum.Unknown
-        };
+        if (connectionService is not null && Entity is ButtonEntity button) {
+
+            if (UseClickSounds) ClickSounds.PlayButtonClickSound();
+            State = State switch {
+                ButtonStateEnum.Unknown => ButtonStateEnum.On,
+                ButtonStateEnum.On      => ButtonStateEnum.Off,
+                ButtonStateEnum.Off     => ButtonStateEnum.On,
+                _                       => ButtonStateEnum.Unknown
+            };
+            ActionApplyButton.ApplyButtonActions(button, State, connectionService);
+        }
     }
 
     public async Task Secondary(ConnectionService? connectionService) { }

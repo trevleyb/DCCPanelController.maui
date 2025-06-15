@@ -48,20 +48,23 @@ public partial class ConnectionService : ObservableObject {
                 Client = DccClientFactory.CreateClient(_profile, _profile.Settings.ClientSettings);
                 Client.ClientMessage += ClientOnClientMessage;
                 if (Client is null) {
-                    OnConnectionChanged();
+                    OnConnectionChanged(false);
                     return Result.Fail("Unable to create a Client instance.");
                 }
 
                 var connectResult = await Client.ConnectAsync();
-                if (connectResult.IsFailure) return Result.Fail("Unable to connect to the specified server.");
-
-                OnConnectionChanged();
+                if (connectResult.IsFailure) {
+                    OnConnectionChanged(false);
+                    return Result.Fail("Unable to connect to the specified server.");
+                }
+                
+                OnConnectionChanged(true);
                 await SetTurnoutsToDefaultState();
                 return connectResult;
             }
         } catch (Exception ex) {
             Console.WriteLine($"Connection Failed: {ex.Message}");
-            OnConnectionChanged();
+            OnConnectionChanged(false);
             return Result.Fail("Unable to connect to the server.", ex);
         }
         return Result.Fail("Unable to connect to the server.");
@@ -73,7 +76,7 @@ public partial class ConnectionService : ObservableObject {
             Client.ClientMessage -= ClientOnClientMessage;
             Client = null;
         }
-        OnConnectionChanged();
+        OnConnectionChanged(false);
     }
 
     private void ClientOnClientMessage(object? sender, DccClientEvent e) {
@@ -86,10 +89,12 @@ public partial class ConnectionService : ObservableObject {
         ServerMessages.Add(e.Message);
     }
 
-    private void OnConnectionChanged() {
+    private void OnConnectionChanged(bool? isConnected = null) {
+        if (isConnected is {}) IsConnected = isConnected.Value;
         Console.WriteLine($"ConnectionService: Connection State Changed to {IsConnected}");
         OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(Client));
+        ConnectStateChanged?.Invoke(this,IsConnected);
     }
     
     public async Task SetTurnoutsToDefaultState() {

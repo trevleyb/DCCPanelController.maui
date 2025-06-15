@@ -12,10 +12,12 @@ public abstract class Tile : ContentView, ITile {
     protected readonly TileDisplayMode DisplayMode;
     protected bool HaveVisualPropertiesChanged;
     protected HashSet<string> VisualProperties { get; } = [];
-
+    protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
+    
     private const int DebounceDelay = 50;
     private CancellationTokenSource? _debounceRebuildCts;
     private Dictionary<string, object?> _propertyCache = [];
+    
 
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;

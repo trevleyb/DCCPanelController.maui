@@ -11,7 +11,7 @@ public class SwitchTile : Tile, ITileInteractive {
     public SwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
-        
+
         if (Entity is SwitchEntity { Light : { } light }) {
             if (light.Id == entity?.Light?.Id) State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
             light.PropertyChanged += (sender, args) => {
@@ -28,15 +28,15 @@ public class SwitchTile : Tile, ITileInteractive {
     } = ButtonStateEnum.Unknown;
 
     public async Task Interact(ConnectionService? connectionService) {
-        ClickSounds.PlayButtonClickSound();
-        State = State switch {
-            ButtonStateEnum.Unknown => ButtonStateEnum.On,
-            ButtonStateEnum.On      => ButtonStateEnum.Off,
-            ButtonStateEnum.Off     => ButtonStateEnum.On,
-            _                       => ButtonStateEnum.Unknown
-        };
         if (connectionService is not null && Entity is SwitchEntity { Light: not null } switchEntity) {
-            if (connectionService.Client is {} client) await client.SendLightCmdAsync(switchEntity.Light, State == ButtonStateEnum.On);
+            if (UseClickSounds) ClickSounds.PlayButtonClickSound();
+            State = State switch {
+                ButtonStateEnum.Unknown => ButtonStateEnum.On,
+                ButtonStateEnum.On      => ButtonStateEnum.Off,
+                ButtonStateEnum.Off     => ButtonStateEnum.On,
+                _                       => ButtonStateEnum.Unknown
+            };
+            if (connectionService.Client is { } client) await client.SendLightCmdAsync(switchEntity.Light, State == ButtonStateEnum.On);
         }
     }
 

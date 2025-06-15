@@ -17,7 +17,15 @@ public partial class JmriSettings : ObservableObject, IDccClientSettings {
     public bool SupportsManualEntries => false;
     public List<DccClientCapability> Capabilities => JmriProxy.Capabilities;
     public DccClientType Type => DccClientType.Jmri;
-    
+
+    public bool HasValidSettings {
+        get {
+            if (SetAutomatically) return true;
+            if (string.IsNullOrEmpty(Address)) return false;
+            return true;
+        }
+    }
+
     public JmriSettings() : this("", "", 12080) { }
     public JmriSettings(string? name, string? address, int? port) {
         Name = name ?? Environment.MachineName ?? "DCCPanelController";

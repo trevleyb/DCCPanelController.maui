@@ -25,7 +25,12 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     public SwitchEntity() { }
 
     public SwitchEntity(Panel panel) : base(panel) { }
-    public SwitchEntity(SwitchEntity entity) : base(entity) { }
+
+    public SwitchEntity(SwitchEntity entity) : base(entity) {
+        State = entity.State;
+        SwitchStyle = entity.SwitchStyle;
+
+    }
     public override string EntityName => "Switch";
 
     public override Entity Clone() {
