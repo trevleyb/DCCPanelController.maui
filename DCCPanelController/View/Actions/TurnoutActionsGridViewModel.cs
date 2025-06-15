@@ -16,44 +16,52 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         ActionContext = context;
         AvailableTurnouts = availableTurnouts;
         TurnoutPanelActions = turnoutPanelActions;
-        OnPropertyChanged(nameof(IsTurnoutContext));
-        OnPropertyChanged(nameof(IsButtonContext));
-        OnPropertyChanged(nameof(ControlHeight));
+        RaisePropertiesChanged();
     }
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
-
     public bool IsGridVisible => TurnoutPanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableTurnouts().Count > 0;
     public double ControlHeight => 40 + TurnoutPanelActions.Count * 40;
 
     public string NoDataText {
         get {
-            if (AvailableTurnouts.Count == 0) return "No Turnouts have been defined. ";
+            if (AvailableTurnouts.Count == 0) return "No available Turnouts defined. ";
             if (TurnoutPanelActions.Count == 0) return "Use the + key to add a turnout action.";
             if (SelectableTurnouts().Count == 0) return "All defined turnouts have been assigned.";
             return "";
         }
     }
 
+    private void RaisePropertiesChanged() {
+        OnPropertyChanged(nameof(IsTurnoutContext));
+        OnPropertyChanged(nameof(IsButtonContext));
+        OnPropertyChanged(nameof(ControlHeight));
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        OnPropertyChanged(nameof(TurnoutPanelActions));
+        OnPropertyChanged(nameof(IsGridVisible));
+        OnPropertyChanged(nameof(NoDataText));
+        
+    }
+    
     [RelayCommand]
     private void AddRow() {
         if (SelectableTurnouts().Count > 0) {
             TurnoutPanelActions.Add(new TurnoutAction { Id = SelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
         }
+        RaisePropertiesChanged();
     }
 
     [RelayCommand]
     private void RemoveRow(TurnoutAction panelAction) {
         TurnoutPanelActions.Remove(panelAction);
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
-        OnPropertyChanged(nameof(TurnoutPanelActions));
+        RaisePropertiesChanged();
     }
 
     [RelayCommand]
     private void IdValueChanged(string id) {
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        RaisePropertiesChanged();    
     }
 
     // Build a collection of all available turnouts that could be selected.

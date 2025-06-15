@@ -33,9 +33,17 @@ public class EditableTurnoutActions(string label, string description = "", int o
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";
-            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID) && b.TurnoutID != entityID).Select(b => b.TurnoutID).ToList<string>() ?? [];
+
+            var t1 = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>();
+            var t2 = t1?.Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID));
+            var t3 = t1?.Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID) && b.TurnoutID != entityID);
+            var t4 = t1?.Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID) && b.TurnoutID != entityID).Select(b => b.TurnoutID).ToList<string>() ?? [];
+            
+            var b1 = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>();
+            
+            var availableTurnouts = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID) && b.TurnoutID != entityID).Select(b => b.TurnoutID).ToList<string>() ?? [];
             if (entity is not null) {
-                return new TurnoutActionsGrid(((IActionEntity)entity).TurnoutPanelActions, context, availableButtons) {
+                return new TurnoutActionsGrid(((IActionEntity)entity).TurnoutPanelActions, context, availableTurnouts) {
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill
                 };

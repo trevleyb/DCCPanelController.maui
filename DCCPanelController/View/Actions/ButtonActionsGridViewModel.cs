@@ -18,6 +18,8 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
         OnPropertyChanged(nameof(ControlHeight));
+        OnPropertyChanged(nameof(IsGridVisible));
+
     }
 
     public List<string> SelectableButtons => BuildSelectableButtons();
@@ -30,31 +32,41 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
 
     public string NoDataText {
         get {
-            if (AvailableButtons.Count == 0) return "No Buttons have been defined. ";
+            if (AvailableButtons.Count == 0) return "No available Buttons defined. ";
             if (ButtonPanelActions.Count == 0) return "Use the + key to add a button action.";
             if (SelectableButtons.Count == 0) return "All defined buttons have been assigned.";
             return "";
         }
     }
 
+    private void RaisePropertiesChanged() {
+        OnPropertyChanged(nameof(IsTurnoutContext));
+        OnPropertyChanged(nameof(IsButtonContext));
+        OnPropertyChanged(nameof(ControlHeight));
+        OnPropertyChanged(nameof(IsGridVisible));
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        OnPropertyChanged(nameof(NoDataText));
+    }
+    
     [RelayCommand]
     private void AddRow() {
         if (SelectableButtons.Count > 0) {
             ButtonPanelActions.Add(new ButtonAction { Id = SelectableButtons[0], WhenOn = ButtonStateEnum.On, WhenOff = ButtonStateEnum.Off, Cascade = false });
         }
+        RaisePropertiesChanged();
     }
 
     [RelayCommand]
     private void RemoveRow(ButtonAction? buttonAction) {
         if (buttonAction is not null) {
             ButtonPanelActions.Remove(buttonAction);
-            OnPropertyChanged(nameof(IsAddButtonEnabled));
         }
+        RaisePropertiesChanged();
     }
 
     [RelayCommand]
     private void IdValueChanged(string id) {
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        RaisePropertiesChanged();
     }
 
     private List<string> BuildSelectableButtons(string? activeButton = null) {

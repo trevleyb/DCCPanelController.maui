@@ -51,8 +51,7 @@
                     SelectionMode="None"
                     HorizontalOptions="Fill"
                     ItemsSource="{Binding TurnoutPanelActions}"
-                    VerticalOptions="Fill"
-                    WidthRequest="440">
+                    VerticalOptions="Fill">
 
                     <ListView.Header>
                         <Grid
@@ -66,9 +65,11 @@
                             <BoxView Background="{StaticResource Primary}" Grid.Column="4"/>
 
                             <Label
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
                                 FontAttributes="Bold"
                                 Grid.Column="0"
-                                Margin="2"
+                                Margin="10,0,0,0"
                                 Text="Turnout"
                                 TextColor="{StaticResource White}"/>
 
@@ -141,7 +142,7 @@
                                         HorizontalOptions="Start"
                                         HeightRequest="15"
                                         Grid.Column="0"
-                                        Margin="-10,0,0,0"
+                                        Margin="-5,0,0,0"
                                         Text="{Binding Id, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         x:Name="IdLabel"/>

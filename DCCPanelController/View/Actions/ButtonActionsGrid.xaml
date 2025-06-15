@@ -50,8 +50,7 @@
                     HorizontalOptions="Fill"
                     ItemsSource="{Binding ButtonPanelActions}"
                     SelectionMode="None"
-                    VerticalOptions="Fill"
-                    WidthRequest="440">
+                    VerticalOptions="Fill">
 
                     <ListView.Header>
                         <Grid
@@ -67,8 +66,10 @@
                             <Label
                                 FontAttributes="Bold"
                                 Grid.Column="0"
-                                Margin="2"
                                 Text="Button"
+                                HorizontalOptions="Start"
+                                VerticalOptions="Center"
+                                Margin="10,0,0,0"
                                 TextColor="{StaticResource White}"/>
 
                             <components:ButtonStateControl
@@ -148,7 +149,7 @@
 
                                     <components:PopUpListBox
                                         Grid.Column="0"
-                                        Margin="0,0,0,0"
+                                        Margin="10,0,0,0"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Center"
                                         BackgroundColor="Transparent"
