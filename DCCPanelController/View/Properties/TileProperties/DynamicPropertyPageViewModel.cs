@@ -35,6 +35,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     public async Task ApplyChangesAsync() {
+        Console.WriteLine($"Applying changes: Panel Name = {Title}");
         await ApplyChangesToAllEntities();
     }
 
@@ -141,6 +142,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                 }
             }
         }
+        Console.WriteLine("Built UI");
     }
 
     public async Task ApplyChangesToAllEntities() {
@@ -156,6 +158,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                     foreach (var targetEntity in Entities) {
                         var targetProperties = EditableExtractor.GetEditableProperties(targetEntity);
                         var targetProperty = targetProperties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
+
+                        Console.WriteLine($"Applying for {targetEntity.EntityName} with {targetProperty?.Name ?? "invalid property"} = {newValue}");
                         
                         if (targetProperty != null) {
                             var valueToSet = newValue;

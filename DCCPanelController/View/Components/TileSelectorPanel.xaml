@@ -53,18 +53,18 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="entities:Entity">
                                 <ContentView
-                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}"
-                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}">
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
                                     <Border
                                         BackgroundColor="White"
-                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
                                         Padding="5"
                                         Stroke="{StaticResource Gray500}"
                                         StrokeShape="RoundRectangle 5,5,5,5"
                                         StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}">
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
                                         <ContentView
                                             Content="{Binding .}"
                                             HorizontalOptions="Fill"
@@ -103,18 +103,18 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="entities:Entity">
                                 <ContentView
-                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}"
-                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}">
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
                                     <Border
                                         BackgroundColor="White"
-                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
                                         Padding="5"
                                         Stroke="{StaticResource Gray500}"
                                         StrokeShape="RoundRectangle 5,5,5,5"
                                         StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}">
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
                                         <ContentView
                                             Content="{Binding .}"
                                             HorizontalOptions="Fill"
@@ -154,18 +154,18 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="entities:Entity">
                                 <ContentView
-                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}"
-                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}">
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
                                     <Border
                                         BackgroundColor="White"
-                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
                                         Padding="5"
                                         Stroke="{StaticResource Gray500}"
                                         StrokeShape="RoundRectangle 5,5,5,5"
                                         StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}">
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
                                         <ContentView
                                             Content="{Binding .}"
                                             HorizontalOptions="Fill"
@@ -204,18 +204,18 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate x:DataType="entities:Entity">
                                 <ContentView
-                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}"
-                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=GridSize}">
+                                    HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}"
+                                    WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=GridSize}">
                                     <Border
                                         BackgroundColor="White"
-                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}"
+                                        HeightRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}"
                                         HorizontalOptions="Fill"
                                         Padding="5"
                                         Stroke="{StaticResource Gray500}"
                                         StrokeShape="RoundRectangle 5,5,5,5"
                                         StrokeThickness="1"
                                         VerticalOptions="Fill"
-                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorPanelViewModel, Path=BorderSize}">
+                                        WidthRequest="{Binding Source={RelativeSource AncestorType={x:Type tileSelectors:TileSelectorPanelViewModel}}, x:DataType=tileSelectors:TileSelectorViewModel, Path=BorderSize}">
                                         <ContentView
                                             Content="{Binding .}"
                                             HorizontalOptions="Fill"

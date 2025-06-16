@@ -10,18 +10,17 @@ public class EditableRouteAttribute(string label, string description = "", int o
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var routes = profile.Routes.ToList();
-            
-            var picker = new Picker {
+            var cell = new PopUpListBox {
                 ItemsSource = routes,
                 IsEnabled = routes.Count > 0,
-                Title = routes.Count > 0 ? "Select a Route" : "No available routes",
+                Placeholder = routes.Count > 0 ? "Select a Route" : "No available routes",
                 HorizontalOptions = LayoutOptions.Start
             };
-            picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            picker.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(Picker.SelectedItem)) SetModified(true);
+            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.PropertyChanged += (sender, args) => {
+                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) SetModified(true);
             };
-            return CreateGroupCell(picker);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Route: {e.Message}");
             return null;
