@@ -18,7 +18,7 @@
         <ToolbarItem Text="Delete" x:Name="DeleteToolbar" IsEnabled="{Binding HasSelectedEntities}"
                      IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
         <ToolbarItem Text="Edit" x:Name="EditToolbar" IconImageSource="edit.png"
-                     Command="{Binding Path=EditPropertiesCommand}"/>
+                     Command="{Binding Path=EditPropertiesCommand}" IsEnabled="{Binding CanEditProperties}" />
         <ToolbarItem Text="Grid" x:Name="GridToolbar" IconImageSource="grid_off.png"
                      Command="{Binding Path=ToggleGridCommand}"/>
     </ContentPage.ToolbarItems>

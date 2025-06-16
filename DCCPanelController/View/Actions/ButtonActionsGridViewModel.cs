@@ -34,7 +34,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
             if (AvailableButtons.Count == 0) return "No available Buttons defined. ";
             if (ButtonPanelActions.Count == 0) return "Use the + key to add a button action.";
             if (SelectableButtons.Count == 0) return "All available buttons have been assigned.";
-            return "";
+            return "Use the + key to add more button actions.";
         }
     }
 

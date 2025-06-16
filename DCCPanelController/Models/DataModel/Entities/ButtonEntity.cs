@@ -9,7 +9,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
 
-    [ObservableProperty] [property: EditableID("Button Name","",0)]
+    [ObservableProperty] [property: EditableID("Button Name","Unique Name for this Button",0)]
     private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableEnum("Button Size","",1)]

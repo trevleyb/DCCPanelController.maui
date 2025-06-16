@@ -35,7 +35,8 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
             if (AvailableTurnouts.Count == 0) return "No available Turnouts defined.";
             if (TurnoutPanelActions.Count == 0 && IsAddButtonEnabled) return "Use the + key to add a turnout action.";
             if (SelectableTurnouts.Count == 0) return "All available turnouts have been assigned.";
-            return "";
+            return "Use the + key to add more turnout actions.";
+
         }
     }
 

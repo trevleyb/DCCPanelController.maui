@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
@@ -28,10 +29,11 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SingleEntitySelected))]
     [NotifyPropertyChangedFor(nameof(SingleOrNoEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
+    [NotifyPropertyChangedFor(nameof(CanEditProperties))]
     private ObservableCollection<ITile> _selectedTiles = [];
 
+    public bool CanEditProperties => SetCanEditProperties();
     public double ScreenHeight = 100;
-
     public double ScreenWidth = 100;
 
     public PanelEditorViewModel(Panel panel, INavigation navigation) {
@@ -49,6 +51,18 @@ public partial class PanelEditorViewModel : ObservableObject {
     public string Title => Panel?.Title ?? "Panel";
     public event Action? OnBeginPushModal;
     public event Action? OnBeginPopModal;
+
+    public bool SetCanEditProperties() {
+        if (SelectedEntities.Count is 0 or 1) return true;
+
+        // If more than 1 selected entity and any are IEntityID, return false
+        if (SelectedEntities.Any(entity => entity is IEntityID)) return false;
+
+        // If they are track entities (but not IEntityID), return true
+        if (SelectedEntities.All(entity => entity is TrackEntity)) return true;
+
+        return false;
+    }
 
     [RelayCommand]
     public async Task SaveAsync() {

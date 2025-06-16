@@ -10,10 +10,10 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
-    [ObservableProperty] [property: EditableID("Turnout Name", "", 0, "Turnout")]
+    [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
     private string _id = string.Empty;
 
-    [ObservableProperty] [property: EditableTurnout("DCC Turnout", "", 0, "Turnout")]
+    [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
     private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)]
@@ -37,7 +37,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
 
     [JsonIgnore]
     public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
-    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Turnout");
+    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? [],"Turnout");
 
     protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
         TurnoutID = string.Empty;
