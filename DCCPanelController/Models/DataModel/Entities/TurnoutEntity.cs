@@ -10,10 +10,10 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
-    [ObservableProperty] [property: EditableID("ID", "", 0, "Turnout")]
+    [ObservableProperty] [property: EditableID("Turnout Name", "", 0, "Turnout")]
     private string _id = string.Empty;
 
-    [ObservableProperty] [property: EditableTurnout("Turnout", "", 0, "Turnout")]
+    [ObservableProperty] [property: EditableTurnout("DCC Turnout", "", 0, "Turnout")]
     private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)]

@@ -9,7 +9,7 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     [ObservableProperty] [property: EditableEnum("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: EditableRoute("Route")]
+    [ObservableProperty] [property: EditableRoute("Route", "", 0)]
     private string _routeID = string.Empty;
 
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;

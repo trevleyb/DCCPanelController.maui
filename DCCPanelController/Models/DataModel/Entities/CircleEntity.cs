@@ -14,10 +14,7 @@ public partial class CircleEntity : Entity, IDrawingEntity {
 
     [ObservableProperty] [property: EditableInt("Border Width", group: "Circle")]
     private int _borderWidth = 1;
-
-    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Circle")]
-    private double _opacity = 0.5;
-
+    
     [JsonConstructor]
     public CircleEntity() { }
 

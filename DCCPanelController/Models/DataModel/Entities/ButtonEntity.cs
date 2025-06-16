@@ -9,19 +9,19 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
 
-    [ObservableProperty] [property: EditableID("Button ID","",0)]
+    [ObservableProperty] [property: EditableID("Button Name","",0)]
     private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableEnum("Button Size","",1)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-
-    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")]
     private ButtonActions _buttonPanelActions = [];
 
     [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions")]
     private TurnoutActions _turnoutPanelActions = [];
+
+    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [JsonConstructor]
     public ButtonEntity() {

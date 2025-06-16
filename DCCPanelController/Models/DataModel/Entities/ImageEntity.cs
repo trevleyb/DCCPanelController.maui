@@ -21,9 +21,6 @@ public partial class ImageEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: EditableImage("Image", group: "Image")]
     private string _image = string.Empty;
 
-    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Image")]
-    private double _opacity = 0.5;
-
     [JsonConstructor]
     public ImageEntity() { }
 

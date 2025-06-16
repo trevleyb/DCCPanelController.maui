@@ -18,9 +18,6 @@ public partial class RectangleEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: EditableInt("Border Width", group: "Rectangle")]
     private int _borderWidth = 1;
 
-    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Rectangle")]
-    private double _opacity = 1;
-
     [JsonConstructor]
     public RectangleEntity() { }
 

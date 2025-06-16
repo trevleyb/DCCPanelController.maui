@@ -21,7 +21,10 @@ public abstract partial class Entity() : ObservableObject {
     [JsonIgnore] public Panel? Parent { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
 
-    [ObservableProperty] [property: EditableInt("Layer", "", 9, "Track")]
+    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Visibility")]
+    private double _opacity = 0.5;
+
+    [ObservableProperty] [property: EditableInt("Layer", "", 9, "Visibility")]
     private int _layer = 1;
     
     protected Entity(Panel panel) : this() {

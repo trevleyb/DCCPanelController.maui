@@ -12,9 +12,6 @@ public partial class LineEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: EditableInt("Line Width", group: "Line")]
     private int _lineWidth = 3;
 
-    [ObservableProperty] [property: EditableOpacity("Opacity", group: "Line")]
-    private double _opacity = 1;
-
     [JsonConstructor]
     public LineEntity() { }
 

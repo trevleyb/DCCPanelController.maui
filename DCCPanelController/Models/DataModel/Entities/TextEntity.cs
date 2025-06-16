@@ -27,9 +27,6 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
-    [ObservableProperty] [property: EditableOpacity("Opacity", "", 5, "Border")]
-    private double _opacity = 0.5;
-
     [ObservableProperty] [property: EditableColor("Text Color", "", 0, "Text")]
     private Color _textColor = Colors.Black;
 
