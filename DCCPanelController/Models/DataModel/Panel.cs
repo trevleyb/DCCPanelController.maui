@@ -61,6 +61,7 @@ public partial class Panel : ObservableObject, IEntityID {
     public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
 
+    [JsonIgnore]
     public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
     public string NextID => EntityID.GenerateNextID(Panels ?? [],"Panel");
 

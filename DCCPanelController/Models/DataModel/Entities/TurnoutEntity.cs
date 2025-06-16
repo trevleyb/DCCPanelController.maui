@@ -29,11 +29,15 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     protected TurnoutEntity() {
         Id = NextID;
     }
+    
+    [JsonIgnore]
+    public Turnout? Turnout => Parent?.Turnout(TurnoutID);
 
     protected TurnoutEntity(Panel panel) : base(panel) { }
 
-    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Turnout");
+    [JsonIgnore]
     public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
+    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Turnout");
 
     protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
         TurnoutID = string.Empty;
@@ -44,10 +48,12 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
         RotationFactor = 90;
     }
 
-    [JsonIgnore]
-    public Turnout? Turnout => Parent?.Turnout(TurnoutID);
-
     public override string ToString() {
         return TurnoutID;
+    }
+    
+    public void CloneActionsInto(IActionEntity entity) {
+        entity.ButtonPanelActions = (ButtonActions)this.ButtonPanelActions.Clone();
+        entity.TurnoutPanelActions = (TurnoutActions)this.TurnoutPanelActions.Clone();
     }
 }

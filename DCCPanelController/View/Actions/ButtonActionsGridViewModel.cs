@@ -3,46 +3,43 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class ButtonActionsGridViewModel : ObservableObject {
     [ObservableProperty] private ActionsContext _actionContext;
     [ObservableProperty] public List<string> _availableButtons;
-    [ObservableProperty] private ButtonActions _buttonPanelActions;
+    [ObservableProperty] private List<string> _selectableButtons;
 
-    public ButtonActionsGridViewModel(ButtonActions buttonPanelActions, ActionsContext context, List<string> availableButtons) {
+    private IActionEntity _entity;
+    public ButtonActions ButtonPanelActions => _entity.ButtonPanelActions;
+
+    public ButtonActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableButtons) {
+        _entity = entity;
         ActionContext = context;
         AvailableButtons = availableButtons;
-        ButtonPanelActions = buttonPanelActions;
-        OnPropertyChanged(nameof(IsTurnoutContext));
-        OnPropertyChanged(nameof(IsButtonContext));
-        OnPropertyChanged(nameof(ControlHeight));
-        OnPropertyChanged(nameof(IsGridVisible));
-
-    }
-
-    public List<string> SelectableButtons {
-        get => BuildSelectableButtons();
-        set => _ = value;
+        SelectableButtons = BuildSelectableButtons();
+        RaisePropertiesChanged();
     }
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
     public bool IsGridVisible => ButtonPanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableButtons.Count > 0;
-    public double ControlHeight => 40 + ButtonPanelActions.Count * 40;
+    public double ControlHeight => 40 + (ButtonPanelActions.Count * 40);
 
     public string NoDataText {
         get {
             if (AvailableButtons.Count == 0) return "No available Buttons defined. ";
             if (ButtonPanelActions.Count == 0) return "Use the + key to add a button action.";
-            if (SelectableButtons.Count == 0) return "All defined buttons have been assigned.";
+            if (SelectableButtons.Count == 0) return "All available buttons have been assigned.";
             return "";
         }
     }
 
     private void RaisePropertiesChanged() {
+        OnPropertyChanged(nameof(ButtonPanelActions));
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
         OnPropertyChanged(nameof(ControlHeight));
@@ -56,6 +53,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         if (SelectableButtons.Count > 0) {
             ButtonPanelActions.Add(new ButtonAction { Id = SelectableButtons[0], WhenOn = ButtonStateEnum.On, WhenOff = ButtonStateEnum.Off, Cascade = false });
         }
+        SelectableButtons = BuildSelectableButtons();
         RaisePropertiesChanged();
     }
 
@@ -64,6 +62,7 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
         if (buttonAction is not null) {
             ButtonPanelActions.Remove(buttonAction);
         }
+        SelectableButtons = BuildSelectableButtons();
         RaisePropertiesChanged();
     }
 

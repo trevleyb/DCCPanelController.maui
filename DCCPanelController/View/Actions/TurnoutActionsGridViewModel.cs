@@ -4,50 +4,49 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty] private ActionsContext _actionContext;
     [ObservableProperty] private List<string> _availableTurnouts;
-    public TurnoutActions TurnoutPanelActions { get; set; }
+    [ObservableProperty] private List<string> _selectableTurnouts;
 
-    public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
+    private readonly IActionEntity _entity;
+    public TurnoutActions TurnoutPanelActions => _entity.TurnoutPanelActions;
+
+    public TurnoutActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableTurnouts) {
+        _entity = entity;
         ActionContext = context;
         AvailableTurnouts = availableTurnouts;
-        TurnoutPanelActions = turnoutPanelActions;
+        SelectableTurnouts = BuildSelectableTurnouts();
         RaisePropertiesChanged();
-    }
-
-    public List<string> SelectableTurnouts {
-        get => BuildSelectableTurnouts();
-        set => _ = value;
     }
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
     public bool IsGridVisible => TurnoutPanelActions.Count > 0;
-    public bool IsAddButtonEnabled => BuildSelectableTurnouts().Count > 0;
-    public double ControlHeight => 40 + TurnoutPanelActions.Count * 40;
+    public bool IsAddButtonEnabled => SelectableTurnouts.Count > 0;
+    public double ControlHeight => 40 + (TurnoutPanelActions.Count * 40);
 
     public string NoDataText {
         get {
-            if (AvailableTurnouts.Count == 0) return "No available Turnouts defined. ";
-            if (TurnoutPanelActions.Count == 0) return "Use the + key to add a turnout action.";
-            if (BuildSelectableTurnouts().Count == 0) return "All defined turnouts have been assigned.";
+            if (AvailableTurnouts.Count == 0) return "No available Turnouts defined.";
+            if (TurnoutPanelActions.Count == 0 && IsAddButtonEnabled) return "Use the + key to add a turnout action.";
+            if (SelectableTurnouts.Count == 0) return "All available turnouts have been assigned.";
             return "";
         }
     }
 
     private void RaisePropertiesChanged() {
+        OnPropertyChanged(nameof(TurnoutPanelActions));
+        OnPropertyChanged(nameof(ControlHeight));
+        OnPropertyChanged(nameof(NoDataText));
+        OnPropertyChanged(nameof(IsAddButtonEnabled));
+        OnPropertyChanged(nameof(IsGridVisible));
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
-        OnPropertyChanged(nameof(ControlHeight));
-        OnPropertyChanged(nameof(IsAddButtonEnabled));
-        OnPropertyChanged(nameof(TurnoutPanelActions));
-        OnPropertyChanged(nameof(IsGridVisible));
-        OnPropertyChanged(nameof(NoDataText));
-        
     }
     
     [RelayCommand]
@@ -55,12 +54,14 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         if (BuildSelectableTurnouts().Count > 0) {
             TurnoutPanelActions.Add(new TurnoutAction { Id = BuildSelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
         }
+        SelectableTurnouts = BuildSelectableTurnouts();
         RaisePropertiesChanged();
     }
 
     [RelayCommand]
     private void RemoveRow(TurnoutAction panelAction) {
         TurnoutPanelActions.Remove(panelAction);
+        SelectableTurnouts = BuildSelectableTurnouts();
         RaisePropertiesChanged();
     }
 

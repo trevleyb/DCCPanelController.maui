@@ -98,8 +98,8 @@ public partial class TileSelectorViewModel : Base.BaseViewModel {
             Branch.Clear();
             
             var panel = source == null ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);
-            AddTile(Actions, new ButtonEntity(panel));
-            AddTile(Actions, new RouteEntity(panel));
+            AddTile(Actions, new ButtonEntity(panel) {State = ButtonStateEnum.On }  );
+            AddTile(Actions, new RouteEntity(panel) {State = ButtonStateEnum.On } );
             AddTile(Actions, new SwitchEntity(panel) { SwitchStyle = SwitchStyleEnum.Light, State = ButtonStateEnum.On} );
             AddTile(Actions, new SwitchEntity(panel) { SwitchStyle = SwitchStyleEnum.Switch, State = ButtonStateEnum.On});
             

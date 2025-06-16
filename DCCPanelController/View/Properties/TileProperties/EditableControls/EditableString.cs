@@ -1,4 +1,5 @@
 using System.Reflection;
+using CommunityToolkit.Maui.Markup;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -20,8 +21,8 @@ public class EditableString(string label, string description = "", int order = 0
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
                 if (args.PropertyName == nameof(Entry.Text)) SetModified(true);
-                if (sender is Entry entry) {
-                    SetModified(Value?.ToString() != entry.Text);
+                if (sender is Entry entry && Value is string) {
+                    SetModified(!Value.Equals(entry.Text));
                 }
             };
             return CreateGroupCell(cell);

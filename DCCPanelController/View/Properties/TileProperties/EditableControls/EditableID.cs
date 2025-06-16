@@ -24,13 +24,6 @@ public class EditableID(string label, string description = "", int order = 0, st
             cell.TextChanged += CellOnTextChanged;
             cell.Completed += CellOnCompleted;
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(Entry.Text)) {
-                    if (sender is Entry item) {
-                        SetModified(item.Text != (string)Value!);
-                    }
-                }
-            };
             return CreateGroupCell(cell);
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a String:  {e.Message}");
@@ -46,8 +39,13 @@ public class EditableID(string label, string description = "", int order = 0, st
 
     private void CellOnTextChanged(object? sender, TextChangedEventArgs e) {
         var isValid = IsIDValid(e.NewTextValue);
-        if (sender is Entry entry) entry.TextColor = isValid ? Colors.Black : Colors.Red;
-        SetModified(true);
+        if (sender is Entry entry) {
+            entry.TextColor = isValid ? Colors.Black : Colors.Red;
+            if (Value is string { } value) {
+                var hasChanged = !entry.Text.Equals(value);
+                SetModified(hasChanged);
+            }
+        }
     }
 
     private bool IsIDValid(string value) {

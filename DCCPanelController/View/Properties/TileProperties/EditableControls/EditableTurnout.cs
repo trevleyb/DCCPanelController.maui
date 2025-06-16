@@ -24,7 +24,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                 };
                 picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
                 picker.PropertyChanged += (sender, args) => {
-                    if (args.PropertyName == nameof(Picker.SelectedItem)) SetModified(true);
+                    if (args.PropertyName == nameof(Picker.SelectedItem)) SetModified( !(Value?.Equals(picker.SelectedItem) ?? false));
                 };
 
                 return CreateGroupCell(picker);

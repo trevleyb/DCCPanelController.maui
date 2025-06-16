@@ -8,6 +8,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties.TileProperties.Attributes;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -26,6 +27,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     public DynamicPropertyPageViewModel(List<Entity> entities) {
         if (entities is null || entities.Count == 0) throw new ArgumentException("There must be at least 1 Entity for Properties.");
         ProxyEntity = entities[0].Clone();
+        if (entities[0] is IActionEntity actionEntity) {
+            actionEntity.CloneActionsInto((IActionEntity)ProxyEntity);
+        }
         Title = "Property Editor";
         Entities = entities;
     }
