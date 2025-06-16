@@ -24,7 +24,9 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActi
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]
-    public ButtonEntity() { }
+    public ButtonEntity() {
+        Id = NextID;
+    }
 
     public ButtonEntity(Panel panel) : base(panel) { }
 
@@ -34,9 +36,9 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActi
     }
     public override string EntityName => "Button";
 
-    public string GenerateID() {
-        return EntityID.NextButtonID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? []);
-    }
+    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Button");
+
+    public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? []) ?? [];
 
     public override Entity Clone() {
         return new ButtonEntity(this);

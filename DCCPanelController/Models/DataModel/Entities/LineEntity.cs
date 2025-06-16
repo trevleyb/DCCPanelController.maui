@@ -5,7 +5,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class LineEntity : Entity, IDrawingEntity, IRotationEntity {
+public partial class LineEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: EditableColor("Line Color", group: "Line")]
     private Color _lineColor = Colors.Black;
 

@@ -5,7 +5,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class TextEntity : Entity, ITextEntity, IDrawingEntity, IRotationEntity {
+public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: EditableColor("Background Color", "", 5, "Border")]
     private Color _backgroundColor = Colors.Transparent;
 

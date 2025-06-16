@@ -3,25 +3,13 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 
-public static class EntityID {
-    // TODO: Make it so that generating IDs includes the Panel Name as part of the ID
-    public static string NextPanelID(IEnumerable<Panel> panels) {
-        return Next(panels, "Panel ");
+public class EntityID {
+
+    public static string GenerateNextID(IEnumerable<IEntityID> entities, string prefix) {
+        return GenerateGetNextID(entities, t => t.Id, prefix);
     }
 
-    public static string NextTurnoutID(IEnumerable<IEntityID> entities) {
-        return Next(entities, "T");
-    }
-
-    public static string NextButtonID(IEnumerable<IEntityID> entities) {
-        return Next(entities, "B");
-    }
-
-    public static string Next(IEnumerable<IEntityID> entities, string prefix) {
-        return GetNextID(entities, t => t.Id, prefix);
-    }
-
-    private static string GetNextID<T>(IEnumerable<T> entities, Func<T, string> idSelector, string defaultPrefix = "UKN") {
+    private static string GenerateGetNextID<T>(IEnumerable<T> entities, Func<T, string> idSelector, string defaultPrefix = "UKN") {
         var ids = entities.Select(idSelector).Where(id => !string.IsNullOrEmpty(id)).OrderBy(id => id).ToList();
         if (ids.Count == 0) return $"{defaultPrefix}1"; // Default name if the list is empty.
         var numericalPattern = ids.Select(id => {

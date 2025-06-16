@@ -39,8 +39,8 @@ public class EditableID(string label, string description = "", int order = 0, st
     }
 
     private void CellOnCompleted(object? sender, EventArgs e) {
-        if (_entity is ButtonEntity { Parent: not null } button) {
-            if (!IsIDValid(button.Id)) button.Id = button.Parent.GenerateID();
+        if (sender is Entry entry && _entity is { } entity) {
+            if (!IsIDValid(entry.Text)) _entity.Id = entity.NextID;
         }
     }
 
@@ -52,10 +52,9 @@ public class EditableID(string label, string description = "", int order = 0, st
 
     private bool IsIDValid(string value) {
         var isValid = true;
-        if (_entity is ButtonEntity { Parent: not null } button) {
-            var buttons = button.Parent?.GetAllEntitiesWithID<ButtonEntity>();
-            var conflictingButtons = buttons?.Where(b => b.Id == value).ToArray() ?? null;
-            isValid = conflictingButtons == null || conflictingButtons.Length == 1 && conflictingButtons[0].Equals(button);
+        if (_entity is { AllIDs: { } ids }) {
+            var conflictingEntities = ids?.Where(entity => entity.Id == value).ToArray() ?? [];
+            isValid = conflictingEntities.Length is 0 or 1;
         }
         return isValid;
     }

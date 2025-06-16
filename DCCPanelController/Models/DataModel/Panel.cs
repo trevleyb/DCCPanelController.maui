@@ -31,7 +31,7 @@ public partial class Panel : ObservableObject, IEntityID {
 
     public Panel(Panels panels) : this() {
         Panels = panels;
-        Id = GenerateID();
+        Id = NextID;
     }
 
     [JsonIgnore] public Panels? Panels { get; set; }
@@ -61,9 +61,8 @@ public partial class Panel : ObservableObject, IEntityID {
     public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
 
-    public string GenerateID() {
-        return EntityID.NextPanelID(Panels ?? []);
-    }
+    public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
+    public string NextID => EntityID.GenerateNextID(Panels ?? [],"Panel");
 
     public Entity? GetEntityAtPosition(int x, int y) {
         return Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
@@ -133,13 +132,13 @@ public partial class Panel : ObservableObject, IEntityID {
 
     public T CreateEntity<T>() where T : Entity {
         var entity = (T)Activator.CreateInstance(typeof(T), this)! ?? throw new InvalidOperationException();
-        if (entity is IEntityID entityID) entityID.Id = entityID.GenerateID();
+        if (entity is IEntityID entityID) entityID.Id = entityID.NextID;
         return entity ?? throw new InvalidOperationException();
     }
 
     public T CreateEntityFrom<T>(T entity) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
-        if (cloned is IEntityID entityID) entityID.Id = entityID.GenerateID();
+        if (cloned is IEntityID entityID) entityID.Id = entityID.NextID;
         return cloned ?? throw new InvalidOperationException();
     }
 

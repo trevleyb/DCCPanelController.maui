@@ -24,11 +24,16 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
 
     [ObservableProperty]
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
-    
+
     [JsonConstructor]
-    protected TurnoutEntity() { }
+    protected TurnoutEntity() {
+        Id = NextID;
+    }
 
     protected TurnoutEntity(Panel panel) : base(panel) { }
+
+    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Turnout");
+    public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
 
     protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
         TurnoutID = string.Empty;
@@ -41,10 +46,6 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
 
     [JsonIgnore]
     public Turnout? Turnout => Parent?.Turnout(TurnoutID);
-
-    public string GenerateID() {
-        return EntityID.NextTurnoutID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []);
-    }
 
     public override string ToString() {
         return TurnoutID;

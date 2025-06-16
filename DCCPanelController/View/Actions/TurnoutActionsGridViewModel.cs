@@ -10,7 +10,7 @@ namespace DCCPanelController.View.Actions;
 public partial class TurnoutActionsGridViewModel : ObservableObject {
     [ObservableProperty] private ActionsContext _actionContext;
     [ObservableProperty] private List<string> _availableTurnouts;
-    public TurnoutActions TurnoutPanelActions;
+    public TurnoutActions TurnoutPanelActions { get; set; }
 
     public TurnoutActionsGridViewModel(TurnoutActions turnoutPanelActions, ActionsContext context, List<string> availableTurnouts) {
         ActionContext = context;
@@ -19,19 +19,22 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         RaisePropertiesChanged();
     }
 
-    public List<string> SelectableButtons => SelectableTurnouts();
+    public List<string> SelectableTurnouts {
+        get => BuildSelectableTurnouts();
+        set => _ = value;
+    }
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;
     public bool IsGridVisible => TurnoutPanelActions.Count > 0;
-    public bool IsAddButtonEnabled => SelectableTurnouts().Count > 0;
+    public bool IsAddButtonEnabled => BuildSelectableTurnouts().Count > 0;
     public double ControlHeight => 40 + TurnoutPanelActions.Count * 40;
 
     public string NoDataText {
         get {
             if (AvailableTurnouts.Count == 0) return "No available Turnouts defined. ";
             if (TurnoutPanelActions.Count == 0) return "Use the + key to add a turnout action.";
-            if (SelectableTurnouts().Count == 0) return "All defined turnouts have been assigned.";
+            if (BuildSelectableTurnouts().Count == 0) return "All defined turnouts have been assigned.";
             return "";
         }
     }
@@ -49,8 +52,8 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     
     [RelayCommand]
     private void AddRow() {
-        if (SelectableTurnouts().Count > 0) {
-            TurnoutPanelActions.Add(new TurnoutAction { Id = SelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
+        if (BuildSelectableTurnouts().Count > 0) {
+            TurnoutPanelActions.Add(new TurnoutAction { Id = BuildSelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
         }
         RaisePropertiesChanged();
     }
@@ -82,7 +85,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
         return foundTurnouts;
     }
 
-    public List<string> SelectableTurnouts(string? activeTurnout = "") {
+    public List<string> BuildSelectableTurnouts(string? activeTurnout = "") {
         var selectableTurnouts = new List<string>(AvailableTurnouts);
         for (var i = AvailableTurnouts.Count - 1; i >= 0; i--) {
             var turnout = AvailableTurnouts[i];

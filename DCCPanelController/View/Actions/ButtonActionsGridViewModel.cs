@@ -22,7 +22,10 @@ public partial class ButtonActionsGridViewModel : ObservableObject {
 
     }
 
-    public List<string> SelectableButtons => BuildSelectableButtons();
+    public List<string> SelectableButtons {
+        get => BuildSelectableButtons();
+        set => _ = value;
+    }
 
     public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
     public bool IsButtonContext => ActionContext == ActionsContext.Button;

@@ -36,7 +36,7 @@ public class SwitchTile : Tile, ITileInteractive {
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
                 _                       => ButtonStateEnum.Unknown
             };
-            if (connectionService.Client is { } client) await client.SendLightCmdAsync(switchEntity.Light, State == ButtonStateEnum.On);
+            if (connectionService.Client is { } client && switchEntity is {Light: not null } )  await client.SendLightCmdAsync(switchEntity.Light, State == ButtonStateEnum.On);
         }
     }
 

@@ -2,5 +2,6 @@ namespace DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 public interface IEntityID {
     public string Id { get; set; }
-    public string GenerateID();
+    public string NextID { get; }
+    public List<IEntityID> AllIDs { get; }
 }

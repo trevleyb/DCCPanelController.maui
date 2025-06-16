@@ -11,13 +11,13 @@ public class EditableOpacity(string label, string description = "", int order = 
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
             cell.HorizontalOptions = LayoutOptions.Start;
-            var dataCell = new Label {
+            var dataCell = new Entry {
                 BindingContext = owner,
                 VerticalOptions = LayoutOptions.Center,
                 WidthRequest = 75,
                 HeightRequest = 30,
                 Margin = new Thickness(10, 0, 10, 0),
-                Text = ConvertOpacityToPercentage((double)(info.GetValue(owner) ?? 0.00))
+                Text = ConvertOpacityToPercentage((double)(info?.GetValue(owner) ?? 0.00))
             };
             
             var stepperUpDown = new Stepper {
@@ -27,7 +27,7 @@ public class EditableOpacity(string label, string description = "", int order = 
                 Increment = 0.05, // Increment/decrement step
                 HorizontalOptions = LayoutOptions.End,
             };
-            stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info?.Name) { Source = owner, Mode = BindingMode.TwoWay });
             
             stepperUpDown.ValueChanged += (s, e) => {
                 dataCell.Text = dataCell.Text = ConvertOpacityToPercentage(stepperUpDown.Value);
