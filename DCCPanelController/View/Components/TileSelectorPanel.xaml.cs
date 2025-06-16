@@ -7,15 +7,15 @@ using CoreGraphics;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public partial class TileSelector {
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(TileSelector), propertyChanged: OnPanelChanged);
+public partial class TileSelectorPanel {
+    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(TileSelectorPanel), propertyChanged: OnPanelChanged);
 
     private double _initialWidth;
     private double _startX;
 
-    public TileSelector() {
+    public TileSelectorPanel() {
         InitializeComponent();
-        BindingContext = new TileSelectorViewModel();
+        BindingContext = new TileSelectorPanelViewModel();
     }
 
     public Panel? Panel {
@@ -24,19 +24,19 @@ public partial class TileSelector {
     }
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        var control = (TileSelector)bindable;
+        var control = (TileSelectorPanel)bindable;
         if (newValue != oldValue) control.ForceRefresh();
     }
 
     public void ForceRefresh() {
-        if (BindingContext is TileSelectorViewModel { } vm) {
+        if (BindingContext is TileSelectorPanelViewModel { } vm) {
             vm.BuildTileList(Panel);
             vm.Panel= Panel;
         }
     }
 
     private void OnResizeHandlePanUpdated(object? sender, PanUpdatedEventArgs e) {
-        if (BindingContext is not TileSelectorViewModel viewModel) return;
+        if (BindingContext is not TileSelectorPanelViewModel viewModel) return;
         
         switch (e.StatusType) {
             case GestureStatus.Started:

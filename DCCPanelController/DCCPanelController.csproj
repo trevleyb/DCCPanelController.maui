@@ -193,7 +193,7 @@
         <MauiXaml Update="View\PropertPages\DynamicPropertyPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\Components\GridColorPicker.xaml">
+        <MauiXaml Update="View\Components\ColorPickerGrid.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\PropertyPages\DynamicPropertyPopup.xaml">
@@ -203,9 +203,6 @@
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\TestPanelPage.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
-        <MauiXaml Update="View\Components\IDPicker.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\BlocksPage.xaml">
@@ -226,7 +223,7 @@
         <MauiXaml Update="View\SensorsPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\Components\TileSelector.xaml">
+        <MauiXaml Update="View\Components\TileSelectorPanel.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -273,7 +270,7 @@
             <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\Components\GridColorPicker.xaml.cs">
+        <Compile Update="View\Components\ColorPickerGrid.xaml.cs">
             <DependentUpon>GridColorPicker.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
@@ -306,10 +303,6 @@
         </Compile>
         <Compile Update="View\TurnoutsViewModel.cs">
             <DependentUpon>TurnoutsPage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\Components\IDPicker.xaml.cs">
-            <DependentUpon>IDPicker.xaml</DependentUpon>
-            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\SettingsViewModel.cs">
             <DependentUpon>SettingsPagePage.xaml</DependentUpon>
@@ -356,12 +349,12 @@
         <Compile Update="View\LightsViewModel.cs">
           <DependentUpon>LightsPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\Components\TileSelector.xaml.cs">
+        <Compile Update="View\Components\TileSelectorPanel.xaml.cs">
           <DependentUpon>TileSelector.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\Components\TileSelectorViewModel.cs">
-          <DependentUpon>TileSelector.xaml</DependentUpon>
+        <Compile Update="View\Components\TileSelectorPanelViewModel.cs">
+          <DependentUpon>TileSelectorPanel.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 

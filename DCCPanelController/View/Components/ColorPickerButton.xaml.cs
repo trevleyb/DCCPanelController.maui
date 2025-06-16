@@ -85,7 +85,7 @@ public partial class ColorPickerButton : ContentView {
     // Asynchronously show the popup and update the selected color
     [RelayCommand]
     private async Task ShowDropdownAsync() {
-        var popup = new GridColorPicker(SelectedColor ?? Colors.White);
+        var popup = new ColorPickerGrid(SelectedColor ?? Colors.White);
         if (App.Current?.Windows[0]?.Page is Page { } mainPage) {
             var result = await mainPage.ShowPopupAsync(popup);
             if (result is Color selectedColor) {

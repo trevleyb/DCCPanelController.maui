@@ -9,7 +9,7 @@ using DCCPanelController.Models.ViewModel.Tiles;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public partial class TileSelectorViewModel : Base.BaseViewModel {
+public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
     private readonly Panels _symbolPanels;
 
     private const int BorderMargin = 5;
@@ -29,7 +29,7 @@ public partial class TileSelectorViewModel : Base.BaseViewModel {
     [ObservableProperty] private ObservableCollection<Tile> _branch = new();
     [ObservableProperty] private ObservableCollection<Tile> _shapes = new();
 
-    public TileSelectorViewModel() {
+    public TileSelectorPanelViewModel() {
         _symbolPanels = new Panels();
         BuildTileList();
     }

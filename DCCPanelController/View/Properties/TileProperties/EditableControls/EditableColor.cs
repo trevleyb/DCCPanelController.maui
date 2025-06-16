@@ -25,7 +25,7 @@ public class EditableColor(string label, string description = "", int order = 0,
                         } else if (picker.SelectedColor == null && Value != null) {
                             SetModified(true);
                         } else {
-                            SetModified(picker.SelectedColor != null && Value != null);
+                            SetModified(!picker.SelectedColor?.Equals(Value) ?? false);
                         }
                     }
                 }

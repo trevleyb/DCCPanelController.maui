@@ -1,10 +1,16 @@
 namespace DCCPanelController.Helpers;
 
 public static class AppleCrayonColors {
-    public static IReadOnlyList<Color> Colors => Crayons.Select(crayon => crayon.Color).ToList();
+    
+    // Cache the colors list to avoid recreation
+    private static readonly Lazy<IReadOnlyList<Color>> _colors = new(() => 
+            Crayons.Select(crayon => crayon.Color).ToList());
+    
+    public static IReadOnlyList<Color> Colors => _colors.Value;
 
-    public static IReadOnlyList<AppleCrayonColor> Crayons =>
-        new List<AppleCrayonColor> {
+    // Cache the crayons list
+    private static readonly Lazy<IReadOnlyList<AppleCrayonColor>> _crayons = new(() =>
+    new List<AppleCrayonColor> {
             new("Licorice", Color.FromArgb("FF000000")),
             new("Lead", Color.FromArgb("FF212121")),
             new("Tungsten", Color.FromArgb("FF424242")),
@@ -56,14 +62,24 @@ public static class AppleCrayonColors {
             new("Lavender", Color.FromArgb("FFd783ff")),
             new("Bubblegum", Color.FromArgb("FFff85ff")),
             new("Carnation", Color.FromArgb("FFff8ad8"))
-        };
+            
+    });
+
+    public static IReadOnlyList<AppleCrayonColor> Crayons => _crayons.Value;
+
+    // Cache name lookups
+    private static readonly Lazy<Dictionary<Color, string>> _colorToName = new(() =>
+            Crayons.ToDictionary(c => c.Color, c => c.Name));
 
     public static string Name(Color color) {
-        return Crayons.FirstOrDefault(crayon => Equals(crayon.Color, color))?.Name ?? "Unknown";
+        return _colorToName.Value.TryGetValue(color, out var name) ? name : "Unknown";
     }
 
+    private static readonly Lazy<Dictionary<string, Color>> _nameToColor 
+        = new(() => Crayons.ToDictionary(c => c.Name, c => c.Color, StringComparer.OrdinalIgnoreCase));
+
     public static Color Value(string name) {
-        return Crayons.FirstOrDefault(crayon => crayon.Name.Equals(name, StringComparison.OrdinalIgnoreCase))?.Color ?? Microsoft.Maui.Graphics.Colors.White;
+        return _nameToColor.Value.TryGetValue(name, out var color) ? color :  Microsoft.Maui.Graphics.Colors.White;
     }
 
     public record AppleCrayonColor(string Name, Color Color);

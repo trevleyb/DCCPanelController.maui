@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <toolkit:Popup
-    x:Class="DCCPanelController.View.Components.GridColorPicker"
-    x:DataType="colorPickerControl:GridColorPicker"
+    x:Class="DCCPanelController.View.Components.ColorPickerGrid"
+    x:DataType="colorPickerControl:ColorPickerGrid"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
@@ -31,7 +31,7 @@
                     <Label
                         Grid.Column="0"
                         Margin="10,5,0,5"
-                        Style="{StaticResource LargeLabel}"
+                        Style="{StaticResource MediumLabel}"
                         Text="Select a Color"
                         TextColor="White"
                         VerticalOptions="Center"/>
@@ -45,40 +45,38 @@
                     SelectionChanged="ColorsView_OnSelectionChanged"
                     SelectionMode="Single"
                     VerticalOptions="FillAndExpand"
-                    x:Name="ColorsView">
+                    x:Name="ColorsView"
+                    ItemSizingStrategy="MeasureFirstItem">
 
-                    <!--  Define the layout for the CollectionView  -->
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Vertical" Span="12"/>
+                        <GridItemsLayout Orientation="Vertical" Span="12" VerticalItemSpacing="2"/>
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="Color">
-                            <Grid Padding="1">
-                                <Border
-                                    BackgroundColor="{Binding .}"
-                                    HeightRequest="25"
-                                    Stroke="{StaticResource Gray300}"
-                                    StrokeThickness="2"
-                                    WidthRequest="25"
-                                    x:Name="ColorFrame">
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup Name="CommonStates">
-                                            <VisualState Name="Normal"/>
-                                            <VisualState Name="Selected">
-                                                <VisualState.Setters>
-                                                    <Setter Property="Stroke" Value="Black"/>
-                                                    <Setter Property="StrokeThickness" Value="3"/>
-                                                </VisualState.Setters>
-                                            </VisualState>
-
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                </Border>
-                            </Grid>
+                            <Border
+                                BackgroundColor="{Binding .}"
+                                HeightRequest="25"
+                                Stroke="{StaticResource Gray300}"
+                                StrokeThickness="2"
+                                WidthRequest="25"
+                                Margin="1">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal"/>
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="Stroke" Value="Black"/>
+                                                <Setter Property="StrokeThickness" Value="3"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
 
                 <Grid ColumnDefinitions="*,auto,auto,*">
                     <BoxView

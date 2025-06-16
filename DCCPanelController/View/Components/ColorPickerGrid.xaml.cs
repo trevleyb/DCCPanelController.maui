@@ -4,21 +4,27 @@ using DCCPanelController.Helpers;
 
 namespace DCCPanelController.View.Components;
 
-public partial class GridColorPicker : Popup {
-    public GridColorPicker(Color color) {
+public partial class ColorPickerGrid : Popup {
+    private static readonly IReadOnlyCollection<Color> CachedColors = AppleCrayonColors.Colors;
+    
+    public ColorPickerGrid(Color color) {
         InitializeComponent();
+        SelectableColors = CachedColors; 
         SelectedColor = color;
-        SelectableColors = AppleCrayonColors.Colors;
         BindingContext = this;
     }
 
     public IReadOnlyCollection<Color> SelectableColors { get; init; }
 
+    private Color? _selectedColor;
     public Color? SelectedColor {
-        get;
+        get => _selectedColor;
         set {
-            field = value;
-            OnPropertyChanged();
+            if (_selectedColor != value) {
+                _selectedColor = value;
+                OnPropertyChanged();
+                OnPropertyChanged(nameof(SelectedColorName));
+            }
         }
     }
 
@@ -31,6 +37,6 @@ public partial class GridColorPicker : Popup {
     }
 
     private void ColorsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
-        OnPropertyChanged(nameof(SelectedColorName));
+        // Property change notification is now handled in the SelectedColor setter
     }
 }
