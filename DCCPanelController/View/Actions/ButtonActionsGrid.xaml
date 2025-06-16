@@ -133,17 +133,15 @@
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
 
-                                    <components:PopUpListBox
+                                    <Picker
                                         Grid.Column="0"
                                         Margin="10,0,0,0"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Center"
                                         BackgroundColor="Transparent"
                                         TextColor="Black"
-                                        TextSize="15"
                                         SelectedItem="{Binding Id, Mode=TwoWay}"
-                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}},x:DataType=local:ButtonActionsGridViewModel, Path=SelectableButtons, Mode=OneWay}"
-                                        Placeholder="Select a Button"/>
+                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}},x:DataType=local:ButtonActionsGridViewModel, Path=SelectableButtons, Mode=OneWay}"/>
 
                                     <components:ButtonStateControl
                                         CanSetStateUnknown="True"
