@@ -10,6 +10,6 @@ public partial class Welcome : ContentPage {
     }
 
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new InstructionsPage());
+        Navigation.PushAsync(new HelpPage());
     }
 }

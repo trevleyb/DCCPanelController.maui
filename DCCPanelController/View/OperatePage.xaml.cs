@@ -48,7 +48,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
     
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new InstructionsPage());
+        Navigation.PushAsync(new HelpPage());
     }
 
     private void HideUnHideTabBar(object? sender, EventArgs e) {

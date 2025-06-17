@@ -64,23 +64,11 @@
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
-        <EmbeddedResource Include="Models\TileImages\light.svg" />
         <MauiImage Include="Resources\Images\*"/>
         <MauiImage Include="Resources\Icons\*"/>
-
-<!--        <MauiImage Update="Resources\Images\appiconimage.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\settings.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\control.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\panels.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\turnouts.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\routes.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\turnout_closed.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\turnout_thrown.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\turnout_unknown.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\route_active.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\route_inactive.svg"/>-->
-<!--        <MauiImage Update="Resources\Images\route_unknown.svg"/>-->
-
+        <MauiFont Include="Resources\Fonts\*"/>
+        <EmbeddedResource Include="Resources\Help\**\*" />
+        
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
@@ -128,14 +116,9 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_unknown.svg"/>
-
-        <!-- Custom Fonts -->
-        <MauiFont Include="Resources\Fonts\*"/>
-        <None Remove="Models\TileImages\switch_off.svg" />
+        <EmbeddedResource Include="Models\TileImages\light.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_off.svg" />
-        <None Remove="Models\TileImages\switch_on.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_on.svg" />
-
     </ItemGroup>
 
     <ItemGroup>
@@ -182,9 +165,6 @@
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\AboutPage.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
-        <MauiXaml Update="View\InstructionsPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\WelcomePage.xaml">
@@ -249,19 +229,12 @@
             <DependentUpon>AboutPage.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
-        <Compile Update="View\InstructionsPage.xaml.cs">
-            <DependentUpon>InstructionsPage.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
         <Compile Update="View\WelcomePage.xaml.cs">
             <DependentUpon>WelcomePage.xaml</DependentUpon>
             <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\WelcomePageViewModel.cs">
             <DependentUpon>WelcomePage.xaml</DependentUpon>
-        </Compile>
-        <Compile Update="View\InstructionsViewModel.cs">
-            <DependentUpon>InstructionsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\AboutViewModel.cs">
             <DependentUpon>AboutPage.xaml</DependentUpon>

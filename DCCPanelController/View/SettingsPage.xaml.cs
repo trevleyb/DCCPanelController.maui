@@ -54,7 +54,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void Instructions_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new InstructionsPage());
+        Navigation.PushAsync(new HelpPage());
     }
 
     private async void Upload_OnClicked(object? sender, EventArgs e) {

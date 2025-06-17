@@ -52,7 +52,7 @@
                 ContentTemplate="{DataTemplate view:ServerMessagesPage}"
                 Title="Server Messages"/>
             <ShellContent
-                ContentTemplate="{DataTemplate view:InstructionsPage}"
+                ContentTemplate="{DataTemplate view:HelpPage}"
                 Title="Help"/>
             <ShellContent
                 ContentTemplate="{DataTemplate view:AboutPage}"

@@ -40,11 +40,11 @@ public static class MauiProgram {
         // --------------------------------------------------------------------------
         services.AddSingleton<Profile>(sp => Profile.NewOrLoad("Sample"));
         services.AddSingleton<ConnectionService>();
+        services.AddSingleton<HelpPage>();
 
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
-        services.AddSingletonViewAndModel<InstructionsPage, InstructionsViewModel>();
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelViewer, PanelViewerViewModel>();
         
