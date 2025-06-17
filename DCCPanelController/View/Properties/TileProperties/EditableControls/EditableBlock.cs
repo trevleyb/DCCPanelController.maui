@@ -14,46 +14,30 @@ public class EditableBlockAttribute(string label, string description = "", int o
             _ = dropDownWidth;
             _ = dropDownHeight;
 
-            
-#if IOS || ANDROID
-                var picker = new Picker {
-                    WidthRequest = width,
-                    ItemsSource = blocks,
-                    IsEnabled = blocks.Count > 0,
-                    Title = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
-                    HorizontalOptions = LayoutOptions.Start
-                };
-                picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-                picker.PropertyChanged += (sender, args) => {
-                    if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) {
-                        if (sender is Picker dropDown) {
-                            SetModified(dropDown.SelectedItem != Value);
-                        }
-                    }
-                };
-                return CreateGroupCell(picker);
-#else
-            var cell = new DropDownListBox {
+            var cell = new PopupSelector() {
+                SelectorType = PopupSelectorTypeEnum.Automatic,
+                InnerMargin = new Thickness(10, 0, 0, 0),
                 WidthRequest = width,
                 DropDownWidth = dropDownWidth,
                 DropDownHeight = dropDownHeight,
-                TextSize = 9,
+                DropdownBorderWidth = 0,
+                TextSize = 12,
                 ItemsSource = blocks,
                 IsEnabled = blocks.Count > 0,
                 Placeholder = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
+                VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) {
-                    if (sender is DropDownBoxBase dropDown) {
+                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) {
+                    if (sender is PopupSelector dropDown) {
                         SetModified(dropDown.SelectedItem != Value);
                     }
                 }
             };
 
             return CreateGroupCell(cell);
-#endif
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Block: {e.Message}");
             return null;

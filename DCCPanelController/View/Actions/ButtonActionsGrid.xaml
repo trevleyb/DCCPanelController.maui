@@ -132,10 +132,14 @@
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
-
-                                    <components:PopUpListBox
+                                    <components:PopupSelector
                                         Grid.Column="0"
+                                        InnerMargin="10,0,0,0"
                                         Margin="10,0,0,0"
+                                        SelectorType="Automatic"
+                                        DropDownWidth="250"
+                                        DropDownHeight="300"
+                                        DropdownBorderWidth="0"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Center"
                                         BackgroundColor="Transparent"

@@ -133,28 +133,20 @@
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
-                                    <!-- <Button -->
-                                    <!--     Clicked="IdLabel_OnClicked" -->
-                                    <!--     TextColor="Black" -->
-                                    <!--     BackgroundColor="Transparent" -->
-                                    <!--     BorderColor="Transparent" -->
-                                    <!--     HorizontalOptions="Start" -->
-                                    <!--     HeightRequest="15" -->
-                                    <!--     Grid.Column="0" -->
-                                    <!--     Margin="-5,0,0,0" -->
-                                    <!--     Text="{Binding Id, Mode=TwoWay}" -->
-                                    <!--     VerticalOptions="Center" -->
-                                    <!--     x:Name="IdLabel"/> -->
 
-                                    <components:PopUpListBox
+                                    <components:PopupSelector
                                         Grid.Column="0"
+                                        InnerMargin="10,0,0,0"
+                                        SelectorType="Automatic"
                                         Margin="10,0,0,0"
+                                        DropDownWidth="250"
+                                        DropDownHeight="300"
+                                        DropdownBorderWidth="0"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Center"
                                         BackgroundColor="Transparent"
                                         TextColor="Black"
                                         TextSize="15"
-                                        HeightRequest="15"
                                         SelectedItem="{Binding Id, Mode=TwoWay}"
                                         ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:TurnoutActionsGridViewModel}},x:DataType=local:TurnoutActionsGridViewModel,Path=SelectableTurnouts,Mode=OneWay}"
                                         Placeholder="Select a Turnout"/>

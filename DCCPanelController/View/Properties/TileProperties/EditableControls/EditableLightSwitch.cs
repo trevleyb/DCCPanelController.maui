@@ -13,38 +13,26 @@ public class EditableLightSwitchAttribute(string label, string description = "",
 
             _ = dropDownWidth;
             _ = dropDownHeight;
-            
-#if IOS || ANDROID
-                var picker = new Picker {
-                    WidthRequest = width,
-                    ItemsSource = lights,
-                    IsEnabled = lights.Count > 0,
-                    Title = lights.Count > 0 ? "Select a Light" : "No available lights",
-                    HorizontalOptions = LayoutOptions.Start
-                };
-                picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-                picker.PropertyChanged += (sender, args) => {
-                    if (args.PropertyName == nameof(Picker.SelectedItem)) SetModified(true);
-                };
 
-                return CreateGroupCell(picker);
-#else
-            var cell = new DropDownListBox {
+            var cell = new PopupSelector() {
+                SelectorType = PopupSelectorTypeEnum.Automatic,
+                InnerMargin = new Thickness(10, 0, 0, 0),
                 WidthRequest = width,
                 DropDownWidth = dropDownWidth,
                 DropDownHeight = dropDownHeight,
-                TextSize = 9,
+                DropdownBorderWidth = 0,
+                TextSize = 12,
                 ItemsSource = lights,
                 IsEnabled = lights.Count > 0,
-                Placeholder = lights.Count > 0 ? "Select a Light" : "No available lights",
+                Placeholder = lights.Count > 0 ? "Select a Light" : "No lights available",
+                VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) SetModified(true);
+                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
             };
             return CreateGroupCell(cell);
-#endif
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Light: {e.Message}");
             return null;

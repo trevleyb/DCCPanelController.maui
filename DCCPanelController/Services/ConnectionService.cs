@@ -93,7 +93,6 @@ public partial class ConnectionService : ObservableObject {
 
     private void OnConnectionChanged(bool? isConnected = null) {
         if (isConnected is {}) IsConnected = isConnected.Value;
-        Console.WriteLine($"ConnectionService: Connection State Changed to {IsConnected}");
         OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(Client));
         ConnectStateChanged?.Invoke(this,IsConnected);

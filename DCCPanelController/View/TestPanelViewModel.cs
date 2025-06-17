@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -12,10 +13,17 @@ public partial class TestPanelPageModel : Base.BaseViewModel {
     [ObservableProperty] private bool _showGrid = true;
     [ObservableProperty] private int _zoom = 10;
 
+    
+    [ObservableProperty] private string _selectedItem;
+    [ObservableProperty] private ObservableCollection<string> _options = [];
+    
+    
     public TestPanelPageModel() {
         IsRefreshing = true;
         IsBusy = true;
 
+        for (int i=1; i<10; i++) Options.Add ($"Button {i}");
+        
         var panels = new Panels();
         var panel = panels.CreatePanel();
         panels.Add(panel);

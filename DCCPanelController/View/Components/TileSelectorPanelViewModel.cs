@@ -47,7 +47,6 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
     
     partial void OnSelectorWidthChanged(double value) {
         if (Panel?.Panels?.Profile?.Settings is { } settings) settings.SelectorWidth = SelectorWidth;
-        Console.WriteLine($"SelectorWidth = {SelectorWidth}");
         UpdateLayout();
     }
 
@@ -91,7 +90,7 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
     }
 
     public async void BuildTileList(Panel? source = null) {
-        using (new CodeTimer("BuildTileList")) {
+        using (new CodeTimer("BuildTileList",false)) {
             Actions.Clear();
             Tracks.Clear();
             Shapes.Clear();

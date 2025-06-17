@@ -14,37 +14,25 @@ public class EditableTurnoutAttribute(string label, string description = "", int
             _ = dropDownWidth;
             _ = dropDownHeight;
             
-#if IOS || ANDROID
-                var picker = new Picker {
-                    WidthRequest = width,
-                    ItemsSource = turnouts,
-                    IsEnabled = turnouts.Count > 0,
-                    Title = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
-                    HorizontalOptions = LayoutOptions.Start
-                };
-                picker.SetBinding(Picker.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-                picker.PropertyChanged += (sender, args) => {
-                    if (args.PropertyName == nameof(Picker.SelectedItem)) SetModified( !(Value?.Equals(picker.SelectedItem) ?? false));
-                };
-
-                return CreateGroupCell(picker);
-#else
-            var cell = new DropDownListBox {
+            var cell = new PopupSelector() {
+                SelectorType = PopupSelectorTypeEnum.Automatic,
+                InnerMargin = new Thickness(10, 0, 0, 0),
                 WidthRequest = width,
                 DropDownWidth = dropDownWidth,
                 DropDownHeight = dropDownHeight,
-                TextSize = 9,
+                DropdownBorderWidth = 0,
+                TextSize = 12,
                 ItemsSource = turnouts,
                 IsEnabled = turnouts.Count > 0,
                 Placeholder = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
+                VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) SetModified(true);
+                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
             };
             return CreateGroupCell(cell);
-#endif
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a Turnout: {e.Message}");
             return null;

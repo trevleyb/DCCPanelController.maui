@@ -158,8 +158,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                     foreach (var targetEntity in Entities) {
                         var targetProperties = EditableExtractor.GetEditableProperties(targetEntity);
                         var targetProperty = targetProperties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
-
-                        Console.WriteLine($"Applying for {targetEntity.EntityName} with {targetProperty?.Name ?? "invalid property"} = {newValue}");
                         
                         if (targetProperty != null) {
                             var valueToSet = newValue;
@@ -176,7 +174,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                                     _ => newValue
                                 };
                             }
-
                             targetProperty.SetValue(targetEntity, valueToSet);
                         }
                     }
@@ -222,7 +219,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             Margin = new Thickness(0, 0, 5, 0),
             Rotation = 0 // Expanded state rotation (facing down)
         };
-
         chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);
         return chevron;
     }

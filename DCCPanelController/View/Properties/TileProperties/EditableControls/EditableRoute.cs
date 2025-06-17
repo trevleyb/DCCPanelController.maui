@@ -4,21 +4,30 @@ using DCCPanelController.View.Components;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
-public class EditableRouteAttribute(string label, string description = "", int order = 0, string? group = null)
+public class EditableRouteAttribute(string label, string description = "", int order = 0, string? group = null, int width = 250, int dropDownWidth = 300, int dropDownHeight = 200)
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
             var routes = profile.Routes.ToList();
-            var cell = new PopUpListBox {
+            
+            var cell = new PopupSelector() {
+                SelectorType = PopupSelectorTypeEnum.Automatic,
+                InnerMargin = new Thickness(10, 0, 0, 0),
+                WidthRequest = width,
+                DropDownWidth = dropDownWidth,
+                DropDownHeight = dropDownHeight,
+                DropdownBorderWidth = 0,
+                TextSize = 12,
                 ItemsSource = routes,
                 IsEnabled = routes.Count > 0,
                 Placeholder = routes.Count > 0 ? "Select a Route" : "No available routes",
+                VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(DropDownBoxBase.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(DropDownBoxBase.SelectedItem)) SetModified(true);
+                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {

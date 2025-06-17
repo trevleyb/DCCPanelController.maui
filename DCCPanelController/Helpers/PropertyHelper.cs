@@ -64,8 +64,11 @@ public static class PropertyHelper {
             throw new ArgumentException($"Value '{enumValue}' is not valid for enum type {property.PropertyType.Name}.");
 
         // Set the value
-        //property.SetValue(obj, Enum.Parse(property.PropertyType, enumValue.ToString() ?? string.Empty));
-        property.SetValue(obj, enumValue);
+        try {
+            property.SetValue(obj, enumValue);
+        } catch (Exception e) {
+            Console.WriteLine($"Unable to set enum value '{enumValue}' on property '{propertyName}' of type {property.PropertyType.Name}: {e.Message}");
+        }
     }
 
     public static void SetPropertyValue<T>(object obj, string propertyName, object value) {
