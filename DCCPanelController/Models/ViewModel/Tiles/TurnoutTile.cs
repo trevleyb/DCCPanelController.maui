@@ -10,14 +10,9 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public abstract class TurnoutTile : TrackTile, ITileInteractive {
     protected TurnoutTile(TurnoutEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TurnoutEntity.State));
-        
-        if (Entity is TurnoutEntity turnout) {
-            Entity.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(TurnoutEntity.State)) {
-                    Console.WriteLine($"TurnoutTile: {turnout.Id} {args.PropertyName} ==> Apply States");
-                    //turnout?.TurnoutPanelActions.Apply(turnout,ConnectionService.Instance);
-                    turnout.SetState(turnout.State, StateChangeSource.External);
-                }
+        if (Entity is TurnoutEntity turnoutEntity && turnoutEntity.Turnout is {} turnout) {
+            turnout.PropertyChanged += (sender, args) => {
+                turnoutEntity.State = turnout.State;
             };
         }
     }
@@ -32,15 +27,10 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 _                        => TurnoutStateEnum.Unknown
             };
             
-            // User interaction is external change
             turnout.SetState(newState, StateChangeSource.Internal);
-            
-            // Send to physical layout
             if (connectionService.Client is { } client) {
                 await client.SendTurnoutCmdAsync(turnout.Turnout, newState != TurnoutStateEnum.Closed);
             }
-
-            
         }
     }
 

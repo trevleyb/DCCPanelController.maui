@@ -21,8 +21,6 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                     TurnoutStateEnum.Thrown => action.WhenOff,
                     _                       => ButtonStateEnum.Unknown
                 };
-
-                // This is an internal change that should cascade
                 actionButton.SetState(newState, StateChangeSource.Internal, context);
             }
         }
@@ -34,11 +32,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                     TurnoutStateEnum.Thrown => action.WhenThrown,
                     _                       => TurnoutStateEnum.Unknown
                 };
-
-                // This is an internal change that should cascade AND be sent to physical layout
                 actionTurnout.SetState(newState, StateChangeSource.Internal, context);
-
-                // Send command to physical turnout
                 if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
                     await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
                 }

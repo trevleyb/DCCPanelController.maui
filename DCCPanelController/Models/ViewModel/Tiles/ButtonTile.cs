@@ -12,30 +12,12 @@ public class ButtonTile : Tile, ITileInteractive {
     public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ButtonEntity.State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
-
-        // if (Entity is ButtonEntity button) {
-        //     Entity.PropertyChanged += (sender, args) => {
-        //         if (args.PropertyName == nameof(ButtonEntity.State)) {
-        //             Console.WriteLine($"TurnoutTile: {button.Id} {args.PropertyName} ==> Apply States");
-        //             button?.ButtonPanelActions.Apply(button,ConnectionService.Instance);
-        //         }
-        //     };
-        // }
-
     }
 
     public async Task Interact(ConnectionService? connectionService) {
         if (connectionService is not null && Entity is ButtonEntity button) {
 
             if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-            // button.State = button.State switch {
-            //     ButtonStateEnum.Unknown => ButtonStateEnum.On,
-            //     ButtonStateEnum.On      => ButtonStateEnum.Off,
-            //     ButtonStateEnum.Off     => ButtonStateEnum.On,
-            //     _                       => ButtonStateEnum.Unknown
-            // };
-            //button.ButtonPanelActions.Apply(button, connectionService);
-            
             var newState = button.State switch {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
                 ButtonStateEnum.On      => ButtonStateEnum.Off,

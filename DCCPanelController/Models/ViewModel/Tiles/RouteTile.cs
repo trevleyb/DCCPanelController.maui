@@ -11,6 +11,11 @@ public class RouteTile : Tile, ITileInteractive {
     public RouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ButtonEntity.State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
+        if (Entity is RouteEntity routeEntity && routeEntity.Route is {} route) {
+            route.PropertyChanged += (sender, args) => {
+                routeEntity.State = route.State;
+            };
+        }
     }
 
     public async Task Interact(ConnectionService? connectionService) {

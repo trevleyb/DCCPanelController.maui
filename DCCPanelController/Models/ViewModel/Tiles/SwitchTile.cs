@@ -11,24 +11,12 @@ public class SwitchTile : Tile, ITileInteractive {
     public SwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
-
-        if (Entity is SwitchEntity switchEntity) {
-            Entity.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(SwitchEntity.State)) {
-                    Console.WriteLine($"SwitchTile: {switchEntity.SwitchID} {args.PropertyName}");
-                }
+        
+        if (Entity is SwitchEntity switchEntity && switchEntity.Light is {} light) {
+            light.PropertyChanged += (sender, args) => {
+                switchEntity.State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
             };
         }
-
-        
-        // if (Entity is SwitchEntity { Light : { } light }) {
-        //     if (light.Id == entity?.Light?.Id) State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
-        //     light.PropertyChanged += (sender, args) => {
-        //         if (light.Id == entity?.Light?.Id) {
-        //             State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
-        //         }
-        //     };
-        // }
     }
 
     public async Task Interact(ConnectionService? connectionService) {
