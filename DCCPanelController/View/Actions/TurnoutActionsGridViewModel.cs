@@ -53,7 +53,7 @@ public partial class TurnoutActionsGridViewModel : ObservableObject {
     [RelayCommand]
     private void AddRow() {
         if (BuildSelectableTurnouts().Count > 0) {
-            TurnoutPanelActions.Add(new TurnoutAction { Id = BuildSelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown, Cascade = false });
+            TurnoutPanelActions.Add(new TurnoutAction { Id = BuildSelectableTurnouts()[0], WhenClosed = TurnoutStateEnum.Closed, WhenThrown = TurnoutStateEnum.Thrown});
         }
         SelectableTurnouts = BuildSelectableTurnouts();
         RaisePropertiesChanged();

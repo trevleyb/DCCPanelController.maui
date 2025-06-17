@@ -9,7 +9,6 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.Clients.WiThrottle;
 
 public partial class WiThrottleProxy : DccClientBase, IDccClient {
-    
     public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes];
     public DccClientType Type => DccClientType.Simulator;
 
@@ -19,14 +18,30 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
     public WiThrottleProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
         _settings = clientSettings as WiThrottleSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for WiThrottle");
     }
-    
+
     #region Connect and Disconnect Methods
     public async Task<IResult> ConnectAsync() {
         if (_client is not null) await DisconnectAsync();
         Status = DccClientStatus.Initialising;
 
+        if (_settings.SetAutomatically) {
+            var result = await GetAutomaticConnectionDetailsAsync();
+            if (result.IsFailure) {
+                Status = DccClientStatus.Disconnected;
+                OnClientMessage("Could not automatically set connection details.");
+                return result;
+            }
+            if (result.Value is WiThrottleSettings jmriSettings) {
+                _settings.Address = jmriSettings.Address;
+                _settings.Port = jmriSettings.Port;
+            }
+        }
+
         try {
             _client = new WiThrottleClient(_settings.Name, _settings.Address, _settings.Port);
+            await _client.ConnectAsync();
+            if (_client is null || _client.IsRunning != true) throw new ApplicationException("Unable to connect to WiThrottle server.");
+
             _client.ConnectionEvent += ClientOnConnectionEvent;
             _client.DataEvent += ClientOnDataEvent;
             Status = DccClientStatus.Connected;

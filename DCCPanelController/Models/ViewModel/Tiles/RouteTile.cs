@@ -9,46 +9,43 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class RouteTile : Tile, ITileInteractive {
     public RouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(State));
+        VisualProperties.Add(nameof(ButtonEntity.State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
     }
 
-    private RouteStateEnum State {
-        get;
-        set => SetField(ref field, value);
-    } = RouteStateEnum.Unknown;
-
     public async Task Interact(ConnectionService? connectionService) {
-        ClickSounds.PlayButtonClickSound();
-        State = State switch {
-            RouteStateEnum.Unknown  => RouteStateEnum.Active,
-            RouteStateEnum.Active   => RouteStateEnum.Inactive,
-            RouteStateEnum.Inactive => RouteStateEnum.Active,
-            _                       => RouteStateEnum.Unknown
-        };
+        if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+        if (Entity is RouteEntity route) {
+            route.State = route.State switch {
+                RouteStateEnum.Unknown  => RouteStateEnum.Active,
+                RouteStateEnum.Active   => RouteStateEnum.Inactive,
+                RouteStateEnum.Inactive => RouteStateEnum.Active,
+                _                       => RouteStateEnum.Unknown
+            };
 
-        if (connectionService is not null && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
-            if (connectionService.Client is {} client) await client.SendRouteCmdAsync(routeEntity.Route, State != RouteStateEnum.Inactive);
+            if (connectionService is not null && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
+                if (connectionService.Client is { } client) await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
+            }
         }
     }
 
     public async Task Secondary(ConnectionService? connectionService) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is RouteEntity button) {
-            var svgImage = button.ButtonSize switch {
+        if (Entity is RouteEntity route) {
+            var svgImage = route.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("route", Entity.Rotation)
             };
-            svgImage.SetAttribute(SvgElementType.Button, State switch {
-                RouteStateEnum.Active   => button.Parent?.ButtonOnColor ?? Colors.Green,
-                RouteStateEnum.Inactive => button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                       => button.Parent?.ButtonColor ?? Colors.Gray
+            svgImage.SetAttribute(SvgElementType.Button, route.State switch {
+                RouteStateEnum.Active   => route.Parent?.ButtonOnColor ?? Colors.Green,
+                RouteStateEnum.Inactive => route.Parent?.ButtonOffColor ?? Colors.Red,
+                _                       => route.Parent?.ButtonColor ?? Colors.Gray
             });
-            svgImage.SetAttribute(SvgElementType.ButtonOutline, State switch {
-                RouteStateEnum.Active   => button.Parent?.ButtonOnBorder ?? Colors.Black,
-                RouteStateEnum.Inactive => button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                       => button.Parent?.ButtonBorder ?? Colors.Black
+            svgImage.SetAttribute(SvgElementType.ButtonOutline, route.State switch {
+                RouteStateEnum.Active   => route.Parent?.ButtonOnBorder ?? Colors.Black,
+                RouteStateEnum.Inactive => route.Parent?.ButtonOffBorder ?? Colors.Black,
+                _                       => route.Parent?.ButtonBorder ?? Colors.Black
             });
 
             var image = new Image {

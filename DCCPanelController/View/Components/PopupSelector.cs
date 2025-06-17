@@ -1,15 +1,10 @@
 using System.Collections;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Views;
-using DCCPanelController;
-using DCCPanelController.Helpers;
-using DCCPanelController.View.Components;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
-using Application = Microsoft.Maui.Controls.Application;
 using LayoutAlignment = Microsoft.Maui.Primitives.LayoutAlignment;
 using ListView = Microsoft.Maui.Controls.ListView;
 using Picker = Microsoft.Maui.Controls.Picker;
@@ -23,6 +18,7 @@ public class PopupSelector : ContentView, IDisposable {
     private bool _disposed;
     private Popup? _popup;
     private Image _arrowImage = new();
+    private Image _clearImage = new();
     private readonly Border _popupContainer = new();
 
     public PopupSelector() {
@@ -42,14 +38,16 @@ public class PopupSelector : ContentView, IDisposable {
         // The label that will be displayed containing the selected item
         // ----------------------------------------------------------------------------
         var selectedItemLabel = new Label {
-            VerticalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Fill,
             VerticalTextAlignment = TextAlignment.Center,
             HorizontalOptions = LayoutOptions.Fill,
             HorizontalTextAlignment = TextAlignment.Start,
             LineBreakMode = LineBreakMode.TailTruncation
         };
+        selectedItemLabel.BindingContext = this;
         selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
         selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
+        selectedItemLabel.SetBinding(Label.TextProperty, new Binding(nameof(SelectedItem), BindingMode.OneWay, source: this));
 
         // The up/down image. Use properties to change what .png is used. (must be PNG)  
         // ----------------------------------------------------------------------------
@@ -64,6 +62,18 @@ public class PopupSelector : ContentView, IDisposable {
         selectedItemLabel.GestureRecognizers.Add(togglePopupGesture);
         _arrowImage.GestureRecognizers.Add(togglePopupGesture);
 
+        // The up/down image. Use properties to change what .png is used. (must be PNG)  
+        // ----------------------------------------------------------------------------
+        _clearImage = new Image {
+            Source = DropdownClearFieldImageSource,
+            HorizontalOptions = LayoutOptions.End,
+            VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(1, 1, 1, 1)
+        };
+        var clearGesture = new TapGestureRecognizer();
+        clearGesture.Tapped += (_, _) => SelectedItem = null;
+        _clearImage.GestureRecognizers.Add(clearGesture);
+        
         // Main container for the label and icon
         // ----------------------------------------------------------------------------
         var mainButtonLayout = new Grid {
@@ -75,18 +85,21 @@ public class PopupSelector : ContentView, IDisposable {
             AbsoluteLayout.SetLayoutBounds(_popupContainer, new Rect(0, mainButtonLayout.Height, dropdownWidth, DropDownHeight));
         };
 
+        mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
         mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-        mainButtonLayout.Children.Add(selectedItemLabel);
-        mainButtonLayout.SetColumn(selectedItemLabel, 0);
+
         mainButtonLayout.Children.Add(_arrowImage);
-        mainButtonLayout.SetColumn(_arrowImage, 1);
+        mainButtonLayout.SetColumn(_arrowImage, 0);
+        mainButtonLayout.Children.Add(selectedItemLabel);
+        mainButtonLayout.SetColumn(selectedItemLabel, 1);
+        if (ShowClearFieldImage) {
+            mainButtonLayout.Children.Add(_clearImage);
+            mainButtonLayout.SetColumn(_clearImage, 2);
+        }
 
         CreatePopupView(mainButtonLayout);
-
-        selectedItemLabel.BindingContext = this;
-        selectedItemLabel.SetBinding(Label.TextProperty, new Binding(nameof(SelectedItem), BindingMode.OneWay, source: this));
-
+        
         // Placeholder management
         // ----------------------------------------------------------------------------
         PropertyChanged += (_, e) => {
@@ -349,7 +362,7 @@ public class PopupSelector : ContentView, IDisposable {
         return new Rect(x, y, Width, Height);
     }
 
-    protected virtual void Dispose(bool disposing) {
+    protected void Dispose(bool disposing) {
         if (!_disposed) {
             if (disposing) {
                 if (_popup is not null) {
@@ -371,6 +384,7 @@ public class PopupSelector : ContentView, IDisposable {
     public static readonly BindableProperty ShowAnchorProperty = BindableProperty.Create(nameof(ShowAnchor), typeof(bool), typeof(PopupSelector), true);
     public static readonly BindableProperty InnerMarginProperty = BindableProperty.Create(nameof(InnerMargin), typeof(Thickness), typeof(PopupSelector), new Thickness(0));
 
+    public static readonly BindableProperty ShowClearFieldImageProperty = BindableProperty.Create(nameof(ShowClearFieldImage), typeof(bool), typeof(PopupSelector), false);
     public static readonly BindableProperty DropDownWidthProperty = BindableProperty.Create(nameof(DropDownWidth), typeof(double), typeof(PopupSelector), -1.0);
     public static readonly BindableProperty DropDownHeightProperty = BindableProperty.Create(nameof(DropDownHeight), typeof(double), typeof(PopupSelector), 200.0);
     public static readonly BindableProperty DropdownCornerRadiusProperty = BindableProperty.Create(nameof(DropdownCornerRadius), typeof(CornerRadius), typeof(PopupSelector), new CornerRadius(10), propertyChanged: CornerRadiusChanged);
@@ -378,6 +392,7 @@ public class PopupSelector : ContentView, IDisposable {
     public static readonly BindableProperty DropdownBackgroundColorProperty = BindableProperty.Create(nameof(DropdownBackgroundColor), typeof(Color), typeof(PopupSelector), Colors.White);
     public static readonly BindableProperty DropdownBorderColorProperty = BindableProperty.Create(nameof(DropdownBorderColor), typeof(Color), typeof(PopupSelector), Colors.DarkGrey);
     public static readonly BindableProperty DropdownBorderWidthProperty = BindableProperty.Create(nameof(DropdownBorderWidth), typeof(double), typeof(PopupSelector), 1.0);
+    public static readonly BindableProperty DropdownClearFieldImageSourceProperty = BindableProperty.Create(nameof(DropdownClearFieldImageSource), typeof(string), typeof(PopupSelector), "x_circle.png");
     public static readonly BindableProperty DropdownClosedImageSourceProperty = BindableProperty.Create(nameof(DropdownClosedImageSource), typeof(string), typeof(PopupSelector), "chevron_right.png");
     public static readonly BindableProperty DropdownOpenImageSourceProperty = BindableProperty.Create(nameof(DropdownOpenImageSource), typeof(string), typeof(PopupSelector), "chevron_down.png");
     public static readonly BindableProperty DropdownImageTintProperty = BindableProperty.Create(nameof(DropdownImageTint), typeof(Color), typeof(PopupSelector));
@@ -403,7 +418,7 @@ public class PopupSelector : ContentView, IDisposable {
     ///     The currently selected item. If an item is clicked, this will become
     ///     the selected item.
     /// </summary>
-    public object SelectedItem {
+    public object? SelectedItem {
         get => GetValue(SelectedItemProperty);
         set => SetValue(SelectedItemProperty, value);
     }
@@ -513,6 +528,19 @@ public class PopupSelector : ContentView, IDisposable {
         set => SetValue(DropdownBackgroundColorProperty, value);
     }
 
+    /// <summary>
+    ///     Gets or sets the image source used to represent the closed state of the dropdown.
+    /// </summary>
+    public string DropdownClearFieldImageSource {
+        get => (string)GetValue(DropdownClearFieldImageSourceProperty);
+        set => SetValue(DropdownClearFieldImageSourceProperty, value);
+    }
+
+    public bool ShowClearFieldImage {
+        get => (bool)GetValue(ShowClearFieldImageProperty);
+        set => SetValue(ShowClearFieldImageProperty, value);
+    }
+    
     /// <summary>
     ///     Gets or sets the image source used to represent the closed state of the dropdown.
     /// </summary>

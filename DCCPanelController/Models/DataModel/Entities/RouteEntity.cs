@@ -12,7 +12,7 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     [ObservableProperty] [property: EditableRoute("Route", "", 0)]
     private string _routeID = string.Empty;
 
-    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
+    [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     [JsonConstructor]
     public RouteEntity() { }

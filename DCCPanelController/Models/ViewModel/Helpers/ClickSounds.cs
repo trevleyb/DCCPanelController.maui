@@ -1,23 +1,27 @@
 using Plugin.Maui.Audio;
+using AudioManager = Plugin.Maui.Audio.AudioManager;
 
 namespace DCCPanelController.Models.ViewModel.Helpers;
 
 public static class ClickSounds {
     private static readonly Dictionary<string, IAudioPlayer> ClickSoundPlayers = new();
 
-    public static void PlayButtonClickSound() {
-        ClickSoundPlayer("Button_Click_Mouse.m4a")?.Play();
+    public static async Task PlayButtonClickSoundAsync() {
+        var clickSound = await ClickSoundPlayerAsync("Button_Click_Mouse.m4a");
+        clickSound?.Play();
     }
 
-    public static void PlayTurnoutClickSound() {
-        ClickSoundPlayer("Button_Click_Fast.m4a")?.Play();
+    public static async Task PlayTurnoutClickSoundAsync() {
+        var clickSound = await ClickSoundPlayerAsync("Button_Click_Fast.m4a");
+        clickSound?.Play();
     }
 
-    private static IAudioPlayer? ClickSoundPlayer(string filename) {
+    private static async Task<IAudioPlayer?> ClickSoundPlayerAsync(string filename) {
         if (ClickSoundPlayers?.ContainsKey(filename) ?? false) return ClickSoundPlayers[filename];
         try {
-            var audioManager = AudioManager.Current;
-            var clickSoundPlayer = audioManager.CreatePlayer(FileSystem.OpenAppPackageFileAsync(filename).Result);
+            var audioManager = new AudioManager();
+            await using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
+            var clickSoundPlayer = audioManager.CreatePlayer(stream, AudioManager.Current.DefaultPlayerOptions);
             ClickSoundPlayers?.Add(filename, clickSoundPlayer);
             return clickSoundPlayer;
         } catch (Exception ex) {
@@ -25,4 +29,5 @@ public static class ClickSounds {
             return null;
         }
     }
+    
 }

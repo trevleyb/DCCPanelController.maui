@@ -6,6 +6,7 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
+using Plugin.Maui.Audio;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace DCCPanelController;
@@ -34,7 +35,7 @@ public static class MauiProgram {
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<MainPageTabbed>();
-
+        
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<Profile>(sp => Profile.NewOrLoad("Sample"));

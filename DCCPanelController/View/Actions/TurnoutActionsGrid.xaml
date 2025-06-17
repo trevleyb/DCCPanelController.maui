@@ -55,15 +55,14 @@
 
                     <ListView.Header>
                         <Grid
-                            ColumnDefinitions="3*,4*,4*,3*,1*"
+                            ColumnDefinitions="3*,4*,4*,1*"
                             ColumnSpacing="2"
                             RowDefinitions="25">
                             <BoxView Background="{StaticResource Primary}" Grid.Column="0"/>
                             <BoxView Background="{StaticResource Primary}" Grid.Column="1"/>
                             <BoxView Background="{StaticResource Primary}" Grid.Column="2"/>
                             <BoxView Background="{StaticResource Primary}" Grid.Column="3"/>
-                            <BoxView Background="{StaticResource Primary}" Grid.Column="4"/>
-
+                            
                             <Label
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
@@ -105,16 +104,8 @@
                                 Margin="2"
                                 State="Thrown"/>
 
-                            <Label
-                                FontAttributes="Bold"
-                                Grid.Column="3"
-                                HorizontalOptions="Center"
-                                Margin="2"
-                                Text="Cascade?"
-                                TextColor="{StaticResource White}"/>
-
                             <Image
-                                Grid.Column="4"
+                                Grid.Column="3"
                                 Margin="2"
                                 Source="trash.png">
                                 <Image.Behaviors>
@@ -129,7 +120,7 @@
                         <DataTemplate>
                             <ViewCell x:DataType="actions:TurnoutAction">
                                 <Grid
-                                    ColumnDefinitions="3*,4*,4*,3*,1*"
+                                    ColumnDefinitions="3*,4*,4*,1*"
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
@@ -169,18 +160,11 @@
                                         State="{Binding WhenThrown, Mode=TwoWay}"
                                         UnknownText="Leave-AsIs"/>
 
-                                    <CheckBox
-                                        Grid.Column="3"
-                                        IsChecked="{Binding Cascade}"
-                                        Margin="2,0,0,0"
-                                        VerticalOptions="Center"
-                                        x:DataType="actions:TurnoutAction"/>
-
                                     <ImageButton
                                         Aspect="Center"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type local:TurnoutActionsGridViewModel}}, x:DataType=local:TurnoutActionsGridViewModel, Path=RemoveRowCommand}"
                                         CommandParameter="{Binding .}"
-                                        Grid.Column="4"
+                                        Grid.Column="3"
                                         HeightRequest="10"
                                         Margin="2,0,0,0"
                                         Source="minus_circle.png"

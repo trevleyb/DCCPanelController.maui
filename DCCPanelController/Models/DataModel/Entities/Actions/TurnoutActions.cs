@@ -11,40 +11,49 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
         foreach (var action in buttonActions) Add(new TurnoutAction(action));
     }
 
-    public void Apply(TurnoutEntity turnout, ConnectionService connectionService) {
+    public async void Apply(TurnoutEntity turnout, ConnectionService connectionService, ActionExecutionContext context) {
         Console.WriteLine($"Applying actions to turnout {turnout.TurnoutID} with state {turnout.State}");
 
         foreach (var action in turnout.ButtonPanelActions) {
             if (turnout.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
-                actionButton.State = turnout.State switch {
+                var newState = turnout.State switch {
                     TurnoutStateEnum.Closed => action.WhenOn,
                     TurnoutStateEnum.Thrown => action.WhenOff,
                     _                       => ButtonStateEnum.Unknown
                 };
+
+                // This is an internal change that should cascade
+                actionButton.SetState(newState, StateChangeSource.Internal, context);
             }
         }
 
         foreach (var action in turnout.TurnoutPanelActions) {
             if (turnout.Parent?.GetTurnoutEntity(action.Id) is { } actionTurnout) {
-                actionTurnout.State = turnout.State switch {
+                var newState = turnout.State switch {
                     TurnoutStateEnum.Closed => action.WhenClosed,
                     TurnoutStateEnum.Thrown => action.WhenThrown,
                     _                       => TurnoutStateEnum.Unknown
                 };
+
+                // This is an internal change that should cascade AND be sent to physical layout
+                actionTurnout.SetState(newState, StateChangeSource.Internal, context);
+
+                // Send command to physical turnout
+                if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
+                    await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
+                }
             }
         }
     }
-    
+
     public object Clone() {
         var turnoutActions = new TurnoutActions();
         foreach (var action in this) turnoutActions.Add(new TurnoutAction(action));
         return turnoutActions;
     }
-
 }
 
 public partial class TurnoutAction : ObservableObject {
-    [ObservableProperty] private bool _cascade;
     [ObservableProperty] private string _id = string.Empty;
     [ObservableProperty] private TurnoutStateEnum _whenClosed = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _whenThrown = TurnoutStateEnum.Unknown;
@@ -55,6 +64,5 @@ public partial class TurnoutAction : ObservableObject {
         Id = action.Id;
         WhenClosed = action.WhenClosed;
         WhenThrown = action.WhenThrown;
-        Cascade = action.Cascade;
     }
 }

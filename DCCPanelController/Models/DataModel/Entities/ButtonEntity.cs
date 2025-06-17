@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
+using DCCPanelController.Services;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -21,7 +22,8 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActi
     [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions")]
     private TurnoutActions _turnoutPanelActions = [];
 
-    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Unknown;
+    [ObservableProperty] 
+    private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [JsonConstructor]
     public ButtonEntity() {
@@ -47,4 +49,22 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActi
         entity.ButtonPanelActions = (ButtonActions)this.ButtonPanelActions.Clone();
         entity.TurnoutPanelActions = (TurnoutActions)this.TurnoutPanelActions.Clone();
     }
+    
+    private StateChangeSource _stateChangeSource = StateChangeSource.External;
+
+    public void SetState(ButtonStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
+        if (State == newState) return;
+        
+        _stateChangeSource = source;
+        State = newState;
+        
+        // Only trigger cascading if this is an external change or we're not already cascading this entity
+        if (source == StateChangeSource.External || (context?.CanCascade(Id) == true)) {
+            context ??= new ActionExecutionContext();
+            using (context.BeginCascade(Id)) {
+                ButtonPanelActions.Apply(this, ConnectionService.Instance, context);
+            }
+        }
+    }
+    
 }

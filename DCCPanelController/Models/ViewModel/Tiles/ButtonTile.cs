@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -9,26 +10,39 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ButtonTile : Tile, ITileInteractive {
     public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(State));
+        VisualProperties.Add(nameof(ButtonEntity.State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
-    }
 
-    private ButtonStateEnum State {
-        get;
-        set => SetField(ref field, value);
-    } = ButtonStateEnum.Unknown;
+        // if (Entity is ButtonEntity button) {
+        //     Entity.PropertyChanged += (sender, args) => {
+        //         if (args.PropertyName == nameof(ButtonEntity.State)) {
+        //             Console.WriteLine($"TurnoutTile: {button.Id} {args.PropertyName} ==> Apply States");
+        //             button?.ButtonPanelActions.Apply(button,ConnectionService.Instance);
+        //         }
+        //     };
+        // }
+
+    }
 
     public async Task Interact(ConnectionService? connectionService) {
         if (connectionService is not null && Entity is ButtonEntity button) {
 
-            if (UseClickSounds) ClickSounds.PlayButtonClickSound();
-            State = State switch {
+            if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+            // button.State = button.State switch {
+            //     ButtonStateEnum.Unknown => ButtonStateEnum.On,
+            //     ButtonStateEnum.On      => ButtonStateEnum.Off,
+            //     ButtonStateEnum.Off     => ButtonStateEnum.On,
+            //     _                       => ButtonStateEnum.Unknown
+            // };
+            //button.ButtonPanelActions.Apply(button, connectionService);
+            
+            var newState = button.State switch {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
                 ButtonStateEnum.On      => ButtonStateEnum.Off,
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
                 _                       => ButtonStateEnum.Unknown
             };
-            button.ButtonPanelActions.Apply(button, connectionService);
+            button.SetState(newState, StateChangeSource.External);
         }
     }
 
@@ -40,12 +54,12 @@ public class ButtonTile : Tile, ITileInteractive {
                 ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("button", Entity.Rotation)
             };
-            svgImage.SetAttribute(SvgElementType.Button, State switch {
+            svgImage.SetAttribute(SvgElementType.Button, button.State switch {
                 ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,
                 _                   => button.Parent?.ButtonColor ?? Colors.Gray
             });
-            svgImage.SetAttribute(SvgElementType.ButtonOutline, State switch {
+            svgImage.SetAttribute(SvgElementType.ButtonOutline, button.State switch {
                 ButtonStateEnum.On  => button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black

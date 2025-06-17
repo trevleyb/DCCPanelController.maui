@@ -12,59 +12,63 @@ public class SwitchTile : Tile, ITileInteractive {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
 
-        if (Entity is SwitchEntity { Light : { } light }) {
-            if (light.Id == entity?.Light?.Id) State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
-            light.PropertyChanged += (sender, args) => {
-                if (light.Id == entity?.Light?.Id) {
-                    State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
+        if (Entity is SwitchEntity switchEntity) {
+            Entity.PropertyChanged += (sender, args) => {
+                if (args.PropertyName == nameof(SwitchEntity.State)) {
+                    Console.WriteLine($"SwitchTile: {switchEntity.SwitchID} {args.PropertyName}");
                 }
             };
         }
-    }
 
-    private ButtonStateEnum State {
-        get;
-        set => SetField(ref field, value);
-    } = ButtonStateEnum.Unknown;
+        
+        // if (Entity is SwitchEntity { Light : { } light }) {
+        //     if (light.Id == entity?.Light?.Id) State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
+        //     light.PropertyChanged += (sender, args) => {
+        //         if (light.Id == entity?.Light?.Id) {
+        //             State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off;
+        //         }
+        //     };
+        // }
+    }
 
     public async Task Interact(ConnectionService? connectionService) {
         if (connectionService is not null && Entity is SwitchEntity switchEntity) {
-            if (UseClickSounds) ClickSounds.PlayButtonClickSound();
-            State = State switch {
+            if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+            switchEntity.State = switchEntity.State switch {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
                 ButtonStateEnum.On      => ButtonStateEnum.Off,
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
                 _                       => ButtonStateEnum.Unknown
             };
-            if (connectionService.Client is { } client && switchEntity is {Light: not null } )  await client.SendLightCmdAsync(switchEntity.Light, State == ButtonStateEnum.On);
+            if (connectionService.Client is { } client && switchEntity is {Light: not null } )  await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
         }
     }
 
     public async Task Secondary(ConnectionService? connectionService) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is SwitchEntity button) {
+        if (Entity is SwitchEntity switchEntity) {
             SvgImage svgImage;
-            if (button.SwitchStyle == SwitchStyleEnum.Light) {
+            if (switchEntity.SwitchStyle == SwitchStyleEnum.Light) {
                 svgImage = SvgImages.GetImage("light", Entity.Rotation);
-            } else if (button.SwitchStyle == SwitchStyleEnum.Button) {
+            } else if (switchEntity.SwitchStyle == SwitchStyleEnum.Button) {
                 svgImage = SvgImages.GetImage("button", Entity.Rotation);
             } else {
-                svgImage = State switch {
+                svgImage = switchEntity.State switch {
                     ButtonStateEnum.On  => SvgImages.GetImage("switchon", Entity.Rotation),
                     ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
                     _                   => SvgImages.GetImage("switch", Entity.Rotation)
                 };
             }
-            svgImage.SetAttribute(SvgElementType.Button, State switch {
-                ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
+            svgImage.SetAttribute(SvgElementType.Button, switchEntity.State switch {
+                ButtonStateEnum.On  => switchEntity.Parent?.ButtonOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.Parent?.ButtonOffColor ?? Colors.Red,
+                _                   => switchEntity.Parent?.ButtonColor ?? Colors.Gray
             });
-            svgImage.SetAttribute(SvgElementType.ButtonOutline, State switch {
-                ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Gray,
-                _                   => button.Parent?.ButtonOnColor ?? Colors.Gray
+            svgImage.SetAttribute(SvgElementType.ButtonOutline, switchEntity.State switch {
+                ButtonStateEnum.On  => switchEntity.Parent?.ButtonOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.Parent?.ButtonOffColor ?? Colors.Gray,
+                _                   => switchEntity.Parent?.ButtonOnColor ?? Colors.Gray
             });
 
             var image = new Image {

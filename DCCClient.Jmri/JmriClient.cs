@@ -155,7 +155,6 @@ public class JmriClient : IDisposable {
     }
 
     public async Task ResetUpdates() {
-        
         // To reset all data from JMRI, we clear the caches which will force the 
         // subscription to rebuild and event all data as changed data
         // -----------------------------------------------------------------------
@@ -221,7 +220,7 @@ public class JmriClient : IDisposable {
                 if (!item.TryGetProperty("type", out var typeElement)) continue;
                 var type = typeElement.GetString();
                 if (string.IsNullOrEmpty(type)) continue;
-                var isValidMessage = type.ToLowerInvariant() switch {
+                var isValidMessage = type switch {
                     "turnout"    => JmriTurnoutEventArgs.ProcessMessage(item, _turnouts, TurnoutChanged), 
                     "signalHead" => JmriSignalEventArgs.ProcessMessage(item, _signals, SignalChanged),
                     "route"      => JmriRouteEventArgs.ProcessMessage(item, _routes, RouteChanged),

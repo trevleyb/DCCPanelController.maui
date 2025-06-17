@@ -7,7 +7,7 @@ namespace DccClients.Jmri.Events;
 public class JmriSignalEventArgs : JmriEventArgs<JmriSignalEventArgs>, IJmriEventArgs, IJmriProcessor<JmriSignalEventArgs> {
     public string Name { get; private init; } = string.Empty;
     public string UserName { get; private set; } = string.Empty;
-    public string Appearance { get; private set; } = string.Empty;
+    public int Appearance { get; private set; } = 0;
     public bool Lit { get; private set; }
     public bool Held { get; private set; }
 
@@ -18,7 +18,7 @@ public class JmriSignalEventArgs : JmriEventArgs<JmriSignalEventArgs>, IJmriEven
         return new JmriSignalEventArgs() {
             Name = dataElement.GetStringProperty("name"),
             UserName = dataElement.GetStringProperty("userName"),
-            Appearance = dataElement.GetStringProperty("appearance"),
+            Appearance = dataElement.GetIntProperty("appearance"),
             Lit = dataElement.GetBoolProperty("lit"),
             Held = dataElement.GetBoolProperty("held")
         };
