@@ -19,7 +19,7 @@ public class RouteTile : Tile, ITileInteractive {
     }
 
     public async Task Interact(ConnectionService? connectionService) {
-        if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+        if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
         if (Entity is RouteEntity route) {
             route.State = route.State switch {
                 RouteStateEnum.Unknown  => RouteStateEnum.Active,

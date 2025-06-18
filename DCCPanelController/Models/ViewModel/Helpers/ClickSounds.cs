@@ -6,6 +6,16 @@ namespace DCCPanelController.Models.ViewModel.Helpers;
 public static class ClickSounds {
     private static readonly Dictionary<string, IAudioPlayer> ClickSoundPlayers = new();
 
+    public static async Task PlayRouteClickSoundAsync() {
+        var clickSound = await ClickSoundPlayerAsync("Button_Click_Quick.m4a");
+        clickSound?.Play();
+    }
+
+    public static async Task PlaySwitchClickSoundAsync() {
+        var clickSound = await ClickSoundPlayerAsync("Button_Light_Switch.m4a");
+        clickSound?.Play();
+    }
+    
     public static async Task PlayButtonClickSoundAsync() {
         var clickSound = await ClickSoundPlayerAsync("Button_Click_Mouse.m4a");
         clickSound?.Play();
