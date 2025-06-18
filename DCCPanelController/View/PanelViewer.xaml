@@ -5,12 +5,14 @@
              xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
              xmlns:view="clr-namespace:DCCPanelController.View"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
              Title="Panels"
              x:Name="PanelViewerPage"
              x:DataType="view:PanelViewerViewModel"
              x:Class="DCCPanelController.View.PanelViewer">
 
     <ContentPage.Resources>
+        <converters:PanelToCardHeightConverter x:Key="PanelToCardHeightConverter"/>
 
         <Style TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
@@ -38,12 +40,30 @@
                 Background="#FAFAFA"
                 Padding="5">
                 <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
-                    <Border Grid.Column="0" Stroke="#CCCCCC" StrokeThickness="1" Margin="5"
+                    <Border x:Name="HorizontalBorder"
+                            Grid.Column="0" Stroke="#CCCCCC" StrokeThickness="1"
+                            Margin="5"
                             Background="{Binding BackgroundColor}">
-                        <Image Source="{Binding Thumbnail}"
-                               Aspect="AspectFill"
-                               HeightRequest="100"
-                               WidthRequest="100"/>
+                        <Border.HeightRequest>
+                            <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
+                                <Binding Source="{x:Reference HorizontalBorder}" x:DataType="Border" Path="Width"/>
+                                <Binding Path="."/> <!-- Current item -->
+                            </MultiBinding>
+                        </Border.HeightRequest>
+                        <Grid>
+                            <Image IsVisible="true"
+                                   Source="{Binding Thumbnail}" Aspect="AspectFill"/>
+
+                            <!-- <view:ControlPanelView -->
+                            <!--     x:DataType="view:ControlPanelView" -->
+                            <!--     IsVisible="false" -->
+                            <!--     BackgroundColor="{Binding BackgroundColor}" -->
+                            <!--     HorizontalOptions="Fill" -->
+                            <!--     Panel="{Binding .}" -->
+                            <!--     ShowGrid="false" -->
+                            <!--     VerticalOptions="Fill"/> -->
+
+                        </Grid>
                     </Border>
                     <StackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
                         <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="15"/>
@@ -82,10 +102,28 @@
                 Padding="5">
                 <Grid>
                     <StackLayout>
-                        <Border Stroke="#CCCCCC" StrokeThickness="1" Margin="5" Background="{Binding BackgroundColor}">
-                            <Image Source="{Binding Thumbnail}" Aspect="AspectFill"
-                                   HeightRequest="120"
-                                   WidthRequest="180" Margin="0,5,0,5"/>
+                        <Border x:Name="VerticalBorder" Stroke="#CCCCCC" StrokeThickness="1" Margin="5"
+                                Background="{Binding BackgroundColor}">
+                            <Grid>
+                                <Image IsVisible="true"
+                                       Source="{Binding Thumbnail}"
+                                       Aspect="AspectFill" Margin="0,5,0,5">
+                                </Image>
+                                <!-- <view:ControlPanelView -->
+                                <!--     x:DataType="view:ControlPanelView" -->
+                                <!--     IsVisible="false" -->
+                                <!--     BackgroundColor="{Binding BackgroundColor}" -->
+                                <!--     HorizontalOptions="Fill" -->
+                                <!--     Panel="{Binding .}" -->
+                                <!--     ShowGrid="false" -->
+                                <!--     VerticalOptions="Fill"/> -->
+                            </Grid>
+                            <Border.HeightRequest>
+                                <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
+                                    <Binding Source="{x:Reference VerticalBorder}" x:DataType="Border" Path="Width"/>
+                                    <Binding Path="."/> <!-- Current item -->
+                                </MultiBinding>
+                            </Border.HeightRequest>
                         </Border>
                         <Label Text="{Binding Id}" HorizontalOptions="Center" FontAttributes="Bold" FontSize="15"
                                Margin="0,0,0,4"/>
@@ -117,6 +155,8 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem x:Name="ZoomOutIcon" IconImageSource="zoom_out.png" Clicked="OnZoomOutClicked"/>
+        <ToolbarItem x:Name="ZoomInIcon" IconImageSource="zoom_in.png" Clicked="OnZoomInClicked"/>
         <ToolbarItem Text="Add" IconImageSource="plus_circle.png" Command="{Binding Path=AddPanelCommand}"/>
         <ToolbarItem Text="Duplicate" IsEnabled="{Binding IsPanelSelected}" IconImageSource="copy.png"
                      Command="{Binding Path=DuplicatePanelCommand}"/>

@@ -1,35 +1,26 @@
 using System.Globalization;
+using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Helpers.Converters;
 
-public class PanelToCardHeightConverter : IValueConverter
-{
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
-        if (value is double collectionViewWidth && collectionViewWidth > 0)
-        {
-            // Get the span from the parameter (GridItemsLayout)
-            var span = 3; // default
-            if (parameter is GridItemsLayout layout)
-            {
-                span = layout.Span;
-            }
-            
-            // Calculate width per item
-            var margin = 20;     // Account for margins (10 on each side of CollectionView + item margins)
-            var itemMargin = 10; // Account for item margins (5 on each side)
-            var availableWidth = collectionViewWidth - margin;
-            var itemWidth = (availableWidth / span) - itemMargin;
-            
-            // Return the same value for height to make it square
-            return Math.Max(itemWidth, 100); // Minimum height of 100
-        }
+public class PanelToCardHeightConverter : IMultiValueConverter {
+    public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture) {
         
+        if (values is [double cardWidth, Panel panel, ..]) {
+
+            // What is the ratio of the Columns to Rows
+            // --------------------------------------------------------------
+            if (cardWidth > 0) {
+                var ratio = (double)panel.Rows / (double)panel.Cols;
+                var itemHeight = cardWidth * ratio;
+                return itemHeight;
+            }
+        }
         return 150; // Fallback height
     }
 
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-    {
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
         throw new NotImplementedException();
     }
+
 }

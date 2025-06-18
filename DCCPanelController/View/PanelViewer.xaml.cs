@@ -5,6 +5,9 @@ namespace DCCPanelController.View;
 public partial class PanelViewer {
     private readonly ConnectionService? _connectionService;
     private readonly PanelViewerViewModel? _viewModel;
+    private int activeSpan = -1;
+    private int minSpan = 1;
+    private int maxSpan = 5;
 
     public PanelViewer(PanelViewerViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
@@ -29,7 +32,9 @@ public partial class PanelViewer {
         if (DeviceInfo.Platform == DevicePlatform.iOS) {
             if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
                 if (width < height) {
-                    PanelsLayout.Span = 1;
+                    activeSpan = 1;
+                    minSpan = 1;
+                    maxSpan = 2;
                     PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["HorizontalTemplate"];
                 } else {
                     SetWideScreenLayout(width);
@@ -40,15 +45,39 @@ public partial class PanelViewer {
         } else {
             SetWideScreenLayout(width);
         }
+        SetZoomLevel();
     }
 
     private void SetWideScreenLayout(double width) {
-        PanelsLayout.Span = width switch {
-            > 1000 => 4,
-            > 800  => 3,
-            > 400  => 2,
-            _      => 1
-        };
+
+        switch (width) {
+        case > 1000:
+            activeSpan = (activeSpan == -1) ? 3 : activeSpan;
+            maxSpan = 5;
+            break;
+        case > 800:
+            activeSpan = (activeSpan == -1) ? 2 : activeSpan;
+            maxSpan = 3;
+            break;
+        default:
+            activeSpan = (activeSpan == -1) ? 1 : activeSpan;
+            maxSpan = 2;
+            break;
+        }
+
+        PanelsLayout.Span = activeSpan;
         PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["VerticalTemplate"];
     }
+    private void SetZoomLevel(int? adjustment = null) {
+        if (adjustment is { } adjustBy ) activeSpan += adjustBy;
+        if (activeSpan < minSpan) activeSpan = minSpan;
+        if (activeSpan > maxSpan) activeSpan = maxSpan;
+        ZoomOutIcon.IsEnabled = activeSpan < maxSpan;
+        ZoomInIcon.IsEnabled = activeSpan > minSpan;
+        PanelsLayout.Span = activeSpan;
+    }
+
+    private void OnZoomInClicked(object? sender, EventArgs e) => SetZoomLevel(-1);
+    private void OnZoomOutClicked(object? sender, EventArgs e) => SetZoomLevel(+1);
+
 }

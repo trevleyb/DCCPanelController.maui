@@ -18,7 +18,9 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     public INavigation? NavigationService;
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
-
+    public bool ShowThumbnail => false;
+    public bool ShowLivePanel => !ShowThumbnail;
+    
     public PanelViewerViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
         Panels = Profile.Panels;

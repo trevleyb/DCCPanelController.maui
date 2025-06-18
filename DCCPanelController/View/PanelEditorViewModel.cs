@@ -91,6 +91,14 @@ public partial class PanelEditorViewModel : ObservableObject {
     public async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
             Panel.Base64Image = await GetThumbnailAsync();
+            
+            // So that we trigger a refresh on other screens, such as the operate
+            // page screen, we need to remove the panel and then re-add it to 
+            // the collection. 
+            var position = profile.Panels.IndexOf(Panel);
+            profile.Panels.RemoveAt(position);
+            profile.Panels.Insert(position, Panel);
+            
             await profile.SaveAsync();
             ResetPanelChanges();
         }
