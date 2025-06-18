@@ -17,8 +17,10 @@
                      IconImageSource="rotate_cw.png" Command="{Binding Path=RotateTileCommand}"/>
         <ToolbarItem Text="Delete" x:Name="DeleteToolbar" IsEnabled="{Binding HasSelectedEntities}"
                      IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
-        <ToolbarItem Text="Edit" x:Name="EditToolbar" IconImageSource="edit.png"
+        <ToolbarItem Text="Edit" x:Name="EditToolbar" IconImageSource="{Binding EditPropertiesIcon}"
                      Command="{Binding Path=EditPropertiesCommand}" IsEnabled="{Binding CanEditProperties}" />
+        <ToolbarItem Text="Save" x:Name="SaveToolbar" IconImageSource="save.png"
+                     Command="{Binding Path=SaveCommand}" IsEnabled="{Binding HavePropertiesChanged}" />
         <ToolbarItem Text="Grid" x:Name="GridToolbar" IconImageSource="grid_off.png"
                      Command="{Binding Path=ToggleGridCommand}"/>
     </ContentPage.ToolbarItems>

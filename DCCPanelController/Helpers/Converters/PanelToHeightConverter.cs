@@ -2,35 +2,34 @@ using System.Globalization;
 
 namespace DCCPanelController.Helpers.Converters;
 
-public class PanelToCardHeightConverter : IMultiValueConverter {
-    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-        if (values.Length == 3) {
-            if (values[0] is double width and > 0 && values[1] is int rows && values[2] is int cols) {
-                var size = width / cols;
-                var height = size * rows;
-                return height;
+public class PanelToCardHeightConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        if (value is double collectionViewWidth && collectionViewWidth > 0)
+        {
+            // Get the span from the parameter (GridItemsLayout)
+            var span = 3; // default
+            if (parameter is GridItemsLayout layout)
+            {
+                span = layout.Span;
             }
+            
+            // Calculate width per item
+            var margin = 20;     // Account for margins (10 on each side of CollectionView + item margins)
+            var itemMargin = 10; // Account for item margins (5 on each side)
+            var availableWidth = collectionViewWidth - margin;
+            var itemWidth = (availableWidth / span) - itemMargin;
+            
+            // Return the same value for height to make it square
+            return Math.Max(itemWidth, 100); // Minimum height of 100
         }
-        return 200; // Default height if Panel or cardWidth parameter is not available
+        
+        return 150; // Fallback height
     }
 
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-        // Ensure the value is a valid double (height in this case)
-        if (value is double height and > 0) {
-            // Ensure the parameter is provided (to preserve context about width, rows, or cols)
-            if (parameter is object[] { Length: 2 } parameters) {
-                var rows = (int)parameters[0];
-                var cols = (int)parameters[1];
-
-                // Reverse the height calculation
-                var size = height / rows;
-                var width = size * cols;
-
-                return [width, rows, cols];
-            }
-        }
-
-        // Default fallback if conversion could not be applied
-        return [0.0, 0, 0]; // Default width, rows, and cols
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+    {
+        throw new NotImplementedException();
     }
 }

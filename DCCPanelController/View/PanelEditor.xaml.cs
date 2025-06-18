@@ -2,6 +2,7 @@ using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.View.Helpers;
+using Plugin.Maui.Audio;
 
 namespace DCCPanelController.View;
 
@@ -15,13 +16,15 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(panel, Navigation);
+        _viewModel = new PanelEditorViewModel(panel, Navigation, GetThumbnailImage);
         _viewModel.GridVisible = true;
         _viewModel.EditMode = EditModeEnum.Move;
+
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
-        _viewModel.OnBeginPopModal += OnBeginPopModal; // Subscribe to the custom event
+        _viewModel.OnBeginPopModal += OnBeginPopModal;   // Subscribe to the custom event
         PanelView.TileSelected += PanelViewOnTileSelected;
+        PanelView.TileChanged += PanelViewOnTileChanged;
 
         BindingContext = _viewModel;
     }
@@ -42,30 +45,52 @@ public partial class PanelEditor : ContentPage {
         _isPushingModal = false;
     }
 
-    protected override async void OnDisappearing() {
-        base.OnDisappearing();
+    // This is a callback so that the Editor View Model can take a snapshot
+    // of the design for the thumbnail on the Panel Viewer Page
+    // ----------------------------------------------------------------------
+    public async Task<string> GetThumbnailImage() {
+        var designMode = PanelView.DesignMode;
+        var showGrid = PanelView.ShowGrid;
+        var thumbnailImage = await PanelView.GetThumbnailAsync();
+        PanelView.ShowGrid = showGrid;
+        PanelView.DesignMode = designMode;
+        return thumbnailImage;
+    }
 
+    protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
         if (_isPushingModal) {
             _isPushingModal = false;
         } else {
-            if (_viewModel.Panel is { } panel) {
-                try {
-                    panel.Base64Image = await PanelView.GetThumbnailAsync();
-                    await _viewModel.SaveAsync();
-                    _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-                    _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
-                    _viewModel.OnBeginPopModal -= OnBeginPopModal;   // Subscribe to the custom event
-                    PanelView.TileSelected -= PanelViewOnTileSelected;
-                } catch (Exception ex) {
-                    Console.WriteLine($"Error exiting Panel and capturing Panel Image: {ex.Message}");
-                }
+            // If there are any unsaved changes, then prompt the user if they 
+            // want to save before we exit this screen. 
+            // ------------------------------------------------------------------------------
+            if (_viewModel.HavePropertiesChanged) {
+                var result = await DisplayAlert("Unsaved Changes", "There are unsaved changes. Would you like to Save?", "Yes", "No");
+                if (result) await _viewModel.SaveAsync();
             }
+            
+            _viewModel.PropertyChanged  -= ViewModelOnPropertyChanged;
+            _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
+            _viewModel.OnBeginPopModal  -= OnBeginPopModal;   // Subscribe to the custom event
+            PanelView.TileSelected      -= PanelViewOnTileSelected;
+            PanelView.TileChanged       -= PanelViewOnTileChanged;
             _closeTcs.TrySetResult(true); // or return data as needed
         }
+        base.OnNavigatedFrom(args);
+    }
+
+    protected override void OnNavigatedTo(NavigatedToEventArgs args) {
+        base.OnNavigatedTo(args);
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
+        _viewModel.SetCanEditProperties();
+    }
+
+    private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {
+        Console.WriteLine($"Tile was changed: {e.Tile}");
+        _viewModel.CheckIfPanelChanged();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

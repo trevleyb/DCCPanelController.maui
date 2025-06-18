@@ -58,8 +58,13 @@ public partial class ControlPanelView {
             _                 => "move.png"
         };
 
+    public event EventHandler<TileSelectedEventArgs>? TileChanged;
     public event EventHandler<TileSelectedEventArgs>? TileSelected;
     public event EventHandler<TileSelectedEventArgs>? TileTapped;
+
+    private void OnTileChanged(ITile tile) {
+        TileChanged?.Invoke(this, new TileTappedEventArgs(tile, 0));
+    }
 
     private void OnTileTapped(ITile tile, int tapCount) {
         TileTapped?.Invoke(this, new TileTappedEventArgs(tile, tapCount));
@@ -96,6 +101,7 @@ public partial class ControlPanelView {
                            [CallerMemberName] string memberName = "",
                            [CallerFilePath] string sourceFilePath = "",
                            [CallerLineNumber] int sourceLineNumber = 0) {
+        
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -236,6 +242,7 @@ public partial class ControlPanelView {
 
     private void RemoveTileFromGrid(ITile tile) {
         RemoveEntityFromGrid(tile.Entity);
+        OnTileChanged(tile);
     }
 
     private void RemoveEntityFromGrid(Entity entity) {
@@ -288,6 +295,7 @@ public partial class ControlPanelView {
         // Update the UI Grid to reflect the changes
         SetTileGridPosition(tile);
         tile.ForceRedraw();
+        OnTileChanged(tile);
     }
 
     private void SetTileGridPosition(ITile tile) {
@@ -582,7 +590,7 @@ public partial class ControlPanelView {
     private void DragCompleted(object? sender, DropCompletedEventArgs e) {
         if (sender is DragGestureRecognizer { Parent : ITile tile }) {
             tile.ForceRedraw();
-            MarkTileSelected(tile);
+            ClearAllSelectedTiles();
         }
     }
 
@@ -617,6 +625,7 @@ public partial class ControlPanelView {
                                 tile.Entity.Row = position.Row;
                                 SetTileGridPosition(tile);
                                 MarkTileSelected(tile);
+                                OnTileChanged(tile);
                                 break;
 
                             case EditModeEnum.Copy:
@@ -624,11 +633,13 @@ public partial class ControlPanelView {
                                 newEntity.Col = position.Col;
                                 newEntity.Row = position.Row;
                                 panel.AddEntity(newEntity);
+                                OnTileChanged(tile);
                                 break;
 
                             case EditModeEnum.Size:
                                 ResizeTrack(tile, position.Col, position.Row);
                                 MarkTileSelected(tile);
+                                OnTileChanged(tile);
                                 break;
                             }
                             break;
@@ -639,6 +650,7 @@ public partial class ControlPanelView {
                             dropEntity.Row = position.Row;
                             panel.AddEntity(dropEntity);
                             ClearAllSelectedTiles();
+                            OnTileChanged(tile);
                             break;
 
                         default:

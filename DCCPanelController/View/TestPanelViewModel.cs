@@ -12,11 +12,8 @@ public partial class TestPanelPageModel : Base.BaseViewModel {
     [ObservableProperty] private Panel? _panel;
     [ObservableProperty] private bool _showGrid = true;
     [ObservableProperty] private int _zoom = 10;
-
-    
-    [ObservableProperty] private string _selectedItem;
+    [ObservableProperty] private string _selectedItem = "";
     [ObservableProperty] private ObservableCollection<string> _options = [];
-    
     
     public TestPanelPageModel() {
         IsRefreshing = true;

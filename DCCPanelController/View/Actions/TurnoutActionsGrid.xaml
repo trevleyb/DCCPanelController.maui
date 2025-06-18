@@ -127,6 +127,7 @@
 
                                     <components:PopupSelector
                                         Grid.Column="0"
+                                        OnPopup="PopupSelector_OnOnPopup"
                                         InnerMargin="10,0,0,0"
                                         SelectorType="Automatic"
                                         Margin="10,0,0,0"
@@ -139,7 +140,7 @@
                                         TextColor="Black"
                                         TextSize="15"
                                         SelectedItem="{Binding Id, Mode=TwoWay}"
-                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:TurnoutActionsGridViewModel}},x:DataType=local:TurnoutActionsGridViewModel,Path=SelectableTurnouts,Mode=OneWay}"
+                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:TurnoutActionsGridViewModel}},x:DataType=local:TurnoutActionsGridViewModel,Path=SelectableItems,Mode=OneWay}"
                                         Placeholder="Select a Turnout"/>
                                     
                                     <components:TurnoutStateControl

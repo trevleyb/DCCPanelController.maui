@@ -1,5 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -24,6 +26,10 @@ public partial class Panel : ObservableObject, IEntityID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
     [ObservableProperty] private int _sortOrder;
 
+    [JsonIgnore] public Panels? Panels { get; set; }
+    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
+    
     [JsonConstructor]
     private Panel() {
         ResetColorsToDefaults();
@@ -33,10 +39,6 @@ public partial class Panel : ObservableObject, IEntityID {
         Panels = panels;
         Id = NextID;
     }
-
-    [JsonIgnore] public Panels? Panels { get; set; }
-    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
 
     [JsonIgnore]
     public string Title {
@@ -72,16 +74,16 @@ public partial class Panel : ObservableObject, IEntityID {
     public List<T> GetPanelEntitiesByType<T>() where T : Entity {
         return Entities.OfType<T>().ToList() ?? [];
     }
-
-    public List<T> GetPanelEntitiesWithID<T>() where T : Entity {
-        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.EntityName)).ToList() ?? [];
+    
+    public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID {
+        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
     }
-
+    
     public List<T> GetAllEntitiesByType<T>() where T : Entity {
         return Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
     }
-
-    public List<T> GetAllEntitiesWithID<T>() where T : Entity {
+    
+    public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID {
         return Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
     }
 
@@ -90,15 +92,7 @@ public partial class Panel : ObservableObject, IEntityID {
     }
 
     public TurnoutEntity? GetTurnoutEntity(string id) {
-        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.TurnoutID == id) ?? null;
-    }
-
-    public RouteEntity? GetRouteEntity(string id) {
-        return GetAllEntitiesWithID<RouteEntity>().FirstOrDefault(b => b.RouteID == id) ?? null;
-    }
-
-    public SwitchEntity? GetSwitchEntity(string id) {
-        return GetAllEntitiesWithID<SwitchEntity>().FirstOrDefault(b => b.SwitchID == id) ?? null;
+        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
     }
 
     public Block? Block(string id) {
@@ -162,14 +156,6 @@ public partial class Panel : ObservableObject, IEntityID {
 
     public void CheckEntityParents() {
         foreach (var entity in Entities) entity.Parent ??= this;
-    }
-
-    public bool HasChanged(Panel original, Panel modified) {
-        var originalJson = JsonSerializer.Serialize(this, JsonOptions.Options);
-        var modifiedJson = JsonSerializer.Serialize(this, JsonOptions.Options);
-        var originalHash = originalJson.GetHashCode();
-        var modifiedHash = modifiedJson.GetHashCode();
-        return originalHash != modifiedHash;
     }
 
     /// <summary>

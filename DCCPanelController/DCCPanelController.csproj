@@ -67,7 +67,7 @@
         <MauiImage Include="Resources\Images\*"/>
         <MauiImage Include="Resources\Icons\*"/>
         <MauiFont Include="Resources\Fonts\*"/>
-        <EmbeddedResource Include="Resources\Help\**\*" />
+        <MauiAsset Include="Resources\Help\**\*"/>
         
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg"/>

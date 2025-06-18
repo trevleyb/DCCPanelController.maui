@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
@@ -14,9 +15,13 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
     private readonly INavigation _navigation;
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+    private PanelChangeDetector? _detector; 
+
+    private Func<Task<string>>? _thumbnailCallback { get; set; }
 
     [ObservableProperty] private bool _gridVisible;
+    [ObservableProperty] private bool _havePropertiesChanged;
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
@@ -30,18 +35,23 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SingleOrNoEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
+    [NotifyPropertyChangedFor(nameof(EditPropertiesIcon))]
+    [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     private ObservableCollection<ITile> _selectedTiles = [];
 
     public bool CanEditProperties => SetCanEditProperties();
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
-    public PanelEditorViewModel(Panel panel, INavigation navigation) {
+    public PanelEditorViewModel(Panel panel, INavigation navigation, Func<Task<string>>? thumbnailCallback) {
         _panel = panel;
         _navigation = navigation;
+        _thumbnailCallback = thumbnailCallback;
+        ResetPanelChanges();
     }
 
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
+    public string EditPropertiesIcon => SelectedEntitiesCount > 0 ? "edit.png" : "properties.png"; 
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
     public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
@@ -64,11 +74,33 @@ public partial class PanelEditorViewModel : ObservableObject {
         return false;
     }
 
+    public void CheckIfPanelChanged() {
+        HavePropertiesChanged = _detector?.HasPanelChanged(Panel) ?? false;
+    }
+    
+    public void ResetPanelChanges() {
+        _detector = new PanelChangeDetector(Panel, new PanelChangeDetectorOptions {
+            MaxDepth = 5,
+            SkipProperties = new HashSet<string> { "Parent", "Navigation", "CustomProperty" },
+            IncludePrivateProperties = false
+        });
+        HavePropertiesChanged = false;
+    }
+    
     [RelayCommand]
     public async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
+            Panel.Base64Image = await GetThumbnailAsync();
             await profile.SaveAsync();
+            ResetPanelChanges();
         }
+    }
+
+    public async Task<string> GetThumbnailAsync() {
+        if (_thumbnailCallback != null) {
+            return await _thumbnailCallback();
+        }
+        return "";
     }
 
     [RelayCommand]
@@ -77,6 +109,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
+            CheckIfPanelChanged();
         }
     }
 
@@ -96,6 +129,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 Panel.Entities.Remove(entity);
             }
+            CheckIfPanelChanged();
             SelectedEntities.Clear();
             OnPropertyChanged(nameof(Panels));
         }
@@ -113,6 +147,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         } else {
             await EditPanelPropertiesAsync();
         }
+        CheckIfPanelChanged();
     }
 
     [RelayCommand]

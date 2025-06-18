@@ -12,6 +12,10 @@ using VisualElement = Microsoft.Maui.Controls.VisualElement;
 
 namespace DCCPanelController.View.Components;
 
+public class PopupSelectorEventArgs(object? currentItem) : EventArgs {
+    public object? CurrentItem { get; init; } = currentItem;
+}
+
 public enum PopupSelectorTypeEnum { Popup, Dropdown, Picker, Automatic }
 
 public class PopupSelector : ContentView, IDisposable {
@@ -20,7 +24,12 @@ public class PopupSelector : ContentView, IDisposable {
     private Image _arrowImage = new();
     private Image _clearImage = new();
     private readonly Border _popupContainer = new();
-
+    private Grid? mainButtonLayout;
+    private Label? selectedItemLabel;
+    
+    public event EventHandler<PopupSelectorEventArgs>? OnPopup;
+    public event EventHandler<PopupSelectorEventArgs>? OnClosing;
+    
     public PopupSelector() {
         DrawPopup();
     }
@@ -37,7 +46,7 @@ public class PopupSelector : ContentView, IDisposable {
     private void DrawPopup() {
         // The label that will be displayed containing the selected item
         // ----------------------------------------------------------------------------
-        var selectedItemLabel = new Label {
+        selectedItemLabel = new Label {
             VerticalOptions = LayoutOptions.Fill,
             VerticalTextAlignment = TextAlignment.Center,
             HorizontalOptions = LayoutOptions.Fill,
@@ -76,7 +85,7 @@ public class PopupSelector : ContentView, IDisposable {
         
         // Main container for the label and icon
         // ----------------------------------------------------------------------------
-        var mainButtonLayout = new Grid {
+        mainButtonLayout = new Grid {
             VerticalOptions = LayoutOptions.Fill,
             HorizontalOptions = LayoutOptions.Fill,
         };
@@ -243,6 +252,8 @@ public class PopupSelector : ContentView, IDisposable {
     /// <param name="isOpen">A boolean value indicating whether the dropdown is open (true) or closed (false).</param>
     private void SetDropDownImage(bool isOpen) {
         try {
+            if (isOpen)  OnPopup?.Invoke(this, new PopupSelectorEventArgs(SelectedItem));
+            if (!isOpen) OnClosing?.Invoke(this, new PopupSelectorEventArgs(SelectedItem));
             _arrowImage.Source = isOpen ? DropdownOpenImageSource : DropdownClosedImageSource;
             if (DropdownImageTint != null) {
                 _arrowImage.Behaviors.Add(new IconTintColorBehavior { TintColor = DropdownImageTint });
@@ -260,8 +271,10 @@ public class PopupSelector : ContentView, IDisposable {
     private void TogglePopup() {
         if (SelectorType == PopupSelectorTypeEnum.Dropdown) {
             _popupContainer.IsVisible = !_popupContainer.IsVisible;
+            SetDropDownImage(_popupContainer.IsVisible);
         } else {
             if (SelectorType == PopupSelectorTypeEnum.Picker || (SelectorType == PopupSelectorTypeEnum.Automatic && DeviceInfo.Platform == DevicePlatform.iOS)) {
+                SetDropDownImage(true);
                 ShowIOSPicker();
                 SetDropDownImage(false);
                 return;
@@ -274,9 +287,11 @@ public class PopupSelector : ContentView, IDisposable {
                     _popup.Close();
                     _popup = null;
                 }
+                SetDropDownImage(false);
                 _popupContainer.IsVisible = false;
             } else {
                 // Create and show popup
+                SetDropDownImage(true);
                 var bounds = GetControlBounds();
                 _popupContainer.WidthRequest = DropDownWidth > 0 ? DropDownWidth : bounds.Width;
                 _popupContainer.HeightRequest = DropDownHeight > 0 ? DropDownHeight : bounds.Height;
@@ -304,7 +319,6 @@ public class PopupSelector : ContentView, IDisposable {
                 }
             }
         }
-        SetDropDownImage(_popupContainer.IsVisible);
     }
 
     /// <summary>
@@ -312,8 +326,6 @@ public class PopupSelector : ContentView, IDisposable {
     /// </summary>
     private async void ShowIOSPicker() {
         try {
-            var content = Content;
-
             var items = ItemsSource.Cast<object>().ToList();
             if (items.Count == 0) return;
 
@@ -331,15 +343,23 @@ public class PopupSelector : ContentView, IDisposable {
             picker.SetBinding(Picker.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
             picker.SetBinding(Picker.BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
 
-            Content = picker;
-            picker.IsVisible = true; // Show it visually
-            picker.Unfocused += OnPickerUnfocused;
-            picker.Focus();
+            if (mainButtonLayout is not null && selectedItemLabel is not null) {
+                selectedItemLabel.IsVisible = false;
+                mainButtonLayout.Children.Add(picker);
+                mainButtonLayout.SetColumn(picker, 1);
 
-            void OnPickerUnfocused(object? sender, FocusEventArgs e) {
-                SelectedItem = picker.SelectedItem;
-                picker.Unfocused -= OnPickerUnfocused;
-                Content = content;
+                picker.IsVisible = true; // Show it visually
+                picker.Unfocused += OnPickerUnfocused;
+                picker.Focus();
+
+                void OnPickerUnfocused(object? sender, FocusEventArgs e) {
+                    SelectedItem = picker.SelectedItem;
+                    picker.Unfocused -= OnPickerUnfocused;
+                    mainButtonLayout.Children.Remove(picker);
+                    selectedItemLabel.IsVisible = true;
+                }
+            } else {
+                Console.WriteLine("We should not be here. MainButtonLayout cannot be null.");
             }
         } catch (Exception e) {
             Console.WriteLine($"Error showing iOS picker: {e.Message}");
