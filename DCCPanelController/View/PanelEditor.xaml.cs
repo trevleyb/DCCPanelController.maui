@@ -20,11 +20,12 @@ public partial class PanelEditor : ContentPage {
         _viewModel.GridVisible = true;
         _viewModel.EditMode = EditModeEnum.Move;
 
-        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
-        _viewModel.OnBeginPopModal += OnBeginPopModal;   // Subscribe to the custom event
-        PanelView.TileSelected += PanelViewOnTileSelected;
-        PanelView.TileChanged += PanelViewOnTileChanged;
+        _viewModel.PropertyChanged   += ViewModelOnPropertyChanged;
+        _viewModel.OnBeginPushModal  += OnBeginPushModal; // Subscribe to the custom event
+        _viewModel.OnBeginPopModal   += OnBeginPopModal;   // Subscribe to the custom event
+        _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
+        PanelView.TileSelected       += PanelViewOnTileSelected;
+        PanelView.TileChanged        += PanelViewOnTileChanged;
 
         BindingContext = _viewModel;
     }
@@ -69,14 +70,20 @@ public partial class PanelEditor : ContentPage {
                 if (result) await _viewModel.SaveAsync();
             }
             
-            _viewModel.PropertyChanged  -= ViewModelOnPropertyChanged;
-            _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
-            _viewModel.OnBeginPopModal  -= OnBeginPopModal;   // Subscribe to the custom event
-            PanelView.TileSelected      -= PanelViewOnTileSelected;
-            PanelView.TileChanged       -= PanelViewOnTileChanged;
+            _viewModel.PropertyChanged   -= ViewModelOnPropertyChanged;
+            _viewModel.OnBeginPushModal  -= OnBeginPushModal; // Subscribe to the custom event
+            _viewModel.OnBeginPopModal   -= OnBeginPopModal;   // Subscribe to the custom event
+            _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
+            PanelView.TileSelected       -= PanelViewOnTileSelected;
+            PanelView.TileChanged        -= PanelViewOnTileChanged;
+            
             _closeTcs.TrySetResult(true); // or return data as needed
         }
         base.OnNavigatedFrom(args);
+    }
+
+    private void ViewModelOnForcePanelRefresh() {
+        PanelView.ForceRefresh();
     }
 
     protected override void OnNavigatedTo(NavigatedToEventArgs args) {
@@ -86,6 +93,7 @@ public partial class PanelEditor : ContentPage {
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
         _viewModel.SetCanEditProperties();
+        if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
     }
 
     private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {
@@ -97,6 +105,7 @@ public partial class PanelEditor : ContentPage {
         switch (e.PropertyName) {
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;
+            PanelView.DesignMode = _viewModel.GridVisible;
             GridToolbar.IconImageSource = _viewModel.GridVisible ? "grid_on.png" : "grid_off.png";
             break;
 

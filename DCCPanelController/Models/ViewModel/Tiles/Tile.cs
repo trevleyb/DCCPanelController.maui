@@ -18,7 +18,6 @@ public abstract class Tile : ContentView, ITile {
     private CancellationTokenSource? _debounceRebuildCts;
     private Dictionary<string, object?> _propertyCache = [];
     
-
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
         GridSize = gridSize;

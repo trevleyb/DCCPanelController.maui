@@ -25,7 +25,7 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
     private int _borderWidth = 2;
 
     [ObservableProperty] [property: EditableInt("Font Size", "", 0, "Text")]
-    private int _fontSize = 8;
+    private int _fontSize = 15;
 
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;

@@ -15,9 +15,8 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
     private readonly INavigation _navigation;
-    private PanelChangeDetector? _detector; 
-
-    private Func<Task<string>>? _thumbnailCallback { get; set; }
+    private PanelChangeDetector? _detector;
+    private Func<Task<string>>? ThumbnailCallback { get; set; }
 
     [ObservableProperty] private bool _gridVisible;
     [ObservableProperty] private bool _havePropertiesChanged;
@@ -46,7 +45,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public PanelEditorViewModel(Panel panel, INavigation navigation, Func<Task<string>>? thumbnailCallback) {
         _panel = panel;
         _navigation = navigation;
-        _thumbnailCallback = thumbnailCallback;
+        ThumbnailCallback = thumbnailCallback;
         ResetPanelChanges();
     }
 
@@ -59,6 +58,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public string Title => Panel?.Title ?? "Panel";
+
+    public event Action? ForcePanelRefresh;
     public event Action? OnBeginPushModal;
     public event Action? OnBeginPopModal;
 
@@ -105,8 +106,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     public async Task<string> GetThumbnailAsync() {
-        if (_thumbnailCallback != null) {
-            return await _thumbnailCallback();
+        if (ThumbnailCallback != null) {
+            return await ThumbnailCallback();
         }
         return "";
     }
@@ -175,11 +176,19 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task EditTilePropertiesAsync() {
         try {
+            var layer = SelectedEntities.First().Layer;
             if (_navigation is { } navigation && SelectedEntities?.Count > 0) {
                 OnBeginPushModal?.Invoke();
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
                 OnBeginPopModal?.Invoke();
+            }
+            
+            // if the layer of the item changed, then we need to force a refresh of the panel
+            // ------------------------------------------------------------------------------
+            if (layer != SelectedEntities?.First().Layer) {
+                Console.WriteLine("Layer was changed, so forcing a Panel redraw");
+                ForcePanelRefresh?.Invoke();
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Tile Properties Page: " + ex.Message);

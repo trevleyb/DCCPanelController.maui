@@ -6,10 +6,10 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TrackEntity : Entity {
-    [ObservableProperty] [property: EditableBlock("Occupancy Block", "", 1, "Track")]
+    [ObservableProperty] [property: EditableBlock("Occupancy Block", "Indicates what block this track is in for showing Occupancy.", 8, "Track")]
     private string? _occupancyBlock;
 
-    [ObservableProperty] [property: EditableEnum("Attributes", "", 5, "Track")]
+    [ObservableProperty] [property: EditableEnum("Track Style", "Dashed normally used for hidden track.", 4, "Track")]
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
     [ObservableProperty] [property: EditableColor("Border Color", "", 5, "Track")]
@@ -20,7 +20,7 @@ public abstract partial class TrackEntity : Entity {
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMainLine))]
-    [property: EditableEnum("Track Type", "", 5, "Track")]
+    [property: EditableEnum("Track Type", "Mainline track has a border. Branch line does not.", 3, "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
 
     protected TrackEntity() { }

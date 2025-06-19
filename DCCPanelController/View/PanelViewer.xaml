@@ -164,7 +164,7 @@
                      Command="{Binding Path=DeletePanelCommand}"/>
         <ToolbarItem Text="Edit" IsEnabled="{Binding IsPanelSelected}" IconImageSource="edit.png"
                      Command="{Binding Path=EditPanelCommand}"/>
-        <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="settings.png"
+        <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="properties.png"
                      Command="{Binding Path=EditPanelPropertiesCommand}"/>
     </ContentPage.ToolbarItems>
 
