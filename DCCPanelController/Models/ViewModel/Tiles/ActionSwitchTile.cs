@@ -7,8 +7,8 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class SwitchTile : Tile, ITileInteractive {
-    public SwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class ActionSwitchTile : Tile, ITileInteractive {
+    public ActionSwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
         

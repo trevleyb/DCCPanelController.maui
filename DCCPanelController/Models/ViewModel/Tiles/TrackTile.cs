@@ -9,7 +9,8 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
-
+    protected SvgImage? svgImage;
+    
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TrackEntity.Rotation));
         VisualProperties.Add(nameof(TrackEntity.TrackType));
@@ -28,20 +29,12 @@ public abstract class TrackTile : Tile, ITileTrack {
         }
     }
 
-    public Color HighlightColor {
-        get {
-            if (IsPath && DisplayMode == TileDisplayMode.Normal) return Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
-            if (IsOccupied && DisplayMode == TileDisplayMode.Normal) return Colors.Tomato.WithAlpha(HighlightColorAlpha);
-            return Colors.Transparent;
-        }
-    }
-
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
         return CreateTrackTileAsCanvas(trackName, trackRotation, scale);
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
-        var svgImage = SvgImages.GetImage(trackName, trackRotation);
+        svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
 
@@ -58,7 +51,7 @@ public abstract class TrackTile : Tile, ITileTrack {
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsImage(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
-        var svgImage = SvgImages.GetImage(trackName, trackRotation);
+        svgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         svgImage.ApplyStyle(style.Build());
 

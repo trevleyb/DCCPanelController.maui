@@ -8,8 +8,8 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class ButtonTile : Tile, ITileInteractive {
-    public ButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class ActionButtonTile : Tile, ITileInteractive {
+    public ActionButtonTile(ButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ButtonEntity.State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
     }

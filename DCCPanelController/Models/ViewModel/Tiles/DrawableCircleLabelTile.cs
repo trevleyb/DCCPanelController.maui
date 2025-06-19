@@ -1,12 +1,13 @@
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class CircleLabelTile : Tile {
-    public CircleLabelTile(CircleLabelEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class DrawableCircleLabelTile : Tile, ITileDrawable {
+    public DrawableCircleLabelTile(CircleLabelEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(CircleLabelEntity.BackgroundColor));
         VisualProperties.Add(nameof(CircleLabelEntity.BorderColor));
         VisualProperties.Add(nameof(CircleLabelEntity.BorderWidth));

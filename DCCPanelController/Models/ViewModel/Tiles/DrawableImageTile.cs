@@ -2,14 +2,15 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using Microsoft.Maui.Controls.Shapes;
 using Colors = Microsoft.Maui.Graphics.Colors;
 using Shape = Microsoft.Maui.Controls.Shapes.Shape;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class ImageTile : Tile {
-    public ImageTile(ImageEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class DrawableImageTile : Tile, ITileDrawable {
+    public DrawableImageTile(ImageEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ImageEntity.BorderColor));
         VisualProperties.Add(nameof(ImageEntity.BorderWidth));
         VisualProperties.Add(nameof(ImageEntity.AspectRatio));

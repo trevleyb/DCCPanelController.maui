@@ -7,8 +7,8 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class RouteTile : Tile, ITileInteractive {
-    public RouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class ActionRouteTile : Tile, ITileInteractive {
+    public ActionRouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ButtonEntity.State));
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
         if (Entity is RouteEntity routeEntity && routeEntity.Route is {} route) {

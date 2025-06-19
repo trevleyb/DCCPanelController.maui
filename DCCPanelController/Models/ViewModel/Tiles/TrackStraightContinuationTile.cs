@@ -2,8 +2,8 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class StraightContinuationTile : TrackTile {
-    public StraightContinuationTile(StraightContinuationEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class TrackStraightContinuationTile : TrackTile {
+    public TrackStraightContinuationTile(StraightContinuationEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(StraightContinuationEntity.ContinuationStyle));
     }
 

@@ -1,12 +1,13 @@
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class RectangleTile : Tile {
-    public RectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+public class DrawableRectangleTile : Tile, ITileDrawable {
+    public DrawableRectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(RectangleEntity.BackgroundColor));
         VisualProperties.Add(nameof(RectangleEntity.BorderColor));
         VisualProperties.Add(nameof(RectangleEntity.BorderRadius));

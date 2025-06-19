@@ -2,8 +2,8 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class CrossingTile : TrackTile {
-    public CrossingTile(CrossingEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+public class TrackCrossingTile : TrackTile {
+    public TrackCrossingTile(CrossingEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         return CreateTrackTile("cross", Entity.Rotation);
