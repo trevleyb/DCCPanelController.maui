@@ -9,7 +9,7 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
-    protected SvgImage? svgImage;
+    public SvgImage? SvgImage { get; protected set; }
     
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TrackEntity.Rotation));
@@ -34,11 +34,11 @@ public abstract class TrackTile : Tile, ITileTrack {
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
-        svgImage = SvgImages.GetImage(trackName, trackRotation);
+        SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
-        svgImage.ApplyStyle(style.Build());
+        SvgImage.ApplyStyle(style.Build());
 
-        var canvas = svgImage.AsCanvas(svgImage.Rotation, 1);
+        var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);
         canvas.HorizontalOptions = LayoutOptions.Fill;
         canvas.VerticalOptions = LayoutOptions.Fill;
         canvas.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
@@ -51,13 +51,13 @@ public abstract class TrackTile : Tile, ITileTrack {
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsImage(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
-        svgImage = SvgImages.GetImage(trackName, trackRotation);
+        SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
-        svgImage.ApplyStyle(style.Build());
+        SvgImage.ApplyStyle(style.Build());
 
-        var image = svgImage.AsImage(svgImage.Rotation, scale);
+        var image = SvgImage.AsImage(SvgImage.Rotation, scale);
         image.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
-        image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: svgImage));
+        image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: SvgImage));
         return image;
     }
 

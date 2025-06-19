@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -9,6 +10,8 @@ public class StraightEntity : TrackEntity, ITrackEntity {
         Layer = 6; // Override the Straight Entity so it overlays anything else
     }
 
+    public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightTrack;
+    
     public StraightEntity(Panel panel) : this() {
         Parent = panel;
     }

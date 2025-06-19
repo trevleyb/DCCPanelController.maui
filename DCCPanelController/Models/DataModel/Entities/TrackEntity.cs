@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 // ReSharper disable once CheckNamespace
@@ -32,6 +33,12 @@ public abstract partial class TrackEntity : Entity {
             return Parent?.Block(OccupancyBlock) ?? null;
         }
     } 
+    
+    [JsonIgnore]
+    public abstract EntityConnections Connections { get; }
+    public ConnectionType[] GetCurrentConnections() => Connections.GetConnections(Rotation);
+    public List<int> GetValidDirections() => Connections.GetValidDirections(Rotation);
+    public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
     
     protected TrackEntity(TrackEntity entity) : base(entity) {
         TrackColor = entity.TrackColor;

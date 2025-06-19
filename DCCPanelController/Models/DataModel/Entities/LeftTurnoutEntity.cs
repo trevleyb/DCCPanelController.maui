@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -7,6 +8,7 @@ public class LeftTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity
     [JsonConstructor]
     public LeftTurnoutEntity() { }
 
+    public override EntityConnections Connections => EntityConnections.TrackPatterns.LeftTurnoutTrack;
     public LeftTurnoutEntity(Panel panel) : base(panel) { }
     public LeftTurnoutEntity(LeftTurnoutEntity entity) : base(entity) { }
     public override string EntityName => "Left Turnout";

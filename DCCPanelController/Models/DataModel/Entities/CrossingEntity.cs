@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -7,6 +8,7 @@ public class CrossingEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public CrossingEntity() { }
 
+    public override EntityConnections Connections => EntityConnections.TrackPatterns.CrossingTrack;
     public CrossingEntity(Panel panel) : this() {
         Parent = panel;
     }

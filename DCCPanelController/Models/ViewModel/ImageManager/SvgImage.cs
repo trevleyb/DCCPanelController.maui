@@ -7,15 +7,16 @@ using SkiaSharp.Views.Maui.Controls;
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public partial class SvgImage : ObservableObject {
-    [ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
+    //[ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
     [ObservableProperty] private string _filename = string.Empty;
     private SvgImageManager? _imageManager;
     [ObservableProperty] private int _rotation;
 
-    public SvgImage(string filename, int rotation, SvgConnections connections) {
+    //public SvgImage(string filename, int rotation, SvgConnections connections) {
+    public SvgImage(string filename, int rotation) {
         Filename = filename;
         Rotation = rotation;
-        Connections = connections;
+        //Connections = connections;
         _imageManager = new SvgImageManager(filename);
     }
 
