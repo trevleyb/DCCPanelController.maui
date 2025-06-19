@@ -6,7 +6,18 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class CircleLabelTile : Tile {
-    public CircleLabelTile(CircleLabelEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public CircleLabelTile(CircleLabelEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(CircleLabelEntity.BackgroundColor));
+        VisualProperties.Add(nameof(CircleLabelEntity.BorderColor));
+        VisualProperties.Add(nameof(CircleLabelEntity.BorderWidth));
+        VisualProperties.Add(nameof(CircleLabelEntity.BorderInnerColor));
+        VisualProperties.Add(nameof(CircleLabelEntity.BorderInnerGap));
+        VisualProperties.Add(nameof(CircleLabelEntity.BorderInnerWidth));
+        VisualProperties.Add(nameof(CircleLabelEntity.FontSize));
+        VisualProperties.Add(nameof(CircleLabelEntity.Label));
+        VisualProperties.Add(nameof(CircleLabelEntity.TextColor));
+        VisualProperties.Add(nameof(CircleLabelEntity.Scale));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         var grid = new Grid {

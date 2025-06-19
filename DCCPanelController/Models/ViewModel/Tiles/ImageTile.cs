@@ -9,7 +9,13 @@ using Shape = Microsoft.Maui.Controls.Shapes.Shape;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ImageTile : Tile {
-    public ImageTile(ImageEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public ImageTile(ImageEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(ImageEntity.BorderColor));
+        VisualProperties.Add(nameof(ImageEntity.BorderWidth));
+        VisualProperties.Add(nameof(ImageEntity.AspectRatio));
+        VisualProperties.Add(nameof(ImageEntity.BorderRadius));
+        VisualProperties.Add(nameof(ImageEntity.Image));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ImageEntity entity && !string.IsNullOrEmpty(entity.Image)) {

@@ -6,7 +6,12 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class RectangleTile : Tile {
-    public RectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public RectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(RectangleEntity.BackgroundColor));
+        VisualProperties.Add(nameof(RectangleEntity.BorderColor));
+        VisualProperties.Add(nameof(RectangleEntity.BorderRadius));
+        VisualProperties.Add(nameof(RectangleEntity.BorderWidth));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is RectangleEntity entity) {

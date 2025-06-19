@@ -6,7 +6,11 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class CircleTile : Tile {
-    public CircleTile(CircleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public CircleTile(CircleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(CircleEntity.BackgroundColor));
+        VisualProperties.Add(nameof(CircleEntity.BorderColor));
+        VisualProperties.Add(nameof(CircleEntity.BorderWidth));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is CircleEntity entity) {
