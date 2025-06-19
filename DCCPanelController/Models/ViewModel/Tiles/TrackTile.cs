@@ -2,11 +2,12 @@ using System.ComponentModel;
 using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public abstract class TrackTile : Tile {
+public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
 
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {

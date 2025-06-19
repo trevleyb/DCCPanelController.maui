@@ -17,7 +17,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         }
     }
 
-    public async Task Interact(ConnectionService? connectionService) {
+    public async Task<bool> Interact(ConnectionService? connectionService) {
         if (connectionService is not null && Entity is TurnoutEntity { Turnout: not null } turnout) {
             if (UseClickSounds) await ClickSounds.PlayTurnoutClickSoundAsync();
             var newState = turnout.State switch {
@@ -26,15 +26,18 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
                 _                        => TurnoutStateEnum.Unknown
             };
-            
             turnout.SetState(newState, StateChangeSource.Internal);
             if (connectionService.Client is { } client) {
                 await client.SendTurnoutCmdAsync(turnout.Turnout, newState != TurnoutStateEnum.Closed);
             }
+            return true;
         }
+        return false;
     }
 
-    public async Task Secondary(ConnectionService? connectionService) { }
+    public async Task<bool> Secondary(ConnectionService? connectionService) {
+        return false;
+    }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
         if (Entity is TurnoutEntity { Turnout: not null } turnout) {

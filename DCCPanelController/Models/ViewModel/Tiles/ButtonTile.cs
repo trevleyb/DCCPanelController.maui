@@ -14,7 +14,7 @@ public class ButtonTile : Tile, ITileInteractive {
         VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
     }
 
-    public async Task Interact(ConnectionService? connectionService) {
+    public async Task<bool> Interact(ConnectionService? connectionService) {
         if (connectionService is not null && Entity is ButtonEntity button) {
 
             if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
@@ -25,10 +25,14 @@ public class ButtonTile : Tile, ITileInteractive {
                 _                       => ButtonStateEnum.Unknown
             };
             button.SetState(newState, StateChangeSource.External);
+            return true;
         }
+        return false;
     }
 
-    public async Task Secondary(ConnectionService? connectionService) { }
+    public async Task<bool> Secondary(ConnectionService? connectionService) {
+        return false;
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ButtonEntity button) {

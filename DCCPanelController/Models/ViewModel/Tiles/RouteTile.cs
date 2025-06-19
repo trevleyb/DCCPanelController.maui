@@ -18,7 +18,7 @@ public class RouteTile : Tile, ITileInteractive {
         }
     }
 
-    public async Task Interact(ConnectionService? connectionService) {
+    public async Task<bool> Interact(ConnectionService? connectionService) {
         if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
         if (Entity is RouteEntity route) {
             route.State = route.State switch {
@@ -31,10 +31,14 @@ public class RouteTile : Tile, ITileInteractive {
             if (connectionService is not null && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
                 if (connectionService.Client is { } client) await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
             }
+            return true;
         }
+        return false;
     }
 
-    public async Task Secondary(ConnectionService? connectionService) { }
+    public async Task<bool> Secondary(ConnectionService? connectionService) {
+        return false;
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is RouteEntity route) {

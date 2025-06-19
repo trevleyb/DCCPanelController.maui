@@ -19,7 +19,7 @@ public class SwitchTile : Tile, ITileInteractive {
         }
     }
 
-    public async Task Interact(ConnectionService? connectionService) {
+    public async Task<bool> Interact(ConnectionService? connectionService) {
         if (connectionService is not null && Entity is SwitchEntity switchEntity) {
             if (UseClickSounds) await ClickSounds.PlaySwitchClickSoundAsync();
             switchEntity.State = switchEntity.State switch {
@@ -29,10 +29,14 @@ public class SwitchTile : Tile, ITileInteractive {
                 _                       => ButtonStateEnum.Unknown
             };
             if (connectionService.Client is { } client && switchEntity is {Light: not null } )  await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
+            return true;
         }
+        return false;
     }
 
-    public async Task Secondary(ConnectionService? connectionService) { }
+    public async Task<bool> Secondary(ConnectionService? connectionService) {
+        return false;
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is SwitchEntity switchEntity) {
