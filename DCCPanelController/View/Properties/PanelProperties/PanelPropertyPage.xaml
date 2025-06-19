@@ -7,21 +7,33 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:panelProperties="clr-namespace:DCCPanelController.View.Properties.PanelProperties"
+    xmlns:helpers="clr-namespace:DCCPanelController.Models.DataModel.Helpers"
+    xmlns:helpers1="clr-namespace:DCCPanelController.Helpers"
+    xmlns:attributes="clr-namespace:DCCPanelController.Helpers.Attributes"
     SizeChanged="PanelPropertyPage_SizeChanged"> <!-- Add SizeChanged handler -->
 
     <ContentView.Content>
         <VerticalStackLayout>
+
+            <Label Text="Panel Settings" Style="{StaticResource LargeLabel}"
+                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+            <BoxView HeightRequest="1"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                     Margin="0,5,0,5"/>
+
             <!--  Panel Name  -->
             <HorizontalStackLayout>
                 <Label Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
                 <Entry HorizontalOptions="FillAndExpand" Placeholder="Enter Panel Name" Text="{Binding Panel.Id}"
-                       HeightRequest="35" WidthRequest="150"/>
+                       WidthRequest="350" HeightRequest="35"/>
             </HorizontalStackLayout>
+
             <HorizontalStackLayout>
                 <Label Text="Description" VerticalOptions="Center" WidthRequest="100"/>
                 <Entry HorizontalOptions="FillAndExpand" Placeholder="Panel Description"
                        Text="{Binding Panel.Description}" HeightRequest="35" WidthRequest="350"/>
             </HorizontalStackLayout>
+
             <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                      Margin="0,5,0,5"/>
 
@@ -49,35 +61,66 @@
                     <Label HorizontalOptions="Center" IsEnabled="False" Margin="0,0,0,0"
                            Style="{StaticResource Headline}" Text="{Binding Panel.PanelRatio}" VerticalOptions="Center"/>
                 </VerticalStackLayout>
+
+                <Border Margin="20,5,10,10" BackgroundColor="WhiteSmoke" Padding="5">
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Suggested Ratios" FontAttributes="Bold" FontSize="12" Margin="2"/>
+                        <HorizontalStackLayout>
+                            <Label WidthRequest="100" Text="iPhone 7/SE (16:9)" Margin="2" FontSize="10"/>
+                            <Label WidthRequest="100" Text="iPhone 14+ (19.5:9)" Margin="2" FontSize="10"/>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label WidthRequest="100" Text="iPad (4:3)" Margin="2" FontSize="10"/>
+                            <Label WidthRequest="100" Text="iPad Pro (10:7)" Margin="2" FontSize="10"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
             </HorizontalStackLayout>
 
             <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                      Margin="0,0,0,15"/>
 
+            <Label Text="Panel Colors" Style="{StaticResource LargeLabel}"
+                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+            <BoxView HeightRequest="1"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                     Margin="0,5,0,0"/>
+
             <ScrollView VerticalScrollBarVisibility="Always">
-                <CollectionView ItemsSource="{Binding ColorSettings}" VerticalScrollBarVisibility="Always">
+                <CollectionView ItemsSource="{Binding GroupedColorSettings}"
+                                VerticalScrollBarVisibility="Always"
+                                IsGrouped="True">
                     <CollectionView.ItemsLayout>
                         <GridItemsLayout Orientation="Vertical"
                                          Span="{Binding ColorGridSpan}"
                                          VerticalItemSpacing="5"
-                                         HorizontalItemSpacing="10"/>
+                                         HorizontalItemSpacing="15"/>
                     </CollectionView.ItemsLayout>
 
+                    <CollectionView.GroupHeaderTemplate>
+                        <DataTemplate x:DataType="attributes:ColorItemGroup">
+                            <StackLayout Orientation="Vertical" Padding="0,15,10,5">
+                                <Label Text="{Binding CategoryName}" FontSize="16" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                                <BoxView HeightRequest="1"
+                                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                                         Margin="0,5,0,0"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.GroupHeaderTemplate>
+
                     <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="panelProperties:ColorSettingItemViewModel">
-                            <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center" Padding="0,2">
-                                <Label Grid.Column="0"
-                                       Text="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:ColorSettingItemViewModel}}, Path=LabelText, Mode=OneWay}"
-                                       VerticalOptions="Center"
-                                       WidthRequest="130"/>
+                        <DataTemplate x:DataType="helpers:PanelColorItem">
+                            <Grid ColumnDefinitions="200,120" HorizontalOptions="Start" VerticalOptions="Center"
+                                  Padding="0,2">
+                                <Label Grid.Column="0" Text="{Binding LabelText}" VerticalOptions="Center"/>
                                 <components:ColorPickerButton
                                     Grid.Column="1"
-                                    AllowsNoColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:ColorSettingItemViewModel}}, Path=AllowsNoColor, Mode=OneWay}"
+                                    AllowsNoColor="{Binding Source={RelativeSource AncestorType={x:Type helpers:PanelColorItem}}, Path=AllowsNoColor, Mode=OneWay}"
                                     HeightRequest="30"
-                                    SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type panelProperties:ColorSettingItemViewModel}}, Path=ColorValue, Mode=TwoWay}"
+                                    SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type helpers:PanelColorItem}}, Path=ColorValue, Mode=TwoWay}"
                                     VerticalOptions="Center"
-                                    HorizontalOptions="Start"
-                                    WidthRequest="120"/>
+                                    HorizontalOptions="Fill"/>
                             </Grid>
                         </DataTemplate>
                     </CollectionView.ItemTemplate>

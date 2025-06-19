@@ -49,14 +49,14 @@ public class SwitchTile : Tile, ITileInteractive {
                 };
             }
             svgImage.SetAttribute(SvgElementType.Button, switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => switchEntity.Parent?.ButtonColor ?? Colors.Gray
+                ButtonStateEnum.On  => switchEntity.Parent?.LightOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.Parent?.LightOffColor ?? Colors.Red,
+                _                   => switchEntity.Parent?.LightOffColor ?? Colors.Gray
             });
             svgImage.SetAttribute(SvgElementType.ButtonOutline, switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.Parent?.ButtonOffColor ?? Colors.Gray,
-                _                   => switchEntity.Parent?.ButtonOnColor ?? Colors.Gray
+                ButtonStateEnum.On  => switchEntity.Parent?.LightOnBorderColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray,
+                _                   => switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray
             });
 
             var image = new Image {

@@ -62,64 +62,28 @@ public partial class Panel : ObservableObject, IEntityID {
     public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
     public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
-
+    
     [JsonIgnore]
     public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
     public string NextID => EntityID.GenerateNextID(Panels ?? [],"Panel");
 
-    public Entity? GetEntityAtPosition(int x, int y) {
-        return Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
-    }
-
-    public List<T> GetPanelEntitiesByType<T>() where T : Entity {
-        return Entities.OfType<T>().ToList() ?? [];
-    }
+    public Entity? GetEntityAtPosition(int x, int y) =>  Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
+    public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
+    public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
+    public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
+    public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
     
-    public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID {
-        return Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
-    }
+    public ButtonEntity? GetButtonEntity(string id) => GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    public TurnoutEntity? GetTurnoutEntity(string id) => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
     
-    public List<T> GetAllEntitiesByType<T>() where T : Entity {
-        return Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
-    }
-    
-    public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID {
-        return Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
-    }
+    public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    public Light? Light(string id) => Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-    public ButtonEntity? GetButtonEntity(string id) {
-        return GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
-    }
-
-    public TurnoutEntity? GetTurnoutEntity(string id) {
-        return GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
-    }
-
-    public Block? Block(string id) {
-        return Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    public Route? Route(string id) {
-        return Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    public Turnout? Turnout(string id) {
-        return Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    public Signal? Signal(string id) {
-        return Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    public Sensor? Sensor(string id) {
-        return Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    public Light? Light(string id) {
-        return Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    }
-    
-    public Entity AddEntity(Entity entity) {
+        public Entity AddEntity(Entity entity) {
         entity.Parent = this;
         Entities.Add(entity);
         return entity;

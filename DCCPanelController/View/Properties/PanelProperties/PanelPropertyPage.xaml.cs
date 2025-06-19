@@ -20,7 +20,11 @@ public partial class PanelPropertyPage : ContentView {
 
     private void UpdateSpanBasedOnSize(double currentWidth) {
         if (currentWidth > 0) {
-            var newSpan = currentWidth < 480 ? 1 : 2;
+            var newSpan = currentWidth switch {
+                < 600 => 1, // iPhone - single column
+                < 900 => 2, // iPad portrait or smaller tablets - 2 columns  
+                _     => 3  // iPad landscape or desktop - 3 columns
+            };
             if (_viewModel.ColorGridSpan != newSpan) {
                 _viewModel.ColorGridSpan = newSpan;
             }
