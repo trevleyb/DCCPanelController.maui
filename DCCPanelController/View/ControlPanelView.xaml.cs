@@ -124,7 +124,7 @@ public partial class ControlPanelView {
             DynamicGrid.ZIndex = 0;
             DynamicGrid.WidthRequest = _viewWidth;
             DynamicGrid.HeightRequest = _viewHeight;
-            DynamicGrid.BackgroundColor = Panel?.BackgroundColor ?? Colors.Transparent;
+            DynamicGrid.BackgroundColor = Panel?.PanelBackgroundColor ?? Colors.Transparent;
 
             DynamicGrid.Children.Clear();
             if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {

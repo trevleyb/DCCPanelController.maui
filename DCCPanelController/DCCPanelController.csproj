@@ -278,7 +278,7 @@
             <DependentUpon>TurnoutsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\SettingsViewModel.cs">
-            <DependentUpon>SettingsPagePage.xaml</DependentUpon>
+            <DependentUpon>SettingsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\BlocksPage.xaml.cs">
             <DependentUpon>BlocksPage.xaml</DependentUpon>

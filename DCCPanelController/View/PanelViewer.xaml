@@ -43,7 +43,7 @@
                     <Border x:Name="HorizontalBorder"
                             Grid.Column="0" Stroke="#CCCCCC" StrokeThickness="1"
                             Margin="5"
-                            Background="{Binding BackgroundColor}">
+                            Background="{Binding PanelBackgroundColor}">
                         <Border.HeightRequest>
                             <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
                                 <Binding Source="{x:Reference HorizontalBorder}" x:DataType="Border" Path="Width"/>
@@ -103,7 +103,7 @@
                 <Grid>
                     <StackLayout>
                         <Border x:Name="VerticalBorder" Stroke="#CCCCCC" StrokeThickness="1" Margin="5"
-                                Background="{Binding BackgroundColor}">
+                                Background="{Binding PanelBackgroundColor}">
                             <Grid>
                                 <Image IsVisible="true"
                                        Source="{Binding Thumbnail}"
