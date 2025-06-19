@@ -30,6 +30,9 @@ public abstract class Tile : ContentView, ITile {
         VisualProperties.Add(nameof(GridSize));
         VisualProperties.Add(nameof(Entity.Col));
         VisualProperties.Add(nameof(Entity.Row));
+        VisualProperties.Add(nameof(Entity.Layer));
+        VisualProperties.Add(nameof(Entity.Opacity));
+        VisualProperties.Add(nameof(Entity.Rotation));
         SetContent();
     }
 
