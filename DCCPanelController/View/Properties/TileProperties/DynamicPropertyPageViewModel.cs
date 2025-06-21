@@ -192,12 +192,12 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         expanderTitle.Children.Add(GroupHeading(groupKey));
         expanderHeading.Children.Add(expanderTitle);
         expanderHeading.Children.Add(GroupDivider());
-        tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 0, 10);
+        tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 10, 10);
         tableExpander.Header = expanderHeading;
         tableExpander.IsExpanded = true;
 
         var stackLayout = new StackLayout {
-            Margin = new Thickness(-5, 1, 1, 0),
+            Margin = new Thickness(0, 10, 1, 0),
             BackgroundColor = Colors.White
         };
         tableExpander.Content = stackLayout;

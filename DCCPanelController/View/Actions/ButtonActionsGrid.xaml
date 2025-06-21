@@ -124,10 +124,11 @@
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
                                     <components:PopupSelector
+                                        WidthRequest="150"
                                         Grid.Column="0"
                                         OnPopup="PopupSelector_OnOnPopup"
                                         InnerMargin="10,0,0,0"
-                                        Margin="10,0,0,0"
+                                        Margin="0,0,0,0"
                                         SelectorType="Automatic"
                                         DropDownWidth="250"
                                         DropDownHeight="300"

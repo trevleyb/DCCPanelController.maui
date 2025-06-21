@@ -1,10 +1,12 @@
 using System.Collections;
+using System.Globalization;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
+using Application = Microsoft.Maui.Controls.Application;
 using LayoutAlignment = Microsoft.Maui.Primitives.LayoutAlignment;
 using ListView = Microsoft.Maui.Controls.ListView;
 using Picker = Microsoft.Maui.Controls.Picker;
@@ -24,14 +26,24 @@ public class PopupSelector : ContentView, IDisposable {
     private Image _arrowImage = new();
     private Image _clearImage = new();
     private readonly Border _popupContainer = new();
+    private bool _isLoaded = false;
+    private Border mainLayoutBox;
     private Grid? mainButtonLayout;
     private Label? selectedItemLabel;
-    
+
     public event EventHandler<PopupSelectorEventArgs>? OnPopup;
     public event EventHandler<PopupSelectorEventArgs>? OnClosing;
-    
+
     public PopupSelector() {
-        DrawPopup();
+        this.Loaded += OnLoaded;
+    }
+
+    private void OnLoaded(object? sender, EventArgs e) {
+        if (!_isLoaded) {
+            _isLoaded = true;
+            DrawPopup();
+            Loaded -= OnLoaded; // Unsubscribe to prevent multiple calls
+        }
     }
 
     public void Dispose() {
@@ -44,6 +56,28 @@ public class PopupSelector : ContentView, IDisposable {
     ///     that it is properly displayed within the parent container.
     /// </summary>
     private void DrawPopup() {
+        if (Handler == null) {
+            Console.WriteLine("Handler is null");
+            if (Handler == null) {
+                Loaded += (s, e) => DrawPopup();
+                return;
+            }
+        }
+
+        mainLayoutBox = new Border() {
+            Margin = new Thickness(5, 5, 5, 5),
+            WidthRequest = this.WidthRequest,
+            HeightRequest = 30,
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Center,
+            BackgroundColor = Colors.Transparent,
+            StrokeThickness = 1,
+            Stroke = new SolidColorBrush((Color?)Application.Current?.Resources["Primary"] ?? Colors.Black),
+            StrokeShape = new RoundRectangle {
+                CornerRadius = new CornerRadius(10) // All corners rounded with radius 10
+            }
+        };
+
         // The label that will be displayed containing the selected item
         // ----------------------------------------------------------------------------
         selectedItemLabel = new Label {
@@ -51,12 +85,19 @@ public class PopupSelector : ContentView, IDisposable {
             VerticalTextAlignment = TextAlignment.Center,
             HorizontalOptions = LayoutOptions.Fill,
             HorizontalTextAlignment = TextAlignment.Start,
-            LineBreakMode = LineBreakMode.TailTruncation
+            LineBreakMode = LineBreakMode.TailTruncation,
+            Margin = new Thickness(10, 5, 5, 5),
         };
         selectedItemLabel.BindingContext = this;
         selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
         selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
-        selectedItemLabel.SetBinding(Label.TextProperty, new Binding(nameof(SelectedItem), BindingMode.OneWay, source: this));
+        selectedItemLabel.SetBinding(Label.TextProperty, new MultiBinding {
+            Bindings = {
+                new Binding(nameof(SelectedItem), source: this),
+                new Binding(nameof(Placeholder), source: this)
+            },
+            Converter = new SelectedItemToDisplayTextConverter()
+        });
 
         // The up/down image. Use properties to change what .png is used. (must be PNG)  
         // ----------------------------------------------------------------------------
@@ -82,7 +123,7 @@ public class PopupSelector : ContentView, IDisposable {
         var clearGesture = new TapGestureRecognizer();
         clearGesture.Tapped += (_, _) => SelectedItem = null;
         _clearImage.GestureRecognizers.Add(clearGesture);
-        
+
         // Main container for the label and icon
         // ----------------------------------------------------------------------------
         mainButtonLayout = new Grid {
@@ -94,30 +135,23 @@ public class PopupSelector : ContentView, IDisposable {
             AbsoluteLayout.SetLayoutBounds(_popupContainer, new Rect(0, mainButtonLayout.Height, dropdownWidth, DropDownHeight));
         };
 
-        mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
         mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
         mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-        mainButtonLayout.Children.Add(_arrowImage);
-        mainButtonLayout.SetColumn(_arrowImage, 0);
-        mainButtonLayout.Children.Add(selectedItemLabel);
-        mainButtonLayout.SetColumn(selectedItemLabel, 1);
+        mainLayoutBox.Content = selectedItemLabel;
+
+        mainButtonLayout.Children.Add(mainLayoutBox);
+        mainButtonLayout.SetColumn(mainLayoutBox, 0);
         if (ShowClearFieldImage) {
             mainButtonLayout.Children.Add(_clearImage);
-            mainButtonLayout.SetColumn(_clearImage, 2);
+            mainButtonLayout.SetColumn(_clearImage, 1);
         }
-
         CreatePopupView(mainButtonLayout);
-        
+
         // Placeholder management
         // ----------------------------------------------------------------------------
         PropertyChanged += (_, e) => {
             switch (e.PropertyName) {
-            case nameof(SelectedItem):
-            case nameof(Placeholder):
-                selectedItemLabel.Text = SelectedItem?.ToString() ?? Placeholder ?? string.Empty;
-                break;
-
             case nameof(DropdownSeparator):
                 OnPropertyChanged(nameof(DropdownSeparatorVisibility));
                 break;
@@ -252,7 +286,7 @@ public class PopupSelector : ContentView, IDisposable {
     /// <param name="isOpen">A boolean value indicating whether the dropdown is open (true) or closed (false).</param>
     private void SetDropDownImage(bool isOpen) {
         try {
-            if (isOpen)  OnPopup?.Invoke(this, new PopupSelectorEventArgs(SelectedItem));
+            if (isOpen) OnPopup?.Invoke(this, new PopupSelectorEventArgs(SelectedItem));
             if (!isOpen) OnClosing?.Invoke(this, new PopupSelectorEventArgs(SelectedItem));
             _arrowImage.Source = isOpen ? DropdownOpenImageSource : DropdownClosedImageSource;
             if (DropdownImageTint != null) {
@@ -333,21 +367,21 @@ public class PopupSelector : ContentView, IDisposable {
             var picker = new Picker {
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
+                WidthRequest = WidthRequest,
+                Margin = new Thickness(10,0,0,0),
                 ItemsSource = items,
                 SelectedItem = SelectedItem,
                 Title = Placeholder ?? "Select an option",
-                IsVisible = false 
+                IsVisible = false
             };
             picker.SetBinding(Picker.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
             picker.SetBinding(Picker.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
             picker.SetBinding(Picker.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
             picker.SetBinding(Picker.BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
-
+            
             if (mainButtonLayout is not null && selectedItemLabel is not null) {
                 selectedItemLabel.IsVisible = false;
-                mainButtonLayout.Children.Add(picker);
-                mainButtonLayout.SetColumn(picker, 1);
-
+                mainLayoutBox.Content = picker;
                 picker.IsVisible = true; // Show it visually
                 picker.Unfocused += OnPickerUnfocused;
                 picker.Focus();
@@ -355,7 +389,7 @@ public class PopupSelector : ContentView, IDisposable {
                 void OnPickerUnfocused(object? sender, FocusEventArgs e) {
                     SelectedItem = picker.SelectedItem;
                     picker.Unfocused -= OnPickerUnfocused;
-                    mainButtonLayout.Children.Remove(picker);
+                    mainLayoutBox.Content = selectedItemLabel;
                     selectedItemLabel.IsVisible = true;
                 }
             } else {
@@ -560,7 +594,7 @@ public class PopupSelector : ContentView, IDisposable {
         get => (bool)GetValue(ShowClearFieldImageProperty);
         set => SetValue(ShowClearFieldImageProperty, value);
     }
-    
+
     /// <summary>
     ///     Gets or sets the image source used to represent the closed state of the dropdown.
     /// </summary>
@@ -621,5 +655,22 @@ public static class ViewExtensions {
             parent = parent.Parent as VisualElement;
         }
         return new Rect(x, y, element?.Width ?? 0, element?.Height ?? 0);
+    }
+}
+
+public class SelectedItemToDisplayTextConverter : IMultiValueConverter {
+    public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
+        if (values?.Length >= 2) {
+            var selectedItem = values[0];
+            var placeholder = values[1] as string;
+
+            var selectedText = selectedItem?.ToString();
+            return string.IsNullOrWhiteSpace(selectedText) ? (placeholder ?? string.Empty) : selectedText;
+        }
+        return string.Empty;
+    }
+
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
+        throw new NotImplementedException();
     }
 }

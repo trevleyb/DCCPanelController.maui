@@ -11,12 +11,13 @@ public class EditableOpacity(string label, string description = "", int order = 
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
             cell.HorizontalOptions = LayoutOptions.Start;
-            var dataCell = new Entry {
+            var dataCell = new Label {
                 BindingContext = owner,
                 VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Start,
                 WidthRequest = 75,
                 HeightRequest = 30,
-                Margin = new Thickness(10, 0, 10, 0),
+                Margin = new Thickness(10, 10, 10, 0),
                 Text = ConvertOpacityToPercentage((double)(info?.GetValue(owner) ?? 0.00))
             };
             
@@ -28,13 +29,11 @@ public class EditableOpacity(string label, string description = "", int order = 
                 HorizontalOptions = LayoutOptions.End,
             };
             stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info?.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            
             stepperUpDown.ValueChanged += (s, e) => {
                 dataCell.Text = dataCell.Text = ConvertOpacityToPercentage(stepperUpDown.Value);
                 var testValue = (int)(stepperUpDown.Value * 100); 
                 SetModified(testValue != originalValue);
             };
-            
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);

@@ -1,21 +1,35 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
-public class EditableID(string label, string description = "", int order = 0, string? group = null)
+public class EditableID(string label, string description = "", int order = 0, string? group = null, int width = 300)
     : EditableProperty(label, description, order, group), IEditableProperty {
     private IEntityID? _entity;
 
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             _entity = owner as IEntityID;
+            var box = new Border() {
+                Margin = new Thickness(5, 5, 5, 5),
+                WidthRequest = width,
+                HeightRequest = 30,
+                HorizontalOptions = LayoutOptions.Start,
+                VerticalOptions = LayoutOptions.Center,
+                BackgroundColor = Colors.Transparent,
+                StrokeThickness = 1,
+                Stroke = new SolidColorBrush((Color?)Application.Current?.Resources["Primary"] ?? Colors.Black),
+                StrokeShape = new RoundRectangle {
+                    CornerRadius = new CornerRadius(10) // All corners rounded with radius 10
+                }
+            };
             var cell = new Entry {
                 Margin = new Thickness(5, 5, 5, 5),
                 Placeholder = "Unique ID",
                 Keyboard = Keyboard.Text,
-                WidthRequest = 100,
+                WidthRequest = 300,
                 HeightRequest = 25,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
@@ -24,7 +38,8 @@ public class EditableID(string label, string description = "", int order = 0, st
             cell.TextChanged += CellOnTextChanged;
             cell.Completed += CellOnCompleted;
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            return CreateGroupCell(cell);
+            box.Content = cell;
+            return CreateGroupCell(box);
         } catch (Exception e) {
             Console.WriteLine($"Unable to create a String:  {e.Message}");
             return null;

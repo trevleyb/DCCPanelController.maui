@@ -209,8 +209,8 @@
             
             <!-- Loading Overlay -->
             <Grid IsVisible="{Binding IsLoading}"
-                  BackgroundColor="Gray"
-                  Opacity="0.5"
+                  BackgroundColor="WhiteSmoke"
+                  Opacity="0.75"
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
 
