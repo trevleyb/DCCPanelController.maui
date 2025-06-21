@@ -206,6 +206,9 @@
         <MauiXaml Update="View\Components\TileSelectorPanel.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
+        <MauiXaml Update="View\Settings\Simulator\SimulatorSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
     </ItemGroup>
 
     <ItemGroup>
@@ -328,6 +331,10 @@
         </Compile>
         <Compile Update="View\Components\TileSelectorPanelViewModel.cs">
           <DependentUpon>TileSelectorPanel.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\Settings\Simulator\SimulatorSettingsView.xaml.cs">
+          <DependentUpon>JmriSettingsView.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

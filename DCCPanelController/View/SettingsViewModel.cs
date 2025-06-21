@@ -21,6 +21,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     
     [ObservableProperty] private bool _isJmriServer;
     [ObservableProperty] private bool _isWiThrottle;
+    [ObservableProperty] private bool _isSimulator;
     public Models.DataModel.Settings Settings => Profile.Settings;
 
     public SettingsPageViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) { }

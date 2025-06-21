@@ -2,10 +2,12 @@ using System.ComponentModel;
 using CommunityToolkit.Maui.Storage;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Jmri;
+using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Clients.WiThrottle;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
+using DCCPanelController.View.Settings.Simulator;
 using DCCPanelController.View.Settings.WiThrottle;
 
 namespace DCCPanelController.View;
@@ -20,10 +22,18 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         BindingContext = _pageViewModel;
         PropertyChanged += OnPropertyChanged;
         InitializeComponent();
-        
+
         switch (_pageViewModel?.Settings?.ClientSettings?.Type) {
+        case DccClientType.Simulator:
+            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _pageViewModel?.Settings?.ClientSettings);
+            _pageViewModel!.IsSimulator = true;
+            _pageViewModel!.IsJmriServer = false;
+            _pageViewModel!.IsWiThrottle = false;
+            break;
+
         case DccClientType.Jmri:
             CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _pageViewModel?.Settings?.ClientSettings);
+            _pageViewModel!.IsSimulator = false;
             _pageViewModel!.IsJmriServer = true;
             _pageViewModel!.IsWiThrottle = false;
             break;
@@ -31,10 +41,12 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         case DccClientType.WiThrottle:
             CheckSettingsCache<JmriSettings>(DccClientType.WiThrottle, _pageViewModel?.Settings?.ClientSettings);
             _pageViewModel!.IsJmriServer = false;
+            _pageViewModel!.IsSimulator = false;
             _pageViewModel!.IsWiThrottle = true;
             break;
 
         default:
+            _pageViewModel!.IsSimulator = true;
             _pageViewModel!.IsJmriServer = false;
             _pageViewModel!.IsWiThrottle = false;
             break;
@@ -122,11 +134,15 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is {IsJmriServer: true} ) LoadSettingsPage();
+        if (_pageViewModel is { IsJmriServer: true }) LoadSettingsPage();
     }
 
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is {IsWiThrottle: true} ) LoadSettingsPage();
+        if (_pageViewModel is { IsWiThrottle: true }) LoadSettingsPage();
+    }
+
+    private void CheckChanged_Simulator(object? sender, CheckedChangedEventArgs e) {
+        if (_pageViewModel is { IsSimulator: true }) LoadSettingsPage();
     }
 
     private void LoadSettingsPage() {
@@ -140,7 +156,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         } else if (_pageViewModel.IsWiThrottle) {
             _pageViewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle);
             view = new WiThrottleSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);
+        } else if (_pageViewModel.IsSimulator) {
+            _pageViewModel.Settings.ClientSettings = CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator);
+            view = new SimulatorSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);            
         }
+
         if (view is not null) SettingsView.Content = view;
         _pageViewModel.SetCapabilities();
     }

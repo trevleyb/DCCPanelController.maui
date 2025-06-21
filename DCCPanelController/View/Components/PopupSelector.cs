@@ -27,7 +27,7 @@ public class PopupSelector : ContentView, IDisposable {
     private Image _clearImage = new();
     private readonly Border _popupContainer = new();
     private bool _isLoaded = false;
-    private Border mainLayoutBox;
+    private Border? mainLayoutBox;
     private Grid? mainButtonLayout;
     private Label? selectedItemLabel;
 
@@ -379,7 +379,7 @@ public class PopupSelector : ContentView, IDisposable {
             picker.SetBinding(Picker.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
             picker.SetBinding(Picker.BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
             
-            if (mainButtonLayout is not null && selectedItemLabel is not null) {
+            if (mainButtonLayout is not null && mainLayoutBox is not null && selectedItemLabel is not null) {
                 selectedItemLabel.IsVisible = false;
                 mainLayoutBox.Content = picker;
                 picker.IsVisible = true; // Show it visually

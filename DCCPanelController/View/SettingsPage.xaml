@@ -13,11 +13,13 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:services="clr-namespace:DCCPanelController.Services"
     xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
-    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters">
+    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:BoolToChevronConverter x:Key="BoolToChevronConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -30,141 +32,207 @@
         <ScrollView Grid.Row="0">
             <Grid RowDefinitions="auto,auto,*">
                 <StackLayout Margin="10,10,10,10" Grid.Row="0">
-                    <Label Text="Profile Settings:" Margin="10,10,20,0" Style="{StaticResource LargeLabel}"
-                           TextColor="{StaticResource Primary}"/>
-                    <StackLayout Margin="10,10,10,10">
-                        <HorizontalStackLayout>
-                            <Label Text="Profile Name" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
-                                   VerticalOptions="Center" WidthRequest="175"/>
-                            <Border
-                                WidthRequest="180"
-                                HorizontalOptions="Start"
-                                StrokeShape="RoundRectangle 10"
-                                Stroke="{StaticResource Primary}"
-                                Padding="10,0,5,0"
-                                Margin="0,5,0,5"
-                                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                                <Entry Text="{Binding Profile.ProfileName}" HorizontalOptions="Start"
-                                       Style="{StaticResource PanelEntry}"/>
-                            </Border>
-                        </HorizontalStackLayout>
+                    <toolkit:Expander IsExpanded="True" x:Name="ExpanderControl">
+                        <toolkit:Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                        <HorizontalStackLayout>
-                            <Label Text="Background Color" HorizontalOptions="Start"
-                                   Style="{StaticResource MediumLabel}"
-                                   VerticalOptions="Center" WidthRequest="175"/>
-                            <components:ColorPickerButton
-                                AllowsNoColor="true"
-                                HeightRequest="35"
-                                BorderColor="{StaticResource Primary}"
-                                BorderWidth="1"
-                                SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
-                                VerticalOptions="Center"
-                                HorizontalOptions="Start"
-                                WidthRequest="180"/>
-                        </HorizontalStackLayout>
+                                <Image Grid.Column="0"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,0"
+                                       Source="{Binding Source={x:Reference ExpanderControl}, 
+                                       Path=IsExpanded, x:DataType=Expander,
+                                       Converter={StaticResource BoolToChevronConverter}}">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                                    </Image.Behaviors>
+                                </Image>
+                                <Label Grid.Column="1" Text="Profile Settings:" Margin="5,0,10,0"
+                                       Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
+                            </Grid>
+                        </toolkit:Expander.Header>
+                        <toolkit:Expander.Content>
+                            <StackLayout Margin="10,10,10,10">
+                                <HorizontalStackLayout>
+                                    <Label Text="Profile Name" HorizontalOptions="Start"
+                                           Style="{StaticResource MediumLabel}"
+                                           VerticalOptions="Center" WidthRequest="175"/>
 
-                        <HorizontalStackLayout Margin="0,10,0,0">
-                            <Label Text="Automatically Connect?" HorizontalOptions="Start"
-                                   Style="{StaticResource MediumLabel}"
-                                   VerticalOptions="Center" WidthRequest="175"/>
-                            <Switch IsToggled="{Binding Settings.ConnectOnStartup}"
-                                    OnColor="{StaticResource Primary}"
-                                    ThumbColor="{StaticResource Gray200}"/>
-                        </HorizontalStackLayout>
+                                    <Border
+                                        WidthRequest="180"
+                                        HorizontalOptions="Start"
+                                        StrokeShape="RoundRectangle 10"
+                                        Stroke="{StaticResource Primary}"
+                                        Padding="10,0,5,0"
+                                        Margin="0,5,0,5"
+                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
+                                        <Entry Text="{Binding Profile.ProfileName}" HorizontalOptions="Start"
+                                               Style="{StaticResource PanelEntry}"/>
+                                    </Border>
+                                </HorizontalStackLayout>
 
-                        <HorizontalStackLayout Margin="0,10,0,0">
-                            <Label Text="Set Turnouts on Connect?" HorizontalOptions="Start"
-                                   Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="175"/>
-                            <Switch IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
-                                    OnColor="{StaticResource Primary}"
-                                    ThumbColor="{StaticResource Gray200}"/>
-                        </HorizontalStackLayout>
+                                <HorizontalStackLayout>
+                                    <Label Text="Background Color" HorizontalOptions="Start"
+                                           Style="{StaticResource MediumLabel}"
+                                           VerticalOptions="Center" WidthRequest="175"/>
+                                    <components:ColorPickerButton
+                                        AllowsNoColor="true"
+                                        HeightRequest="35"
+                                        BorderColor="{StaticResource Primary}"
+                                        BorderWidth="1"
+                                        SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
+                                        VerticalOptions="Center"
+                                        HorizontalOptions="Start"
+                                        WidthRequest="180"/>
+                                </HorizontalStackLayout>
 
+                                <HorizontalStackLayout Margin="0,10,0,0">
+                                    <Label Text="Automatically Connect?" HorizontalOptions="Start"
+                                           Style="{StaticResource MediumLabel}"
+                                           VerticalOptions="Center" WidthRequest="175"/>
+                                    <Switch IsToggled="{Binding Settings.ConnectOnStartup}"
+                                            OnColor="{StaticResource Primary}"
+                                            ThumbColor="{StaticResource Gray200}"/>
+                                </HorizontalStackLayout>
 
-                    </StackLayout>
+                                <HorizontalStackLayout Margin="0,10,0,0">
+                                    <Label Text="Set Turnouts on Connect?" HorizontalOptions="Start"
+                                           Style="{StaticResource MediumLabel}" VerticalOptions="Center"
+                                           WidthRequest="175"/>
+                                    <Switch IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
+                                            OnColor="{StaticResource Primary}"
+                                            ThumbColor="{StaticResource Gray200}"/>
+                                </HorizontalStackLayout>
 
+                                <HorizontalStackLayout Margin="0,10,0,0">
+                                    <Label Text="Enable Click Sounds?" HorizontalOptions="Start"
+                                           Style="{StaticResource MediumLabel}" VerticalOptions="Center"
+                                           WidthRequest="175"/>
+                                    <Switch IsToggled="{Binding Settings.UseClickSounds}"
+                                            OnColor="{StaticResource Primary}"
+                                            ThumbColor="{StaticResource Gray200}"/>
+                                </HorizontalStackLayout>
+
+                            </StackLayout>
+                        </toolkit:Expander.Content>
+                    </toolkit:Expander>
                     <BoxView Margin="10,10,20,10"
                              BackgroundColor="{StaticResource Primary}"
                              HeightRequest="1"
                              HorizontalOptions="FillAndExpand"/>
                 </StackLayout>
 
-                <StackLayout Margin="20,0,0,0" Grid.Row="1" HeightRequest="120">
-                    <Label
-                        Text="Server Connection Details:"
-                        Style="{StaticResource LargeLabel}"
-                        TextColor="{StaticResource Primary}"/>
-                        <HorizontalStackLayout Margin="-3,0,0,0">
-                            <RadioButton Value="jmri"
-                                         GroupName="ServerType"
-                                         Content="JMRI Server"
-                                         IsChecked="{Binding IsJmriServer}"
-                                         CheckedChanged="CheckChanged_Jmri"/>
-                            <RadioButton Value="withrottle"
-                                         GroupName="ServerType"
-                                         Content="WiThrottle Server"
-                                         IsChecked="{Binding IsWiThrottle}"
-                                         CheckedChanged="CheckChanged_WiThrottle"/>
-                        </HorizontalStackLayout>
+                <StackLayout Margin="10,0,10,0" Grid.Row="1" HeightRequest="120">
+                    <toolkit:Expander IsExpanded="True" x:Name="ConnectionExpander" Margin="0,0,10,0">
+                        <toolkit:Expander.Header>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
 
-                        <StackLayout>
-                            <Label Margin="10,0,0,0" Text="Server Capabilities" Style="{StaticResource MicroLabel}"/>
-                            <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}"
-                                            Margin="10,0,30,0">
-                                <CollectionView.ItemsLayout>
-                                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
-                                </CollectionView.ItemsLayout>
+                                <Image Grid.Column="0"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="Center"
+                                       Margin="0,0,0,0"
+                                       Source="{Binding Source={x:Reference ConnectionExpander}, 
+                                       Path=IsExpanded, x:DataType=Expander,
+                                       Converter={StaticResource BoolToChevronConverter}}">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                                    </Image.Behaviors>
+                                </Image>
+                                <Label Grid.Column="1" Text="Server Connection Details:" Margin="5,0,10,0"
+                                       Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
+                            </Grid>
+                        </toolkit:Expander.Header>
+                        
+                        <toolkit:Expander.Content>
+                            <StackLayout Margin="0,10,0,0">
+                                <HorizontalStackLayout Margin="-5,0,0,0">
+                                    <RadioButton Value="jmri"
+                                                 GroupName="ServerType"
+                                                 Content="JMRI Server"
+                                                 IsChecked="{Binding IsJmriServer}"
+                                                 CheckedChanged="CheckChanged_Jmri"/>
+                                    <RadioButton Value="withrottle"
+                                                 GroupName="ServerType"
+                                                 Content="WiThrottle Server"
+                                                 IsChecked="{Binding IsWiThrottle}"
+                                                 CheckedChanged="CheckChanged_WiThrottle"/>
+                                    <RadioButton Value="simulator"
+                                                 GroupName="ServerType"
+                                                 Content="Simulator"
+                                                 IsChecked="{Binding IsSimulator}"
+                                                 CheckedChanged="CheckChanged_Simulator"/>
+                                </HorizontalStackLayout>
 
-                                <CollectionView.ItemTemplate>
-                                    <DataTemplate x:DataType="helpers:CapabilityIcon">
-                                        <Grid RowDefinitions="auto,15">
-                                            <!-- Stroke="{Binding IsAvailable, Converter={StaticResource BoolToColorConverter}}" -->
-                                            <Border StrokeShape="RoundRectangle 5"
-                                                    StrokeThickness="0.5">
-                                                <Border.BackgroundColor>
-                                                    <Binding Path="IsAvailable">
-                                                        <Binding.Converter>
-                                                            <converters:BoolToColorConverter
-                                                                TrueColor="Transparent"
-                                                                FalseColor="GhostWhite"/>
-                                                        </Binding.Converter>
-                                                    </Binding>
-                                                </Border.BackgroundColor>
-                                                <Border.Stroke>
-                                                    <Binding Path="IsAvailable">
-                                                        <Binding.Converter>
-                                                            <converters:BoolToColorConverter
-                                                                TrueColor="{StaticResource Primary}"
-                                                                FalseColor="LightGray"/>
-                                                        </Binding.Converter>
-                                                    </Binding>
-                                                </Border.Stroke>
-                                            </Border>
+                                <StackLayout>
+                                    <Label Margin="10,0,0,0" Text="Server Capabilities"
+                                           Style="{StaticResource MicroLabel}"/>
+                                    <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}"
+                                                    Margin="10,0,30,0">
+                                        <CollectionView.ItemsLayout>
+                                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+                                        </CollectionView.ItemsLayout>
 
-                                            <Image Source="{Binding IconSource}" WidthRequest="24" HeightRequest="24"
-                                                   Aspect="AspectFit"/>
+                                        <CollectionView.ItemTemplate>
+                                            <DataTemplate x:DataType="helpers:CapabilityIcon">
+                                                <Grid RowDefinitions="auto,15">
+                                                    <!-- Stroke="{Binding IsAvailable, Converter={StaticResource BoolToColorConverter}}" -->
+                                                    <Border StrokeShape="RoundRectangle 5"
+                                                            StrokeThickness="0.5">
+                                                        <Border.BackgroundColor>
+                                                            <Binding Path="IsAvailable">
+                                                                <Binding.Converter>
+                                                                    <converters:BoolToColorConverter
+                                                                        TrueColor="Transparent"
+                                                                        FalseColor="GhostWhite"/>
+                                                                </Binding.Converter>
+                                                            </Binding>
+                                                        </Border.BackgroundColor>
+                                                        <Border.Stroke>
+                                                            <Binding Path="IsAvailable">
+                                                                <Binding.Converter>
+                                                                    <converters:BoolToColorConverter
+                                                                        TrueColor="{StaticResource Primary}"
+                                                                        FalseColor="LightGray"/>
+                                                                </Binding.Converter>
+                                                            </Binding>
+                                                        </Border.Stroke>
+                                                    </Border>
 
-                                            <Label Grid.Row="1" LineBreakMode="MiddleTruncation"
-                                                   Text="{Binding Capability}"
-                                                   VerticalOptions="Center" HorizontalOptions="Center"
-                                                   FontFamily="OpenSansLight" FontSize="9">
-                                                <Label.TextColor>
-                                                    <Binding Path="IsAvailable">
-                                                        <Binding.Converter>
-                                                            <converters:BoolToColorConverter
-                                                                TrueColor="{StaticResource Black}"
-                                                                FalseColor="Gray"/>
-                                                        </Binding.Converter>
-                                                    </Binding>
-                                                </Label.TextColor>
+                                                    <Image Source="{Binding IconSource}" WidthRequest="24"
+                                                           HeightRequest="24"
+                                                           Aspect="AspectFit"/>
 
-                                            </Label>
-                                        </Grid>
-                                    </DataTemplate>
-                                </CollectionView.ItemTemplate>
-                            </CollectionView>
-                        </StackLayout>
+                                                    <Label Grid.Row="1" LineBreakMode="MiddleTruncation"
+                                                           Text="{Binding Capability}"
+                                                           VerticalOptions="Center" HorizontalOptions="Center"
+                                                           FontFamily="OpenSansLight" FontSize="9">
+                                                        <Label.TextColor>
+                                                            <Binding Path="IsAvailable">
+                                                                <Binding.Converter>
+                                                                    <converters:BoolToColorConverter
+                                                                        TrueColor="{StaticResource Black}"
+                                                                        FalseColor="Gray"/>
+                                                                </Binding.Converter>
+                                                            </Binding>
+                                                        </Label.TextColor>
+
+                                                    </Label>
+                                                </Grid>
+                                            </DataTemplate>
+                                        </CollectionView.ItemTemplate>
+                                    </CollectionView>
+                                </StackLayout>
+                            </StackLayout>
+                        </toolkit:Expander.Content>
+                        </toolkit:Expander>
                 </StackLayout>
 
                 <ScrollView Margin="0,20,0,0" Grid.Row="2" VerticalScrollBarVisibility="Always"
@@ -172,6 +240,7 @@
                     <ContentView x:Name="SettingsView"/>
                 </ScrollView>
             </Grid>
+
         </ScrollView>
         <Button Grid.Row="1"
                 Command="{Binding SaveSettingsCommand}"
