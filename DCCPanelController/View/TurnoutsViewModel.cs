@@ -36,7 +36,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private bool _isAscending;
     private string _sortColumn = "";
 
-    public bool IsSupported { get; private set; }
+    public bool IsSupported { get; set; }
     public bool IsNotSupported => !IsSupported;
 
     public double ScreenHeight = 100;

@@ -1,3 +1,4 @@
+using DCCPanelController.Clients;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
@@ -13,8 +14,12 @@ public partial class TurnoutsPage : ContentPage {
         _viewModel.Navigation = Navigation;
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();
+    }
 
-        //MainStackLayout.Padding = new Thickness(safeInsets.Left, safeInsets.Top, safeInsets.Right, 0);
+    protected override void OnAppearing() {
+        base.OnAppearing();
+        _viewModel.IsSupported = _viewModel.Profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        _viewModel.CanAddTurnout = _viewModel.Profile?.Settings?.ClientSettings?.SupportsManualEntries == true && _viewModel.IsSupported;
     }
 
     protected override void OnSizeAllocated(double width, double height) {

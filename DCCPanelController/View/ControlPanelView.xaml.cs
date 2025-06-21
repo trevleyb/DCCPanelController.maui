@@ -263,7 +263,7 @@ public partial class ControlPanelView {
         foreach (var child in children) {
             child.GestureRecognizers.Clear();
             DynamicGrid.Remove(child);
-            if (child is TrackTile trackTile) PathTracer.RegisterTile(trackTile);
+            if (child is TrackTile trackTile) PathTracer.UnregisterTile(trackTile);
         }
     }
 

@@ -169,40 +169,79 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <CollectionView x:Name="PanelsCollectionView"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedPanel}"
-                        ItemsSource="{Binding Panels}"
-                        Margin="10">
+        <Grid>
+            <CollectionView x:Name="PanelsCollectionView"
+                            IsEnabled="{Binding IsNotLoading}"
+                            SelectionMode="Single"
+                            SelectedItem="{Binding SelectedPanel}"
+                            ItemsSource="{Binding Panels}"
+                            Margin="10">
 
-            <CollectionView.EmptyView>
-                <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
-                    <StackLayout HorizontalOptions="Fill" VerticalOptions="Center">
-                        <Label Style="{StaticResource LargeLabel}" HorizontalOptions="Center"
-                               Text="No Panels were found."/>
-                        <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0">
-                            <Label Style="{StaticResource MediumLabel}" Text="Please use" VerticalOptions="Center"/>
-                            <ImageButton
-                                Command="{Binding AddPanelCommand}"
-                                Margin="-5,0,-5,0"
-                                Scale="0.50"
-                                Source="plus_circle.png">
-                                <Image.Behaviors>
-                                    <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
-                                </Image.Behaviors>
-                            </ImageButton>
-                            <Label
-                                Style="{StaticResource MediumLabel}"
-                                Text="to add a new Panel."
-                                VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
-                    </StackLayout>
-                </Grid>
-            </CollectionView.EmptyView>
+                <CollectionView.EmptyView>
+                    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+                        <StackLayout HorizontalOptions="Fill" VerticalOptions="Center">
+                            <Label Style="{StaticResource LargeLabel}" HorizontalOptions="Center"
+                                   Text="No Panels were found."/>
+                            <HorizontalStackLayout HorizontalOptions="Center" Margin="0,10,0,0">
+                                <Label Style="{StaticResource MediumLabel}" Text="Please use" VerticalOptions="Center"/>
+                                <ImageButton
+                                    Command="{Binding AddPanelCommand}"
+                                    Margin="-5,0,-5,0"
+                                    Scale="0.50"
+                                    Source="plus_circle.png">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                                    </Image.Behaviors>
+                                </ImageButton>
+                                <Label
+                                    Style="{StaticResource MediumLabel}"
+                                    Text="to add a new Panel."
+                                    VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
+                        </StackLayout>
+                    </Grid>
+                </CollectionView.EmptyView>
 
-            <CollectionView.ItemsLayout>
-                <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1"/>
-            </CollectionView.ItemsLayout>
-        </CollectionView>
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1"/>
+                </CollectionView.ItemsLayout>
+            </CollectionView>
+            
+            <!-- Loading Overlay -->
+            <Grid IsVisible="{Binding IsLoading}"
+                  BackgroundColor="Gray"
+                  Opacity="0.5"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
+
+                <ActivityIndicator IsRunning="{Binding IsLoading}"
+                                   Color="{StaticResource Primary}"
+                                   HeightRequest="48"
+                                   WidthRequest="48"/>
+
+                <!-- <Border BackgroundColor="Transparent" -->
+                <!--         StrokeShape="RoundRectangle 10" -->
+                <!--         Stroke="Gray" -->
+                <!--         StrokeThickness="1" -->
+                <!--         HorizontalOptions="Center" -->
+                <!--         VerticalOptions="Center" -->
+                <!--         WidthRequest="200" -->
+                <!--         HeightRequest="120" -->
+                <!--         Padding="20"> -->
+                <!--      -->
+                <!--     <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15"> -->
+                <!--         <ActivityIndicator IsRunning="{Binding IsLoading}" -->
+                <!--                            Color="{StaticResource Primary}" -->
+                <!--                            HeightRequest="40" -->
+                <!--                            WidthRequest="40"/> -->
+                <!--         <Label Text="Loading Panel Editor..." -->
+                <!--                HorizontalOptions="Center" -->
+                <!--                FontSize="24" -->
+                <!--                TextColor="Black"/> -->
+                <!--     </StackLayout> -->
+                <!-- </Border> -->
+            </Grid>
+
+        </Grid>
     </ContentPage.Content>
 </ContentPage>

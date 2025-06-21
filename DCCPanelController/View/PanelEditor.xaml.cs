@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
 using Plugin.Maui.Audio;
 
@@ -16,9 +17,10 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(panel, Navigation, GetThumbnailImage);
-        _viewModel.GridVisible = true;
-        _viewModel.EditMode = EditModeEnum.Move;
+        _viewModel = new PanelEditorViewModel(panel, Navigation, GetThumbnailImage) {
+            GridVisible = true,
+            EditMode = EditModeEnum.Move
+        };
 
         _viewModel.PropertyChanged   += ViewModelOnPropertyChanged;
         _viewModel.OnBeginPushModal  += OnBeginPushModal; // Subscribe to the custom event
@@ -26,7 +28,7 @@ public partial class PanelEditor : ContentPage {
         _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
         PanelView.TileSelected       += PanelViewOnTileSelected;
         PanelView.TileChanged        += PanelViewOnTileChanged;
-
+        PanelView.TileTapped         += PanelViewOnTileTapped;
         BindingContext = _viewModel;
     }
 
@@ -76,10 +78,19 @@ public partial class PanelEditor : ContentPage {
             _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
             PanelView.TileSelected       -= PanelViewOnTileSelected;
             PanelView.TileChanged        -= PanelViewOnTileChanged;
-            
+            PanelView.TileTapped         -= PanelViewOnTileTapped;
             _closeTcs.TrySetResult(true); // or return data as needed
         }
         base.OnNavigatedFrom(args);
+    }
+    
+    private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
+        if (BindingContext is PanelEditorViewModel viewModel) {
+            if (e.Tile is ITileInteractive { } tile) {
+                if (e.IsSingleTap) await tile.Interact(null);
+                if (e.IsDoubleTap) await tile.Secondary(null);
+            }
+        }
     }
 
     private void ViewModelOnForcePanelRefresh() {

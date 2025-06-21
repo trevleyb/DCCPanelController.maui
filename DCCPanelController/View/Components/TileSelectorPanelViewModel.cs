@@ -14,13 +14,13 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
 
     private const int BorderMargin = 5;
     private const int IconMargin = 5;
-    private const int DefaultSelectorWidth = 72;
+    private const int DefaultSelectorWidth = 100;
     
-    [ObservableProperty] private double _borderSize = 32;
-    [ObservableProperty] private double _iconSize = 32;
-    [ObservableProperty] private double _gridSize = 32;
+    [ObservableProperty] private double _borderSize = 48;
+    [ObservableProperty] private double _iconSize = 48;
+    [ObservableProperty] private double _gridSize = 48;
 
-    [ObservableProperty] private double _selectorWidth = 64; // Default width
+    [ObservableProperty] private double _selectorWidth = 108; // Default width
     [ObservableProperty] private int _columnCount = 1;
     [ObservableProperty] private double _columnSpacing = 4;
     
@@ -39,7 +39,7 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
         set {
             field = value;
             if (field is not null) {
-                SelectorWidth = field?.Panels?.Profile?.Settings?.SelectorWidth ?? DefaultSelectorWidth;
+                //SelectorWidth = field?.Panels?.Profile?.Settings?.SelectorWidth ?? DefaultSelectorWidth;
                 UpdateLayout();
             }
         }
@@ -51,8 +51,8 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
     }
 
     private void UpdateLayout() {
-        const double minWidth = 32;
-        const double maxTileSize = 64; // 2x minimum
+        const double minWidth = 48;
+        const double maxTileSize = 96; // 2x minimum
         
         // Ensure minimum width
         if (SelectorWidth < minWidth) {

@@ -15,12 +15,17 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Panel? _selectedPanel;
 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsNotLoading))]
+    private bool _isLoading;
+
     public INavigation? NavigationService;
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
     public bool ShowThumbnail => false;
     public bool ShowLivePanel => !ShowThumbnail;
-    
+    public bool IsNotLoading => !IsLoading;
+
     public PanelViewerViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
         ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
         Panels = Profile.Panels;
@@ -103,10 +108,19 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     public async Task EditPanelAsync() {
-        if (SelectedPanel is { } panel && NavigationService is { } navigation) {
-            var editorPage = new PanelEditor(panel);
-            await navigation.PushAsync(editorPage);
-            await editorPage.PageClosed;
+        try {
+            if (SelectedPanel is { } panel && NavigationService is { } navigation) {
+                IsLoading = true;
+                await Task.Delay(100);
+
+                var editorPage = new PanelEditor(panel);
+                await navigation.PushAsync(editorPage);
+                await editorPage.PageClosed;
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error loading Panel Editor: {ex.Message}");
+        } finally {
+            IsLoading = false;
         }
     }
 
@@ -126,7 +140,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             Console.WriteLine("Properties view dismissed.");
         }
     }
-    
+
     #region Drag and Drop Support for Panels
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {
