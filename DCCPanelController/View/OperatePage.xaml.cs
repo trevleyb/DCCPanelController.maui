@@ -41,15 +41,9 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
-            var primaryActioned = false;
-            var secondaryActioned = false;
             if (e.Tile is ITileInteractive { } tile) {
-                if (e.IsSingleTap) primaryActioned = await tile.Interact(viewModel.ConnectionService);
-                if (e.IsDoubleTap) secondaryActioned = await tile.Secondary(viewModel.ConnectionService);
-            }
-            if (e.Tile is ITileTrack && !primaryActioned) { }
-            if (e.Tile is ITileTrack && !secondaryActioned) {
-                Console.WriteLine("We need to add code to set the Path");
+                if (e.IsSingleTap) await tile.Interact(viewModel.ConnectionService);
+                if (e.IsDoubleTap) await tile.Secondary(viewModel.ConnectionService);
             }
         }
     }

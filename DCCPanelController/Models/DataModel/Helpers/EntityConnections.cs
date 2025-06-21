@@ -140,7 +140,7 @@ public class EntityConnections {
         // Straight tracks - base orientation E-W
         public static EntityConnections StraightTrack               => new("**S***S*");             
         public static EntityConnections StraightContinuationTrack   => new("**C***S*"); 
-        public static EntityConnections CornerTrack                 => new("*S*****S*");               
+        public static EntityConnections CornerTrack                 => new("*S****S*");               
         public static EntityConnections CornerContinuationTrack     => new("*C****S*");   
         public static EntityConnections CrossingTrack               => new("S*S*S*S*");              
         public static EntityConnections TerminatorTrack             => new("**T***S*");           

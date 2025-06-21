@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
@@ -7,20 +8,17 @@ using SkiaSharp.Views.Maui.Controls;
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public partial class SvgImage : ObservableObject {
-    //[ObservableProperty] private SvgConnections _connections = SvgConnections.NoConnections;
     [ObservableProperty] private string _filename = string.Empty;
-    private SvgImageManager? _imageManager;
     [ObservableProperty] private int _rotation;
 
-    //public SvgImage(string filename, int rotation, SvgConnections connections) {
     public SvgImage(string filename, int rotation) {
         Filename = filename;
         Rotation = rotation;
-        //Connections = connections;
-        _imageManager = new SvgImageManager(filename);
+        ImageManager = new SvgImageManager(filename);
     }
 
-    private SvgImageManager ImageManager => _imageManager ??= new SvgImageManager(Filename);
+    [field: AllowNull, MaybeNull] 
+    private SvgImageManager ImageManager => field ??= new SvgImageManager(Filename);
 
     public ImageSource AsImageSource(int rotation = 0, float scale = 1.0f) {
         return ImageManager.AsImageSource(rotation, scale);

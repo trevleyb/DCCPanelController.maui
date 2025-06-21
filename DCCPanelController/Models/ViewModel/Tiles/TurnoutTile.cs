@@ -10,15 +10,13 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public abstract class TurnoutTile : TrackTile, ITileInteractive {
     protected TurnoutTile(TurnoutEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TurnoutEntity.State));
-        if (Entity is TurnoutEntity turnoutEntity && turnoutEntity.Turnout is {} turnout) {
-            turnout.PropertyChanged += (sender, args) => {
-                turnoutEntity.State = turnout.State;
-            };
+        if (Entity is TurnoutEntity turnoutEntity && turnoutEntity.Turnout is { } turnout) {
+            turnout.PropertyChanged += (sender, args) => { turnoutEntity.State = turnout.State; };
         }
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (connectionService is not null && Entity is TurnoutEntity { Turnout: not null } turnout) {
+        if (Entity is TurnoutEntity { } turnout) {
             if (UseClickSounds) await ClickSounds.PlayTurnoutClickSoundAsync();
             var newState = turnout.State switch {
                 TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
@@ -27,9 +25,9 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 _                        => TurnoutStateEnum.Unknown
             };
             turnout.SetState(newState, StateChangeSource.Internal);
-            if (connectionService.Client is { } client) {
+            if (connectionService?.Client is { } client && turnout.Turnout is not null) {
                 await client.SendTurnoutCmdAsync(turnout.Turnout, newState != TurnoutStateEnum.Closed);
-            }
+            } 
             return true;
         }
         return false;
@@ -40,7 +38,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
-        if (Entity is TurnoutEntity { Turnout: not null } turnout) {
+        if (Entity is TurnoutEntity turnout) {
             var imageName = turnout.State switch {
                 TurnoutStateEnum.Unknown => trackName + "Unknown",
                 TurnoutStateEnum.Closed  => trackName + "Straight",

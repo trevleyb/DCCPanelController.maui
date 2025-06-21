@@ -9,7 +9,7 @@ public static class SvgImages {
 
     private static readonly Lock LockObject = new();
     private static readonly List<string> AvailableSymbols;
-    private static readonly Dictionary<string, Dictionary<int, SvgReference>> Images = new();
+    private static readonly Dictionary<string, (string straight, string diagonal)> Images = new();
 
     static SvgImages() {
         AvailableSymbols = BuildAvailableSymbols();
@@ -49,9 +49,9 @@ public static class SvgImages {
         AddImage("Terminator", "Track_Straight_Terminator", "Track_Angle_Terminator");
 
         AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "Track_Angle_Continuation_Arrow");
-        AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines","Track_Angle_Continuation_Lines");
+        AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "Track_Angle_Continuation_Lines");
 
-        AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow","Track_Corner_Right_Continuation_Arrow");
+        AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "Track_Corner_Right_Continuation_Arrow");
         AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "Track_Corner_Right_Continuation_Lines");
 
         AddImage("LeftTurnoutUnknown", "Track_Turnout_Left");
@@ -63,94 +63,29 @@ public static class SvgImages {
         AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging");
     }
 
-    public static int CompassPoints(int direction) {
-        if (direction is >= 0 and < 8) return direction;
-        return direction switch {
-            < 45   => 0,    // North
-            < 90   => 1,    // North-East
-            < 135  => 2,    // East
-            < 180  => 3,    // South East
-            < 225  => 4,    // South
-            < 270  => 5,    // South West
-            < 315  => 6,    // West
-            >= 315 => 7,    // North West
-        };
-    }
-
     public static SvgImage GetImage(string name, int direction = 0) {
-        var reference = GetImageReference(name, direction);
-        if (reference is null) throw new SvgImageException($"***** Image '{name}' not found");
-        return new SvgImage(reference.Filename, reference.Rotation);
+        if (Images.TryGetValue(name.ToLowerInvariant(), out var images)) {
+            
+            // If we are looking for a straight track piece (----) then return it.
+            // -----------------------------------------------------------------------------
+            if (direction % 90 == 0) return new SvgImage(images.straight, direction);
+            
+            // If it is angled, we need, then we need to adjust as all the images have been 
+            // built pointing up / but should be \ so need to add 45 to them to adjust
+            // -----------------------------------------------------------------------------
+            if (direction % 45 == 0) {
+                return new SvgImage(images.diagonal, (direction + 45) % 360);
+            }
+            throw new SvgImageException($"***** Image '{name}' invalid direction provided");
+        }
+        Console.WriteLine($"Could not find the base image of {name}");
+        throw new SvgImageException($"***** Image '{name}' not found");
     }
 
-    private static SvgReference GetImageReference(string name, int rotation) {
-        try {
-            if (!Images.TryGetValue(name.ToLower(), out var imageRoot)) throw new SvgImageException($"Image {name} not found");
-            return imageRoot.Values.Count switch {
-                0 => throw new SvgImageException($"Image {name} has no directional images."),
-                1 => imageRoot[0],
-                _ => imageRoot.TryGetValue(rotation, out var reference) ? reference : imageRoot[0]
-            };
-        } catch (Exception ex) {
-            Console.WriteLine($"Error getting image: {name} @ {rotation}");
-            throw new SvgImageException($"Image {name} has no directional images.");
-        }
-    } 
-
-    /// <summary>
-    ///     Add a non-repeating Image (Button, Image, Circle) etc. These are more used as Icons.
-    /// </summary>
     private static void AddImage(string name, string filename) => AddImage(name, filename, filename);
-
     private static void AddImage(string name, string filenameStraight, string filenameDiagonal) {
-        if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
-        var imageRoot = Images[name.ToLower()];
-
-        // The default starting direction for any tile or entity is East-West. So assume
-        // that we start with a position of (2) East as a rotation angle of 0. 
-        // -----------------------------------------------------------------------------
-        for (var direction = 0; direction < 8; direction ++) {
-            
-            // Key is the rotation that we need to search for this image.
-            // This is the rotation value associated with the track Entity, such as 45
-            // This should then return the correct image
-            // ------------------------------------------------------------------------
-            var key = (direction * 45) % 360;
-            
-            // Rotation is how much this image should be rotated when displayed. 
-            // While we may want the entity at a 45-degree rotation, if it is a angle
-            // image, then the image should actually be at 45 already, so the rotation is 0. 
-            // ------------------------------------------------------------------------
-            var rotation = direction % 2 == 0 ? key : key - 45;
-            var imageToUse = direction % 2 == 0 ? filenameStraight : filenameDiagonal;
-            
-            if (!imageRoot.ContainsKey(key)) {
-                var foundImage = GetFullPathImage(imageToUse);
-                if (string.IsNullOrEmpty(foundImage)) {
-                    Console.WriteLine($"Image {foundImage} not found");
-                    return; // Not found, so don't add it to the list.'
-                }
-                imageRoot.Add(key, new SvgReference(foundImage, rotation));
-            }
-        }
-    }
-
-    
-    private static void AddImage(string name, string filename, int points, int start) {
-        if (!Images.ContainsKey(name.ToLower())) Images.Add(name.ToLower(), new Dictionary<int, SvgReference>());
-        var imageRoot = Images[name.ToLower()];
-        for (var direction = 0; direction < 8; direction += 8 / points) {
-            var key = start + direction * 45;
-            var rotation = direction * 45;
-            if (!imageRoot.ContainsKey(key)) {
-                var foundImage = GetFullPathImage(filename);
-                if (string.IsNullOrEmpty(foundImage)) {
-                    Console.WriteLine($"Image {filename} not found");
-                    return; // Not found, so don't add it to the list.'
-                }
-                imageRoot.Add(key, new SvgReference(foundImage, rotation));
-            }
-        }
+        if (Images.ContainsKey(name.ToLowerInvariant())) return;
+        Images.Add(name.ToLowerInvariant(), (GetFullPathImage(filenameStraight), GetFullPathImage(filenameDiagonal)));
     }
 
     private static string GetFullPathImage(string filename) {
@@ -165,6 +100,4 @@ public static class SvgImages {
         availableSymbols.AddRange(resourceNames.Where(name => name.EndsWith(".svg", StringComparison.OrdinalIgnoreCase)).ToList());
         return availableSymbols ?? throw new ApplicationException("No SVG Symbols for Tracks found in this assembly.");
     }
-
-    private record SvgReference(string Filename, int Rotation);
 }

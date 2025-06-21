@@ -8,6 +8,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.PathFinder;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Layouts;
@@ -27,6 +28,7 @@ public partial class ControlPanelView {
         Resize
     }
 
+    protected PathTracingService PathTracer = new PathTracingService();
     private const int DoubleTapTime = 200;
     private readonly bool _canDragTiles = true;
     private readonly HashSet<ITile> _selectedTiles = [];
@@ -101,7 +103,6 @@ public partial class ControlPanelView {
                            [CallerMemberName] string memberName = "",
                            [CallerFilePath] string sourceFilePath = "",
                            [CallerLineNumber] int sourceLineNumber = 0) {
-        
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -116,7 +117,7 @@ public partial class ControlPanelView {
 
         ClearAllSelectedTiles();
 
-        using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}",false)) {
+        using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}", false)) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
             _viewHeight = _gridSize * Rows;
@@ -149,6 +150,7 @@ public partial class ControlPanelView {
     /// </summary>
     private void AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
+        PathTracer.ClearTileRegistry();
         foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
             AddEntityToGrid(entity);
         }
@@ -165,6 +167,7 @@ public partial class ControlPanelView {
             SetTileGestures(tile);
             SetTileGridPosition(tile);
             DynamicGrid.Children.Add(view);
+            if (tile is TrackTile trackTile) PathTracer.RegisterTile(trackTile);
         }
         return tile;
     }
@@ -181,23 +184,37 @@ public partial class ControlPanelView {
             tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
             view.GestureRecognizers.Add(tapGesture);
 
-            if (DesignMode) {
-                var touchBehavior = new TouchBehavior();
-                touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
-                view.Behaviors.Add(touchBehavior);
+            switch (DesignMode) {
+                case false: {
+                    var touchBehavior = new TouchBehavior();
+                    touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
+                    view.Behaviors.Add(touchBehavior);
+                    break;
+                }
 
-                var dragGesture = new DragGestureRecognizer();
-                dragGesture.DragStarting += (_, args) => DragTileStarting(args, tile);
-                dragGesture.DropCompleted += (sender, args) => DragCompleted(sender, args);
-                view.GestureRecognizers.Add(dragGesture);
+                case true: {
+                    var dragGesture = new DragGestureRecognizer();
+                    dragGesture.DragStarting += (_, args) => DragTileStarting(args, tile);
+                    dragGesture.DropCompleted += DragCompleted;
+                    view.GestureRecognizers.Add(dragGesture);
+                    break;
+                }
             }
         }
     }
 
-    private static void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
-        Console.WriteLine($"ControlPanelView.OnLongPressCompleted for {sender?.GetType()}");
-
-        // TODO: Maybe this code draws the current path???
+    private async void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
+        try {
+            if (sender is TrackTile trackTile) {
+                Console.WriteLine($"Long Press for a Tile Track {trackTile?.GetType()}");
+                foreach (var tile in PathTracer.RegisteredTiles) {
+                    Console.WriteLine($"Tile: {tile.Entity.EntityName} {tile.Entity.Guid} registered");
+                }
+                await PathTracer.StartPathTracing(trackTile!);
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error in launching path Tracing: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -250,6 +267,7 @@ public partial class ControlPanelView {
         foreach (var child in children) {
             child.GestureRecognizers.Clear();
             DynamicGrid.Remove(child);
+            if (child is TrackTile trackTile) PathTracer.RegisterTile(trackTile);
         }
     }
 

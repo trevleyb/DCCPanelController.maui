@@ -6,7 +6,7 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public abstract class Tile : ContentView, ITile, ITileTrack {
+public abstract class Tile : ContentView, ITile {
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor = 0.75f;
 
