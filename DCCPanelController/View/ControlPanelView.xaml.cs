@@ -206,10 +206,6 @@ public partial class ControlPanelView {
     private async void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         try {
             if (sender is TrackTile trackTile) {
-                Console.WriteLine($"Long Press for a Tile Track {trackTile?.GetType()}");
-                foreach (var tile in PathTracer.RegisteredTiles) {
-                    Console.WriteLine($"Tile: {tile.Entity.EntityName} {tile.Entity.Guid} registered");
-                }
                 await PathTracer.StartPathTracing(trackTile!);
             }
         } catch (Exception ex) {

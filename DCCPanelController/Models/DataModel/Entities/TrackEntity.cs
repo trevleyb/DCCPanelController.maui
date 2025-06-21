@@ -36,8 +36,9 @@ public abstract partial class TrackEntity : Entity {
     
     [JsonIgnore]
     public abstract EntityConnections Connections { get; }
-    public ConnectionType[] GetCurrentConnections() => Connections.GetConnections(Rotation);
-    public List<int> GetValidDirections() => Connections.GetValidDirections(Rotation);
+    public string RotatedConnections => Connections.GetRotatedConnectionsStr(Rotation);
+    public ConnectionType[] GetCurrentConnections => Connections.GetConnections(Rotation);
+    public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);
     public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
     
     protected TrackEntity(TrackEntity entity) : base(entity) {

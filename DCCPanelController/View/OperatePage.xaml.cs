@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View;
@@ -47,7 +49,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
             }
         }
     }
-    
+
     private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new HelpPage());
     }

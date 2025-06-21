@@ -16,6 +16,8 @@ public class EntityConnections {
         _baseConnections = ParseConnectionPattern(connectionPattern);
     }
 
+    public string GetRotatedConnectionsStr(int rotation) => ConvertDirectionsToString(GetConnections(rotation));
+    
     /// <summary>
     /// Gets the connections for the entity at its current rotation
     /// </summary>
@@ -120,10 +122,12 @@ public class EntityConnections {
         return rotated;
     }
 
-    public override string ToString() {
+    public override string ToString() => ConvertDirectionsToString(_baseConnections);
+
+    public string ConvertDirectionsToString(ConnectionType[] connections) {
         var result = string.Empty;
         for (int i = 0; i < MaxDirections; i++) {
-            result += _baseConnections[i] switch {
+            result += connections[i] switch {
                 ConnectionType.Terminator => 'T',
                 ConnectionType.Straight => 'S',
                 ConnectionType.Diverging => 'D',

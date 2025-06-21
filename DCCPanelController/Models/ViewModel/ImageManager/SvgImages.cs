@@ -74,7 +74,7 @@ public static class SvgImages {
             // built pointing up / but should be \ so need to add 45 to them to adjust
             // -----------------------------------------------------------------------------
             if (direction % 45 == 0) {
-                return new SvgImage(images.diagonal, (direction + 45) % 360);
+                return new SvgImage(images.diagonal, ((direction + 45) % 360) - 90);
             }
             throw new SvgImageException($"***** Image '{name}' invalid direction provided");
         }
