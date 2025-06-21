@@ -1,6 +1,6 @@
 <svg width="48px" height="48px" viewBox="0 0 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg"
 >
-    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <g id="Tracks" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="matrix(-0 1 -1 -0 48 0)">
         <g id="Track_Angle_Terminator">
             <polygon id="Track" fill="#BDBDBD" transform="translate(12, 36) rotate(180) translate(-12, -36)"
                      points="0 43.0000008 0 43.0000008 19.0000234 24 24 24 24 29.0000006 4.99762032 48"></polygon>

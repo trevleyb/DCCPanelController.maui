@@ -5,7 +5,7 @@
             <rect width="48" height="48"/>
         </clipPath>
     </defs>
-    <g clip-path="url(#clip_path_1)">
+    <g clip-path="url(#clip_path_1)" transform="matrix(-0 1 -1 -0 48 0)">
         <g>
             <g>
                 <path id="Border" d="M3.8147e-06 43.0001L0 40.0001L40 0L41.0525 0L43 0L3.8147e-06 43.0001Z"
