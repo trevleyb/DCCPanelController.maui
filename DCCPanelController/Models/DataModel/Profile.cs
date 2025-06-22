@@ -5,11 +5,6 @@ using DCCPanelController.Models.DataModel.Repository;
 
 namespace DCCPanelController.Models.DataModel;
 
-/// <summary>
-///     At some point we will support multiple profiles in the system, each stored
-///     on the local machine and you can use Setttings to Upload and Download
-///     profiles. Need to build a selector to select a profile in the future.
-/// </summary>
 public partial class Profile : ObservableObject {
     [ObservableProperty] private string _profileName;
     [ObservableProperty] private Panels _panels;
@@ -23,8 +18,9 @@ public partial class Profile : ObservableObject {
 
     public Profile(string profileName) {
         _profileName = profileName;
-        Panels = new Panels();
-        Panels.Profile = this;
+        Panels = new Panels {
+            Profile = this
+        };
         Settings = new Settings();
         Blocks = new ObservableCollection<Block>();
         Turnouts = new ObservableCollection<Turnout>();
@@ -51,11 +47,11 @@ public partial class Profile : ObservableObject {
     }
 
     public static Profile NewOrLoad(string profileName) {
-        return JsonRepository.Load(profileName);
+        return Task.Run(() => JsonRepository.LoadAsync(profileName)).Result;
     }
 
-    public static Profile Load(string profileName) {
-        return JsonRepository.Load(profileName);
+    public static async Task<Profile> LoadAsync(string profileName) {
+        return await JsonRepository.LoadAsync(profileName);
     }
 
     public async Task SaveAsync() {

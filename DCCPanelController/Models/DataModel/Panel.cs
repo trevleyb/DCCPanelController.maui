@@ -83,7 +83,7 @@ public partial class Panel : ObservableObject, IEntityID {
     public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
     public Light? Light(string id) => Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
 
-        public Entity AddEntity(Entity entity) {
+    public Entity AddEntity(Entity entity) {
         entity.Parent = this;
         Entities.Add(entity);
         return entity;

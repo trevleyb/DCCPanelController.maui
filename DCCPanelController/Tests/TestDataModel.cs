@@ -13,7 +13,7 @@ public class TestDataModel {
             BuildTestDataModel(profile);
             ValidateTestDataModel(profile);
             await profile.SaveAsync();
-            var loadedStorage = JsonRepository.Load();
+            var loadedStorage = await JsonRepository.LoadAsync();
             ValidateTestDataModel(loadedStorage);
         } catch (Exception ex) {
             Debug.Fail("Exception thrown:",ex.Message);

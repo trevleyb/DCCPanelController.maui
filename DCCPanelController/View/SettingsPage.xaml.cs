@@ -76,7 +76,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             if (!string.IsNullOrEmpty(fileName)) {
                 if (_pageViewModel is { Settings: not null } vm) {
                     var loadedJson = await LoadJsonFromFile(fileName);
-                    var profile = JsonRepository.UploadSettings(loadedJson);
+                    var profile = await JsonRepository.UploadSettingsAsync(loadedJson);
                     vm.Profile = profile;
                     await vm.SaveSettingsAsync();
                     await DisplayAlert("Success", "File Loaded.", "OK");

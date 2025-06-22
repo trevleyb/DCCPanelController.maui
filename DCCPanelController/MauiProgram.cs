@@ -38,7 +38,8 @@ public static class MauiProgram {
         
         // Add dependant Services
         // --------------------------------------------------------------------------
-        services.AddSingleton<Profile>(sp => Profile.NewOrLoad("Sample"));
+        var profile = Profile.NewOrLoad("Panel");
+        services.AddSingleton<Profile>(sp => profile);
         services.AddSingleton<ConnectionService>();
         services.AddSingleton<HelpPage>();
 

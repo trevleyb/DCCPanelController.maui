@@ -5,6 +5,7 @@ using DCCPanelController.Helpers;
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonRepository {
+    
     public static async Task SaveAsync(Profile profile, string profileName = "default", [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}")) {
             try {
@@ -22,14 +23,13 @@ public static class JsonRepository {
         }
     }
     
-    public static Profile Load(string profileName = "default", [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        var others = Profiles;
+    public static async Task<Profile> LoadAsync(string profileName = "default", [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
         using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}")) {
             try {
                 if (File.Exists(filePath)) {
                     try {
-                        var jsonString = File.ReadAllText(filePath);
+                        var jsonString = await File.ReadAllTextAsync(filePath);
                         var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? new Profile(profileName);
                         profile.FixLoadedPanels();
                         return profile;
@@ -52,31 +52,12 @@ public static class JsonRepository {
     /// </summary>
     /// <param name="profileName">The name of the file to be deleted. Defaults to "DCCPanelController.json" if not provided.</param>
     /// <exception cref="Exception">Thrown if an unexpected error occurs while attempting to delete the file.</exception>
-    public static void Delete(string profileName = "default") {
+    public static async Task Delete(string profileName = "default") {
         try {
             var filePath = GetStorageFilePath(profileName);
             if (File.Exists(filePath)) File.Delete(filePath);
         } catch (Exception ex) {
             Console.WriteLine("Could not delete settings. " + ex.Message);
-        }
-    }
-
-    /// <summary>
-    ///     Retrieves a list of profile names available in the application's data directory.
-    ///     The profiles are determined by the files present in the directory used for storing settings.
-    ///     The list is generated from the file names without their extensions.
-    ///     Ensures that the storage directory exists before attempting to retrieve profiles.
-    /// </summary>
-    /// <remarks>
-    ///     If the directory does not exist, it is created automatically.
-    ///     Returns an empty list if no files are found in the directory.
-    /// </remarks>
-    public static List<string> Profiles {
-        get {
-            var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
-            if (!Directory.Exists(storageDir)) Directory.CreateDirectory(storageDir);
-            var storageFiles = Directory.GetFiles(storageDir);
-            return storageFiles.Select(Path.GetFileNameWithoutExtension).ToList()!;
         }
     }
 
@@ -106,14 +87,14 @@ public static class JsonRepository {
     /// <summary>
     ///     Reads and deserializes the JSON data from the provided file to create and return a Storage object.
     /// </summary>
-    public static Profile UploadSettings(string jsonString) {
+    public static async Task<Profile> UploadSettingsAsync(string jsonString) {
         try {
             var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
             profile.FixLoadedPanels();
             return profile;
         } catch (Exception ex) {
             Console.WriteLine("Could not deserialize settings. Trying to Reload Existing" + ex.Message);
-            return Load();
+            return await LoadAsync();
         }
     }
 
