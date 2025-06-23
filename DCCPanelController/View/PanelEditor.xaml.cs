@@ -107,15 +107,12 @@ public partial class PanelEditor : ContentPage {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
         _viewModel.SetCanEditProperties();
 
-        if (_viewModel.SelectedTiles.Count == 0) {
-            SelectionText.Text = "No tiles selected";
-        }
-        if (_viewModel.SelectedTiles.Count == 1) {
-            SelectionText.Text = $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}";
-        }
-        if (_viewModel.SelectedTiles.Count > 1) {
-            SelectionText.Text = $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})";
-        }
+        SelectionText.Text = _viewModel.SelectedTiles.Count switch {
+            0   => "No tiles selected",
+            1   => $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}",
+            > 1 => $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})",
+            _   => SelectionText.Text
+        };
         if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
     }
 
