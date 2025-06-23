@@ -9,7 +9,6 @@ namespace DCCPanelController.Models.DataModel.Entities;
 [DebuggerDisplay("{EntityName} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject {
-    protected int RotationFactor = 45;
     
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
     [ObservableProperty] private int _col;               // What Grid Position (Horizontal) is this component?
@@ -18,6 +17,7 @@ public abstract partial class Entity() : ObservableObject {
     [ObservableProperty] private int _height = 1;        // What Height is this component? 
     [ObservableProperty] private int _rotation;          // Is the track rotated?
 
+    [JsonIgnore] protected int RotationFactor = 45;
     [JsonIgnore] public Panel? Parent { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
 
@@ -29,7 +29,7 @@ public abstract partial class Entity() : ObservableObject {
     
     protected Entity(Panel panel) : this() {
         Parent = panel;
-        Layer = EntityPresets.DefaultLayer(this); // Setup the default layer for this item but can be changed later. 
+        Layer = EntityPresets.DefaultLayer(this);  
     }
 
     protected Entity(Entity entity) : this() {

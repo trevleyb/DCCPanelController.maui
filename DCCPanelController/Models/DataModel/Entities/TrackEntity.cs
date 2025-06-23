@@ -34,13 +34,13 @@ public abstract partial class TrackEntity : Entity {
         }
     } 
     
-    [JsonIgnore]
-    public abstract EntityConnections Connections { get; }
-    public string RotatedConnections => Connections.GetRotatedConnectionsStr(Rotation);
-    public ConnectionType[] GetCurrentConnections => Connections.GetConnections(Rotation);
-    public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);
-    public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
+    [JsonIgnore] public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;
+    [JsonIgnore] public abstract EntityConnections Connections { get; }
+    [JsonIgnore] public string RotatedConnections => Connections.GetRotatedConnectionsStr(Rotation);
+    [JsonIgnore] public ConnectionType[] GetCurrentConnections => Connections.GetConnections(Rotation);
+    [JsonIgnore] public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);
     
+    public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
     protected TrackEntity(TrackEntity entity) : base(entity) {
         TrackColor = entity.TrackColor;
         TrackBorderColor = entity.TrackBorderColor;
@@ -48,6 +48,4 @@ public abstract partial class TrackEntity : Entity {
         TrackAttribute = entity.TrackAttribute;
         Rotation = entity.Rotation;
     }
-
-    public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;
 }
