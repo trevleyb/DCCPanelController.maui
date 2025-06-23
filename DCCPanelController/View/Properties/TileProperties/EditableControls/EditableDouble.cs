@@ -14,17 +14,14 @@ public class EditableDouble(string label, string description = "", int order = 0
             var cell = new HorizontalStackLayout();
             cell.VerticalOptions = LayoutOptions.Center;
             cell.HorizontalOptions = LayoutOptions.Start;
-            var dataCell = new Entry {
+            var dataCell = new Label {
                 BindingContext = owner,
                 WidthRequest = 75,
                 HeightRequest = 30,
-                Placeholder = Label,
-                Keyboard = Keyboard.Numeric,
                 Margin = new Thickness(10, 0, 10, 0),
                 Text = info.GetValue(owner)?.ToString() ?? "0"
             };
 
-            dataCell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             var stepperUpDown = new Stepper {
                 Minimum = MinValue,    // Define the stepper min value if needed
                 Maximum = MaxValue,    // Define the stepper max value if needed
@@ -34,17 +31,8 @@ public class EditableDouble(string label, string description = "", int order = 0
                 VerticalOptions = LayoutOptions.Center
             };
 
-            if (int.TryParse(dataCell.Text, out var initialStepperValue)) {
-                stepperUpDown.Value = initialStepperValue;
-            }
-
+            stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("0.00", CultureInfo.InvariantCulture) ?? "1.00"; };
-            dataCell.TextChanged += (s, e) => {
-                if (int.TryParse(e.NewTextValue, out var parsedValue)) {
-                    SetModified(true);
-                    stepperUpDown.Value = parsedValue;
-                }
-            };
 
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
