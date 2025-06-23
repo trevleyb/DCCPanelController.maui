@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -104,7 +105,26 @@ public partial class PanelEditor : ContentPage {
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
         _viewModel.SetCanEditProperties();
-        if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
+
+        if (_viewModel.SelectedTiles.Count == 0) {
+            SelectionText.Text = "No tiles selected";
+            SelectedItems.Text = "";
+        }
+        if (_viewModel.SelectedTiles.Count == 1) {
+            SelectionText.Text = "Selected Tile:";
+            SelectedItems.Text = _viewModel.SelectedTiles[0].Entity.EntityName;
+        }
+        
+        if (_viewModel.SelectedTiles.Count > 1) {
+            var sb = new StringBuilder();
+            foreach (var tile in _viewModel.SelectedTiles) {
+                if (sb.Length > 1) sb.Append(", ");
+                sb.Append(tile.Entity.EntityName);
+            }  
+            SelectionText.Text = "Multiple Selected Tiles:";
+            SelectedItems.Text = sb.ToString();
+        }
+        //if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
     }
 
     private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {

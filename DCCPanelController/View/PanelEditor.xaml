@@ -18,9 +18,9 @@
         <ToolbarItem Text="Delete" x:Name="DeleteToolbar" IsEnabled="{Binding HasSelectedEntities}"
                      IconImageSource="trash_2.png" Command="{Binding Path=DeleteTileCommand}"/>
         <ToolbarItem Text="Edit" x:Name="EditToolbar" IconImageSource="{Binding EditPropertiesIcon}"
-                     Command="{Binding Path=EditPropertiesCommand}" IsEnabled="{Binding CanEditProperties}" />
+                     Command="{Binding Path=EditPropertiesCommand}" IsEnabled="{Binding CanEditProperties}"/>
         <ToolbarItem Text="Save" x:Name="SaveToolbar" IconImageSource="save.png"
-                     Command="{Binding Path=SaveCommand}" IsEnabled="{Binding HavePropertiesChanged}" />
+                     Command="{Binding Path=SaveCommand}" IsEnabled="{Binding HavePropertiesChanged}"/>
         <ToolbarItem Text="Grid" x:Name="GridToolbar" IconImageSource="grid_off.png"
                      Command="{Binding Path=ToggleGridCommand}"/>
     </ContentPage.ToolbarItems>
@@ -29,14 +29,14 @@
         <Grid
             BackgroundColor="White"
             ColumnDefinitions="*,auto"
+            RowDefinitions="*, 30"
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-            <Border
-                BackgroundColor="WhiteSmoke"
-                Grid.Column="0"
-                Stroke="#FFF5F5F5"
-                StrokeThickness="0">
+            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="0">
                 <Grid
                     BackgroundColor="White"
                     HorizontalOptions="Fill"
@@ -54,8 +54,8 @@
                         x:Name="PanelView"/>
                 </Grid>
             </Border>
-            <Grid
-                Grid.Column="1" Margin="5,0,0,0">
+
+            <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Grid.RowSpan="2">
                 <Border
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"
@@ -67,6 +67,19 @@
                         x:Name="TileSelector"/>
                 </Border>
             </Grid>
+            
+            <Grid Grid.Row="1" Grid.Column="0" Margin="5,2,5,2">
+                <Border
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    StrokeThickness="0">
+                    <HorizontalStackLayout>
+                        <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                        <Label FontSize="15" FontFamily="OpenSansMedium" x:Name="SelectedItems" Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </Border>
+            </Grid>
+
         </Grid>
 
     </ContentPage.Content>

@@ -39,6 +39,7 @@ public partial class ControlPanelView {
     private int _lastDragCol;
     private int _lastDragRow;
     private int _tapCount;
+    private int _currentSelectionIndex = 0;
 
     private double _gridSize;
     private double _viewHeight;
@@ -240,10 +241,32 @@ public partial class ControlPanelView {
             if (DesignMode) {
                 if (sender is ITile tile) {
                     if (_tapCount == 1) {
-                        if (tile.IsSelected) {
-                            MarkTileUnSelected(tile);
-                        } else {
-                            MarkTileSelected(tile);
+                        var tilesAtPosition = TilesInGrid(tile);
+                        
+                        // If there is only a single tile at this position, then we can 
+                        // toggle it on or off
+                        // -------------------------------------------------------
+                        if (tilesAtPosition.Count is 0 or 1) {
+                            if (tile.IsSelected) {
+                                MarkTileUnSelected(tile);
+                            } else {
+                                MarkTileSelected(tile);
+                            }
+                            _currentSelectionIndex = -1;
+                        } 
+                        
+                        // There are multiple tiles at this position, so we need to
+                        // step through the tiles until we get to the last one. 
+                        // ---------------------------------------------------------
+                        else {
+                            _currentSelectionIndex++;
+                            foreach (var posTile in tilesAtPosition) MarkTileUnSelected(posTile);
+                            if (_currentSelectionIndex >= tilesAtPosition.Count) {
+                                _currentSelectionIndex = -1;
+                            } else {
+                                var selectedTile = tilesAtPosition[_currentSelectionIndex];
+                                MarkTileSelected(selectedTile);
+                            }
                         }
                         OnTileSelected(_tapCount);
                     }
@@ -262,6 +285,16 @@ public partial class ControlPanelView {
         }
     }
 
+    private List<Tile> TilesInGrid(ITile tile) {
+        var children = DynamicGrid.Children.OfType<Tile>()
+                                  .Where(x => x.Entity.Col == tile.Entity.Col && x.Entity.Row == tile.Entity.Row)
+                                  .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
+                                  .ToList();
+    
+        Console.WriteLine("Check we have the right children here.");
+        return children; // Add the missing return statement
+    }
+    
     private void RemoveTileFromGrid(ITile tile) {
         RemoveEntityFromGrid(tile.Entity);
         OnTileChanged(tile);
