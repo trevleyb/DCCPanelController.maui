@@ -12,7 +12,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
     [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
-    private EntityIDField _id = string.Empty;
+    private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
     private string _turnoutID = string.Empty;

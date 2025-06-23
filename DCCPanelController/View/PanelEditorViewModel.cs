@@ -8,7 +8,7 @@ using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
-using DynamicPropertyPageViewModel = DCCPanelController.View.Properties.TileProperties.DynamicPropertyPageViewModel;
+using DCCPanelController.View.Properties.TileProperties;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;

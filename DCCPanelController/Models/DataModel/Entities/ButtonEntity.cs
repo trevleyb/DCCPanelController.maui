@@ -10,14 +10,23 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
 
-    [ObservableProperty] [property: EditableID("Button Name","Unique Name for this Button",0)]
-    private EntityIDField _id = string.Empty;
+    [ObservableProperty] [property: EditableID("Button Name","Unique Name for this Button so it can be referenced by actions.",0)]
+    private string _id = string.Empty;
 
-    [ObservableProperty] [property: EditableDouble("Scale", "", 5, "Circle", .25, 2.0)]
-    private double _scale = 0.8;
-    
     [ObservableProperty] [property: EditableEnum("Button Size","",1)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
+
+    [ObservableProperty] [property: EditableColor("On Color", "Override default 'On' color", 5, "Colors")]
+    private Color? _colorOn;
+
+    [ObservableProperty] [property: EditableColor("On Border Color", "Override default 'On' border color", 5, "Colors")]
+    private Color? _colorOnBorder;
+    
+    [ObservableProperty] [property: EditableColor("Off Color", "Override default 'Off' color", 5, "Colors")]
+    private Color? _colorOff;
+    
+    [ObservableProperty] [property: EditableColor("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
+    private Color? _colorOffBorder;
 
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")]
     private ButtonActions _buttonPanelActions = [];

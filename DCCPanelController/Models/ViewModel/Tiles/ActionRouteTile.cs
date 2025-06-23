@@ -47,15 +47,17 @@ public class ActionRouteTile : Tile, ITileInteractive {
                 _                    => SvgImages.GetImage("route", Entity.Rotation)
             };
             svgImage.SetAttribute(SvgElementType.Button, route.State switch {
-                RouteStateEnum.Active   => route.Parent?.ButtonOnColor ?? Colors.Green,
-                RouteStateEnum.Inactive => route.Parent?.ButtonOffColor ?? Colors.Red,
+                RouteStateEnum.Active   => route.ColorOn ?? route.Parent?.ButtonOnColor ?? Colors.Green,
+                RouteStateEnum.Inactive => route.ColorOff ?? route.Parent?.ButtonOffColor ?? Colors.Red,
                 _                       => route.Parent?.ButtonColor ?? Colors.Gray
             });
             svgImage.SetAttribute(SvgElementType.ButtonOutline, route.State switch {
-                RouteStateEnum.Active   => route.Parent?.ButtonOnBorder ?? Colors.Black,
-                RouteStateEnum.Inactive => route.Parent?.ButtonOffBorder ?? Colors.Black,
+                RouteStateEnum.Active   => route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black,
+                RouteStateEnum.Inactive => route.ColorOffBorder ?? route.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                       => route.Parent?.ButtonBorder ?? Colors.Black
             });
+
+            svgImage.SetAttribute(SvgElementType.Indicator, route.RouteIndicator ?? route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black);
 
             var image = new Image {
                 Source = svgImage.AsImageSource(0, DefaultScaleFactor)

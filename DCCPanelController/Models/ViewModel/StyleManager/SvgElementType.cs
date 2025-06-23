@@ -11,5 +11,6 @@ public enum SvgElementType {
     ButtonOutline,  // The outline of a button
     Text,           // Text
     Highlight,
+    Indicator,
     Unknown
 }

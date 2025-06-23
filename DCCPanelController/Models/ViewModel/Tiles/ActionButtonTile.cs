@@ -15,7 +15,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (connectionService is not null && Entity is ButtonEntity button) {
+        if (Entity is ButtonEntity button) {
 
             if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
             var newState = button.State switch {
@@ -41,13 +41,13 @@ public class ActionButtonTile : Tile, ITileInteractive {
                 _                    => SvgImages.GetImage("button", Entity.Rotation)
             };
             svgImage.SetAttribute(SvgElementType.Button, button.State switch {
-                ButtonStateEnum.On  => button.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => button.Parent?.ButtonOffColor ?? Colors.Red,
+                ButtonStateEnum.On  => button.ColorOn  ?? button.Parent?.ButtonOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
                 _                   => button.Parent?.ButtonColor ?? Colors.Gray
             });
             svgImage.SetAttribute(SvgElementType.ButtonOutline, button.State switch {
-                ButtonStateEnum.On  => button.Parent?.ButtonOnBorder ?? Colors.Black,
-                ButtonStateEnum.Off => button.Parent?.ButtonOffBorder ?? Colors.Black,
+                ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
+                ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black
             });
 

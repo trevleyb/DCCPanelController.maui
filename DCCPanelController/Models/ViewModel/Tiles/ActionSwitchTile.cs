@@ -20,7 +20,7 @@ public class ActionSwitchTile : Tile, ITileInteractive {
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (connectionService is not null && Entity is SwitchEntity switchEntity) {
+        if (Entity is SwitchEntity switchEntity) {
             if (UseClickSounds) await ClickSounds.PlaySwitchClickSoundAsync();
             switchEntity.State = switchEntity.State switch {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
@@ -28,7 +28,7 @@ public class ActionSwitchTile : Tile, ITileInteractive {
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
                 _                       => ButtonStateEnum.Unknown
             };
-            if (connectionService.Client is { } client && switchEntity is {Light: not null } )  await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
+            if (connectionService?.Client is { } client && switchEntity is {Light: not null } )  await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
             return true;
         }
         return false;
@@ -53,13 +53,13 @@ public class ActionSwitchTile : Tile, ITileInteractive {
                 };
             }
             svgImage.SetAttribute(SvgElementType.Button, switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.Parent?.LightOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.Parent?.LightOffColor ?? Colors.Red,
+                ButtonStateEnum.On  => switchEntity.ColorOn ?? switchEntity.Parent?.LightOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.ColorOff ?? switchEntity.Parent?.LightOffColor ?? Colors.Red,
                 _                   => switchEntity.Parent?.LightOffColor ?? Colors.Gray
             });
             svgImage.SetAttribute(SvgElementType.ButtonOutline, switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.Parent?.LightOnBorderColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray,
+                ButtonStateEnum.On  => switchEntity.ColorOnBorder ?? switchEntity.Parent?.LightOnBorderColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.ColorOffBorder ?? switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray,
                 _                   => switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray
             });
 

@@ -37,7 +37,9 @@ public class EditableID(string label, string description = "", int order = 0, st
             };
             cell.TextChanged += CellOnTextChanged;
             cell.Completed += CellOnCompleted;
+            Console.WriteLine($"Creating Binding????");
             cell.SetBinding(Entry.TextProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            Console.WriteLine($"Done");
             box.Content = cell;
             return CreateGroupCell(box);
         } catch (Exception e) {

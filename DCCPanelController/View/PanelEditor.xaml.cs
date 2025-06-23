@@ -22,7 +22,7 @@ public partial class PanelEditor : ContentPage {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
-        SetDefaultEditMode();
+        ShowSelectedMode();
 
         _viewModel.PropertyChanged   += ViewModelOnPropertyChanged;
         _viewModel.OnBeginPushModal  += OnBeginPushModal; // Subscribe to the custom event
@@ -113,7 +113,7 @@ public partial class PanelEditor : ContentPage {
             > 1 => $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})",
             _   => SelectionText.Text
         };
-        if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
+        if (e.IsLongTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
     }
 
     private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {
@@ -141,11 +141,12 @@ public partial class PanelEditor : ContentPage {
                 EditModeEnum.Size => "crop.png",
                 _                 => "move.png"
             };
+            ShowSelectedMode();
             break;
         }
     }
 
-    private void SetDefaultEditMode() {
+    private void ShowSelectedMode() {
         EditModeText.Text = _viewModel.EditMode switch {
             EditModeEnum.Move => "Move Tiles Mode",
             EditModeEnum.Copy => "Copy Tiles Mode",

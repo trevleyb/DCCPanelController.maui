@@ -13,6 +13,7 @@ public static class SvgElementTypes {
             SvgElementType.ButtonOutline  => "ButtonOutline",
             SvgElementType.Text           => "Text",
             SvgElementType.Highlight      => "Highlight",
+            SvgElementType.Indicator      => "Indicator",
             _                             => ""
         };
     }

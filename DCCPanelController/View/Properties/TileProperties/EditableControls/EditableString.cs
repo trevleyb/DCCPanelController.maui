@@ -10,7 +10,7 @@ public class EditableString(string label, string description = "", int order = 0
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var box = new Border() {
-                Margin = new Thickness(5, 5, 5, 5),
+                Margin = new Thickness(0, 5, 5, 5),
                 WidthRequest = width,
                 HeightRequest = 30,
                 HorizontalOptions = LayoutOptions.Start,

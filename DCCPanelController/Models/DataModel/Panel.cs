@@ -23,7 +23,7 @@ public partial class Panel : ObservableObject, IEntityID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
 
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private EntityIDField _id = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
     [ObservableProperty] private int _sortOrder;
 
     [JsonIgnore] public Panels? Panels { get; set; }

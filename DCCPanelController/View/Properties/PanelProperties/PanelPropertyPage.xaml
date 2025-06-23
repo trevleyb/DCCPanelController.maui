@@ -23,7 +23,7 @@
 
             <!--  Panel Name  -->
             <HorizontalStackLayout>
-                <Label Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
+                <Label Text="Panel Name" VerticalOptions="Center" WidthRequest="300"/>
                 <Entry HorizontalOptions="FillAndExpand" Placeholder="Enter Panel Name" Text="{Binding Panel.Id}"
                        WidthRequest="350" HeightRequest="35"/>
             </HorizontalStackLayout>

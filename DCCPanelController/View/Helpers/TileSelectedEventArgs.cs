@@ -10,4 +10,5 @@ public class TileSelectedEventArgs(HashSet<ITile> tiles, int tapCount) : EventAr
     public ITile? Tile => Tiles.FirstOrDefault();
     public bool IsSingleTap => TapCount == 1;
     public bool IsDoubleTap => TapCount == 2;
+    public bool IsLongTap   => TapCount == -1;
 }

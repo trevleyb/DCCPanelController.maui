@@ -215,7 +215,9 @@ public partial class ControlPanelView {
 
     private async void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         try {
-            if (sender is TrackTile trackTile) {
+            if (DesignMode) {
+                OnTileSelected(-1);
+            } else if (sender is TrackTile trackTile) {
                 await _pathTracer.StartPathTracing(trackTile!);
             }
         } catch (Exception ex) {
@@ -291,7 +293,6 @@ public partial class ControlPanelView {
                                   .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
                                   .ToList();
     
-        Console.WriteLine("Check we have the right children here.");
         return children; // Add the missing return statement
     }
     

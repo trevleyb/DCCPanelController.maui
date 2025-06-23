@@ -10,17 +10,17 @@ public class EditableInt(string label, string description = "", int order = 0, s
 
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var cell = new HorizontalStackLayout();
-            cell.VerticalOptions = LayoutOptions.Center;
-            cell.HorizontalOptions = LayoutOptions.Start;
+            var cell = new HorizontalStackLayout {
+                VerticalOptions = LayoutOptions.Center,
+                HorizontalOptions = LayoutOptions.Start
+            };
             var dataCell = new Label {
                 BindingContext = owner,
                 WidthRequest = 75,
                 HeightRequest = 30,
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start,
-                Margin = new Thickness(10, 10, 10, 5),
-                Text = info.GetValue(owner)?.ToString() ?? "0"
+                Margin = new Thickness(10, 15, 10, 5),
             };
 
             var stepperUpDown = new Stepper {
@@ -34,6 +34,8 @@ public class EditableInt(string label, string description = "", int order = 0, s
 
             stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
+            dataCell.Text = stepperUpDown.Value.ToString(CultureInfo.InvariantCulture) ?? "0";
+
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);

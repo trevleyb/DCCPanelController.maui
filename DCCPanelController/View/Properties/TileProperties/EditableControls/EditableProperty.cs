@@ -11,7 +11,6 @@ public abstract class EditableProperty(string label, string description = "", in
     public int Order { get; } = order;                 // Order within the group
     public object? Value { get; set; } = null;         // Initial Value or display Value
     public bool IsModified { get; set; } = false;      // Has this been modified?
-
     
     protected IView CreateGroupCell(IView view, int? height = null) {
 
@@ -29,6 +28,7 @@ public abstract class EditableProperty(string label, string description = "", in
             WidthRequest = 150,
             Margin = new Thickness(5, 5, 5, 5)
         };
+        label.SetBinding(Microsoft.Maui.Controls.Label.TextColorProperty, new Binding(nameof(ModifiedTextColor)) { Source = this, Mode = BindingMode.OneWay });
         hStack.Children.Add(label);
         hStack.Children.Add(view);
         vStack.Children.Add(hStack);
@@ -38,7 +38,7 @@ public abstract class EditableProperty(string label, string description = "", in
         if (!string.IsNullOrWhiteSpace(Description)) {
             var desc = new Label {
                 Text = Description,
-                FontSize = 8,
+                FontSize = 10,
                 FontFamily = "OpenSansLight",
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,

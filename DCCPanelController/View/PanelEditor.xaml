@@ -29,7 +29,7 @@
         <Grid
             BackgroundColor="White"
             ColumnDefinitions="*,auto"
-            RowDefinitions="*,25"
+            RowDefinitions="*,30"
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
@@ -74,15 +74,19 @@
                     VerticalOptions="Fill"
                     StrokeThickness="0">
                     <Grid ColumnDefinitions="100,*,100" Padding="5">
+
                         <Grid Grid.Column="0" ColumnDefinitions="auto,auto">
-                            <Label FontSize="15" FontFamily="OpenSansLight" TextColor="{StaticResource Primary}"
-                                   Text="Edit Mode:"
-                                   Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                            <Label FontSize="15" FontFamily="OpenSansMedium" TextColor="{StaticResource Primary}"
-                                   x:Name="EditModeText"
-                                   Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                            <HorizontalStackLayout>
+                                <Label FontSize="15" FontFamily="OpenSansLight" TextColor="{StaticResource Primary}"
+                                       Text="Edit Mode:"
+                                       Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                                <Label FontSize="15" FontFamily="OpenSansMedium" TextColor="{StaticResource Primary}"
+                                       x:Name="EditModeText"
+                                       Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                            </HorizontalStackLayout>
                         </Grid>
-                        <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center"
+                              VerticalOptions="Center">
                             <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0"
                                    TextColor="{StaticResource Primary}"/>
                         </Grid>

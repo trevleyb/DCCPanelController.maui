@@ -9,9 +9,25 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     [ObservableProperty] [property: EditableEnum("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: EditableRoute("Route", "", 0)]
+    [ObservableProperty] [property: EditableRoute("Route", "Select the route triggered by this button", 10, "Actions")]
     private string _routeID = string.Empty;
 
+    [ObservableProperty] [property: EditableColor("Indicator Color", "Default color of the Indicator", 5, "Colors")]
+    private Color? _routeIndicator;
+
+    [ObservableProperty] [property: EditableColor("On Color", "Override default 'On' color", 5, "Colors")]
+    private Color? _colorOn;
+
+    [ObservableProperty] [property: EditableColor("On Border Color", "Override default 'On' border color", 5, "Colors")]
+    private Color? _colorOnBorder;
+    
+    [ObservableProperty] [property: EditableColor("Off Color", "Override default 'Off' color", 5, "Colors")]
+    private Color? _colorOff;
+    
+    [ObservableProperty] [property: EditableColor("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
+    private Color? _colorOffBorder;
+
+    
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     [JsonConstructor]

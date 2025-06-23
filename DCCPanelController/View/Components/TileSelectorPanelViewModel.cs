@@ -104,28 +104,28 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
             
             AddTile(Tracks, new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new StraightContinuationEntity(panel){ TrackType = TrackTypeEnum.MainLine});
-            AddTile(Tracks, new PlatformEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new CornerEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new CornerContinuationEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new LeftTurnoutEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new RightTurnoutEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new TerminatorEntity(panel){ TrackType = TrackTypeEnum.MainLine});
-            AddTile(Tracks, new TunnelEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new CrossingEntity(panel){ TrackType = TrackTypeEnum.MainLine});
+            AddTile(Tracks, new TunnelEntity(panel){ TrackType = TrackTypeEnum.MainLine});
+            AddTile(Tracks, new PlatformEntity(panel){ TrackType = TrackTypeEnum.MainLine});
 
             AddTile(Branch, new StraightEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new StraightContinuationEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
-            AddTile(Branch, new PlatformEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new CornerEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new CornerContinuationEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new LeftTurnoutEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new RightTurnoutEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new TerminatorEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
-            AddTile(Branch, new TunnelEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new CrossingEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
+            AddTile(Branch, new PlatformEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
+            AddTile(Branch, new TunnelEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             
-            AddTile(Shapes, new CircleLabelEntity(panel));
             AddTile(Shapes, new TextEntity(panel));
+            AddTile(Shapes, new CircleLabelEntity(panel));
             AddTile(Shapes, new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black });
             AddTile(Shapes, new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 3 });
             AddTile(Shapes, new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black });

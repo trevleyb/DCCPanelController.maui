@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Reflection;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
@@ -16,9 +15,47 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.View.Properties.TileProperties;
 
+// Represents a property that exists across multiple entities
+public record CommonProperty(
+    PropertyInfo Property,
+    IEditableProperty Metadata,
+    object? CommonValue,        // null means "mixed values"
+    bool HasMixedValues);
+
+public static class ValueComparer {
+    private static readonly HashSet<Type> MultipleEntityExcludedAttributeTypes = new() {
+        typeof(EditableID),
+        typeof(EditableButtonActions),
+        typeof(EditableTurnoutActions),
+    };
+
+    public static bool AreEqual(object? value1, object? value2) {
+        if (ReferenceEquals(value1, value2)) return true;
+        if (value1 == null || value2 == null) return false;
+        if (value1.GetType() != value2.GetType()) return false;
+
+        return value1 switch {
+            int intValue                   => intValue.IsEqualTo((int)value2),
+            float floatVal                 => floatVal.IsEqualTo((float)value2),
+            double doubleVal               => doubleVal.IsEqualTo((double)value2),
+            string stringValue             => stringValue.Equals(value2),
+            _ when value1.GetType().IsEnum => value1.Equals(value2),
+            _                              => value1.Equals(value2)
+        };
+    }
+
+    public static bool IsExcludedForMultipleEntities(IEditableProperty metadata)
+    {
+        var attributeType = metadata.GetType();
+        return MultipleEntityExcludedAttributeTypes.Contains(attributeType);
+    }
+}
+
 public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
     private readonly StackBase _container = new VerticalStackLayout();
-    private List<(PropertyInfo Property, IEditableProperty Metadata)> _properties = [];
+    private List<CommonProperty> _commonProperties = [];
+    private readonly Dictionary<string, object?> _originalValues = new();
+
     [ObservableProperty] private Entity _proxyEntity;
     [ObservableProperty] private List<Entity> _entities;
     [ObservableProperty] private string _title;
@@ -26,13 +63,17 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     public DynamicPropertyPageViewModel(Entity entity) : this([entity]) { }
 
     public DynamicPropertyPageViewModel(List<Entity> entities) {
-        if (entities is null || entities.Count == 0) throw new ArgumentException("There must be at least 1 Entity for Properties.");
+        if (entities is null || entities.Count == 0)
+            throw new ArgumentException("There must be at least 1 Entity for Properties.");
+
+        Entities = entities;
         ProxyEntity = entities[0].Clone();
+
         if (entities[0] is IActionEntity actionEntity) {
             actionEntity.CloneActionsInto((IActionEntity)ProxyEntity);
         }
+
         Title = "Property Editor";
-        Entities = entities;
     }
 
     public async Task ApplyChangesAsync() {
@@ -42,149 +83,197 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
     public Microsoft.Maui.Controls.View CreatePropertiesView() {
         Title = Entities.Count == 1 ? $"{Entities[0].EntityName}" : $"Multiple Tiles ({Entities.Count})";
+
         if (Entities.Count == 0) {
             AddNoEntitiesMessage();
         } else {
-            BuildCommonPropertyUI(Entities);
+            BuildCommonPropertyUI();
         }
+
         return _container;
     }
 
-    private void FindCommonProperties(List<Entity> entities) {
-        var commonProperties = new List<(PropertyInfo Property, IEditableProperty Metadata)>();
-        var firstEntityProperties = EditableExtractor.GetEditableProperties(entities[0]);
+    private void BuildCommonPropertyUI() {
+        _commonProperties = FindCommonProperties();
 
-        foreach (var property in firstEntityProperties) {
-            var isCommonProperty = true;
-            var commonValue = property.Property.GetValue(entities[0]);
-
-            // Check if this property exists in all other entities
-            // ---------------------------------------------------
-            if (entities.Count > 1) {
-                // If this property is a ButtonActions or TurnoutActions then they 
-                // cannot be considered common, so mark them as not being a common property
-                // --------------------------------------------------------------------------
-                if (property.Property.PropertyType == typeof(ButtonActions) || 
-                    property.Property.PropertyType == typeof(TurnoutActions) ||
-                    property.Property.PropertyType == typeof(EntityIDField)) {
-                    isCommonProperty = false;
-                } else {
-                    for (var i = 1; i < entities.Count; i++) {
-                        var entityProperties = EditableExtractor.GetEditableProperties(entities[i]);
-                        if (entityProperties.All(p => p.Property.Name != property.Property.Name)) {
-                            isCommonProperty = false;
-                            break;
-                        }
-
-                        // Check if we have a common value for matching items
-                        // --------------------------------------------------
-                        if (commonValue is not null) {
-                            var compareValue = property.Property.GetValue(entities[i]);
-                            if (compareValue != commonValue) commonValue = null;
-                        }
-                    }
-                }
-            }
-
-            // If there is only a single property, OR we found a matching property,
-            // then add this property to our common property collection.
-            // If there is only a single entity, all its properties should be added.
-            //
-            // Mark all as not modified but mark ButtonActions and TurnoutActions 
-            // as modified as currently we don't know if they are modified or not. 
-            // ----------------------------------------------------------------------
-            if (isCommonProperty) {
-                property.Metadata.Value = commonValue;
-                property.Metadata.IsModified = false;
-                commonProperties.Add(property);
-            }
-        }
-
-        // Finally, sort the properties and store them so they can be used
-        // by the other parts of the system
-        // --------------------------------------------------------------
-        var sorted = commonProperties
-                    .OrderBy(item => item.Metadata.Order)
-                    .ThenBy(item => item.Metadata.Group)
-                    .ToList();
-
-        _properties = sorted;
-    }
-
-    private void BuildCommonPropertyUI(List<Entity> entities) {
-        FindCommonProperties(entities);
-        if (_properties is not { Count: > 0 }) {
+        if (_commonProperties.Count == 0) {
             AddNoCommonPropertiesMessage();
             return;
         }
 
-        // Now build the UI for the common properties
-        // ------------------------------------------------------------------
+        Console.WriteLine("===== COMMON PROPERTIES =====");
+        Console.WriteLine($" ==> {_commonProperties.Count} common properties.");
+        BuildUI();
+    }
+
+    private List<CommonProperty> FindCommonProperties() {
+        return Entities.Count == 1 ? FindSingleEntityProperties() : FindMultiEntityCommonProperties();
+    }
+
+    private List<CommonProperty> FindSingleEntityProperties() {
+        var properties = EditableExtractor.GetEditableProperties(Entities[0]);
+        var result = new List<CommonProperty>();
+
+        foreach (var (property, metadata) in properties) {
+            var value = GetPropertyValue(property, Entities[0]);
+            _originalValues[property.Name] = value;
+            result.Add(new CommonProperty(property, metadata, value, false));
+        }
+
+        return SortProperties(result);
+    }
+
+    private List<CommonProperty> FindMultiEntityCommonProperties() {
+        var firstEntityProperties = EditableExtractor.GetEditableProperties(Entities[0]);
+        var result = new List<CommonProperty>();
+
+        foreach (var (property, metadata) in firstEntityProperties) {
+            if (ValueComparer.IsExcludedForMultipleEntities(metadata)) continue;
+            var commonPropertyResult = AnalyzePropertyAcrossEntities(property, metadata);
+            if (commonPropertyResult != null) {
+                result.Add(commonPropertyResult);
+            }
+        }
+
+        return SortProperties(result);
+    }
+
+    private CommonProperty? AnalyzePropertyAcrossEntities(PropertyInfo property, IEditableProperty metadata) {
+        var values = new List<object?>();
+
+        // Collect all values for this property across all entities
+        foreach (var entity in Entities) {
+            if (!HasProperty(entity, property))
+                return null; // Property doesn't exist in all entities
+
+            var value = GetPropertyValue(property, entity);
+            values.Add(value);
+        }
+
+        // Determine if all values are the same
+        var firstValue = values[0];
+        var allSame = values.All(v => ValueComparer.AreEqual(firstValue, v));
+
+        var commonValue = allSame ? firstValue : null;
+        _originalValues[property.Name] = commonValue;
+
+        return new CommonProperty(property, metadata, commonValue, !allSame);
+    }
+
+    private static bool HasProperty(Entity entity, PropertyInfo property) {
+        var entityProperties = EditableExtractor.GetEditableProperties(entity);
+        return entityProperties.Any(p => p.Property.Name == property.Name &&
+                                         p.Property.PropertyType == property.PropertyType);
+    }
+
+    private static object? GetPropertyValue(PropertyInfo property, Entity entity) {
+        try {
+            var targetProperty = entity.GetType().GetProperty(property.Name, property.PropertyType);
+            return targetProperty?.GetValue(entity);
+        } catch (Exception ex) {
+            Console.WriteLine($"Error getting property {property.Name}: {ex.Message}");
+            return null;
+        }
+    }
+
+    private static List<CommonProperty> SortProperties(List<CommonProperty> properties) {
+        return properties
+              .OrderBy(p => p.Metadata.Order)
+              .ThenBy(p => p.Metadata.Group)
+              .ToList();
+    }
+
+    private void BuildUI() {
         (IView? Group, IList<IView>? Container) groupContainer = (null, null);
-
         var lastGroup = "*";
-        foreach (var property in _properties) {
 
-            // Create a group container if the group has changed
-            // -------------------------------------------------------------------------------------
-            if (property.Metadata.Group != lastGroup) {
-                groupContainer = CreateExpanderGroup(property.Metadata.Group, lastGroup == "*");
+        foreach (var commonProperty in _commonProperties) {
+            // Create the group if needed
+            if (commonProperty.Metadata.Group != lastGroup) {
+                groupContainer = CreateExpanderGroup(commonProperty.Metadata.Group, lastGroup == "*");
                 _container.Children.Add(groupContainer.Group);
-                lastGroup = property.Metadata.Group;
+                lastGroup = commonProperty.Metadata.Group;
             }
 
-            // Create the UI element
-            // -------------------------------------------------------------------------------------
-            if (groupContainer.Container is not null) {
-                var cell = property.Metadata.CreateView(ProxyEntity, property.Property);
-                if (cell is not null) {
-                    if (property.Metadata.Value is not null && property.Property.CanWrite) {
-                        property.Property.SetValue(ProxyEntity, property.Metadata.Value);
-                    }
+            // Create UI element
+            if (groupContainer.Container != null) {
+                Console.WriteLine($"Creating View: {commonProperty.Property}");
+                var cell = commonProperty.Metadata.CreateView(ProxyEntity, commonProperty.Property);
+                if (cell != null) {
+                    SetInitialValue(commonProperty);
                     groupContainer.Container.Add(cell);
                 }
             }
         }
-        Console.WriteLine("Built UI");
     }
 
-    public async Task ApplyChangesToAllEntities() {
-        foreach (var modifiedProperty in _properties) {
-            var propertyName = modifiedProperty.Property.Name;
-            var properties = EditableExtractor.GetEditableProperties(ProxyEntity);
-            var property = properties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
-
-            if (property != null) {
-                var newValue = property.GetValue(ProxyEntity);
-                var oldValue = modifiedProperty.Metadata.Value;
-                if (newValue != oldValue || (property.PropertyType == typeof(ButtonActions) || property.PropertyType == typeof(TurnoutActions)) ) {
-                    foreach (var targetEntity in Entities) {
-                        var targetProperties = EditableExtractor.GetEditableProperties(targetEntity);
-                        var targetProperty = targetProperties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
-                        
-                        if (targetProperty != null) {
-                            var valueToSet = newValue;
-
-                            // Only clone if it's a reference type (excluding string)
-                            if (newValue != null &&
-                                !targetProperty.PropertyType.IsValueType &&
-                                targetProperty.PropertyType != typeof(string)) {
-                                
-                                valueToSet = newValue switch {
-                                    ICloneable cloneable            => cloneable.Clone(),
-                                    List<string> list               => new List<string>(list),
-                                    Dictionary<string, object> dict => new Dictionary<string, object>(dict),
-                                    _ => newValue
-                                };
-                            }
-                            targetProperty.SetValue(targetEntity, valueToSet);
-                        }
-                    }
-                }
+    private void SetInitialValue(CommonProperty commonProperty) {
+        if (commonProperty.CommonValue != null && commonProperty.Property.CanWrite) {
+            try {
+                commonProperty.Property.SetValue(ProxyEntity, commonProperty.CommonValue);
+                commonProperty.Metadata.Value = commonProperty.CommonValue;
+                commonProperty.Metadata.IsModified = false;
+            } catch (Exception ex) {
+                Console.WriteLine($"Error setting initial value for {commonProperty.Property.Name}: {ex.Message}");
             }
         }
     }
 
+    public async Task ApplyChangesToAllEntities() {
+        Console.WriteLine("===== APPLYING CHANGES =====");
+        foreach (var commonProperty in _commonProperties) {
+            await ApplyPropertyChange(commonProperty);
+        }
+    }
+
+    private async Task ApplyPropertyChange(CommonProperty commonProperty) {
+        var propertyName = commonProperty.Property.Name;
+        var newValue = GetPropertyValue(commonProperty.Property, ProxyEntity);
+        var originalValue = _originalValues.GetValueOrDefault(propertyName);
+
+        // Check if the value actually changed
+        var hasChanged = !ValueComparer.AreEqual(newValue, originalValue);
+
+        // Always update ButtonActions and TurnoutActions (as per original logic)
+        var forceUpdate = Entities.Count > 1 && ValueComparer.IsExcludedForMultipleEntities(commonProperty.Metadata);
+
+        if (hasChanged || forceUpdate) {
+            Console.WriteLine($"Updating property '{propertyName}': '{originalValue}' -> '{newValue}'");
+
+            foreach (var entity in Entities) {
+                await UpdateEntityProperty(entity, propertyName, newValue);
+            }
+        }
+    }
+
+    private async Task UpdateEntityProperty(Entity entity, string propertyName, object? newValue) {
+        try {
+            var entityProperties = EditableExtractor.GetEditableProperties(entity);
+            var targetProperty = entityProperties.FirstOrDefault(p => p.Property.Name == propertyName).Property;
+
+            if (targetProperty?.CanWrite == true) {
+                var valueToSet = CloneValueIfNeeded(newValue, targetProperty.PropertyType);
+                targetProperty.SetValue(entity, valueToSet);
+                Console.WriteLine($"Updated {entity.EntityName}.{propertyName}");
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error updating {entity.EntityName}.{propertyName}: {ex.Message}");
+        }
+    }
+
+    private static object? CloneValueIfNeeded(object? value, Type propertyType) {
+        if (value == null) return null;
+        if (propertyType.IsValueType || propertyType == typeof(string)) return value;
+
+        return value switch {
+            ICloneable cloneable            => cloneable.Clone(),
+            List<string> list               => new List<string>(list),
+            Dictionary<string, object> dict => new Dictionary<string, object>(dict),
+            _                               => value
+        };
+    }
+
+    // UI Creation Methods (keeping existing implementations)
     private static (IView?, IList<IView>?) CreateExpanderGroup(string groupKey, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey);
 
@@ -209,7 +298,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
     private static Image GroupChevrons(Expander expander) {
         var chevron = new Image {
-            Source = "chevron_circle_down.png", // Default chevron for expanded state
+            Source = "chevron_circle_down.png",
             Behaviors = {
                 new IconTintColorBehavior {
                     TintColor = (Color?)Application.Current?.Resources["Primary"] ?? Colors.Black
@@ -220,9 +309,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             VerticalOptions = LayoutOptions.Center,
             HorizontalOptions = LayoutOptions.Start,
             Margin = new Thickness(0, 0, 5, 0),
-            Rotation = 0 // Expanded state rotation (facing down)
+            Rotation = 0
         };
-        chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded), converter: new ExpandRotationConverter(), source: expander);
+        chevron.Bind(VisualElement.RotationProperty, nameof(expander.IsExpanded),
+                     converter: new ExpandRotationConverter(), source: expander);
         return chevron;
     }
 
@@ -251,7 +341,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
     private static string FormatLabel(string groupKey) {
         if (groupKey.EndsWith("s")) return groupKey;
-        return string.IsNullOrEmpty(groupKey) ? "Properties" : $"{groupKey} properties";
+        return string.IsNullOrEmpty(groupKey) ? "Properties" : $"{groupKey}";
     }
 
     private static BoxView GroupDivider(Color? color = null) {
@@ -264,11 +354,24 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     private void AddNoCommonPropertiesMessage() => AddNoPropertiesMessage("There are no common properties between the selected track elements.");
+
     private void AddNoEntitiesMessage() => AddNoPropertiesMessage("There are no available properties.");
 
     private void AddNoPropertiesMessage(string message) {
-        var labelTitle = new Label { FontSize = 18, Margin = new Thickness(10, 20, 10, 20), FontAttributes = FontAttributes.Bold, Text = "No Common Properties", HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
-        var labelDescription = new Label { FontSize = 12, Text = message, HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Center };
+        var labelTitle = new Label {
+            FontSize = 18,
+            Margin = new Thickness(10, 20, 10, 20),
+            FontAttributes = FontAttributes.Bold,
+            Text = "No Common Properties",
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
+        };
+        var labelDescription = new Label {
+            FontSize = 12,
+            Text = message,
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center
+        };
         _container?.Children?.Add(labelTitle);
         _container?.Children?.Add(labelDescription);
     }
