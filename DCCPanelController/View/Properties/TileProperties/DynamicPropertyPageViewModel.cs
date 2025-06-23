@@ -23,11 +23,12 @@ public record CommonProperty(
     bool HasMixedValues);
 
 public static class ValueComparer {
-    private static readonly HashSet<Type> MultipleEntityExcludedAttributeTypes = new() {
+    private static readonly HashSet<Type> MultipleEntityExcludedAttributeTypes = 
+    [
         typeof(EditableID),
         typeof(EditableButtonActions),
-        typeof(EditableTurnoutActions),
-    };
+        typeof(EditableTurnoutActions)
+    ];
 
     public static bool AreEqual(object? value1, object? value2) {
         if (ReferenceEquals(value1, value2)) return true;
@@ -35,17 +36,15 @@ public static class ValueComparer {
         if (value1.GetType() != value2.GetType()) return false;
 
         return value1 switch {
-            int intValue                   => intValue.IsEqualTo((int)value2),
-            float floatVal                 => floatVal.IsEqualTo((float)value2),
-            double doubleVal               => doubleVal.IsEqualTo((double)value2),
-            string stringValue             => stringValue.Equals(value2),
-            _ when value1.GetType().IsEnum => value1.Equals(value2),
-            _                              => value1.Equals(value2)
+            int intValue       => intValue.IsEqualTo((int)value2),
+            float floatVal     => floatVal.IsEqualTo((float)value2),
+            double doubleVal   => doubleVal.IsEqualTo((double)value2),
+            string stringValue => stringValue.Equals(value2),
+            _                  => value1.Equals(value2)
         };
     }
 
-    public static bool IsExcludedForMultipleEntities(IEditableProperty metadata)
-    {
+    public static bool IsExcludedForMultipleEntities(IEditableProperty metadata) {
         var attributeType = metadata.GetType();
         return MultipleEntityExcludedAttributeTypes.Contains(attributeType);
     }
@@ -61,19 +60,17 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     [ObservableProperty] private string _title;
 
     public DynamicPropertyPageViewModel(Entity entity) : this([entity]) { }
-
     public DynamicPropertyPageViewModel(List<Entity> entities) {
         if (entities is null || entities.Count == 0)
             throw new ArgumentException("There must be at least 1 Entity for Properties.");
 
         Entities = entities;
         ProxyEntity = entities[0].Clone();
+        Title = "Property Editor";
 
         if (entities[0] is IActionEntity actionEntity) {
             actionEntity.CloneActionsInto((IActionEntity)ProxyEntity);
         }
-
-        Title = "Property Editor";
     }
 
     public async Task ApplyChangesAsync() {
