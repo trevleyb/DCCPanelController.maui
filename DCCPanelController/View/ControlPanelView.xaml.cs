@@ -306,6 +306,8 @@ public partial class ControlPanelView {
             child.GestureRecognizers.Clear();
             DynamicGrid.Remove(child);
             if (child is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
+            var tiles = DynamicGrid.Children.OfType<ITile>().Where(x => x.Entity.Guid == entity.Guid).ToList();
+            foreach (var tile in tiles) MarkTileUnSelected(tile);
         }
     }
 
