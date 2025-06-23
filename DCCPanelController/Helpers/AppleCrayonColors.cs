@@ -1,86 +1,128 @@
 namespace DCCPanelController.Helpers;
 
 public static class AppleCrayonColors {
-    
     // Cache the colors list to avoid recreation
-    private static readonly Lazy<IReadOnlyList<Color>> _colors = new(() => 
-            Crayons.Select(crayon => crayon.Color).ToList());
-    
+    private static readonly Lazy<IReadOnlyList<Color>> _colors = new(() => Crayons.Select(crayon => crayon.Color).ToList());
     public static IReadOnlyList<Color> Colors => _colors.Value;
+    public static IReadOnlyList<AppleCrayonColor> Crayons => _crayons.Value;
+    public static IReadOnlyList<AppleCrayonColor> Lazy => _crayons.Value;
+    private static readonly Lazy<Dictionary<Color, string>> ColorToName = new(() => Crayons.ToDictionary(c => c.Color, c => c.Name));
+    public static string Name(Color color) => ColorToName.Value.GetValueOrDefault(color, "Unknown");
+    public static Color Value(string name) => NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
+
+    private static readonly Lazy<Dictionary<string, Color>> NameToColor = new(() => Crayons.ToDictionary(c => c.Name, c => c.Color, StringComparer.OrdinalIgnoreCase));
+
+    public record AppleCrayonColor(string Name, Color Color);
 
     // Cache the crayons list
     private static readonly Lazy<IReadOnlyList<AppleCrayonColor>> _crayons = new(() =>
-    new List<AppleCrayonColor> {
-            new("Licorice", Color.FromArgb("FF000000")),
-            new("Lead", Color.FromArgb("FF212121")),
-            new("Tungsten", Color.FromArgb("FF424242")),
-            new("Iron", Color.FromArgb("FF5e5e5e")),
-            new("Steel", Color.FromArgb("FF797979")),
-            new("Tin", Color.FromArgb("FF919191")),
-            new("Nickel", Color.FromArgb("FF929292")),
-            new("Aluminium", Color.FromArgb("FFA9A9A9")),
-            new("Magnesium", Color.FromArgb("FFC0C0C0")),
-            new("Silver", Color.FromArgb("FFD6D6D6")),
-            new("Mercury", Color.FromArgb("FFEBEBEB")),
-            new("Snow", Color.FromArgb("FFFFFFFF")),
+                                                                                     new List<AppleCrayonColor> {
+                                                                                         new(nameof(AppleCrayonColorsEnum.Licorice), EnumToColor(AppleCrayonColorsEnum.Licorice)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Lead), EnumToColor(AppleCrayonColorsEnum.Lead)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Tungsten), EnumToColor(AppleCrayonColorsEnum.Tungsten)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Iron), EnumToColor(AppleCrayonColorsEnum.Iron)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Steel), EnumToColor(AppleCrayonColorsEnum.Steel)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Tin), EnumToColor(AppleCrayonColorsEnum.Tin)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Nickel), EnumToColor(AppleCrayonColorsEnum.Nickel)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Aluminium), EnumToColor(AppleCrayonColorsEnum.Aluminium)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Magnesium), EnumToColor(AppleCrayonColorsEnum.Magnesium)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Silver), EnumToColor(AppleCrayonColorsEnum.Silver)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Mercury), EnumToColor(AppleCrayonColorsEnum.Mercury)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Snow), EnumToColor(AppleCrayonColorsEnum.Snow)),
 
-            new("Cayenne", Color.FromArgb("FF941100")),
-            new("Mocha", Color.FromArgb("FF945200")),
-            new("Asparagus", Color.FromArgb("FF929000")),
-            new("Fern", Color.FromArgb("FF4F8F00")),
-            new("Clover", Color.FromArgb("FF008f00")),
-            new("Moss", Color.FromArgb("FF009051")),
-            new("Teal", Color.FromArgb("FF009193")),
-            new("Ocean", Color.FromArgb("FF005493")),
-            new("Midnight", Color.FromArgb("FF011993")),
-            new("Eggplant", Color.FromArgb("FF531b93")),
-            new("Plum", Color.FromArgb("FF942193")),
-            new("Maroon", Color.FromArgb("FF941751")),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Cayenne), EnumToColor(AppleCrayonColorsEnum.Cayenne)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Mocha), EnumToColor(AppleCrayonColorsEnum.Mocha)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Asparagus), EnumToColor(AppleCrayonColorsEnum.Asparagus)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Fern), EnumToColor(AppleCrayonColorsEnum.Fern)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Clover), EnumToColor(AppleCrayonColorsEnum.Clover)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Moss), EnumToColor(AppleCrayonColorsEnum.Moss)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Teal), EnumToColor(AppleCrayonColorsEnum.Teal)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Ocean), EnumToColor(AppleCrayonColorsEnum.Ocean)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Midnight), EnumToColor(AppleCrayonColorsEnum.Midnight)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Eggplant), EnumToColor(AppleCrayonColorsEnum.Eggplant)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Plum), EnumToColor(AppleCrayonColorsEnum.Plum)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Maroon), EnumToColor(AppleCrayonColorsEnum.Maroon)),
 
-            new("Maraschino", Color.FromArgb("FFFF2600")),
-            new("Tangerine", Color.FromArgb("FFFF9300")),
-            new("Lemon", Color.FromArgb("FFfffb00")),
-            new("Lime", Color.FromArgb("FF8efa00")),
-            new("Spring", Color.FromArgb("FF00f900")),
-            new("Sea Foam", Color.FromArgb("FF00fa92")),
-            new("Turquoise", Color.FromArgb("FF00fdff")),
-            new("Aqua", Color.FromArgb("FF0096ff")),
-            new("Blueberry", Color.FromArgb("FF0433ff")),
-            new("Grape", Color.FromArgb("FF9437ff")),
-            new("Magenta", Color.FromArgb("FFff40ff")),
-            new("Strawberry", Color.FromArgb("FFff2f92")),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Maraschino), EnumToColor(AppleCrayonColorsEnum.Maraschino)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Tangerine), EnumToColor(AppleCrayonColorsEnum.Tangerine)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Lemon), EnumToColor(AppleCrayonColorsEnum.Lemon)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Lime), EnumToColor(AppleCrayonColorsEnum.Lime)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Spring), EnumToColor(AppleCrayonColorsEnum.Spring)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.SeaFoam), EnumToColor(AppleCrayonColorsEnum.SeaFoam)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Turquoise), EnumToColor(AppleCrayonColorsEnum.Turquoise)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Aqua), EnumToColor(AppleCrayonColorsEnum.Aqua)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Blueberry), EnumToColor(AppleCrayonColorsEnum.Blueberry)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Grape), EnumToColor(AppleCrayonColorsEnum.Grape)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Magenta), EnumToColor(AppleCrayonColorsEnum.Magenta)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Strawberry), EnumToColor(AppleCrayonColorsEnum.Strawberry)),
 
-            new("Salmon", Color.FromArgb("FFff7e79")),
-            new("Cantaloupe", Color.FromArgb("FFffd479")),
-            new("Banana", Color.FromArgb("FFfffc79")),
-            new("Honeydew", Color.FromArgb("FFd4fb79")),
-            new("Flora", Color.FromArgb("FF73fa79")),
-            new("Spindrift", Color.FromArgb("FF73fcd6")),
-            new("Ice", Color.FromArgb("FF73fdff")),
-            new("Sky", Color.FromArgb("FF76d6ff")),
-            new("Orchid", Color.FromArgb("FF7a81ff")),
-            new("Lavender", Color.FromArgb("FFd783ff")),
-            new("Bubblegum", Color.FromArgb("FFff85ff")),
-            new("Carnation", Color.FromArgb("FFff8ad8"))
-            
-    });
+                                                                                         new(nameof(AppleCrayonColorsEnum.Salmon), EnumToColor(AppleCrayonColorsEnum.Salmon)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Cantaloupe), EnumToColor(AppleCrayonColorsEnum.Cantaloupe)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Banana), EnumToColor(AppleCrayonColorsEnum.Banana)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Honeydew), EnumToColor(AppleCrayonColorsEnum.Honeydew)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Flora), EnumToColor(AppleCrayonColorsEnum.Flora)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Spindrift), EnumToColor(AppleCrayonColorsEnum.Spindrift)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Ice), EnumToColor(AppleCrayonColorsEnum.Ice)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Sky), EnumToColor(AppleCrayonColorsEnum.Sky)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Orchid), EnumToColor(AppleCrayonColorsEnum.Orchid)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Lavender), EnumToColor(AppleCrayonColorsEnum.Lavender)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Bubblegum), EnumToColor(AppleCrayonColorsEnum.Bubblegum)),
+                                                                                         new(nameof(AppleCrayonColorsEnum.Carnation), EnumToColor(AppleCrayonColorsEnum.Carnation))
+                                                                                     });
 
-    public static IReadOnlyList<AppleCrayonColor> Crayons => _crayons.Value;
+    private static Color EnumToColor(AppleCrayonColorsEnum color) => Color.FromArgb($"{(uint)color:X8}");
 
-    // Cache name lookups
-    private static readonly Lazy<Dictionary<Color, string>> _colorToName = new(() =>
-            Crayons.ToDictionary(c => c.Color, c => c.Name));
+    public enum AppleCrayonColorsEnum : uint {
+        Licorice = 0xFF000000,
+        Lead = 0xFF212121,
+        Tungsten = 0xFF424242,
+        Iron = 0xFF5e5e5e,
+        Steel = 0xFF797979,
+        Tin = 0xFF919191,
+        Nickel = 0xFF929292,
+        Aluminium = 0xFFA9A9A9,
+        Magnesium = 0xFFC0C0C0,
+        Silver = 0xFFD6D6D6,
+        Mercury = 0xFFEBEBEB,
+        Snow = 0xFFFFFFFF,
 
-    public static string Name(Color color) {
-        return _colorToName.Value.TryGetValue(color, out var name) ? name : "Unknown";
-    }
+        Cayenne = 0xFF941100,
+        Mocha = 0xFF945200,
+        Asparagus = 0xFF929000,
+        Fern = 0xFF4F8F00,
+        Clover = 0xFF008f00,
+        Moss = 0xFF009051,
+        Teal = 0xFF009193,
+        Ocean = 0xFF005493,
+        Midnight = 0xFF011993,
+        Eggplant = 0xFF531b93,
+        Plum = 0xFF942193,
+        Maroon = 0xFF941751,
 
-    private static readonly Lazy<Dictionary<string, Color>> _nameToColor 
-        = new(() => Crayons.ToDictionary(c => c.Name, c => c.Color, StringComparer.OrdinalIgnoreCase));
+        Maraschino = 0xFFFF2600,
+        Tangerine = 0xFFFF9300,
+        Lemon = 0xFFfffb00,
+        Lime = 0xFF8efa00,
+        Spring = 0xFF00f900,
+        SeaFoam = 0xFF00fa92,
+        Turquoise = 0xFF00fdff,
+        Aqua = 0xFF0096ff,
+        Blueberry = 0xFF0433ff,
+        Grape = 0xFF9437ff,
+        Magenta = 0xFFff40ff,
+        Strawberry = 0xFFff2f92,
 
-    public static Color Value(string name) {
-        return _nameToColor.Value.TryGetValue(name, out var color) ? color :  Microsoft.Maui.Graphics.Colors.White;
-    }
-
-    public record AppleCrayonColor(string Name, Color Color);
+        Salmon = 0xFFff7e79,
+        Cantaloupe = 0xFFffd479,
+        Banana = 0xFFfffc79,
+        Honeydew = 0xFFd4fb79,
+        Flora = 0xFF73fa79,
+        Spindrift = 0xFF73fcd6,
+        Ice = 0xFF73fdff,
+        Sky = 0xFF76d6ff,
+        Orchid = 0xFF7a81ff,
+        Lavender = 0xFFd783ff,
+        Bubblegum = 0xFFff85ff,
+        Carnation = 0xFFff8ad8
+    };
 }
