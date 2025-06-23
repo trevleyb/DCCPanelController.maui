@@ -73,24 +73,24 @@
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill"
                     StrokeThickness="0">
-                    <Grid ColumnDefinitions="100,*,100">
-                        <HorizontalStackLayout Grid.Column="0">
+                    <Grid ColumnDefinitions="100,*,100" Padding="5">
+                        <Grid Grid.Column="0" ColumnDefinitions="auto,auto">
                             <Label FontSize="15" FontFamily="OpenSansLight" TextColor="{StaticResource Primary}"
                                    Text="Edit Mode:"
                                    Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
                             <Label FontSize="15" FontFamily="OpenSansMedium" TextColor="{StaticResource Primary}"
                                    x:Name="EditModeText"
                                    Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                        </HorizontalStackLayout>
-                        <HorizontalStackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
+                        </Grid>
+                        <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center" VerticalOptions="Center">
                             <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0"
                                    TextColor="{StaticResource Primary}"/>
-                            <Label FontSize="15" FontFamily="OpenSansMedium" x:Name="SelectedItems" Margin="10,0,0,0"
-                                   TextColor="{StaticResource Primary}" LineBreakMode="MiddleTruncation" />
-                        </HorizontalStackLayout>
-                        <Label Grid.Column="2" TextColor="{StaticResource Primary}" FontSize="15"
-                               FontFamily="OpenSansBold" x:Name="NeedsSavingText"
-                               Margin="10,0,0,0" HorizontalOptions="End" VerticalOptions="Center"/>
+                        </Grid>
+                        <Grid Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
+                            <Label TextColor="{StaticResource Primary}" FontSize="15"
+                                   FontFamily="OpenSansBold" x:Name="NeedsSavingText"
+                                   Margin="10,0,0,0" HorizontalOptions="End" VerticalOptions="Center"/>
+                        </Grid>
                     </Grid>
                 </Border>
             </Grid>

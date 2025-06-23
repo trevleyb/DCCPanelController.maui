@@ -109,21 +109,12 @@ public partial class PanelEditor : ContentPage {
 
         if (_viewModel.SelectedTiles.Count == 0) {
             SelectionText.Text = "No tiles selected";
-            SelectedItems.Text = "";
         }
         if (_viewModel.SelectedTiles.Count == 1) {
-            SelectionText.Text = "Selected Tile:";
-            SelectedItems.Text = _viewModel.SelectedTiles[0].Entity.EntityName;
+            SelectionText.Text = $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}";
         }
-        
         if (_viewModel.SelectedTiles.Count > 1) {
-            var sb = new StringBuilder();
-            foreach (var tile in _viewModel.SelectedTiles) {
-                if (sb.Length > 1) sb.Append(", ");
-                sb.Append(tile.Entity.EntityName);
-            }  
-            SelectionText.Text = "Multiple Selected Tiles:";
-            SelectedItems.Text = sb.ToString();
+            SelectionText.Text = $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})";
         }
         if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
     }
