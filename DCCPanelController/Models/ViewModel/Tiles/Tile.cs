@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using System.Text;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -13,12 +15,14 @@ public abstract class Tile : ContentView, ITile {
     protected readonly TileDisplayMode DisplayMode;
     protected bool HaveVisualPropertiesChanged;
     protected HashSet<string> VisualProperties { get; } = [];
+    protected HashSet<string> ChangedProperties { get; } = [];
     protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
 
-    private const int DebounceDelay = 50;
+    private DateTime _lastChangeTime = DateTime.Now;
+    private const int DebounceDelay = 75;
     private CancellationTokenSource? _debounceRebuildCts;
     private Dictionary<string, object?> _propertyCache = [];
-    
+
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
         GridSize = gridSize;
@@ -42,6 +46,7 @@ public abstract class Tile : ContentView, ITile {
 
     public void ForceRedraw() {
         HaveVisualPropertiesChanged = true;
+        ChangedProperties.Add("FORCE-REDRAW");
         RebuildIfNecessary();
     }
 
@@ -58,6 +63,18 @@ public abstract class Tile : ContentView, ITile {
             Content.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.OneWay, source: Entity));
             Content.SetBinding(IsVisibleProperty, new Binding(nameof(Entity.IsEnabled), BindingMode.OneWay, source: Entity));
         }
+    }
+
+    private string GetChangedProperties() {
+        var sb = new StringBuilder();
+        if (ChangedProperties.Count == 0) return "None";
+
+        foreach (var property in ChangedProperties) {
+            if (sb.Length > 0) sb.Append(",");
+            sb.Append(property);
+        }
+        ChangedProperties.Clear();
+        return sb.ToString();
     }
 
     private void SetSymbolContent() {
@@ -80,6 +97,7 @@ public abstract class Tile : ContentView, ITile {
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
             HaveVisualPropertiesChanged = true;
+            ChangedProperties.Add(property);
         }
         RebuildIfNecessary();
     }
@@ -108,7 +126,8 @@ public abstract class Tile : ContentView, ITile {
                          if (HaveVisualPropertiesChanged) {
                              SetContent();
                              HaveVisualPropertiesChanged = false; // Reset flag
-                         } 
+                             _lastChangeTime = DateTime.Now;
+                         }
                      });
                  } catch (Exception ex) {
                      Console.WriteLine($"Error rebuilding tile: {ex.Message}");

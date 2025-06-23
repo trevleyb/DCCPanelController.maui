@@ -81,6 +81,7 @@ public partial class ControlPanelView {
     }
 
     private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        Console.WriteLine("Entities Collection Changed....");
         if (sender is ControlPanelView control) {
             control.ClearAllSelectedTiles();
 

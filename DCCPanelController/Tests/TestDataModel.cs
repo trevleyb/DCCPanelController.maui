@@ -89,9 +89,6 @@ public class TestDataModel {
             buttonEntity.State = ButtonStateEnum.Off;
             break;
 
-        case CircleLabelEntity circleLabelEntity:
-            circleLabelEntity.Label = "Test";
-            break;
         }
         panel.AddEntity(entity);
         var cloned = panel.CreateEntityFrom(entity);

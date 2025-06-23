@@ -28,17 +28,19 @@ public partial class ControlPanelView {
         Resize
     }
 
-    protected PathTracingService PathTracer = new PathTracingService();
+    private readonly PathTracingService _pathTracer = new();
+    
     private const int DoubleTapTime = 200;
     private readonly bool _canDragTiles = true;
     private readonly HashSet<ITile> _selectedTiles = [];
+
     private int _dragStartCol;
     private int _dragStartRow;
-
-    private double _gridSize;
     private int _lastDragCol;
     private int _lastDragRow;
     private int _tapCount;
+
+    private double _gridSize;
     private double _viewHeight;
     private double _viewWidth;
 
@@ -60,6 +62,7 @@ public partial class ControlPanelView {
             _                 => "move.png"
         };
 
+    #region Event Handlers
     public event EventHandler<TileSelectedEventArgs>? TileChanged;
     public event EventHandler<TileSelectedEventArgs>? TileSelected;
     public event EventHandler<TileSelectedEventArgs>? TileTapped;
@@ -75,7 +78,9 @@ public partial class ControlPanelView {
     private void OnTileSelected(int tapCount) {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
-
+    #endregion
+    
+    #region Grid Management
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
     }
@@ -103,21 +108,23 @@ public partial class ControlPanelView {
                            [CallerMemberName] string memberName = "",
                            [CallerFilePath] string sourceFilePath = "",
                            [CallerLineNumber] int sourceLineNumber = 0) {
-        // Only redraw the grid if we absolutely need to. Events may mean that this 
-        // is called multiple times, but if we really have not changed, then do not 
-        // waste time redrawing and rebuilding the grid. 
-        // -------------------------------------------------------------------------
-        //Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
-        //Console.WriteLine($"**DrawPanel: Panel={(Panel is null ? "Null" : "Set")} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
-        //Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
 
         if (Panel is null) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
+        // Only redraw the grid if we absolutely need to. Events may mean that this 
+        // is called multiple times, but if we really have not changed, then do not 
+        // waste time redrawing and rebuilding the grid. 
+        // -------------------------------------------------------------------------
+        Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
+        Console.WriteLine($"**DrawPanel: Panel={Panel?.Id ?? "UNKNOWN PANEL???"} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
+        Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
+        Console.WriteLine($"========================================================================");
+
         ClearAllSelectedTiles();
 
-        using (new CodeTimer($"Draw Panel: {Panel.Id} called from {memberName}@{sourceLineNumber}", false)) {
+        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", false)) {
             _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
             _viewWidth = _gridSize * Cols;
             _viewHeight = _gridSize * Rows;
@@ -150,7 +157,7 @@ public partial class ControlPanelView {
     /// </summary>
     private void AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
-        PathTracer.ClearTileRegistry();
+        _pathTracer.ClearTileRegistry();
         foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
             AddEntityToGrid(entity);
         }
@@ -161,15 +168,17 @@ public partial class ControlPanelView {
     /// </summary>
     /// <returns>Returns an instance of the created tile or null if it could not create one. </returns>
     private ITile? AddEntityToGrid(Entity entity) {
-        var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
-        if (tile is ContentView view) {
-            view.ClassId = entity.Guid.ToString();
-            SetTileGestures(tile);
-            SetTileGridPosition(tile);
-            DynamicGrid.Children.Add(view);
-            if (tile is TrackTile trackTile) PathTracer.RegisterTile(trackTile);
+        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}")) {
+            var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
+            if (tile is ContentView view) {
+                view.ClassId = entity.Guid.ToString();
+                SetTileGestures(tile);
+                SetTileGridPosition(tile);
+                DynamicGrid.Children.Add(view);
+                if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
+            }
+            return tile;
         }
-        return tile;
     }
 
     private void SetTileGestures(ITile tile) {
@@ -206,7 +215,7 @@ public partial class ControlPanelView {
     private async void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
         try {
             if (sender is TrackTile trackTile) {
-                await PathTracer.StartPathTracing(trackTile!);
+                await _pathTracer.StartPathTracing(trackTile!);
             }
         } catch (Exception ex) {
             Console.WriteLine($"Error in launching path Tracing: {ex.Message}");
@@ -263,7 +272,7 @@ public partial class ControlPanelView {
         foreach (var child in children) {
             child.GestureRecognizers.Clear();
             DynamicGrid.Remove(child);
-            if (child is TrackTile trackTile) PathTracer.UnregisterTile(trackTile);
+            if (child is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
         }
     }
 
@@ -320,7 +329,9 @@ public partial class ControlPanelView {
             DynamicGrid.SetRowSpan(view, tile.Entity.Height);
         }
     }
+    #endregion
 
+    #region Position Helpers
     /// <summary>
     ///     Convert a position in the grid (absolute) to a Grid position within the col/row definitions
     /// </summary>
@@ -356,11 +367,17 @@ public partial class ControlPanelView {
     }
 
     public async Task<string> GetThumbnailAsync() {
-        DesignMode = false;
-        ShowGrid = false;
-        DrawPanel(true);
-        return await this.RenderSchematicToBase64ImageAsync();
+        try {
+            DesignMode = false;
+            ShowGrid = false;
+            DrawPanel(true);
+            return await this.RenderSchematicToBase64ImageAsync();
+        } catch (Exception ex) {
+            Console.WriteLine($"Error generating the thumbnail: {ex.Message}");
+            return string.Empty;
+        }
     }
+    #endregion 
 
     #region Draw Grid when in Design Mode
     private void DrawGrid() {
@@ -602,6 +619,8 @@ public partial class ControlPanelView {
     }
 
     private void DragCompleted(object? sender, DropCompletedEventArgs e) {
+        var complete = (sender is DragGestureRecognizer { Parent : ITile }); 
+        Console.WriteLine($"DragCompleted: Complete={complete}");
         if (sender is DragGestureRecognizer { Parent : ITile tile }) {
             tile.ForceRedraw();
             ClearAllSelectedTiles();
@@ -623,7 +642,8 @@ public partial class ControlPanelView {
             var source = e.Data.Properties["Source"] as string ?? null;
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
             var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-
+            Console.WriteLine($"DROPPING... {source}={tile?.Entity.EntityName} {gridPosition.ToString()}");
+            
             if (gridPosition is { } position && tile is not null) {
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
@@ -654,6 +674,10 @@ public partial class ControlPanelView {
                                 ResizeTrack(tile, position.Col, position.Row);
                                 MarkTileSelected(tile);
                                 OnTileChanged(tile);
+                                break;
+                            
+                            default:
+                                Console.WriteLine("ERROR: Invalid operation?");
                                 break;
                             }
                             break;

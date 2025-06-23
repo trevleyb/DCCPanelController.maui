@@ -30,8 +30,8 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
-    [ObservableProperty] [property: EditableDouble("Scale", "", 5, "Circle", .25, 2.0)]
-    private double _scale = 1;
+    [ObservableProperty] //[property: EditableDouble("Scale", "", 5, "Circle", .25, 2.0)]
+    private double _scale = 0.8;
 
     [ObservableProperty] [property: EditableColor("Text Color", "", 0, "Text")]
     private Color _textColor = Colors.White;
@@ -41,6 +41,7 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
 
     public CircleLabelEntity(Panel panel) : this() {
         Parent = panel;
+        Layer = 8;
     }
 
     public CircleLabelEntity(CircleLabelEntity entity) : base(entity) {

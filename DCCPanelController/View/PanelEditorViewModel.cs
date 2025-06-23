@@ -167,6 +167,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
                 OnBeginPopModal?.Invoke();
+                await SaveAsync();
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
@@ -182,14 +183,16 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
                 OnBeginPopModal?.Invoke();
+                await SaveAsync();
             }
             
             // if the layer of the item changed, then we need to force a refresh of the panel
             // ------------------------------------------------------------------------------
-            if (layer != SelectedEntities?.First().Layer) {
+            if (layer != SelectedEntities?.First()?.Layer) {
                 Console.WriteLine("Layer was changed, so forcing a Panel redraw");
                 ForcePanelRefresh?.Invoke();
             }
+            SelectedEntities?.Clear();
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Tile Properties Page: " + ex.Message);
         }

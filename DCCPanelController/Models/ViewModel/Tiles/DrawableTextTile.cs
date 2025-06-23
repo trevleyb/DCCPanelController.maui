@@ -14,48 +14,48 @@ public class DrawableTextTile : Tile, ITileDrawable {
         VisualProperties.Add(nameof(entity.TextColor));
         VisualProperties.Add(nameof(entity.HorizontalJustification));
         VisualProperties.Add(nameof(entity.VerticalJustification));
+        
+        VisualProperties.Add(nameof(entity.BorderColor));
+        VisualProperties.Add(nameof(entity.BackgroundColor));
+        VisualProperties.Add(nameof(entity.BorderWidth));
+        VisualProperties.Add(nameof(entity.BorderRadius));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is TextEntity entity && !string.IsNullOrEmpty(entity.Label)) {
             var label = new Label {
-                //Text = entity.Label,
-                //FontSize = entity.FontSize,
                 HorizontalTextAlignment = entity.HorizontalJustification,
                 VerticalTextAlignment = entity.VerticalJustification,
-                HorizontalOptions = LayoutOptions.Start,
-                VerticalOptions = LayoutOptions.Start,
-
-                //TextColor = entity.TextColor,
-                //BackgroundColor = BackgroundColor,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill,
+                BackgroundColor = Colors.Transparent,
                 ZIndex = entity.Layer,
-
-                //RotationX = entity.Rotation,
                 LineBreakMode = LineBreakMode.TailTruncation,
+                Rotation = entity.Rotation,
+                FontSize = entity.FontSize,
+                TextColor = entity.TextColor,
                 InputTransparent = true,
                 WidthRequest = TileWidth,
                 HeightRequest = TileHeight
             };
-            label.SetBinding(RotationProperty, new Binding(nameof(entity.Rotation), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(Label.FontSizeProperty, new Binding(nameof(entity.FontSize), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(Label.TextColorProperty, new Binding(nameof(entity.TextColor), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(BackgroundColorProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
+            label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.OneWay, source: Entity));
 
+            if (entity.BorderWidth == 0) return label;
+            
             var border = new Border {
                 Content = label,
                 InputTransparent = true,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
+                Stroke = new SolidColorBrush(entity.BorderColor),
+                StrokeThickness = entity.BorderWidth,
+                StrokeShape = new RoundRectangle { CornerRadius = entity.BorderRadius },
+                Rotation = entity.Rotation,
+                Opacity = entity.Opacity,
+                BackgroundColor = entity.BackgroundColor,
                 WidthRequest = TileWidth,
-                HeightRequest = TileHeight
+                HeightRequest = TileHeight // Assume this so we use the label 
             };
-            border.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
-            border.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
-            border.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: entity));
-            border.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: entity));
-            border.SetBinding(RoundRectangle.CornerRadiusProperty, new Binding(nameof(entity.BorderRadius), BindingMode.TwoWay, source: entity));
             return border;
         }
         return CreateSymbol();
