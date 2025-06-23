@@ -17,6 +17,12 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
     private string _turnoutID = string.Empty;
 
+    [ObservableProperty] [property: EditableEnum("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
+    private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
+
+    [ObservableProperty] [property: EditableColor("Not Selected Track", "The color of the track of the track not selected", 5, "Track")]
+    private Color? _trackNotSelectedColor;
+    
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)]
     private ButtonActions _buttonPanelActions = [];
 

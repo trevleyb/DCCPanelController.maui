@@ -57,10 +57,18 @@ public static class SvgImages {
         AddImage("LeftTurnoutUnknown", "Track_Turnout_Left");
         AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight");
         AddImage("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging");
+        
+        AddImage("LeftTurnoutUnknownAlt", "Track_Turnout_Left");
+        AddImage("LeftTurnoutStraightAlt", "Track_Turnout_Left_Straight_alt");
+        AddImage("LeftTurnoutDivergingAlt", "Track_Turnout_Left_Diverging_alt");
 
         AddImage("RightTurnoutUnknown", "Track_Turnout_Right");
         AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight");
         AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging");
+        
+        AddImage("RightTurnoutUnknownAlt", "Track_Turnout_Right");
+        AddImage("RightTurnoutStraightAlt", "Track_Turnout_Right_Straight_alt");
+        AddImage("RightTurnoutDivergingAlt", "Track_Turnout_Right_Diverging_alt");
     }
 
     public static SvgImage GetImage(string name, int direction = 0) {

@@ -18,6 +18,8 @@ public enum TrackTerminatorEnum { Normal, Arrow, Lines }
 
 public enum TrackAttributeEnum { Normal, Dashed }
 
+public enum TurnoutStyleEnum { Standard, NoBranch }
+
 public static class EnumHelpers {
     public static TurnoutStateEnum ConvertTurnout(string state) {
         return state switch {

@@ -119,6 +119,14 @@
         <EmbeddedResource Include="Models\TileImages\light.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_off.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_on.svg" />
+        <None Remove="Models\TileImages\track_turnout_left_diverging_alt.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging_alt.svg" />
+        <None Remove="Models\TileImages\track_turnout_left_straight_alt.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight_alt.svg" />
+        <None Remove="Models\TileImages\track_turnout_right_diverging_alt.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging_alt.svg" />
+        <None Remove="Models\TileImages\track_turnout_right_straight_alt.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight_alt.svg" />
     </ItemGroup>
 
     <ItemGroup>
