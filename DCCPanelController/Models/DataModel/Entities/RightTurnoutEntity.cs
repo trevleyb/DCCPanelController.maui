@@ -8,7 +8,7 @@ public class RightTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntit
     [JsonConstructor]
     public RightTurnoutEntity() { }
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.RightTurnoutTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.RightTurnoutTrack;
     
     public RightTurnoutEntity(Panel panel) : base(panel) { }
     public RightTurnoutEntity(RightTurnoutEntity entity) : base(entity) { }

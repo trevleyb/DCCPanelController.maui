@@ -8,7 +8,7 @@ public class TerminatorEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public TerminatorEntity() { }
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.TerminatorTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.TerminatorTrack;
     
     public TerminatorEntity(Panel panel) : this() {
         Parent = panel;

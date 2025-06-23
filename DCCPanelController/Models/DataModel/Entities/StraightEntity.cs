@@ -10,7 +10,7 @@ public class StraightEntity : TrackEntity, ITrackEntity {
         Layer = 6; // Override the Straight Entity so it overlays anything else
     }
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightTrack;
     
     public StraightEntity(Panel panel) : this() {
         Parent = panel;

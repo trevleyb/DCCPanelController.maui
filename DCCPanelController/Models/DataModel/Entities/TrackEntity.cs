@@ -34,8 +34,8 @@ public abstract partial class TrackEntity : Entity {
         }
     } 
     
-    [JsonIgnore] public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;
     [JsonIgnore] public abstract EntityConnections Connections { get; }
+    [JsonIgnore] public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;
     [JsonIgnore] public string RotatedConnections => Connections.GetRotatedConnectionsStr(Rotation);
     [JsonIgnore] public ConnectionType[] GetCurrentConnections => Connections.GetConnections(Rotation);
     [JsonIgnore] public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);

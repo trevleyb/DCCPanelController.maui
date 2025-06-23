@@ -8,7 +8,7 @@ public class CornerEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public CornerEntity() { }
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerTrack;
     public CornerEntity(Panel panel) : this() {
         Parent = panel;
     }

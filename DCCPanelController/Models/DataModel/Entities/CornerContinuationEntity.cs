@@ -10,7 +10,7 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
     [ObservableProperty] [property: EditableEnum("Terminator", group: "Track")]
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerContinuationTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerContinuationTrack;
     [JsonConstructor]
     public CornerContinuationEntity() { }
 

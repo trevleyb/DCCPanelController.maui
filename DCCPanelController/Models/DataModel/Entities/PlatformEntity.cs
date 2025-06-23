@@ -8,7 +8,7 @@ public class PlatformEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public PlatformEntity() { }
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.PlatformTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.PlatformTrack;
     public PlatformEntity(Panel panel) : this() {
         Parent = panel;
     }

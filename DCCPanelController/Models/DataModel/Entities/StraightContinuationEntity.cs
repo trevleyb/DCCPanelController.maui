@@ -13,7 +13,7 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public StraightContinuationEntity() { }
 
-    public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightContinuationTrack;
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightContinuationTrack;
     
     public StraightContinuationEntity(Panel panel) : this() {
         Parent = panel;

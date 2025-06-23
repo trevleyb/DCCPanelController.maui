@@ -36,9 +36,8 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
 
     protected TurnoutEntity(Panel panel) : base(panel) { }
 
-    [JsonIgnore]
-    public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
-    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? [],"Turnout");
+    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
+    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? [],"Turnout");
 
     protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
         TurnoutID = string.Empty;
