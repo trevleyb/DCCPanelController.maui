@@ -10,7 +10,7 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
 
     [ObservableProperty] 
     [property: EditableLightSwitch("Light", "", 0)]
-    private string _switchID = string.Empty;
+    private EntityIDField _switchID = string.Empty;
     
     [ObservableProperty] 
     [property: EditableEnum("Use Switch", "", 0)]

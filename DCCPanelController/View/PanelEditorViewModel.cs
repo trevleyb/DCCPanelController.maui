@@ -64,15 +64,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public event Action? OnBeginPopModal;
 
     public bool SetCanEditProperties() {
-        if (SelectedEntities.Count is 0 or 1) return true;
-
-        // If more than 1 selected entity and any are IEntityID, return false
-        if (SelectedEntities.Any(entity => entity is IEntityID)) return false;
-
-        // If they are track entities (but not IEntityID), return true
-        if (SelectedEntities.All(entity => entity is TrackEntity)) return true;
-
-        return false;
+        return true;
     }
 
     public void CheckIfPanelChanged() {

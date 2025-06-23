@@ -22,6 +22,7 @@ public partial class PanelEditor : ContentPage {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
+        SetDefaultEditMode();
 
         _viewModel.PropertyChanged   += ViewModelOnPropertyChanged;
         _viewModel.OnBeginPushModal  += OnBeginPushModal; // Subscribe to the custom event
@@ -124,16 +125,19 @@ public partial class PanelEditor : ContentPage {
             SelectionText.Text = "Multiple Selected Tiles:";
             SelectedItems.Text = sb.ToString();
         }
-        //if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
+        if (e.IsDoubleTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
     }
 
     private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {
-        Console.WriteLine($"Tile was changed: {e.Tile}");
         _viewModel.CheckIfPanelChanged();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
+        case nameof(PanelEditorViewModel.HavePropertiesChanged):
+            NeedsSavingText.Text = _viewModel.HavePropertiesChanged ? "Unsaved Changes" : "";
+            break;
+        
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;
             PanelView.DesignMode = _viewModel.GridVisible;
@@ -150,5 +154,15 @@ public partial class PanelEditor : ContentPage {
             };
             break;
         }
+    }
+
+    private void SetDefaultEditMode() {
+        EditModeText.Text = _viewModel.EditMode switch {
+            EditModeEnum.Move => "Move Tiles Mode",
+            EditModeEnum.Copy => "Copy Tiles Mode",
+            EditModeEnum.Size => "Resize Tiles Mode",
+            _                 => ""
+        };
+
     }
 }

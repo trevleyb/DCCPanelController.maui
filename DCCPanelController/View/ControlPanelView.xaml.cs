@@ -30,7 +30,7 @@ public partial class ControlPanelView {
 
     private readonly PathTracingService _pathTracer = new();
     
-    private const int DoubleTapTime = 200;
+    private const int DoubleTapTime = 150;
     private readonly bool _canDragTiles = true;
     private readonly HashSet<ITile> _selectedTiles = [];
 

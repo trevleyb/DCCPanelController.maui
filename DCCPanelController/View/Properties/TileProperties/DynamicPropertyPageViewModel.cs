@@ -9,6 +9,7 @@ using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties.TileProperties.Attributes;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -63,7 +64,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                 // If this property is a ButtonActions or TurnoutActions then they 
                 // cannot be considered common, so mark them as not being a common property
                 // --------------------------------------------------------------------------
-                if (property.Property.PropertyType == typeof(ButtonActions) || property.Property.PropertyType == typeof(TurnoutActions)) {
+                if (property.Property.PropertyType == typeof(ButtonActions) || 
+                    property.Property.PropertyType == typeof(TurnoutActions) ||
+                    property.Property.PropertyType == typeof(EntityIDField)) {
                     isCommonProperty = false;
                 } else {
                     for (var i = 1; i < entities.Count; i++) {

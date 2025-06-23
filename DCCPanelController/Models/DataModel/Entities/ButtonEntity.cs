@@ -11,7 +11,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
 
     [ObservableProperty] [property: EditableID("Button Name","Unique Name for this Button",0)]
-    private string _id = string.Empty;
+    private EntityIDField _id = string.Empty;
 
     [ObservableProperty] [property: EditableDouble("Scale", "", 5, "Circle", .25, 2.0)]
     private double _scale = 0.8;
