@@ -15,6 +15,8 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<Aspect>(),
             new JsonEnumToStringConverter<FontWeight>(),
             new JsonEnumToStringConverter<TextAlignment>(),
+            new JsonEnumToStringConverter<TextAlignmentHorizontalEnum>(),
+            new JsonEnumToStringConverter<TextAlignmentVerticalEnum>(),
             new JsonEnumToStringConverter<SwitchStyleEnum>(),
             new JsonEnumToStringConverter<ButtonStateEnum>(),
             new JsonEnumToStringConverter<TurnoutStateEnum>(),
