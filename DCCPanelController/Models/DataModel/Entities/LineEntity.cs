@@ -6,10 +6,10 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class LineEntity : Entity, IDrawingEntity {
-    [ObservableProperty] [property: EditableColor("Line Color", group: "Line")]
+    [ObservableProperty] [property: EditableColor("Line Color", "",0, "Line")]
     private Color _lineColor = Colors.Black;
 
-    [ObservableProperty] [property: EditableInt("Line Width", group: "Line")]
+    [ObservableProperty] [property: EditableInt("Line Width", "",0, "Line")]
     private int _lineWidth = 3;
 
     [JsonConstructor]

@@ -3,22 +3,21 @@
     <g>
         <g>
             <g>
-                <circle id="ButtonOutline" stroke="#000000" stroke-width="2" cx="24" cy="24" r="10"></circle>
-                <circle id="Button" fill="#90C418" cx="24" cy="24" r="9"></circle>
+                <circle id="ButtonOutline" stroke="#000000" stroke-width="2" cx="24" cy="24" r="10"/>
+                <circle id="Button" fill="#90C418" cx="24" cy="24" r="9"/>
             </g>
-            <!-- ROUTE GROUP: Centered and Enlarged -->
-            <g id="Route" transform="translate(24 24) scale(1.5) translate(-5 -5)">
+            <g transform="translate(24 24) scale(1.5) translate(-5 -5)">
                 <line id="Indicator" x1="1" y1="0" x2="1" y2="7" fill="none" stroke-width="1" stroke="#000000"
                       stroke-linecap="square" transform="translate(4 2)"/>
+                <line id="Indicator" x1="0" y1="0" x2="2.355" y2="2.196" fill="none" stroke-width="1" stroke="#000000"
+                      stroke-linecap="square" transform="translate(2.45 3.998)"/>
+                <line id="Indicator" x1="2.297" y1="0" x2="0" y2="2.055" fill="none" stroke-width="1" stroke="#000000"
+                      stroke-linecap="square" transform="translate(5.088 4.349)"/>
                 <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd" transform="translate(4 0)"/>
                 <path id="Indicator" d="M1 0L2 2L2.38419e-07 2L1 0Z" fill="#000000" fill-rule="evenodd"
                       transform="matrix(0.707 -0.707 0.707 0.707 0 3)"/>
                 <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd"
                       transform="matrix(0.707 0.707 -0.707 0.707 8.414 1.952)"/>
-                <line id="Indicator" x1="0" y1="0" x2="2.355" y2="2.196" fill="none" stroke-width="1" stroke="#000000"
-                      stroke-linecap="square" transform="translate(2.45 3.998)"/>
-                <line id="Indicator" x1="2.297" y1="0" x2="0" y2="2.055" fill="none" stroke-width="1" stroke="#000000"
-                      stroke-linecap="square" transform="translate(5.088 4.349)"/>
                 <path id="Indicator"
                       d="M0 1C0 0.447715 0.447715 0 1 0C1.55228 0 2 0.447715 2 1C2 1.55228 1.55228 2 1 2C0.447715 2 0 1.55228 0 1Z"
                       fill="#000000" fill-rule="evenodd" transform="translate(4 8)"/>

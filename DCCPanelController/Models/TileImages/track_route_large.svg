@@ -2,31 +2,27 @@
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g>
         <g transform="translate(7.937 8.062)">
-            <g>
-                <g>
-                    <path id="Border"
-                          d="M0.00236014 15.7304C0.152582 6.8938 7.4378 -0.147861 16.2744 0.00236002C25.111 0.152582 32.1526 7.4378 32.0024 16.2744C31.8521 25.111 24.567 32.1526 15.7304 32.0024C6.8938 31.8521 -0.147862 24.567 0.00236014 15.7304Z"
-                          fill="none" stroke-width="4" stroke="#000000"/>
-                    <path id="Button"
-                          d="M0.00221252 14.7472C0.143045 6.46295 6.97294 -0.138616 15.2572 0.0022161C23.5415 0.143049 30.143 6.97295 30.0022 15.2572C29.8614 23.5415 23.0315 30.143 14.7472 30.0022C6.46294 29.8614 -0.138621 23.0315 0.00221252 14.7472Z"
-                          fill="#90C418" fill-rule="evenodd" transform="translate(1.07 0.931)"/>
-                </g>
-            </g>
+            <path id="Border"
+                  d="M0.00236014 15.7304C0.152582 6.8938 7.4378 -0.147861 16.2744 0.00236002C25.111 0.152582 32.1526 7.4378 32.0024 16.2744C31.8521 25.111 24.567 32.1526 15.7304 32.0024C6.8938 31.8521 -0.147862 24.567 0.00236014 15.7304Z"
+                  fill="none" stroke-width="4" stroke="#000000"/>
+            <path id="Button"
+                  d="M0.00221252 14.7472C0.143045 6.46295 6.97294 -0.138616 15.2572 0.0022161C23.5415 0.143049 30.143 6.97295 30.0022 15.2572C29.8614 23.5415 23.0315 30.143 14.7472 30.0022C6.46294 29.8614 -0.138621 23.0315 0.00221252 14.7472Z"
+                  fill="#90C418" fill-rule="evenodd" transform="translate(1.07 0.931)"/>
         </g>
         <g transform="translate(13 11)">
-            <line id="Border" x1="2.615" y1="0" x2="2.615" y2="18.2" fill="none" stroke-width="2" stroke="#000000"
+            <line id="Indicator" x1="2.615" y1="0" x2="2.615" y2="18.2" fill="none" stroke-width="2" stroke="#000000"
                   stroke-linecap="square" transform="translate(8.61 5.2)"/>
-            <path id="Border" d="M2.61462 0L5.22924 5.2L0 5.2L2.61462 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Indicator" d="M2.61462 0L5.22924 5.2L0 5.2L2.61462 0Z" fill="#000000" fill-rule="evenodd"
                   transform="translate(8.61 0)"/>
-            <path id="Border" d="M0 0L5.54644 1.83848L1.84882 5.51543L0 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Indicator" d="M0 0L5.54644 1.83848L1.84882 5.51543L0 0Z" fill="#000000" fill-rule="evenodd"
                   transform="translate(0 5.962)"/>
-            <path id="Border" d="M5.54644 0L3.69763 5.51543L0 1.83848L5.54644 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Indicator" d="M5.54644 0L3.69763 5.51543L0 1.83848L5.54644 0Z" fill="#000000" fill-rule="evenodd"
                   transform="translate(16.454 6.913)"/>
-            <line id="Border" x1="0" y1="0" x2="7.468" y2="6.841" fill="none" stroke-width="2" stroke="#000000"
+            <line id="Indicator" x1="0" y1="0" x2="7.468" y2="6.841" fill="none" stroke-width="2" stroke="#000000"
                   stroke-linecap="square" transform="translate(3.247 9.262)"/>
-            <line id="Border" x1="6.732" y1="0" x2="0" y2="6.094" fill="none" stroke-width="2" stroke="#000000"
+            <line id="Indicator" x1="6.732" y1="0" x2="0" y2="6.094" fill="none" stroke-width="2" stroke="#000000"
                   stroke-linecap="square" transform="translate(11.455 10.554)"/>
-            <path id="Border"
+            <path id="Indicator"
                   d="M0 2.6C0 1.16406 1.1706 0 2.61462 0C4.05863 0 5.22924 1.16406 5.22924 2.6C5.22924 4.03594 4.05863 5.2 2.61462 5.2C1.1706 5.2 0 4.03594 0 2.6Z"
                   fill="#000000" fill-rule="evenodd" transform="translate(8.61 20.8)"/>
         </g>

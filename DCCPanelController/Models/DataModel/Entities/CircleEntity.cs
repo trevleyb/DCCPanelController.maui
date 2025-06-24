@@ -7,13 +7,13 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleEntity : Entity, IDrawingEntity {
-    [ObservableProperty] [property: EditableColor("Background", group: "Circle")]
+    [ObservableProperty] [property: EditableColor("Background","", 0, "Circle")]
     private Color _backgroundColor = Colors.Gray;
 
-    [ObservableProperty] [property: EditableColor("Border", group: "Circle")]
+    [ObservableProperty] [property: EditableColor("Border", "",0, "Circle")]
     private Color _borderColor = Colors.Black;
 
-    [ObservableProperty] [property: EditableInt("Border Width", group: "Circle")]
+    [ObservableProperty] [property: EditableInt("Border Width", "", 0, "Circle")]
     private int _borderWidth = 1;
     
     [JsonConstructor]

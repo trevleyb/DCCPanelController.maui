@@ -18,7 +18,7 @@ public class EditableDouble(string label, string description = "", int order = 0
                 BindingContext = owner,
                 WidthRequest = 75,
                 HeightRequest = 30,
-                Margin = new Thickness(10, 0, 10, 0),
+                Margin = new Thickness(10, 10, 10, 0),
                 Text = info.GetValue(owner)?.ToString() ?? "0"
             };
 

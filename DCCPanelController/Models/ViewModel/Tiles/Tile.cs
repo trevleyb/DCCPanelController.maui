@@ -89,16 +89,27 @@ public abstract class Tile : ContentView, ITile {
     }
 
     private void SetContent() {
-        if (DisplayMode == TileDisplayMode.Normal) SetNormalContent();
-        if (DisplayMode == TileDisplayMode.Symbol) SetSymbolContent();
-        if (DisplayMode == TileDisplayMode.Design) SetNormalContent();
+        switch (DisplayMode) {
+        case TileDisplayMode.Normal:
+            SetNormalContent();
+            break;
+
+        case TileDisplayMode.Symbol:
+            SetSymbolContent();
+            break;
+
+        case TileDisplayMode.Design:
+            SetNormalContent();
+            break;
+        }
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
-            HaveVisualPropertiesChanged = true;
-            ChangedProperties.Add(property);
-        }
+        // if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
+        //     HaveVisualPropertiesChanged = true;
+        //     ChangedProperties.Add(property);
+        // }
+        HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();
     }
 

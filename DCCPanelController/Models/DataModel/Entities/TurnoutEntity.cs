@@ -20,7 +20,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     [ObservableProperty] [property: EditableEnum("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
 
-    [ObservableProperty] [property: EditableColor("Not Selected Track", "The color of the track of the track not selected", 5, "Track")]
+    [ObservableProperty] [property: EditableColor("Not Selected Track", "The color of the track of the track not selected", 6, "Track")]
     private Color? _trackNotSelectedColor;
     
     [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)]

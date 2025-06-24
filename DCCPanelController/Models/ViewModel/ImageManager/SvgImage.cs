@@ -32,8 +32,12 @@ public partial class SvgImage : ObservableObject {
         return ImageManager.AsCanvasView(rotation, scale);
     }
 
-    public void SetAttribute(SvgElementType elementType, Color color) {
+    public void SetAttributeFillColor(SvgElementType elementType, Color color) {
         ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());
+    }
+
+    public void SetAttributeLineColor(SvgElementType elementType, Color color) {
+        ImageManager.SetAllAttributeValues(elementType, "stroke", color.ToHex());
     }
 
     public void SetLabel(string label) {

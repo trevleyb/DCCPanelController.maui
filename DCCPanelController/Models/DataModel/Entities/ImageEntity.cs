@@ -6,19 +6,19 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ImageEntity : Entity, IDrawingEntity {
-    [ObservableProperty] [property: EditableEnum("Aspect Ratio", group: "Image")]
+    [ObservableProperty] [property: EditableEnum("Aspect Ratio", "",0, "Image")]
     private Aspect _aspectRatio = Aspect.AspectFit;
 
-    [ObservableProperty] [property: EditableColor("Border Color", group: "Image")]
+    [ObservableProperty] [property: EditableColor("Border Color", "",0, "Image")]
     private Color _borderColor = Colors.Transparent;
 
-    [ObservableProperty] [property: EditableInt("Border Radius", group: "Image")]
+    [ObservableProperty] [property: EditableInt("Border Radius", "",0,"Image")]
     private int _borderRadius;
 
-    [ObservableProperty] [property: EditableInt("Border Width", group: "Image")]
+    [ObservableProperty] [property: EditableInt("Border Width", "",0,"Image")]
     private int _borderWidth;
 
-    [ObservableProperty] [property: EditableImage("Image", group: "Image")]
+    [ObservableProperty] [property: EditableImage("Image", "",0, "Select Image")]
     private string _image = string.Empty;
 
     [JsonConstructor]

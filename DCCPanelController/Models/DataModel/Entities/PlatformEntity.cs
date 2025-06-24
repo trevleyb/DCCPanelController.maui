@@ -7,7 +7,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class PlatformEntity : TrackEntity, ITrackEntity {
-    [ObservableProperty] [property: EditableColor("Platform Color", "Color of the Platform", 5, "Colors")]
+    [ObservableProperty] [property: EditableColor("Platform Color", "Color of the Platform", 6, "Track")]
     private Color? _platformColor;
     
     [JsonConstructor]

@@ -7,7 +7,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TunnelEntity : StraightEntity, ITrackEntity {
 
-    [ObservableProperty] [property: EditableColor("Tunnel Color", "Color of the Tunnel Entrance", 5, "Colors")]
+    [ObservableProperty] [property: EditableColor("Tunnel Color", "Color of the Tunnel Entrance", 6, "Track")]
     private Color? _tunnelColor;
 
     [JsonConstructor]
