@@ -11,11 +11,11 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
-    [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
-    private string _id = string.Empty;
+    // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
+    // private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
-    private string _turnoutID = string.Empty;
+    private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableEnum("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
@@ -33,12 +33,10 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     [JsonConstructor]
-    protected TurnoutEntity() {
-        Id = NextID;
-    }
+    protected TurnoutEntity() { }
     
     [JsonIgnore]
-    public Turnout? Turnout => Parent?.Turnout(TurnoutID);
+    public Turnout? Turnout => Parent?.Turnout(Id);
 
     protected TurnoutEntity(Panel panel) : base(panel) { }
 
@@ -51,7 +49,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     }
 
     public override string ToString() {
-        return TurnoutID;
+        return Id;
     }
     
     public void CloneActionsInto(IActionEntity entity) {

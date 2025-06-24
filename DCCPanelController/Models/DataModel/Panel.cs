@@ -16,7 +16,7 @@ namespace DCCPanelController.Models.DataModel;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
-public partial class Panel : ObservableObject, IEntityID {
+public partial class Panel : ObservableObject, IEntityGeneratingID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
@@ -91,13 +91,13 @@ public partial class Panel : ObservableObject, IEntityID {
 
     public T CreateEntity<T>() where T : Entity {
         var entity = (T)Activator.CreateInstance(typeof(T), this)! ?? throw new InvalidOperationException();
-        if (entity is IEntityID entityID) entityID.Id = entityID.NextID;
+        if (entity is IEntityGeneratingID entityID) entityID.Id = entityID.NextID;
         return entity ?? throw new InvalidOperationException();
     }
 
     public T CreateEntityFrom<T>(T entity) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
-        if (cloned is IEntityID entityID) entityID.Id = entityID.NextID;
+        if (cloned is IEntityGeneratingID entityID) entityID.Id = entityID.NextID;
         return cloned ?? throw new InvalidOperationException();
     }
 

@@ -9,7 +9,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActionEntity {
+public partial class ButtonEntity : Entity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
 
     [ObservableProperty] [property: EditableID("Button Name","Unique Name for this Button so it can be referenced by actions.",0)]
     private string _id = string.Empty;

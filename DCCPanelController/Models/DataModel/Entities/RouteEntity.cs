@@ -5,12 +5,12 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class RouteEntity : Entity, IInteractiveEntity {
+public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
     [ObservableProperty] [property: EditableEnum("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: EditableRoute("Route", "Select the route triggered by this button", 10, "Actions")]
-    private string _routeID = string.Empty;
+    private string _id = string.Empty;
 
     [ObservableProperty] [property: EditableColor("Indicator Color", "Default color of the Indicator", 5, "Colors")]
     private Color? _routeIndicator;
@@ -38,13 +38,13 @@ public partial class RouteEntity : Entity, IInteractiveEntity {
     public override string EntityName => "Route";
 
     [JsonIgnore]
-    public Route? Route => Parent?.Route(RouteID);
+    public Route? Route => Parent?.Route(Id);
 
     public override Entity Clone() {
         return new RouteEntity(this);
     }
 
     public override string ToString() {
-        return RouteID;
+        return Id;
     }
 }

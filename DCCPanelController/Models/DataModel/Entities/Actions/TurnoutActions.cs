@@ -12,31 +12,35 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
     }
 
     public async void Apply(TurnoutEntity turnout, ConnectionService connectionService, ActionExecutionContext context) {
-        Console.WriteLine($"Applying actions to turnout {turnout.TurnoutID} with state {turnout.State}");
+        Console.WriteLine($"Applying actions to turnout {turnout.Id} with state {turnout.State}");
 
-        foreach (var action in turnout.ButtonPanelActions) {
-            if (turnout.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
-                var newState = turnout.State switch {
-                    TurnoutStateEnum.Closed => action.WhenOn,
-                    TurnoutStateEnum.Thrown => action.WhenOff,
-                    _                       => ButtonStateEnum.Unknown
-                };
-                actionButton.SetState(newState, StateChangeSource.Internal, context);
-            }
-        }
-
-        foreach (var action in turnout.TurnoutPanelActions) {
-            if (turnout.Parent?.GetTurnoutEntity(action.Id) is { } actionTurnout) {
-                var newState = turnout.State switch {
-                    TurnoutStateEnum.Closed => action.WhenClosed,
-                    TurnoutStateEnum.Thrown => action.WhenThrown,
-                    _                       => TurnoutStateEnum.Unknown
-                };
-                actionTurnout.SetState(newState, StateChangeSource.Internal, context);
-                if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
-                    await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
+        try {
+            foreach (var action in turnout.ButtonPanelActions) {
+                if (turnout.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
+                    var newState = turnout.State switch {
+                        TurnoutStateEnum.Closed => action.WhenOn,
+                        TurnoutStateEnum.Thrown => action.WhenOff,
+                        _                       => ButtonStateEnum.Unknown
+                    };
+                    actionButton.SetState(newState, StateChangeSource.Internal, context);
                 }
             }
+
+            foreach (var action in turnout.TurnoutPanelActions) {
+                if (turnout.Parent?.GetTurnoutEntity(action.Id) is { } actionTurnout) {
+                    var newState = turnout.State switch {
+                        TurnoutStateEnum.Closed => action.WhenClosed,
+                        TurnoutStateEnum.Thrown => action.WhenThrown,
+                        _                       => TurnoutStateEnum.Unknown
+                    };
+                    actionTurnout.SetState(newState, StateChangeSource.Internal, context);
+                    if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
+                        await client.SendTurnoutCmdAsync(actionTurnout.Turnout, newState != TurnoutStateEnum.Closed);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error in Async Void function: ButtonActions:Apply => {ex.Message}");
         }
     }
 

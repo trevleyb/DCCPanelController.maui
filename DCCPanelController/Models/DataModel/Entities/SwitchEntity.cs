@@ -6,11 +6,11 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class SwitchEntity : Entity,  IInteractiveEntity {
+public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
 
     [ObservableProperty] 
-    [property: EditableLightSwitch("Light", "Select the ID of the light controlled by this button", 10, "Actions")]
-    private string _switchID = string.Empty;
+    [property: EditableLightSwitch("DCC Light", "Select the ID of the light controlled by this button", 10, "Actions")]
+    private string _id = string.Empty;
     
     [ObservableProperty] 
     [property: EditableEnum("Use Switch", "", 0)]
@@ -31,7 +31,7 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [JsonIgnore]
-    public Light? Light => Parent?.Light(SwitchID);
+    public Light? Light => Parent?.Light(Id);
 
     [JsonConstructor]
     public SwitchEntity() { }
@@ -43,5 +43,7 @@ public partial class SwitchEntity : Entity,  IInteractiveEntity {
     public override Entity Clone() {
         return new SwitchEntity(this);
     }
-
+    public override string ToString() {
+        return Id;
+    }
 }

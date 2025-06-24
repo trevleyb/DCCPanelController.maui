@@ -47,7 +47,7 @@ public class EditableID(string label, string description = "", int order = 0, st
     }
 
     private void CellOnCompleted(object? sender, EventArgs e) {
-        if (sender is Entry entry && _entity is { } entity) {
+        if (sender is Entry entry && _entity is IEntityGeneratingID { } entity ) {
             if (!IsIDValid(entry.Text)) _entity.Id = entity.NextID;
         }
     }
@@ -65,7 +65,7 @@ public class EditableID(string label, string description = "", int order = 0, st
 
     private bool IsIDValid(string value) {
         var isValid = true;
-        if (_entity is { AllIDs: { } ids }) {
+        if (_entity is IEntityGeneratingID { AllIDs: { } ids }) {
             var conflictingEntities = ids?.Where(entity => entity.Id == value).ToArray() ?? [];
             isValid = conflictingEntities.Length is 0 or 1;
         }
