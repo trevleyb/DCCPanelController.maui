@@ -38,6 +38,10 @@ public partial class ButtonEntity : Entity, IEntityGeneratingID, IInteractiveEnt
     [ObservableProperty] 
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? []) ?? [];
+    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Button");
+
     [JsonConstructor]
     public ButtonEntity() {
         Id = NextID;
@@ -46,10 +50,6 @@ public partial class ButtonEntity : Entity, IEntityGeneratingID, IInteractiveEnt
     public ButtonEntity(Panel panel) : base(panel) { }
     public ButtonEntity(ButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
     public override string EntityName => "Button";
-
-    [JsonIgnore]
-    public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? []) ?? [];
-    public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Button");
 
     public override Entity Clone() {
         return new ButtonEntity(this);

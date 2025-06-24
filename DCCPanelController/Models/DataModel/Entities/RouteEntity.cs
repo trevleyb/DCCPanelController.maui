@@ -40,6 +40,8 @@ public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
     [JsonIgnore]
     public Route? Route => Parent?.Route(Id);
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+    
     public override Entity Clone() {
         return new RouteEntity(this);
     }

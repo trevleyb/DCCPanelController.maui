@@ -33,6 +33,8 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: EditableColor("Text Color", "", 0, "Text")]
     private Color _textColor = Colors.Black;
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     [JsonConstructor]
     public TextEntity() { }
 
@@ -43,7 +45,7 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     public TextEntity(TextEntity entity) : base(entity) { }
 
     public override string EntityName => "Text Block";
-
+    
     public override Entity Clone() {
         return new TextEntity(this);
     }

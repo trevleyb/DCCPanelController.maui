@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public class CompassEntity : Entity {
@@ -7,6 +9,8 @@ public class CompassEntity : Entity {
         Parent = panel;
     }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+    
     public CompassEntity(CompassEntity entity) : base(entity) { }
     public override string EntityName => "Compass";
 

@@ -27,6 +27,7 @@ public abstract partial class TrackEntity : Entity {
     protected TrackEntity() { }
     protected TrackEntity(Panel panel) : base(panel) { }
 
+    [JsonIgnore] protected override int RotationFactor => 45;
     [JsonIgnore] public Block? Occupancy {
         get {
             if (string.IsNullOrEmpty(OccupancyBlock)) return null;

@@ -18,7 +18,7 @@ public abstract partial class Entity() : ObservableObject {
     [ObservableProperty] private int _height = 1;        // What Height is this component? 
     [ObservableProperty] private int _rotation;          // Is the track rotated?
 
-    [JsonIgnore] protected int RotationFactor = 45;
+    [JsonIgnore] protected abstract int RotationFactor { get; }
     [JsonIgnore] public Panel? Parent { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
 

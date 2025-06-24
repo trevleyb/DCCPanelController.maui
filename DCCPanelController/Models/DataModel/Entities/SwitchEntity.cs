@@ -33,6 +33,8 @@ public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
     [JsonIgnore]
     public Light? Light => Parent?.Light(Id);
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     [JsonConstructor]
     public SwitchEntity() { }
 

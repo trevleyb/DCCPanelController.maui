@@ -55,10 +55,10 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
             // If the Neighbor track is actually a BranchLine then mark the diverging
             // track as not having a border as it would not make sense.
             // --------------------------------------------------------------------------
-            var neighbor = turnout.GetDivergingEntity();
-            if (neighbor is TurnoutEntity neighborTurnout) {
-                if (turnout.IsMainLine && neighborTurnout.IsBranchLine) {
+            if (turnout.GetDivergingEntity() is TrackEntity neighbor) {
+                if (turnout.IsMainLine && neighbor.IsBranchLine && turnout.State == TurnoutStateEnum.Closed) {
                     style.Add(e => e.WithName(SvgElementType.BorderDiverging).Hidden());
+                    style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(neighbor.TrackColor ?? neighbor.Parent?.BranchLineColor ?? Colors.Gray));
                 }
             }
             

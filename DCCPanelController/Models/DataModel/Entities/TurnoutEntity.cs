@@ -13,7 +13,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
     // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
     // private string _id = string.Empty;
-
+  
     [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
     private string _id = string.Empty;
 
@@ -40,6 +40,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
 
     protected TurnoutEntity(Panel panel) : base(panel) { }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
     [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
     [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? [],"Turnout");
 

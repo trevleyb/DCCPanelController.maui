@@ -24,6 +24,8 @@ public partial class ImageEntity : Entity, IDrawingEntity {
     [JsonConstructor]
     public ImageEntity() { }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     public ImageEntity(Panel panel) : this() {
         Parent = panel;
     }

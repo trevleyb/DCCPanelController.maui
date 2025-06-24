@@ -11,6 +11,8 @@ public class PointsEntity : Entity, IDrawingEntity {
         Parent = panel;
     }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     public PointsEntity(PointsEntity entity) : base(entity) { }
     public override string EntityName => "Connection Points";
 

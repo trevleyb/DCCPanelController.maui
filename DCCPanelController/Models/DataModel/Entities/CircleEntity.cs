@@ -23,6 +23,8 @@ public partial class CircleEntity : Entity, IDrawingEntity {
         Parent = panel;
     }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+    
     public CircleEntity(CircleEntity entity) : base(entity) { }
 
     public override string EntityName => "Circle";

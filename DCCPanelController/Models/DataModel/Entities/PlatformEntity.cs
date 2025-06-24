@@ -17,6 +17,7 @@ public partial class PlatformEntity : TrackEntity, ITrackEntity {
     public PlatformEntity(Panel panel) : this() {
         Parent = panel;
     }
+    [JsonIgnore] protected override int RotationFactor => 90;
 
     public PlatformEntity(PlatformEntity entity) : base(entity) { }
     public override string EntityName => "Platform Track";

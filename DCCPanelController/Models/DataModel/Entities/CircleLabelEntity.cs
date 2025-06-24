@@ -40,6 +40,8 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
     [JsonConstructor]
     public CircleLabelEntity() { }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     public CircleLabelEntity(Panel panel) : this() {
         Parent = panel;
         Layer = 8;

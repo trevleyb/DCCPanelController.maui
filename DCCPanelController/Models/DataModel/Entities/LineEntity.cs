@@ -15,6 +15,8 @@ public partial class LineEntity : Entity, IDrawingEntity {
     [JsonConstructor]
     public LineEntity() { }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     public LineEntity(Panel panel) : this() {
         Parent = panel;
     }

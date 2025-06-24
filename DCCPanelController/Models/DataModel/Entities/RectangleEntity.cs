@@ -21,6 +21,8 @@ public partial class RectangleEntity : Entity, IDrawingEntity {
     [JsonConstructor]
     public RectangleEntity() { }
 
+    [JsonIgnore] protected override int RotationFactor => 90;
+
     public RectangleEntity(Panel panel) : this() {
         Parent = panel;
     }
