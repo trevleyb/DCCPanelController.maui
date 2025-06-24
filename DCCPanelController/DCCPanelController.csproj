@@ -76,6 +76,7 @@
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
         <EmbeddedResource Include="Models\TileImages\sample.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_bridge.svg" />
         <EmbeddedResource Include="Models\TileImages\track_angle_continuation_arrow.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg"/>
@@ -99,6 +100,7 @@
         <EmbeddedResource Include="Models\TileImages\track_route.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_route_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_bridge.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg"/>
@@ -127,6 +129,10 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging_alt.svg" />
         <None Remove="Models\TileImages\track_turnout_right_straight_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight_alt.svg" />
+        <None Remove="Models\TileImages\track_angle_platform.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_platform.svg" />
+        <None Remove="Models\TileImages\track_straight_platform.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_platform.svg" />
     </ItemGroup>
 
     <ItemGroup>

@@ -7,7 +7,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
-    [ObservableProperty] [property: EditableEnum("Terminator", group: "Track")]
+    [ObservableProperty] [property: EditableEnum("Continuation","Page Continuation Indicator",5,"Track")]
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerContinuationTrack;
@@ -20,7 +20,7 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
 
     public CornerContinuationEntity(CornerContinuationEntity entity) : base(entity) { }
 
-    public override string EntityName => "Corner Track";
+    public override string EntityName => "Corner Continuation Track";
 
     public override Entity Clone() {
         return new CornerContinuationEntity(this);

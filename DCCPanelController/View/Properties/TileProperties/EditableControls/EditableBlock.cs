@@ -25,6 +25,7 @@ public class EditableBlockAttribute(string label, string description = "", int o
                 DisplayMemberPath = "Name",
                 SelectedValuePath = "Id",
                 DisplayFormat = "{Name} ({Id})",
+                ShowClearFieldImage = true,
                 IsEnabled = blocks.Count > 0,
                 Placeholder = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
                 VerticalOptions = LayoutOptions.Center,

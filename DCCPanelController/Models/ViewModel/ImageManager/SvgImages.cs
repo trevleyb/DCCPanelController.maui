@@ -41,9 +41,10 @@ public static class SvgImages {
         AddImage("Route", "Track_Route");
         AddImage("RouteLarge", "Track_Route_Large");
 
-        AddImage("Platform", "Track_Platform");
+        AddImage("Platform", "Track_Straight_Platform","Track_Angle_Platform");
         AddImage("Straight", "Track_Straight", "Track_Angle");
         AddImage("Tunnel", "Track_Straight_Tunnel", "Track_Angle_Tunnel");
+        AddImage("Bridge", "Track_Straight_Bridge", "Track_Angle_Bridge");
         AddImage("Cross", "Track_Straight_Cross", "Track_Angle_Cross");
         AddImage("Corner", "Track_Corner_Left", "Track_Corner_Right");
         AddImage("Terminator", "Track_Straight_Terminator", "Track_Angle_Terminator");

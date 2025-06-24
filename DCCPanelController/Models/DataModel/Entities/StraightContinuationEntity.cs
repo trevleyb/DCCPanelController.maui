@@ -7,7 +7,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
-    [ObservableProperty] [property: EditableEnum("Terminator", group: "Track")]
+    [ObservableProperty] [property: EditableEnum("Continuation","Page Continuation Indicator",5,"Track")]
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;
 
     [JsonConstructor]
@@ -21,7 +21,7 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
 
     public StraightContinuationEntity(StraightContinuationEntity entity) : base(entity) { }
 
-    public override string EntityName => "Straight Track";
+    public override string EntityName => "Continuation Track";
 
     public override Entity Clone() {
         return new StraightContinuationEntity(this);

@@ -12,5 +12,6 @@ public enum SvgElementType {
     Text,           // Text
     Highlight,
     Indicator,
+    Bridge,
     Unknown
 }

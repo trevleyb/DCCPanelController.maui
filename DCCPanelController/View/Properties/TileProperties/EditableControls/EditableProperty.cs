@@ -44,7 +44,7 @@ public abstract class EditableProperty(string label, string description = "", in
                 LineBreakMode = LineBreakMode.MiddleTruncation,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(5, 0, 5, 5)
+                Margin = new Thickness(5, 0, 5, 0)
             };
             vStack.Children.Add(desc);
         }

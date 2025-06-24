@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip_path_1">
+            <rect width="48" height="48" />
+        </clipPath>
+    </defs>
+    <g>
+        <g clip-path="url(#clip_path_1)">
+            <g transform="matrix(0 1 -1 0 48 0)">
+                <g>
+                    <g>
+                        <path id="Border" d="M3.8147e-06 43.0001C3.8147e-06 43.0001 0 40.0001 0 40.0001L40 0L41.0525 0L43 0C43 0 3.8147e-06 43.0001 3.8147e-06 43.0001Z" fill="#000000" fill-rule="evenodd" />
+                        <path id="Border" d="M43 0C43 0 0 43 0 43L3 43L43 3C43 3 43 0 43 0Z" fill="#000000" fill-rule="evenodd" transform="translate(5 5)" />
+                        <path id="Track" d="M48 5.00001C48 5.00001 5 48 5 48L0 48L0 43L43 0L48 1.14441e-05C48 1.14441e-05 48 5.00001 48 5.00001Z" fill="#BDBDBD" fill-rule="evenodd" />
+                        <line id="Dashline" x1="0" y1="40" x2="40" y2="0" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 4)" />
+                    </g>
+                </g>
+            </g>
+            <g transform="matrix(0.707 0.707 -0.707 0.707 12.686 -2.87)">
+                <g>
+                    <g>
+                        <path id="Bridge" d="M0 0C0 0 52 0 52 0L52 3L0 3C0 3 0 0 0 0Z" fill="#000000" fill-rule="evenodd" transform="matrix(1 0 0 1 1 0)" />
+                        <path id="Bridge" d="M0 0C0 0 53 0 53 0L53 3L0 3C0 3 0 0 0 0Z" fill="#000000" fill-rule="evenodd" transform="matrix(1 0 0 1 0 19)" />
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -111,6 +111,7 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
             AddTile(Tracks, new TerminatorEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new CrossingEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new TunnelEntity(panel){ TrackType = TrackTypeEnum.MainLine});
+            AddTile(Tracks, new BridgeEntity(panel){ TrackType = TrackTypeEnum.MainLine});
             AddTile(Tracks, new PlatformEntity(panel){ TrackType = TrackTypeEnum.MainLine});
 
             AddTile(Branch, new StraightEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
@@ -121,8 +122,9 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
             AddTile(Branch, new RightTurnoutEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new TerminatorEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new CrossingEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
-            AddTile(Branch, new PlatformEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new TunnelEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
+            AddTile(Tracks, new BridgeEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
+            AddTile(Branch, new PlatformEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             
             AddTile(Shapes, new TextEntity(panel));
             AddTile(Shapes, new CircleLabelEntity(panel));

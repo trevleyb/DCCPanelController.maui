@@ -66,14 +66,14 @@ public class PopupSelector : ContentView, IDisposable {
         }
 
         mainLayoutBox = new Border() {
-            Margin = new Thickness(5, 5, 5, 5),
+            Margin = new Thickness(0, 0,0, 0),
             WidthRequest = this.WidthRequest,
             HeightRequest = 30,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
             BackgroundColor = Colors.Transparent,
             StrokeThickness = 1,
-            Stroke = new SolidColorBrush((Color?)Application.Current?.Resources["Primary"] ?? Colors.Black),
+            Stroke = new SolidColorBrush(Colors.Gray),
             StrokeShape = new RoundRectangle {
                 CornerRadius = new CornerRadius(10) // All corners rounded with radius 10
             }

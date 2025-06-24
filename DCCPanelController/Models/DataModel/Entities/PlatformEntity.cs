@@ -14,7 +14,7 @@ public class PlatformEntity : TrackEntity, ITrackEntity {
     }
 
     public PlatformEntity(PlatformEntity entity) : base(entity) { }
-    public override string EntityName => "Straight Track";
+    public override string EntityName => "Platform Track";
 
     public override Entity Clone() {
         return new PlatformEntity(this);

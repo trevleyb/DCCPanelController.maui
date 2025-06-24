@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <g transform="translate(7 12)">
+            <g>
+                <path id="Border" d="M0 0L34 0L34 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd"
+                      transform="translate(0 6)"/>
+                <path id="Border" d="M0 0L34 0L34 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd"
+                      transform="translate(0 16)"/>
+                <path id="Track" d="M0 0L34 0L34 8L0 8L0 0Z" fill="#BDBDBD" fill-rule="evenodd"
+                      transform="translate(0 8)"/>
+                <line x1="0" id="Dashline" y1="1" x2="27" y2="1" fill="none" stroke-width="4" stroke="#686868"
+                      stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 11)"/>
+                <path id="Bridge" d="M0 0L34 0L34 2L0 2L0 0Z" fill="#BDBDBD" fill-rule="evenodd"
+                      transform="translate(0 3)"/>
+                <path id="Bridge" d="M0 0L34 0L34 2L0 2L0 0Z" fill="#BDBDBD" fill-rule="evenodd"
+                      transform="translate(0 19)"/>
+            </g>
+        </g>
+    </g>
+</svg>

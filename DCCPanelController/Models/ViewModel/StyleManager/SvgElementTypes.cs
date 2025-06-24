@@ -14,6 +14,7 @@ public static class SvgElementTypes {
             SvgElementType.Text           => "Text",
             SvgElementType.Highlight      => "Highlight",
             SvgElementType.Indicator      => "Indicator",
+            SvgElementType.Bridge         => "Bridge",
             _                             => ""
         };
     }
