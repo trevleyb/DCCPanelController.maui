@@ -17,13 +17,13 @@
                 <line id="Dashline" x1="0" y1="40" x2="40" y2="0" fill="none" stroke-width="4" stroke="#686868"
                       stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 4)"/>
             </g>
-            <path id="Border" d="M0 0L6 3.8147e-06L6 2L3.8147e-06 2L0 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Tunnel" d="M0 0L6 3.8147e-06L6 2L3.8147e-06 2L0 0Z" fill="#000000" fill-rule="evenodd"
                   transform="matrix(0.707 -0.707 0.707 0.707 33.95 28.192)"/>
-            <path id="Border" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Tunnel" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd"
                   transform="matrix(0.707 -0.707 0.707 0.707 33.95 22.536)"/>
-            <path id="Border" d="M0 0L6 1.90735e-06L6 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Tunnel" d="M0 0L6 1.90735e-06L6 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd"
                   transform="matrix(0.707 -0.707 0.707 0.707 18.393 12.636)"/>
-            <path id="Border" d="M0 0L2 -1.90735e-06L2 4L-1.90735e-06 4L0 0Z" fill="#000000" fill-rule="evenodd"
+            <path id="Tunnel" d="M0 0L2 -1.90735e-06L2 4L-1.90735e-06 4L0 0Z" fill="#000000" fill-rule="evenodd"
                   transform="matrix(0.707 -0.707 0.707 0.707 22.636 11.222)"/>
         </g>
     </g>

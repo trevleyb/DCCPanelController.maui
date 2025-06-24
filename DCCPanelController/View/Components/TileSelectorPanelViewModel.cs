@@ -123,7 +123,7 @@ public partial class TileSelectorPanelViewModel : Base.BaseViewModel {
             AddTile(Branch, new TerminatorEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new CrossingEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new TunnelEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
-            AddTile(Tracks, new BridgeEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
+            AddTile(Branch, new BridgeEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             AddTile(Branch, new PlatformEntity(panel){ TrackType = TrackTypeEnum.BranchLine});
             
             AddTile(Shapes, new TextEntity(panel));

@@ -14,5 +14,6 @@ public enum SvgElementType {
     Indicator,
     Bridge,
     Platform,
+    Tunnel,
     Unknown
 }

@@ -4,7 +4,9 @@ using DCCPanelController.Models.ViewModel.StyleManager;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class BridgeTile : TrackTile {
-    public BridgeTile(BridgeEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public BridgeTile(BridgeEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+        VisualProperties.Add(nameof(BridgeEntity.BridgeColor));
+    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is BridgeEntity bridge) {
