@@ -150,8 +150,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         // Determine if all values are the same
         var firstValue = values[0];
         var allSame = values.All(v => ValueComparer.AreEqual(firstValue, v));
-
         var commonValue = allSame ? firstValue : null;
+        metadata.HasMixedValues = !allSame;
         _originalValues[property.Name] = commonValue;
 
         return new CommonProperty(property, metadata, commonValue, !allSame);
@@ -229,8 +229,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         var originalValue = _originalValues.GetValueOrDefault(propertyName);
 
         // Check if the value actually changed
-        var hasChanged = !ValueComparer.AreEqual(newValue, originalValue);
-
+        var hasChanged = commonProperty.Metadata.IsModified;  //!ValueComparer.AreEqual(newValue, originalValue);
+        
         // Always update ButtonActions and TurnoutActions (as per original logic)
         var forceUpdate = Entities.Count > 1 && ValueComparer.IsExcludedForMultipleEntities(commonProperty.Metadata);
 

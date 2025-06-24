@@ -11,6 +11,7 @@ public abstract class EditableProperty(string label, string description = "", in
     public int Order { get; } = order;                 // Order within the group
     public object? Value { get; set; } = null;         // Initial Value or display Value
     public bool IsModified { get; set; } = false;      // Has this been modified?
+    public bool HasMixedValues { get; set; } = false; 
     
     protected IView CreateGroupCell(IView view, int? height = null) {
 

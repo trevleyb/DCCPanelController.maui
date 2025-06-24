@@ -33,9 +33,12 @@ public class EditableInt(string label, string description = "", int order = 0, s
             };
 
             stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0"; };
+            stepperUpDown.ValueChanged += (s, e) => {
+                dataCell.Text = e?.NewValue.ToString(CultureInfo.InvariantCulture) ?? "0";
+                var originalValue = info.GetValue(owner);
+                SetModified(originalValue == null || !Equals(e?.NewValue, originalValue));
+            };
             dataCell.Text = stepperUpDown.Value.ToString(CultureInfo.InvariantCulture) ?? "0";
-
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);

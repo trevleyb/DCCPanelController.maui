@@ -8,6 +8,7 @@ public interface IEditableProperty {
     string Group { get; }
     int Order { get; }
     object? Value { get; set; }
-    bool IsModified { get; set; } 
+    bool IsModified { get; set; }
+    bool HasMixedValues { get; set; }
     IView? CreateView(object owner, PropertyInfo info);
 }

@@ -11,7 +11,15 @@ public class EditableEnum(string label, string description = "", int order = 0, 
         try {
             // Get the enum type from the property
             var enumType = info.PropertyType;
-            
+            var enumValues = Enum.GetValues(enumType).Cast<object>().ToList();
+            var enumNames = enumValues.Select(v => v.ToString()).ToList();
+
+            // Add a "Mixed Values" option when dealing with mixed states
+            if (HasMixedValues) {   // You'd need to pass this information somehow{
+                enumNames.Insert(0, "Mixed Values");
+                enumValues.Insert(0, null!); // Special marker for mixed state
+            }
+
             // Handle nullable enums
             if (enumType.IsGenericType && enumType.GetGenericTypeDefinition() == typeof(Nullable<>)) {
                 enumType = Nullable.GetUnderlyingType(enumType) ?? enumType;
@@ -21,17 +29,14 @@ public class EditableEnum(string label, string description = "", int order = 0, 
                 throw new InvalidOperationException($"Property '{info.Name}' is not an enum type.");
             }
             
-            // Get all enum values
-            var enumValues = Enum.GetValues(enumType);
-            
-            return CreateRadioGroupForEnum(Label, enumValues, enumType, owner, info);
+            return CreateRadioGroupForEnum(Label, enumNames, enumValues,  enumType, owner, info, HasMixedValues);
         } catch (Exception e) {
             Console.WriteLine($"Unable to create enum control for {info.Name}: {e.Message}");
             return null;
         }
     }
     
-    private IView? CreateRadioGroupForEnum(string name, Array enumValues, Type enumType, object owner, PropertyInfo info) {
+    private IView? CreateRadioGroupForEnum(string name, List<string?> enumNames, List<object> enumValues,  Type enumType, object owner, PropertyInfo info, bool hasMixedvalues) {
         if (owner == null) throw new ArgumentNullException(nameof(owner), "Binding source cannot be null.");
         if (string.IsNullOrWhiteSpace(info.Name)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(info.Name));
 
@@ -43,33 +48,37 @@ public class EditableEnum(string label, string description = "", int order = 0, 
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(-5, 0, 0, 0)
         };
-        
-        foreach (var enumValue in enumValues) {
+
+        var currentValue = info.GetValue(owner);
+        Console.WriteLine($"Current Enum Value: {currentValue ?? "null"}");
+
+        for (var i = 0; i < enumNames.Count; i++) {
             var radioButton = new RadioButton {
                 HeightRequest = 30,
                 BorderWidth = 0,
                 FontSize = 10,
-                Value = enumValue,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                Content = enumValue.ToString()
+                Value = enumValues[i] ?? 0,
+                Content = enumNames[i] ?? "Unknown"
             };
+            
+            if (HasMixedValues) {
+                if (enumValues[i] == null!) radioButton.IsChecked = true;
+            } else {
+                radioButton.IsChecked = enumValues[i]?.Equals(currentValue) ?? false;
+            }
             
             radioButton.CheckedChanged += (sender, args) => {
                 if (sender is RadioButton button && args.Value) {
                     var buttonVal = button.Value;
-                    PropertyHelper.SetEnumPropertyValue(owner, info.Name, enumValue);
+                    PropertyHelper.SetEnumPropertyValue(owner, info.Name, buttonVal);
                     SetModified(buttonVal?.ToString() != initialValue?.ToString());
                 }
             };
-            
-            // Set initial checked state
-            var currentValue = info.GetValue(owner);
-            radioButton.IsChecked = enumValue.Equals(currentValue);
-            
             radioGroup.Children.Add(radioButton);
         }
-
+        SetModified(false);
         return CreateGroupCell(radioGroup);
     }
 }

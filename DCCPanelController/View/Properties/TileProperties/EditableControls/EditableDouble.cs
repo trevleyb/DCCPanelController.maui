@@ -32,7 +32,11 @@ public class EditableDouble(string label, string description = "", int order = 0
             };
 
             stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
-            stepperUpDown.ValueChanged += (s, e) => { dataCell.Text = e?.NewValue.ToString("0.00", CultureInfo.InvariantCulture) ?? "1.00"; };
+            stepperUpDown.ValueChanged += (s, e) => {
+                dataCell.Text = e?.NewValue.ToString("0.00", CultureInfo.InvariantCulture) ?? "1.00";
+                var originalValue = info.GetValue(owner);
+                SetModified(originalValue == null || !Equals(e?.NewValue, originalValue));
+            };
 
             cell.Children.Add(stepperUpDown);
             cell.Children.Add(dataCell);
