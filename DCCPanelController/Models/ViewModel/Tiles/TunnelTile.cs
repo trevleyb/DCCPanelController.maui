@@ -12,7 +12,7 @@ public class TunnelTile : TrackTile {
         if (Entity is TunnelEntity tunnel) {
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Tunnel).WithColor(tunnel.TunnelColor ?? tunnel.Parent?.MainLineColor ?? Colors.Gray ));
-            return CreateTrackTile("platform", Entity.Rotation, style.Build());
+            return CreateTrackTile("tunnel", Entity.Rotation, style.Build());
         }
         return CreateTrackTile("tunnel", Entity.Rotation);
     }

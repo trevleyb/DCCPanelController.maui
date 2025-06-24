@@ -22,18 +22,33 @@
                      Margin="0,5,0,5"/>
 
             <!--  Panel Name  -->
-            <HorizontalStackLayout>
-                <Label Text="Panel Name" VerticalOptions="Center" WidthRequest="300"/>
-                <Entry HorizontalOptions="FillAndExpand" Placeholder="Enter Panel Name" Text="{Binding Panel.Id}"
-                       WidthRequest="350" HeightRequest="35"/>
-            </HorizontalStackLayout>
+            <VerticalStackLayout>
+                <HorizontalStackLayout>
+                    <Label Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
+                    <Border HeightRequest="35" WidthRequest="350">
+                        <Entry HorizontalOptions="Fill"
+                               Margin="5,0,0,0"
+                               Placeholder="Enter Panel Name"
+                               Text="{Binding Panel.Id}"/>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12,12,12,12"/>
+                        </Border.StrokeShape>
+                    </Border>
+                </HorizontalStackLayout>
 
-            <HorizontalStackLayout>
-                <Label Text="Description" VerticalOptions="Center" WidthRequest="100"/>
-                <Entry HorizontalOptions="FillAndExpand" Placeholder="Panel Description"
-                       Text="{Binding Panel.Description}" HeightRequest="35" WidthRequest="350"/>
-            </HorizontalStackLayout>
-
+                <HorizontalStackLayout Margin="0,5,0,5">
+                    <Label Text="Description" VerticalOptions="Center" WidthRequest="100"/>
+                    <Border HeightRequest="35" WidthRequest="350">
+                        <Entry HorizontalOptions="Fill"
+                               Margin="5,0,0,0"
+                               Placeholder="Panel Description"
+                               Text="{Binding Panel.Description}"/>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12,12,12,12"/>
+                        </Border.StrokeShape>
+                    </Border>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
             <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                      Margin="0,5,0,5"/>
 

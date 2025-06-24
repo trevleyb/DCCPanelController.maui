@@ -18,9 +18,6 @@
             <polygon id="Border" fill="#000000"
                      transform="translate(35.5, 17.5) scale(-1, 1) rotate(90) translate(-35.5, -17.5)"
                      points="23.000038 30.0000335 48.00004 4.9999685 48.00004 7.9999684 26.000046 30.0000335"></polygon>
-            <polygon id="TrackDiverging" fill="#BDBDBD"
-                     transform="translate(35.5, 24) rotate(180) translate(-35.5, -24)"
-                     points="30.9998779 20 41.000001 20 32.9956002 28.000001 30 28.0000005 30 20"></polygon>
             <line x1="11" y1="24" x2="24" y2="24" id="Dashline" stroke="#686868" stroke-width="4"
                   stroke-linecap="square" stroke-dasharray="2,6"></line>
             <line x1="44.0000001" y1="4" x2="27" y2="21" id="Dashline" stroke="#686868" stroke-width="4"

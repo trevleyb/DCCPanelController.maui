@@ -5,7 +5,7 @@ namespace DCCPanelController.View;
 public partial class PanelViewer {
     private readonly ConnectionService? _connectionService;
     private readonly PanelViewerViewModel? _viewModel;
-    private int _activeSpan = -1;
+    private int _activeSpan = 3;
     private int _minSpan = 1;
     private int _maxSpan = 5;
 
