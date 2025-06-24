@@ -13,5 +13,6 @@ public enum SvgElementType {
     Highlight,
     Indicator,
     Bridge,
+    Platform,
     Unknown
 }
