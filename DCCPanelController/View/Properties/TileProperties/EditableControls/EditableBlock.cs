@@ -9,7 +9,7 @@ public class EditableBlockAttribute(string label, string description = "", int o
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var blocks = profile.Blocks.Select(t => t.Id).ToList();
+            var blocks = profile.Blocks.ToList();
 
             _ = dropDownWidth;
             _ = dropDownHeight;
@@ -22,13 +22,16 @@ public class EditableBlockAttribute(string label, string description = "", int o
                 DropDownHeight = dropDownHeight,
                 DropdownBorderWidth = 0,
                 TextSize = 12,
-                ItemsSource = blocks,
+                DisplayMemberPath = "Name",
+                SelectedValuePath = "Id",
+                DisplayFormat = "{Name} ({Id})",
                 IsEnabled = blocks.Count > 0,
                 Placeholder = blocks.Count > 0 ? "Select an Occupancy Block" : "No occupancy blocks available",
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.ItemsSource = blocks;
+            cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
                 if (args.PropertyName == nameof(PopupSelector.SelectedItem)) {
                     if (sender is PopupSelector dropDown) {

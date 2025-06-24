@@ -25,12 +25,7 @@ public partial class RectangleEntity : Entity, IDrawingEntity {
         Parent = panel;
     }
 
-    public RectangleEntity(RectangleEntity entity) : base(entity) {
-        BackgroundColor = entity.BackgroundColor;
-        BorderColor = entity.BorderColor;
-        BorderWidth = entity.BorderWidth;
-        Opacity = entity.Opacity;
-    }
+    public RectangleEntity(RectangleEntity entity) : base(entity) { }
 
     public override string EntityName => "Rectangle";
 

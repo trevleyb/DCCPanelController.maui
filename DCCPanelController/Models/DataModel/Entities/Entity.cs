@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 // ReSharper disable once CheckNamespace
@@ -32,17 +33,18 @@ public abstract partial class Entity() : ObservableObject {
         Layer = EntityPresets.DefaultLayer(this);  
     }
 
-    protected Entity(Entity entity) : this() {
-        Col = entity.Col;
-        Row = entity.Row;
-        Width = entity.Width;
-        Height = entity.Height;
-        Rotation = entity.Rotation;
-        Layer = entity.Layer;
-        IsEnabled = entity.IsEnabled;
+    protected Entity(Entity entity, params string[] excludeProperties) : this() {
+        ArgumentNullException.ThrowIfNull(entity);
+
+        // Always exclude these base properties by default
+        var defaultExclusions = new[] { "Parent", "Id", "Guid" };
+        var allExclusions = defaultExclusions.Concat(excludeProperties).ToArray();
+        ObjectCloner.CloneProperties(entity, this, allExclusions);
+
         Parent = entity.Parent;
         Guid = Guid.NewGuid();
     }
+    public abstract Entity Clone();
 
     public abstract string EntityName { get; }
     public virtual string Type => GetType().Name;
@@ -55,5 +57,4 @@ public abstract partial class Entity() : ObservableObject {
         Rotation = (Rotation + RotationFactor) % 360;
     }
 
-    public abstract Entity Clone();
 }

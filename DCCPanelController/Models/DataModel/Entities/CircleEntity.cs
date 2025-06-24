@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -22,12 +23,7 @@ public partial class CircleEntity : Entity, IDrawingEntity {
         Parent = panel;
     }
 
-    public CircleEntity(CircleEntity entity) : base(entity) {
-        BackgroundColor = entity.BackgroundColor;
-        BorderColor = entity.BorderColor;
-        BorderWidth = entity.BorderWidth;
-        Opacity = entity.Opacity;
-    }
+    public CircleEntity(CircleEntity entity) : base(entity) { }
 
     public override string EntityName => "Circle";
 

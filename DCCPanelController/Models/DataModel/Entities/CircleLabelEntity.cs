@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -44,15 +45,7 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
         Layer = 8;
     }
 
-    public CircleLabelEntity(CircleLabelEntity entity) : base(entity) {
-        BorderWidth = entity.BorderWidth;
-        BorderColor = entity.BorderColor;
-        BackgroundColor = entity.BackgroundColor;
-        FontSize = entity.FontSize;
-        Label = entity.Label;
-        TextColor = entity.TextColor;
-        Opacity = entity.Opacity;
-    }
+    public CircleLabelEntity(CircleLabelEntity entity) : base(entity) { }
 
     public override string EntityName => "Circle Label";
 

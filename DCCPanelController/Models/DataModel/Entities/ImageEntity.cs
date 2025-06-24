@@ -28,13 +28,7 @@ public partial class ImageEntity : Entity, IDrawingEntity {
         Parent = panel;
     }
 
-    public ImageEntity(ImageEntity entity) : base(entity) {
-        BorderRadius = entity.BorderRadius;
-        BorderWidth = entity.BorderWidth;
-        BorderColor = entity.BorderColor;
-        AspectRatio = entity.AspectRatio;
-        Image = entity.Image;
-    }
+    public ImageEntity(ImageEntity entity) : base(entity) { }
 
     public override string EntityName => "Image";
 

@@ -41,11 +41,5 @@ public abstract partial class TrackEntity : Entity {
     [JsonIgnore] public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);
     
     public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
-    protected TrackEntity(TrackEntity entity) : base(entity) {
-        TrackColor = entity.TrackColor;
-        TrackBorderColor = entity.TrackBorderColor;
-        TrackType = entity.TrackType;
-        TrackAttribute = entity.TrackAttribute;
-        Rotation = entity.Rotation;
-    }
+    protected TrackEntity(TrackEntity entity, params string[] excludeProperties ) : base(entity, excludeProperties) { }
 }

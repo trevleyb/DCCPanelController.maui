@@ -1,5 +1,6 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
@@ -43,10 +44,7 @@ public partial class ButtonEntity : Entity, IEntityID, IInteractiveEntity, IActi
     }
 
     public ButtonEntity(Panel panel) : base(panel) { }
-    public ButtonEntity(ButtonEntity entity) : base(entity) {
-        ButtonSize = entity.ButtonSize;
-        State = entity.State;
-    }
+    public ButtonEntity(ButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
     public override string EntityName => "Button";
 
     [JsonIgnore]

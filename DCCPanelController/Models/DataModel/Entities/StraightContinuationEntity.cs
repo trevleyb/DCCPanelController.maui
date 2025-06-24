@@ -19,9 +19,7 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
         Parent = panel;
     }
 
-    public StraightContinuationEntity(StraightContinuationEntity entity) : base(entity) {
-        ContinuationStyle = entity.ContinuationStyle;
-    }
+    public StraightContinuationEntity(StraightContinuationEntity entity) : base(entity) { }
 
     public override string EntityName => "Straight Track";
 

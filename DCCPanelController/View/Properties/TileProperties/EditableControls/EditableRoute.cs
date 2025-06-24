@@ -19,15 +19,18 @@ public class EditableRouteAttribute(string label, string description = "", int o
                 DropDownHeight = dropDownHeight,
                 DropdownBorderWidth = 0,
                 TextSize = 12,
-                ItemsSource = routes,
+                DisplayMemberPath = "Name",
+                SelectedValuePath = "Id",
+                DisplayFormat = "{Name} ({Id})",
                 IsEnabled = routes.Count > 0,
                 Placeholder = routes.Count > 0 ? "Select a Route" : "No available routes",
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.ItemsSource = routes;
+            cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
+                if (args.PropertyName == nameof(PopupSelector.SelectedValue)) SetModified(true);
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {

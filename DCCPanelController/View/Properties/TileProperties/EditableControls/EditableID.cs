@@ -11,6 +11,7 @@ public class EditableID(string label, string description = "", int order = 0, st
 
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
+            _entity = owner as IEntityID;
             var box = new Border() {
                 Margin = new Thickness(5, 5, 5, 5),
                 WidthRequest = width,

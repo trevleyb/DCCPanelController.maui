@@ -45,13 +45,9 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
     [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? [],"Turnout");
 
-    protected TurnoutEntity(TurnoutEntity entity) : base(entity) {
-        TurnoutID = string.Empty;
+    protected TurnoutEntity(TurnoutEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") {
         ButtonPanelActions = new ButtonActions(entity.ButtonPanelActions);
         TurnoutPanelActions = new TurnoutActions(entity.TurnoutPanelActions);
-        State = TurnoutStateEnum.Unknown;
-        TrackColor = entity.TrackColor;
-        RotationFactor = 90;
     }
 
     public override string ToString() {

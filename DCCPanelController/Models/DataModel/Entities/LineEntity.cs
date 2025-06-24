@@ -19,12 +19,7 @@ public partial class LineEntity : Entity, IDrawingEntity {
         Parent = panel;
     }
 
-    public LineEntity(LineEntity entity) : base(entity) {
-        LineColor = entity.LineColor;
-        LineWidth = entity.LineWidth;
-        Opacity = entity.Opacity;
-        RotationFactor = 10;
-    }
+    public LineEntity(LineEntity entity) : base(entity) { }
 
     public override string EntityName => "Line";
 

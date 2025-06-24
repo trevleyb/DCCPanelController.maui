@@ -9,7 +9,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var turnouts = profile.Turnouts.Select(t => t.Id).ToList();
+            var turnouts = profile.Turnouts.ToList();
 
             _ = dropDownWidth;
             _ = dropDownHeight;
@@ -22,13 +22,16 @@ public class EditableTurnoutAttribute(string label, string description = "", int
                 DropDownHeight = dropDownHeight,
                 DropdownBorderWidth = 0,
                 TextSize = 12,
-                ItemsSource = turnouts,
                 IsEnabled = turnouts.Count > 0,
+                DisplayMemberPath = "Name",
+                SelectedValuePath = "Id",
+                DisplayFormat = "{Name} ({Id})",
                 Placeholder = turnouts.Count > 0 ? "Select a Turnout" : "No available turnouts",
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.ItemsSource = turnouts;
+            cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
                 if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
             };

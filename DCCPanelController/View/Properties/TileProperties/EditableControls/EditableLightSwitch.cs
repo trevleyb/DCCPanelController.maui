@@ -9,8 +9,7 @@ public class EditableLightSwitchAttribute(string label, string description = "",
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var lights = profile.Lights.Select(t => t.Id).ToList();
-
+            var lights = profile.Lights.ToList();
             _ = dropDownWidth;
             _ = dropDownHeight;
 
@@ -22,13 +21,16 @@ public class EditableLightSwitchAttribute(string label, string description = "",
                 DropDownHeight = dropDownHeight,
                 DropdownBorderWidth = 0,
                 TextSize = 12,
-                ItemsSource = lights,
+                DisplayMemberPath = "Name",
+                SelectedValuePath = "Id",
+                DisplayFormat = "{Name} ({Id})",
                 IsEnabled = lights.Count > 0,
                 Placeholder = lights.Count > 0 ? "Select a Light" : "No lights available",
                 VerticalOptions = LayoutOptions.Center,
                 HorizontalOptions = LayoutOptions.Start
             };
-            cell.SetBinding(PopupSelector.SelectedItemProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.ItemsSource = lights;
+            cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
                 if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
             };

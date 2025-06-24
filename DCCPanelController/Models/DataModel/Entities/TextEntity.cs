@@ -40,17 +40,7 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
         Parent = panel;
     }
 
-    public TextEntity(TextEntity entity) : base(entity) {
-        BorderRadius = entity.BorderRadius;
-        BorderWidth = entity.BorderWidth;
-        TextColor = entity.TextColor;
-        BorderColor = entity.BorderColor;
-        BackgroundColor = entity.BackgroundColor;
-        FontSize = entity.FontSize;
-        Label = entity.Label;
-        HorizontalJustification = entity.HorizontalJustification;
-        VerticalJustification = entity.VerticalJustification;
-    }
+    public TextEntity(TextEntity entity) : base(entity) { }
 
     public override string EntityName => "Text Block";
 

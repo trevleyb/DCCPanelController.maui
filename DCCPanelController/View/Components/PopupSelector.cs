@@ -27,6 +27,7 @@ public class PopupSelector : ContentView, IDisposable {
     private Image _clearImage = new();
     private readonly Border _popupContainer = new();
     private bool _isLoaded = false;
+    private bool _isInitializing = false;
     private Border? mainLayoutBox;
     private Grid? mainButtonLayout;
     private Label? selectedItemLabel;
@@ -91,10 +92,20 @@ public class PopupSelector : ContentView, IDisposable {
         selectedItemLabel.BindingContext = this;
         selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
         selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
+
+        //selectedItemLabel.SetBinding(Label.TextProperty, new MultiBinding {
+        //    Bindings = {
+        //        new Binding(nameof(SelectedItem), source: this),
+        //        new Binding(nameof(Placeholder), source: this)
+        //    },
+        //    Converter = new SelectedItemToDisplayTextConverter()
+        //});
         selectedItemLabel.SetBinding(Label.TextProperty, new MultiBinding {
             Bindings = {
                 new Binding(nameof(SelectedItem), source: this),
-                new Binding(nameof(Placeholder), source: this)
+                new Binding(nameof(Placeholder), source: this),
+                new Binding(nameof(DisplayMemberPath), source: this),
+                new Binding(nameof(DisplayFormat), source: this)
             },
             Converter = new SelectedItemToDisplayTextConverter()
         });
@@ -152,6 +163,21 @@ public class PopupSelector : ContentView, IDisposable {
         // ----------------------------------------------------------------------------
         PropertyChanged += (_, e) => {
             switch (e.PropertyName) {
+            case nameof(SelectedItem):
+                UpdateSelectedValue();
+                break;
+
+            case nameof(SelectedValue):
+                UpdateSelectedItemFromValue();
+                break;
+            
+            case nameof(ItemsSource):
+                // When ItemsSource changes, try to restore the selection
+                if (!_isInitializing && SelectedValue != null && SelectedItem == null) {
+                    UpdateSelectedItemFromValue();
+                }
+                break;
+
             case nameof(DropdownSeparator):
                 OnPropertyChanged(nameof(DropdownSeparatorVisibility));
                 break;
@@ -171,6 +197,71 @@ public class PopupSelector : ContentView, IDisposable {
                 break;
             }
         };
+
+        // Complete initialization after a short delay to ensure all bindings are set
+        Dispatcher.StartTimer(TimeSpan.FromMilliseconds(100), () => {
+            CompleteInitialization();
+            return false; // Don't repeat
+        });
+
+    }
+
+    // Add this method to be called after control is fully initialized
+    private void CompleteInitialization() {
+        _isInitializing = false;
+        // Force update of SelectedItem from SelectedValue now that everything is ready
+        if (SelectedValue != null && SelectedItem == null) {
+            UpdateSelectedItemFromValue();
+        }
+    }
+
+    private void UpdateSelectedItemFromValue() {
+        // Don't update during initialization to avoid timing issues
+        if (_isInitializing) return;
+
+        if (SelectedValue == null) {
+            SelectedItem = null;
+            return;
+        }
+
+        if (string.IsNullOrEmpty(SelectedValuePath)) {
+            SelectedItem = SelectedValue;
+            return;
+        }
+
+        // Find the item in ItemsSource that has the matching SelectedValue
+        if (ItemsSource != null) {
+            foreach (var item in ItemsSource) {
+                var itemValue = GetPropertyValue(item, SelectedValuePath);
+                if (Equals(itemValue, SelectedValue)) {
+                    SelectedItem = item;
+                    return;
+                }
+            }
+        }
+
+        // Keep SelectedItem as null but don't clear SelectedValue
+        SelectedItem = null;
+    }
+
+    private void UpdateSelectedValue() {
+        // Don't update during initialization
+        if (_isInitializing) return;
+
+        if (string.IsNullOrEmpty(SelectedValuePath)) {
+            SelectedValue = SelectedItem;
+        } else if (SelectedItem != null) {
+            SelectedValue = GetPropertyValue(SelectedItem, SelectedValuePath);
+        } else {
+            SelectedValue = null;
+        }
+    }
+
+    private void UpdateSelectedItemFromValueWhenItemsSourceChanges() {
+        // When ItemsSource changes, try to find the matching item again
+        if (SelectedValue != null && SelectedItem == null) {
+            UpdateSelectedItemFromValue();
+        }
     }
 
     private void CreatePopupView(Microsoft.Maui.Controls.View mainButtonLayout) {
@@ -192,7 +283,16 @@ public class PopupSelector : ContentView, IDisposable {
                 label.SetBinding(Label.TextColorProperty, new Binding(nameof(DropdownTextColor), BindingMode.OneWay, source: this));
                 label.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
                 label.SetBinding(BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
-                label.SetBinding(Label.TextProperty, new Binding("."));
+
+                // Check if DisplayMemberPath is set
+                if (!string.IsNullOrEmpty(DisplayMemberPath)) {
+                    // Use the specified property path
+                    label.SetBinding(Label.TextProperty, new Binding(DisplayMemberPath));
+                } else {
+                    // Default behavior: bind to the entire object (uses ToString())
+                    label.SetBinding(Label.TextProperty, new Binding("."));
+                }
+
                 return label;
             })
         };
@@ -355,49 +455,103 @@ public class PopupSelector : ContentView, IDisposable {
         }
     }
 
-    /// <summary>
-    /// Shows the native iOS picker for item selection
-    /// </summary>
-    private async void ShowIOSPicker() {
-        try {
-            var items = ItemsSource.Cast<object>().ToList();
-            if (items.Count == 0) return;
+    void ShowIOSPicker() {
+        if (ItemsSource == null) return;
 
-            // Create a hidden picker control
-            var picker = new Picker {
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-                WidthRequest = WidthRequest,
-                Margin = new Thickness(10,0,0,0),
-                ItemsSource = items,
-                SelectedItem = SelectedItem,
-                Title = Placeholder ?? "Select an option",
-                IsVisible = false
-            };
-            picker.SetBinding(Picker.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
-            picker.SetBinding(Picker.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
-            picker.SetBinding(Picker.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
-            picker.SetBinding(Picker.BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
-            
-            if (mainButtonLayout is not null && mainLayoutBox is not null && selectedItemLabel is not null) {
-                selectedItemLabel.IsVisible = false;
-                mainLayoutBox.Content = picker;
-                picker.IsVisible = true; // Show it visually
-                picker.Unfocused += OnPickerUnfocused;
-                picker.Focus();
+        var items = ItemsSource.Cast<object>().ToList();
+        if (items.Count == 0) return;
 
-                void OnPickerUnfocused(object? sender, FocusEventArgs e) {
-                    SelectedItem = picker.SelectedItem;
-                    picker.Unfocused -= OnPickerUnfocused;
-                    mainLayoutBox.Content = selectedItemLabel;
-                    selectedItemLabel.IsVisible = true;
-                }
+        // Create display items for the picker based on DisplayMemberPath or DisplayFormat
+        var displayItems = new List<string>();
+        foreach (var item in items) {
+            string displayText;
+
+            if (!string.IsNullOrEmpty(DisplayFormat)) {
+                // Use the display format template
+                var formattedText = FormatObject(item, DisplayFormat);
+                displayText = formattedText ?? item.ToString() ?? string.Empty;
+            } else if (!string.IsNullOrEmpty(DisplayMemberPath)) {
+                // Use the display member path
+                var displayValue = GetPropertyValue(item, DisplayMemberPath);
+                displayText = displayValue?.ToString() ?? string.Empty;
             } else {
-                Console.WriteLine("We should not be here. MainButtonLayout cannot be null.");
+                // Default behavior: use the item's ToString() method
+                displayText = item.ToString() ?? string.Empty;
             }
-        } catch (Exception e) {
-            Console.WriteLine($"Error showing iOS picker: {e.Message}");
+
+            displayItems.Add(displayText);
         }
+
+        var picker = new Picker {
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            WidthRequest = WidthRequest,
+            Margin = new Thickness(10, 0, 0, 0),
+            ItemsSource = displayItems, // Use formatted display items
+            Title = Placeholder ?? "Select an option",
+            IsVisible = false
+        };
+
+        // Set the selected index based on the current SelectedItem
+        if (SelectedItem != null) {
+            var selectedIndex = items.IndexOf(SelectedItem);
+            if (selectedIndex >= 0) {
+                picker.SelectedIndex = selectedIndex;
+            }
+        }
+
+        picker.SelectedIndexChanged += (sender, e) => {
+            if (picker.SelectedIndex >= 0 && picker.SelectedIndex < items.Count) {
+                var selectedItem = items[picker.SelectedIndex];
+                SelectedItem = selectedItem;
+
+                // Update SelectedValue based on SelectedValuePath
+                UpdateSelectedValue();
+            }
+        };
+
+        // Add picker to the layout temporarily to show it
+        if (Parent is Layout layout) {
+            layout.Children.Add(picker);
+            picker.Focus();
+
+            // Remove picker after selection or when focus is lost
+            picker.Unfocused += (sender, e) => {
+                if (layout.Children.Contains(picker)) {
+                    layout.Children.Remove(picker);
+                }
+            };
+        }
+    }
+
+    /// <summary>
+    /// Formats an object using a format string with property placeholders like "{Name} ({Id})"
+    /// </summary>
+    /// <param name="source">The object to format</param>
+    /// <param name="formatString">The format string with property names in curly braces</param>
+    /// <returns>The formatted string, or null if source is null</returns>
+    public static string? FormatObject(object? source, string formatString) {
+        if (source == null) {
+            return null; // Return null so the converter can use placeholder
+        }
+
+        if (string.IsNullOrEmpty(formatString)) {
+            return source.ToString();
+        }
+
+        var result = formatString;
+
+        // Find all property placeholders like {PropertyName}
+        var regex = new System.Text.RegularExpressions.Regex(@"\{(\w+)\}");
+        var matches = regex.Matches(formatString);
+
+        foreach (System.Text.RegularExpressions.Match match in matches) {
+            var propertyName = match.Groups[1].Value;
+            var propertyValue = GetPropertyValue(source, propertyName)?.ToString() ?? string.Empty;
+            result = result.Replace(match.Value, propertyValue);
+        }
+
+        return result;
     }
 
     private Rect GetControlBounds() {
@@ -430,13 +584,19 @@ public class PopupSelector : ContentView, IDisposable {
 
     #region Bindable Properties
     public static readonly BindableProperty SelectorTypeProperty = BindableProperty.Create(nameof(SelectorType), typeof(PopupSelectorTypeEnum), typeof(PopupSelector), PopupSelectorTypeEnum.Popup, propertyChanged: SelectorTypeChanged);
-    public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(PopupSelector));
+    public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(PopupSelector), propertyChanged: OnItemsSourceChanged);
+
     public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(PopupSelector), null, BindingMode.TwoWay);
     public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(PopupSelector), string.Empty);
     public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(PopupSelector), Colors.Black);
     public static readonly BindableProperty TextSizeProperty = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(PopupSelector), 12.0);
     public static readonly BindableProperty ShowAnchorProperty = BindableProperty.Create(nameof(ShowAnchor), typeof(bool), typeof(PopupSelector), true);
     public static readonly BindableProperty InnerMarginProperty = BindableProperty.Create(nameof(InnerMargin), typeof(Thickness), typeof(PopupSelector), new Thickness(0));
+
+    public static readonly BindableProperty DisplayMemberPathProperty = BindableProperty.Create(nameof(DisplayMemberPath), typeof(string), typeof(PopupSelector));
+    public static readonly BindableProperty SelectedValuePathProperty = BindableProperty.Create(nameof(SelectedValuePath), typeof(string), typeof(PopupSelector));
+    public static readonly BindableProperty SelectedValueProperty = BindableProperty.Create(nameof(SelectedValue), typeof(object), typeof(PopupSelector), null, BindingMode.TwoWay);
+    public static readonly BindableProperty DisplayFormatProperty = BindableProperty.Create(nameof(DisplayFormat), typeof(string), typeof(PopupSelector));
 
     public static readonly BindableProperty ShowClearFieldImageProperty = BindableProperty.Create(nameof(ShowClearFieldImage), typeof(bool), typeof(PopupSelector), false);
     public static readonly BindableProperty DropDownWidthProperty = BindableProperty.Create(nameof(DropDownWidth), typeof(double), typeof(PopupSelector), -1.0);
@@ -453,6 +613,15 @@ public class PopupSelector : ContentView, IDisposable {
     public static readonly BindableProperty DropdownShadowProperty = BindableProperty.Create(nameof(DropdownShadow), typeof(bool), typeof(PopupSelector), true);
     public static readonly BindableProperty DropdownSeparatorProperty = BindableProperty.Create(nameof(DropdownSeparator), typeof(bool), typeof(PopupSelector), true);
 
+    private static void OnItemsSourceChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is PopupSelector selector) {
+            // Force update when ItemsSource changes
+            if (!selector._isInitializing && selector.SelectedValue != null) {
+                selector.UpdateSelectedItemFromValue();
+            }
+        }
+    }
+    
     public PopupSelectorTypeEnum SelectorType {
         get => (PopupSelectorTypeEnum)GetValue(SelectorTypeProperty);
         set => SetValue(SelectorTypeProperty, value);
@@ -639,6 +808,38 @@ public class PopupSelector : ContentView, IDisposable {
         set => SetValue(DropdownSeparatorProperty, value);
     }
 
+    /// <summary>
+    /// Gets or sets the property path that is used to get the display value for each item in the ItemsSource.
+    /// When null or empty, the item's ToString() method is used.
+    /// </summary>
+    public string DisplayMemberPath {
+        get => (string)GetValue(DisplayMemberPathProperty);
+        set => SetValue(DisplayMemberPathProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the property path that is used to get the value from the selected item.
+    /// When null or empty, the entire object is used as the value.
+    /// </summary>
+    public string SelectedValuePath {
+        get => (string)GetValue(SelectedValuePathProperty);
+        set => SetValue(SelectedValuePathProperty, value);
+    }
+
+    /// <summary>
+    /// Gets or sets the value that is extracted from the selected item using the SelectedValuePath.
+    /// This is what gets bound to your model property (e.g., the ID).
+    /// </summary>
+    public object? SelectedValue {
+        get => GetValue(SelectedValueProperty);
+        set => SetValue(SelectedValueProperty, value);
+    }
+
+    public string DisplayFormat {
+        get => (string)GetValue(DisplayFormatProperty);
+        set => SetValue(DisplayFormatProperty, value);
+    }
+
     public SeparatorVisibility DropdownSeparatorVisibility => DropdownSeparator ? SeparatorVisibility.Default : SeparatorVisibility.None;
     #endregion
 }
@@ -660,14 +861,31 @@ public static class ViewExtensions {
 
 public class SelectedItemToDisplayTextConverter : IMultiValueConverter {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-        if (values?.Length >= 2) {
-            var selectedItem = values[0];
-            var placeholder = values[1] as string;
+        if (values?.Length != 4) return string.Empty;
 
-            var selectedText = selectedItem?.ToString();
-            return string.IsNullOrWhiteSpace(selectedText) ? (placeholder ?? string.Empty) : selectedText;
+        var selectedItem = values[0];
+        var placeholder = values[1] as string ?? string.Empty;
+        var displayMemberPath = values[2] as string;
+        var displayFormat = values[3] as string;
+
+        // If no item is selected, show placeholder
+        if (selectedItem == null) {
+            return placeholder;
         }
-        return string.Empty;
+
+        // If we have a display format, use it
+        if (!string.IsNullOrEmpty(displayFormat)) {
+            return PopupSelector.FormatObject(selectedItem, displayFormat) ?? placeholder;
+        }
+
+        // If we have a display member path, use it
+        if (!string.IsNullOrEmpty(displayMemberPath)) {
+            var displayValue = PopupSelector.GetPropertyValue(selectedItem, displayMemberPath);
+            return displayValue?.ToString() ?? placeholder;
+        }
+
+        // Default: use ToString()
+        return selectedItem.ToString() ?? placeholder;
     }
 
     public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {

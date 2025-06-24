@@ -18,9 +18,7 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
         Parent = panel;
     }
 
-    public CornerContinuationEntity(CornerContinuationEntity entity) : base(entity) {
-        ContinuationStyle = entity.ContinuationStyle;
-    }
+    public CornerContinuationEntity(CornerContinuationEntity entity) : base(entity) { }
 
     public override string EntityName => "Corner Track";
 
