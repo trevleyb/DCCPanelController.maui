@@ -7,10 +7,14 @@
             <polygon id="Border" fill="#000000"
                      transform="translate(26.5, 26.5) scale(-1, 1) rotate(90) translate(-26.5, -26.5)"
                      points="5.000019 48.000017 48.000019 4.999983 48.000019 7.99998426 8.00001849 48.000017"></polygon>
-            <polygon id="Track" fill="#BDBDBD" transform="translate(24, 24) rotate(180) translate(-24, -24)"
-                     points="-1.5258789e-05 42.9999878 43.0000028 -1.1444092e-05 47.9999997 -1.1444092e-05 47.9999997 4.99999504 4.99998474 47.9999986 -1.5258789e-05 47.999987"></polygon>
+            <path id="Track" d="M48 5.00001L5 48L2.5 45.5L0 43L43 0L45.5 2.5L48 5.00001Z" fill="#BDBDBD" fill-rule="evenodd" transform="translate(0 0)" />
             <line x1="4.00000005" y1="44.0000007" x2="44" y2="4.00000001" id="Dashline" stroke="#686868"
                   stroke-width="4" stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>
+
     </g>
 </svg>
+
+<!--<polygon id="Track" fill="#BDBDBD" transform="translate(24, 24) rotate(180) translate(-24, -24)"-->
+<!--         points="-1.5258789e-05 42.9999878 43.0000028 -1.1444092e-05 47.9999997 -1.1444092e-05 47.9999997 4.99999504 4.99998474 47.9999986 -1.5258789e-05 47.999987"></polygon>-->
+

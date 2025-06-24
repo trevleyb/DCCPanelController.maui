@@ -52,7 +52,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
             
             var style = new SvgStyleBuilder();
             if (turnout.TrackNotSelectedColor is { } divergingColor) {
-                style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(divergingColor));
+                style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(divergingColor ?? turnout?.Parent?.DivergingColor ?? Colors.Gray));
             }
             
             var trackTurnout = base.CreateTrackTile(imageName, Entity.Rotation, style.Build());
