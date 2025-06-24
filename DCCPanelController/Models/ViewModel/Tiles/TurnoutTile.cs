@@ -1,4 +1,3 @@
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -13,8 +12,8 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         VisualProperties.Add(nameof(TurnoutEntity.State));
         VisualProperties.Add(nameof(TurnoutEntity.TrackNotSelectedColor));
         VisualProperties.Add(nameof(TurnoutEntity.TurnoutStyle));
-        if (Entity is TurnoutEntity turnoutEntity && turnoutEntity.Turnout is { } turnout) {
-            turnout.PropertyChanged += (sender, args) => { turnoutEntity.State = turnout.State; };
+        if (Entity is TurnoutEntity { Turnout: { } turnout } turnoutEntity) {
+            turnout.PropertyChanged += (_, _) => { turnoutEntity.State = turnout.State; };
         }
     }
 
@@ -51,8 +50,16 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
             if (turnout.TurnoutStyle == TurnoutStyleEnum.NoBranch) imageName += "alt";
             
             var style = new SvgStyleBuilder();
-            if (turnout.TrackNotSelectedColor is { } divergingColor) {
-                style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(divergingColor ?? turnout?.Parent?.DivergingColor ?? Colors.Gray));
+            style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(turnout.TrackNotSelectedColor ?? turnout?.Parent?.DivergingColor ?? Colors.Gray));
+
+            // If the Neighbor track is actually a BranchLine then mark the diverging
+            // track as not having a border as it would not make sense.
+            // --------------------------------------------------------------------------
+            var neighbor = turnout.GetDivergingEntity();
+            if (neighbor is TurnoutEntity neighborTurnout) {
+                if (turnout.IsMainLine && neighborTurnout.IsBranchLine) {
+                    style.Add(e => e.WithName(SvgElementType.BorderDiverging).Hidden());
+                }
             }
             
             var trackTurnout = base.CreateTrackTile(imageName, Entity.Rotation, style.Build());

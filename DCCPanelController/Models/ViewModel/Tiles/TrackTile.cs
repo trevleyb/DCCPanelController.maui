@@ -81,12 +81,14 @@ public abstract class TrackTile : Tile, ITileTrack {
             switch (trackEntity.TrackType) {
             case TrackTypeEnum.BranchLine:
                 style.Add(e => e.WithName(SvgElementType.Border).Hidden())
+                     .Add(e => e.WithName(SvgElementType.BorderDiverging).Hidden())
                      .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.BranchLineColor ?? Colors.Gray).Visible());
                 break;
 
             case TrackTypeEnum.MainLine:
             default:
                 style.Add(e => e.WithName(SvgElementType.Border).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.MainlineBorderColor ?? Colors.Black).Visible())
+                     .Add(e => e.WithName(SvgElementType.BorderDiverging).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.MainlineBorderColor ?? Colors.Black).Visible())
                      .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible());
                 break;
             }

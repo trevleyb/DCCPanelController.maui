@@ -5,7 +5,7 @@ namespace DCCPanelController.Models.DataModel.Helpers;
 /// </summary>
 public class EntityConnections {
     public const int MaxDirections = 8; // All entities support 8 compass directions
-    
+
     private readonly ConnectionType[] _baseConnections;
 
     /// <summary>
@@ -17,7 +17,7 @@ public class EntityConnections {
     }
 
     public string GetRotatedConnectionsStr(int rotation) => ConvertDirectionsToString(GetConnections(rotation));
-    
+
     /// <summary>
     /// Gets the connections for the entity at its current rotation
     /// </summary>
@@ -26,7 +26,7 @@ public class EntityConnections {
     public ConnectionType[] GetConnections(int rotation) {
         var normalizedRotation = NormalizeRotation(rotation);
         var rotationIndex = CalculateRotationIndex(normalizedRotation);
-        
+
         if (rotationIndex == 0) return (ConnectionType[])_baseConnections.Clone();
         return RotateConnections(_baseConnections, rotationIndex);
     }
@@ -50,13 +50,13 @@ public class EntityConnections {
     public List<int> GetValidDirections(int rotation) {
         var connections = GetConnections(rotation);
         var validDirections = new List<int>();
-        
+
         for (int i = 0; i < MaxDirections; i++) {
             if (connections[i] != ConnectionType.None) {
                 validDirections.Add(i);
             }
         }
-        
+
         return validDirections;
     }
 
@@ -79,8 +79,8 @@ public class EntityConnections {
         if (string.IsNullOrEmpty(pattern)) {
             pattern = new string('*', MaxDirections);
         }
-        
-        // Ensure pattern is exactly 8 characters
+
+        // Ensure the pattern is exactly 8 characters
         if (pattern.Length < MaxDirections) {
             pattern = pattern.PadRight(MaxDirections, '*');
         } else if (pattern.Length > MaxDirections) {
@@ -88,17 +88,17 @@ public class EntityConnections {
         }
 
         var connections = new ConnectionType[MaxDirections];
-        for (int i = 0; i < MaxDirections; i++) {
+        for (var i = 0; i < MaxDirections; i++) {
             connections[i] = char.ToLower(pattern[i]) switch {
                 't' => ConnectionType.Terminator,
                 's' => ConnectionType.Straight,
                 'd' => ConnectionType.Diverging,
                 'c' => ConnectionType.Connector,
                 'x' => ConnectionType.Closed,
-                _ => ConnectionType.None
+                _   => ConnectionType.None
             };
         }
-        
+
         return connections;
     }
 
@@ -124,16 +124,31 @@ public class EntityConnections {
 
     public override string ToString() => ConvertDirectionsToString(_baseConnections);
 
+    public static (int dx, int dy) GetDirectionOffset(int direction) {
+        return direction switch {
+            0 => (0, -1),  // N
+            1 => (1, -1),  // NE
+            2 => (1, 0),   // E
+            3 => (1, 1),   // SE
+            4 => (0, 1),   // S
+            5 => (-1, 1),  // SW
+            6 => (-1, 0),  // W
+            7 => (-1, -1), // NW
+            _ => (0, 0)
+        };
+    }
+
+    
     public string ConvertDirectionsToString(ConnectionType[] connections) {
         var result = string.Empty;
-        for (int i = 0; i < MaxDirections; i++) {
+        for (var i = 0; i < MaxDirections; i++) {
             result += connections[i] switch {
-                ConnectionType.Terminator => 'T',
-                ConnectionType.Straight => 'S',
-                ConnectionType.Diverging => 'D',
-                ConnectionType.Connector => 'C',
-                ConnectionType.Closed => 'X',
-                _ => '*'
+                ConnectionType.Terminator => "T",
+                ConnectionType.Straight   => "S",
+                ConnectionType.Diverging  => "D",
+                ConnectionType.Connector  => "C",
+                ConnectionType.Closed     => "X",
+                _                         => "*"
             };
         }
         return result;
@@ -142,16 +157,16 @@ public class EntityConnections {
     // Static factory methods for common track types (based on E-W horizontal base orientation)
     public static class TrackPatterns {
         // Straight tracks - base orientation E-W
-        public static EntityConnections StraightTrack               => new("**S***S*");             
-        public static EntityConnections StraightContinuationTrack   => new("**C***S*"); 
-        public static EntityConnections CornerTrack                 => new("*S****S*");               
-        public static EntityConnections CornerContinuationTrack     => new("*C****S*");   
-        public static EntityConnections CrossingTrack               => new("S*S*S*S*");              
-        public static EntityConnections TerminatorTrack             => new("**T***S*");           
-        public static EntityConnections TunnelTrack                 => new("**S***S*");               
-        public static EntityConnections PlatformTrack               => new("**S***S*");             
-        public static EntityConnections LeftTurnoutTrack            => new("*DX***S*");          
-        public static EntityConnections RightTurnoutTrack           => new("**XD**S*");          
+        public static EntityConnections StraightTrack => new("**S***S*");
+        public static EntityConnections StraightContinuationTrack => new("**C***S*");
+        public static EntityConnections CornerTrack => new("*S****S*");
+        public static EntityConnections CornerContinuationTrack => new("*C****S*");
+        public static EntityConnections CrossingTrack => new("S*S*S*S*");
+        public static EntityConnections TerminatorTrack => new("**T***S*");
+        public static EntityConnections TunnelTrack => new("**S***S*");
+        public static EntityConnections PlatformTrack => new("**S***S*");
+        public static EntityConnections LeftTurnoutTrack => new("*DX***S*");
+        public static EntityConnections RightTurnoutTrack => new("**XD**S*");
     }
 }
 

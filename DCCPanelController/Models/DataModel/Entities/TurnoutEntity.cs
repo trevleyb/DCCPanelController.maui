@@ -73,4 +73,26 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
         }
     }
 
+    /// <summary>
+    /// This function is design to find the entity that the diverging track on
+    /// this turnout would connect to. We can do this so that if it is a branch
+    /// line and the turnout is a mainline, then we can hide the border. 
+    /// </summary>
+    /// <returns>The neighbor Entity</returns>
+    public Entity? GetDivergingEntity() {
+        var connections = Connections.GetConnections(Rotation);
+        for (int i = 0; i <= connections.Length; i++) {
+            if (connections[i] == ConnectionType.Diverging) {
+                var neighborOffset = EntityConnections.GetDirectionOffset(i);
+                var neighborCol = Col + neighborOffset.dx;
+                var neighborRow = Row + neighborOffset.dy;
+                var neighbor = Parent?.GetEntityAtPosition(neighborCol, neighborRow);
+                Console.WriteLine($"Found Neighbor: {neighbor?.EntityName ?? "none"} from base {Col},{Row} => {neighborCol},{neighborRow}");
+                return neighbor;
+            }
+        }
+        Console.WriteLine($"No Neighbor Found for Diverging Path");
+        return null;
+    }
+    
 }

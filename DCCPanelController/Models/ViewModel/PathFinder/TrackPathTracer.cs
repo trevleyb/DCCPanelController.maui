@@ -304,7 +304,7 @@ public class TrackPathTracer {
 
     private (TrackEntity track, int entryDirection, ConnectionValidationResult result)? FindNextTrackAndValidateConnection(TrackEntity currentTrack, int exitDirection) {
         // Calculate the position of the next track
-        var offset = GetDirectionOffset(exitDirection);
+        var offset = EntityConnections.GetDirectionOffset(exitDirection);
         var nextCol = currentTrack.Col + offset.dx;
         var nextRow = currentTrack.Row + offset.dy;
 
@@ -400,17 +400,4 @@ public class TrackPathTracer {
         return (direction + 4) % EntityConnections.MaxDirections;
     }
 
-    private static (int dx, int dy) GetDirectionOffset(int direction) {
-        return direction switch {
-            0 => (0, -1),  // N
-            1 => (1, -1),  // NE
-            2 => (1, 0),   // E
-            3 => (1, 1),   // SE
-            4 => (0, 1),   // S
-            5 => (-1, 1),  // SW
-            6 => (-1, 0),  // W
-            7 => (-1, -1), // NW
-            _ => (0, 0)
-        };
-    }
 }
