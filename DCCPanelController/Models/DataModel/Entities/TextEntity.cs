@@ -22,16 +22,16 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     private int _fontSize = 8;
 
     [ObservableProperty] [property: EditableEnum("Horizontal", "", 0, "Text")]
-    private TextAlignment _horizontalJustification = TextAlignment.Center;
+    private TextAlignmentHorizontalEnum _horizontalJustification = TextAlignmentHorizontalEnum.Center;
+
+    [ObservableProperty] [property: EditableEnum("Vertical", "", 0, "Text")]
+    private TextAlignmentVerticalEnum _verticalJustification = TextAlignmentVerticalEnum.Center;
 
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
     [ObservableProperty] [property: EditableColor("Text Color", "", 0, "Text")]
     private Color _textColor = Colors.Black;
-
-    [ObservableProperty] [property: EditableEnum("Vertical", "", 0, "Text")]
-    private TextAlignment _verticalJustification = TextAlignment.Center;
 
     [JsonConstructor]
     public TextEntity() { }

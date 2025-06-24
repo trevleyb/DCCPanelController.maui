@@ -24,8 +24,8 @@ public class DrawableTextTile : Tile, ITileDrawable {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is TextEntity entity && !string.IsNullOrEmpty(entity.Label)) {
             var label = new Label {
-                HorizontalTextAlignment = entity.HorizontalJustification,
-                VerticalTextAlignment = entity.VerticalJustification,
+                HorizontalTextAlignment = EnumHelpers.ConvertHorizontalAlignmentToText(entity.HorizontalJustification),
+                VerticalTextAlignment = EnumHelpers.ConvertVerticalAlignmentToText(entity.VerticalJustification),
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
                 BackgroundColor = Colors.Transparent,
