@@ -11,7 +11,7 @@ public class BridgeTile : TrackTile {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is BridgeEntity bridge) {
             var style = new SvgStyleBuilder();
-            style.Add(e => e.WithName(SvgElementType.Bridge).WithColor(bridge.BridgeColor ?? bridge.Parent?.MainLineColor ?? Colors.Gray ));
+            style.Add(e => e.WithName(SvgElementType.Bridge).WithColor(bridge.BridgeColor ?? bridge.Parent?.BridgeColor ?? Colors.Gray ));
             return CreateTrackTile("bridge", Entity.Rotation, style.Build());
         }
         return CreateTrackTile("bridge", Entity.Rotation);

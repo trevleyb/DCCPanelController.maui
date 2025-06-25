@@ -11,7 +11,7 @@ public class TunnelTile : TrackTile {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is TunnelEntity tunnel) {
             var style = new SvgStyleBuilder();
-            style.Add(e => e.WithName(SvgElementType.Tunnel).WithColor(tunnel.TunnelColor ?? tunnel.Parent?.MainLineColor ?? Colors.Gray ));
+            style.Add(e => e.WithName(SvgElementType.Tunnel).WithColor(tunnel.TunnelColor ?? tunnel.Parent?.TunnelColor ?? Colors.Gray ));
             return CreateTrackTile("tunnel", Entity.Rotation, style.Build());
         }
         return CreateTrackTile("tunnel", Entity.Rotation);
