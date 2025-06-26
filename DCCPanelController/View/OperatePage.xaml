@@ -2,7 +2,7 @@
 
 <ContentPage
     BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-    Title="{Binding SelectedPanel.Title, FallbackValue='DCC Panel Controller'}"
+    Title="{Binding ActivePanel.Title, FallbackValue='DCC Panel Controller'}"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="view:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -10,111 +10,153 @@
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:global="clr-namespace:">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
+            <global:IndicatorColorConverter x:Key="IndicatorColorConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
-        <ToolbarItem
-            Clicked="HideUnHideTabBar"
-            IconImageSource="maximize_2.png"
-            Text="Hide"
-            ToolTipProperties.Text="Hide Bottom Tab Bar"
-            x:Name="HideUnHide"/>
-
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}"
+                     IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Clicked="HideUnHideTabBar" IconImageSource="maximize_2.png" Text="Hide"
+                     ToolTipProperties.Text="Hide Bottom Tab Bar" x:Name="HideUnHide"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
         <Grid RowDefinitions="*,25">
-            <CarouselView
-                BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-                CurrentItem="{Binding SelectedPanel}"
-                Grid.Column="0"
-                Grid.Row="0"
-                IndicatorView="IndicatorView"
-                x:Name="PanelCarousel">
 
-                <CarouselView.ItemsSource>
-                    <Binding Path="Panels"/>
-                </CarouselView.ItemsSource>
+            <!-- Main Panel Content with Swipe Gesture -->
+            <ContentView Grid.Row="0"
+                         BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
+                <ContentView.GestureRecognizers>
+                    <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
+                    <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
+                </ContentView.GestureRecognizers>
 
-                <CarouselView.EmptyView>
-                    <ContentView HorizontalOptions="Center" VerticalOptions="Center">
+                <!-- Panel Content or Empty View -->
+                <Grid>
+                    <!-- Active Panel View -->
+                    <view:ControlPanelView
+                        TileTapped="PanelViewOnTileTapped"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        DesignMode="False"
+                        ShowGrid="false"
+                        IsVisible="{Binding HideWelcomePage}"
+                        x:Name="PanelView"/>
+
+                    <!-- BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=BackgroundColor}" -->
+                    <!-- Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=ActivePanel}" -->
+                    <!-- IsVisible="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=HideWelcomePage}" -->
+
+                    <!-- Empty View when no panels -->
+                    <ContentView HorizontalOptions="Fill" VerticalOptions="Fill"
+                                 IsVisible="{Binding ShowWelcomePage}">
                         <ScrollView>
-                        <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                            <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
-                            <Label
-                                Style="{StaticResource LargeLabel}"
-                                FontFamily="OpenSansBold"
-                                HorizontalOptions="Center"
-                                LineBreakMode="WordWrap"
-                                HorizontalTextAlignment="Center"
-                                Margin="20,20,20,10"
-                                Text="Welcome to the DCC Model Layout Panel Controller App"
-                                VerticalOptions="Center"/>
-                            <Label
-                                Style="{StaticResource MediumLabel}"
-                                LineBreakMode="WordWrap"
-                                FontFamily="OpenSansLight"
-                                HorizontalOptions="Center"
-                                HorizontalTextAlignment="Center"
-                                Margin="20,10,20,0"
-                                Text="Currently, no Panels are defined. "
-                                VerticalOptions="Center"/>
-                            <Label
-                                Style="{StaticResource MediumLabel}"
-                                LineBreakMode="WordWrap"
-                                FontFamily="OpenSansLight"
-                                HorizontalOptions="Center"
-                                HorizontalTextAlignment="Center"
-                                Margin="20,0,20,10"
-                                Text="Use the Panel Editor to add a Panel. "
-                                VerticalOptions="Center"/>
-                            <HorizontalStackLayout
-                                HorizontalOptions="Center"
-                                Margin="0"
-                                Padding="10"
-                                VerticalOptions="End">
-                                <Button
-                                    Clicked="ButtonInstructions_OnClicked"
-                                    Margin="10,10,10,10"
-                                    Style="{StaticResource ButtonOutline}"
-                                    Text="Instructions"/>
-                            </HorizontalStackLayout>
-                        </StackLayout>
+                            <Grid ColumnDefinitions="150,*,150">
+                                <ImageButton Grid.Column="0" WidthRequest="100" HeightRequest="100" 
+                                       Source="chevrons_left.png"
+                                       Command="{Binding SwipeLeftCommand}"
+                                       HorizontalOptions="Start" VerticalOptions="Center">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="LightGray"/>
+                                    </Image.Behaviors>
+                                </ImageButton>
+                                <ImageButton Grid.Column="2" WidthRequest="100" HeightRequest="100"
+                                       Command="{Binding SwipeRightCommand}"
+                                       Source="chevrons_right.png" 
+                                       HorizontalOptions="End" VerticalOptions="Center">
+                                    <Image.Behaviors>
+                                        <toolkit:IconTintColorBehavior TintColor="LightGray"/>
+                                    </Image.Behaviors>
+                                </ImageButton>
+                                <StackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
+                                    <Label
+                                        Style="{StaticResource LargeLabel}"
+                                        FontFamily="OpenSansBold"
+                                        HorizontalOptions="Center"
+                                        LineBreakMode="WordWrap"
+                                        HorizontalTextAlignment="Center"
+                                        Margin="20,20,20,10"
+                                        Text="Welcome to the DCC Model Layout Panel Controller App"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        Style="{StaticResource MediumLabel}"
+                                        LineBreakMode="WordWrap"
+                                        FontFamily="OpenSansLight"
+                                        HorizontalOptions="Center"
+                                        HorizontalTextAlignment="Center"
+                                        Margin="20,10,20,0"
+                                        Text="Currently, no Panels are defined. "
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        Style="{StaticResource MediumLabel}"
+                                        LineBreakMode="WordWrap"
+                                        FontFamily="OpenSansLight"
+                                        HorizontalOptions="Center"
+                                        HorizontalTextAlignment="Center"
+                                        Margin="20,0,20,10"
+                                        Text="Use the Panel Editor to add a Panel. "
+                                        VerticalOptions="Center"/>
+                                    <HorizontalStackLayout
+                                        HorizontalOptions="Center"
+                                        Margin="0"
+                                        Padding="10"
+                                        VerticalOptions="End">
+                                        <Button
+                                            Clicked="ButtonInstructions_OnClicked"
+                                            Margin="10,10,10,10"
+                                            Style="{StaticResource ButtonOutline}"
+                                            Text="Instructions"/>
+                                    </HorizontalStackLayout>
+                                </StackLayout>
+                            </Grid>
                         </ScrollView>
                     </ContentView>
-                </CarouselView.EmptyView>
+                </Grid>
+            </ContentView>
 
-                <CarouselView.ItemTemplate>
-                    <DataTemplate>
-                        <view:ControlPanelView
-                            TileTapped="PanelViewOnTileTapped"
-                            BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=BackgroundColor}"
-                            HorizontalOptions="Fill"
-                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType=view:OperateViewModel, Path=SelectedPanel}"
-                            ShowGrid="false"
-                            VerticalOptions="Fill"
-                            x:DataType="dataModel:Panel"
-                            x:Name="PanelView"/>
-                    </DataTemplate>
-                </CarouselView.ItemTemplate>
-            </CarouselView>
-
-            <IndicatorView
-                Grid.Column="0"
+            <CollectionView
                 Grid.Row="1"
+                ItemsSource="{Binding PanelIndicators}"
                 HorizontalOptions="Center"
-                IndicatorColor="DarkGrey"
-                IndicatorSize="10"
-                SelectedIndicatorColor="{StaticResource Primary}"
                 VerticalOptions="Start"
-                x:Name="IndicatorView"/>
+                IsVisible="{Binding HasPanels}">
+
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+                </CollectionView.ItemsLayout>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="{x:Type x:Int32}">
+                        <Border
+                            WidthRequest="15"
+                            HeightRequest="15"
+                            StrokeShape="Ellipse"
+                            StrokeThickness="0">
+
+                            <Border.BackgroundColor>
+                                <MultiBinding Converter="{StaticResource IndicatorColorConverter}">
+                                    <Binding Path="."/>
+                                    <Binding Source="{RelativeSource AncestorType={x:Type view:OperateViewModel}}"/>
+                                </MultiBinding>
+                            </Border.BackgroundColor>
+
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=SelectPanelCommand}"
+                                    CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
         </Grid>
     </ContentPage.Content>

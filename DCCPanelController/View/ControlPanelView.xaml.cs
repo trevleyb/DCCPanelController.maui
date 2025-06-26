@@ -48,6 +48,7 @@ public partial class ControlPanelView {
     public ControlPanelView() {
         InitializeComponent();
         BindingContext = this;
+        PropertyChanged += (sender, args) => Console.WriteLine($"ControlPanelView: OnPropertyChanged=>{args.PropertyName}");
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }

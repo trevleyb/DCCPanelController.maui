@@ -26,7 +26,18 @@ public partial class ProfileService : ObservableObject {
 
     public ProfileService() {
         PropertyChanged += OnActiveProfileChanged;
-        _ = Task.Run(async () => await RefreshAvailableProfilesAsync());
+        _ = Task.Run(async () => InitialiseProfileService());
+    }
+
+    public async Task InitialiseProfileService() {
+        try {
+            await RefreshAvailableProfilesAsync();
+            Console.WriteLine($"ProfileService: Loaded Profiles = {AvailableProfiles.Count}");
+            await LoadProfileAsync(AvailableProfiles[0]);
+            Console.WriteLine($"ProfileService: Loaded Profile = {ActiveProfile.ProfileName}");
+        } catch (Exception ex) {
+            Console.WriteLine($"ProfileService: Error Initialising Service => {ex.Message}");
+        }
     }
     
     /// <summary>
@@ -39,8 +50,7 @@ public partial class ProfileService : ObservableObject {
                 if (_activeProfile == null) {
                     _activeProfile = new Profile("default");
                     SubscribeToProfileEvents(_activeProfile);
-
-                    // Initialize asynchronously in the background
+                    
                     if (!_isInitialized) {
                         _isInitialized = true;
                         _ = Task.Run(async () => await InitializeProfileAsync());

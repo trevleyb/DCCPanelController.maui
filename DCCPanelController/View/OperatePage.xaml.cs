@@ -10,43 +10,34 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private bool _tabBarState = true;
-    private DisplayOrientation? _lastOrientation;
 
     public OperatePage(OperateViewModel viewModel) {
         BindingContext = viewModel;
+        viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         InitializeComponent();
-        _lastOrientation = null;
-        DeviceDisplay.Current.MainDisplayInfoChanged += OnMainDisplayInfoChanged;
         SetTabBarState(true);
     }
 
-    protected override void OnAppearing() {
-        base.OnAppearing();
-        _lastOrientation = null;
-    }
-
-    private void OnMainDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e) {
-        RefreshEmptyViewOnDisplayInfoChange(e.DisplayInfo.Orientation);
-    }
-
-    private void RefreshEmptyViewOnDisplayInfoChange(DisplayOrientation orientation) {
-        if (orientation != _lastOrientation) {
-            _lastOrientation = orientation;
-            MainThread.BeginInvokeOnMainThread(() => {
-                // Force EmptyView refresh
-                var currentEmptyView = PanelCarousel.EmptyView;
-                PanelCarousel.EmptyView = null;
-                PanelCarousel.EmptyView = currentEmptyView;
-            });
+    private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
+            if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {
+                PanelView.Panel = viewModel.ActivePanel;
+                PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
+                BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
+            }
         }
     }
 
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
-        if (BindingContext is OperateViewModel viewModel) {
-            if (e.Tile is ITileInteractive { } tile) {
-                if (e.IsSingleTap) await tile.Interact(viewModel.ConnectionService);
-                if (e.IsDoubleTap) await tile.Secondary(viewModel.ConnectionService);
+        try {
+            if (BindingContext is OperateViewModel viewModel) {
+                if (e.Tile is ITileInteractive { } tile) {
+                    if (e.IsSingleTap) await tile.Interact(viewModel.ConnectionService);
+                    if (e.IsDoubleTap) await tile.Secondary(viewModel.ConnectionService);
+                }
             }
+        } catch (Exception ex) {
+            Console.WriteLine($"OperatePage: PanelViewTileTapped: Error=>{ex.Message}"); // TODO handle exception
         }
     }
 
