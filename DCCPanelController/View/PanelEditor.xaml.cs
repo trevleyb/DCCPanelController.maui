@@ -99,10 +99,6 @@ public partial class PanelEditor : ContentPage {
         PanelView.ForceRefresh();
     }
 
-    protected override void OnNavigatedTo(NavigatedToEventArgs args) {
-        base.OnNavigatedTo(args);
-    }
-
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
         _viewModel.SetCanEditProperties();
@@ -124,6 +120,7 @@ public partial class PanelEditor : ContentPage {
         switch (e.PropertyName) {
         case nameof(PanelEditorViewModel.HavePropertiesChanged):
             NeedsSavingText.Text = _viewModel.HavePropertiesChanged ? "Unsaved Changes" : "";
+            ShowSelectedMode();
             break;
         
         case nameof(PanelEditorViewModel.GridVisible):
@@ -147,12 +144,14 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void ShowSelectedMode() {
-        EditModeText.Text = _viewModel.EditMode switch {
-            EditModeEnum.Move => "Move Tiles Mode",
-            EditModeEnum.Copy => "Copy Tiles Mode",
-            EditModeEnum.Size => "Resize Tiles Mode",
-            _                 => ""
-        };
-
+        if (_viewModel is { } vm) {
+            DisplayBorder.BackgroundColor = vm.Panel?.DisplayBackgroundColor ?? Colors.WhiteSmoke;
+            EditModeText.Text = vm.EditMode switch {
+                EditModeEnum.Move => "Move Tiles Mode",
+                EditModeEnum.Copy => "Copy Tiles Mode",
+                EditModeEnum.Size => "Resize Tiles Mode",
+                _                 => ""
+            };
+        }
     }
 }

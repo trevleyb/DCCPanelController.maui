@@ -14,6 +14,7 @@ public partial class Turnout : ObservableObject {
     [ObservableProperty] private string? _name;
     [ObservableProperty] private int _dccAddress;
     [ObservableProperty] private bool _isEditable;
+    [ObservableProperty] private bool _isModified;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 }

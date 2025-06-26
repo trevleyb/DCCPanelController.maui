@@ -18,6 +18,17 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         SetTabBarState(true);
     }
 
+    protected override void OnAppearing() {
+        base.OnAppearing();
+        Console.WriteLine($"OperatingPage: Is Appearing Called");
+        if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {
+            PanelView.Panel = viewModel.ActivePanel;
+            PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
+            BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
+            PanelView.ForceRefresh();
+        }
+    }
+
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {

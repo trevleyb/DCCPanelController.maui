@@ -214,32 +214,27 @@
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
 
-                <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                   Color="{StaticResource Primary}"
-                                   HeightRequest="48"
-                                   WidthRequest="48"/>
-
-                <!-- <Border BackgroundColor="Transparent" -->
-                <!--         StrokeShape="RoundRectangle 10" -->
-                <!--         Stroke="Gray" -->
-                <!--         StrokeThickness="1" -->
-                <!--         HorizontalOptions="Center" -->
-                <!--         VerticalOptions="Center" -->
-                <!--         WidthRequest="200" -->
-                <!--         HeightRequest="120" -->
-                <!--         Padding="20"> -->
-                <!--      -->
-                <!--     <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15"> -->
-                <!--         <ActivityIndicator IsRunning="{Binding IsLoading}" -->
-                <!--                            Color="{StaticResource Primary}" -->
-                <!--                            HeightRequest="40" -->
-                <!--                            WidthRequest="40"/> -->
-                <!--         <Label Text="Loading Panel Editor..." -->
-                <!--                HorizontalOptions="Center" -->
-                <!--                FontSize="24" -->
-                <!--                TextColor="Black"/> -->
-                <!--     </StackLayout> -->
-                <!-- </Border> -->
+                <Border BackgroundColor="Transparent"
+                        StrokeShape="RoundRectangle 15"
+                        Stroke="Gray"
+                        StrokeThickness="2"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        WidthRequest="200"
+                        HeightRequest="120"
+                        Padding="20">
+                
+                    <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
+                        <ActivityIndicator IsRunning="{Binding IsLoading}" Color="{StaticResource Primary}"
+                                           HeightRequest="40"
+                                           WidthRequest="80"/>
+                        <Label Text="Loading Panel Editor"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               FontSize="15"
+                               TextColor="Black"/>
+                    </StackLayout>
+                </Border>
             </Grid>
 
         </Grid>

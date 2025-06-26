@@ -23,7 +23,8 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<RouteStateEnum>(),
             new JsonEnumToStringConverter<TrackTypeEnum>(),
             new JsonEnumToStringConverter<TrackAttributeEnum>(),
-            new JsonEnumToStringConverter<TrackTerminatorEnum>()
+            new JsonEnumToStringConverter<TrackTerminatorEnum>(),
+            new ExpressionFilterConverter<Turnout>(t => t.IsEditable || t.IsModified)
         }
     };
 }

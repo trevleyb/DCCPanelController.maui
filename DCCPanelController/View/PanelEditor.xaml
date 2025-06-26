@@ -33,12 +33,15 @@
             HorizontalOptions="Fill"
             VerticalOptions="Fill">
 
-            <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
-                    BackgroundColor="WhiteSmoke"
+            <Border  
+                    Grid.Row="0" 
+                    Grid.Column="0" 
+                    Grid.RowSpan="2"
                     Stroke="#FFF5F5F5"
                     StrokeThickness="0">
                 <Grid
-                    BackgroundColor="White"
+                    x:Name="DisplayBorder"
+                    BackgroundColor="WhiteSmoke"
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill">
 
@@ -55,7 +58,10 @@
                 </Grid>
             </Border>
 
-            <Grid Grid.Row="0" Grid.Column="1" Margin="0,0,0,0" Grid.RowSpan="2">
+            <Grid 
+                Grid.Row="0" 
+                Grid.Column="1" 
+                Margin="0,0,0,0" Grid.RowSpan="2">
                 <Border
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"

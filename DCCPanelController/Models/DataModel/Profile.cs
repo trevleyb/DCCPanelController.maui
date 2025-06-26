@@ -9,25 +9,24 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private string _profileName;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Settings _settings;
-    [ObservableProperty] private ObservableCollection<Block> _blocks;
-    [ObservableProperty] private ObservableCollection<Route> _routes;
-    [ObservableProperty] private ObservableCollection<Signal> _signals;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
-    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
-    [ObservableProperty] private ObservableCollection<Light> _lights;
+    
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Block> _blocks;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Route> _routes;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Signal> _signals;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Sensor> _sensors;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Light> _lights;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName) {
         _profileName = profileName;
-        Panels = new Panels {
-            Profile = this
-        };
+        Panels = new Panels { Profile = this };
         Settings = new Settings();
-        Blocks = new ObservableCollection<Block>();
-        Turnouts = new ObservableCollection<Turnout>();
-        Routes = new ObservableCollection<Route>();
-        Signals = new ObservableCollection<Signal>();
-        Sensors = new ObservableCollection<Sensor>();
-        Lights = new ObservableCollection<Light>();
+        Blocks = [];
+        Turnouts = [];
+        Routes = [];
+        Signals = [];
+        Sensors = [];
+        Lights = [];
     }
 
     public Turnout? Turnout(string id) {
