@@ -22,6 +22,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         base.OnAppearing();
         Console.WriteLine($"OperatingPage: Is Appearing Called");
         if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {
+            PanelView.IsVisible = true;
             PanelView.Panel = viewModel.ActivePanel;
             PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
             BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;

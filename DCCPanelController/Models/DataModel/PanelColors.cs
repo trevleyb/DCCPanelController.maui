@@ -74,13 +74,13 @@ public partial class Panel : ObservableObject {
     [ObservableProperty, Copyable("Colors", DisplayName = "Light Switch Off Border", Category = "Light Switch", CategorySortOrder = 20, ItemSortOrder = 13)]
     private Color _lightOffBorderColor = null!;
 
-    [ObservableProperty, Copyable("Colors", DisplayName = "Bridge", Category = "Special", CategorySortOrder = 5, ItemSortOrder = 7)]
+    [ObservableProperty, Copyable("Colors", DisplayName = "Bridge", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _bridgeColor = null!;
 
-    [ObservableProperty, Copyable("Colors", DisplayName = "Platform", Category = "Special", CategorySortOrder = 5, ItemSortOrder = 7)]
+    [ObservableProperty, Copyable("Colors", DisplayName = "Platform", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _platformColor = null!;
 
-    [ObservableProperty, Copyable("Colors", DisplayName = "Tunner", Category = "Special", CategorySortOrder = 5, ItemSortOrder = 7)]
+    [ObservableProperty, Copyable("Colors", DisplayName = "Tunnel", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _tunnelColor = null!;
 
     [ObservableProperty, Copyable("Settings")]

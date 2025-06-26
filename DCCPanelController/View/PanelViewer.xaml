@@ -41,9 +41,10 @@
                 Padding="5">
                 <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
                     <Border x:Name="HorizontalBorder"
-                            Grid.Column="0" Stroke="#CCCCCC" StrokeThickness="1"
+                            Grid.Column="0" 
+                            Stroke="#CCCCCC" StrokeThickness="1"
                             Margin="5"
-                            Background="{Binding PanelBackgroundColor}">
+                            Background="{Binding DisplayBackgroundColor}">
                         <Border.HeightRequest>
                             <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
                                 <Binding Source="{x:Reference HorizontalBorder}" x:DataType="Border" Path="Width"/>
@@ -51,17 +52,16 @@
                             </MultiBinding>
                         </Border.HeightRequest>
                         <Grid>
-                            <Image IsVisible="true"
-                                   Source="{Binding Thumbnail}" Aspect="AspectFill"/>
+                            <!-- <Image IsVisible="true" -->
+                            <!--        Source="{Binding Thumbnail}" Aspect="AspectFill"/> -->
 
-                            <!-- <view:ControlPanelView -->
-                            <!--     x:DataType="view:ControlPanelView" -->
-                            <!--     IsVisible="false" -->
-                            <!--     BackgroundColor="{Binding BackgroundColor}" -->
-                            <!--     HorizontalOptions="Fill" -->
-                            <!--     Panel="{Binding .}" -->
-                            <!--     ShowGrid="false" -->
-                            <!--     VerticalOptions="Fill"/> -->
+                            <view:ControlPanelView
+                                IsVisible="true"
+                                BackgroundColor="{Binding PanelBackgroundColor}"
+                                HorizontalOptions="Fill"
+                                Panel="{Binding .}"
+                                ShowGrid="false"
+                                VerticalOptions="Fill"/>
 
                         </Grid>
                     </Border>
@@ -92,7 +92,8 @@
         </DataTemplate>
 
         <!-- Vertical (Image above, text below) -->
-        <DataTemplate x:Key="VerticalTemplate" x:DataType="dataModel:Panel">
+        <DataTemplate x:Key="VerticalTemplate" 
+                      x:DataType="dataModel:Panel">
             <Border
                 Stroke="#CCCCCC"
                 StrokeThickness="1"
@@ -102,21 +103,20 @@
                 Padding="5">
                 <Grid>
                     <StackLayout>
-                        <Border x:Name="VerticalBorder" Stroke="#CCCCCC" StrokeThickness="1" Margin="5"
-                                Background="{Binding PanelBackgroundColor}">
+                        <Border 
+                            x:Name="VerticalBorder" 
+                            Stroke="#CCCCCC" StrokeThickness="1" 
+                            Margin="5"
+                            Background="{Binding DisplayBackgroundColor}">
                             <Grid>
-                                <Image IsVisible="true"
-                                       Source="{Binding Thumbnail}"
-                                       Aspect="AspectFill" Margin="0,5,0,5">
-                                </Image>
-                                <!-- <view:ControlPanelView -->
-                                <!--     x:DataType="view:ControlPanelView" -->
-                                <!--     IsVisible="false" -->
-                                <!--     BackgroundColor="{Binding BackgroundColor}" -->
-                                <!--     HorizontalOptions="Fill" -->
-                                <!--     Panel="{Binding .}" -->
-                                <!--     ShowGrid="false" -->
-                                <!--     VerticalOptions="Fill"/> -->
+                                <view:ControlPanelView
+                                    IsVisible="true"
+                                    ShowGrid="false"
+                                    DesignMode="False"
+                                    Interactive="False"
+                                    HorizontalOptions="Fill"
+                                    Panel="{Binding .}"
+                                    VerticalOptions="Fill"/>
                             </Grid>
                             <Border.HeightRequest>
                                 <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">

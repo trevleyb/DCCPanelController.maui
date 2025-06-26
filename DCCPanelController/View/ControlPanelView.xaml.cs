@@ -1,3 +1,4 @@
+using System.Collections.Specialized;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
@@ -39,7 +40,7 @@ public partial class ControlPanelView {
     private int _lastDragCol;
     private int _lastDragRow;
     private int _tapCount;
-    private int _currentSelectionIndex = 0;
+    private int _currentSelectionIndex;
 
     private double _gridSize;
     private double _viewHeight;
@@ -47,8 +48,6 @@ public partial class ControlPanelView {
 
     public ControlPanelView() {
         InitializeComponent();
-        BindingContext = this;
-        PropertyChanged += (sender, args) => Console.WriteLine($"ControlPanelView: OnPropertyChanged=>{args.PropertyName}");
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
@@ -191,15 +190,19 @@ public partial class ControlPanelView {
             view.Behaviors.Clear();
             view.GestureRecognizers.Clear();
 
-            var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-            tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
-            view.GestureRecognizers.Add(tapGesture);
+            if (Interactive) {
+                var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
+                tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
+                view.GestureRecognizers.Add(tapGesture);
+            }
 
             switch (DesignMode) {
                 case false: {
-                    var touchBehavior = new TouchBehavior();
-                    touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
-                    view.Behaviors.Add(touchBehavior);
+                    if (Interactive) {
+                        var touchBehavior = new TouchBehavior();
+                        touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
+                        view.Behaviors.Add(touchBehavior);
+                    }
                     break;
                 }
 
@@ -773,5 +776,143 @@ public partial class ControlPanelView {
         // If there are any tracks in the clashing list, return true
         return tilesInGrid.Any();
     }
+    #endregion
+    
+        #region Bindable Properties
+    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), propertyChanged: OnPanelChanged);
+    public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
+    public static readonly BindableProperty InteractiveProperty = BindableProperty.Create(nameof(Interactive), typeof(bool), typeof(ControlPanelView), true, BindingMode.Default, propertyChanged: OnInteractiveChanged);
+    public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
+    public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
+    public static readonly BindableProperty EditModeProperty = BindableProperty.Create(nameof(EditMode), typeof(EditModeEnum), typeof(ControlPanelView), EditModeEnum.Move, BindingMode.Default, propertyChanged: OnEditModeChanged);
+
+    public Panel? Panel {
+        get => (Panel)GetValue(PanelProperty);
+        set => SetValue(PanelProperty, value);
+    }
+
+    public bool DesignMode {
+        get => (bool)GetValue(DesignModeProperty);
+        set => SetValue(DesignModeProperty, value);
+    }
+
+    public bool ShowGrid {
+        get => (bool)GetValue(ShowGridProperty);
+        set => SetValue(ShowGridProperty, value);
+    }
+
+    public bool Interactive {
+        get => (bool)GetValue(InteractiveProperty);
+        set => SetValue(InteractiveProperty, value);
+    }
+
+    public EditModeEnum EditMode {
+        get => (EditModeEnum)GetValue(EditModeProperty);
+        set => SetValue(EditModeProperty, value);
+    }
+
+    public bool ShowTrackErrors {
+        get => (bool)GetValue(ShowTrackErrorsProperty);
+        set => SetValue(ShowTrackErrorsProperty, value);
+    }
+
+    private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is ControlPanelView control) {
+            control.ShowGrid = control.DesignMode;
+            control.DynamicGrid.GestureRecognizers.Clear();
+            if (control.DesignMode) {
+                // In design mode we need to support drag and drop for the tiles on the screen.
+                // ----------------------------------------------------------------------------
+                var dropRecogniser = new DropGestureRecognizer();
+                dropRecogniser.Drop += control.DropTileOnPanel;
+                dropRecogniser.DragOver += control.DragOverTileOnPanel;
+                dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
+                control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
+
+                // In design mode, also support tapping anywhere that is not a tile so we clear selections.
+                // ----------------------------------------------------------------------------
+                if (control.Interactive) {
+                    var tapRecogniser = new TapGestureRecognizer();
+                    tapRecogniser.Tapped += control.DynamicGridTapped;
+                    control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
+                }
+            }
+            control.DrawPanel();
+        }
+    }
+    
+    /// <summary>
+    ///     If the Panel object is changed, then we need to clear and rebuild the whole Panel
+    /// </summary>
+    private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is ControlPanelView control) {
+            if (oldValue != newValue) {
+                if (oldValue is Panel oldPanel) {
+                    oldPanel.Entities.CollectionChanged -= EntitiesOnCollectionChanged;
+                }
+                if (newValue is Panel newPanel) {
+                    newPanel.Entities.CollectionChanged += (_, args) => EntitiesOnCollectionChanged(control, args);
+                    control.Panel = newPanel;
+                    control.ClearAllSelectedTiles();
+                    control.DrawPanel(true);
+                }
+            }
+        }
+    }
+
+    private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        Console.WriteLine("Entities Collection Changed....");
+        if (sender is ControlPanelView control) {
+            control.ClearAllSelectedTiles();
+
+            // Any items that have been removed from the collection need to be
+            // removed from the display panel. 
+            // -------------------------------------------------------------------------
+            var oldEntities = e.OldItems?.Cast<Entity>().ToList() ?? new List<Entity>();
+            foreach (var oldEntity in oldEntities) {
+                Console.WriteLine($"Removing {oldEntity.EntityName} from the grid");
+                control.RemoveEntityFromGrid(oldEntity);
+            }
+
+            // Any new items added to the Panel.Entities collection need to be drawn
+            // on the display panel. This will iterate and add the items
+            // -------------------------------------------------------------------------
+            var newEntities = e.NewItems?.Cast<Entity>().ToList() ?? new List<Entity>();
+            ITile? lastTile = null;
+            foreach (var newEntity in newEntities) {
+                Console.WriteLine($"Adding {newEntity.EntityName} to the grid");
+                lastTile = control.AddEntityToGrid(newEntity);
+            }
+
+            // Highlight the last item added to the collection. Normally there would 
+            // only be one anyway, but just in case we have a mass-add function.
+            // ----------------------------------------------------------------------
+            if (lastTile is not null) {
+                control.MarkTileSelected(lastTile);
+            }
+        }
+    }
+
+    private static void OnClientChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        if (bindable is ControlPanelView control) {
+            Console.WriteLine("Client Connection Property Changed");
+        }
+    }
+
+    private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        if (bindable is ControlPanelView control) { }
+    }
+
+    private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        if (bindable is ControlPanelView control) {
+            control.DrawGrid();
+        }
+    }
+
+    private static void OnInteractiveChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is ControlPanelView control) { }
+    }
+
+    private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) { }
     #endregion
 }

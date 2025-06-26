@@ -18,7 +18,7 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(panel, Navigation, GetThumbnailImage) {
+        _viewModel = new PanelEditorViewModel(panel, Navigation) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };

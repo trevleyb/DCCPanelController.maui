@@ -16,7 +16,6 @@ namespace DCCPanelController.View;
 public partial class PanelEditorViewModel : ObservableObject {
     private readonly INavigation _navigation;
     private PanelChangeDetector? _detector;
-    private Func<Task<string>>? ThumbnailCallback { get; set; }
 
     [ObservableProperty] private bool _gridVisible;
     [ObservableProperty] private bool _havePropertiesChanged;
@@ -42,10 +41,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
-    public PanelEditorViewModel(Panel panel, INavigation navigation, Func<Task<string>>? thumbnailCallback) {
+    public PanelEditorViewModel(Panel panel, INavigation navigation) {
         _panel = panel;
         _navigation = navigation;
-        ThumbnailCallback = thumbnailCallback;
         ResetPanelChanges();
     }
 
@@ -83,8 +81,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     public async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
-            Panel.Base64Image = await GetThumbnailAsync();
-            
             // So that we trigger a refresh on other screens, such as the operate
             // page screen, we need to remove the panel and then re-add it to 
             // the collection. 
@@ -95,13 +91,6 @@ public partial class PanelEditorViewModel : ObservableObject {
             await profile.SaveAsync();
             ResetPanelChanges();
         }
-    }
-
-    public async Task<string> GetThumbnailAsync() {
-        if (ThumbnailCallback != null) {
-            return await ThumbnailCallback();
-        }
-        return "";
     }
 
     [RelayCommand]

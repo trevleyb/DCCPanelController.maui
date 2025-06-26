@@ -17,7 +17,6 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
@@ -49,13 +48,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
             return Id + $" - {Description}";
         }
     }
-
-    [JsonIgnore]
-    public ImageSource? Thumbnail =>
-        string.IsNullOrWhiteSpace(Base64Image)
-            ? null
-            : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
-
+    
     public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
     public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
     public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
@@ -106,7 +99,6 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         var clone = new Panel(Panels) {
             Description = Description,
             SortOrder = SortOrder,
-            Base64Image = Base64Image,
             Cols = Cols,
             Rows = Rows
         };

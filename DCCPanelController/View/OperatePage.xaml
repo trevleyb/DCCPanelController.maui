@@ -45,14 +45,10 @@
                         TileTapped="PanelViewOnTileTapped"
                         HorizontalOptions="Fill"
                         VerticalOptions="Fill"
+                        Interactive="True"
                         DesignMode="False"
                         ShowGrid="false"
-                        IsVisible="{Binding HideWelcomePage}"
                         x:Name="PanelView"/>
-
-                    <!-- BackgroundColor="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=BackgroundColor}" -->
-                    <!-- Panel="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=ActivePanel}" -->
-                    <!-- IsVisible="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=HideWelcomePage}" -->
 
                     <!-- Empty View when no panels -->
                     <ContentView HorizontalOptions="Fill" VerticalOptions="Fill"
