@@ -166,6 +166,8 @@
                      Command="{Binding Path=EditPanelCommand}"/>
         <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="properties.png"
                      Command="{Binding Path=EditPanelPropertiesCommand}"/>
+        <ToolbarItem IconImageSource="upload.png" Command="{Binding UploadPanelCommand}"/>
+        <ToolbarItem IconImageSource="download.png" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

@@ -10,7 +10,7 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelViewerViewModel : Base.ConnectionViewModel {
-    private ProfileService _profileService;
+    private readonly ProfileService _profileService;
     private Panel? _draggedPanel;
     [ObservableProperty] private bool _isPanelSelected;
     [ObservableProperty] private Panels _panels;
@@ -92,7 +92,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     [RelayCommand]
     public async Task UploadPanelAsync() {
         try {
-            var jsonString = await FileHelper.OpenFileAsync("Select a Panel File");
+            var jsonString = await FileHelper.OpenFileAsync("Select a Panel File to upload");
             if (!string.IsNullOrEmpty(jsonString)) {
                 var panel = Panels.UploadPanel(jsonString);
                 if (panel is not null) {
