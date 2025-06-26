@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -8,8 +9,7 @@ public class EditableBlockAttribute(string label, string description = "", int o
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var blocks = profile.Blocks.ToList();
+            var blocks =((Entity)owner).Parent?.Blocks.ToList() ?? new List<Block>();
 
             _ = dropDownWidth;
             _ = dropDownHeight;

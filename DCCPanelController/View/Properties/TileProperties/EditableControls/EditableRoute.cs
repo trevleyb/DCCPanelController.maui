@@ -1,6 +1,8 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
+using Microsoft.Maui.Controls.Internals;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -8,8 +10,11 @@ public class EditableRouteAttribute(string label, string description = "", int o
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var routes = profile.Routes.ToList();
+            
+            var routes =((Entity)owner).Parent?.Routes.ToList() ?? new List<Route>();
+
+            _ = dropDownWidth;
+            _ = dropDownHeight;
             
             var cell = new PopupSelector() {
                 SelectorType = PopupSelectorTypeEnum.Automatic,

@@ -7,7 +7,7 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.Clients.Simulator;
 
 public partial class SimulatorProxy: DccClientBase, IDccClient {
-    public static List<DccClientCapability> Capabilities => [DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors]; 
+    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts,DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors]; 
     public DccClientType Type => DccClientType.Simulator;
     
     public SimulatorProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {

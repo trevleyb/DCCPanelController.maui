@@ -8,12 +8,12 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.Base;
 
 public partial class ConnectionViewModel : BaseViewModel {
-
+    private ProfileService _profileService;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
     [ObservableProperty] private bool _isConnected = false;
     
-    protected ConnectionViewModel(Profile profile, ConnectionService connectionService) {
-        Profile = profile;
+    protected ConnectionViewModel(ProfileService profileService, ConnectionService connectionService) {
+        _profileService = profileService;
         ConnectionService = connectionService;
         ConnectionService.ConnectStateChanged += (sender, args) => {
             IsConnected = args;
@@ -24,7 +24,7 @@ public partial class ConnectionViewModel : BaseViewModel {
         ServerMessages = ConnectionService.ServerMessages;
     }
 
-    public Profile Profile { get; set; }
+    private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"ConnectionViewModel: Active profile is not defined.");
     public ConnectionService ConnectionService { get; }
     public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false; 
     public string ConnectionIcon => IsConnected ? "wifi_on.png" : "wifi_off.png";

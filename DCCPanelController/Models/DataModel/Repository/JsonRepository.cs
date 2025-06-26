@@ -77,7 +77,7 @@ public static class JsonRepository {
 
     public static string DownloadProfile(Profile profile) {
         try {
-            return JsonSerializer.Serialize(profile, JsonOptions.Options);
+            return JsonSerializer.Serialize (profile, JsonOptions.Options);
         } catch (Exception ex) {
             Console.WriteLine("Could not deserialize Profile. Trying to Reload Existing" + ex.Message);
             return string.Empty;

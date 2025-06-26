@@ -11,8 +11,8 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
 
-    public OperateViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Panels = Profile.Panels.Where(p => p.Entities.Count > 0).ToObservableCollection();
+    public OperateViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        Panels = profileService?.ActiveProfile?.Panels.Where(p => p.Entities.Count > 0).ToObservableCollection() ?? [];
         if (Panels.Any()) {
             SelectedPanel = Panels.FirstOrDefault();
         }

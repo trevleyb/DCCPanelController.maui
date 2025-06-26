@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -8,8 +9,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var turnouts = profile.Turnouts.ToList();
+            var turnouts =((Entity)owner).Parent?.Turnouts.ToList() ?? new List<Turnout>();
 
             _ = dropDownWidth;
             _ = dropDownHeight;

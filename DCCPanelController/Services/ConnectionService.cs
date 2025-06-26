@@ -12,7 +12,7 @@ namespace DCCPanelController.Services;
 public partial class ConnectionService : ObservableObject {
 
     private const int MaxServerMessages = 500;
-    private readonly Profile _profile;
+    private ProfileService _profileService;
 
     public IDccClient? Client { get; private set; }
     public event EventHandler<bool>? ConnectStateChanged;
@@ -20,8 +20,8 @@ public partial class ConnectionService : ObservableObject {
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
-    public ConnectionService(Profile profile) {
-        _profile = profile ?? throw new NullReferenceException("Profile cannot be null.");
+    public ConnectionService(ProfileService profileService) {
+        _profileService = profileService;
         _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
@@ -29,7 +29,7 @@ public partial class ConnectionService : ObservableObject {
 
     private async Task InitializeConnectionAsync() {
         try {
-            if (_profile.Settings.ConnectOnStartup) await ConnectAsync();
+            if (_profileService?.ActiveProfile?.Settings.ConnectOnStartup ?? false) await ConnectAsync();
         } catch (Exception ex) {
             Console.WriteLine($"Initialisation connection error: {ex.Message}");
         }
@@ -46,8 +46,8 @@ public partial class ConnectionService : ObservableObject {
     public async Task<IResult> ConnectAsync() {
         try {
             if (Client is { IsConnected : true }) await DisconnectAsync();
-            if (_profile.Settings.ClientSettings is { } settings) {
-                Client = DccClientFactory.CreateClient(_profile, _profile.Settings.ClientSettings);
+            if (_profileService?.ActiveProfile?.Settings.ClientSettings is { } settings) {
+                Client = DccClientFactory.CreateClient(_profileService.ActiveProfile, _profileService.ActiveProfile.Settings.ClientSettings);
                 Client.ClientMessage += ClientOnClientMessage;
                 if (Client is null) {
                     OnConnectionChanged(false);
@@ -99,9 +99,9 @@ public partial class ConnectionService : ObservableObject {
     }
     
     public async Task SetTurnoutsToDefaultState() {
-        if (_profile.Settings.SetTurnoutStatesOnStartup) {
+        if (_profileService?.ActiveProfile?.Settings?.SetTurnoutStatesOnStartup ?? false) {
             if (Client is { IsConnected: true }) {
-                foreach (var turnout in _profile.Turnouts) {
+                foreach (var turnout in _profileService.ActiveProfile.Turnouts) {
                     if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout?.Id)) {
                         await Client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
                     }

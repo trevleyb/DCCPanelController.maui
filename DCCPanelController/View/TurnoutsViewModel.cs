@@ -41,11 +41,11 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
-
-    public TurnoutsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Turnouts = Profile.Turnouts;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
-        CanAddTurnout = profile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+    private ProfileService _profileService;
+    
+    public TurnoutsViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _profileService = profileService;
+        Turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService),"TurnoutViewModel: Active profile is not defined.");
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {
                 IsTurnoutSelected = SelectedTurnout != null;
@@ -54,6 +54,11 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         SetLabels();
     }
 
+    public void SetToolbarItems() {
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
+        CanAddTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
+    }
+    
     private void SetLabels() {
         ColumnLabelID = LabelID + (_sortColumn.Equals(LabelID) ? _isAscending.GetSortDirection() : "");
         ColumnLabelName = LabelName + (_sortColumn.Equals(LabelName) ? _isAscending.GetSortDirection() : "");
@@ -65,9 +70,9 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task RefreshTurnoutsAsync() {
         IsBusy = true;
         try {
-            var removeTurnouts = Profile.Turnouts.Where(turnout => turnout.IsEditable == false).ToList();
+            var removeTurnouts = _profileService?.ActiveProfile?.Turnouts.Where(turnout => turnout.IsEditable == false).ToList() ?? [];
             foreach (var turnout in removeTurnouts) {
-                Profile.Turnouts.Remove(turnout);
+                _profileService?.ActiveProfile?.Turnouts.Remove(turnout);
             }
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Turnouts));
@@ -112,7 +117,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         if (turnout is not null) {
             Turnouts.Remove(turnout);
             OnPropertyChanged(nameof(Turnouts));
-            await Profile.SaveAsync();
+            await _profileService.SaveActiveProfileAsync();
         }
     }
 
@@ -127,7 +132,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         };
         Turnouts.Add(turnout);
         await EditTurnoutAsync(turnout);
-        await Profile.SaveAsync();
+        await _profileService.SaveActiveProfileAsync();
         OnPropertyChanged(nameof(Turnouts));
     }
 
@@ -148,7 +153,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             if (turnout is not null && Navigation is { } navigation) {
                 var turnoutsEditViewModel = new TurnoutsEditViewModel(turnout, ConnectionService);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, turnoutsEditViewModel, ScreenWidth, ScreenHeight);
-                await Profile.SaveAsync();
+                await _profileService.SaveActiveProfileAsync();
                 OnPropertyChanged(nameof(Turnouts));
             }
         } catch (Exception ex) {

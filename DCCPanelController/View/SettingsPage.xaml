@@ -57,12 +57,13 @@
                         </toolkit:Expander.Header>
                         <toolkit:Expander.Content>
                             <StackLayout Margin="10,10,10,10">
-                                <HorizontalStackLayout IsVisible="False">
+                                <HorizontalStackLayout>
                                     <Label Text="Profile Name" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}"
                                            VerticalOptions="Center" WidthRequest="175"/>
 
                                     <Border
+                                        HeightRequest="35"
                                         WidthRequest="180"
                                         HorizontalOptions="Start"
                                         StrokeShape="RoundRectangle 10"

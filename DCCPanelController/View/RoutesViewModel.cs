@@ -29,14 +29,15 @@ public partial class RoutesViewModel : ConnectionViewModel {
 
     private string _sortColumn = "";
     private bool _isAscending;
-
+    private ProfileService _profileService;
+    
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
 
-    public RoutesViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        ArgumentNullException.ThrowIfNull(Profile);
-        Routes = Profile.Routes;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
+    public RoutesViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _profileService = profileService;
+        Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService),"RoutesViewModel: Active profile is not defined.");
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
         SetLabels();
     }
 
@@ -78,8 +79,8 @@ public partial class RoutesViewModel : ConnectionViewModel {
     private async Task RefreshRoutesAsync() {
         IsBusy = true;
         try {
-            for (var ptr = Profile.Routes.Count; ptr > 0; ptr--) {
-                Profile.Routes.RemoveAt(ptr - 1);
+            for (var ptr = _profileService?.ActiveProfile?.Routes.Count ?? 0; ptr > 0; ptr--) {
+                _profileService?.ActiveProfile?.Routes.RemoveAt(ptr - 1);
                 OnPropertyChanged(nameof(Routes));
             }
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();

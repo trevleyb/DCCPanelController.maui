@@ -18,8 +18,7 @@ public partial class TurnoutsPage : ContentPage {
 
     protected override void OnAppearing() {
         base.OnAppearing();
-        _viewModel.IsSupported = _viewModel.Profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
-        _viewModel.CanAddTurnout = _viewModel.Profile?.Settings?.ClientSettings?.SupportsManualEntries == true && _viewModel.IsSupported;
+        _viewModel.SetToolbarItems();
     }
 
     protected override void OnSizeAllocated(double width, double height) {

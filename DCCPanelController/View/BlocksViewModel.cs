@@ -27,9 +27,12 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
     
-    public BlocksViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Blocks = Profile.Blocks;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
+    private readonly ProfileService _profileService;
+    
+    public BlocksViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _profileService = profileService;
+        Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService),"BlocksViewModel: Active profile is not defined.");
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         SetLabels();
     }
 
@@ -79,8 +82,8 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     private async Task RefreshBlocksAsync() {
         IsBusy = true;
         try {
-            for (var ptr = Profile.Blocks.Count; ptr > 0; ptr--) {
-                Profile.Blocks.RemoveAt(ptr - 1);
+            for (var ptr = _profileService?.ActiveProfile?.Blocks.Count ?? 0; ptr > 0; ptr--) {
+                _profileService?.ActiveProfile?.Blocks.RemoveAt(ptr - 1);
                 OnPropertyChanged(nameof(Blocks));
             }
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();

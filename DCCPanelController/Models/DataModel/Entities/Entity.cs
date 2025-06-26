@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 // ReSharper disable once CheckNamespace
@@ -9,7 +10,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 [DebuggerDisplay("{EntityName} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
-public abstract partial class Entity() : ObservableObject {
+public abstract partial class Entity() : ObservableObject, IEntity {
     
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
     [ObservableProperty] private int _col;               // What Grid Position (Horizontal) is this component?

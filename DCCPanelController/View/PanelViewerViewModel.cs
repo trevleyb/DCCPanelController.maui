@@ -10,6 +10,7 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelViewerViewModel : Base.ConnectionViewModel {
+    private ProfileService _profileService;
     private Panel? _draggedPanel;
     [ObservableProperty] private bool _isPanelSelected;
     [ObservableProperty] private Panels _panels;
@@ -26,9 +27,9 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     public bool ShowLivePanel => !ShowThumbnail;
     public bool IsNotLoading => !IsLoading;
 
-    public PanelViewerViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        ArgumentNullException.ThrowIfNull(Profile, "Profile Service should be provided by the DI.");
-        Panels = Profile.Panels;
+    public PanelViewerViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _profileService = profileService;
+        Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService),"PanelViewerViewModel: Active profile is not defined.");
         PropertyChanged += OnPropertyChanged;
         SelectedPanel = Panels.FirstOrDefault();
     }
@@ -40,7 +41,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     }
 
     private async Task SaveAsync() {
-        await Profile.SaveAsync();
+        await _profileService.SaveActiveProfileAsync();
     }
 
     [RelayCommand]
@@ -155,7 +156,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         RefreshSortOrder();
         OnPropertyChanged(nameof(Panels));
         OnPropertyChanged(nameof(SelectedPanel));
-        await Profile.SaveAsync();
+        await _profileService.SaveActiveProfileAsync();
     }
 
     [RelayCommand]

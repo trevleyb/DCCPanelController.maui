@@ -24,13 +24,15 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
 
     private bool _isAscending;
     private string _sortColumn = "";
-
+    private ProfileService _profileService;
+    
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
 
-    public SensorsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Sensors = Profile.Sensors;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
+    public SensorsViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _profileService = profileService;
+        Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");;
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
     }
 
@@ -80,8 +82,8 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
     private async Task RefreshSensorsAsync() {
         IsBusy = true;
         try {
-            for (var ptr = Profile.Sensors.Count; ptr > 0; ptr--) {
-                Profile.Blocks.RemoveAt(ptr - 1);
+            for (var ptr = _profileService?.ActiveProfile?.Sensors.Count ?? 0; ptr > 0; ptr--) {
+                _profileService?.ActiveProfile?.Blocks.RemoveAt(ptr - 1);
             }
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */

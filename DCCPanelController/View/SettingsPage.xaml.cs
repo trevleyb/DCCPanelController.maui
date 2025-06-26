@@ -13,7 +13,6 @@ using DCCPanelController.View.Settings.WiThrottle;
 namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
-    private Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     private readonly SettingsPageViewModel? _pageViewModel;
 
     public SettingsPage(SettingsPageViewModel pageViewModel) {
@@ -23,43 +22,11 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         PropertyChanged += OnPropertyChanged;
         InitializeComponent();
 
-        switch (_pageViewModel?.Settings?.ClientSettings?.Type) {
-        case DccClientType.Simulator:
-            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _pageViewModel?.Settings?.ClientSettings);
-            _pageViewModel!.IsSimulator = true;
-            _pageViewModel!.IsJmriServer = false;
-            _pageViewModel!.IsWiThrottle = false;
-            break;
-
-        case DccClientType.Jmri:
-            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _pageViewModel?.Settings?.ClientSettings);
-            _pageViewModel!.IsSimulator = false;
-            _pageViewModel!.IsJmriServer = true;
-            _pageViewModel!.IsWiThrottle = false;
-            break;
-
-        case DccClientType.WiThrottle:
-            CheckSettingsCache<JmriSettings>(DccClientType.WiThrottle, _pageViewModel?.Settings?.ClientSettings);
-            _pageViewModel!.IsJmriServer = false;
-            _pageViewModel!.IsSimulator = false;
-            _pageViewModel!.IsWiThrottle = true;
-            break;
-
-        default:
-            _pageViewModel!.IsSimulator = true;
-            _pageViewModel!.IsJmriServer = false;
-            _pageViewModel!.IsWiThrottle = false;
-            break;
-        }
-        _pageViewModel.SetCapabilities();
+        pageViewModel.SetActiveSettings();
+        pageViewModel.SetCapabilities();
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
-
-    protected override async void OnDisappearing() {
-        base.OnDisappearing();
-        if (_pageViewModel is { } vm) await _pageViewModel.Profile.SaveAsync();
-    }
 
     private void About_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new AboutPage());
@@ -69,42 +36,43 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         Navigation.PushAsync(new HelpPage());
     }
 
+    // TOFIX:
     private async void Upload_OnClicked(object? sender, EventArgs e) {
-        try {
-            var fileName = await PromptUserForConfigFile();
-
-            if (!string.IsNullOrEmpty(fileName)) {
-                if (_pageViewModel is { Settings: not null } vm) {
-                    var loadedJson = await LoadJsonFromFile(fileName);
-                    var profile = await JsonRepository.UploadSettingsAsync(loadedJson);
-                    vm.Profile = profile;
-                    await vm.SaveSettingsAsync();
-                    await DisplayAlert("Success", "File Loaded.", "OK");
-                } else {
-                    throw new Exception("File could not be loaded.");
-                }
-            }
-        } catch (Exception ex) {
-            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
-        }
+    //     try {
+    //         var fileName = await PromptUserForConfigFile();
+    //
+    //         if (!string.IsNullOrEmpty(fileName)) {
+    //             if (_pageViewModel is { Settings: not null } vm) {
+    //                 var loadedJson = await LoadJsonFromFile(fileName);
+    //                 var profile = await JsonRepository.UploadSettingsAsync(loadedJson);
+    //                 vm.Profile = profile;
+    //                 await vm.SaveSettingsAsync();
+    //                 await DisplayAlert("Success", "File Loaded.", "OK");
+    //             } else {
+    //                 throw new Exception("File could not be loaded.");
+    //             }
+    //         }
+    //     } catch (Exception ex) {
+    //         await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+    //     }
     }
-
+    
     private async void Download_OnClicked(object? sender, EventArgs e) {
-        try {
-            var filePath = await PromptUserForSaveLocation();
-
-            if (!string.IsNullOrEmpty(filePath)) {
-                if (_pageViewModel is { } vm) {
-                    var saveFile = Path.Combine(filePath, "dccpanel.settings");
-                    var jsonString = JsonRepository.DownloadProfile(vm.Profile);
-                    await SaveJsonToFile(saveFile, jsonString);
-                    await DisplayAlert("Success", "File Downloaded.", "OK");
-                    Console.WriteLine(saveFile);
-                }
-            }
-        } catch (Exception ex) {
-            await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
-        }
+    //     try {
+    //         var filePath = await PromptUserForSaveLocation();
+    //
+    //         if (!string.IsNullOrEmpty(filePath)) {
+    //             if (_pageViewModel is { } vm) {
+    //                 var saveFile = Path.Combine(filePath, "dccpanel.settings");
+    //                 var jsonString = JsonRepository.DownloadProfile(vm.Profile);
+    //                 await SaveJsonToFile(saveFile, jsonString);
+    //                 await DisplayAlert("Success", "File Downloaded.", "OK");
+    //                 Console.WriteLine(saveFile);
+    //             }
+    //         }
+    //     } catch (Exception ex) {
+    //         await DisplayAlert("Error", $"An error occurred: {ex.Message}", "OK");
+    //     }
     }
 
     private static async Task<string> PromptUserForConfigFile() {
@@ -134,54 +102,25 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
 
     private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is { IsJmriServer: true }) LoadSettingsPage();
+        if (_pageViewModel is { IsJmriServer: true }) {
+            SettingsView.Content = _pageViewModel.LoadSettingsPage();
+        }
     }
 
     private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is { IsWiThrottle: true }) LoadSettingsPage();
+        if (_pageViewModel is { IsWiThrottle: true }) {
+            SettingsView.Content = _pageViewModel.LoadSettingsPage();
+        }
     }
 
     private void CheckChanged_Simulator(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is { IsSimulator: true }) LoadSettingsPage();
-    }
-
-    private void LoadSettingsPage() {
-        if (_pageViewModel?.Settings is null) return;
-
-        ContentView? view = null;
-
-        if (_pageViewModel.IsJmriServer) {
-            _pageViewModel.Settings.ClientSettings = CheckSettingsCache<JmriSettings>(DccClientType.Jmri);
-            view = new JmriSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);
-        } else if (_pageViewModel.IsWiThrottle) {
-            _pageViewModel.Settings.ClientSettings = CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle);
-            view = new WiThrottleSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);
-        } else if (_pageViewModel.IsSimulator) {
-            _pageViewModel.Settings.ClientSettings = CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator);
-            view = new SimulatorSettingsView(_pageViewModel.Settings.ClientSettings, _pageViewModel.ConnectionService);            
+        if (_pageViewModel is { IsSimulator: true }) {
+            SettingsView.Content = _pageViewModel.LoadSettingsPage();
         }
-
-        if (view is not null) SettingsView.Content = view;
-        _pageViewModel.SetCapabilities();
     }
+
 
     private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         OnPropertyChanged();
-    }
-
-    private IDccClientSettings CheckSettingsCache<T>(DccClientType type, IDccClientSettings? settings = null) where T : IDccClientSettings, new() {
-        try {
-            if (_settingsCache.TryGetValue(type, out var cache)) return cache;
-            if (settings is not null && settings.Type == type) {
-                _settingsCache[settings.Type] = settings;
-                return settings;
-            }
-            var newSettings = new T();
-            _settingsCache[type] = newSettings;
-            return newSettings;
-        } catch (Exception ex) {
-            Console.WriteLine($"CheckSettings: {ex.Message}");
-            return new T();
-        }
     }
 }

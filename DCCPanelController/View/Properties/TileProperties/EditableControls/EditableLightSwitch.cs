@@ -1,6 +1,8 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
+using Microsoft.Maui.Controls.Internals;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -8,8 +10,8 @@ public class EditableLightSwitchAttribute(string label, string description = "",
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var profile = MauiProgram.ServiceHelper.GetService<Profile>();
-            var lights = profile.Lights.ToList();
+            var lights = ((Entity)owner).Parent?.Lights.ToList() ?? new List<Light>();
+
             _ = dropDownWidth;
             _ = dropDownHeight;
 

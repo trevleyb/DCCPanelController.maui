@@ -26,10 +26,12 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
 
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
-
-    public LightsViewModel(Profile profile, ConnectionService connectionService) : base(profile, connectionService) {
-        Lights = Profile.Lights;
-        IsSupported = profile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
+    private ProfileService _profileService;
+    
+    public LightsViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _profileService = profileService;
+        Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService),"LightsViewModel: Active profile is not defined.");
+        IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
         SetLabels();
     }
 
@@ -78,8 +80,8 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
     private async Task RefreshLightsAsync() {
         IsBusy = true;
         try {
-            for (var ptr = Profile.Lights.Count; ptr > 0; ptr--) {
-                Profile.Lights.RemoveAt(ptr - 1);
+            for (var ptr = _profileService?.ActiveProfile?.Lights.Count ?? 0; ptr > 0; ptr--) {
+                _profileService?.ActiveProfile?.Lights.RemoveAt(ptr - 1);
             }
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Lights));
