@@ -15,29 +15,29 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private Panel? _activePanel;
 
     public Color BackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
-    public ObservableCollection<Panel> Panels { get; set; } = [];
+    public ObservableCollection<Panel> Panels { get; private set; }
 
     public bool HideWelcomePage => !ShowWelcomePage;
     public bool HasPanels => Panels?.Any() == true || ShowWelcomePage;
     public bool HasNoPanels => !HasPanels;
-    public List<int> PanelIndicators => Enumerable.Range(0, Panels?.Count ?? 0).ToList();
+    public ObservableCollection<int> PanelIndicators { get; private set; } = [];
 
     private readonly ProfileService _profileService;
     public OperateViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _profileService = profileService;
+        Panels = [];        // Just set it to nothing until it is re-assigned. 
         _ = Task.Run(async () => await LoadPanelsAsync());
     }
-
+    
     private async Task LoadPanelsAsync() {
         try {
             var profile = await _profileService.GetActiveProfileAsync();
-            var panels = profile?.Panels?.ToList() ?? [];
-            ShowWelcomePage = panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
+            Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
+            ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
             
             MainThread.BeginInvokeOnMainThread(() => {
-                Panels.Clear();
-                foreach (var panel in panels) Panels.Add(panel);
-
+                UpdatePanelIndicators();
+                
                 CurrentPanelIndex = -1;
                 if (!ShowWelcomePage) SelectPanel(0);
                 
@@ -47,6 +47,13 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
             });
         } catch (Exception ex) {
             Console.WriteLine($"Error loading panels: {ex.Message}");
+        }
+    }
+
+    public void UpdatePanelIndicators() {
+        PanelIndicators.Clear();
+        for (var i = 0; i < (Panels?.Count ?? 0); i++) {
+            PanelIndicators.Add(i);
         }
     }
 
@@ -76,7 +83,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(ActivePanel));
         OnPropertyChanged(nameof(ShowWelcomePage));
         OnPropertyChanged(nameof(HideWelcomePage));
-        OnPropertyChanged(nameof(PanelIndicators));
+        UpdatePanelIndicators();
         ShowWelcomePage = false;
     }
 }

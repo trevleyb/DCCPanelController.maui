@@ -113,7 +113,6 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
                 await Task.Delay(100);
-
                 var editorPage = new PanelEditor(panel);
                 await navigation.PushAsync(editorPage);
                 await editorPage.PageClosed;

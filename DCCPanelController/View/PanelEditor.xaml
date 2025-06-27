@@ -9,6 +9,10 @@
              Title="{Binding Title}"
              x:Class="DCCPanelController.View.PanelEditor">
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior x:DataType="view:PanelEditorViewModel" Command="{Binding BackButtonPressedCommand}"/>
+    </Shell.BackButtonBehavior>
+    
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Mode" x:Name="ModeToolbar" IconImageSource="move.png"
                      IsEnabled="{Binding SingleOrNoEntitiesSelected}"

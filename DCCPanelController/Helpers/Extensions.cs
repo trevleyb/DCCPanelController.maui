@@ -47,21 +47,21 @@ public static class Extensions {
         }
     }
 
-    public static async Task<string> RenderSchematicToBase64ImageAsync(this IView view) {
-        return Convert.ToBase64String(await RenderSchematicToImageStreamAsync(view) ?? []);
-    }
-
-    public static async Task<byte[]?> RenderSchematicToImageStreamAsync(this IView view) {
-        try {
-            var image = await view.CaptureAsync();
-            if (image is null) return null;
-
-            using (var stream = new MemoryStream()) {
-                await image.CopyToAsync(stream);
-                return stream.ToArray();
-            }
-        } catch {
-            return null;
-        }
-    }
+    // public static async Task<string> RenderSchematicToBase64ImageAsync(this IView view) {
+    //     return Convert.ToBase64String(await RenderSchematicToImageStreamAsync(view) ?? []);
+    // }
+    //
+    // public static async Task<byte[]?> RenderSchematicToImageStreamAsync(this IView view) {
+    //     try {
+    //         var image = await view.CaptureAsync();
+    //         if (image is null) return null;
+    //
+    //         using (var stream = new MemoryStream()) {
+    //             await image.CopyToAsync(stream);
+    //             return stream.ToArray();
+    //         }
+    //     } catch {
+    //         return null;
+    //     }
+    // }
 }

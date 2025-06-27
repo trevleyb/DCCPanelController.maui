@@ -118,10 +118,10 @@ public partial class ControlPanelView {
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
-        Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
-        Console.WriteLine($"**DrawPanel: Panel={Panel?.Id ?? "UNKNOWN PANEL???"} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
-        Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
-        Console.WriteLine($"========================================================================");
+        //Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
+        //Console.WriteLine($"**DrawPanel: Panel={Panel?.Id ?? "UNKNOWN PANEL???"} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
+        //Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
+        //Console.WriteLine($"========================================================================");
 
         ClearAllSelectedTiles();
 
@@ -169,7 +169,7 @@ public partial class ControlPanelView {
     /// </summary>
     /// <returns>Returns an instance of the created tile or null if it could not create one. </returns>
     private ITile? AddEntityToGrid(Entity entity) {
-        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}")) {
+        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", false)) {
             var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
             if (tile is ContentView view) {
                 view.ClassId = entity.Guid.ToString();
@@ -190,7 +190,7 @@ public partial class ControlPanelView {
             view.Behaviors.Clear();
             view.GestureRecognizers.Clear();
 
-            if (Interactive) {
+            if (Interactive || DesignMode) {
                 var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
                 tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
                 view.GestureRecognizers.Add(tapGesture);
@@ -404,18 +404,6 @@ public partial class ControlPanelView {
         }
         Console.WriteLine($"Could not determine the Grid Position from the point provided: {point.ToString()}");
         return null;
-    }
-
-    public async Task<string> GetThumbnailAsync() {
-        try {
-            DesignMode = false;
-            ShowGrid = false;
-            DrawPanel(true);
-            return await this.RenderSchematicToBase64ImageAsync();
-        } catch (Exception ex) {
-            Console.WriteLine($"Error generating the thumbnail: {ex.Message}");
-            return string.Empty;
-        }
     }
     #endregion 
 
@@ -831,7 +819,7 @@ public partial class ControlPanelView {
 
                 // In design mode, also support tapping anywhere that is not a tile so we clear selections.
                 // ----------------------------------------------------------------------------
-                if (control.Interactive) {
+                if (control.Interactive || control.DesignMode) {
                     var tapRecogniser = new TapGestureRecognizer();
                     tapRecogniser.Tapped += control.DynamicGridTapped;
                     control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);

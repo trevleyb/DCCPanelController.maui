@@ -17,6 +17,7 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
@@ -28,7 +29,11 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     [JsonIgnore] public Panels? Panels { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    
+    [JsonIgnore] public ImageSource? Thumbnail =>
+        string.IsNullOrWhiteSpace(Base64Image)
+            ? null
+            : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
+
     [JsonConstructor]
     private Panel() {
         ResetColorsToDefaults();
@@ -56,9 +61,8 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
     
-    [JsonIgnore]
-    public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
-    public string NextID => EntityID.GenerateNextID(Panels ?? [],"Panel");
+    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
+    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Panels ?? [],"Panel");
 
     public Entity? GetEntityAtPosition(int x, int y) =>  Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
@@ -94,14 +98,17 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return cloned ?? throw new InvalidOperationException();
     }
 
-    public Panel Clone() {
+    public Panel Clone(bool generateNewId = true) {
         ArgumentNullException.ThrowIfNull(Panels);
         var clone = new Panel(Panels) {
+            Base64Image = Base64Image,
             Description = Description,
             SortOrder = SortOrder,
             Cols = Cols,
             Rows = Rows
         };
+        if (!generateNewId) clone.Id = Id; 
+        
         CopyColorsTo(clone);
         foreach (var entity in Entities) {
             var entityClone = clone.CreateEntityFrom(entity);
@@ -122,6 +129,17 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return JsonSerializer.Serialize<Panel>(this, JsonOptions.Options);
     }
 
+    public bool IsEqualTo(Panel panel) {
+        var comparerOptions = new GenericComparerOptions {
+            MaxDepth = 5,
+            IncludePrivateProperties = false,
+            CompareCollectionsOrdered = false, // For entity collections
+            IgnoreProperties = { "Parent", "Navigation", "Panels", "Guid", "Id", "Base64Image" }
+        };
+        
+        return GenericComparer.AreEqual(this, panel, comparerOptions);
+    }
+    
     /// <summary>
     ///     Calculates the ratio of columns to rows in the format "x:y".
     /// </summary>

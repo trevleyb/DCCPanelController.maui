@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text;
 using CommunityToolkit.Maui.Core.Extensions;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
@@ -18,19 +19,19 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(panel, Navigation) {
+        _viewModel = new PanelEditorViewModel(panel, this, PanelView) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
         ShowSelectedMode();
 
-        _viewModel.PropertyChanged   += ViewModelOnPropertyChanged;
-        _viewModel.OnBeginPushModal  += OnBeginPushModal; // Subscribe to the custom event
-        _viewModel.OnBeginPopModal   += OnBeginPopModal;   // Subscribe to the custom event
+        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+        _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
+        _viewModel.OnBeginPopModal += OnBeginPopModal;   // Subscribe to the custom event
         _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
-        PanelView.TileSelected       += PanelViewOnTileSelected;
-        PanelView.TileChanged        += PanelViewOnTileChanged;
-        PanelView.TileTapped         += PanelViewOnTileTapped;
+        PanelView.TileSelected += PanelViewOnTileSelected;
+        PanelView.TileChanged += PanelViewOnTileChanged;
+        PanelView.TileTapped += PanelViewOnTileTapped;
         BindingContext = _viewModel;
     }
 
@@ -49,43 +50,24 @@ public partial class PanelEditor : ContentPage {
     private void OnBeginPopModal() {
         _isPushingModal = false;
     }
-
-    // This is a callback so that the Editor View Model can take a snapshot
-    // of the design for the thumbnail on the Panel Viewer Page
-    // ----------------------------------------------------------------------
-    public async Task<string> GetThumbnailImage() {
-        var designMode = PanelView.DesignMode;
-        var showGrid = PanelView.ShowGrid;
-        var thumbnailImage = await PanelView.GetThumbnailAsync();
-        PanelView.ShowGrid = showGrid;
-        PanelView.DesignMode = designMode;
-        return thumbnailImage;
-    }
-
+    
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
+        base.OnNavigatedFrom(args);
+
         if (_isPushingModal) {
             _isPushingModal = false;
         } else {
-            // If there are any unsaved changes, then prompt the user if they 
-            // want to save before we exit this screen. 
-            // ------------------------------------------------------------------------------
-            if (_viewModel.HavePropertiesChanged) {
-                var result = await DisplayAlert("Unsaved Changes", "There are unsaved changes. Would you like to Save?", "Yes", "No");
-                if (result) await _viewModel.SaveAsync();
-            }
-            
-            _viewModel.PropertyChanged   -= ViewModelOnPropertyChanged;
-            _viewModel.OnBeginPushModal  -= OnBeginPushModal; // Subscribe to the custom event
-            _viewModel.OnBeginPopModal   -= OnBeginPopModal;   // Subscribe to the custom event
+            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+            _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
+            _viewModel.OnBeginPopModal -= OnBeginPopModal;   // Subscribe to the custom event
             _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
-            PanelView.TileSelected       -= PanelViewOnTileSelected;
-            PanelView.TileChanged        -= PanelViewOnTileChanged;
-            PanelView.TileTapped         -= PanelViewOnTileTapped;
+            PanelView.TileSelected -= PanelViewOnTileSelected;
+            PanelView.TileChanged -= PanelViewOnTileChanged;
+            PanelView.TileTapped -= PanelViewOnTileTapped;
             _closeTcs.TrySetResult(true); // or return data as needed
         }
-        base.OnNavigatedFrom(args);
     }
-    
+
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         if (BindingContext is PanelEditorViewModel viewModel) {
             if (e.Tile is ITileInteractive { } tile) {
@@ -110,6 +92,7 @@ public partial class PanelEditor : ContentPage {
             _   => SelectionText.Text
         };
         if (e.IsLongTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
+        _viewModel.CheckIfPanelChanged();
     }
 
     private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {
@@ -122,7 +105,7 @@ public partial class PanelEditor : ContentPage {
             NeedsSavingText.Text = _viewModel.HavePropertiesChanged ? "Unsaved Changes" : "";
             ShowSelectedMode();
             break;
-        
+
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;
             PanelView.DesignMode = _viewModel.GridVisible;

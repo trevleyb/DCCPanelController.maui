@@ -1,10 +1,9 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
@@ -15,8 +14,9 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
     private readonly INavigation _navigation;
-    private PanelChangeDetector? _detector;
-
+    private readonly ContentPage _page;
+    private ControlPanelView _panelView;
+    
     [ObservableProperty] private bool _gridVisible;
     [ObservableProperty] private bool _havePropertiesChanged;
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
@@ -24,6 +24,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
     private Panel? _panel;
+    private Panel? _original;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
@@ -41,10 +42,17 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
-    public PanelEditorViewModel(Panel panel, INavigation navigation) {
-        _panel = panel;
-        _navigation = navigation;
-        ResetPanelChanges();
+    public PanelEditorViewModel(Panel panel, ContentPage page, ControlPanelView panelView) {
+        _original = panel;
+        _panel = panel.Clone(false);     // Make a clone so we are working on a clone
+        _navigation = page.Navigation;
+        _page = page;
+        _panelView = panelView;
+        
+        CheckIfPanelChanged();
+        if (HavePropertiesChanged == true) {
+            Console.WriteLine($"Property comparison should NOT return true at this point.");
+        }
     }
 
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
@@ -61,35 +69,75 @@ public partial class PanelEditorViewModel : ObservableObject {
     public event Action? OnBeginPushModal;
     public event Action? OnBeginPopModal;
 
+    public void UpdateOriginalFromCopy() {
+        ArgumentNullException.ThrowIfNull(_original,"Original Panel should never be undefined.");
+        if (_original.Panels != null && Panel != null) {
+            var collection = _original.Panels;
+            var index = collection.IndexOf(_original);
+            
+            if (index >= 0) {
+                var newPanel = Panel.Clone(false);
+                collection[index] = newPanel;
+                _original = newPanel;
+            }
+        }
+    }
+    
+    // This is a callback so that the Editor View Model can take a snapshot
+    // of the design for the thumbnail on the Panel Viewer Page
+    // ----------------------------------------------------------------------
+    public async Task<string> GetThumbnailImage() {
+        try {
+            var showGrid = _panelView.ShowGrid;
+            _panelView.ShowGrid = false;
+            var result = await _panelView.CaptureAsync();
+            _panelView.ShowGrid = showGrid;
+
+            if (result == null) return string.Empty;
+
+            //await using var stream = await result. .OpenReadAsync();
+            using var memoryStream = new MemoryStream();
+            await result.CopyToAsync(memoryStream, ScreenshotFormat.Jpeg);
+            //await stream.CopyToAsync(memoryStream);
+            var imageBytes = memoryStream.ToArray();
+            return Convert.ToBase64String(imageBytes);
+        } catch (Exception ex) {
+            Console.WriteLine($"Error Capturing Thumbnail Image: {ex.Message}");
+            return string.Empty;
+        }
+    }
+    
     public bool SetCanEditProperties() {
         return true;
     }
 
     public void CheckIfPanelChanged() {
-        HavePropertiesChanged = _detector?.HasPanelChanged(Panel) ?? false;
+        ArgumentNullException.ThrowIfNull(_original,"Original Panel should never be undefined.");
+        ArgumentNullException.ThrowIfNull(Panel, "Panel should never be undefined.");
+        HavePropertiesChanged = !_original.IsEqualTo(Panel);
     }
-    
-    public void ResetPanelChanges() {
-        _detector = new PanelChangeDetector(Panel, new PanelChangeDetectorOptions {
-            MaxDepth = 5,
-            SkipProperties = new HashSet<string> { "Parent", "Navigation", "CustomProperty" },
-            IncludePrivateProperties = false
-        });
-        HavePropertiesChanged = false;
+
+    [RelayCommand]
+    public async Task BackButtonPressedAsync() {
+        Console.WriteLine($"Back Button was pressed????");
+        if (HavePropertiesChanged) {
+            var result = await _page.DisplayAlert("Unsaved Changes",null, "Save & Leave", "Discard Changes");
+            if (result) await SaveAsync();
+        }
+        await Shell.Current.GoToAsync("..");
     }
-    
+
     [RelayCommand]
     public async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
-            // So that we trigger a refresh on other screens, such as the operate
-            // page screen, we need to remove the panel and then re-add it to 
-            // the collection. 
-            var position = profile.Panels.IndexOf(Panel);
-            profile.Panels.RemoveAt(position);
-            profile.Panels.Insert(position, Panel);
-            
+            // If we are saving, then we need to update the original item
+            // but still work on the copied item. So just make a clone of 
+            // the editing panel and make the original point to this new clone. 
+            // ----------------------------------------------------------
+            Panel.Base64Image = await GetThumbnailImage();
+            UpdateOriginalFromCopy();
             await profile.SaveAsync();
-            ResetPanelChanges();
+            CheckIfPanelChanged();
         }
     }
 
@@ -99,8 +147,8 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
-            CheckIfPanelChanged();
         }
+        CheckIfPanelChanged();
     }
 
     [RelayCommand]
@@ -119,10 +167,10 @@ public partial class PanelEditorViewModel : ObservableObject {
             foreach (var entity in SelectedEntities) {
                 Panel.Entities.Remove(entity);
             }
-            CheckIfPanelChanged();
             SelectedEntities.Clear();
             OnPropertyChanged(nameof(Panels));
         }
+        CheckIfPanelChanged();
     }
 
     [RelayCommand]
@@ -148,7 +196,6 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
                 OnBeginPopModal?.Invoke();
-                await SaveAsync();
             }
         } catch (Exception ex) {
             Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
