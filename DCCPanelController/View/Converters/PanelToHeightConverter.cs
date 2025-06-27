@@ -1,7 +1,7 @@
 using System.Globalization;
 using DCCPanelController.Models.DataModel;
 
-namespace DCCPanelController.Helpers.Converters;
+namespace DCCPanelController.View.Converters;
 
 public class PanelToCardHeightConverter : IMultiValueConverter {
     public object Convert(object[] values, Type targetType, object? parameter, CultureInfo culture) {

@@ -4,12 +4,12 @@ using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
-using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Base;
+using DCCPanelController.View.Converters;
 using DCCPanelController.View.Properties.TileProperties.Attributes;
 using DCCPanelController.View.Properties.TileProperties.EditableControls;
 

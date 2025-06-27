@@ -1,6 +1,6 @@
 using System.Globalization;
-using DCCPanelController;
-using DCCPanelController.View;
+
+namespace DCCPanelController.View.Converters;
 
 public class IndicatorColorConverter : IMultiValueConverter {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {

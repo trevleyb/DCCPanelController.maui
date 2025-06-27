@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace DCCPanelController.Helpers.Converters;
+namespace DCCPanelController.View.Converters;
 
 public class EnumToRadioButtonConverter<T>(T enumValue) : IValueConverter
     where T : struct, Enum {

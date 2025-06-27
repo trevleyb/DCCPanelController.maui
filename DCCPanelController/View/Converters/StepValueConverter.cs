@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace DCCPanelController.Helpers.Converters;
+namespace DCCPanelController.View.Converters;
 
 public class StepValueConverter : IValueConverter
 {

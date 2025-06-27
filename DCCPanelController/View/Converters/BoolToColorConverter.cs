@@ -1,5 +1,6 @@
 using System.Globalization;
-namespace DCCPanelController.Helpers.Converters;
+
+namespace DCCPanelController.View.Converters;
 
 public class BoolToColorConverter : IValueConverter {
     public Color TrueColor { get; set; } = Colors.Green;

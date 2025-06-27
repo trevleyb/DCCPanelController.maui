@@ -1,7 +1,7 @@
 using System.Globalization;
 using DCCPanelController.Models.DataModel.Entities;
 
-namespace DCCPanelController.Helpers.Converters;
+namespace DCCPanelController.View.Converters;
 
 public class TurnoutActionEnumConverter : IValueConverter {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {

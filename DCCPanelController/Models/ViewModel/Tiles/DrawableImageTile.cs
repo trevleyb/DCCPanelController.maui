@@ -1,8 +1,8 @@
 using DCCPanelController.Helpers;
-using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.Converters;
 using Microsoft.Maui.Controls.Shapes;
 using Colors = Microsoft.Maui.Graphics.Colors;
 using Shape = Microsoft.Maui.Controls.Shapes.Shape;

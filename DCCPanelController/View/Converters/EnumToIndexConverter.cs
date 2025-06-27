@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace DCCPanelController.Helpers.Converters;
+namespace DCCPanelController.View.Converters;
 
 public class EnumToIndexConverter<T> : IValueConverter where T : struct, Enum {
     public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {

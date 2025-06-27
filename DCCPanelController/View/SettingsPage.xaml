@@ -13,13 +13,13 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:services="clr-namespace:DCCPanelController.Services"
     xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
-    xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:converters1="clr-namespace:DCCPanelController.View.Converters">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
-            <converters:BoolToChevronConverter x:Key="BoolToChevronConverter"/>
+            <converters1:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters1:BoolToChevronConverter x:Key="BoolToChevronConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -199,7 +199,7 @@
                                                         <Border.BackgroundColor>
                                                             <Binding Path="IsAvailable">
                                                                 <Binding.Converter>
-                                                                    <converters:BoolToColorConverter
+                                                                    <converters1:BoolToColorConverter
                                                                         TrueColor="Transparent"
                                                                         FalseColor="GhostWhite"/>
                                                                 </Binding.Converter>
@@ -208,7 +208,7 @@
                                                         <Border.Stroke>
                                                             <Binding Path="IsAvailable">
                                                                 <Binding.Converter>
-                                                                    <converters:BoolToColorConverter
+                                                                    <converters1:BoolToColorConverter
                                                                         TrueColor="{StaticResource Primary}"
                                                                         FalseColor="LightGray"/>
                                                                 </Binding.Converter>
@@ -227,7 +227,7 @@
                                                         <Label.TextColor>
                                                             <Binding Path="IsAvailable">
                                                                 <Binding.Converter>
-                                                                    <converters:BoolToColorConverter
+                                                                    <converters1:BoolToColorConverter
                                                                         TrueColor="{StaticResource Black}"
                                                                         FalseColor="Gray"/>
                                                                 </Binding.Converter>

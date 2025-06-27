@@ -5,13 +5,13 @@
              xmlns:settings="clr-namespace:DCCPanelController.View.Settings"
              xmlns:jmri="clr-namespace:DCCPanelController.View.Settings.Simulator"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:converters="clr-namespace:DCCPanelController.Helpers.Converters"
              xmlns:discovery="clr-namespace:DCCClient.Discovery;assembly=DCCClient"
+             xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
              x:DataType="jmri:SimulatorSettingsViewModel"
              x:Class="DCCPanelController.View.Settings.Simulator.SimulatorSettingsView">
 
     <ContentView.Resources>
-        <converters:StepValueConverter x:Key="StepConverter" Step="0.25" />
+        <converters1:StepValueConverter x:Key="StepConverter" Step="0.25" />
         <Style x:Key="SelectableItemStyle" TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>

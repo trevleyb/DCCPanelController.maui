@@ -1,7 +1,7 @@
-using DCCPanelController.Helpers.Converters;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.Converters;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
