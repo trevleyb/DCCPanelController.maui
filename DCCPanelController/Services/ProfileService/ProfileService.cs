@@ -32,11 +32,9 @@ public partial class ProfileService : ObservableObject {
     public async Task InitialiseProfileService() {
         try {
             await RefreshAvailableProfilesAsync();
-            Console.WriteLine($"ProfileService: Loaded Profiles = {AvailableProfiles.Count}");
             await LoadProfileAsync(AvailableProfiles[0]);
-            Console.WriteLine($"ProfileService: Loaded Profile = {ActiveProfile.ProfileName}");
         } catch (Exception ex) {
-            Console.WriteLine($"ProfileService: Error Initialising Service => {ex.Message}");
+            throw new ApplicationException($"ProfileService: Error Initialising Service", ex);
         }
     }
     

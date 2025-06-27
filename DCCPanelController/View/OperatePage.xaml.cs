@@ -20,7 +20,6 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     protected override void OnAppearing() {
         base.OnAppearing();
-        Console.WriteLine($"OperatingPage: Is Appearing Called");
         if (BindingContext is OperateViewModel viewModel ) {
             if (viewModel.ActivePanel is not null) {
                 PanelView.IsVisible = true;

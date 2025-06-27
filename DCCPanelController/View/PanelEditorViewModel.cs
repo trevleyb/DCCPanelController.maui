@@ -118,8 +118,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    public async Task BackButtonPressedAsync() {
-        Console.WriteLine($"Back Button was pressed????");
+    private async Task BackButtonPressedAsync() {
         if (HavePropertiesChanged) {
             var result = await _page.DisplayAlert("Unsaved Changes",null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
@@ -128,7 +127,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    public async Task SaveAsync() {
+    private async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
             // If we are saving, then we need to update the original item
             // but still work on the copied item. So just make a clone of 
