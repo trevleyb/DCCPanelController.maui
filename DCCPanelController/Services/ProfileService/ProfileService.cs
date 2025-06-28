@@ -171,13 +171,13 @@ public partial class ProfileService : ObservableObject {
     /// <param name="jsonString">JSON string representation of the profile</param>
     /// <param name="profileName">Name for the new profile</param>
     /// <param name="setAsActive">Whether to set this as the active profile</param>
-    public async Task UploadProfileAsync(string jsonString, string profileName, bool setAsActive = true) {
+    public async Task UploadProfileAsync(string jsonString, bool setAsActive = true, string? profileName = null) {
         var profile = await JsonRepository.UploadSettingsAsync(jsonString);
-        profile.ProfileName = profileName;
+        if (profileName is not null) profile.ProfileName = profileName;
         profile.FixLoadedPanels();
 
-        await JsonRepository.SaveAsync(profile, profileName);
-        if (setAsActive) await LoadProfileAsync(profileName);
+        await JsonRepository.SaveAsync(profile, profile.ProfileName);
+        if (setAsActive) await LoadProfileAsync(profile.ProfileName);
         await RefreshAvailableProfilesAsync();
     }
 
@@ -189,7 +189,7 @@ public partial class ProfileService : ObservableObject {
     /// <param name="setAsActive">Whether to set this as the active profile</param>
     public async Task OverwriteProfileAsync(string jsonString, string profileName, bool setAsActive = true) {
         await JsonRepository.Delete(profileName);
-        await UploadProfileAsync(jsonString, profileName, setAsActive);
+        await UploadProfileAsync(jsonString, setAsActive, profileName);
     }
 
     /// <summary>

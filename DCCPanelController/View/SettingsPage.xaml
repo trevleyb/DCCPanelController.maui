@@ -24,8 +24,8 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Clicked="Upload_OnClicked" IconImageSource="upload.png"/>
-        <ToolbarItem Clicked="Download_OnClicked" IconImageSource="download.png"/>
+        <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="upload.png"/>
+        <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="download.png"/>
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="*,70">

@@ -5,6 +5,7 @@ using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.TileProperties;
@@ -120,7 +121,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task BackButtonPressedAsync() {
         if (HavePropertiesChanged) {
-            var result = await _page.DisplayAlert("Unsaved Changes",null, "Save & Leave", "Discard Changes");
+            var result = await DisplayAlertHelper.DisplayAlertAsync("Unsaved Changes",null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
         }
         await Shell.Current.GoToAsync("..");

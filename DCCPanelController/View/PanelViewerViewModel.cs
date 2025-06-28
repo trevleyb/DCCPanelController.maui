@@ -10,8 +10,9 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelViewerViewModel : Base.ConnectionViewModel {
-    private readonly ProfileService _profileService;
     private Panel? _draggedPanel;
+    private readonly ProfileService _profileService;
+    
     [ObservableProperty] private bool _isPanelSelected;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Panel? _selectedPanel;
@@ -79,10 +80,15 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     public async Task DownloadPanelAsync() {
         try {
             if (SelectedPanel is { } panel) {
-                var panelAsJson = panel.DownloadPanel();
-                var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
-                Console.WriteLine(location);
-                await DisplayAlertHelper.DisplayOkAlertAsync("Panel Saved", location ?? "");
+                var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel","This allows you to download a single Panel to local storage.", "Continue", "Cancel");
+                if (result) {
+                    var panelAsJson = panel.DownloadPanel();
+                    var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
+                    if (!string.IsNullOrEmpty(location)) {
+                        Console.WriteLine(location);
+                        await DisplayAlertHelper.DisplayOkAlertAsync("Panel Saved", location ?? "");
+                    }
+                }
             }
         } catch (Exception ex) {
             Console.WriteLine("Unable to save the panel: " + ex.Message);
@@ -92,14 +98,17 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     [RelayCommand]
     public async Task UploadPanelAsync() {
         try {
-            var jsonString = await FileHelper.OpenFileAsync("Select a Panel File to upload");
-            if (!string.IsNullOrEmpty(jsonString)) {
-                var panel = Panels.UploadPanel(jsonString);
-                if (panel is not null) {
-                    await DisplayAlertHelper.DisplayOkAlertAsync("Success", $"Uploaded Panel: {panel.Id ?? ""}");
-                    await SaveAsync();
-                } else {
-                    await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");
+            var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Panel","This allows you to upload a previously downloaded panel.", "Continue", "Cancel");
+            if (result) {
+                var jsonString = await FileHelper.OpenFileAsync("Select a Panel File to upload");
+                if (!string.IsNullOrEmpty(jsonString)) {
+                    var panel = Panels.UploadPanel(jsonString);
+                    if (panel is not null) {
+                        await DisplayAlertHelper.DisplayOkAlertAsync("Success", $"Uploaded Panel: {panel.Id ?? ""}");
+                        await SaveAsync();
+                    } else {
+                        await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");
+                    }
                 }
             }
         } catch (Exception ex) {

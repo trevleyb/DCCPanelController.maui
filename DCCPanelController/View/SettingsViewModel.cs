@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Maui.Core.Extensions;
+using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
@@ -117,6 +118,64 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             Console.WriteLine($"CheckSettings: {ex.Message}");
             return new T();
         }
+    }
+
+    [RelayCommand]
+    private async Task UploadSettingsAsync() {
+        try {
+            var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
+            if (result) {
+                var fileName = await PromptUserForConfigFile(); 
+                if (!string.IsNullOrEmpty(fileName)) {
+                    var loadedJson = await LoadJsonFromFile(fileName);
+                    await _profileService.UploadProfileAsync(loadedJson);
+                    await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Loaded.");
+                } else {
+                    throw new Exception("File could not be loaded.");
+                }
+            }
+        } catch (Exception ex) {
+            await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
+        }
+    }
+
+    [RelayCommand]
+    private async Task DownloadSettingsAsync() {
+        try {
+            var filePath = await PromptUserForSaveLocation();
+            if (!string.IsNullOrEmpty(filePath)) {
+                var saveFile = Path.Combine(filePath, "dccpanel.settings");
+                var jsonString = _profileService.DownloadActiveProfile();
+                await SaveJsonToFile(saveFile, jsonString);
+                await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Downloaded.");
+                Console.WriteLine(saveFile);
+            }
+        } catch (Exception ex) {
+            await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
+        }
+    }
+    
+    private static async Task<string> PromptUserForConfigFile() {
+        var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
+        return result is not null ? result.FullPath : string.Empty;
+    }
+
+    private static async Task<string> PromptUserForSaveLocation() {
+        var result = await FolderPicker.PickAsync(CancellationToken.None);
+        result.EnsureSuccess();
+        return result.Folder.Path ?? string.Empty;
+    }
+
+    // Method to save the JSON file to the specified location
+    private async Task SaveJsonToFile(string filePath, string jsonData) {
+        await using var streamWriter = new StreamWriter(filePath, false);
+        await streamWriter.WriteAsync(jsonData);
+    }
+
+    // Method to save the JSON file to the specified location
+    private async Task<string> LoadJsonFromFile(string filePath) {
+        using var reader = new StreamReader(filePath);
+        return await reader.ReadToEndAsync();
     }
 
 }
