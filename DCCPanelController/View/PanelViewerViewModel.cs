@@ -86,7 +86,8 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
                     var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
                     if (!string.IsNullOrEmpty(location)) {
                         Console.WriteLine(location);
-                        await DisplayAlertHelper.DisplayOkAlertAsync("Panel Saved", location ?? "");
+                        //await DisplayAlertHelper.DisplayOkAlertAsync("Panel Saved", location ?? "");
+                        await DisplayAlertHelper.DisplayToastAlert("Panel Saved");
                     }
                 }
             }
@@ -104,7 +105,8 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
                 if (!string.IsNullOrEmpty(jsonString)) {
                     var panel = Panels.UploadPanel(jsonString);
                     if (panel is not null) {
-                        await DisplayAlertHelper.DisplayOkAlertAsync("Success", $"Uploaded Panel: {panel.Id ?? ""}");
+                        //await DisplayAlertHelper.DisplayOkAlertAsync("Success", $"Uploaded Panel: {panel.Id ?? ""}");
+                        await DisplayAlertHelper.DisplayToastAlert($"Uploaded Panel: {panel.Id ?? ""}");
                         await SaveAsync();
                     } else {
                         await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");

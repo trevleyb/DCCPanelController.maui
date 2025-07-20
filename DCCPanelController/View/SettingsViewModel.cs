@@ -46,7 +46,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         if (reconnect) await ConnectionService.DisconnectAsync();
         await _profileService.SaveActiveProfileAsync();
         if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
-        await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
+        //await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
+        await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
     }
 
     public void SetCapabilities() {
@@ -129,7 +130,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
                 if (!string.IsNullOrEmpty(fileName)) {
                     var loadedJson = await LoadJsonFromFile(fileName);
                     await _profileService.UploadProfileAsync(loadedJson);
-                    await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Loaded.");
+                    //await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Loaded.");
+                    await DisplayAlertHelper.DisplayToastAlert("Success: File Loaded");
                 } else {
                     throw new Exception("File could not be loaded.");
                 }
@@ -147,7 +149,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
                 var saveFile = Path.Combine(filePath, "dccpanel.settings");
                 var jsonString = _profileService.DownloadActiveProfile();
                 await SaveJsonToFile(saveFile, jsonString);
-                await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Downloaded.");
+                //await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Downloaded.");
+                await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
                 Console.WriteLine(saveFile);
             }
         } catch (Exception ex) {
