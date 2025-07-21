@@ -45,17 +45,17 @@ public partial class Profile : ObservableObject {
         return Blocks.FirstOrDefault(s => s.Id == id);
     }
 
-    public static Profile NewOrLoad(string profileName) {
-        return Task.Run(() => JsonRepository.LoadAsync(profileName)).Result;
-    }
+    //public static Profile NewOrLoad(string profileName) {
+    //    return Task.Run(() => JsonRepository.LoadAsync(profileName)).Result;
+    //}
 
-    public static async Task<Profile> LoadAsync(string profileName) {
-        return await JsonRepository.LoadAsync(profileName);
-    }
+    //public static async Task<Profile> LoadAsync(string profileName) {
+    //    return await JsonRepository.LoadAsync(profileName);
+    //}
 
-    public async Task SaveAsync() {
-        await JsonRepository.SaveAsync(this, ProfileName);
-    }
+    //public async Task SaveAsync() {
+    //    await JsonRepository.SaveAsync(this, ProfileName);
+    //}
 
     /// <summary>
     ///     This method ensures that each panel in the collection of panels is properly initialized with the reference to the

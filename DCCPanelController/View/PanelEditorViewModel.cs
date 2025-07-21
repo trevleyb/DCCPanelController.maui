@@ -19,6 +19,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly INavigation _navigation;
     private readonly ContentPage _page;
     private ControlPanelView _panelView;
+    private ProfileService _profileService;
     
     [ObservableProperty] private bool _gridVisible;
     [ObservableProperty] private bool _havePropertiesChanged;
@@ -46,7 +47,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
 
     private ILogger<PanelEditor> _logger;
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ContentPage page, ControlPanelView panelView) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ContentPage page, ControlPanelView panelView) {
+        _profileService = profileService;
         _logger = logger;
         _original = panel;
         _panel = panel.Clone(false);     // Make a clone so we are working on a clone
@@ -137,7 +139,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             // ----------------------------------------------------------
             Panel.Base64Image = await GetThumbnailImage();
             UpdateOriginalFromCopy();
-            await profile.SaveAsync();
+            await _profileService.SaveActiveProfileAsync(); 
             CheckIfPanelChanged();
         }
     }

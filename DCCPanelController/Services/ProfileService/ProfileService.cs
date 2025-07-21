@@ -14,10 +14,13 @@ namespace DCCPanelController.Services;
 // Long term, this will allow for the selection of multiple profiles.
 //
 public partial class ProfileService : ObservableObject {
+
+    public const string DefaultProfileName = "dccPanelController.profile";
+    
     private Profile? _activeProfile;
     private readonly Lock _profileLock = new Lock();
     private bool _isInitialized = false;
-    private ILogger<ProfileService> _logger = LogHelper.CreateLogger<ProfileService>();
+    private ILogger<ProfileService> _logger;
     
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private ObservableCollection<string> _availableProfiles = [];
@@ -26,8 +29,8 @@ public partial class ProfileService : ObservableObject {
     public event EventHandler<ProfileChangedEventArgs>? ProfileChanged;
     public event EventHandler<ProfileDataChangedEventArgs>? ProfileDataChanged;
 
-
     public ProfileService() {
+         _logger = LogHelper.CreateLogger<ProfileService>();
         PropertyChanged += OnActiveProfileChanged;
         _ = Task.Run(async () => InitialiseProfileService());
     }
@@ -50,7 +53,7 @@ public partial class ProfileService : ObservableObject {
         get {
             lock (_profileLock) {
                 if (_activeProfile == null) {
-                    _activeProfile = new Profile("default");
+                    _activeProfile = new Profile(DefaultProfileName);
                     SubscribeToProfileEvents(_activeProfile);
                     
                     if (!_isInitialized) {
@@ -76,7 +79,7 @@ public partial class ProfileService : ObservableObject {
     private async Task InitializeProfileAsync() {
         try {
             await RefreshAvailableProfilesAsync();
-            await LoadProfileAsync("default");
+            await LoadProfileAsync(DefaultProfileName);
         } catch (Exception ex) {
             _logger.LogCritical("Failed to initialize profile: {Message}",ex.Message);
         }
@@ -95,9 +98,8 @@ public partial class ProfileService : ObservableObject {
         // Load the profile if not already initialized
         if (!_isInitialized) {
             _isInitialized = true;
-            await LoadProfileAsync("default");
+            await LoadProfileAsync(DefaultProfileName);
         }
-
         return _activeProfile!;
     }
 
@@ -105,18 +107,17 @@ public partial class ProfileService : ObservableObject {
     /// Loads a profile by name and sets it as the active profile
     /// </summary>
     /// <param name="profileName">The name of the profile to load</param>
-    public async Task LoadProfileAsync(string profileName) {
+    public async Task LoadProfileAsync(string profileName = DefaultProfileName) {
         IsLoading = true;
         try {
             var oldProfile = _activeProfile;
             Profile newProfile;
 
             try {
-                newProfile = await Profile.LoadAsync(profileName);
+                newProfile = await JsonRepository.LoadAsync(profileName);
                 newProfile.FixLoadedPanels();
             } catch (Exception ex) {
                 // If we can't load the specified profile, create a new empty one
-
                 _logger.LogDebug("Failed to load profile '{profileName}', creating new empty profile: {Message}",profileName,ex.Message);
                 newProfile = new Profile(profileName);
             }
@@ -148,7 +149,7 @@ public partial class ProfileService : ObservableObject {
     /// </summary>
     public async Task ReloadActiveProfileAsync() {
         if (_activeProfile != null) {
-            await LoadProfileAsync(_activeProfile.ProfileName);
+            await LoadProfileAsync(DefaultProfileName);
         } else throw new ApplicationException("ProfileService: Active Profile should never be null when reloading active profile.");
         await Task.CompletedTask;
     }
@@ -157,7 +158,7 @@ public partial class ProfileService : ObservableObject {
     /// Saves the current active profile
     /// </summary>
     public async Task SaveActiveProfileAsync() {
-        await ActiveProfile.SaveAsync();
+        if (_activeProfile is not null) await JsonRepository.SaveAsync(_activeProfile, DefaultProfileName);
     }
 
     /// <summary>
@@ -179,8 +180,8 @@ public partial class ProfileService : ObservableObject {
         if (profileName is not null) profile.ProfileName = profileName;
         profile.FixLoadedPanels();
 
-        await JsonRepository.SaveAsync(profile, profile.ProfileName);
-        if (setAsActive) await LoadProfileAsync(profile.ProfileName);
+        await JsonRepository.SaveAsync(profile, DefaultProfileName);
+        if (setAsActive) await LoadProfileAsync(DefaultProfileName);
         await RefreshAvailableProfilesAsync();
     }
 
@@ -191,8 +192,8 @@ public partial class ProfileService : ObservableObject {
     /// <param name="profileName">Name of the profile to overwrite</param>
     /// <param name="setAsActive">Whether to set this as the active profile</param>
     public async Task OverwriteProfileAsync(string jsonString, string profileName, bool setAsActive = true) {
-        await JsonRepository.Delete(profileName);
-        await UploadProfileAsync(jsonString, setAsActive, profileName);
+        await JsonRepository.Delete(DefaultProfileName);
+        await UploadProfileAsync(jsonString, setAsActive, DefaultProfileName);
     }
 
     /// <summary>
@@ -200,7 +201,7 @@ public partial class ProfileService : ObservableObject {
     /// </summary>
     public async Task RefreshAvailableProfilesAsync() {
         AvailableProfiles.Clear();
-        AvailableProfiles.Add("default");
+        AvailableProfiles.Add(DefaultProfileName);
     }
 
     /// <summary>

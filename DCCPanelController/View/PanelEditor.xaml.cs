@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
@@ -17,13 +18,13 @@ public partial class PanelEditor : ContentPage {
     private readonly PanelEditorViewModel _viewModel;
     private bool _isPushingModal; // Flag to track modal presentation
 
-    public PanelEditor(ILogger<PanelEditor> logger, Panel panel) {
+    public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
         _logger = logger;
         InitializeComponent();
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(_logger, panel, this, PanelView) {
+        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };

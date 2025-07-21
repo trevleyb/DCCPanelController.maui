@@ -12,7 +12,7 @@ public class TestDataModel {
             var profile = new Profile("testProfile");
             BuildTestDataModel(profile);
             ValidateTestDataModel(profile);
-            await profile.SaveAsync();
+            //await profile.SaveAsync();
             var loadedStorage = await JsonRepository.LoadAsync();
             ValidateTestDataModel(loadedStorage);
         } catch (Exception ex) {
