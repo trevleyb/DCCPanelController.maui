@@ -99,11 +99,8 @@ public partial class PanelEditorViewModel : ObservableObject {
             _panelView.ShowGrid = showGrid;
 
             if (result == null) return string.Empty;
-
-            //await using var stream = await result. .OpenReadAsync();
             using var memoryStream = new MemoryStream();
             await result.CopyToAsync(memoryStream, ScreenshotFormat.Jpeg);
-            //await stream.CopyToAsync(memoryStream);
             var imageBytes = memoryStream.ToArray();
             return Convert.ToBase64String(imageBytes);
         } catch (Exception ex) {

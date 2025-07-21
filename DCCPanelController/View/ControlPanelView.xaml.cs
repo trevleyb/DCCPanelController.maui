@@ -49,9 +49,12 @@ public partial class ControlPanelView {
     private double _viewHeight;
     private double _viewWidth;
 
+    [ObservableProperty] private bool _isRefreshing = false;
+    
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
         InitializeComponent();
+        BindingContext = this;
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }
@@ -121,37 +124,41 @@ public partial class ControlPanelView {
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
-        _logger.LogDebug("**DrawPanel: From='{MemberName}' @ '{SourceLineNumber}'", memberName, sourceLineNumber);
-        _logger.LogDebug("**DrawPanel: Panel={UnknownPanel} and Force={B} and HasChanged={HasGridSizeChanged1}", Panel?.Id ?? "UNKNOWN PANEL???", forceRefresh, HasGridSizeChanged(MainGrid.Width, MainGrid.Height));
-        _logger.LogDebug("**DrawPanel: Width={MainGridWidth} Height={MainGridHeight}", MainGrid.Width, MainGrid.Height);
+        //_logger.LogDebug("**DrawPanel: From='{MemberName}' @ '{SourceLineNumber}'", memberName, sourceLineNumber);
+        //_logger.LogDebug("**DrawPanel: Panel={UnknownPanel} and Force={B} and HasChanged={HasGridSizeChanged1}", Panel?.Id ?? "UNKNOWN PANEL???", forceRefresh, HasGridSizeChanged(MainGrid.Width, MainGrid.Height));
+        //_logger.LogDebug("**DrawPanel: Width={MainGridWidth} Height={MainGridHeight}", MainGrid.Width, MainGrid.Height);
 
-        ClearAllSelectedTiles();
+        try {
+            IsRefreshing = true;
+            ClearAllSelectedTiles();
+            using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", false)) {
+                _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
+                _viewWidth = _gridSize * Cols;
+                _viewHeight = _gridSize * Rows;
 
-        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", false)) {
-            _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
-            _viewWidth = _gridSize * Cols;
-            _viewHeight = _gridSize * Rows;
+                DynamicGrid.ZIndex = 0;
+                DynamicGrid.WidthRequest = _viewWidth;
+                DynamicGrid.HeightRequest = _viewHeight;
+                DynamicGrid.BackgroundColor = Panel?.PanelBackgroundColor ?? Colors.Transparent;
 
-            DynamicGrid.ZIndex = 0;
-            DynamicGrid.WidthRequest = _viewWidth;
-            DynamicGrid.HeightRequest = _viewHeight;
-            DynamicGrid.BackgroundColor = Panel?.PanelBackgroundColor ?? Colors.Transparent;
+                DynamicGrid.Children.Clear();
+                if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
+                    DynamicGrid.RowDefinitions.Clear();
+                    DynamicGrid.ColumnDefinitions.Clear();
 
-            DynamicGrid.Children.Clear();
-            if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
-                DynamicGrid.RowDefinitions.Clear();
-                DynamicGrid.ColumnDefinitions.Clear();
+                    for (var i = 0; i < Rows; i++) {
+                        DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+                    }
 
-                for (var i = 0; i < Rows; i++) {
-                    DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+                    for (var j = 0; j < Cols; j++) {
+                        DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                    }
                 }
-
-                for (var j = 0; j < Cols; j++) {
-                    DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-                }
+                AddEntitiesToGrid(Panel);
+                DrawGrid();
             }
-            AddEntitiesToGrid(Panel);
-            DrawGrid();
+        } finally {
+            IsRefreshing = false;
         }
     }
 

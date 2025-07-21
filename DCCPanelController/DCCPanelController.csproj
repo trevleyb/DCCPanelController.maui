@@ -186,9 +186,6 @@
         <MauiXaml Update="View\AboutPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\WelcomePage.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\PropertPages\DynamicPropertyPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -247,13 +244,6 @@
         <Compile Update="View\AboutPage.xaml.cs">
             <DependentUpon>AboutPage.xaml</DependentUpon>
             <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\WelcomePage.xaml.cs">
-            <DependentUpon>WelcomePage.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\WelcomePageViewModel.cs">
-            <DependentUpon>WelcomePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\AboutViewModel.cs">
             <DependentUpon>AboutPage.xaml</DependentUpon>
