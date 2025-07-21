@@ -34,8 +34,7 @@ public static class ClickSounds {
             var clickSoundPlayer = audioManager.CreatePlayer(stream, AudioManager.Current.DefaultPlayerOptions);
             ClickSoundPlayers?.Add(filename, clickSoundPlayer);
             return clickSoundPlayer;
-        } catch (Exception ex) {
-            Console.WriteLine($"Error loading sound file: {filename}: {ex.Message}");
+        } catch (Exception) {
             return null;
         }
     }

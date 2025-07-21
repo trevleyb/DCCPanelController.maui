@@ -87,7 +87,6 @@ public static class SvgImages {
             }
             throw new SvgImageException($"***** Image '{name}' invalid direction provided");
         }
-        Console.WriteLine($"Could not find the base image of {name}");
         throw new SvgImageException($"***** Image '{name}' not found");
     }
 

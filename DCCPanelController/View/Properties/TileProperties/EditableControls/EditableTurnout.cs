@@ -2,6 +2,7 @@ using System.Reflection;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -37,7 +38,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Turnout: {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Turnout: {Message}",e.Message);
             return null;
         }
     }

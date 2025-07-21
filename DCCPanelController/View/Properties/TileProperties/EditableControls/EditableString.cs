@@ -1,5 +1,6 @@
 using System.Reflection;
 using CommunityToolkit.Maui.Markup;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -43,7 +44,7 @@ public class EditableString(string label, string description = "", int order = 0
             box.Content = cell;
             return CreateGroupCell(box);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a String:  {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a String:  {Message}",e.Message);
             return null;
         }
     }

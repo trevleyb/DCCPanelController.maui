@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Helpers;
 
@@ -19,7 +20,10 @@ public class CodeTimer : IDisposable {
     public void Dispose() {
 #if DEBUG
         _stopwatch.Stop();
-        if (_writeOutput) Console.WriteLine($"[{_blockName}] executed in {_stopwatch.ElapsedMilliseconds}ms");
+        var logger = LogHelper.CreateLogger("CodeTimer");
+        if (_writeOutput) {
+            logger.LogDebug("[{BlockName}] executed in {StopwatchElapsedMilliseconds}ms", _blockName, _stopwatch.ElapsedMilliseconds);
+        }
 #endif
     }
 }

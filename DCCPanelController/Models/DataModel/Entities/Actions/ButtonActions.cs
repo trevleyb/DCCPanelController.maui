@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
@@ -12,7 +14,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
     }
 
     public async void Apply(ButtonEntity button, ConnectionService connectionService, ActionExecutionContext context) {
-        Console.WriteLine($"Applying actions to button {button.Id} with state {button.State}");
+        var logger = LogHelper.CreateLogger("ButtonActionsApply");
         try {
             foreach (var action in button.ButtonPanelActions) {
                 if (button.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
@@ -39,7 +41,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in Async Void function: ButtonActions:Apply =>{ex.Message}");
+            logger.LogError("Error in Async Void function: ButtonActions:Apply =>{Message}",ex.Message);
         }
     }
 

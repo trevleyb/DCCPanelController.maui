@@ -23,7 +23,8 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView {
-    private readonly ILogger<ControlPanelView> _logger; 
+    private readonly ILogger<ControlPanelView> _logger;
+
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
@@ -32,7 +33,7 @@ public partial class ControlPanelView {
     }
 
     private readonly PathTracingService _pathTracer = new();
-    
+
     private const int DoubleTapTime = 150;
     private readonly bool _canDragTiles = true;
     private readonly HashSet<ITile> _selectedTiles = [];
@@ -83,7 +84,7 @@ public partial class ControlPanelView {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
     #endregion
-    
+
     #region Grid Management
     private void OnGridSizeChanged(object? sender, EventArgs e) {
         DrawPanel();
@@ -112,7 +113,6 @@ public partial class ControlPanelView {
                            [CallerMemberName] string memberName = "",
                            [CallerFilePath] string sourceFilePath = "",
                            [CallerLineNumber] int sourceLineNumber = 0) {
-
         if (Panel is null) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
@@ -121,10 +121,9 @@ public partial class ControlPanelView {
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
-        //Console.WriteLine($"**DrawPanel: From='{memberName}' @ '{sourceLineNumber}'");
-        //Console.WriteLine($"**DrawPanel: Panel={Panel?.Id ?? "UNKNOWN PANEL???"} and Force={forceRefresh} and HasChanged={HasGridSizeChanged(MainGrid.Width, MainGrid.Height)}" );
-        //Console.WriteLine($"**DrawPanel: Width={MainGrid.Width} Height={MainGrid.Height}");
-        //Console.WriteLine($"========================================================================");
+        _logger.LogDebug("**DrawPanel: From='{MemberName}' @ '{SourceLineNumber}'", memberName, sourceLineNumber);
+        _logger.LogDebug("**DrawPanel: Panel={UnknownPanel} and Force={B} and HasChanged={HasGridSizeChanged1}", Panel?.Id ?? "UNKNOWN PANEL???", forceRefresh, HasGridSizeChanged(MainGrid.Width, MainGrid.Height));
+        _logger.LogDebug("**DrawPanel: Width={MainGridWidth} Height={MainGridHeight}", MainGrid.Width, MainGrid.Height);
 
         ClearAllSelectedTiles();
 
@@ -200,22 +199,22 @@ public partial class ControlPanelView {
             }
 
             switch (DesignMode) {
-                case false: {
-                    if (Interactive) {
-                        var touchBehavior = new TouchBehavior();
-                        touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
-                        view.Behaviors.Add(touchBehavior);
-                    }
-                    break;
+            case false: {
+                if (Interactive) {
+                    var touchBehavior = new TouchBehavior();
+                    touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
+                    view.Behaviors.Add(touchBehavior);
                 }
+                break;
+            }
 
-                case true: {
-                    var dragGesture = new DragGestureRecognizer();
-                    dragGesture.DragStarting += (_, args) => DragTileStarting(args, tile);
-                    dragGesture.DropCompleted += DragCompleted;
-                    view.GestureRecognizers.Add(dragGesture);
-                    break;
-                }
+            case true: {
+                var dragGesture = new DragGestureRecognizer();
+                dragGesture.DragStarting += (_, args) => DragTileStarting(args, tile);
+                dragGesture.DropCompleted += DragCompleted;
+                view.GestureRecognizers.Add(dragGesture);
+                break;
+            }
             }
         }
     }
@@ -228,7 +227,7 @@ public partial class ControlPanelView {
                 await _pathTracer.StartPathTracing(trackTile!);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in launching path Tracing: {ex.Message}");
+            _logger.LogError($"Error in launching path Tracing: {ex.Message}");
         }
     }
 
@@ -251,7 +250,7 @@ public partial class ControlPanelView {
                 if (sender is ITile tile) {
                     if (_tapCount == 1) {
                         var tilesAtPosition = TilesInGrid(tile);
-                        
+
                         // If there is only a single tile at this position, then we can 
                         // toggle it on or off
                         // -------------------------------------------------------
@@ -262,8 +261,8 @@ public partial class ControlPanelView {
                                 MarkTileSelected(tile);
                             }
                             _currentSelectionIndex = -1;
-                        } 
-                        
+                        }
+
                         // There are multiple tiles at this position, so we need to
                         // step through the tiles until we get to the last one. 
                         // ---------------------------------------------------------
@@ -290,7 +289,7 @@ public partial class ControlPanelView {
             }
             _tapCount = 0;
         } catch (Exception ex) {
-            Console.WriteLine($"Tap Tile failed due to: {ex.Message}");
+            _logger.LogDebug("Tap Tile failed due to: {ExMessage}", ex.Message);
         }
     }
 
@@ -299,10 +298,10 @@ public partial class ControlPanelView {
                                   .Where(x => x.Entity.Col == tile.Entity.Col && x.Entity.Row == tile.Entity.Row)
                                   .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
                                   .ToList();
-    
+
         return children; // Add the missing return statement
     }
-    
+
     private void RemoveTileFromGrid(ITile tile) {
         RemoveEntityFromGrid(tile.Entity);
         OnTileChanged(tile);
@@ -391,7 +390,7 @@ public partial class ControlPanelView {
             var cellWidth = totalWidth / colCount;
 
             if (cellHeight == 0 || cellWidth == 0) {
-                Console.WriteLine($"Cell Height or Width is zero? {cellHeight},{cellWidth}");
+                _logger.LogDebug("Cell Height or Width is zero? {CellHeight},{CellWidth}", cellHeight, cellWidth);
                 return null;
             }
 
@@ -405,10 +404,10 @@ public partial class ControlPanelView {
 
             return (col, row);
         }
-        Console.WriteLine($"Could not determine the Grid Position from the point provided: {point.ToString()}");
+        _logger.LogError("Could not determine the Grid Position from the point provided: {S}", point.ToString());
         return null;
     }
-    #endregion 
+    #endregion
 
     #region Draw Grid when in Design Mode
     private void DrawGrid() {
@@ -650,8 +649,7 @@ public partial class ControlPanelView {
     }
 
     private void DragCompleted(object? sender, DropCompletedEventArgs e) {
-        var complete = (sender is DragGestureRecognizer { Parent : ITile }); 
-        Console.WriteLine($"DragCompleted: Complete={complete}");
+        var complete = (sender is DragGestureRecognizer { Parent : ITile });
         if (sender is DragGestureRecognizer { Parent : ITile tile }) {
             tile.ForceRedraw();
             ClearAllSelectedTiles();
@@ -665,7 +663,6 @@ public partial class ControlPanelView {
         try {
             if (!e.Data.Properties.ContainsKey("Source") ||
                 !e.Data.Properties.ContainsKey("Tile")) {
-                Console.WriteLine("Invalid Drop Properties.");
                 return;
             }
 
@@ -673,8 +670,7 @@ public partial class ControlPanelView {
             var source = e.Data.Properties["Source"] as string ?? null;
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
             var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
-            Console.WriteLine($"DROPPING... {source}={tile?.Entity.EntityName} {gridPosition.ToString()}");
-            
+
             if (gridPosition is { } position && tile is not null) {
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
@@ -706,9 +702,9 @@ public partial class ControlPanelView {
                                 MarkTileSelected(tile);
                                 OnTileChanged(tile);
                                 break;
-                            
+
                             default:
-                                Console.WriteLine("ERROR: Invalid operation?");
+                                _logger.LogError("ERROR: Invalid operation?");
                                 break;
                             }
                             break;
@@ -723,18 +719,18 @@ public partial class ControlPanelView {
                             break;
 
                         default:
-                            Console.WriteLine($"ERROR: Invalid source: '{source}'");
+                            _logger.LogError("ERROR: Invalid source: '{Source}'", source);
                             break;
                         }
                     }
                 } else {
-                    Console.WriteLine("ERROR: Item clashes with existing track");
+                    _logger.LogError("ERROR: Item clashes with existing track");
                 }
             } else {
-                Console.WriteLine("ERROR: Invalid grid position");
+                _logger.LogError("ERROR: Invalid grid position");
             }
         } catch (Exception ex) {
-            Console.WriteLine("ERROR: Error dropping item: " + ex.Message);
+            _logger.LogError("ERROR: Error dropping item: {ExMessage} ", ex.Message);
         }
 
         _lastDragCol = 0;
@@ -768,8 +764,8 @@ public partial class ControlPanelView {
         return tilesInGrid.Any();
     }
     #endregion
-    
-        #region Bindable Properties
+
+    #region Bindable Properties
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
     public static readonly BindableProperty InteractiveProperty = BindableProperty.Create(nameof(Interactive), typeof(bool), typeof(ControlPanelView), true, BindingMode.Default, propertyChanged: OnInteractiveChanged);
@@ -831,7 +827,7 @@ public partial class ControlPanelView {
             control.DrawPanel();
         }
     }
-    
+
     /// <summary>
     ///     If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>
@@ -852,7 +848,6 @@ public partial class ControlPanelView {
     }
 
     private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        Console.WriteLine("Entities Collection Changed....");
         if (sender is ControlPanelView control) {
             control.ClearAllSelectedTiles();
 
@@ -861,7 +856,6 @@ public partial class ControlPanelView {
             // -------------------------------------------------------------------------
             var oldEntities = e.OldItems?.Cast<Entity>().ToList() ?? new List<Entity>();
             foreach (var oldEntity in oldEntities) {
-                Console.WriteLine($"Removing {oldEntity.EntityName} from the grid");
                 control.RemoveEntityFromGrid(oldEntity);
             }
 
@@ -871,7 +865,6 @@ public partial class ControlPanelView {
             var newEntities = e.NewItems?.Cast<Entity>().ToList() ?? new List<Entity>();
             ITile? lastTile = null;
             foreach (var newEntity in newEntities) {
-                Console.WriteLine($"Adding {newEntity.EntityName} to the grid");
                 lastTile = control.AddEntityToGrid(newEntity);
             }
 
@@ -885,9 +878,7 @@ public partial class ControlPanelView {
     }
 
     private static void OnClientChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        if (bindable is ControlPanelView control) {
-            Console.WriteLine("Client Connection Property Changed");
-        }
+        if (bindable is ControlPanelView control) { }
     }
 
     private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {

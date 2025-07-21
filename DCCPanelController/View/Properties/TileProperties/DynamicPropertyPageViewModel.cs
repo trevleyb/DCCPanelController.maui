@@ -74,7 +74,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     public async Task ApplyChangesAsync() {
-        Console.WriteLine($"Applying changes: Panel Name = {Title}");
         await ApplyChangesToAllEntities();
     }
 
@@ -98,8 +97,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             return;
         }
 
-        Console.WriteLine("===== COMMON PROPERTIES =====");
-        Console.WriteLine($" ==> {_commonProperties.Count} common properties.");
         BuildUI();
     }
 
@@ -194,7 +191,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
             // Create UI element
             if (groupContainer.Container != null) {
-                Console.WriteLine($"Creating View: {commonProperty.Property}");
                 var cell = commonProperty.Metadata.CreateView(ProxyEntity, commonProperty.Property);
                 if (cell != null) {
                     SetInitialValue(commonProperty);
@@ -217,7 +213,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
     }
 
     public async Task ApplyChangesToAllEntities() {
-        Console.WriteLine("===== APPLYING CHANGES =====");
         foreach (var commonProperty in _commonProperties) {
             await ApplyPropertyChange(commonProperty);
         }
@@ -251,10 +246,9 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             if (targetProperty?.CanWrite == true) {
                 var valueToSet = CloneValueIfNeeded(newValue, targetProperty.PropertyType);
                 targetProperty.SetValue(entity, valueToSet);
-                Console.WriteLine($"Updated {entity.EntityName}.{propertyName}");
             }
-        } catch (Exception ex) {
-            Console.WriteLine($"Error updating {entity.EntityName}.{propertyName}: {ex.Message}");
+        } catch (Exception) {
+            // Console.WriteLine($"Error updating {entity.EntityName}.{propertyName}: {ex.Message}");
         }
     }
 

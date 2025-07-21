@@ -140,8 +140,8 @@ public abstract class Tile : ContentView, ITile {
                              _lastChangeTime = DateTime.Now;
                          }
                      });
-                 } catch (Exception ex) {
-                     Console.WriteLine($"Error rebuilding tile: {ex.Message}");
+                 } catch (Exception) {
+                     //Console.WriteLine($"Error rebuilding tile: {ex.Message}");
                  }
              }, token, TaskContinuationOptions.OnlyOnRanToCompletion, TaskScheduler.Default);
     }

@@ -7,14 +7,12 @@ public class PinchToZoomContainer : ContentView {
     private double yOffset;
 
     public PinchToZoomContainer() {
-        Console.WriteLine("PinchToZoom Instantiated");
         var pinchGesture = new PinchGestureRecognizer();
         pinchGesture.PinchUpdated += OnPinchUpdated;
         GestureRecognizers.Add(pinchGesture);
     }
 
     private void OnPinchUpdated(object? sender, PinchGestureUpdatedEventArgs e) {
-        Console.WriteLine("OnPinchUpdated");
         if (e.Status == GestureStatus.Started) {
             // Store the current scale factor applied to the wrapped user interface element,
             // and zero the components for the center point of the translate transform.

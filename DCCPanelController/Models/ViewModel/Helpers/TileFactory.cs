@@ -1,7 +1,9 @@
 using System.Reflection;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.ViewModel.Helpers;
 
@@ -36,7 +38,7 @@ public static class TileFactory {
         if (EntityTileMappings.Value.TryGetValue(entityType, out var tileType)) {
             return (ITile?)Activator.CreateInstance(tileType, entity, gridSize, displayMode);
         }
-        Console.WriteLine($"No tile found for entity type {entityType.Name}");
+        LogHelper.CreateLogger("Tilefactory").LogDebug("No tile found for entity type {entityTypeName}",entityType.Name);
         return null;
     }
 }

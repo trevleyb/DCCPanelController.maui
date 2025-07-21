@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -12,7 +13,7 @@ public class EditableUndefined(string label = "undefined", string description = 
                 VerticalOptions = LayoutOptions.Center
             };
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Bool switch {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Undefined Editable item {Message}",e.Message);
             return null;
         }
     }

@@ -2,6 +2,7 @@ using System.Reflection;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -43,7 +44,7 @@ public class EditableBlockAttribute(string label, string description = "", int o
 
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Block: {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Block: {Message}",e.Message);
             return null;
         }
     }

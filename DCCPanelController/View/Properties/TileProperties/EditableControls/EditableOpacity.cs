@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -38,7 +39,7 @@ public class EditableOpacity(string label, string description = "", int order = 
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Int: {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Opacity: {Message}", e.Message);
             return null;
         }
     }

@@ -50,7 +50,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
                 OnPropertyChanged(nameof(PanelIndicators));
             });
         } catch (Exception ex) {
-            Console.WriteLine($"Error loading panels: {ex.Message}");
+            _logger.LogError("Error loading panels: {ExMessage}", ex.Message);
         }
     }
 

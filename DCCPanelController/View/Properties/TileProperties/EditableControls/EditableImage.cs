@@ -1,6 +1,7 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -56,7 +57,7 @@ public class EditableImage(string label, string description = "", int order = 0,
             stack.Children.Add(horizontal);
             return CreateGroupCell(stack, 150);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create an Image: {e.Message}");
+            PropertyLogger.LogDebug("Unable to create an Image: {Message}",e.Message);
             return null;
         }
     }

@@ -120,7 +120,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             _settingsCache[type] = newSettings;
             return newSettings;
         } catch (Exception ex) {
-            Console.WriteLine($"CheckSettings: {ex.Message}");
+            _logger.LogDebug("CheckSettings: {ExMessage}", ex.Message);
             return new T();
         }
     }
@@ -153,9 +153,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
                 var saveFile = Path.Combine(filePath, "dccpanel.settings");
                 var jsonString = _profileService.DownloadActiveProfile();
                 await SaveJsonToFile(saveFile, jsonString);
-                //await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Downloaded.");
                 await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
-                Console.WriteLine(saveFile);
             }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");

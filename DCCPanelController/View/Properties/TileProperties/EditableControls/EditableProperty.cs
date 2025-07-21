@@ -1,5 +1,7 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using DCCPanelController.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -12,6 +14,8 @@ public abstract class EditableProperty(string label, string description = "", in
     public object? Value { get; set; } = null;         // Initial Value or display Value
     public bool IsModified { get; set; } = false;      // Has this been modified?
     public bool HasMixedValues { get; set; } = false; 
+    
+    protected ILogger<EditableProperty> PropertyLogger = LogHelper.CreateLogger<EditableProperty>();
     
     protected IView CreateGroupCell(IView view, int? height = null) {
 

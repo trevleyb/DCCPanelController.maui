@@ -54,7 +54,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine($"OperatePage: PanelViewTileTapped: Error=>{ex.Message}"); // TODO handle exception
+            _logger.LogError("OperatePage: PanelViewTileTapped: Error=>{ExMessage}", ex.Message); 
         }
     }
 

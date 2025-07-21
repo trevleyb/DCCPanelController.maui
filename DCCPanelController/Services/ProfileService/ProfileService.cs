@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Services;
 
@@ -15,7 +17,8 @@ public partial class ProfileService : ObservableObject {
     private Profile? _activeProfile;
     private readonly Lock _profileLock = new Lock();
     private bool _isInitialized = false;
-
+    private ILogger<ProfileService> _logger = LogHelper.CreateLogger<ProfileService>();
+    
     [ObservableProperty] private bool _isLoading;
     [ObservableProperty] private ObservableCollection<string> _availableProfiles = [];
 
@@ -34,6 +37,7 @@ public partial class ProfileService : ObservableObject {
             await RefreshAvailableProfilesAsync();
             await LoadProfileAsync(AvailableProfiles[0]);
         } catch (Exception ex) {
+            _logger.LogCritical("ProfileService: Error Initialising Service => {Message}", ex.Message);
             throw new ApplicationException($"ProfileService: Error Initialising Service", ex);
         }
     }
@@ -74,9 +78,7 @@ public partial class ProfileService : ObservableObject {
             await RefreshAvailableProfilesAsync();
             await LoadProfileAsync("default");
         } catch (Exception ex) {
-            Console.WriteLine($"Failed to initialize profile: {ex.Message}");
-
-            // The default empty profile will remain active
+            _logger.LogCritical("Failed to initialize profile: {Message}",ex.Message);
         }
     }
 
@@ -114,7 +116,8 @@ public partial class ProfileService : ObservableObject {
                 newProfile.FixLoadedPanels();
             } catch (Exception ex) {
                 // If we can't load the specified profile, create a new empty one
-                Console.WriteLine($"Failed to load profile '{profileName}', creating new empty profile: {ex.Message}");
+
+                _logger.LogDebug("Failed to load profile '{profileName}', creating new empty profile: {Message}",profileName,ex.Message);
                 newProfile = new Profile(profileName);
             }
 

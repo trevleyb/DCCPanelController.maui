@@ -20,7 +20,6 @@ public static class GenericComparer {
     }
 
     private static bool CompareResult(bool result, string? message = "", object? obj1 = null, object? obj2 = null ) {
-        //Console.WriteLine($"Compare Result: {result}=>{message} {obj1?.GetType()}:{obj1?.ToString()} {obj2?.GetType()}:{obj2?.ToString()}");
         return result;
     }
     

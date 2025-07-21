@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -43,7 +44,7 @@ public class EditableInt(string label, string description = "", int order = 0, s
             cell.Children.Add(dataCell);
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Int: {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Int: {Message}",e.Message);
             return null;
         }
     }

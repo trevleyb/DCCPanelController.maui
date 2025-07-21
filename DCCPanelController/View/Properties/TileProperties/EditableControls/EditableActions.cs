@@ -2,6 +2,7 @@ using System.Reflection;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Actions;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -19,10 +20,10 @@ public class EditableButtonActions(string label, string description = "", int or
                 };
             }
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Action {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Action {Message}",e.Message);
             return null;
         }
-        Console.WriteLine("Creating an Action but no valid Action attributes were found.");
+        PropertyLogger.LogDebug("Creating an Action but no valid Action attributes were found.");
         return null;
     }
 }
@@ -41,10 +42,10 @@ public class EditableTurnoutActions(string label, string description = "", int o
                 };
             }
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Action {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Action {Message}",e.Message);
             return null;
         }
-        Console.WriteLine("Creating an Action but no valid Action attributes were found.");
+        PropertyLogger.LogDebug("Creating an Action but no valid Action attributes were found.");
         return null;
     }
 }

@@ -174,7 +174,7 @@ public static class MauiProgram {
         var logFilePath = GetLogFilePath();
         var levelSwitch = LoggingLevelHelper.Initialize(LogEventLevel.Debug);
         Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.Debug()
+                    .MinimumLevel.ControlledBy(levelSwitch)
                     .WriteTo.File(
                          path: logFilePath,
                          rollingInterval: RollingInterval.Day,
@@ -189,6 +189,7 @@ public static class MauiProgram {
 #endif
                     .CreateLogger();
         
+        Log.Information("Logger Initialised.");
     }
 
     private static string GetLogFilePath() => Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");

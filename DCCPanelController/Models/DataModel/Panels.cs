@@ -30,7 +30,6 @@ public sealed class Panels : ObservableCollection<Panel> {
             }
             return panel;
         } catch {
-            Console.WriteLine($"Could not upload panel: {panelAsJson}");
             return null;
         }
     }

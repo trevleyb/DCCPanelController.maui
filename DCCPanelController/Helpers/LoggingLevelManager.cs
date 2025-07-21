@@ -14,8 +14,7 @@ public static class LoggingLevelHelper
     /// </summary>
     /// <param name="initialLevel">The initial logging level</param>
     /// <returns>The LoggingLevelSwitch to use in Serilog configuration</returns>
-    public static LoggingLevelSwitch Initialize(LogEventLevel initialLevel = LogEventLevel.Debug)
-    {
+    public static LoggingLevelSwitch Initialize(LogEventLevel initialLevel = LogEventLevel.Debug) {
         _levelSwitch = new LoggingLevelSwitch(initialLevel);
         return _levelSwitch;
     }

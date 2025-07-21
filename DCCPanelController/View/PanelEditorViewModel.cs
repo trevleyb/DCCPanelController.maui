@@ -56,7 +56,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         
         CheckIfPanelChanged();
         if (HavePropertiesChanged == true) {
-            Console.WriteLine($"Property comparison should NOT return true at this point.");
+            _logger.LogDebug($"Property comparison should NOT return true at this point.");
         }
     }
 
@@ -107,7 +107,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             var imageBytes = memoryStream.ToArray();
             return Convert.ToBase64String(imageBytes);
         } catch (Exception ex) {
-            Console.WriteLine($"Error Capturing Thumbnail Image: {ex.Message}");
+            _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
             return string.Empty;
         }
     }
@@ -202,7 +202,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 OnBeginPopModal?.Invoke();
             }
         } catch (Exception ex) {
-            Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
+            _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
         }
     }
 
@@ -224,7 +224,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 ForcePanelRefresh?.Invoke();
             }
         } catch (Exception ex) {
-            Console.WriteLine("Error Launching Tile Properties Page: " + ex.Message);
+            _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         }
     }
 }

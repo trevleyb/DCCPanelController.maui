@@ -1,6 +1,8 @@
 using System.Text;
 using System.Xml.Linq;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using SkiaSharp.Views.Maui.Controls;
 using Svg.Skia;
@@ -12,7 +14,7 @@ public class SvgImageManager {
     private const int DefaultHeight = 48;
     private readonly XDocument _svgDocument;
     private string _imageSource;
-
+    
     /// <summary>
     ///     Creates an instance of the DisplayImage Manager with the given name of the
     ///     image to manage. This needs to be a part of the resource name as it will
@@ -107,12 +109,10 @@ public class SvgImageManager {
         try {
             using var stream = SvgImages.ExecutingAssembly.GetManifestResourceStream(resourceName);
             if (stream == null) {
-                Console.WriteLine($"Could not find the image resource: '{resourceName}'");
                 throw new FileNotFoundException("Resource not found.", resourceName);
             }
             return XDocument.Load(stream);
         } catch (Exception ex) {
-            Console.WriteLine($"Failed to load the SVG image: '{resourceName}' with {ex.Message}");
             throw new FileLoadException("Failed to load the SVG image.", ex);
         }
     }

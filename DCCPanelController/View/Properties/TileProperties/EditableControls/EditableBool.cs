@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
+using Microsoft.Extensions.Logging;
 using Switch = Microsoft.Maui.Controls.Switch;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -18,7 +19,7 @@ public class EditableBool(string label, string description = "", int order = 0, 
             };
            return CreateGroupCell(cell);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Bool switch {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Bool switch {Message}",e.Message);
             return null;
         }
     }

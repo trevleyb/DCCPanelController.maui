@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
@@ -12,8 +14,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
     }
 
     public async void Apply(TurnoutEntity turnout, ConnectionService connectionService, ActionExecutionContext context) {
-        Console.WriteLine($"Applying actions to turnout {turnout.Id} with state {turnout.State}");
-
+        var logger = LogHelper.CreateLogger("TurnoutActionsApply");
         try {
             foreach (var action in turnout.ButtonPanelActions) {
                 if (turnout.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
@@ -40,7 +41,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in Async Void function: ButtonActions:Apply => {ex.Message}");
+            logger.LogError("Error in Async Void function: TurnoutActions:Apply => {Message}",ex.Message);
         }
     }
 

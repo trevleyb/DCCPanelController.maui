@@ -1,6 +1,7 @@
 using System.Reflection;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
@@ -41,7 +42,7 @@ public class EditableID(string label, string description = "", int order = 0, st
             box.Content = cell;
             return CreateGroupCell(box);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a String:  {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a ID:  {Message}", e.Message);
             return null;
         }
     }

@@ -76,8 +76,6 @@ public partial class PropertyPopup : Popup {
             var currentActualHeight = popupContentBorder.Height;
 
             if (currentActualWidth <= 0 || currentActualHeight <= 0) {
-                Console.WriteLine($"PropertyPopup: Warning - Read invalid actual dimensions ({currentActualWidth}x{currentActualHeight}). Falling back to MinPopup constants to lock size.");
-
                 // Fallback to MinPopupWidth/Height if reading actual dimensions failed
                 currentActualWidth = MinPopupWidth;
                 currentActualHeight = MinPopupHeight;

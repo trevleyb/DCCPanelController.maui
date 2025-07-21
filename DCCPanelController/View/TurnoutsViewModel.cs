@@ -160,7 +160,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
                 OnPropertyChanged(nameof(Turnouts));
             }
         } catch (Exception ex) {
-            Console.WriteLine("Error Launching Panel Properties Page: " + ex.Message);
+            _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
         }
     }
 }

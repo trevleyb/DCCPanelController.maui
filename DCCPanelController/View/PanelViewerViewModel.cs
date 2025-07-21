@@ -89,14 +89,13 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
                     var panelAsJson = panel.DownloadPanel();
                     var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
                     if (!string.IsNullOrEmpty(location)) {
-                        Console.WriteLine(location);
-                        //await DisplayAlertHelper.DisplayOkAlertAsync("Panel Saved", location ?? "");
+                        _logger.LogInformation(location);
                         await DisplayAlertHelper.DisplayToastAlert("Panel Saved");
                     }
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine("Unable to save the panel: " + ex.Message);
+            _logger.LogCritical("Unable to save the panel: " + ex.Message);
         }
     }
 
@@ -109,7 +108,6 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
                 if (!string.IsNullOrEmpty(jsonString)) {
                     var panel = Panels.UploadPanel(jsonString);
                     if (panel is not null) {
-                        //await DisplayAlertHelper.DisplayOkAlertAsync("Success", $"Uploaded Panel: {panel.Id ?? ""}");
                         await DisplayAlertHelper.DisplayToastAlert($"Uploaded Panel: {panel.Id ?? ""}");
                         await SaveAsync();
                     } else {
@@ -118,7 +116,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine("Unable to upload the panel: " + ex.Message);
+            _logger.LogCritical("Unable to upload the panel: " + ex.Message);
         }
     }
 
@@ -128,12 +126,12 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
                 await Task.Delay(100);
-                var editorPage = new PanelEditor((ILogger<PanelEditor>)_logger,panel);
+                var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(),panel);
                 await navigation.PushAsync(editorPage);
                 await editorPage.PageClosed;
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error loading Panel Editor: {ex.Message}");
+            _logger.LogCritical("Error loading Panel Editor: {Message}",ex.Message);
         } finally {
             IsLoading = false;
         }
@@ -148,12 +146,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         var result = await PropertyDisplayService.ShowPropertiesAsync(
             NavigationService, panelViewModel, ScreenWidth, ScreenHeight);
 
-        if (result) {
-            Console.WriteLine("Properties applied successfully.");
-            await SaveAsync();
-        } else {
-            Console.WriteLine("Properties view dismissed.");
-        }
+        if (result) await SaveAsync();
     }
 
     #region Drag and Drop Support for Panels

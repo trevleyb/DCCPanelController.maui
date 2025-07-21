@@ -88,11 +88,9 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
                 var neighborCol = Col + neighborOffset.dx;
                 var neighborRow = Row + neighborOffset.dy;
                 var neighbor = Parent?.GetEntityAtPosition(neighborCol, neighborRow);
-                Console.WriteLine($"Found Neighbor: {neighbor?.EntityName ?? "none"} from base {Col},{Row} => {neighborCol},{neighborRow}");
                 return neighbor;
             }
         }
-        Console.WriteLine($"No Neighbor Found for Diverging Path");
         return null;
     }
     

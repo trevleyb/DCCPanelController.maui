@@ -58,11 +58,8 @@ public class PopupSelector : ContentView, IDisposable {
     /// </summary>
     private void DrawPopup() {
         if (Handler == null) {
-            Console.WriteLine("Handler is null");
-            if (Handler == null) {
-                Loaded += (s, e) => DrawPopup();
-                return;
-            }
+            Loaded += (s, e) => DrawPopup();
+            return;
         }
 
         mainLayoutBox = new Border() {
@@ -393,7 +390,7 @@ public class PopupSelector : ContentView, IDisposable {
                 _arrowImage.Behaviors.Add(new IconTintColorBehavior { TintColor = DropdownImageTint });
             }
         } catch {
-            Console.WriteLine($"Error setting dropdown image source: {(isOpen ? DropdownOpenImageSource : DropdownClosedImageSource)}");
+            // "Error setting dropdown image source: {(isOpen ? DropdownOpenImageSource : DropdownClosedImageSource)}");
         }
     }
 

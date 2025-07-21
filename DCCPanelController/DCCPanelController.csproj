@@ -201,9 +201,6 @@
         <MauiXaml Update="View\LayoutPanel\LayoutPanelView.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\TestPanelPage.xaml">
-            <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\BlocksPage.xaml">
             <SubType>Designer</SubType>
         </MauiXaml>
@@ -276,13 +273,6 @@
         <Compile Update="View\LayoutPanel\LayoutPanelView.xaml.cs">
             <DependentUpon>ControlPanelView.xaml</DependentUpon>
             <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\TestPanelPage.xaml.cs">
-            <DependentUpon>TestPanelPage.xaml</DependentUpon>
-            <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\TestPanelViewModel.cs">
-            <DependentUpon>TestPanelPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\OperateViewModel.cs">
             <DependentUpon>OperatePage.xaml</DependentUpon>

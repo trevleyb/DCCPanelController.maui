@@ -37,8 +37,8 @@ public class PathTracingService {
                 _currentTracingCts?.Dispose();
                 _currentTracingCts = null;
             }
-        } catch (Exception ex) {
-            Console.WriteLine($"StartPathTracing error: {ex.Message}");
+        } catch (Exception ) {
+            // Do Nothing
         }
     }
 

@@ -4,13 +4,16 @@ using CommunityToolkit.Mvvm.Input;
 using DCCClient.Helpers;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Simulator;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
 
+    private ILogger<ConnectionService> _logger = LogHelper.CreateLogger<ConnectionService>();
     private const int MaxServerMessages = 500;
     private ProfileService _profileService;
 
@@ -30,8 +33,9 @@ public partial class ConnectionService : ObservableObject {
     private async Task InitializeConnectionAsync() {
         try {
             if (_profileService?.ActiveProfile?.Settings.ConnectOnStartup ?? false) await ConnectAsync();
+            _logger.LogInformation("Initialised Connection");
         } catch (Exception ex) {
-            Console.WriteLine($"Initialisation connection error: {ex.Message}");
+            _logger.LogError("Initialisation connection error: {Message}",ex.Message);
         }
     }
 
@@ -51,12 +55,14 @@ public partial class ConnectionService : ObservableObject {
                 Client.ClientMessage += ClientOnClientMessage;
                 if (Client is null) {
                     OnConnectionChanged(false);
+                    _logger.LogDebug("Unable to create a Client instance.");
                     return Result.Fail("Unable to create a Client instance.");
                 }
 
                 var connectResult = await Client.ConnectAsync();
                 if (connectResult.IsFailure) {
                     OnConnectionChanged(false);
+                    _logger.LogDebug("Unable to connect to the specified server.");
                     return Result.Fail("Unable to connect to the specified server.");
                 }
                 
@@ -65,10 +71,11 @@ public partial class ConnectionService : ObservableObject {
                 return connectResult;
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Connection Failed: {ex.Message}");
+            _logger.LogDebug("Connection Failed: {Message}",ex.Message);
             OnConnectionChanged(false);
             return Result.Fail("Unable to connect to the server.", ex);
         }
+        _logger.LogDebug("Unable to connect to the specified server.");
         return Result.Fail("Unable to connect to the server.");
     }
 

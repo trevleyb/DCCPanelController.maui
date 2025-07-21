@@ -1,4 +1,5 @@
 using System.Reflection;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -21,7 +22,7 @@ public class EditableDate(string label, string description = "", int order = 0, 
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            Console.WriteLine($"Unable to create a Date: {e.Message}");
+            PropertyLogger.LogDebug("Unable to create a Date: {Message}",e.Message);
             return null;
         }
     }

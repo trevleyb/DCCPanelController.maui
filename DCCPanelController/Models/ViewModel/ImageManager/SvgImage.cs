@@ -80,7 +80,6 @@ public partial class SvgImage : ObservableObject {
         var elements = ImageManager.FindElements(elementName);
         foreach (var element in elements) {
             var elementType = ImageManager.ElementType(element);
-            //Console.WriteLine($"Applying {attributeName} = {attributeValue} to {elementName} with type {elementType}");
 
             _ = elementType switch {
                 "rect"    => SetFillType(element, attributeName, attributeValue),
