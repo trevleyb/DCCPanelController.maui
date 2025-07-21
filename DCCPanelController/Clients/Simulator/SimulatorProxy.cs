@@ -9,8 +9,10 @@ namespace DCCPanelController.Clients.Simulator;
 public partial class SimulatorProxy: DccClientBase, IDccClient {
     public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts,DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors]; 
     public DccClientType Type => DccClientType.Simulator;
-    
+
+    private Profile _profile;
     public SimulatorProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
+        _profile = profile;
         Settings = clientSettings as SimulatorSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for Simulator");
     }
 
@@ -20,6 +22,7 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
     #region Connect and Disconnect Methods
     public async Task<IResult> ConnectAsync() {
         Status = DccClientStatus.Connected;
+        _profile?.RefreshAll();
         AddSimulatedData();
         await Task.CompletedTask;
         return Result.Ok();

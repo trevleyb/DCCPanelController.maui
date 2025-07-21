@@ -6,6 +6,8 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Route : ObservableObject {
     [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
+[ObservableProperty] private bool _isEditable = false;
+    [ObservableProperty] private bool _isModified = false;
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     /// <summary>

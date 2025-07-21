@@ -77,7 +77,6 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         return view;
     }
 
-    
     public void SetActiveSettings() {
         switch (Settings?.ClientSettings?.Type) {
         case DccClientType.Simulator:
@@ -134,7 +133,6 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
                 if (!string.IsNullOrEmpty(fileName)) {
                     var loadedJson = await LoadJsonFromFile(fileName);
                     await _profileService.UploadProfileAsync(loadedJson);
-                    //await DisplayAlertHelper.DisplayOkAlertAsync("Success", "File Loaded.");
                     await DisplayAlertHelper.DisplayToastAlert("Success: File Loaded");
                 } else {
                     throw new Exception("File could not be loaded.");

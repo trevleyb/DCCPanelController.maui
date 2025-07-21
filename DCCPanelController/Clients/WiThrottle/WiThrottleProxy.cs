@@ -12,10 +12,12 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
     public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes];
     public DccClientType Type => DccClientType.Simulator;
 
+    private Profile _profile;
     private WiThrottleClient? _client;
     private WiThrottleSettings _settings;
 
     public WiThrottleProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
+        _profile = profile;
         _settings = clientSettings as WiThrottleSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for WiThrottle");
     }
 
@@ -36,7 +38,7 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
                 _settings.Port = jmriSettings.Port;
             }
         }
-
+        _profile?.RefreshAll();
         try {
             _client = new WiThrottleClient(_settings.Name, _settings.Address, _settings.Port);
             await _client.ConnectAsync();

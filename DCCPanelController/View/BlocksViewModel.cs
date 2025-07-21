@@ -85,10 +85,7 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     private async Task RefreshBlocksAsync() {
         IsBusy = true;
         try {
-            for (var ptr = _profileService?.ActiveProfile?.Blocks.Count ?? 0; ptr > 0; ptr--) {
-                _profileService?.ActiveProfile?.Blocks.RemoveAt(ptr - 1);
-                OnPropertyChanged(nameof(Blocks));
-            }
+            if (_profileService?.ActiveProfile is { } profile) profile.RefreshBlocks();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */
         } finally {

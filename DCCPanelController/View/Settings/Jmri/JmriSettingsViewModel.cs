@@ -25,6 +25,14 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
         JmriSettings.Name = DeviceInfo.Name;
     }
 
+    public int Port {
+        get => JmriSettings.Port;
+        set {
+            JmriSettings.Port = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string Address {
         get => JmriSettings.Address;
         set {

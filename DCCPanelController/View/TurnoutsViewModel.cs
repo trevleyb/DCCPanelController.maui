@@ -73,10 +73,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     private async Task RefreshTurnoutsAsync() {
         IsBusy = true;
         try {
-            var removeTurnouts = _profileService?.ActiveProfile?.Turnouts.Where(turnout => turnout.IsEditable == false).ToList() ?? [];
-            foreach (var turnout in removeTurnouts) {
-                _profileService?.ActiveProfile?.Turnouts.Remove(turnout);
-            }
+            if (_profileService?.ActiveProfile is { } profile) profile.RefreshTurnouts();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Turnouts));
         } catch { /* ignored */

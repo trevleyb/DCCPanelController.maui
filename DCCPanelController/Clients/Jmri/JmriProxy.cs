@@ -12,10 +12,12 @@ public partial class JmriProxy : DccClientBase, IDccClient {
     public DccClientType Type => DccClientType.Jmri;
     public JmriSettings _settings;
     private JmriClient? _client;
-
+    private Profile _profile;
+    
     public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors];
 
     public JmriProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
+        _profile = profile;
         _settings = clientSettings as JmriSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for Jmri");
     }
 
@@ -40,6 +42,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             }
         }
 
+        _profile?.RefreshAll();
         try {
             _client = new JmriClient(_settings.Address, _settings.Port, _settings.PollingInterval, ReconnectDelayMs);
             await _client.ConnectAsync();

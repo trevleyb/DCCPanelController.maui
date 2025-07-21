@@ -82,10 +82,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
     private async Task RefreshRoutesAsync() {
         IsBusy = true;
         try {
-            for (var ptr = _profileService?.ActiveProfile?.Routes.Count ?? 0; ptr > 0; ptr--) {
-                _profileService?.ActiveProfile?.Routes.RemoveAt(ptr - 1);
-                OnPropertyChanged(nameof(Routes));
-            }
+            if (_profileService?.ActiveProfile is { } profile) profile.RefreshRoutes();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */
         } finally {

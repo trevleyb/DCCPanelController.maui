@@ -20,7 +20,15 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
     private async Task OnDefaultDeviceNameClickedAsync() {
         WiThrottleSettings.Name = DeviceInfo.Name;
     }
-    
+
+    public int Port {
+        get => WiThrottleSettings.Port;
+        set {
+            WiThrottleSettings.Port = value;
+            OnPropertyChanged();
+        }
+    }
+
     public string Address {
         get => WiThrottleSettings.Address;
         set {

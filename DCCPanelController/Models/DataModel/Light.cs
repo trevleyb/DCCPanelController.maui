@@ -11,7 +11,8 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Light : ObservableObject {
     [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;
-    [ObservableProperty] private bool _isEditable;
+    [ObservableProperty] private bool _isEditable = false;
+    [ObservableProperty] private bool _isModified = false;
     [ObservableProperty] private bool _state;
     [ObservableProperty] private int _dccAddress;
 

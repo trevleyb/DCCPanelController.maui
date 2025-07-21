@@ -83,9 +83,7 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
     private async Task RefreshLightsAsync() {
         IsBusy = true;
         try {
-            for (var ptr = _profileService?.ActiveProfile?.Lights.Count ?? 0; ptr > 0; ptr--) {
-                _profileService?.ActiveProfile?.Lights.RemoveAt(ptr - 1);
-            }
+            if (_profileService?.ActiveProfile is { } profile) profile.RefreshLights();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Lights));
         } catch { /* ignored */

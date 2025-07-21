@@ -86,9 +86,7 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
     private async Task RefreshSensorsAsync() {
         IsBusy = true;
         try {
-            for (var ptr = _profileService?.ActiveProfile?.Sensors.Count ?? 0; ptr > 0; ptr--) {
-                _profileService?.ActiveProfile?.Blocks.RemoveAt(ptr - 1);
-            }
+            if (_profileService?.ActiveProfile is { } profile) profile.RefreshSensors();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
         } catch { /* ignored */
         } finally {
