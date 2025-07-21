@@ -1,10 +1,13 @@
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace DCCPanelController.View;
 
 public partial class BlocksPage : ContentPage {
-    public BlocksPage(BlocksViewModel viewModel) {
+    private readonly ILogger<BlocksPage> _logger;
+    public BlocksPage(ILogger<BlocksPage> logger, BlocksViewModel viewModel) {
+        _logger = logger;
         InitializeComponent();
         BindingContext = viewModel;
 

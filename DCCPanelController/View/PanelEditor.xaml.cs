@@ -5,21 +5,25 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;
+using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
+using Serilog;
 
 namespace DCCPanelController.View;
 
 public partial class PanelEditor : ContentPage {
+    private readonly ILogger<PanelEditor> _logger;
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly PanelEditorViewModel _viewModel;
     private bool _isPushingModal; // Flag to track modal presentation
 
-    public PanelEditor(Panel panel) {
+    public PanelEditor(ILogger<PanelEditor> logger, Panel panel) {
+        _logger = logger;
         InitializeComponent();
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(panel, this, PanelView) {
+        _viewModel = new PanelEditorViewModel(_logger, panel, this, PanelView) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };

@@ -21,6 +21,7 @@ public static class JsonRepository {
                 Console.WriteLine($"Unable to SAVE Data: {ex.Message}");
             }
         }
+        LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
     }
     
     public static async Task<Profile> LoadAsync(string profileName = "default", [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
@@ -31,6 +32,7 @@ public static class JsonRepository {
                     try {
                         var jsonString = await File.ReadAllTextAsync(filePath);
                         var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? new Profile(profileName);
+                        LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
                         profile.FixLoadedPanels();
                         return profile;
                     } catch (Exception ex) {
@@ -39,7 +41,9 @@ public static class JsonRepository {
                     }
                 }
                 Console.WriteLine($"File not found: {profileName}");
-                return new Profile(profileName);
+                var newProfile = new Profile(profileName);
+                LoggingLevelHelper.SetLogLevel(newProfile.Settings.LogLevel);
+                return newProfile;
             } catch (Exception ex) {
                 Console.WriteLine("Could not access Profile. New Profile created. " + ex.Message);
                 return new Profile(profileName);

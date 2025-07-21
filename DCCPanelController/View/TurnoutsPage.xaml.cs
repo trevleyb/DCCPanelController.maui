@@ -1,14 +1,17 @@
 using DCCPanelController.Clients;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 
 namespace DCCPanelController.View;
 
 public partial class TurnoutsPage : ContentPage {
+    private readonly ILogger<TurnoutsPage> _logger;
     private readonly TurnoutsViewModel _viewModel;
 
-    public TurnoutsPage(TurnoutsViewModel viewModel) {
+    public TurnoutsPage(ILogger<TurnoutsPage> logger, TurnoutsViewModel viewModel) {
         InitializeComponent();
+        _logger = logger; 
         _viewModel = viewModel;
         BindingContext = _viewModel;
         _viewModel.Navigation = Navigation;

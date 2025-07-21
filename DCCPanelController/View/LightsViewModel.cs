@@ -5,6 +5,7 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
@@ -27,8 +28,10 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
     private ProfileService _profileService;
-    
-    public LightsViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    private ILogger<LightsViewModel> _logger;
+
+    public LightsViewModel(ILogger<LightsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;
         _profileService = profileService;
         Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService),"LightsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;

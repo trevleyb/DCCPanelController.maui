@@ -6,14 +6,16 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
-using Plugin.Maui.Audio;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using Serilog;
+using Serilog.Events;
 
 namespace DCCPanelController;
 
 public static class MauiProgram {
     public static MauiApp CreateMauiApp() {
         var builder = MauiApp.CreateBuilder();
+        ConfigureSerilog();
         builder.UseMauiApp<App>()
                .ConfigureFonts(RegisterAllFonts)
                .ConfigureMauiHandlers(handlers => { })
@@ -24,10 +26,10 @@ public static class MauiProgram {
                .UseMauiCommunityToolkitMediaElement();
 
         FormHelper.RemoveBorders();
-
+        builder.Services.AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true));
+        
 #if DEBUG
         builder.Logging.AddDebug();
-        builder.Services.AddLogging(configure => configure.AddDebug());
 #endif
 
         var services = builder.Services;
@@ -61,7 +63,6 @@ public static class MauiProgram {
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
-
         return app;
     }
 
@@ -87,8 +88,6 @@ public static class MauiProgram {
     private static void AddSingletonViewAndModel<TView, TViewModel>(this IServiceCollection services) where TView : ContentPage where TViewModel : class {
         services.AddSingleton<TViewModel>();
         services.AddSingleton<TView>();
-
-        //services.AddSingleton<TView>(serviceProvider => new TView { BindingContext = serviceProvider.GetService<TViewModel>() });
     }
 
     /// <summary>
@@ -170,5 +169,27 @@ public static class MauiProgram {
             }
         }
     }
+    
+    private static void ConfigureSerilog() {
+        var logFilePath = GetLogFilePath();
+        var levelSwitch = LoggingLevelHelper.Initialize(LogEventLevel.Debug);
+        Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.Debug()
+                    .WriteTo.File(
+                         path: logFilePath,
+                         rollingInterval: RollingInterval.Day,
+                         retainedFileCountLimit: 7,
+                         fileSizeLimitBytes: 10_000_000,
+                         rollOnFileSizeLimit: true,
+                         shared: true,
+                         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+#if DEBUG
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+#endif
+                    .CreateLogger();
+        
+    }
 
+    private static string GetLogFilePath() => Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");
 }

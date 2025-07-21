@@ -5,6 +5,7 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
@@ -28,8 +29,10 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     public bool IsNotSupported => !IsSupported;
     
     private readonly ProfileService _profileService;
+    private ILogger<BlocksViewModel> _logger;
     
-    public BlocksViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    public BlocksViewModel(ILogger<BlocksViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;
         _profileService = profileService;
         Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService),"BlocksViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;

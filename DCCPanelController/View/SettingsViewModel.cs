@@ -12,9 +12,11 @@ using DCCPanelController.Clients.WiThrottle;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
 using DCCPanelController.View.Settings.WiThrottle;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
@@ -35,8 +37,10 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     public Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"SettingsViewModel: Active profile is not defined.");
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     private readonly ProfileService _profileService;
-
-    public SettingsPageViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    private ILogger<SettingsViewModel> _logger;
+    
+    public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;
         _profileService = profileService;
     }
 

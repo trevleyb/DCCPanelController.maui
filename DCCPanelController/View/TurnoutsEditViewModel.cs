@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Properties;
+using Microsoft.Extensions.Logging;
 using Turnout = DCCPanelController.Models.DataModel.Turnout;
 
 namespace DCCPanelController.View;
@@ -12,8 +13,10 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesView
     [ObservableProperty] private Turnout _turnout;
     [ObservableProperty] private bool _isServerControlled;
     [ObservableProperty] private bool _isManualControlled;
-
-    public TurnoutsEditViewModel(Turnout turnout, ConnectionService connectionService) {
+    private ILogger<TurnoutsEditViewModel> _logger;
+    
+    public TurnoutsEditViewModel(ILogger<TurnoutsEditViewModel> logger, Turnout turnout, ConnectionService connectionService) {
+        _logger = logger;
         Turnout = turnout;
         ConnectionService = connectionService;
         Title = Turnout?.Name ?? "Turnout Properties";
@@ -28,7 +31,7 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesView
     }
 
     public Microsoft.Maui.Controls.View CreatePropertiesView() {
-        var propPage = new TurnoutsEditView(this);
+        var propPage = new TurnoutsEditView((ILogger<TurnoutsEditView>) _logger, this);
         return propPage;
     }
 

@@ -9,13 +9,17 @@ using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
 using DCCPanelController.View.Settings.WiThrottle;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
+    
+    private readonly ILogger<SettingsPage> _logger;
     private readonly SettingsPageViewModel? _pageViewModel;
 
-    public SettingsPage(SettingsPageViewModel pageViewModel) {
+    public SettingsPage(ILogger<SettingsPage> logger, SettingsPageViewModel pageViewModel) {
+        _logger = logger;
         _pageViewModel = pageViewModel;
         ArgumentNullException.ThrowIfNull(_pageViewModel);
         BindingContext = _pageViewModel;

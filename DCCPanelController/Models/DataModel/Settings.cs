@@ -12,5 +12,6 @@ public partial class Settings : ObservableObject {
     [ObservableProperty] private bool _connectOnStartup = true;
     [ObservableProperty] private bool _setTurnoutStatesOnStartup = true;
     [ObservableProperty] private bool _showWelcomePage = true;
+    [ObservableProperty] private string _logLevel = "Info";
     [ObservableProperty] private IDccClientSettings? _clientSettings = new SimulatorSettings();
 }

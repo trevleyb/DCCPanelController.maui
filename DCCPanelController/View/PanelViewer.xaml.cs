@@ -1,16 +1,19 @@
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class PanelViewer {
+    private readonly ILogger<PanelViewer> _logger;
     private readonly ConnectionService? _connectionService;
     private readonly PanelViewerViewModel? _viewModel;
     private int _activeSpan = 3;
     private int _minSpan = 1;
     private int _maxSpan = 5;
 
-    public PanelViewer(PanelViewerViewModel viewModel, ConnectionService connectionService) {
+    public PanelViewer(ILogger<PanelViewer> logger, PanelViewerViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
+        _logger = logger;
         _connectionService = connectionService;
         _viewModel = viewModel;
         _viewModel.NavigationService = Navigation;

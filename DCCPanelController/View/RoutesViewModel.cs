@@ -8,6 +8,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
@@ -33,8 +34,10 @@ public partial class RoutesViewModel : ConnectionViewModel {
     
     public bool IsSupported { get; private set; }
     public bool IsNotSupported => !IsSupported;
+    private ILogger<RoutesViewModel> _logger;
 
-    public RoutesViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    public RoutesViewModel(ILogger<RoutesViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;
         _profileService = profileService;
         Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService),"RoutesViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;

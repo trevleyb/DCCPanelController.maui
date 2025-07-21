@@ -1,15 +1,18 @@
 using System.ComponentModel;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class TurnoutsEditView : ContentView {
+    private readonly ILogger<TurnoutsEditView> _logger;
     private readonly TurnoutsEditViewModel _viewModel;
 
-    public TurnoutsEditView(TurnoutsEditViewModel viewModel) {
+    public TurnoutsEditView(ILogger<TurnoutsEditView> logger, TurnoutsEditViewModel viewModel) {
         InitializeComponent();
+        _logger = logger;
         _viewModel = viewModel;
-        BindingContext = _viewModel;
         _viewModel.Turnout.PropertyChanged += ViewModelOnPropertyChanged;
+        BindingContext = _viewModel;
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {

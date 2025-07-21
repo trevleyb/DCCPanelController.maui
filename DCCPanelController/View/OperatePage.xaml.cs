@@ -5,13 +5,16 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
+    private readonly ILogger<OperatePage> _logger;
     private bool _tabBarState = true;
 
-    public OperatePage(OperateViewModel viewModel) {
+    public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel) {
+        _logger = logger;
         BindingContext = viewModel;
         viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         InitializeComponent();

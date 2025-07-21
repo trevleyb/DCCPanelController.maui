@@ -4,6 +4,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace DCCPanelController.View;
 
@@ -22,8 +24,10 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     public bool HasNoPanels => !HasPanels;
     public ObservableCollection<int> PanelIndicators { get; private set; } = [];
 
+    private ILogger<OperateViewModel> _logger;
     private readonly ProfileService _profileService;
-    public OperateViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;
         _profileService = profileService;
         Panels = [];        // Just set it to nothing until it is re-assigned. 
         _ = Task.Run(async () => await LoadPanelsAsync());

@@ -9,6 +9,8 @@ using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.TileProperties;
+using Microsoft.Extensions.Logging;
+using ILogger = Serilog.ILogger;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
@@ -43,7 +45,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
-    public PanelEditorViewModel(Panel panel, ContentPage page, ControlPanelView panelView) {
+    private ILogger<PanelEditor> _logger;
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ContentPage page, ControlPanelView panelView) {
+        _logger = logger;
         _original = panel;
         _panel = panel.Clone(false);     // Make a clone so we are working on a clone
         _navigation = page.Navigation;

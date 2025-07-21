@@ -5,6 +5,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.View.Properties;
+using Microsoft.Extensions.Logging;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
@@ -28,7 +29,10 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     public bool ShowLivePanel => !ShowThumbnail;
     public bool IsNotLoading => !IsLoading;
 
-    public PanelViewerViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    private ILogger<PanelViewerViewModel> _logger;
+
+    public PanelViewerViewModel(ILogger<PanelViewerViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;
         _profileService = profileService;
         Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService),"PanelViewerViewModel: Active profile is not defined.");
         PropertyChanged += OnPropertyChanged;
@@ -124,7 +128,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
                 await Task.Delay(100);
-                var editorPage = new PanelEditor(panel);
+                var editorPage = new PanelEditor((ILogger<PanelEditor>)_logger,panel);
                 await navigation.PushAsync(editorPage);
                 await editorPage.PageClosed;
             }

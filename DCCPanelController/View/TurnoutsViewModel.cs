@@ -8,6 +8,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties;
+using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
@@ -42,8 +43,10 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
     private ProfileService _profileService;
-    
-    public TurnoutsViewModel(ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+    private ILogger<TurnoutsViewModel> _logger;
+
+    public TurnoutsViewModel(ILogger<TurnoutsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
+        _logger = logger;        
         _profileService = profileService;
         Turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService),"TurnoutViewModel: Active profile is not defined.");
         PropertyChanged += (sender, args) => {
@@ -151,7 +154,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         turnout ??= SelectedTurnout;
         try {
             if (turnout is not null && Navigation is { } navigation) {
-                var turnoutsEditViewModel = new TurnoutsEditViewModel(turnout, ConnectionService);
+                var turnoutsEditViewModel = new TurnoutsEditViewModel(LogHelper.CreateLogger<TurnoutsEditViewModel>(), turnout, ConnectionService);
                 await PropertyDisplayService.ShowPropertiesAsync(navigation, turnoutsEditViewModel, ScreenWidth, ScreenHeight);
                 await _profileService.SaveActiveProfileAsync();
                 OnPropertyChanged(nameof(Turnouts));

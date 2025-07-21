@@ -12,6 +12,7 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.PathFinder;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
+using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
 using CoreGraphics;
@@ -22,6 +23,7 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView {
+    private readonly ILogger<ControlPanelView> _logger; 
     public enum CellHighlightAction {
         Selected,
         DragInvalid,
@@ -47,6 +49,7 @@ public partial class ControlPanelView {
     private double _viewWidth;
 
     public ControlPanelView() {
+        _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
         InitializeComponent();
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
