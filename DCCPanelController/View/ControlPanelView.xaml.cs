@@ -179,11 +179,16 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Given the Panel list of Entities, add each one as a tile to the panel.
     /// </summary>
-    private void AddEntitiesToGrid(Panel? panel) {
+    private async Task AddEntitiesToGrid(Panel? panel) {
         if (panel is null) return;
         _pathTracer.ClearTileRegistry();
-        foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
-            AddEntityToGrid(entity);
+        DynamicGrid.BatchBegin();
+        try {
+            foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
+                AddEntityToGrid(entity);
+            }
+        } finally {
+            DynamicGrid.BatchCommit();
         }
     }
 
