@@ -23,24 +23,22 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     protected override void OnAppearing() {
         base.OnAppearing();
-        if (BindingContext is OperateViewModel viewModel ) {
-            if (viewModel.ActivePanel is not null) {
-                PanelView.IsVisible = true;
-                PanelView.Panel = viewModel.ActivePanel;
-                PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
-                BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
-                PanelView.ForceRefresh();
-            }
-            viewModel.UpdatePanelIndicators();
+        if (BindingContext is OperateViewModel viewModel) {
+            PanelView.Panel = null;
+            viewModel.SelectPanelCommand.Execute(viewModel.CurrentPanelIndex);
         }
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {
+                _logger.LogDebug("ViewModelOnPropertyChanged: ActivePanel='Valid'");
                 PanelView.Panel = viewModel.ActivePanel;
                 PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
                 BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
+            } else {
+                PanelView.Panel = null;
+                _logger.LogDebug("ViewModelOnPropertyChanged: BindingContext is not OperateViewModel");
             }
         }
     }

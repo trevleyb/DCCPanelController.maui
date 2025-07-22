@@ -52,16 +52,17 @@
                             </MultiBinding>
                         </Border.HeightRequest>
                         <Grid>
-                            <Image IsVisible="true"
-                            Source="{Binding Thumbnail}" Aspect="AspectFill"/>
+                            <!-- <Image IsVisible="true" -->
+                            <!-- Source="{Binding Thumbnail}" Aspect="AspectFill"/> -->
 
-                            <!-- <view:ControlPanelView -->
-                            <!--     IsVisible="true" -->
-                            <!--     BackgroundColor="{Binding PanelBackgroundColor}" -->
-                            <!--     HorizontalOptions="Fill" -->
-                            <!--     Panel="{Binding .}" -->
-                            <!--     ShowGrid="false" -->
-                            <!--     VerticalOptions="Fill"/> -->
+                            <view:ControlPanelView
+                                IsVisible="true"
+                                BackgroundColor="{Binding PanelBackgroundColor}"
+                                HorizontalOptions="Fill"
+                                Panel="{Binding}"
+                                BindingContext="{Binding}"
+                                ShowGrid="false"
+                                VerticalOptions="Fill"/>
 
                         </Grid>
                     </Border>
@@ -109,17 +110,18 @@
                             Margin="5"
                             Background="{Binding DisplayBackgroundColor}">
                             <Grid>
-                                <Image IsVisible="true"
-                                       Source="{Binding Thumbnail}" Aspect="AspectFill"/>
+                                <!-- <Image IsVisible="true" -->
+                                <!--        Source="{Binding Thumbnail}" Aspect="AspectFill"/> -->
 
-                                <!-- <view:ControlPanelView -->
-                                <!--     IsVisible="true" -->
-                                <!--     ShowGrid="false" -->
-                                <!--     DesignMode="False" -->
-                                <!--     Interactive="False" -->
-                                <!--     HorizontalOptions="Fill" -->
-                                <!--     Panel="{Binding .}" -->
-                                <!--     VerticalOptions="Fill"/> -->
+                                <view:ControlPanelView
+                                    IsVisible="true"
+                                    ShowGrid="false"
+                                    DesignMode="False"
+                                    Interactive="False"
+                                    HorizontalOptions="Fill"
+                                    Panel="{Binding}"
+                                    BindingContext="{Binding}"
+                                    VerticalOptions="Fill"/>
                             </Grid>
                             <Border.HeightRequest>
                                 <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">

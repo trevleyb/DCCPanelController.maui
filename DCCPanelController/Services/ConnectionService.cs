@@ -68,6 +68,7 @@ public partial class ConnectionService : ObservableObject {
                 
                 OnConnectionChanged(true);
                 await SetTurnoutsToDefaultState();
+                await ResetOccupancyStates();
                 return connectResult;
             }
         } catch (Exception ex) {
@@ -81,6 +82,7 @@ public partial class ConnectionService : ObservableObject {
 
     public async Task DisconnectAsync() {
         if (Client is { }) {
+            await ResetOccupancyStates();
             if (Client.IsConnected) await Client.DisconnectAsync();
             Client.ClientMessage -= ClientOnClientMessage;
             Client = null;
@@ -104,7 +106,13 @@ public partial class ConnectionService : ObservableObject {
         OnPropertyChanged(nameof(Client));
         ConnectStateChanged?.Invoke(this,IsConnected);
     }
-    
+
+    public async Task ResetOccupancyStates() {
+        foreach (var sensor in _profileService.ActiveProfile.Sensors) {
+            sensor.State = false;
+        }
+    }
+
     public async Task SetTurnoutsToDefaultState() {
         if (_profileService?.ActiveProfile?.Settings?.SetTurnoutStatesOnStartup ?? false) {
             if (Client is { IsConnected: true }) {

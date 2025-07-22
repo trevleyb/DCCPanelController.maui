@@ -11,19 +11,25 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:services="clr-namespace:DCCPanelController.Services">
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
-        <ShellContent
-            ContentTemplate="{DataTemplate view:OperatePage}"
-            Icon="control.png"
-            Title="Operate"/>
-        <ShellContent
-            ContentTemplate="{DataTemplate view:PanelViewer}"
+        <Tab Icon="control.png"
+             Title="Operate"
+             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
+            <ShellContent ContentTemplate="{DataTemplate view:OperatePage}"/>
+        </Tab>
+
+        <Tab
             Icon="panels.png"
-            Title="Panel Editor"/>
-        
-        <Tab Title="Tables" Icon="tables.png">
+            Title="Panel Editor"
+            IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
+            <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
+        </Tab>
+
+        <Tab Title="Tables" Icon="tables.png"
+             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:TurnoutsPage}"
                 Title="Turnouts"/>
@@ -40,7 +46,8 @@
                 ContentTemplate="{DataTemplate view:LightsPage}"
                 Title="Lights"/>
         </Tab>
-        <Tab Title="Settings" Icon="settings.png">
+        <Tab Title="Settings" Icon="settings.png"
+             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:SettingsPage}"
                 Title="Settings"/>
@@ -54,7 +61,6 @@
                 ContentTemplate="{DataTemplate view:AboutPage}"
                 Title="About"/>
         </Tab>
-
     </FlyoutItem>
 
 </Shell>

@@ -146,8 +146,8 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type x:Int32}">
                         <Border
-                            WidthRequest="15"
-                            HeightRequest="15"
+                            WidthRequest="20"
+                            HeightRequest="20"
                             StrokeShape="Ellipse"
                             StrokeThickness="0">
 

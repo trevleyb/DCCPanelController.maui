@@ -139,7 +139,8 @@ public partial class PanelEditorViewModel : ObservableObject {
             // ----------------------------------------------------------
             Panel.Base64Image = await GetThumbnailImage();
             UpdateOriginalFromCopy();
-            await _profileService.SaveActiveProfileAsync(); 
+            await _profileService.SaveActiveProfileAsync();
+            await DisplayAlertHelper.DisplayToastAlert("Changes Saved");
             CheckIfPanelChanged();
         }
     }

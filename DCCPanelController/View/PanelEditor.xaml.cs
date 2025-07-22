@@ -38,6 +38,7 @@ public partial class PanelEditor : ContentPage {
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;
         BindingContext = _viewModel;
+        AppState.Instance.IsEditingPanel = true;
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -70,6 +71,7 @@ public partial class PanelEditor : ContentPage {
             PanelView.TileChanged -= PanelViewOnTileChanged;
             PanelView.TileTapped -= PanelViewOnTileTapped;
             _closeTcs.TrySetResult(true); // or return data as needed
+            AppState.Instance.IsEditingPanel = false;
         }
     }
 
@@ -82,8 +84,12 @@ public partial class PanelEditor : ContentPage {
         }
     }
 
-    private void ViewModelOnForcePanelRefresh() {
-        PanelView.ForceRefresh();
+    private async void ViewModelOnForcePanelRefresh() {
+        try {
+            await PanelView.ForceRefresh();
+        } catch (Exception e) {
+            _logger.LogCritical("Error Forcing Refresh from ViewModelOnForcePanelRefresh: {Message}", e.Message);
+        }
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {

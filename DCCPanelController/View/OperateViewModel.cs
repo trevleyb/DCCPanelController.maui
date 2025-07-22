@@ -78,8 +78,8 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     private void SelectPanel(int index) {
-        if (ShowWelcomePage) index = 0;
-        if (Panels?.Any() == true && index >= 0 && index < Panels.Count) {
+        if (index < 0) index = 0;
+        if (Panels?.Any() == true && index < Panels.Count) {
             ActivePanel = null;
             CurrentPanelIndex = index;
             ActivePanel = Panels[index];

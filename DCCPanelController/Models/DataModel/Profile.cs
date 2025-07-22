@@ -45,18 +45,6 @@ public partial class Profile : ObservableObject {
         return Blocks.FirstOrDefault(s => s.Id == id);
     }
 
-    //public static Profile NewOrLoad(string profileName) {
-    //    return Task.Run(() => JsonRepository.LoadAsync(profileName)).Result;
-    //}
-
-    //public static async Task<Profile> LoadAsync(string profileName) {
-    //    return await JsonRepository.LoadAsync(profileName);
-    //}
-
-    //public async Task SaveAsync() {
-    //    await JsonRepository.SaveAsync(this, ProfileName);
-    //}
-
     /// <summary>
     ///     This method ensures that each panel in the collection of panels is properly initialized with the reference to the
     ///     parent
@@ -71,8 +59,8 @@ public partial class Profile : ObservableObject {
     }
 
     // Add this generic helper method to your Profile class
-    private static void RefreshCollection<T>(ObservableCollection<T> collection, Func<T, bool> predicate) {
-        var itemsToRemove = collection.Where(predicate).ToList();
+    private static void RefreshCollection<T>(ObservableCollection<T> collection, Func<T, bool> removePredicate) {
+        var itemsToRemove = collection.Where(removePredicate).ToList();
         foreach (var item in itemsToRemove) {
             collection.Remove(item);
         }
@@ -87,10 +75,10 @@ public partial class Profile : ObservableObject {
         RefreshSensors();
     }
 
-    public void RefreshTurnouts()   => RefreshCollection(Turnouts, t => t.IsEditable == false);
-    public void RefreshRoutes()     => RefreshCollection(Routes, t => t.IsEditable == false);
-    public void RefreshBlocks()     => RefreshCollection(Blocks, t => t.IsEditable == false);
-    public void RefreshSignals()    => RefreshCollection(Signals, t => t.IsEditable == false);
-    public void RefreshSensors()    => RefreshCollection(Sensors, t => t.IsEditable == false);
-    public void RefreshLights()     => RefreshCollection(Lights, t => t.IsEditable == false);
+    public void RefreshTurnouts()   => RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
+    public void RefreshRoutes()     => RefreshCollection(Routes, t => t is { IsEditable  : false, IsModified: false });
+    public void RefreshBlocks()     => RefreshCollection(Blocks, t => t is { IsEditable  : false, IsModified: false });
+    public void RefreshSignals()    => RefreshCollection(Signals, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshSensors()    => RefreshCollection(Sensors, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshLights()     => RefreshCollection(Lights, t => t is { IsEditable  : false, IsModified: false });
 }

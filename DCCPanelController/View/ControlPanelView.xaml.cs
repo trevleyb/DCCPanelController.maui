@@ -49,8 +49,6 @@ public partial class ControlPanelView {
     private double _viewHeight;
     private double _viewWidth;
 
-    [ObservableProperty] private bool _isRefreshing = false;
-    
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
         InitializeComponent();
@@ -89,16 +87,31 @@ public partial class ControlPanelView {
     #endregion
 
     #region Grid Management
-    private void OnGridSizeChanged(object? sender, EventArgs e) {
-        DrawPanel();
+    private async void OnGridSizeChanged(object? sender, EventArgs e) {
+        try {
+            await DrawPanel();
+        } catch (Exception ex) {
+            _logger.LogError("OnGridSizeChanged Threw Error: {Message}", ex.Message);
+        }
     }
 
     public bool HasGridSizeChanged(double width, double height) {
         if (width < 1.0 || height < 1.0) return false;
-        var roundWidth = (int)(width * 100) / 100;
-        var roundHeight = (int)(height * 100) / 100;
-        var difference = Math.Abs(CalculateGridSize(roundWidth, roundHeight) - _gridSize);
-        return difference > 1;
+
+        // Use a small epsilon for floating-point comparison. This is more
+        // robust and will detect smaller, but still significant, size changes.
+        const double Epsilon = 0.01;
+
+        var newGridSize = CalculateGridSize(width, height);
+        var difference = Math.Abs(newGridSize - _gridSize);
+
+        return difference > Epsilon;
+
+        // if (width < 1.0 || height < 1.0) return false;
+        // var roundWidth = (int)(width * 100) / 100;
+        // var roundHeight = (int)(height * 100) / 100;
+        // var difference = Math.Abs(CalculateGridSize(roundWidth, roundHeight) - _gridSize);
+        // return difference > 1;
     }
 
     public double CalculateGridSize(double width, double height) {
@@ -108,15 +121,17 @@ public partial class ControlPanelView {
         return gridSize;
     }
 
-    public void ForceRefresh() {
-        DrawPanel(true);
+    public async Task ForceRefresh() {
+        await DrawPanel(true);
     }
 
-    private void DrawPanel(bool forceRefresh = false,
+    private async Task DrawPanel(bool forceRefresh = false,
                            [CallerMemberName] string memberName = "",
                            [CallerFilePath] string sourceFilePath = "",
                            [CallerLineNumber] int sourceLineNumber = 0) {
+
         if (Panel is null) return;
+        if (Panel.IsRefreshing) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
@@ -124,14 +139,13 @@ public partial class ControlPanelView {
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
-        //_logger.LogDebug("**DrawPanel: From='{MemberName}' @ '{SourceLineNumber}'", memberName, sourceLineNumber);
-        //_logger.LogDebug("**DrawPanel: Panel={UnknownPanel} and Force={B} and HasChanged={HasGridSizeChanged1}", Panel?.Id ?? "UNKNOWN PANEL???", forceRefresh, HasGridSizeChanged(MainGrid.Width, MainGrid.Height));
-        //_logger.LogDebug("**DrawPanel: Width={MainGridWidth} Height={MainGridHeight}", MainGrid.Width, MainGrid.Height);
-
+        _logger.LogDebug("DrawPanel: From='{MemberName}' @ '{SourceLineNumber}' Panel='{Panel}' Forced='{Forced}' Changed='{HasChanged}' ", memberName, sourceLineNumber, Panel?.Id ?? "UNKNOWN PANEL???", forceRefresh, HasGridSizeChanged(MainGrid.Width, MainGrid.Height));
         try {
-            IsRefreshing = true;
+            Panel!.IsRefreshing = true;
+            await Task.Delay(10);    // Yield to allow UI to update
+            
             ClearAllSelectedTiles();
-            using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", false)) {
+            using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", true)) {
                 _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
                 _viewWidth = _gridSize * Cols;
                 _viewHeight = _gridSize * Rows;
@@ -158,7 +172,7 @@ public partial class ControlPanelView {
                 DrawGrid();
             }
         } finally {
-            IsRefreshing = false;
+            Panel!.IsRefreshing = false;
         }
     }
 
@@ -667,9 +681,11 @@ public partial class ControlPanelView {
     ///     Support dropping the dragged tile onto the panel in a new position (or the same position)
     /// </summary>
     private void DropTileOnPanel(object? sender, DropEventArgs e) {
+        _logger.LogInformation("DropTileOnPanel Called.");
         try {
             if (!e.Data.Properties.ContainsKey("Source") ||
                 !e.Data.Properties.ContainsKey("Tile")) {
+                _logger.LogInformation("DropTileOnPanel Called: No source or tile");
                 return;
             }
 
@@ -679,6 +695,8 @@ public partial class ControlPanelView {
             var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
 
             if (gridPosition is { } position && tile is not null) {
+                _logger.LogInformation("DropTileOnPanel Source='{Source}' Tile='{Tile}' Position='{Col},{Row}'", source, tile.Entity.EntityName ?? "Undefined", position.Col, position.Row);
+
                 // Make sure that the item we are placing is onto a point that is 
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
@@ -689,6 +707,7 @@ public partial class ControlPanelView {
                         case "Panel":
                             switch (EditMode) {
                             case EditModeEnum.Move:
+                                _logger.LogInformation("DropTileOnPanel: Mode=Move");
                                 tile.Entity.Col = position.Col;
                                 tile.Entity.Row = position.Row;
                                 SetTileGridPosition(tile);
@@ -697,6 +716,7 @@ public partial class ControlPanelView {
                                 break;
 
                             case EditModeEnum.Copy:
+                                _logger.LogInformation("DropTileOnPanel: Mode=Copy");
                                 var newEntity = panel.CreateEntityFrom(tile.Entity);
                                 newEntity.Col = position.Col;
                                 newEntity.Row = position.Row;
@@ -705,6 +725,7 @@ public partial class ControlPanelView {
                                 break;
 
                             case EditModeEnum.Size:
+                                _logger.LogInformation("DropTileOnPanel: Mode=Size");
                                 ResizeTrack(tile, position.Col, position.Row);
                                 MarkTileSelected(tile);
                                 OnTileChanged(tile);
@@ -717,6 +738,7 @@ public partial class ControlPanelView {
                             break;
 
                         case "Symbol":
+                            _logger.LogInformation("DropTileOnPanel: Mode=Symbol");
                             var dropEntity = panel.CreateEntityFrom(tile.Entity);
                             dropEntity.Col = position.Col;
                             dropEntity.Row = position.Row;
@@ -810,7 +832,7 @@ public partial class ControlPanelView {
         set => SetValue(ShowTrackErrorsProperty, value);
     }
 
-    private static void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
+    private static async void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is ControlPanelView control) {
             control.ShowGrid = control.DesignMode;
             control.DynamicGrid.GestureRecognizers.Clear();
@@ -831,56 +853,70 @@ public partial class ControlPanelView {
                     control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
                 }
             }
-            control.DrawPanel();
+            await control.DrawPanel();
         }
     }
 
     /// <summary>
     ///     If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>
-    private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is ControlPanelView control) {
-            if (oldValue != newValue) {
-                if (oldValue is Panel oldPanel) {
-                    oldPanel.Entities.CollectionChanged -= EntitiesOnCollectionChanged;
-                }
-                if (newValue is Panel newPanel) {
-                    newPanel.Entities.CollectionChanged += (_, args) => EntitiesOnCollectionChanged(control, args);
-                    control.Panel = newPanel;
-                    control.ClearAllSelectedTiles();
-                    control.DrawPanel(true);
-                }
+    private static async void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is not ControlPanelView control) return;
+
+        // Unsubscribe from the old panel's events to prevent memory leaks and stop listening to it.
+        if (oldValue is Panel oldPanel) {
+            oldPanel.Entities.CollectionChanged -= control.EntitiesOnCollectionChanged;
+            oldPanel.PropertyChanged -= control.OnPanelPropertyChanged;
+        }
+
+        // Subscribe to the new panel's events to react to its changes.
+        if (newValue is Panel newPanel) {
+            newPanel.Entities.CollectionChanged += control.EntitiesOnCollectionChanged;
+            newPanel.PropertyChanged += control.OnPanelPropertyChanged;
+
+            control.ClearAllSelectedTiles();
+            await control.ForceRefresh();
+        }
+    }
+
+    private void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
+        ClearAllSelectedTiles();
+
+        // Remove any entities from the grid that were removed from the collection.
+        if (e.OldItems is not null) {
+            foreach (var oldEntity in e.OldItems.Cast<Entity>()) {
+                _logger.LogDebug("Removing Item from Grid: {item}@{col},{row}", oldEntity.EntityName, oldEntity.Col, oldEntity.Row);
+                RemoveEntityFromGrid(oldEntity);
+            }
+        }
+
+        // Add any new entities to the grid that were added to the collection.
+        if (e.NewItems is not null) {
+            ITile? lastTile = null;
+            foreach (var newEntity in e.NewItems.Cast<Entity>()) {
+                _logger.LogDebug("Adding Item to Grid: {item}@{col},{row}", newEntity.EntityName, newEntity.Col, newEntity.Row);
+                lastTile = AddEntityToGrid(newEntity);
+            }
+
+            // Highlight the last item that was added.
+            if (lastTile is not null) {
+                MarkTileSelected(lastTile);
             }
         }
     }
 
-    private static void EntitiesOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) {
-        if (sender is ControlPanelView control) {
-            control.ClearAllSelectedTiles();
-
-            // Any items that have been removed from the collection need to be
-            // removed from the display panel. 
-            // -------------------------------------------------------------------------
-            var oldEntities = e.OldItems?.Cast<Entity>().ToList() ?? new List<Entity>();
-            foreach (var oldEntity in oldEntities) {
-                control.RemoveEntityFromGrid(oldEntity);
-            }
-
-            // Any new items added to the Panel.Entities collection need to be drawn
-            // on the display panel. This will iterate and add the items
-            // -------------------------------------------------------------------------
-            var newEntities = e.NewItems?.Cast<Entity>().ToList() ?? new List<Entity>();
-            ITile? lastTile = null;
-            foreach (var newEntity in newEntities) {
-                lastTile = control.AddEntityToGrid(newEntity);
-            }
-
-            // Highlight the last item added to the collection. Normally there would 
-            // only be one anyway, but just in case we have a mass-add function.
-            // ----------------------------------------------------------------------
-            if (lastTile is not null) {
-                control.MarkTileSelected(lastTile);
-            }
+    /// <summary>
+    /// Responds to property changes on the currently assigned Panel object.
+    /// </summary>
+    private async void OnPanelPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e) {
+        if (e.PropertyName is nameof(Panel.Cols) or nameof(Panel.Rows)) {
+            Dispatcher.Dispatch(async void () => {
+                try {
+                    await ForceRefresh();
+                } catch (Exception ex) {
+                    _logger.LogCritical("Error Forcing a Refresh on Col/Row Change: {Message}",ex.Message);
+                }
+            });
         }
     }
 

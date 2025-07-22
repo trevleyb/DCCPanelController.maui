@@ -26,6 +26,8 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
     [ObservableProperty] private int _sortOrder;
 
+    [ObservableProperty] [JsonIgnore] bool _isRefreshing = false;
+
     [JsonIgnore] public Panels? Panels { get; set; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
