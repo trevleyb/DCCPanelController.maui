@@ -335,10 +335,6 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Models\ViewModel\Actions\" />
-    </ItemGroup>
-
-    <ItemGroup>
         <ProjectReference Include="..\DCCClient.Jmri\DCCClient.Jmri.csproj" />
         <ProjectReference Include="..\DCCClient.Simulator\DCCClient.Simulator.csproj" />
         <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj" />
