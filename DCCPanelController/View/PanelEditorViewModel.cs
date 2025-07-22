@@ -133,11 +133,14 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
+            // Take an image (thumbnail) of the Panel 
+            // Currently turned off as we render panels directly
+            // Panel.Base64Image = await GetThumbnailImage();
+
             // If we are saving, then we need to update the original item
             // but still work on the copied item. So just make a clone of 
             // the editing panel and make the original point to this new clone. 
             // ----------------------------------------------------------
-            Panel.Base64Image = await GetThumbnailImage();
             UpdateOriginalFromCopy();
             await _profileService.SaveActiveProfileAsync();
             await DisplayAlertHelper.DisplayToastAlert("Changes Saved");
@@ -148,9 +151,11 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
+            _panelView.UnMarkRotatedSelectedTiles();
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
+            _panelView.ReMarkRotatedSelectedTiles();
         }
         CheckIfPanelChanged();
     }

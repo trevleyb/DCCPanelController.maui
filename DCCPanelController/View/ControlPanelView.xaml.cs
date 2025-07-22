@@ -168,7 +168,7 @@ public partial class ControlPanelView {
                         DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
                     }
                 }
-                AddEntitiesToGrid(Panel);
+                await AddEntitiesToGrid(Panel);
                 DrawGrid();
             }
         } finally {
@@ -199,14 +199,34 @@ public partial class ControlPanelView {
     private ITile? AddEntityToGrid(Entity entity) {
         using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", false)) {
             var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
-            if (tile is ContentView view) {
-                view.ClassId = entity.Guid.ToString();
-                SetTileGestures(tile);
-                SetTileGridPosition(tile);
-                DynamicGrid.Children.Add(view);
-                if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
+            if (tile is not null) {
+                tile.TileChanged += TileOnPropertiesChanged;
+                if (tile is ContentView view) {
+                    view.ClassId = entity.Guid.ToString();
+                    SetTileGestures(tile);
+                    SetTileGridPosition(tile);
+                    DynamicGrid.Children.Add(view);
+                    if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
+                }
+                return tile;
+            } else {
+                _logger.LogError("Unable to create the tile for '{Entity}'", entity.EntityName);
+                return null;
             }
-            return tile;
+        }
+    }
+
+    private void TileOnPropertiesChanged(object? sender, TileChangedEventArgs e) {
+        if (sender is Tile tile) {
+            
+            _logger.LogDebug("TilePropertyChanged: {ChangeType}",e.ChangeType);
+            
+            switch (e.ChangeType) {
+            case TileChangeType.Dimensions:
+                SetTileGridPosition(tile);
+                tile.ForceRedraw();
+                break;
+            }
         }
     }
 
@@ -329,6 +349,7 @@ public partial class ControlPanelView {
     }
 
     private void RemoveTileFromGrid(ITile tile) {
+        tile.TileChanged -= TileOnPropertiesChanged;
         RemoveEntityFromGrid(tile.Entity);
         OnTileChanged(tile);
     }
@@ -474,14 +495,31 @@ public partial class ControlPanelView {
         _selectedTiles.Add(tile);
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
-
-        //OnTileSelected(tile, 1);
     }
 
     public void MarkTileUnSelected(ITile tile) {
         _selectedTiles.Remove(tile);
         UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
         tile.IsSelected = false;
+    }
+
+    /// <summary>
+    /// There are times, such as when we rotate a tile, that the bounds may have
+    /// changed, and we need to re-mark the tile. This code will unmark and
+    /// remark the tiles where the width or height > 1. This is done
+    /// without calling Mark/UnMark as we do not want to event that the
+    /// tile was marked or unmarked.  
+    /// </summary>
+    public void ReMarkRotatedSelectedTiles() {
+        foreach (var tile in _selectedTiles.Where(x => x.Entity.Width > 1 || x.Entity.Height > 1)) {
+            HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
+        }
+    }
+
+    public void UnMarkRotatedSelectedTiles() {
+        foreach (var tile in _selectedTiles.Where(x => x.Entity.Width > 1 || x.Entity.Height > 1)) {
+            UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
+        }
     }
 
     public void ClearAllSelectedTiles() {

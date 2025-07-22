@@ -25,14 +25,14 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: EditableColor("Background Color", "", 5, "Border")]
     private Color _backgroundColor = Colors.Transparent;
 
-    [ObservableProperty] [property: EditableColor("Border Color", "", 5, "Border")]
-    private Color _borderColor = Colors.Transparent;
+    //[ObservableProperty] [property: EditableColor("Border Color", "", 5, "Border")]
+    //private Color _borderColor = Colors.Transparent;
 
-    [ObservableProperty] [property: EditableInt("Border Radius", "", 5, "Border")]
-    private int _borderRadius;
+    //[ObservableProperty] [property: EditableInt("Border Radius", "", 5, "Border")]
+    //private int _borderRadius;
 
-    [ObservableProperty] [property: EditableInt("Border Width", "", 5, "Border")]
-    private int _borderWidth;
+    //[ObservableProperty] [property: EditableInt("Border Width", "", 5, "Border")]
+    //private int _borderWidth;
    
     [JsonIgnore] protected override int RotationFactor => 90;
 
@@ -46,6 +46,16 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     public TextEntity(TextEntity entity) : base(entity) { }
 
     public override string EntityName => "Text Block";
+
+    public override void RotateLeft() {
+        base.RotateLeft();
+        HandleRotation();
+    }
+
+    public override void RotateRight() {
+        base.RotateRight();
+        HandleRotation();
+    }
     
     public override Entity Clone() {
         return new TextEntity(this);

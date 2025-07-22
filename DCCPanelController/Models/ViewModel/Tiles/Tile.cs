@@ -5,6 +5,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
@@ -14,6 +15,7 @@ public abstract class Tile : ContentView, ITile {
 
     protected readonly TileDisplayMode DisplayMode;
     protected bool HaveVisualPropertiesChanged;
+    protected bool HaveDimensionsChanged;
     protected HashSet<string> VisualProperties { get; } = [];
     protected HashSet<string> ChangedProperties { get; } = [];
     protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
@@ -22,6 +24,8 @@ public abstract class Tile : ContentView, ITile {
     private const int DebounceDelay = 75;
     private CancellationTokenSource? _debounceRebuildCts;
     private Dictionary<string, object?> _propertyCache = [];
+
+    public event EventHandler<TileChangedEventArgs>? TileChanged;
 
     protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
         Entity = entity;
@@ -34,6 +38,8 @@ public abstract class Tile : ContentView, ITile {
         VisualProperties.Add(nameof(GridSize));
         VisualProperties.Add(nameof(Entity.Col));
         VisualProperties.Add(nameof(Entity.Row));
+        VisualProperties.Add(nameof(Entity.Width));
+        VisualProperties.Add(nameof(Entity.Height));
         VisualProperties.Add(nameof(Entity.Layer));
         VisualProperties.Add(nameof(Entity.Opacity));
         VisualProperties.Add(nameof(Entity.Rotation));
@@ -45,6 +51,7 @@ public abstract class Tile : ContentView, ITile {
     public Entity Entity { get; init; }
 
     public void ForceRedraw() {
+        HaveDimensionsChanged = false;        
         HaveVisualPropertiesChanged = true;
         ChangedProperties.Add("FORCE-REDRAW");
         RebuildIfNecessary();
@@ -101,14 +108,18 @@ public abstract class Tile : ContentView, ITile {
         case TileDisplayMode.Design:
             SetNormalContent();
             break;
+
+        default:
+            throw new ArgumentOutOfRangeException();
         }
     }
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        // if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
-        //     HaveVisualPropertiesChanged = true;
-        //     ChangedProperties.Add(property);
-        // }
+        if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
+            HaveDimensionsChanged = e.PropertyName is nameof(Entity.Col) or nameof(Entity.Row) or nameof(Entity.Width) or nameof(Entity.Height) or nameof(Entity.Rotation);
+            HaveVisualPropertiesChanged = true;
+            ChangedProperties.Add(property);
+        }
         HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();
     }
@@ -140,6 +151,8 @@ public abstract class Tile : ContentView, ITile {
                              _lastChangeTime = DateTime.Now;
                          }
                      });
+                     if (HaveDimensionsChanged) OnTileChanged(TileChangeType.Dimensions);
+                     // OnTileChanged(TileChangeType.Modified);
                  } catch (Exception) {
                      //Console.WriteLine($"Error rebuilding tile: {ex.Message}");
                  }
@@ -167,6 +180,16 @@ public abstract class Tile : ContentView, ITile {
         return true;
     }
 
+
+    // Protected method to raise the event
+    protected virtual void OnTileChanged(TileChangeType changeType = TileChangeType.Modified) {
+        TileChanged?.Invoke(this, new TileChangedEventArgs(this, changeType));
+    }
+
+    protected virtual void OnTileChanged(string propertyName, object? oldValue, object? newValue) {
+        TileChanged?.Invoke(this, new TileChangedEventArgs(this, propertyName, oldValue, newValue));
+    }
+    
     // @formatter:off
     public bool IsSelected {get; set => SetField(ref field, value); }
     public double GridSize {get; set => SetField(ref field, value); }

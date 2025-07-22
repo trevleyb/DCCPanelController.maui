@@ -13,11 +13,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
         VisualProperties.Add(nameof(entity.TextColor));
         VisualProperties.Add(nameof(entity.HorizontalJustification));
         VisualProperties.Add(nameof(entity.VerticalJustification));
-        
-        VisualProperties.Add(nameof(entity.BorderColor));
         VisualProperties.Add(nameof(entity.BackgroundColor));
-        VisualProperties.Add(nameof(entity.BorderWidth));
-        VisualProperties.Add(nameof(entity.BorderRadius));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
@@ -35,31 +31,32 @@ public class DrawableTextTile : Tile, ITileDrawable {
                 TextColor = entity.TextColor,
                 InputTransparent = true,
                 WidthRequest = TileWidth,
-                HeightRequest = TileHeight
+                HeightRequest = TileHeight,
+                Text = entity.Label
             };
-            label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.OneWay, source: Entity));
+            return label;
 
-            if (entity.BorderWidth == 0) return label;
-            
-            var border = new Border {
-                Content = label,
-                InputTransparent = true,
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-                Stroke = new SolidColorBrush(entity.BorderColor),
-                StrokeThickness = entity.BorderWidth,
-                StrokeShape = new RoundRectangle { CornerRadius = entity.BorderRadius },
-                Rotation = entity.Rotation,
-                Opacity = entity.Opacity,
-                BackgroundColor = entity.BackgroundColor,
-                WidthRequest = TileWidth,
-                HeightRequest = TileHeight // Assume this so we use the label 
-            };
-            return border;
+            //if (entity.BorderWidth == 0) return label;
+
+            //var border = new Border {
+            //    Content = label,
+            //    InputTransparent = true,
+            //    HorizontalOptions = LayoutOptions.Fill,
+            //    VerticalOptions = LayoutOptions.Fill,
+            //    Stroke = new SolidColorBrush(entity.BorderColor),
+            //    StrokeThickness = entity.BorderWidth,
+            //    StrokeShape = new RoundRectangle { CornerRadius = entity.BorderRadius },
+            //    Rotation = entity.Rotation,
+            //    Opacity = entity.Opacity,
+            //    BackgroundColor = entity.BackgroundColor,
+            //    WidthRequest = TileWidth,
+            //    HeightRequest = TileHeight,
+            //};
+            //return border;
         }
-        return CreateSymbol();
+        return CreateSymbol(); // Fallback on error
     }
-
+    
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("text").AsImage();
     }
