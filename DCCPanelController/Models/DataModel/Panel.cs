@@ -72,7 +72,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
     public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
     
-    public ButtonEntity? GetButtonEntity(string id) => GetAllEntitiesWithID<ButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    public ActionButtonEntity? GetButtonEntity(string id) => GetAllEntitiesWithID<ActionButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
     public TurnoutEntity? GetTurnoutEntity(string id) => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
     
     public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));

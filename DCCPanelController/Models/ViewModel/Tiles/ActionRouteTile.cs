@@ -11,8 +11,8 @@ public class ActionRouteTile : Tile, ITileInteractive {
     public SvgImage? SvgImage { get; protected set; }
 
     public ActionRouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(ButtonEntity.State));
-        VisualProperties.Add(nameof(ButtonEntity.ButtonSize));
+        VisualProperties.Add(nameof(ActionButtonEntity.State));
+        VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         if (Entity is RouteEntity routeEntity && routeEntity.Route is { } route) {
             route.PropertyChanged += (sender, args) => { routeEntity.State = route.State; };
         }

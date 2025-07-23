@@ -14,7 +14,7 @@ public static class EntityPresets {
     public static int DefaultLayer(Entity entity) {
         return entity switch {
             ITrackEntity   => Track,
-            ButtonEntity   => Button,
+            ActionButtonEntity   => Button,
             ITextEntity    => Label,
             IDrawingEntity => Drawing,
             _              => Default

@@ -9,10 +9,11 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public abstract class Tile : ContentView, ITile {
+public abstract class Tile : ContentView, ITile, IDisposable {
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor = 0.75f;
 
+    protected bool disposed = false;
     protected readonly TileDisplayMode DisplayMode;
     protected bool HaveVisualPropertiesChanged;
     protected bool HaveDimensionsChanged;
@@ -45,6 +46,20 @@ public abstract class Tile : ContentView, ITile {
         VisualProperties.Add(nameof(Entity.Rotation));
         SetContent();
     }
+
+    public void Dispose() {
+        Dispose(true);
+        GC.SuppressFinalize(this); // Only if you had a finalizer
+    }
+
+    protected void Dispose(bool disposing) {
+        if (!disposed && disposing) {
+            Cleanup();
+            disposed = true;
+        }
+    }
+
+    protected virtual void Cleanup() { }
 
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;

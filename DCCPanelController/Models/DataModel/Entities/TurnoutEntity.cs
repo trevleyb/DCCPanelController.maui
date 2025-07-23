@@ -59,6 +59,13 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     }
     
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
+
+    public void ToggleState() {
+        if (State == TurnoutStateEnum.Closed) SetState(TurnoutStateEnum.Thrown, _stateChangeSource);
+        if (State == TurnoutStateEnum.Thrown) SetState(TurnoutStateEnum.Closed, _stateChangeSource);
+        if (State == TurnoutStateEnum.Unknown) SetState(TurnoutStateEnum.Closed, _stateChangeSource);
+    }
+    
     public void SetState(TurnoutStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
         if (State == newState) return;
         

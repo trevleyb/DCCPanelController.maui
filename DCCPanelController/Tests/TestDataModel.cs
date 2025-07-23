@@ -51,7 +51,7 @@ public class TestDataModel {
     private Panel CreatePanel(Panels panels) {
         var panel = panels.CreatePanel();
         panels.Add(panel);
-        CreateEntity<ButtonEntity>(panel);
+        CreateEntity<ActionButtonEntity>(panel);
         CreateEntity<CompassEntity>(panel);
         CreateEntity<CornerEntity>(panel);
         CreateEntity<CornerContinuationEntity>(panel);
@@ -85,7 +85,7 @@ public class TestDataModel {
         }
 
         switch (entity) {
-        case ButtonEntity buttonEntity:
+        case ActionButtonEntity buttonEntity:
             buttonEntity.State = ButtonStateEnum.Off;
             break;
 

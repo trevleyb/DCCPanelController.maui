@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -8,24 +9,42 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class ActionButtonTile : Tile, ITileInteractive {
+public class TurnoutActionButtonTile : Tile, ITileInteractive {
+    private TurnoutEntity? turnout = null;
     public SvgImage? SvgImage { get; protected set; }
 
-    public ActionButtonTile(ActionButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    public TurnoutActionButtonTile(TurnoutButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
+
+        // Find the related Turnout for this Tile and subscribe 
+        // to its events so we can change states. 
+        // -----------------------------------------------------------------
+        if (entity?.Turnout is { } turnoutRef) {
+            turnout = entity?.Parent?.GetTurnoutEntity(turnoutRef);
+            if (turnout is not null) turnout.PropertyChanged += TurnoutOnPropertyChanged;
+        }
+    }
+
+    private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        Console.WriteLine("Turnout State Change to TurnoutButton");
+        if (Entity is TurnoutButtonEntity entity && turnout is not null) {
+            entity!.State = turnout.State switch {
+                TurnoutStateEnum.Closed => entity.WhenNormal,
+                TurnoutStateEnum.Thrown => entity.WhenThrown,
+                _                       => ButtonStateEnum.Unknown
+            };
+        }
+    }
+
+    protected override void Cleanup() {
+        if (turnout is not null) turnout.PropertyChanged -= TurnoutOnPropertyChanged;
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is ActionButtonEntity button) {
+        if (Entity is TurnoutButtonEntity button) {
             if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-            var newState = button.State switch {
-                ButtonStateEnum.Unknown => ButtonStateEnum.On,
-                ButtonStateEnum.On      => ButtonStateEnum.Off,
-                ButtonStateEnum.Off     => ButtonStateEnum.On,
-                _                       => ButtonStateEnum.Unknown
-            };
-            button.SetState(newState, StateChangeSource.External);
+            turnout?.ToggleState();
             return true;
         }
         return false;
@@ -106,4 +125,5 @@ public class ActionButtonTile : Tile, ITileInteractive {
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("button").AsImage();
     }
+
 }

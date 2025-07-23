@@ -9,7 +9,7 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ButtonEntity : Entity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
+public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
 
     [ObservableProperty] [property: EditableID("Button Name","Unique Name for this Button so it can be referenced by actions.",0)]
     private string _id = string.Empty;
@@ -39,20 +39,20 @@ public partial class ButtonEntity : Entity, IEntityGeneratingID, IInteractiveEnt
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? []) ?? [];
-    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ButtonEntity>() ?? [],"Button");
+    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
+    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? [],"Button");
 
     [JsonConstructor]
-    public ButtonEntity() {
+    public ActionButtonEntity() {
         Id = NextID;
     }
 
-    public ButtonEntity(Panel panel) : base(panel) { }
-    public ButtonEntity(ButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
+    public ActionButtonEntity(Panel panel) : base(panel) { }
+    public ActionButtonEntity(ActionButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
     public override string EntityName => "Button";
 
     public override Entity Clone() {
-        return new ButtonEntity(this);
+        return new ActionButtonEntity(this);
     }
 
     public void CloneActionsInto(IActionEntity entity) {

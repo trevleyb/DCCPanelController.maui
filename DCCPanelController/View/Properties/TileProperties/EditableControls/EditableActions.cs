@@ -12,7 +12,7 @@ public class EditableButtonActions(string label, string description = "", int or
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";
-            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ActionButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
             if (entity is IActionEntity actionsEntity) {
                 return new ButtonActionsGrid(actionsEntity, context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,

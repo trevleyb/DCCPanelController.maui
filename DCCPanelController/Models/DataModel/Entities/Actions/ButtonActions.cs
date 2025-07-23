@@ -13,7 +13,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
         foreach (var action in buttonActions) Add(new ButtonAction(action));
     }
 
-    public async void Apply(ButtonEntity button, ConnectionService connectionService, ActionExecutionContext context) {
+    public async void Apply(ActionButtonEntity button, ConnectionService connectionService, ActionExecutionContext context) {
         var logger = LogHelper.CreateLogger("ButtonActionsApply");
         try {
             foreach (var action in button.ButtonPanelActions) {
