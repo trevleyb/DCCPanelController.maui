@@ -1,6 +1,6 @@
 <ContentView
     x:Class="DCCPanelController.View.ControlPanelView"
-    x:DataType="dataModel:Panel"
+    x:DataType="view:ControlPanelView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:view="clr-namespace:DCCPanelController.View"
@@ -27,11 +27,12 @@
                 x:Name="DynamicGrid"/>
         </AbsoluteLayout>
 
-        <ActivityIndicator HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           IsRunning="{Binding IsRefreshing}"
-                           IsVisible="{Binding IsRefreshing}"
-                           Color="{StaticResource Primary}"/>
+        <ActivityIndicator
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            IsRunning="{Binding Source={RelativeSource AncestorType={x:Type 'view:ControlPanelView'}}, Path=IsPanelDrawing, x:DataType=view:ControlPanelView}"
+            IsVisible="{Binding Source={RelativeSource AncestorType={x:Type 'view:ControlPanelView'}}, Path=IsPanelDrawing, x:DataType=view:ControlPanelView}"
+            Color="{StaticResource Primary}"/>
     </Grid>
 
 </ContentView>

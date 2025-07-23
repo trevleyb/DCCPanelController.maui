@@ -22,7 +22,7 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
 
     public Button Button {
         get => (Button)GetValue(ButtonProperty);
-        set => SetValue(ButtonProperty, value);
+        init => SetValue(ButtonProperty, value);
     }
 
     public ButtonStateEnum State {
@@ -77,7 +77,7 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
                 State = State switch {
                     ButtonStateEnum.On  => ButtonStateEnum.Off,
                     ButtonStateEnum.Off => ButtonStateEnum.On,
-                    _                   => ButtonStateEnum.Unknown
+                    _                   => ButtonStateEnum.On
                 };
             }
 
@@ -85,7 +85,7 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
                 if (command.CanExecute(Button)) command.Execute(Button);
             }
         }
-
         OnPropertyChanged(nameof(Button));
+        OnPropertyChanged(nameof(State));
     }
 }

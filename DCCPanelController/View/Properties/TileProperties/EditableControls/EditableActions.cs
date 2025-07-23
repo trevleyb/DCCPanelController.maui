@@ -12,7 +12,7 @@ public class EditableButtonActions(string label, string description = "", int or
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";
-            var availableButtons = entity?.Parent?.GetAllEntitiesWithID<ActionButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+            var availableButtons = entity?.Parent?.GetAllEntitiesByType<ActionButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
             if (entity is IActionEntity actionsEntity) {
                 return new ButtonActionsGrid(actionsEntity, context, availableButtons) {
                     HorizontalOptions = LayoutOptions.Fill,
@@ -34,7 +34,7 @@ public class EditableTurnoutActions(string label, string description = "", int o
         try {
             var entity = owner as Entity;
             var entityID = (owner as IEntityID)?.Id ?? "";
-            var availableTurnouts = entity?.Parent?.GetAllEntitiesWithID<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+            var availableTurnouts = entity?.Parent?.GetAllEntitiesByType<TurnoutEntity>().Where(b => !string.IsNullOrWhiteSpace(b.TurnoutID) && b.TurnoutID != entityID).Select(b => b.TurnoutID).ToList<string>() ?? [];
             if (entity is IActionEntity actionsEntity) {
                 return new TurnoutActionsGrid(actionsEntity, context, availableTurnouts) {
                     HorizontalOptions = LayoutOptions.Fill,

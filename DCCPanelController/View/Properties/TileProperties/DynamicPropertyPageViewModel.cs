@@ -247,8 +247,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
                 var valueToSet = CloneValueIfNeeded(newValue, targetProperty.PropertyType);
                 targetProperty.SetValue(entity, valueToSet);
             }
-        } catch (Exception) {
-            // Console.WriteLine($"Error updating {entity.EntityName}.{propertyName}: {ex.Message}");
+        } catch (Exception ex) {
+            Console.WriteLine($"Error updating {entity.EntityName}.{propertyName}: {ex.Message}");
         }
     }
 

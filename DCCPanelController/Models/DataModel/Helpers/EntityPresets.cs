@@ -13,11 +13,12 @@ public static class EntityPresets {
 
     public static int DefaultLayer(Entity entity) {
         return entity switch {
-            ITrackEntity   => Track,
-            ActionButtonEntity   => Button,
-            ITextEntity    => Label,
-            IDrawingEntity => Drawing,
-            _              => Default
+            ITrackEntity        => Track,
+            ActionButtonEntity  => Button,
+            TurnoutButtonEntity => Button,
+            ITextEntity         => Label,
+            IDrawingEntity      => Drawing,
+            _                   => Default
         };
     }
 }

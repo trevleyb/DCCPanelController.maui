@@ -68,12 +68,20 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
 
     public Entity? GetEntityAtPosition(int x, int y) =>  Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
-    public List<T> GetPanelEntitiesWithID<T>() where T : Entity, IEntityID => Entities.OfType<T>().Where(e => !string.IsNullOrEmpty(e.Id)).ToList() ?? [];
     public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
-    public List<T> GetAllEntitiesWithID<T>() where T : Entity, IEntityID => Panels?.SelectMany(panel => panel.GetPanelEntitiesWithID<T>()).ToList() ?? [];
     
-    public ActionButtonEntity? GetButtonEntity(string id) => GetAllEntitiesWithID<ActionButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
-    public TurnoutEntity? GetTurnoutEntity(string id) => GetAllEntitiesWithID<TurnoutEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    public ActionButtonEntity? GetButtonEntity(string id) => GetAllEntitiesByType<ActionButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    public TurnoutEntity? GetTurnoutEntity(string id) {
+        var allEntitiesWithID = GetAllEntitiesByType<TurnoutEntity>();
+        var foundItem = allEntitiesWithID.FirstOrDefault(b => b.TurnoutID == id) ?? null;
+        return foundItem;
+    }
+
+    public TurnoutEntity? GetTurnoutEntityByRef(string id) {
+        var allEntitiesWithID = GetAllEntitiesByType<TurnoutEntity>();
+        var foundItem = allEntitiesWithID.FirstOrDefault(b => b?.Turnout?.Id == id) ?? null;
+        return foundItem;
+    }
     
     public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
     public Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));

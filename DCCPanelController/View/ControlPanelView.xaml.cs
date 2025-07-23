@@ -23,6 +23,7 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView {
+    [ObservableProperty] private bool _isPanelDrawing = false;
     private readonly ILogger<ControlPanelView> _logger;
 
     public enum CellHighlightAction {
@@ -51,8 +52,8 @@ public partial class ControlPanelView {
 
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
-        InitializeComponent();
         BindingContext = this;
+        InitializeComponent();
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
     }

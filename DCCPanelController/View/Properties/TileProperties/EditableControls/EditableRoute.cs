@@ -11,7 +11,7 @@ public class EditableRouteAttribute(string label, string description = "", int o
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            
+            var initialValue = info.GetValue(owner);
             var routes =((Entity)owner).Parent?.Routes.ToList() ?? new List<Route>();
 
             _ = dropDownWidth;
@@ -36,7 +36,12 @@ public class EditableRouteAttribute(string label, string description = "", int o
             cell.ItemsSource = routes;
             cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(PopupSelector.SelectedValue)) SetModified(true);
+                if (args.PropertyName == nameof(PopupSelector.SelectedValue)) {
+                    var currentValue = info.GetValue(owner);
+                    if (!object.Equals(currentValue, initialValue)) {
+                        SetModified(true);
+                    }
+                }
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {

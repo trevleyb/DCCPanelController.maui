@@ -129,7 +129,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    protected void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
             HaveDimensionsChanged = e.PropertyName is nameof(Entity.Col) or nameof(Entity.Row) or nameof(Entity.Width) or nameof(Entity.Height) or nameof(Entity.Rotation);
             HaveVisualPropertiesChanged = true;

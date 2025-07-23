@@ -231,5 +231,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         }
+        CheckIfPanelChanged();
     }
 }

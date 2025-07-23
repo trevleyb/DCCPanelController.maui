@@ -10,12 +10,12 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteractiveEntity, ITrackEntity, IActionEntity {
+public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, ITrackEntity, IActionEntity {
     // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
     // private string _id = string.Empty;
   
     [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
-    private string _id = string.Empty;
+    private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: EditableEnum("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
@@ -36,13 +36,11 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     protected TurnoutEntity() { }
     
     [JsonIgnore]
-    public Turnout? Turnout => Parent?.Turnout(Id);
+    public Turnout? Turnout => Parent?.Turnout(TurnoutID);
 
     protected TurnoutEntity(Panel panel) : base(panel) { }
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
-    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? [],"Turnout");
 
     protected TurnoutEntity(TurnoutEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") {
         ButtonPanelActions = new ButtonActions(entity.ButtonPanelActions);
@@ -50,7 +48,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     }
 
     public override string ToString() {
-        return Id;
+        return TurnoutID;
     }
     
     public void CloneActionsInto(IActionEntity entity) {
@@ -61,9 +59,12 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
 
     public void ToggleState() {
-        if (State == TurnoutStateEnum.Closed) SetState(TurnoutStateEnum.Thrown, _stateChangeSource);
-        if (State == TurnoutStateEnum.Thrown) SetState(TurnoutStateEnum.Closed, _stateChangeSource);
-        if (State == TurnoutStateEnum.Unknown) SetState(TurnoutStateEnum.Closed, _stateChangeSource);
+        var newState = State switch {
+            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+            _                       => TurnoutStateEnum.Closed,
+        };        
+        SetState(newState, _stateChangeSource);
     }
     
     public void SetState(TurnoutStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
@@ -73,9 +74,9 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityID, IInteracti
         State = newState;
         
         // Only trigger cascading if this is an external change or we're not already cascading this entity
-        if (source == StateChangeSource.External || (context?.CanCascade(Id) == true)) {
+        if (source == StateChangeSource.External || (context?.CanCascade(TurnoutID) == true)) {
             context ??= new ActionExecutionContext();
-            using (context.BeginCascade(Id)) {
+            using (context.BeginCascade(TurnoutID)) {
                 TurnoutPanelActions.Apply(this, ConnectionService.Instance, context);
             }
         }

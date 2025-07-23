@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -10,26 +11,45 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class TurnoutActionButtonTile : Tile, ITileInteractive {
-    private TurnoutEntity? turnout = null;
+    private TurnoutEntity? _turnout = null;
     public SvgImage? SvgImage { get; protected set; }
 
     public TurnoutActionButtonTile(TurnoutButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
+        RegisterForTurnoutEvents();
+    }
 
-        // Find the related Turnout for this Tile and subscribe 
-        // to its events so we can change states. 
-        // -----------------------------------------------------------------
-        if (entity?.Turnout is { } turnoutRef) {
-            turnout = entity?.Parent?.GetTurnoutEntity(turnoutRef);
-            if (turnout is not null) turnout.PropertyChanged += TurnoutOnPropertyChanged;
+    new protected void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        base.OnPropertyChanged(sender,e);
+        if (e.PropertyName == nameof(TurnoutButtonEntity.Turnout)) {
+            if (_turnout is not null) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
+            RegisterForTurnoutEvents();
         }
     }
 
+    private void RegisterForTurnoutEvents() {
+        // Find the related Turnout for this Tile and subscribe 
+        // to its events so we can change states. 
+        // -----------------------------------------------------------------
+        if (Entity is TurnoutButtonEntity { Turnout: { } turnoutRef } entity) {
+            _turnout = entity?.Parent?.GetTurnoutEntityByRef(turnoutRef);
+            if (_turnout is not null) {
+                _turnout.PropertyChanged += TurnoutOnPropertyChanged;
+                UpdateEntityStateBasedOnTurnout();
+            }
+        }
+    }
+    
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        Console.WriteLine("Turnout State Change to TurnoutButton");
-        if (Entity is TurnoutButtonEntity entity && turnout is not null) {
-            entity!.State = turnout.State switch {
+        if (Entity is TurnoutButtonEntity entity && _turnout is not null) {
+            UpdateEntityStateBasedOnTurnout();
+        }
+    }
+
+    private void UpdateEntityStateBasedOnTurnout() {
+        if (Entity is TurnoutButtonEntity entity) {
+            entity!.State = _turnout?.State switch {
                 TurnoutStateEnum.Closed => entity.WhenNormal,
                 TurnoutStateEnum.Thrown => entity.WhenThrown,
                 _                       => ButtonStateEnum.Unknown
@@ -38,13 +58,13 @@ public class TurnoutActionButtonTile : Tile, ITileInteractive {
     }
 
     protected override void Cleanup() {
-        if (turnout is not null) turnout.PropertyChanged -= TurnoutOnPropertyChanged;
+        if (_turnout is not null) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
         if (Entity is TurnoutButtonEntity button) {
             if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-            turnout?.ToggleState();
+            _turnout?.ToggleState();
             return true;
         }
         return false;
@@ -59,7 +79,7 @@ public class TurnoutActionButtonTile : Tile, ITileInteractive {
     }
 
     protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
-        if (Entity is ActionButtonEntity button) {
+        if (Entity is TurnoutButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("button", Entity.Rotation)
@@ -97,7 +117,7 @@ public class TurnoutActionButtonTile : Tile, ITileInteractive {
     }
 
     protected Microsoft.Maui.Controls.View? CreateTileAsImage() {
-        if (Entity is ActionButtonEntity button) {
+        if (Entity is TurnoutButtonEntity button) {
             var svgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("button", Entity.Rotation)

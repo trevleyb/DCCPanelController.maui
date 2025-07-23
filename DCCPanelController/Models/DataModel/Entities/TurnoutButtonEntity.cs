@@ -32,10 +32,10 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
     [ObservableProperty] [property: EditableTurnout("Turnout", "Turnout to Control with this button", 5, "Turnout")]
     private string? _turnout;
 
-    [ObservableProperty] [property: EditableButton("When Straight/Normal", "When Turnout is Straight/Thrown set Button to?", 8, "Turnout")]
+    [ObservableProperty] [property: EditableButton("Straight/Normal", "When Turnout is Straight/Thrown set Button to?", 8, "Turnout")]
     private ButtonStateEnum _whenNormal;
 
-    [ObservableProperty] [property: EditableButton("When Diverging/Thrown", "When Turnout is Diverging/Thrown set Button to?", 8, "Turnout")]
+    [ObservableProperty] [property: EditableButton("Diverging/Thrown", "When Turnout is Diverging/Thrown set Button to?", 8, "Turnout")]
     private ButtonStateEnum _whenThrown;
 
     [ObservableProperty] 

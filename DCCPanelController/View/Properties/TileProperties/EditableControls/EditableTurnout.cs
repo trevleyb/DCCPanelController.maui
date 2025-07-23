@@ -10,6 +10,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
+            var initialValue = info.GetValue(owner);
             var turnouts =((Entity)owner).Parent?.Turnouts.ToList() ?? new List<Turnout>();
 
             _ = dropDownWidth;
@@ -34,7 +35,12 @@ public class EditableTurnoutAttribute(string label, string description = "", int
             cell.ItemsSource = turnouts;
             cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
+                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) {
+                    var currentValue = info.GetValue(owner);
+                    if (!object.Equals(currentValue, initialValue)) {
+                        SetModified(true);
+                    }
+                }
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
