@@ -5,6 +5,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.View;
+using DCCPanelController.View.Components;
 using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Serilog;
@@ -59,7 +60,8 @@ public static class MauiProgram {
 
         services.AddTransientViewAndModel<SettingsPage, SettingsPageViewModel>();
         services.AddTransientViewAndModel<ServerMessagesPage, ServerMessagesViewModel>();
-
+        services.AddTransientPopup<ColorPickerGrid, ColorPickerGridViewModel>();
+        
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());

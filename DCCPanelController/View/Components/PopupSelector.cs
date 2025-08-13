@@ -415,7 +415,8 @@ public class PopupSelector : ContentView, IDisposable {
             // ----------------------------------------------------------
             if (_popup?.Parent != null) {
                 if (_popup is not null) {
-                    _popup.Close();
+                    //TODO: FIX
+                    //_popup.Close();
                     _popup = null;
                 }
                 SetDropDownImage(false);
@@ -428,16 +429,19 @@ public class PopupSelector : ContentView, IDisposable {
                 _popupContainer.HeightRequest = DropDownHeight > 0 ? DropDownHeight : bounds.Height;
                 _popup = new Popup {
                     Content = _popupContainer,
-                    Size = new Size(_popupContainer.WidthRequest + InnerMargin.Left + InnerMargin.Right, DropDownHeight + InnerMargin.Top + InnerMargin.Bottom),
+                    //TODO: FIX
+                    //Size = new Size(_popupContainer.WidthRequest + InnerMargin.Left + InnerMargin.Right, DropDownHeight + InnerMargin.Top + InnerMargin.Bottom),
                     CanBeDismissedByTappingOutsideOfPopup = true,
-                    VerticalOptions = LayoutAlignment.Center,
-                    HorizontalOptions = LayoutAlignment.Center
+                    //TODO: FIXVerticalOptions = LayoutAlignment.Center,
+                    //TODO: FIXHorizontalOptions = LayoutAlignment.Center
                 };
                 if (ShowAnchor) {
-                    _popup.Anchor = this;
+                    //TODO: FIX
+                    //_popup.Anchor = this;
                     _popupContainer.Margin = InnerMargin;
                 }
-                _popup.SetBinding(Popup.ColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
+                //TODO: FIX
+                //_popup.SetBinding(Popup.ColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
                 _popup.Closed += (sender, args) => {
                     SetDropDownImage(false);
                     _popupContainer.IsVisible = false;
@@ -445,7 +449,8 @@ public class PopupSelector : ContentView, IDisposable {
                 };
 
                 if (App.Current.Windows[0].Page is { } page) {
-                    page.ShowPopup(_popup);
+                    //TODO: FIX
+                    //page.ShowPopup(_popup);
                     _popupContainer.IsVisible = true;
                 }
             }
@@ -571,7 +576,8 @@ public class PopupSelector : ContentView, IDisposable {
         if (!_disposed) {
             if (disposing) {
                 if (_popup is not null) {
-                    _popup?.Close();
+                    //TODO: FIX
+                    //_popup?.Close();
                     _popup = null;
                 }
             }

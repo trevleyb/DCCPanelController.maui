@@ -1,3 +1,5 @@
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
 
@@ -85,12 +87,23 @@ public partial class ColorPickerButton : ContentView {
     // Asynchronously show the popup and update the selected color
     [RelayCommand]
     private async Task ShowDropdownAsync() {
-        var popup = new ColorPickerGrid(SelectedColor ?? Colors.White);
-        if (App.Current?.Windows[0]?.Page is Page { } mainPage) {
-            var result = await mainPage.ShowPopupAsync(popup);
-            if (result is Color selectedColor) {
+
+        var popupService = MauiProgram.ServiceHelper.GetService<IPopupService>();
+        var queryAttributes = new Dictionary<string, object> { ["color"] = SelectedColor ?? Colors.White };
+        var popup = new ColorPickerGrid(new ColorPickerGridViewModel(popupService));
+        var result = await popupService.ShowPopupAsync<ColorPickerGridViewModel>(Shell.Current, options: PopupOptions.Empty, shellParameters: queryAttributes);
+        if (result.WasDismissedByTappingOutsideOfPopup == false) {
+            if (result is IPopupResult<Color?> { Result: { } selectedColor }) {
                 SelectedColor = selectedColor;
             }
         }
+
+        // var popup = new ColorPickerGrid(SelectedColor ?? Colors.White);
+        // if (App.Current?.Windows[0]?.Page is Page { } mainPage) {
+        //     var result = await mainPage.ShowPopupAsync(popup);
+        //     if (result is Color selectedColor) {
+        //         SelectedColor = selectedColor;
+        //     }
+        // }
     }
 }

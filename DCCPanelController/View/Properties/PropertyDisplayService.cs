@@ -1,6 +1,8 @@
 // Assuming IPropertiesViewModel is here
 // For PropertySheetPage and PropertyPopup
 
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -35,18 +37,29 @@ public static class PropertyDisplayService {
             // For iPad, Mac, Windows, Android tablets, or landscape iPhone
             var propertyPopup = new PropertyPopup(viewModel);
 
+            var services = App.Current?.Handler?.MauiContext?.Services;
+            var popupService = services?.GetService<IPopupService>();
+            if (popupService is null) {
+                return false;
+            }
+            
+            // TODO FIX: Popup Service 
+            //await popupService.ShowPopupAsync(propertyPopup);
+            //result = await propertyPopup.PopupClosedTask;
+
+            
             // The PropertyPopup.ShowAsync handles showing and awaiting closure
             // This is a simplified call. You might need to pass the current page.
-            if (App.Current.Windows[0].Page is { } mainPage) {
-                await mainPage.ShowPopupAsync(propertyPopup);
-                result = await propertyPopup.PopupClosedTask;
-                propertyPopup?.Close();
-            } else {
-                // Fallback or error handling if MainPage is not available
-                // For simplicity, we'll assume MainPage is available.
-                // In a real app, you might need more robust handling.
-                return false; // Or throw an exception
-            }
+            // if (App.Current.Windows[0].Page is { } mainPage) {
+            //     await mainPage.ShowPopupAsync(propertyPopup);
+            //     result = await propertyPopup.PopupClosedTask;
+            //     propertyPopup?.Close();
+            // } else {
+            //     // Fallback or error handling if MainPage is not available
+            //     // For simplicity, we'll assume MainPage is available.
+            //     // In a real app, you might need more robust handling.
+            //     return false; // Or throw an exception
+            // }
         }
         return result;
     }

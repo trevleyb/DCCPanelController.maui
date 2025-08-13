@@ -136,13 +136,13 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.70"/>
-        <PackageReference Include="CommunityToolkit.Maui" Version="11.2.0"/>
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.0"/>
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.0.2"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.1" />
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5"/>
-        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.70"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
+        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.90" />
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0"/>
         <PackageReference Include="Serilog" Version="4.3.0" />
@@ -150,23 +150,11 @@
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
         <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-        <PackageReference Include="SkiaSharp" Version="3.116.1"/>
-        <PackageReference Include="SkiaSharp.Views" Version="3.116.1"/>
-        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.116.1"/>
-        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.116.1"/>
-        <PackageReference Include="Svg.Skia" Version="3.0.3"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
-        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.116.1"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
-        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.116.1"/>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.116.1"/>
+        <PackageReference Include="SkiaSharp" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Views" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.119.0" />
+        <PackageReference Include="Svg.Skia" Version="3.0.5" />
     </ItemGroup>
 
 
@@ -332,6 +320,9 @@
           <DependentUpon>JmriSettingsView.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\Components\ColorPickerGridViewModel.cs">
+          <DependentUpon>ColorPickerGrid.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>
@@ -339,6 +330,18 @@
         <ProjectReference Include="..\DCCClient.Simulator\DCCClient.Simulator.csproj" />
         <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj" />
         <ProjectReference Include="..\DCCClient\DCCClient.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
+      <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.119.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
+      <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.119.0" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
+      <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0" />
     </ItemGroup>
 
 </Project>

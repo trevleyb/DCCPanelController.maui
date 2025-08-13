@@ -15,33 +15,36 @@ public partial class PropertyPopup : Popup {
     private const double MinPopupHeight = 400;
     private readonly TaskCompletionSource<bool> _popupClosedTcs = new();
 
-    private bool _initialSizeLocked;
+    //TODO: FIX
+    //private bool _initialSizeLocked;
 
     public PropertyPopup(IPropertiesViewModel viewModel) {
         InitializeComponent();
         ViewModel = viewModel;
         BindingContext = ViewModel;
         PropertyViewContainer.Content = ViewModel.CreatePropertiesView();
-        Opened += OnPopupOpened;
-        Closed += OnPopupClosed;
+        // TODO: FIX Opened += OnPopupOpened;
+        // TODO: FIX Closed += OnPopupClosed;
     }
 
     public Task<bool> PopupClosedTask => _popupClosedTcs.Task;
     public IPropertiesViewModel ViewModel { get; }
 
-    private void OnPopupOpened(object? sender, PopupOpenedEventArgs e) {
-        // We only want to capture and lock the initial size once.
-        if (!_initialSizeLocked && Content is Border popupContentBorder) {
-            LockPopupToInitialSize(popupContentBorder);
-            _initialSizeLocked = true;
-        }
-    }
-
-    private void OnPopupClosed(object? sender, PopupClosedEventArgs e) {
-        Opened -= OnPopupOpened;
-        Closed -= OnPopupClosed;
-        _popupClosedTcs.TrySetResult(e.Result as bool? ?? false);
-    }
+    // TODO: FIX 
+    // private void OnPopupOpened(object? sender, PopupOpenedEventArgs e) {
+    //     // We only want to capture and lock the initial size once.
+    //     if (!_initialSizeLocked && Content is Border popupContentBorder) {
+    //         LockPopupToInitialSize(popupContentBorder);
+    //         _initialSizeLocked = true;
+    //     }
+    // }
+    
+    // TODO: FIX 
+    // private void OnPopupClosed(object? sender, PopupClosedEventArgs e) {
+    //     Opened -= OnPopupOpened;
+    //     Closed -= OnPopupClosed;
+    //     _popupClosedTcs.TrySetResult(e.Result as bool? ?? false);
+    // }
 
     private void LockPopupToInitialSize(Border popupContentBorder) {
         if (DeviceDisplay.Current?.MainDisplayInfo == null) return;
@@ -100,16 +103,18 @@ public partial class PropertyPopup : Popup {
     }
 
     private async void CloseButton_Clicked(object sender, EventArgs e) {
-        await ViewModel.ApplyChangesAsync();
-        _popupClosedTcs.TrySetResult(true);
-        await CloseAsync(true);
+        // TODO: FIX 
+        // await ViewModel.ApplyChangesAsync();
+        // _popupClosedTcs.TrySetResult(true);
+        // await CloseAsync(true);
     }
 
-    protected override async Task OnDismissedByTappingOutsideOfPopup(CancellationToken token = new()) {
-        // Consider if changes should be applied or discarded when tapping outside.
-        // For now, assuming discard (or already handled by ViewModel if needed).
-        // if (ViewModel != null) await ViewModel.ApplyChangesAsync(); 
-        _popupClosedTcs.TrySetResult(false);
-        await base.OnDismissedByTappingOutsideOfPopup(token);
-    }
+    // TODO: FIX 
+    // protected override async Task OnDismissedByTappingOutsideOfPopup(CancellationToken token = new()) {
+    //     // Consider if changes should be applied or discarded when tapping outside.
+    //     // For now, assuming discard (or already handled by ViewModel if needed).
+    //     // if (ViewModel != null) await ViewModel.ApplyChangesAsync(); 
+    //     _popupClosedTcs.TrySetResult(false);
+    //     await base.OnDismissedByTappingOutsideOfPopup(token);
+    // }
 }
