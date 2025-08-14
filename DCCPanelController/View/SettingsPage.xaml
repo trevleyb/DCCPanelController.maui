@@ -14,7 +14,8 @@
     xmlns:services="clr-namespace:DCCPanelController.Services"
     xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:converters1="clr-namespace:DCCPanelController.View.Converters">
+    xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
+    xmlns:textInputLayout="http://schemas.syncfusion.com/maui/toolkit">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -56,45 +57,34 @@
                             </Grid>
                         </toolkit:Expander.Header>
                         <toolkit:Expander.Content>
-                            <StackLayout Margin="10,10,10,10">
-                                <HorizontalStackLayout>
+                            <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
+                                <HorizontalStackLayout Margin="0,10,0,0">
                                     <Label Text="Profile Name" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="175"/>
-
-                                    <Border
-                                        HeightRequest="35"
-                                        WidthRequest="180"
-                                        HorizontalOptions="Start"
-                                        StrokeShape="RoundRectangle 10"
-                                        Stroke="{StaticResource Primary}"
-                                        Padding="10,0,5,0"
-                                        Margin="0,5,0,5"
-                                        BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                                        <Entry Text="{Binding Profile.ProfileName}" HorizontalOptions="Fill"
-                                               Style="{StaticResource PanelEntry}"/>
-                                    </Border>
+                                           VerticalOptions="Center" WidthRequest="250"/>
+                                    <Entry Text="{Binding Profile.ProfileName}"/>
                                 </HorizontalStackLayout>
 
-                                <HorizontalStackLayout>
-                                    <Label Text="Background Color" HorizontalOptions="Start"
+
+                                <HorizontalStackLayout Margin="0,10,0,0">
+                                    <Label Text="Background Color?" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="175"/>
+                                           VerticalOptions="Center" WidthRequest="250"/>
                                     <components:ColorPickerButton
                                         AllowsNoColor="true"
                                         HeightRequest="35"
                                         BorderColor="{StaticResource Primary}"
                                         BorderWidth="1"
+                                        WidthRequest="150"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        HorizontalOptions="Start"
-                                        WidthRequest="180"/>
+                                        HorizontalOptions="Fill"/>
                                 </HorizontalStackLayout>
 
                                 <HorizontalStackLayout Margin="0,10,0,0">
                                     <Label Text="Show Welcome Page?" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="175"/>
+                                           VerticalOptions="Center" WidthRequest="250"/>
                                     <Switch IsToggled="{Binding Settings.ShowWelcomePage}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
@@ -103,7 +93,7 @@
                                 <HorizontalStackLayout Margin="0,10,0,0">
                                     <Label Text="Automatically Connect?" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="175"/>
+                                           VerticalOptions="Center" WidthRequest="250"/>
                                     <Switch IsToggled="{Binding Settings.ConnectOnStartup}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
@@ -112,7 +102,7 @@
                                 <HorizontalStackLayout Margin="0,10,0,0">
                                     <Label Text="Set Turnouts on Connect?" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}" VerticalOptions="Center"
-                                           WidthRequest="175"/>
+                                           WidthRequest="250"/>
                                     <Switch IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
@@ -121,7 +111,7 @@
                                 <HorizontalStackLayout Margin="0,10,0,0">
                                     <Label Text="Enable Click Sounds?" HorizontalOptions="Start"
                                            Style="{StaticResource MediumLabel}" VerticalOptions="Center"
-                                           WidthRequest="175"/>
+                                           WidthRequest="250"/>
                                     <Switch IsToggled="{Binding Settings.UseClickSounds}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
@@ -160,26 +150,28 @@
                                        Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
                             </Grid>
                         </toolkit:Expander.Header>
-                        
+
                         <toolkit:Expander.Content>
+
                             <StackLayout Margin="0,10,0,0">
-                                <HorizontalStackLayout Margin="-5,0,0,0">
-                                    <RadioButton Value="jmri"
-                                                 GroupName="ServerType"
-                                                 Content="JMRI Server"
-                                                 IsChecked="{Binding IsJmriServer}"
-                                                 CheckedChanged="CheckChanged_Jmri"/>
-                                    <RadioButton Value="withrottle"
-                                                 GroupName="ServerType"
-                                                 Content="WiThrottle Server"
-                                                 IsChecked="{Binding IsWiThrottle}"
-                                                 CheckedChanged="CheckChanged_WiThrottle"/>
-                                    <RadioButton Value="simulator"
-                                                 GroupName="ServerType"
-                                                 Content="Simulator"
-                                                 IsChecked="{Binding IsSimulator}"
-                                                 CheckedChanged="CheckChanged_Simulator"/>
-                                </HorizontalStackLayout>
+                                <textInputLayout:SfSegmentedControl x:Name="SelectionSegmentControl"
+                                                                    HorizontalOptions="Start"
+                                                                    Stroke="{StaticResource Primary}"
+                                                                    EnableRippleEffect="True"
+                                                                    SelectionChanged="SegmentSelectionChanged">
+                                    <textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
+                                        <textInputLayout:SelectionIndicatorSettings
+                                            SelectionIndicatorPlacement="Fill"
+                                            Background="{StaticResource Primary}"/>
+                                    </textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
+                                    <textInputLayout:SfSegmentedControl.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>Simulator</x:String>
+                                            <x:String>JMRI</x:String>
+                                            <x:String>WiThrottle</x:String>
+                                        </x:Array>
+                                    </textInputLayout:SfSegmentedControl.ItemsSource>
+                                </textInputLayout:SfSegmentedControl>
 
                                 <StackLayout>
                                     <Label Margin="10,0,0,0" Text="Server Capabilities"
@@ -242,7 +234,7 @@
                                 </StackLayout>
                             </StackLayout>
                         </toolkit:Expander.Content>
-                        </toolkit:Expander>
+                    </toolkit:Expander>
                 </StackLayout>
 
                 <ScrollView Margin="0,20,0,0" Grid.Row="2" VerticalScrollBarVisibility="Always"

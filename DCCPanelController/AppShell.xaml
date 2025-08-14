@@ -2,17 +2,16 @@
 
 <Shell
     FlyoutBehavior="Disabled"
-    Shell.TabBarBackgroundColor="{StaticResource Primary}"
-    Shell.TabBarForegroundColor="{StaticResource Primary}"
-    Shell.TabBarUnselectedColor="White"
     Title="DCC Panel Controller"
     iOsSpecific:Page.UseSafeArea="True"
-    x:Class="DCCPanelController.View.MainPageTabbed"
+    x:Class="DCCPanelController.AppShell"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:services="clr-namespace:DCCPanelController.Services">
+    xmlns:services="clr-namespace:DCCPanelController.Services"
+    xmlns:dccPanelController="clr-namespace:DCCPanelController">
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
         <Tab Icon="control.png"
@@ -46,6 +45,7 @@
                 ContentTemplate="{DataTemplate view:LightsPage}"
                 Title="Lights"/>
         </Tab>
+
         <Tab Title="Settings" Icon="settings.png"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent

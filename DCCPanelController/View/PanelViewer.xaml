@@ -6,6 +6,7 @@
              xmlns:view="clr-namespace:DCCPanelController.View"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
+             xmlns:fonts="clr-namespace:Fonts"
              Title="Panels"
              x:Name="PanelViewerPage"
              x:DataType="view:PanelViewerViewModel"
@@ -160,19 +161,51 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="ZoomOutIcon" IconImageSource="zoom_out.png" Clicked="OnZoomOutClicked"/>
-        <ToolbarItem x:Name="ZoomInIcon" IconImageSource="zoom_in.png" Clicked="OnZoomInClicked"/>
-        <ToolbarItem Text="Add" IconImageSource="plus_circle.png" Command="{Binding Path=AddPanelCommand}"/>
-        <ToolbarItem Text="Duplicate" IsEnabled="{Binding IsPanelSelected}" IconImageSource="copy.png"
-                     Command="{Binding Path=DuplicatePanelCommand}"/>
-        <ToolbarItem Text="Delete" IsEnabled="{Binding IsPanelSelected}" IconImageSource="trash_2.png"
-                     Command="{Binding Path=DeletePanelCommand}"/>
-        <ToolbarItem Text="Edit" IsEnabled="{Binding IsPanelSelected}" IconImageSource="edit.png"
-                     Command="{Binding Path=EditPanelCommand}"/>
-        <ToolbarItem Text="Properties" IsEnabled="{Binding IsPanelSelected}" IconImageSource="properties.png"
-                     Command="{Binding Path=EditPanelPropertiesCommand}"/>
-        <ToolbarItem IconImageSource="upload.png" Command="{Binding UploadPanelCommand}"/>
-        <ToolbarItem IconImageSource="download.png" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}"/>
+        <ToolbarItem x:Name="ZoomOutIcon" Clicked="OnZoomOutClicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.zoom_out_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem x:Name="ZoomInIcon" Clicked="OnZoomInClicked">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.zoom_in_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Add"         Command="{Binding Path=AddPanelCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.add_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Duplicate"   Command="{Binding Path=DuplicatePanelCommand}" IsEnabled="{Binding IsPanelSelected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.copy_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Delete"      Command="{Binding Path=DeletePanelCommand}" IsEnabled="{Binding IsPanelSelected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.delete_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Edit"        Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.edit_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Properties"  Command="{Binding Path=EditPanelPropertiesCommand}" IsEnabled="{Binding IsPanelSelected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.settings_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Upload"      Command="{Binding UploadPanelCommand}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.arrow_upload_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+        <ToolbarItem Text="Download"    Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.arrow_download_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

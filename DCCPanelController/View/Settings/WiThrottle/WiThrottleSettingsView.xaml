@@ -48,7 +48,7 @@
                     Padding="10,0,5,0"
                     Margin="0,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                    <Entry Text="{Binding WiThrottleSettings.Name}" Style="{StaticResource PanelEntry}"/>
+                    <Entry Text="{Binding WiThrottleSettings.Name}" />
                 </Border>
                 <ImageButton Margin="2,0,0,0" Aspect="Center"
                              Source="target.png" WidthRequest="15" HeightRequest="15"
@@ -82,7 +82,7 @@
                     WidthRequest="50"
                     Margin="0,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                    <Entry Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                    <Entry Focused="OnEntryFocused" 
                            HorizontalTextAlignment="Center" Text="{Binding IpAddress1, Mode=TwoWay}">
                         <Entry.Behaviors>
                             <settings:EntryValidationBehavior/>
@@ -99,7 +99,7 @@
                     Margin="0,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                     <Entry
-                        Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                        Focused="OnEntryFocused"
                         HorizontalTextAlignment="Center" Text="{Binding IpAddress2, Mode=TwoWay}">
                         <Entry.Behaviors>
                             <settings:EntryValidationBehavior/>
@@ -116,7 +116,7 @@
                     Margin="0,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                     <Entry
-                        Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                        Focused="OnEntryFocused" 
                         HorizontalTextAlignment="Center" Text="{Binding IpAddress3, Mode=TwoWay}">
                         <Entry.Behaviors>
                             <settings:EntryValidationBehavior/>
@@ -133,7 +133,7 @@
                     Margin="0,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                     <Entry
-                        Focused="OnEntryFocused" Style="{StaticResource PanelEntry}"
+                        Focused="OnEntryFocused"
                         HorizontalTextAlignment="Center" Text="{Binding IpAddress4, Mode=TwoWay}">
                         <Entry.Behaviors>
                             <settings:EntryValidationBehavior/>
@@ -151,7 +151,6 @@
                     Margin="0,5,0,5"
                     BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                     <Entry
-                        Style="{StaticResource PanelEntry}"
                         Focused="OnEntryFocused"
                         HorizontalTextAlignment="Center"
                         Text="{Binding WiThrottleSettings.Port, Mode=TwoWay, FallbackValue='0'}"/>

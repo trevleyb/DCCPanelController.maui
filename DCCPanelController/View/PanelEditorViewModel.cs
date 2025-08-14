@@ -9,6 +9,7 @@ using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.TileProperties;
+using Fonts;
 using Microsoft.Extensions.Logging;
 using ILogger = Serilog.ILogger;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -21,9 +22,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     private ControlPanelView _panelView;
     private ProfileService _profileService;
     
-    [ObservableProperty] private bool _gridVisible;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(GridOnOffToolbarIcon))]
+    private bool _gridVisible;
+    
+    [ObservableProperty] 
+    [NotifyPropertyChangedFor(nameof(EditModeToolbarIcon))]
+    private EditModeEnum _editMode = EditModeEnum.Move;
+
     [ObservableProperty] private bool _havePropertiesChanged;
-    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
@@ -38,7 +45,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SingleOrNoEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
-    [NotifyPropertyChangedFor(nameof(EditPropertiesIcon))]
+    [NotifyPropertyChangedFor(nameof(EditPropertiesToolbarIcon))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     private ObservableCollection<ITile> _selectedTiles = [];
 
@@ -63,7 +70,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
-    public string EditPropertiesIcon => SelectedEntitiesCount > 0 ? "edit.png" : "properties.png"; 
+    
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
     public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
@@ -72,6 +79,17 @@ public partial class PanelEditorViewModel : ObservableObject {
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public string Title => Panel?.Title ?? "Panel";
 
+    public string EditPropertiesToolbarIcon => SelectedEntitiesCount > 0 ? FluentUI.edit_20 : FluentUI.settings_20;
+    public string GridOnOffToolbarIcon => GridVisible ? FluentUI.grid_20 : FluentUI.grid_dots_20;
+    public string EditModeToolbarIcon =>
+        EditMode switch {
+            EditModeEnum.Copy => FluentUI.copy_20,
+            EditModeEnum.Move => FluentUI.arrow_move_20,
+            EditModeEnum.Size => FluentUI.resize_20,
+            _                 => FluentUI.arrow_move_20
+        };
+
+    
     public event Action? ForcePanelRefresh;
     public event Action? OnBeginPushModal;
     public event Action? OnBeginPopModal;

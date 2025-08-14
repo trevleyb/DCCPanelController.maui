@@ -11,13 +11,22 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:services="clr-namespace:DCCPanelController.Services"
-    xmlns:clients="clr-namespace:DCCPanelController.Clients">
+    xmlns:clients="clr-namespace:DCCPanelController.Clients"
+    xmlns:fonts="clr-namespace:Fonts">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="trash.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}"
-                     IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.tray_item_remove_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{Binding ConnectionIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">

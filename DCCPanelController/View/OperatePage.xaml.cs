@@ -5,6 +5,7 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
+using Fonts;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
@@ -67,10 +68,10 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void SetTabBarState(bool state) {
         if (state) {
             Shell.SetTabBarIsVisible(this, true);
-            HideUnHide.IconImageSource = "maximize_2.png";
+            HideUnHideToolbarIcon.Glyph = FluentUI.full_screen_maximize_20;
         } else {
             Shell.SetTabBarIsVisible(this, false);
-            HideUnHide.IconImageSource = "minimize_2.png";
+            HideUnHideToolbarIcon.Glyph = FluentUI.full_screen_minimize_20;
         }
         _tabBarState = state;
     }

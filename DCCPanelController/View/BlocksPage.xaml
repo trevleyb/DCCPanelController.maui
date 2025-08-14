@@ -10,11 +10,22 @@
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:fonts="clr-namespace:Fonts">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding RefreshBlocksCommand}" IsEnabled="{Binding IsConnected}" IconImageSource="refresh_cw.png"/>
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}" IconImageSource="{Binding ConnectionIcon}"/>
+        <ToolbarItem Command="{Binding RefreshBlocksCommand}" IsEnabled="{Binding IsConnected}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{x:Static fonts:FluentUI.row_triple_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
+        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}">
+            <ToolbarItem.IconImageSource>
+                <FontImageSource Glyph="{Binding ConnectionIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
     </ContentPage.ToolbarItems>
 
     <StackLayout x:Name="MainStackLayout">

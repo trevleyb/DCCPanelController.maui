@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using Fonts;
 
 namespace DCCPanelController.View.Base;
 
@@ -27,7 +28,7 @@ public partial class ConnectionViewModel : BaseViewModel {
     private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"ConnectionViewModel: Active profile is not defined.");
     public ConnectionService ConnectionService { get; }
     public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false; 
-    public string ConnectionIcon => IsConnected ? "wifi_on.png" : "wifi_off.png";
+    public string ConnectionIcon => IsConnected ? FluentUI.wifi_1_20 : FluentUI.wifi_off_20;
 
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {

@@ -10,6 +10,7 @@ using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
 using DCCPanelController.View.Settings.WiThrottle;
 using Microsoft.Extensions.Logging;
+using SelectionChangedEventArgs = Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs;
 
 namespace DCCPanelController.View;
 
@@ -28,6 +29,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
         pageViewModel.SetActiveSettings();
         pageViewModel.SetCapabilities();
+        SelectionSegmentControl.SelectedIndex = SetActiveSelectionSegment();
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
@@ -61,5 +63,30 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         OnPropertyChanged();
+    }
+
+    private int SetActiveSelectionSegment() {
+        if (_pageViewModel is { Settings.ClientSettings: not null }) {
+            return _pageViewModel.Settings.ClientSettings.Type switch {
+                DccClientType.Simulator => 0,
+                DccClientType.Jmri => 1,
+                DccClientType.WiThrottle => 2,
+                _ => 0,
+            };
+        }
+        return 0;
+    }
+    
+    private void SegmentSelectionChanged(object? sender, SelectionChangedEventArgs e) {
+        if (_pageViewModel is { Settings.ClientSettings: not null }) {
+            var type = e.NewIndex switch {
+                0 => DccClientType.Simulator,
+                1 => DccClientType.Jmri,
+                2 => DccClientType.WiThrottle,
+                _ => DccClientType.Simulator,
+            };
+            _pageViewModel.SetActiveSettings(type);
+            SettingsView.Content = _pageViewModel.LoadSettingsPage();
+        }
     }
 }

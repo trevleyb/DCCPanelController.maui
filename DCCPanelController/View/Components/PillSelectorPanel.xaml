@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DCCPanelController.View.TileSelectors.PillSelectorPanel"
+    x:DataType="tileSelectors:PillSelectorPanelViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sfac="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:accordion="http://schemas.syncfusion.com/maui/toolkit"
+    BackgroundColor="Transparent"
+    xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
+    xmlns:interfaces="clr-namespace:DCCPanelController.Models.ViewModel.Interfaces"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+
+    <Grid x:Name="PillSelectorGrid" RowDefinitions="48,60" ColumnDefinitions="*" WidthRequest="400">
+        <sfac:SfSegmentedControl
+            x:Name="SegmentedControl"
+            Grid.Row="0"
+            Stroke="{StaticResource Primary}"
+            StrokeThickness="2"
+            CornerRadius="15,15,0,0"
+            EnableRippleEffect="True"
+            SegmentHeight="32"
+            SegmentBackground="{StaticResource WhiteBrush}"
+            ShowSeparator="True"
+            VerticalOptions="Start"
+            Margin="0,10,0,10"
+            Padding="0"
+            AutoScrollToSelectedSegment="True" 
+            ItemsSource="{Binding Categories}" 
+            SelectionChanged="OnSelectionChanged">
+            <sfac:SfSegmentedControl.TextStyle>
+                <sfac:SegmentTextStyle TextColor="Black" FontSize="15" FontFamily="OpenSansMedium"/>
+            </sfac:SfSegmentedControl.TextStyle>    
+            <sfac:SfSegmentedControl.SelectionIndicatorSettings>
+                <sfac:SelectionIndicatorSettings SelectionIndicatorPlacement="Fill"/>
+            </sfac:SfSegmentedControl.SelectionIndicatorSettings>
+        </sfac:SfSegmentedControl>
+
+        <!-- Pill -->
+        <Grid Grid.Row="1" 
+              HeightRequest="64" Margin="3,0,3,0" 
+              HorizontalOptions="Fill"
+              BackgroundColor="White" >
+
+            <Border Stroke="{StaticResource Primary}" StrokeThickness="2" StrokeShape="RoundRectangle 0 0 10 10" />
+            
+            <!-- Content: horizontally scrolling tiles -->
+            <ScrollView
+                Orientation="Horizontal"
+                HorizontalScrollBarVisibility="Never"
+                Margin="10,5,10,5"
+                InputTransparent="False">
+                <CollectionView
+                    x:Name="TileCollection"
+                    ItemsSource="{Binding TilesForSelectedCategory}"
+                    ItemsLayout="HorizontalList"
+                    HorizontalOptions="Center"
+                    HorizontalScrollBarVisibility="Never"
+                    SelectionMode="None">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Padding="4,4,4,4" RowDefinitions="32,12" ColumnDefinitions="48" HorizontalOptions="Center">
+                                <Border Grid.Row="0" x:DataType="interfaces:ITile"
+                                    
+                                    StrokeThickness="0"
+                                    WidthRequest="32"
+                                    HeightRequest="32"
+                                    StrokeShape="RoundRectangle 8"
+                                    Content="{Binding .}">
+                                    <Border.GestureRecognizers>
+                                        <DragGestureRecognizer DragStarting="OnTileDragStarting" />
+                                    </Border.GestureRecognizers>
+                                </Border>
+                                <Label Grid.Row="1"
+                                       Margin="0,4,0,0"
+                                       FontSize="8"
+                                       x:DataType="interfaces:ITile"
+                                       TextColor="{DynamicResource PrimaryTextColor}"
+                                       HorizontalTextAlignment="Center"
+                                       LineBreakMode="TailTruncation"
+                                       Text="{Binding Entity.EntityName, FallbackValue=Tile}" />
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </Grid>
+    </Grid>
+</ContentView>

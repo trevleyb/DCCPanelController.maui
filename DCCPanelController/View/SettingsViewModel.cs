@@ -77,10 +77,11 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         return view;
     }
 
-    public void SetActiveSettings() {
-        switch (Settings?.ClientSettings?.Type) {
+    public void SetActiveSettings() => SetActiveSettings(Settings?.ClientSettings?.Type ?? DccClientType.Simulator);
+    public void SetActiveSettings(DccClientType type) {
+        switch (type) {
         case DccClientType.Simulator:
-            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, _profileService.ActiveProfile?.Settings?.ClientSettings);
+            CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator, _profileService.ActiveProfile?.Settings?.ClientSettings);
             IsSimulator = true;
             IsJmriServer = false;
             IsWiThrottle = false;
@@ -94,7 +95,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             break;
 
         case DccClientType.WiThrottle:
-            CheckSettingsCache<JmriSettings>(DccClientType.WiThrottle, _profileService.ActiveProfile?.Settings?.ClientSettings);
+            CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle, _profileService.ActiveProfile?.Settings?.ClientSettings);
             IsJmriServer = false;
             IsSimulator = false;
             IsWiThrottle = true;

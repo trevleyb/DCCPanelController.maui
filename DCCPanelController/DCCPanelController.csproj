@@ -155,6 +155,7 @@
         <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
         <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.119.0" />
         <PackageReference Include="Svg.Skia" Version="3.0.5" />
+        <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6" />
     </ItemGroup>
 
 
@@ -208,6 +209,9 @@
           <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Settings\Simulator\SimulatorSettingsView.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="AppShell.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -322,6 +326,10 @@
         </Compile>
         <Compile Update="View\Components\ColorPickerGridViewModel.cs">
           <DependentUpon>ColorPickerGrid.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="AppShell.xaml.cs">
+          <DependentUpon>AppShell.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

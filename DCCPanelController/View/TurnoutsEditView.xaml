@@ -22,7 +22,6 @@
                 BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                 <Entry
                     IsEnabled="{Binding Turnout.IsEditable}"
-                    Style="{StaticResource PanelEntry}"
                     HorizontalOptions="Start"
                     Text="{Binding Turnout.Id}"
                     VerticalOptions="Center"/>
@@ -45,7 +44,6 @@
                 BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
                 <Entry
                     IsEnabled="{Binding Turnout.IsEditable}"
-                    Style="{StaticResource PanelEntry}"
                     HorizontalOptions="Start"
                     Text="{Binding Turnout.Name}"
                     VerticalOptions="Center"/>
