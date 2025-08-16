@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <Shell
+    TabBarTitleColor="White"
+    TabBarForegroundColor="Black"
+    TabBarBackgroundColor="{StaticResource Primary}"
+    TabBarUnselectedColor="WhiteSmoke"
     FlyoutBehavior="Disabled"
     Title="DCC Panel Controller"
     iOsSpecific:Page.UseSafeArea="True"
@@ -25,12 +29,6 @@
             Title="Panel Editor"
             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
-        </Tab>
-
-        <Tab
-            Icon="panels.png"
-            Title="Text Editor">
-            <ShellContent ContentTemplate="{DataTemplate view:PanelSurfaceEditor}"/>
         </Tab>
 
         <Tab Title="Tables" Icon="tables.png"
