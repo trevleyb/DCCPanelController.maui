@@ -1,7 +1,9 @@
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.View.Helpers;
 
+// Event records
 public class TileTappedEventArgs(ITile tile, int tapCount) : TileSelectedEventArgs([tile], tapCount);
 
 public class TileSelectedEventArgs(HashSet<ITile> tiles, int tapCount) : EventArgs {

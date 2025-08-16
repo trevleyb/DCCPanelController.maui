@@ -331,6 +331,9 @@
           <DependentUpon>AppShell.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\PanelSurfaceEditorViewModel.cs">
+          <DependentUpon>PanelSurfaceEditor.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

@@ -9,7 +9,7 @@ using Svg.Skia;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
-public class SvgImageManager {
+public partial class SvgImageManager {
     private const int DefaultWidth = 48;
     private const int DefaultHeight = 48;
     private readonly XDocument _svgDocument;

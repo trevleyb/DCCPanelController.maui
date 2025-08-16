@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DCCPanelController.View.PanelSurfaceView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:skia="clr-namespace:SkiaSharp.Views.Maui.Controls;assembly=SkiaSharp.Views.Maui.Controls">
+
+    <!--
+      Layout: a single SKCanvasView that we scale/translate for zoom & pan.
+      We keep a transparent overlay Grid only for receiving gestures.
+    -->
+    <Grid x:Name="Root" BackgroundColor="Transparent">
+        <skia:SKCanvasView x:Name="Surface"
+                           IgnorePixelScaling="True"
+                           PaintSurface="OnPaintSurface" />
+
+        <!-- Gesture overlay -->
+        <Grid x:Name="GestureOverlay" BackgroundColor="Transparent">
+            <Grid.GestureRecognizers>
+                <PanGestureRecognizer PanUpdated="OnPan" />
+                <PinchGestureRecognizer PinchUpdated="OnPinch" />
+                <TapGestureRecognizer NumberOfTapsRequired="1" Tapped="OnTapped" />
+                <TapGestureRecognizer NumberOfTapsRequired="2" Tapped="OnDoubleTapped" />
+                <DropGestureRecognizer DragOver="OnDragOver" Drop="OnDrop" />
+            </Grid.GestureRecognizers>
+        </Grid>
+    </Grid>
+</ContentView>

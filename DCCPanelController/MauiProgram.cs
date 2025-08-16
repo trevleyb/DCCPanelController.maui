@@ -72,6 +72,7 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelViewer, PanelViewerViewModel>();
+        services.AddSingletonViewAndModel<PanelSurfaceEditor, PanelSurfaceEditorViewModel>();
         
         services.AddTransientViewAndModel<TurnoutsPage, TurnoutsViewModel>();
         services.AddTransientViewAndModel<RoutesPage, RoutesViewModel>();
