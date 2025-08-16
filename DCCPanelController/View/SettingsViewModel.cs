@@ -33,6 +33,9 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _isWiThrottle;
     [ObservableProperty] private bool _isSimulator;
 
+    [ObservableProperty] private int _selectedSegmentIndex;
+    [ObservableProperty] private Microsoft.Maui.Controls.View? _currentSettingsView;
+
     public Models.DataModel.Settings? Settings => Profile.Settings;
     public Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"SettingsViewModel: Active profile is not defined.");
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
@@ -50,7 +53,6 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         if (reconnect) await ConnectionService.DisconnectAsync();
         await _profileService.SaveActiveProfileAsync();
         if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
-        //await DisplayAlertHelper.DisplayOkAlertAsync("Success", "Settings and Profile Saved");
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
     }
 
@@ -109,6 +111,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         }
         SetCapabilities();
     }
+
     private IDccClientSettings CheckSettingsCache<T>(DccClientType type, IDccClientSettings? settings = null) where T : IDccClientSettings, new() {
         try {
             if (_settingsCache.TryGetValue(type, out var cache)) return cache;
@@ -170,16 +173,30 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         return result.Folder.Path ?? string.Empty;
     }
 
-    // Method to save the JSON file to the specified location
     private async Task SaveJsonToFile(string filePath, string jsonData) {
         await using var streamWriter = new StreamWriter(filePath, false);
         await streamWriter.WriteAsync(jsonData);
     }
 
-    // Method to save the JSON file to the specified location
     private async Task<string> LoadJsonFromFile(string filePath) {
         using var reader = new StreamReader(filePath);
         return await reader.ReadToEndAsync();
     }
 
+    // React to selection changes from the UI
+    partial void OnSelectedSegmentIndexChanged(int value) {
+        // Map index to type
+        var type = value switch {
+            0 => DccClientType.Simulator,
+            1 => DccClientType.Jmri,
+            2 => DccClientType.WiThrottle,
+            _ => DccClientType.Simulator
+        };
+
+        // Update flags and active settings
+        SetActiveSettings(type);
+
+        // Create/load the appropriate sub-view and assign it
+        CurrentSettingsView = LoadSettingsPage();
+    }
 }

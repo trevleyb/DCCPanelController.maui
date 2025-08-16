@@ -28,8 +28,12 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         InitializeComponent();
 
         pageViewModel.SetActiveSettings();
-        pageViewModel.SetCapabilities();
-        SelectionSegmentControl.SelectedIndex = SetActiveSelectionSegment();
+        _pageViewModel.SelectedSegmentIndex = _pageViewModel.Settings?.ClientSettings?.Type switch {
+            DCCPanelController.Clients.DccClientType.Simulator  => 0,
+            DCCPanelController.Clients.DccClientType.Jmri       => 1,
+            DCCPanelController.Clients.DccClientType.WiThrottle => 2,
+            _                                                   => 0
+        };
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
@@ -40,53 +44,5 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     private void Instructions_OnClicked(object? sender, EventArgs e) {
         Navigation.PushAsync(new HelpPage());
-    }
-    
-    private void CheckChanged_Jmri(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is { IsJmriServer: true }) {
-            SettingsView.Content = _pageViewModel.LoadSettingsPage();
-        }
-    }
-
-    private void CheckChanged_WiThrottle(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is { IsWiThrottle: true }) {
-            SettingsView.Content = _pageViewModel.LoadSettingsPage();
-        }
-    }
-
-    private void CheckChanged_Simulator(object? sender, CheckedChangedEventArgs e) {
-        if (_pageViewModel is { IsSimulator: true }) {
-            SettingsView.Content = _pageViewModel.LoadSettingsPage();
-        }
-    }
-
-
-    private void SettingsViewOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        OnPropertyChanged();
-    }
-
-    private int SetActiveSelectionSegment() {
-        if (_pageViewModel is { Settings.ClientSettings: not null }) {
-            return _pageViewModel.Settings.ClientSettings.Type switch {
-                DccClientType.Simulator => 0,
-                DccClientType.Jmri => 1,
-                DccClientType.WiThrottle => 2,
-                _ => 0,
-            };
-        }
-        return 0;
-    }
-    
-    private void SegmentSelectionChanged(object? sender, SelectionChangedEventArgs e) {
-        if (_pageViewModel is { Settings.ClientSettings: not null }) {
-            var type = e.NewIndex switch {
-                0 => DccClientType.Simulator,
-                1 => DccClientType.Jmri,
-                2 => DccClientType.WiThrottle,
-                _ => DccClientType.Simulator,
-            };
-            _pageViewModel.SetActiveSettings(type);
-            SettingsView.Content = _pageViewModel.LoadSettingsPage();
-        }
     }
 }

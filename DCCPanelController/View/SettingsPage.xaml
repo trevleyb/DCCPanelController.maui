@@ -31,7 +31,7 @@
 
     <Grid RowDefinitions="*,70">
         <ScrollView Grid.Row="0">
-            <Grid RowDefinitions="auto,auto,*">
+            <Grid RowDefinitions="auto,auto,auto">
                 <StackLayout Margin="10,10,10,10" Grid.Row="0">
                     <toolkit:Expander IsExpanded="True" x:Name="ExpanderControl">
                         <toolkit:Expander.Header>
@@ -58,19 +58,21 @@
                         </toolkit:Expander.Header>
                         <toolkit:Expander.Content>
                             <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
-                                <HorizontalStackLayout Margin="0,10,0,0">
-                                    <Label Text="Profile Name" HorizontalOptions="Start"
+                                <!-- Profile Name -->
+                                <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Label Text="Profile Name"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="250"/>
-                                    <Entry Text="{Binding Profile.ProfileName}"/>
-                                </HorizontalStackLayout>
+                                           VerticalOptions="Center"/>
+                                    <Entry Grid.Column="1" Text="{Binding Profile.ProfileName}" />
+                                </Grid>
 
-
-                                <HorizontalStackLayout Margin="0,10,0,0">
-                                    <Label Text="Background Color?" HorizontalOptions="Start"
+                                <!-- Background Color -->
+                                <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Label Text="Background Color?"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="250"/>
+                                           VerticalOptions="Center"/>
                                     <components:ColorPickerButton
+                                        Grid.Column="1"
                                         AllowsNoColor="true"
                                         HeightRequest="35"
                                         BorderColor="{StaticResource Primary}"
@@ -78,45 +80,52 @@
                                         WidthRequest="150"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
-                                        HorizontalOptions="Fill"/>
-                                </HorizontalStackLayout>
+                                        HorizontalOptions="Start"/>
+                                </Grid>
 
-                                <HorizontalStackLayout Margin="0,10,0,0">
-                                    <Label Text="Show Welcome Page?" HorizontalOptions="Start"
+                                <!-- Show Welcome Page -->
+                                <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Label Text="Show Welcome Page?"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="250"/>
-                                    <Switch IsToggled="{Binding Settings.ShowWelcomePage}"
+                                           VerticalOptions="Center"/>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding Settings.ShowWelcomePage}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
-                                </HorizontalStackLayout>
+                                </Grid>
 
-                                <HorizontalStackLayout Margin="0,10,0,0">
-                                    <Label Text="Automatically Connect?" HorizontalOptions="Start"
+                                <!-- Automatically Connect -->
+                                <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Label Text="Automatically Connect?"
                                            Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center" WidthRequest="250"/>
-                                    <Switch IsToggled="{Binding Settings.ConnectOnStartup}"
+                                           VerticalOptions="Center"/>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding Settings.ConnectOnStartup}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
-                                </HorizontalStackLayout>
+                                </Grid>
 
-                                <HorizontalStackLayout Margin="0,10,0,0">
-                                    <Label Text="Set Turnouts on Connect?" HorizontalOptions="Start"
-                                           Style="{StaticResource MediumLabel}" VerticalOptions="Center"
-                                           WidthRequest="250"/>
-                                    <Switch IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
+                                <!-- Set Turnouts on Connect -->
+                                <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Label Text="Set Turnouts on Connect?"
+                                           Style="{StaticResource MediumLabel}"
+                                           VerticalOptions="Center"/>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding Settings.SetTurnoutStatesOnStartup}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
-                                </HorizontalStackLayout>
+                                </Grid>
 
-                                <HorizontalStackLayout Margin="0,10,0,0">
-                                    <Label Text="Enable Click Sounds?" HorizontalOptions="Start"
-                                           Style="{StaticResource MediumLabel}" VerticalOptions="Center"
-                                           WidthRequest="250"/>
-                                    <Switch IsToggled="{Binding Settings.UseClickSounds}"
+                                <!-- Enable Click Sounds -->
+                                <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Label Text="Enable Click Sounds?"
+                                           Style="{StaticResource MediumLabel}"
+                                           VerticalOptions="Center"/>
+                                    <Switch Grid.Column="1"
+                                            IsToggled="{Binding Settings.UseClickSounds}"
                                             OnColor="{StaticResource Primary}"
                                             ThumbColor="{StaticResource Gray200}"/>
-                                </HorizontalStackLayout>
-
+                                </Grid>
                             </StackLayout>
                         </toolkit:Expander.Content>
                     </toolkit:Expander>
@@ -158,7 +167,7 @@
                                                                     HorizontalOptions="Start"
                                                                     Stroke="{StaticResource Primary}"
                                                                     EnableRippleEffect="True"
-                                                                    SelectionChanged="SegmentSelectionChanged">
+                                                                    SelectedIndex="{Binding SelectedSegmentIndex, Mode=TwoWay}">
                                     <textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
                                         <textInputLayout:SelectionIndicatorSettings
                                             SelectionIndicatorPlacement="Fill"
@@ -185,7 +194,6 @@
                                         <CollectionView.ItemTemplate>
                                             <DataTemplate x:DataType="helpers:CapabilityIcon">
                                                 <Grid RowDefinitions="auto,15">
-                                                    <!-- Stroke="{Binding IsAvailable, Converter={StaticResource BoolToColorConverter}}" -->
                                                     <Border StrokeShape="RoundRectangle 5"
                                                             StrokeThickness="0.5">
                                                         <Border.BackgroundColor>
@@ -237,10 +245,10 @@
                     </toolkit:Expander>
                 </StackLayout>
 
-                <ScrollView Margin="0,20,0,0" Grid.Row="2" VerticalScrollBarVisibility="Always"
-                            HorizontalScrollBarVisibility="Always">
-                    <ContentView x:Name="SettingsView"/>
-                </ScrollView>
+                <!-- Settings sub-view host: single presenter, no nested ScrollView -->
+                <ContentPresenter Grid.Row="2"
+                                  Margin="0,20,0,0"
+                                  Content="{Binding CurrentSettingsView}" />
             </Grid>
 
         </ScrollView>
