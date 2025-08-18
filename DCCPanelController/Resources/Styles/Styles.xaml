@@ -150,29 +150,7 @@
             </VisualStateGroupList>
         </Setter>
     </Style>
-
-    <Style TargetType="Entry">
-        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
-        <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="{OnIdiom 18, Desktop=24}" />
-        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
-        <Setter Property="MinimumHeightRequest" Value="44"/>
-        <Setter Property="MinimumWidthRequest" Value="44"/>
-        <Setter Property="VisualStateManager.VisualStateGroups">
-            <VisualStateGroupList>
-                <VisualStateGroup x:Name="CommonStates">
-                    <VisualState x:Name="Normal" />
-                    <VisualState x:Name="Disabled">
-                        <VisualState.Setters>
-                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
-                        </VisualState.Setters>
-                    </VisualState>
-                </VisualStateGroup>
-            </VisualStateGroupList>
-        </Setter>
-    </Style>
-
+    
     <Style TargetType="ImageButton">
         <Setter Property="Opacity" Value="1" />
         <Setter Property="BorderColor" Value="Transparent"/>
@@ -543,29 +521,49 @@
         <Setter Property="UnselectedTabColor" Value="{AppThemeBinding Light={StaticResource PrimaryDisabled}, Dark={StaticResource PrimaryDisabled}}" />
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource White}}" />
     </Style>
-
     
     <Style x:Key="EntryBorderStyle" TargetType="Border">
         <Setter Property="StrokeShape" Value="RoundRectangle 10" />
         <Setter Property="Stroke" Value="{StaticResource Primary}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="Padding" Value="5,0,5,0" />
-        <Setter Property="Margin" Value="0,0,0,0" />
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource White}" />
         <Setter Property="HorizontalOptions" Value="Start" />
+        <Setter Property="HeightRequest" Value="35" />
         <Setter Property="WidthRequest" Value="175" />
     </Style>
 
-    <Style x:Key="BorderedEntryContentStyle" TargetType="Entry">
+    <Style TargetType="Entry">
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource DarkOnLightBackground}, Dark={StaticResource LightOnDarkBackground}}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontFamily" Value="OpenSansRegular"/>
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="PlaceholderColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray500}}" />
+        <Setter Property="MinimumHeightRequest" Value="35"/>
+        <Setter Property="MinimumWidthRequest" Value="35"/>
         <Setter Property="HorizontalOptions" Value="Start" />
         <Setter Property="VerticalOptions" Value="Center" />
-        <Setter Property="TextColor" Value="{StaticResource MidnightBlue}" />
-        <Setter Property="FontSize">
-            <Setter.Value>
-                <OnIdiom x:TypeArguments="x:Double" Phone="12" Tablet="13" Desktop="12"/>
-            </Setter.Value>
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
         </Setter>
+    </Style>
+    
+    <Style x:Key="BorderedEntryContentStyle" TargetType="Entry">
+        <Setter Property="BackgroundColor" Value="White" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="Margin" Value="0,0,0,0" />
+        <Setter Property="TextColor" Value="{StaticResource MidnightBlue}" />
+        <Setter Property="FontSize" Value="12"/>
     </Style>
     
     <Style TargetType="shimmer:SfShimmer">

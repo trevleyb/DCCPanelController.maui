@@ -60,14 +60,10 @@
                             <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
                                 <!-- Profile Name -->
                                 <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
-                                    <Label Grid.Column="0" Text="Profile Name"
-                                           Style="{StaticResource MediumLabel}"
-                                           VerticalOptions="Center"/>
-                                    <Border Grid.Column="1" Style="{StaticResource EntryBorderStyle}">
-                                        <Entry Style="{StaticResource BorderedEntryContentStyle}"  Text="{Binding Profile.ProfileName}" />
+                                    <Label Grid.Column="0" Text="Profile Name" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                                    <Border Grid.Column="1" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                                        <Entry Text="{Binding Profile.ProfileName}" />
                                     </Border>
-
-                                    <!-- <Entry Grid.Column="1" Text="{Binding Profile.ProfileName}" /> -->
                                 </Grid>
 
                                 <!-- Background Color -->
@@ -81,7 +77,7 @@
                                         HeightRequest="35"
                                         BorderColor="{StaticResource Primary}"
                                         BorderWidth="1"
-                                        WidthRequest="150"
+                                        WidthRequest="175"
                                         SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type view:SettingsPageViewModel}}, Path=Settings.BackgroundColor, Mode=TwoWay}"
                                         VerticalOptions="Center"
                                         HorizontalOptions="Start"/>
@@ -198,13 +194,12 @@
                                         <CollectionView.ItemTemplate>
                                             <DataTemplate x:DataType="helpers:CapabilityIcon">
                                                 <Grid RowDefinitions="auto,15">
-                                                    <Border StrokeShape="RoundRectangle 5"
-                                                            StrokeThickness="0.5">
+                                                    <Border StrokeShape="RoundRectangle 5" StrokeThickness="0.5">
                                                         <Border.BackgroundColor>
                                                             <Binding Path="IsAvailable">
                                                                 <Binding.Converter>
                                                                     <converters1:BoolToColorConverter
-                                                                        TrueColor="Transparent"
+                                                                        TrueColor="White"
                                                                         FalseColor="GhostWhite"/>
                                                                 </Binding.Converter>
                                                             </Binding>

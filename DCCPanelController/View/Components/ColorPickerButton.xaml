@@ -18,7 +18,7 @@
             Grid.Column="0"/>
 
         <Label
-            FontSize="10"
+            FontSize="12"
             Grid.Column="0"
             HorizontalOptions="Start"
             InputTransparent="True"

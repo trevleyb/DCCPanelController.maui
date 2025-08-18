@@ -79,8 +79,8 @@
         <navigationDrawer:SfNavigationDrawer.ContentView>
             <RefreshView IsRefreshing="{Binding IsBusy}"
                          Command="{Binding RefreshTurnoutsCommand}">
-                <Grid
-                    IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}">
+                <Grid>
+                    <!-- IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"> -->
                     <CollectionView ItemsSource="{Binding Turnouts}"
                                     SelectedItem="{Binding SelectedTurnout}"
                                     SelectionMode="Single">
