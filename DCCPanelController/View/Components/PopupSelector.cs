@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Globalization;
+using System.Linq;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Views;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
+using UIKit;
 using Application = Microsoft.Maui.Controls.Application;
 using LayoutAlignment = Microsoft.Maui.Primitives.LayoutAlignment;
 using ListView = Microsoft.Maui.Controls.ListView;
@@ -28,9 +30,9 @@ public class PopupSelector : ContentView, IDisposable {
     private readonly Border _popupContainer = new();
     private bool _isLoaded = false;
     private bool _isInitializing = false;
-    private Border? mainLayoutBox;
-    private Grid? mainButtonLayout;
-    private Label? selectedItemLabel;
+    private Border? _mainLayoutBox;
+    private Grid? _mainButtonLayout;
+    private Label? _selectedItemLabel;
 
     public event EventHandler<PopupSelectorEventArgs>? OnPopup;
     public event EventHandler<PopupSelectorEventArgs>? OnClosing;
@@ -62,7 +64,7 @@ public class PopupSelector : ContentView, IDisposable {
             return;
         }
 
-        mainLayoutBox = new Border() {
+        _mainLayoutBox = new Border() {
             Margin = new Thickness(0, 0,0, 0),
             WidthRequest = this.WidthRequest,
             HeightRequest = 30,
@@ -78,26 +80,18 @@ public class PopupSelector : ContentView, IDisposable {
 
         // The label that will be displayed containing the selected item
         // ----------------------------------------------------------------------------
-        selectedItemLabel = new Label {
+        _selectedItemLabel = new Label {
             VerticalOptions = LayoutOptions.Fill,
             VerticalTextAlignment = TextAlignment.Center,
             HorizontalOptions = LayoutOptions.Fill,
             HorizontalTextAlignment = TextAlignment.Start,
             LineBreakMode = LineBreakMode.TailTruncation,
             Margin = new Thickness(10, 5, 5, 5),
+            BindingContext = this
         };
-        selectedItemLabel.BindingContext = this;
-        selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
-        selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
-
-        //selectedItemLabel.SetBinding(Label.TextProperty, new MultiBinding {
-        //    Bindings = {
-        //        new Binding(nameof(SelectedItem), source: this),
-        //        new Binding(nameof(Placeholder), source: this)
-        //    },
-        //    Converter = new SelectedItemToDisplayTextConverter()
-        //});
-        selectedItemLabel.SetBinding(Label.TextProperty, new MultiBinding {
+        _selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
+        _selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
+        _selectedItemLabel.SetBinding(Label.TextProperty, new MultiBinding {
             Bindings = {
                 new Binding(nameof(SelectedItem), source: this),
                 new Binding(nameof(Placeholder), source: this),
@@ -117,7 +111,7 @@ public class PopupSelector : ContentView, IDisposable {
         };
         var togglePopupGesture = new TapGestureRecognizer();
         togglePopupGesture.Tapped += (_, _) => TogglePopup();
-        selectedItemLabel.GestureRecognizers.Add(togglePopupGesture);
+        _selectedItemLabel.GestureRecognizers.Add(togglePopupGesture);
         _arrowImage.GestureRecognizers.Add(togglePopupGesture);
 
         // The up/down image. Use properties to change what .png is used. (must be PNG)  
@@ -134,27 +128,25 @@ public class PopupSelector : ContentView, IDisposable {
 
         // Main container for the label and icon
         // ----------------------------------------------------------------------------
-        mainButtonLayout = new Grid {
+        _mainButtonLayout = new Grid {
             VerticalOptions = LayoutOptions.Fill,
             HorizontalOptions = LayoutOptions.Fill,
         };
-        mainButtonLayout.SizeChanged += (_, _) => {
-            var dropdownWidth = DropDownWidth > 0 ? DropDownWidth - 2 : mainButtonLayout.Width - 2;
-            AbsoluteLayout.SetLayoutBounds(_popupContainer, new Rect(0, mainButtonLayout.Height, dropdownWidth, DropDownHeight));
+        _mainButtonLayout.SizeChanged += (_, _) => {
+            var dropdownWidth = DropDownWidth > 0 ? DropDownWidth - 2 : _mainButtonLayout.Width - 2;
+            AbsoluteLayout.SetLayoutBounds(_popupContainer, new Rect(0, _mainButtonLayout.Height, dropdownWidth, DropDownHeight));
         };
 
-        mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
-        mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-        mainLayoutBox.Content = selectedItemLabel;
-
-        mainButtonLayout.Children.Add(mainLayoutBox);
-        mainButtonLayout.SetColumn(mainLayoutBox, 0);
-        if (ShowClearFieldImage) {
-            mainButtonLayout.Children.Add(_clearImage);
-            mainButtonLayout.SetColumn(_clearImage, 1);
+        _mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+        _mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+        _mainLayoutBox.Content = _selectedItemLabel;
+        _mainButtonLayout.Children.Add(_mainLayoutBox);
+        _mainButtonLayout.SetColumn(_mainLayoutBox, 0);
+        if (ShowClearFieldImage && HasItems(ItemsSource)) {
+            _mainButtonLayout.Children.Add(_clearImage);
+            _mainButtonLayout.SetColumn(_clearImage, 1);
         }
-        CreatePopupView(mainButtonLayout);
+        CreatePopupView(_mainButtonLayout);
 
         // Placeholder management
         // ----------------------------------------------------------------------------
@@ -169,7 +161,6 @@ public class PopupSelector : ContentView, IDisposable {
                 break;
             
             case nameof(ItemsSource):
-                // When ItemsSource changes, try to restore the selection
                 if (!_isInitializing && SelectedValue != null && SelectedItem == null) {
                     UpdateSelectedItemFromValue();
                 }
@@ -200,22 +191,23 @@ public class PopupSelector : ContentView, IDisposable {
             CompleteInitialization();
             return false; // Don't repeat
         });
+    }
 
+    private bool HasItems(IEnumerable itemsSource) {
+        var count = itemsSource.Cast<object?>().Count();
+        return count > 0; 
     }
 
     // Add this method to be called after control is fully initialized
     private void CompleteInitialization() {
         _isInitializing = false;
-        // Force update of SelectedItem from SelectedValue now that everything is ready
         if (SelectedValue != null && SelectedItem == null) {
             UpdateSelectedItemFromValue();
         }
     }
 
     private void UpdateSelectedItemFromValue() {
-        // Don't update during initialization to avoid timing issues
         if (_isInitializing) return;
-
         if (SelectedValue == null) {
             SelectedItem = null;
             return;
@@ -236,15 +228,11 @@ public class PopupSelector : ContentView, IDisposable {
                 }
             }
         }
-
-        // Keep SelectedItem as null but don't clear SelectedValue
         SelectedItem = null;
     }
 
     private void UpdateSelectedValue() {
-        // Don't update during initialization
         if (_isInitializing) return;
-
         if (string.IsNullOrEmpty(SelectedValuePath)) {
             SelectedValue = SelectedItem;
         } else if (SelectedItem != null) {
@@ -255,7 +243,6 @@ public class PopupSelector : ContentView, IDisposable {
     }
 
     private void UpdateSelectedItemFromValueWhenItemsSourceChanges() {
-        // When ItemsSource changes, try to find the matching item again
         if (SelectedValue != null && SelectedItem == null) {
             UpdateSelectedItemFromValue();
         }
@@ -280,16 +267,7 @@ public class PopupSelector : ContentView, IDisposable {
                 label.SetBinding(Label.TextColorProperty, new Binding(nameof(DropdownTextColor), BindingMode.OneWay, source: this));
                 label.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
                 label.SetBinding(BackgroundColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
-
-                // Check if DisplayMemberPath is set
-                if (!string.IsNullOrEmpty(DisplayMemberPath)) {
-                    // Use the specified property path
-                    label.SetBinding(Label.TextProperty, new Binding(DisplayMemberPath));
-                } else {
-                    // Default behavior: bind to the entire object (uses ToString())
-                    label.SetBinding(Label.TextProperty, new Binding("."));
-                }
-
+                label.SetBinding(Label.TextProperty, !string.IsNullOrEmpty(DisplayMemberPath) ? new Binding(DisplayMemberPath) : new Binding("."));
                 return label;
             })
         };
@@ -327,7 +305,6 @@ public class PopupSelector : ContentView, IDisposable {
             AbsoluteLayout.SetLayoutBounds(mainButtonLayout, new Rect(0, 0, 1, 40)); // Layout button at (0, 0)
             AbsoluteLayout.SetLayoutFlags(mainButtonLayout, AbsoluteLayoutFlags.WidthProportional);
             absoluteLayout.Children.Add(mainButtonLayout);
-
             AbsoluteLayout.SetLayoutBounds(_popupContainer, new Rect(0, 40, DropDownWidth > 0 ? DropDownWidth - 2 : WidthRequest - 2, DropDownHeight));
             AbsoluteLayout.SetLayoutFlags(_popupContainer, AbsoluteLayoutFlags.None);
             absoluteLayout.Children.Add(_popupContainer);
@@ -404,62 +381,60 @@ public class PopupSelector : ContentView, IDisposable {
             _popupContainer.IsVisible = !_popupContainer.IsVisible;
             SetDropDownImage(_popupContainer.IsVisible);
         } else {
-            if (SelectorType == PopupSelectorTypeEnum.Picker || (SelectorType == PopupSelectorTypeEnum.Automatic && DeviceInfo.Platform == DevicePlatform.iOS)) {
+            //if (SelectorType == PopupSelectorTypeEnum.Picker || (SelectorType == PopupSelectorTypeEnum.Automatic && DeviceInfo.Platform == DevicePlatform.iOS)) {
                 SetDropDownImage(true);
                 ShowIOSPicker();
                 SetDropDownImage(false);
                 return;
-            }
+            //}
 
             // This is a normal Popup then. 
             // ----------------------------------------------------------
-            if (_popup?.Parent != null) {
-                if (_popup is not null) {
-                    //TODO: FIX
-                    //_popup.Close();
-                    _popup = null;
-                }
-                SetDropDownImage(false);
-                _popupContainer.IsVisible = false;
-            } else {
-                // Create and show popup
-                SetDropDownImage(true);
-                var bounds = GetControlBounds();
-                _popupContainer.WidthRequest = DropDownWidth > 0 ? DropDownWidth : bounds.Width;
-                _popupContainer.HeightRequest = DropDownHeight > 0 ? DropDownHeight : bounds.Height;
-                _popup = new Popup {
-                    Content = _popupContainer,
-                    //TODO: FIX
-                    //Size = new Size(_popupContainer.WidthRequest + InnerMargin.Left + InnerMargin.Right, DropDownHeight + InnerMargin.Top + InnerMargin.Bottom),
-                    CanBeDismissedByTappingOutsideOfPopup = true,
-                    //TODO: FIXVerticalOptions = LayoutAlignment.Center,
-                    //TODO: FIXHorizontalOptions = LayoutAlignment.Center
-                };
-                if (ShowAnchor) {
-                    //TODO: FIX
-                    //_popup.Anchor = this;
-                    _popupContainer.Margin = InnerMargin;
-                }
-                //TODO: FIX
-                //_popup.SetBinding(Popup.ColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
-                _popup.Closed += (sender, args) => {
-                    SetDropDownImage(false);
-                    _popupContainer.IsVisible = false;
-                    _popup = null;
-                };
-
-                if (App.Current.Windows[0].Page is { } page) {
-                    //TODO: FIX
-                    //page.ShowPopup(_popup);
-                    _popupContainer.IsVisible = true;
-                }
-            }
+            // if (_popup?.Parent != null) {
+            //     if (_popup is not null) {
+            //         //TODO: FIX
+            //         //_popup.Close();
+            //         _popup = null;
+            //     }
+            //     SetDropDownImage(false);
+            //     _popupContainer.IsVisible = false;
+            // } else {
+            //     // Create and show popup
+            //     SetDropDownImage(true);
+            //     var bounds = GetControlBounds();
+            //     _popupContainer.WidthRequest = DropDownWidth > 0 ? DropDownWidth : bounds.Width;
+            //     _popupContainer.HeightRequest = DropDownHeight > 0 ? DropDownHeight : bounds.Height;
+            //     _popup = new Popup {
+            //         Content = _popupContainer,
+            //         //TODO: FIX
+            //         //Size = new Size(_popupContainer.WidthRequest + InnerMargin.Left + InnerMargin.Right, DropDownHeight + InnerMargin.Top + InnerMargin.Bottom),
+            //         CanBeDismissedByTappingOutsideOfPopup = true,
+            //         //TODO: FIXVerticalOptions = LayoutAlignment.Center,
+            //         //TODO: FIXHorizontalOptions = LayoutAlignment.Center
+            //     };
+            //     if (ShowAnchor) {
+            //         //TODO: FIX
+            //         //_popup.Anchor = this;
+            //         _popupContainer.Margin = InnerMargin;
+            //     }
+            //     //TODO: FIX
+            //     //_popup.SetBinding(Popup.ColorProperty, new Binding(nameof(DropdownBackgroundColor), BindingMode.OneWay, source: this));
+            //     _popup.Closed += (sender, args) => {
+            //         SetDropDownImage(false);
+            //         _popupContainer.IsVisible = false;
+            //         _popup = null;
+            //     };
+            //
+            //     if (App.Current.Windows[0].Page is { } page) {
+            //         //TODO: FIX
+            //         //page.ShowPopup(_popup);
+            //         _popupContainer.IsVisible = true;
+            //     }
+            // }
         }
     }
 
     void ShowIOSPicker() {
-        if (ItemsSource == null) return;
-
         var items = ItemsSource.Cast<object>().ToList();
         if (items.Count == 0) return;
 
@@ -480,7 +455,6 @@ public class PopupSelector : ContentView, IDisposable {
                 // Default behavior: use the item's ToString() method
                 displayText = item.ToString() ?? string.Empty;
             }
-
             displayItems.Add(displayText);
         }
 

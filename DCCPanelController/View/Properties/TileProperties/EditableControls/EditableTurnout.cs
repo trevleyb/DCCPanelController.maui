@@ -19,6 +19,7 @@ public class EditableTurnoutAttribute(string label, string description = "", int
             var cell = new PopupSelector() {
                 SelectorType = PopupSelectorTypeEnum.Automatic,
                 InnerMargin = new Thickness(10, 0, 0, 0),
+                ShowClearFieldImage = turnouts.Count > 0, 
                 WidthRequest = width,
                 DropDownWidth = dropDownWidth,
                 DropDownHeight = dropDownHeight,
