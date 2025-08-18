@@ -24,7 +24,6 @@ public partial class PanelPropertyViewModel : Base.BaseViewModel, IPropertiesVie
 
     public ObservableCollection<ColorItemGroup> GroupedColorSettings { get; set; }
     public ObservableCollection<PanelColorItem> ColorSettings { get; }
-    public PropertyDisplayService.ShowPropertiesType ShowPropertiesType { get; set; }
 
     public Task ApplyChangesAsync() {
         return Task.CompletedTask;

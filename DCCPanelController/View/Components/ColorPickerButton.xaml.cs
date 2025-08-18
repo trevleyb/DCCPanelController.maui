@@ -2,6 +2,8 @@ using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Helpers;
+using Syncfusion.Maui.Toolkit.Popup;
 
 namespace DCCPanelController.View.Components;
 
@@ -12,14 +14,15 @@ public partial class ColorPickerButton : ContentView {
     public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty BorderWidthProperty = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
-    
+
     public ColorPickerButton() {
         InitializeComponent();
         BindingContext = this;
     }
 
     public Color ActiveColor => SelectedColor ?? DefaultColor ?? Colors.White;
-    public string SelectedColorText => SelectedColor == null ? "Use Default" : "";
+    public Color SelectedOffsetColor => AppleCrayonColors.GetContrastingTextColor(SelectedColor ?? Colors.White);
+    public string SelectedColorText => SelectedColor == null ? "Use Default" : AppleCrayonColors.Name(SelectedColor);
     public bool ShowClearColorButton => SelectedColor != null && AllowsNoColor;
 
     public Color? DefaultColor {
@@ -34,7 +37,10 @@ public partial class ColorPickerButton : ContentView {
         get => (Color)GetValue(SelectedColorProperty);
         set {
             SetValue(SelectedColorProperty, value);
-            OnPropertyChanged(nameof(SelectedColorProperty)); // Update DisplayText when the color changes
+            OnPropertyChanged(nameof(SelectedColorProperty)); 
+            OnPropertyChanged(nameof(SelectedOffsetColor));
+            OnPropertyChanged(nameof(SelectedColorText));
+            OnPropertyChanged(nameof(ShowClearColorButton));
         }
     }
 
@@ -61,7 +67,7 @@ public partial class ColorPickerButton : ContentView {
             OnPropertyChanged(nameof(BorderWidthProperty)); // Update DisplayText when the color changes
         }
     }
-    
+
     public int CornerRadius {
         get => (int)GetValue(CornerRadiusProperty);
         set {
@@ -77,33 +83,64 @@ public partial class ColorPickerButton : ContentView {
         control.OnPropertyChanged(nameof(ShowClearColorButton));
         control.OnPropertyChanged(nameof(SelectedColorText));
         control.OnPropertyChanged(nameof(AllowsNoColor));
+        control.OnPropertyChanged(nameof(SelectedColorProperty)); 
+        control.OnPropertyChanged(nameof(SelectedOffsetColor));
     }
 
     [RelayCommand]
     private async Task ClearColorAsync() {
         SelectedColor = null;
+        OnPropertyChanged(nameof(SelectedColorProperty)); 
+        OnPropertyChanged(nameof(SelectedOffsetColor));
+        OnPropertyChanged(nameof(SelectedColorText));
+        OnPropertyChanged(nameof(ShowClearColorButton));
     }
 
-    // Asynchronously show the popup and update the selected color
     [RelayCommand]
     private async Task ShowDropdownAsync() {
+        var colorPickerViewModel = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
+        var colorPickerGrid = new ColorPickerGrid(colorPickerViewModel);
 
-        var popupService = MauiProgram.ServiceHelper.GetService<IPopupService>();
-        var queryAttributes = new Dictionary<string, object> { ["color"] = SelectedColor ?? Colors.White };
-        var popup = new ColorPickerGrid(new ColorPickerGridViewModel(popupService));
-        var result = await popupService.ShowPopupAsync<ColorPickerGridViewModel>(Shell.Current, options: PopupOptions.Empty, shellParameters: queryAttributes);
-        if (result.WasDismissedByTappingOutsideOfPopup == false) {
-            if (result is IPopupResult<Color?> { Result: { } selectedColor }) {
-                SelectedColor = selectedColor;
+        var popup = new Syncfusion.Maui.Toolkit.Popup.SfPopup {
+            ContentTemplate = new DataTemplate(() => colorPickerGrid),
+            ShowHeader = false,
+            ShowFooter = false, 
+            BackgroundColor = Colors.Transparent,
+            PopupStyle = new PopupStyle {
+                CornerRadius = 10, 
+                HasShadow = false,
+                BlurIntensity = PopupBlurIntensity.Light
+            },
+            AutoSizeMode = PopupAutoSizeMode.Both,
+            AnimationMode = PopupAnimationMode.Zoom,
+            AnimationDuration = 300
+        };
+
+        var tcs = new TaskCompletionSource<Color?>();
+
+        // Subscribe to events
+        colorPickerViewModel.ColorSelectionCompleted += (color) => {
+            popup.Dismiss();
+            tcs.SetResult(color);
+        };
+
+        colorPickerViewModel.SelectionCancelled += () => {
+            popup.Dismiss();
+            tcs.SetResult(null);
+        };
+
+        // Handle popup closing
+        popup.Closed += (sender, args) => {
+            if (!tcs.Task.IsCompleted) {
+                tcs.SetResult(null);
             }
-        }
+        };
 
-        // var popup = new ColorPickerGrid(SelectedColor ?? Colors.White);
-        // if (App.Current?.Windows[0]?.Page is Page { } mainPage) {
-        //     var result = await mainPage.ShowPopupAsync(popup);
-        //     if (result is Color selectedColor) {
-        //         SelectedColor = selectedColor;
-        //     }
-        // }
+        popup.Show();
+        var result = await tcs.Task;
+
+        if (result is not null) {
+            SelectedColor = result;
+        }
     }
 }

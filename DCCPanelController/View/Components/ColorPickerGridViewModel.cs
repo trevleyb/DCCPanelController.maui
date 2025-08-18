@@ -7,20 +7,20 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.View.Components;
 
-public partial class ColorPickerGridViewModel : ObservableObject, IQueryAttributable {
-
-    private IPopupService popupService;
+public partial class ColorPickerGridViewModel : ObservableObject {
     public IReadOnlyCollection<Color> SelectableColors { get; init; }
     private static readonly IReadOnlyCollection<Color> CachedColors = AppleCrayonColors.Colors;
-
     public string SelectedColorName => (SelectedColor == null ? "Default" : AppleCrayonColors.Name(SelectedColor ?? Colors.White)).ToUpper();
     
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedColorName))]
     private Color? _selectedColor; 
 
-    public ColorPickerGridViewModel(IPopupService popupService) {
-        this.popupService = popupService;
+    // Add events for the popup
+    public event Action<Color?>? ColorSelectionCompleted;
+    public event Action? SelectionCancelled;
+
+    public ColorPickerGridViewModel() {
         SelectableColors = CachedColors;
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedColor)) {
@@ -29,22 +29,23 @@ public partial class ColorPickerGridViewModel : ObservableObject, IQueryAttribut
         };
     }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> queryAttributes) {
-        SelectedColor = queryAttributes.TryGetValue("color", out var color) ? color as Color : null;
+    public ColorPickerGridViewModel(Color selectedColor) : this() {
+        SelectedColor = selectedColor;
     }
 
     [RelayCommand]
     async Task OnColorSelected(Color color) {
+        SelectedColor = color;
         Console.WriteLine($"Color selected: {color}");
     }
     
     [RelayCommand]
     async Task OnCancel() {
-        await popupService.ClosePopupAsync(Shell.Current);
+        SelectionCancelled?.Invoke();
     }
     
     [RelayCommand()]
     async Task OnSave() {
-        await popupService.ClosePopupAsync(Shell.Current, SelectedColor);
+        ColorSelectionCompleted?.Invoke(SelectedColor);
     }
 }

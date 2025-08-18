@@ -17,4 +17,6 @@ public partial class Turnout : ObservableObject {
     [ObservableProperty] private bool _isModified;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
+    public string DisplayFormat => $"{Name} ({Id})";
+
 }

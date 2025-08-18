@@ -17,7 +17,7 @@ public abstract class EditableProperty(string label, string description = "", in
     
     protected ILogger<EditableProperty> PropertyLogger = LogHelper.CreateLogger<EditableProperty>();
     
-    protected IView CreateGroupCell(IView view, int? height = null) {
+    protected IView CreateGroupCell(IView? view, int? height = null) {
 
         var vStack = new VerticalStackLayout();
         var hStack = new HorizontalStackLayout();
@@ -35,7 +35,7 @@ public abstract class EditableProperty(string label, string description = "", in
         };
         label.SetBinding(Microsoft.Maui.Controls.Label.TextColorProperty, new Binding(nameof(ModifiedTextColor)) { Source = this, Mode = BindingMode.OneWay });
         hStack.Children.Add(label);
-        hStack.Children.Add(view);
+        if (view is not null) hStack.Children.Add(view);
         vStack.Children.Add(hStack);
         
         // If there is a description to go with the lqbel, add it under the label

@@ -9,6 +9,7 @@ using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.NavigationDrawer;
 
 namespace DCCPanelController.View;
 
@@ -31,9 +32,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
-    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts = [];
 
-    public INavigation? Navigation;
     private bool _isAscending;
     private string _sortColumn = "";
 
@@ -44,7 +44,9 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public double ScreenWidth = 100;
     private ProfileService _profileService;
     private ILogger<TurnoutsViewModel> _logger;
-
+    private ContentView? _navigationContentView;
+    private SfNavigationDrawer? _navigationDrawer;
+    
     public TurnoutsViewModel(ILogger<TurnoutsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;        
         _profileService = profileService;
@@ -57,6 +59,11 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         SetLabels();
     }
 
+    public void SetNavigationReferences(SfNavigationDrawer navigationDrawer, ContentView navigationContentView) {
+        _navigationDrawer = navigationDrawer;
+        _navigationContentView = navigationContentView;
+    }
+    
     public void SetToolbarItems() {
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
         CanAddTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
@@ -150,14 +157,14 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public async Task EditTurnoutAsync(Turnout? turnout) {
         turnout ??= SelectedTurnout;
         try {
-            if (turnout is not null && Navigation is { } navigation) {
+            if (turnout is not null && _navigationContentView is { } navigationContent && _navigationDrawer is { } navigationDrawer) {
                 var turnoutsEditViewModel = new TurnoutsEditViewModel(LogHelper.CreateLogger<TurnoutsEditViewModel>(), turnout, ConnectionService);
-                await PropertyDisplayService.ShowPropertiesAsync(navigation, turnoutsEditViewModel, ScreenWidth, ScreenHeight);
-                await _profileService.SaveActiveProfileAsync();
-                OnPropertyChanged(nameof(Turnouts));
+                navigationContent.Content = new TurnoutsEditView(LogHelper.CreateLogger<TurnoutsEditView>(), turnoutsEditViewModel);
+                navigationDrawer.ToggleDrawer();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
         }
+        OnPropertyChanged(nameof(Turnouts));
     }
 }

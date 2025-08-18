@@ -12,41 +12,15 @@
     <StackLayout>
         <HorizontalStackLayout>
             <Label WidthRequest="175" Text="System Name (ID)" VerticalOptions="Center"/>
-            <Border
-                WidthRequest="175"
-                HorizontalOptions="Start"
-                StrokeShape="RoundRectangle 10"
-                Stroke="{StaticResource Primary}"
-                Padding="10,0,10,0"
-                Margin="0,5,0,5"
-                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                <Entry
-                    IsEnabled="{Binding Turnout.IsEditable}"
-                    HorizontalOptions="Start"
-                    Text="{Binding Turnout.Id}"
-                    VerticalOptions="Center"/>
+            <Border Style="{StaticResource EntryBorderStyle}">
+                <Entry Style="{StaticResource BorderedEntryContentStyle}" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Id}" />
             </Border>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout>
-            <Label
-                WidthRequest="175"
-                HorizontalOptions="Start"
-                Text="User Name"
-                VerticalOptions="Center"/>
-            <Border
-                WidthRequest="175"
-                HorizontalOptions="Start"
-                StrokeShape="RoundRectangle 10"
-                Stroke="{StaticResource Primary}"
-                Padding="10,0,10,0"
-                Margin="0,5,0,5"
-                BackgroundColor="{AppThemeBinding Light={StaticResource LightBackground}, Dark={StaticResource DarkBackground}}">
-                <Entry
-                    IsEnabled="{Binding Turnout.IsEditable}"
-                    HorizontalOptions="Start"
-                    Text="{Binding Turnout.Name}"
-                    VerticalOptions="Center"/>
+            <Label WidthRequest="175" HorizontalOptions="Start" Text="User Name" VerticalOptions="Center"/>
+            <Border Style="{StaticResource EntryBorderStyle}">
+                <Entry Style="{StaticResource BorderedEntryContentStyle}" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Name}" />
             </Border>
         </HorizontalStackLayout>
 

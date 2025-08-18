@@ -8,17 +8,20 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
+using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
 using Fonts;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.NavigationDrawer;
 using ILogger = Serilog.ILogger;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
-    private readonly INavigation _navigation;
     private readonly ContentPage _page;
+    private readonly ContentView _navigationDrawerContent;
+    private readonly SfNavigationDrawer _navigationDrawer;
     private ControlPanelView _panelView;
     private ProfileService _profileService;
     
@@ -54,14 +57,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
 
     private ILogger<PanelEditor> _logger;
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ContentPage page, ControlPanelView panelView) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ContentPage page, ControlPanelView panelView, SfNavigationDrawer navigationDrawer, ContentView navigationDrawerContent) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
         _panel = panel.Clone(false);     // Make a clone so we are working on a clone
-        _navigation = page.Navigation;
         _page = page;
         _panelView = panelView;
+        _navigationDrawer = navigationDrawer;
+        _navigationDrawerContent = navigationDrawerContent;
         
         CheckIfPanelChanged();
         if (HavePropertiesChanged == true) {
@@ -218,11 +222,11 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
         try {
-            if (Panel is { } panel && _navigation is { } navigation) {
-                OnBeginPushModal?.Invoke();
+            if (Panel is { } panel && _navigationDrawer is {} navigationDrawer && _navigationDrawerContent is {} navigationDrawerContent) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
-                await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
-                OnBeginPopModal?.Invoke();
+                var propertiesPage = new PanelPropertyPage(propertiesViewModel);
+                navigationDrawerContent.Content = propertiesPage;
+                navigationDrawer.ToggleDrawer();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -233,13 +237,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task EditTilePropertiesAsync() {
         try {
             var layer = SelectedEntities.First().Layer;
-            if (_navigation is { } navigation && SelectedEntities?.Count > 0) {
-                OnBeginPushModal?.Invoke();
-                var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
-                await PropertyDisplayService.ShowPropertiesAsync(navigation, propertiesViewModel, ScreenWidth, ScreenHeight);
-                OnBeginPopModal?.Invoke();
-            }
             
+            if (Panel is { } panel && SelectedEntities?.Count > 0 && _navigationDrawer is {} navigationDrawer && _navigationDrawerContent is {} navigationDrawerContent) {
+                var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
+                var propertiesPage = propertiesViewModel.CreatePropertiesView();
+                navigationDrawer.DrawerSettings.DrawerWidth = 300;
+                navigationDrawerContent.Content = propertiesPage;
+                navigationDrawer.ToggleDrawer();
+            }
+
             // if the layer of the item changed, then we need to force a refresh of the panel
             // ------------------------------------------------------------------------------
             if (layer != SelectedEntities?.First()?.Layer) {

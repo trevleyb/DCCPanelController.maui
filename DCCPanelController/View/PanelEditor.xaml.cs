@@ -16,6 +16,7 @@ public partial class PanelEditor : ContentPage {
     private readonly ILogger<PanelEditor> _logger;
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly PanelEditorViewModel _viewModel;
+
     private bool _isPushingModal; // Flag to track modal presentation
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
@@ -24,7 +25,7 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView) {
+        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, PropertiesDrawer, DrawerContentView) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
@@ -56,7 +57,7 @@ public partial class PanelEditor : ContentPage {
     private void OnBeginPopModal() {
         _isPushingModal = false;
     }
-    
+
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
         base.OnNavigatedFrom(args);
 

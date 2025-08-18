@@ -191,11 +191,6 @@
                 <FontImageSource Glyph="{x:Static fonts:FluentUI.edit_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
-        <ToolbarItem Text="Properties"  Command="{Binding Path=EditPanelPropertiesCommand}" IsEnabled="{Binding IsPanelSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.settings_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
         <ToolbarItem Text="Upload"      Command="{Binding UploadPanelCommand}">
             <ToolbarItem.IconImageSource>
                 <FontImageSource Glyph="{x:Static fonts:FluentUI.arrow_upload_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />

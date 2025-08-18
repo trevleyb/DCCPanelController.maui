@@ -13,6 +13,7 @@
     SizeChanged="PanelPropertyPage_SizeChanged"> <!-- Add SizeChanged handler -->
 
     <ContentView.Content>
+        <ScrollView>
         <VerticalStackLayout>
 
             <Label Text="Panel Settings" Style="{StaticResource LargeLabel}"
@@ -101,7 +102,6 @@
                      BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
                      Margin="0,5,0,0"/>
 
-            <ScrollView VerticalScrollBarVisibility="Always">
                 <CollectionView ItemsSource="{Binding GroupedColorSettings}"
                                 VerticalScrollBarVisibility="Always"
                                 IsGrouped="True">
@@ -140,7 +140,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </ScrollView>
 
             <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                      Margin="0,10,0,10"/>
@@ -161,5 +160,6 @@
             <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                      Margin="0,0,0,15"/>
         </VerticalStackLayout>
+        </ScrollView>
     </ContentView.Content>
 </ContentView>

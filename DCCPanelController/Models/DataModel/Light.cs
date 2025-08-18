@@ -16,6 +16,8 @@ public partial class Light : ObservableObject {
     [ObservableProperty] private bool _state;
     [ObservableProperty] private int _dccAddress;
 
+    public string DisplayFormat => $"{Name} ({Id})";
+
     /// <summary>
     ///     Represents a Turnout with its current state.
     ///     This is controlled by data that comes in via the Withrottle Interface

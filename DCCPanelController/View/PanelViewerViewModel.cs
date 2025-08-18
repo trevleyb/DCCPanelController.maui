@@ -137,18 +137,6 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         }
     }
 
-    [RelayCommand]
-    public async Task EditPanelPropertiesAsync() {
-        if (NavigationService is null) return;
-        if (SelectedPanel is null) return;
-
-        var panelViewModel = new PanelPropertyViewModel(SelectedPanel);
-        var result = await PropertyDisplayService.ShowPropertiesAsync(
-            NavigationService, panelViewModel, ScreenWidth, ScreenHeight);
-
-        if (result) await SaveAsync();
-    }
-
     #region Drag and Drop Support for Panels
     [RelayCommand]
     private async Task DragPanelAsync(Panel? panel) {

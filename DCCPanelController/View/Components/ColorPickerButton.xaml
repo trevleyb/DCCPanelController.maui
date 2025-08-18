@@ -5,6 +5,7 @@
     x:DataType="colorPickerControl:ColorPickerButton"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
+    xmlns:popup="clr-namespace:Syncfusion.Maui.Toolkit.Popup;assembly=Syncfusion.Maui.Toolkit"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <Grid>
@@ -22,6 +23,7 @@
             HorizontalOptions="Start"
             InputTransparent="True"
             Margin="8,0,0,0"
+            TextColor="{Binding SelectedOffsetColor}"
             Text="{Binding SelectedColorText}"
             VerticalOptions="Center"/>
 

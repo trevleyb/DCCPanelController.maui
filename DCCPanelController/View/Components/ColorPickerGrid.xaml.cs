@@ -10,8 +10,4 @@ public partial class ColorPickerGrid : ContentView {
         InitializeComponent();
         BindingContext = viewModel;
     }
-
-    private void ColorsView_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
-        Console.WriteLine("Selection changed");
-    }
 }

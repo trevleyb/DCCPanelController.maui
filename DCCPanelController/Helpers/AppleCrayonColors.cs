@@ -10,6 +10,14 @@ public static class AppleCrayonColors {
     public static string Name(Color color) => ColorToName.Value.GetValueOrDefault(color, "Unknown");
     public static Color Value(string name) => NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
 
+    public static Color GetContrastingTextColor(Color backgroundColor) {
+        var luminance = 0.299 * backgroundColor.Red + 0.587 * backgroundColor.Green + 0.114 * backgroundColor.Blue;
+        // Return white text for dark backgrounds, black text for light backgrounds
+        return luminance > 0.5 ? EnumToColor(AppleCrayonColorsEnum.Licorice) : EnumToColor(AppleCrayonColorsEnum.Snow);
+    }
+
+        
+        
     private static readonly Lazy<Dictionary<string, Color>> NameToColor = new(() => Crayons.ToDictionary(c => c.Name, c => c.Color, StringComparer.OrdinalIgnoreCase));
 
     public record AppleCrayonColor(string Name, Color Color);

@@ -13,5 +13,6 @@ public partial class Block : ObservableObject {
     [NotifyPropertyChangedFor(nameof(State))]
     private bool _isOccupied;
 
+    public string DisplayFormat => $"{Name} ({Id})";
     public string State => IsOccupied ? "Occupied" : "Free";
 }

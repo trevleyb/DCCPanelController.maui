@@ -10,6 +10,8 @@ public partial class Route : ObservableObject {
     [ObservableProperty] private bool _isModified = false;
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
+    public string DisplayFormat => $"{Name} ({Id})";
+
     /// <summary>
     ///     Represents a Turnout with its current state.
     ///     This is controlled by data that comes in via the Withrottle Interface

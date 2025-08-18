@@ -9,10 +9,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <StackLayout
+        BackgroundColor="Transparent"
         HorizontalOptions="Fill"
         Margin="0"
         Padding="0"
         VerticalOptions="Fill"
+        HeightRequest="264"
         WidthRequest="388">
         <Border
             Background="White"

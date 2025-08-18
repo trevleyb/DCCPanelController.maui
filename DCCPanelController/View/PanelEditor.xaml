@@ -6,6 +6,7 @@
              xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
              xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
              xmlns:fonts="clr-namespace:Fonts"
+             xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit"
              x:DataType="view:PanelEditorViewModel"
              Title="{Binding Title}"
              x:Class="DCCPanelController.View.PanelEditor">
@@ -60,230 +61,132 @@
         </ToolbarItem>
     </ContentPage.ToolbarItems>
 
-    <ContentPage.Content>
-        <Grid
-            BackgroundColor="WhiteSmoke"
-            ColumnDefinitions="*"
-            RowDefinitions="*,120,30"
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
 
-            <Border
-                Grid.Row="0"
-                Grid.Column="0"
-                Stroke="#FFF5F5F5"
-                StrokeThickness="0">
-                <Grid
-                    x:Name="DisplayBorder"
-                    BackgroundColor="WhiteSmoke"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+    <navigationDrawer:SfNavigationDrawer x:Name="PropertiesDrawer">
+        <navigationDrawer:SfNavigationDrawer.ContentView>
 
-                    <view:ControlPanelView
-                        Margin="5"
-                        BackgroundColor="Transparent"
-                        DesignMode="true"
-                        Interactive="False"
-                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
-                        Grid.Column="0"
-                        HorizontalOptions="Fill"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
-                        VerticalOptions="Fill"
-                        x:Name="PanelView"/>
-                </Grid>
-            </Border>
-
+            <!-- <ContentPage.Content> -->
             <Grid
-                Grid.Row="1"
-                Margin="0,0,0,0">
+                BackgroundColor="WhiteSmoke"
+                ColumnDefinitions="*"
+                RowDefinitions="*,120,30"
+                HorizontalOptions="Fill"
+                VerticalOptions="Fill">
+
                 <Border
-                    BackgroundColor="WhiteSmoke"
+                    Grid.Row="0"
+                    Grid.Column="0"
                     Stroke="#FFF5F5F5"
-                    StrokeThickness="1"
-                    x:DataType="dataModel:Panel">
-                    <tileSelectors:PillSelectorPanel
-                        HorizontalOptions="Center"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
-                        x:Name="TileSelector"/>
-                </Border>
-            </Grid>
-
-            <Grid Grid.Row="2" Margin="2,2,2,2">
-                <Border
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill"
                     StrokeThickness="0">
-                    <Grid ColumnDefinitions="100,*,100" Padding="5">
+                    <Grid
+                        x:Name="DisplayBorder"
+                        BackgroundColor="WhiteSmoke"
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill">
 
-                        <Grid Grid.Column="0" ColumnDefinitions="auto,auto">
-                            <HorizontalStackLayout>
-                                <Label FontSize="15" FontFamily="OpenSansLight" TextColor="{StaticResource Primary}"
-                                       Text="Edit Mode:"
-                                       Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                                <Label FontSize="15" FontFamily="OpenSansMedium" TextColor="{StaticResource Primary}"
-                                       x:Name="EditModeText"
-                                       Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                            </HorizontalStackLayout>
-                        </Grid>
-                        <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center"
-                              VerticalOptions="Center">
-                            <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0"
-                                   TextColor="{StaticResource Primary}"/>
-                        </Grid>
-                        <Grid Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
-                            <Label TextColor="{StaticResource Primary}" FontSize="15"
-                                   FontFamily="OpenSansBold" x:Name="NeedsSavingText"
-                                   Margin="10,0,0,0" HorizontalOptions="End" VerticalOptions="Center"/>
-                        </Grid>
+                        <view:ControlPanelView
+                            Margin="5"
+                            BackgroundColor="Transparent"
+                            DesignMode="true"
+                            Interactive="False"
+                            EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
+                            Grid.Column="0"
+                            HorizontalOptions="Fill"
+                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
+                            VerticalOptions="Fill"
+                            x:Name="PanelView"/>
                     </Grid>
                 </Border>
+
+                <Grid
+                    Grid.Row="1"
+                    Margin="0,0,0,0">
+                    <Border
+                        BackgroundColor="WhiteSmoke"
+                        Stroke="#FFF5F5F5"
+                        StrokeThickness="1"
+                        x:DataType="dataModel:Panel">
+                        <tileSelectors:PillSelectorPanel
+                            HorizontalOptions="Center"
+                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
+                            x:Name="TileSelector"/>
+                    </Border>
+                </Grid>
+
+                <Grid Grid.Row="2" Margin="2,2,2,2">
+                    <Border
+                        HorizontalOptions="Fill"
+                        VerticalOptions="Fill"
+                        StrokeThickness="0">
+                        <Grid ColumnDefinitions="100,*,100" Padding="5">
+
+                            <Grid Grid.Column="0" ColumnDefinitions="auto,auto">
+                                <HorizontalStackLayout>
+                                    <Label FontSize="15" FontFamily="OpenSansLight"
+                                           TextColor="{StaticResource Primary}"
+                                           Text="Edit Mode:"
+                                           Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                                    <Label FontSize="15" FontFamily="OpenSansMedium"
+                                           TextColor="{StaticResource Primary}"
+                                           x:Name="EditModeText"
+                                           Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center"
+                                  VerticalOptions="Center">
+                                <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0"
+                                       TextColor="{StaticResource Primary}"/>
+                            </Grid>
+                            <Grid Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
+                                <Label TextColor="{StaticResource Primary}" FontSize="15"
+                                       FontFamily="OpenSansBold" x:Name="NeedsSavingText"
+                                       Margin="10,0,0,0" HorizontalOptions="End" VerticalOptions="Center"/>
+                            </Grid>
+                        </Grid>
+                    </Border>
+                </Grid>
+
             </Grid>
+        </navigationDrawer:SfNavigationDrawer.ContentView>
 
-        </Grid>
+        <navigationDrawer:SfNavigationDrawer.DrawerSettings>
+            <navigationDrawer:DrawerSettings
+                DrawerWidth="400" 
+                EnableSwipeGesture="True"
+                TouchThreshold="10"
+                Position="Bottom">
 
-    </ContentPage.Content>
+                <navigationDrawer:DrawerSettings.DrawerContentView>
+                    <Grid Margin="10" Padding="5" BackgroundColor="White">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        
+                        <!-- iOS-style drag handle -->
+                        <Grid Grid.Row="0" Padding="0,12,0,8" BackgroundColor="White">
+                            <BoxView 
+                                x:Name="GrabHandle"
+                                BackgroundColor="LightGray" 
+                                WidthRequest="36" 
+                                HeightRequest="4" 
+                                CornerRadius="2"
+                                HorizontalOptions="Center" 
+                                VerticalOptions="Center" />
+                        </Grid>
+            
+                        <!-- Your actual properties content -->
+                        <ScrollView Grid.Row="1" >
+                            <ContentView x:Name="DrawerContentView"/>
+                        </ScrollView>
+                    </Grid>
+
+                </navigationDrawer:DrawerSettings.DrawerContentView>
+
+            </navigationDrawer:DrawerSettings>
+        </navigationDrawer:SfNavigationDrawer.DrawerSettings>
+
+    </navigationDrawer:SfNavigationDrawer>
+
+    <!-- </ContentPage.Content> -->
 </ContentPage>
-
-
-<!-- -->
-<!-- <?xml version="1.0" encoding="utf-8"?> -->
-<!-- -->
-<!-- <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui" -->
-<!--              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" -->
-<!--              xmlns:view="clr-namespace:DCCPanelController.View" -->
-<!--              xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel" -->
-<!--              xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors" -->
-<!--              xmlns:fonts="clr-namespace:Fonts" -->
-<!--              x:DataType="view:PanelEditorViewModel" -->
-<!--              Title="{Binding Title}" -->
-<!--              x:Class="DCCPanelController.View.PanelEditor"> -->
-<!-- -->
-<!--     <Shell.BackButtonBehavior> -->
-<!--         <BackButtonBehavior x:DataType="view:PanelEditorViewModel" Command="{Binding BackButtonPressedCommand}"/> -->
-<!--     </Shell.BackButtonBehavior> -->
-<!--      -->
-<!--     <ContentPage.ToolbarItems> -->
-<!--         <ToolbarItem Text="Mode" x:Name="ModeToolbar" -->
-<!--                      IsEnabled="{Binding SingleOrNoEntitiesSelected}" -->
-<!--                      Command="{Binding Path=SwitchModeCommand}"> -->
-<!--             <ToolbarItem.IconImageSource> -->
-<!--                 <FontImageSource Glyph="{Binding EditModeToolbarIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  /> -->
-<!--             </ToolbarItem.IconImageSource> -->
-<!--         </ToolbarItem> -->
-<!--         <ToolbarItem Text="Rotate" x:Name="RotateToolbar" IsEnabled="{Binding HasSelectedEntities}" -->
-<!--                      Command="{Binding Path=RotateTileCommand}"> -->
-<!--             <ToolbarItem.IconImageSource> -->
-<!--                 <FontImageSource Glyph="{x:Static fonts:FluentUI.rotate_left_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  /> -->
-<!--             </ToolbarItem.IconImageSource> -->
-<!--         </ToolbarItem> -->
-<!--         <ToolbarItem Text="Delete" x:Name="DeleteToolbar" IsEnabled="{Binding HasSelectedEntities}" -->
-<!--                      Command="{Binding Path=DeleteTileCommand}"> -->
-<!--             <ToolbarItem.IconImageSource> -->
-<!--                 <FontImageSource Glyph="{x:Static fonts:FluentUI.delete_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  /> -->
-<!--             </ToolbarItem.IconImageSource> -->
-<!--         </ToolbarItem> -->
-<!--         <ToolbarItem Text="Edit" x:Name="EditToolbar" -->
-<!--                      Command="{Binding Path=EditPropertiesCommand}" IsEnabled="{Binding CanEditProperties}"> -->
-<!--             <ToolbarItem.IconImageSource> -->
-<!--                 <FontImageSource Glyph="{Binding EditPropertiesToolbarIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  /> -->
-<!--             </ToolbarItem.IconImageSource> -->
-<!--         </ToolbarItem> -->
-<!--         <ToolbarItem Text="Save" x:Name="SaveToolbar"  -->
-<!--                      Command="{Binding Path=SaveCommand}" IsEnabled="{Binding HavePropertiesChanged}"> -->
-<!--             <ToolbarItem.IconImageSource> -->
-<!--                 <FontImageSource Glyph="{x:Static fonts:FluentUI.save_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  /> -->
-<!--             </ToolbarItem.IconImageSource> -->
-<!--         </ToolbarItem> -->
-<!--         <ToolbarItem Text="Grid" x:Name="GridToolbar" -->
-<!--                      Command="{Binding Path=ToggleGridCommand}"> -->
-<!--             <ToolbarItem.IconImageSource> -->
-<!--                 <FontImageSource Glyph="{Binding GridOnOffToolbarIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  /> -->
-<!--             </ToolbarItem.IconImageSource> -->
-<!--         </ToolbarItem> -->
-<!--     </ContentPage.ToolbarItems> -->
-<!-- -->
-<!--     <ContentPage.Content> -->
-<!--         <Grid -->
-<!--             BackgroundColor="White" -->
-<!--             ColumnDefinitions="*,auto" -->
-<!--             RowDefinitions="*,30" -->
-<!--             HorizontalOptions="Fill" -->
-<!--             VerticalOptions="Fill"> -->
-<!-- -->
-<!--             <Border   -->
-<!--                     Grid.Row="0"  -->
-<!--                     Grid.Column="0"  -->
-<!--                     Grid.RowSpan="2" -->
-<!--                     Stroke="#FFF5F5F5" -->
-<!--                     StrokeThickness="0"> -->
-<!--                 <Grid -->
-<!--                     x:Name="DisplayBorder" -->
-<!--                     BackgroundColor="WhiteSmoke" -->
-<!--                     HorizontalOptions="Fill" -->
-<!--                     VerticalOptions="Fill"> -->
-<!-- -->
-<!--                     <view:ControlPanelView -->
-<!--                         Margin="5" -->
-<!--                         BackgroundColor="Transparent" -->
-<!--                         DesignMode="true" -->
-<!--                         Interactive="False" -->
-<!--                         EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}" -->
-<!--                         Grid.Column="0" -->
-<!--                         HorizontalOptions="Fill" -->
-<!--                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}" -->
-<!--                         VerticalOptions="Fill" -->
-<!--                         x:Name="PanelView"/> -->
-<!--                 </Grid> -->
-<!--             </Border> -->
-<!-- -->
-<!--             <Grid  -->
-<!--                 Grid.Row="0"  -->
-<!--                 Grid.Column="1"  -->
-<!--                 Margin="0,0,0,0" Grid.RowSpan="2"> -->
-<!--                 <Border -->
-<!--                     BackgroundColor="WhiteSmoke" -->
-<!--                     Stroke="#FFF5F5F5" -->
-<!--                     StrokeThickness="1" -->
-<!--                     x:DataType="dataModel:Panel"> -->
-<!--                     <tileSelectors:TileSelectorPanel -->
-<!--                         HorizontalOptions="Center" -->
-<!--                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}" -->
-<!--                         x:Name="TileSelector"/> -->
-<!--                 </Border> -->
-<!--             </Grid> -->
-<!-- -->
-<!--             <Grid Grid.Row="1" Grid.Column="0" Margin="2,2,2,2"> -->
-<!--                 <Border -->
-<!--                     HorizontalOptions="Fill" -->
-<!--                     VerticalOptions="Fill" -->
-<!--                     StrokeThickness="0"> -->
-<!--                     <Grid ColumnDefinitions="100,*,100" Padding="5"> -->
-<!-- -->
-<!--                         <Grid Grid.Column="0" ColumnDefinitions="auto,auto"> -->
-<!--                             <HorizontalStackLayout> -->
-<!--                                 <Label FontSize="15" FontFamily="OpenSansLight" TextColor="{StaticResource Primary}" -->
-<!--                                        Text="Edit Mode:" -->
-<!--                                        Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/> -->
-<!--                                 <Label FontSize="15" FontFamily="OpenSansMedium" TextColor="{StaticResource Primary}" -->
-<!--                                        x:Name="EditModeText" -->
-<!--                                        Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/> -->
-<!--                             </HorizontalStackLayout> -->
-<!--                         </Grid> -->
-<!--                         <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center" -->
-<!--                               VerticalOptions="Center"> -->
-<!--                             <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0" -->
-<!--                                    TextColor="{StaticResource Primary}"/> -->
-<!--                         </Grid> -->
-<!--                         <Grid Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center"> -->
-<!--                             <Label TextColor="{StaticResource Primary}" FontSize="15" -->
-<!--                                    FontFamily="OpenSansBold" x:Name="NeedsSavingText" -->
-<!--                                    Margin="10,0,0,0" HorizontalOptions="End" VerticalOptions="Center"/> -->
-<!--                         </Grid> -->
-<!--                     </Grid> -->
-<!--                 </Border> -->
-<!--             </Grid> -->
-<!-- -->
-<!--         </Grid> -->
-<!-- -->
-<!--     </ContentPage.Content> -->
-<!-- </ContentPage> -->
