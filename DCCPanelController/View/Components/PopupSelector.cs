@@ -7,9 +7,6 @@ using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Layouts;
-using UIKit;
-using Application = Microsoft.Maui.Controls.Application;
-using LayoutAlignment = Microsoft.Maui.Primitives.LayoutAlignment;
 using ListView = Microsoft.Maui.Controls.ListView;
 using Picker = Microsoft.Maui.Controls.Picker;
 using VisualElement = Microsoft.Maui.Controls.VisualElement;
@@ -58,7 +55,7 @@ public class PopupSelector : ContentView, IDisposable {
     ///     Renders the dropdown menu, handling its visual update and ensuring
     ///     that it is properly displayed within the parent container.
     /// </summary>
-    private void DrawPopup() {
+    public void DrawPopup() {
         if (Handler == null) {
             Loaded += (s, e) => DrawPopup();
             return;
@@ -248,7 +245,7 @@ public class PopupSelector : ContentView, IDisposable {
         }
     }
 
-    private void CreatePopupView(Microsoft.Maui.Controls.View mainButtonLayout) {
+    private async Task CreatePopupView(Microsoft.Maui.Controls.View mainButtonLayout) {
         // This list of items as a list view
         // ----------------------------------------------------------------------------
         var itemListView = new ListView {
@@ -276,10 +273,10 @@ public class PopupSelector : ContentView, IDisposable {
         itemListView.SetBinding(ListView.SeparatorColorProperty, new Binding(nameof(DropdownTextColor), BindingMode.OneWay, source: this));
         itemListView.SetBinding(ListView.SeparatorVisibilityProperty, new Binding(nameof(DropdownSeparatorVisibility), BindingMode.OneWay, source: this));
         itemListView.On<iOS>().SetSeparatorStyle(SeparatorStyle.FullWidth);
-        itemListView.ItemTapped += (_, e) => {
+        itemListView.ItemTapped += async (_, e) => {
             if (e?.Item is { } item) {
                 SelectedItem = item;
-                TogglePopup();
+                await TogglePopup();
             }
         };
 
@@ -376,14 +373,14 @@ public class PopupSelector : ContentView, IDisposable {
     ///     Depending on the configured dropdown style, either shows or hides the popup
     ///     container by updating its visibility or dynamically creating and displaying a popup.
     /// </summary>
-    private void TogglePopup() {
+    private async Task TogglePopup() {
         if (SelectorType == PopupSelectorTypeEnum.Dropdown) {
             _popupContainer.IsVisible = !_popupContainer.IsVisible;
             SetDropDownImage(_popupContainer.IsVisible);
         } else {
             //if (SelectorType == PopupSelectorTypeEnum.Picker || (SelectorType == PopupSelectorTypeEnum.Automatic && DeviceInfo.Platform == DevicePlatform.iOS)) {
                 SetDropDownImage(true);
-                ShowIOSPicker();
+                await ShowIOSPicker();
                 SetDropDownImage(false);
                 return;
             //}
@@ -434,7 +431,7 @@ public class PopupSelector : ContentView, IDisposable {
         }
     }
 
-    void ShowIOSPicker() {
+    async Task ShowIOSPicker() {
         var items = ItemsSource.Cast<object>().ToList();
         if (items.Count == 0) return;
 

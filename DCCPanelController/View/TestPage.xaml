@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:components="clr-namespace:DCCPanelController.View.Components"
+             xmlns:view="clr-namespace:DCCPanelController.View"
+             x:DataType="view:TestPageViewModel"
+             BindingContext="TestPageViewModel"
+             x:Class="DCCPanelController.View.TestPage">
+    <ContentPage.Content>
+        
+        <StackLayout>
+
+            <HorizontalStackLayout Margin="0,0,0,10">
+                <Label Text="Selected Item:"/>
+                <Label Text="**"/>
+                <Label Text="{Binding SelectedItem}"/>
+                <Label Text="**"/>
+            </HorizontalStackLayout>
+            
+            <HorizontalStackLayout Margin="0,0,0,10">
+                <Label Text="Selected Value:"/>
+                <Label Text="**"/>
+                <Label Text="{Binding SelectedValue}"/>
+                <Label Text="**"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout HeightRequest="50" Margin="0,0,0,10" VerticalOptions="Center">
+                <Label Text="$$" HeightRequest="50" HorizontalOptions="Fill"/>
+                <components:PickerSelector
+                        WidthRequest="140"
+                        HeightRequest="30"
+                        Padding="0"
+                        Margin="0"
+                        ShowClearFieldImage="True"
+                        HorizontalOptions="Start"
+                        VerticalOptions="Center"
+                        DisplayFormat="[Name] ([Id])"
+                        SelectedValuePath="Id"
+                        SelectedValue="{Binding SelectedValue}"
+                        SelectedItem="{Binding SelectedItem}"
+                        ItemsSource="{Binding TestItems}"
+                    />
+                <Label Text="**"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Margin="0,0,0,10">
+                <Label Text="**"/>
+                <Picker
+                    WidthRequest="140"
+                    HeightRequest="35"
+                    HorizontalOptions="Start"
+                    SelectedItem="{Binding SelectedItem}"
+                    ItemsSource="{Binding TestItems}"
+                />
+                <Label Text="**"/>
+            </HorizontalStackLayout>
+        </StackLayout>
+        
+    </ContentPage.Content>
+</ContentPage>

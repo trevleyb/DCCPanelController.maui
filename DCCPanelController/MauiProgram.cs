@@ -70,6 +70,7 @@ public static class MauiProgram {
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
+        services.AddSingletonViewAndModel<TestPage, TestPageViewModel>();
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelViewer, PanelViewerViewModel>();
         
