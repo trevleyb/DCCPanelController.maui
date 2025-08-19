@@ -20,14 +20,9 @@ public class EditableBlockAttribute(string label, string description = "", int o
             _ = dropDownWidth;
             _ = dropDownHeight;
             
-            var cell = new PopupSelector() {
-                SelectorType = PopupSelectorTypeEnum.Automatic,
-                InnerMargin = new Thickness(10, 0, 0, 0),
+            var cell = new PickerSelector() {
                 WidthRequest = width,
                 ShowClearFieldImage = blocks.Count > 0,
-                DropDownWidth = dropDownWidth,
-                DropDownHeight = dropDownHeight,
-                DropdownBorderWidth = 0,
                 TextSize = 12,
                 DisplayMemberPath = "Name",
                 SelectedValuePath = "Id",
@@ -39,10 +34,10 @@ public class EditableBlockAttribute(string label, string description = "", int o
             };
             
             //cell.ItemsSource = blocks;
-            cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.SetBinding(PickerSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) {
-                    if (sender is PopupSelector dropDown) {
+                if (args.PropertyName == nameof(PickerSelector.SelectedItem)) {
+                    if (sender is PickerSelector dropDown) {
                         SetModified(dropDown.SelectedItem != Value);
                     }
                 }

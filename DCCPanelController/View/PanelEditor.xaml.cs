@@ -32,8 +32,6 @@ public partial class PanelEditor : ContentPage {
         ShowSelectedMode();
 
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
-        _viewModel.OnBeginPopModal += OnBeginPopModal;   // Subscribe to the custom event
         _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
         PanelView.TileSelected += PanelViewOnTileSelected;
         PanelView.TileChanged += PanelViewOnTileChanged;
@@ -65,8 +63,6 @@ public partial class PanelEditor : ContentPage {
             _isPushingModal = false;
         } else {
             _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-            _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
-            _viewModel.OnBeginPopModal -= OnBeginPopModal;   // Subscribe to the custom event
             _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
             PanelView.TileSelected -= PanelViewOnTileSelected;
             PanelView.TileChanged -= PanelViewOnTileChanged;

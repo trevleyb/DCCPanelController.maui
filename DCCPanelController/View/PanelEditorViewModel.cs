@@ -95,8 +95,6 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     
     public event Action? ForcePanelRefresh;
-    public event Action? OnBeginPushModal;
-    public event Action? OnBeginPopModal;
 
     public void UpdateOriginalFromCopy() {
         ArgumentNullException.ThrowIfNull(_original,"Original Panel should never be undefined.");

@@ -21,6 +21,7 @@ public partial class TestPageViewModel : ObservableObject {
         _testItems.Add(new SomeTestItem {Name = "Test 4", Id = "4"});
         _testItems.Add(new SomeTestItem {Name = "Test 5", Id = "5"});
         _selectedItem = _testItems[2];
+        _selectedValue = _selectedItem.Id;
     }
     
 }

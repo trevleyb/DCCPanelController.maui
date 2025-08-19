@@ -12,10 +12,10 @@ public partial class ButtonActionsGrid : ContentView {
         BindingContext = new ButtonActionsGridViewModel(entity, context, availableButtons);
     }
     
-    private void PopupSelector_OnOnPopup(object? sender, PopupSelectorEventArgs e) {
-        if (BindingContext is ButtonActionsGridViewModel vm) {
-            vm.UpdateSelectableItems(e.CurrentItem?.ToString() ?? "");
-        }
-    }
+    // private void PopupSelector_OnOnPopup(object? sender, PopupSelectorEventArgs e) {
+    //     if (BindingContext is ButtonActionsGridViewModel vm) {
+    //         vm.UpdateSelectableItems(e.CurrentItem?.ToString() ?? "");
+    //     }
+    // }
 
 }

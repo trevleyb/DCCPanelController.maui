@@ -13,9 +13,9 @@ public partial class TurnoutActionsGrid : ContentView {
         BindingContext = new TurnoutActionsGridViewModel(entity, context, availableTurnouts);
     }
 
-    private void PopupSelector_OnOnPopup(object? sender, PopupSelectorEventArgs e) {
-        if (BindingContext is TurnoutActionsGridViewModel vm) {
-            vm.UpdateSelectableItems(e.CurrentItem?.ToString() ?? "");
-        }
-    }
+    // private void PopupSelector_OnOnPopup(object? sender, PopupSelectorEventArgs e) {
+    //     if (BindingContext is TurnoutActionsGridViewModel vm) {
+    //         vm.UpdateSelectableItems(e.CurrentItem?.ToString() ?? "");
+    //     }
+    // }
 }

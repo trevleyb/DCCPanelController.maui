@@ -123,16 +123,10 @@
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
-                                    <components:PopupSelector
+                                    <components:PickerSelector
                                         WidthRequest="150"
                                         Grid.Column="0"
-                                        OnPopup="PopupSelector_OnOnPopup"
-                                        InnerMargin="10,0,0,0"
                                         Margin="0,0,0,0"
-                                        SelectorType="Automatic"
-                                        DropDownWidth="250"
-                                        DropDownHeight="300"
-                                        DropdownBorderWidth="0"
                                         HorizontalOptions="Start"
                                         VerticalOptions="Center"
                                         BackgroundColor="Transparent"

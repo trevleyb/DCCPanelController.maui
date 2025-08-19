@@ -52,6 +52,7 @@ public class PickerSelector : ContentView {
         // The label that will be displayed containing the selected item
         // ----------------------------------------------------------------------------
         _selectedItemLabel = new Label {
+            BackgroundColor = BackgroundColor,
             WidthRequest = WidthRequest,
             HeightRequest = HeightRequest,
             VerticalOptions = LayoutOptions.Fill,
@@ -60,6 +61,7 @@ public class PickerSelector : ContentView {
             LineBreakMode = LineBreakMode.TailTruncation,
             HorizontalOptions = LayoutOptions.Fill,
             Margin = new Thickness(10, 5, 5, 5),
+            Padding = new Thickness(5, 0, 0, 0),
             BindingContext = this
         };
         _selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
@@ -101,7 +103,7 @@ public class PickerSelector : ContentView {
                 Source = ClearFieldImageSource,
                 HorizontalOptions = LayoutOptions.End,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(1, 1, 1, 1),
+                Margin = new Thickness(1, 1, 2, 1),
             };
             _clearImage.GestureRecognizers.Add(clearGesture);
             _mainButtonLayout.Children.Add(_clearImage);
@@ -177,7 +179,7 @@ public class PickerSelector : ContentView {
             } else {
                 displayText = item.ToString() ?? string.Empty;
             }
-            displayItems.Add(displayText, item);
+            displayItems.TryAdd(displayText, item);
         }
         return displayItems;
     }
@@ -212,7 +214,10 @@ public class PickerSelector : ContentView {
             WidthRequest = WidthRequest,
             Margin = new Thickness(10, 0, 0, 0),
             ItemsSource = pickerItems, // Use formatted display items
+            #if !MACCATALYST
+            // Title is not supported on macOS
             Title = Placeholder ?? "Select an option",
+            #endif
             IsVisible = false,
         };
         var index = FindIndexOfSelectedValue(SelectedValue, displayItems);
@@ -231,7 +236,6 @@ public class PickerSelector : ContentView {
         // Add picker to the layout temporarily to show it
         if (Parent is Layout layout) {
             layout.Children.Add(picker);
-            picker.IsVisible = true;
             picker.Focus();
 
             // Remove picker after selection or when focus is lost
@@ -254,7 +258,7 @@ public class PickerSelector : ContentView {
         if (string.IsNullOrEmpty(formatString)) return source.ToString();
 
         var result = formatString;
-        var regex = new System.Text.RegularExpressions.Regex(@"\[(\w+)\]");
+        var regex = new System.Text.RegularExpressions.Regex(@"\{(\w+)\}");
         var matches = regex.Matches(formatString);
 
         foreach (System.Text.RegularExpressions.Match match in matches) {

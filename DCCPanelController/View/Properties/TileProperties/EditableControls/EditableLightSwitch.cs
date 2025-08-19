@@ -16,13 +16,8 @@ public class EditableLightSwitchAttribute(string label, string description = "",
             _ = dropDownWidth;
             _ = dropDownHeight;
 
-            var cell = new PopupSelector() {
-                SelectorType = PopupSelectorTypeEnum.Automatic,
-                InnerMargin = new Thickness(10, 0, 0, 0),
+            var cell = new PickerSelector() {
                 WidthRequest = width,
-                DropDownWidth = dropDownWidth,
-                DropDownHeight = dropDownHeight,
-                DropdownBorderWidth = 0,
                 TextSize = 12,
                 DisplayMemberPath = "Name",
                 SelectedValuePath = "Id",
@@ -33,9 +28,9 @@ public class EditableLightSwitchAttribute(string label, string description = "",
                 HorizontalOptions = LayoutOptions.Start
             };
             cell.ItemsSource = lights;
-            cell.SetBinding(PopupSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
+            cell.SetBinding(PickerSelector.SelectedValueProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (args.PropertyName == nameof(PopupSelector.SelectedItem)) SetModified(true);
+                if (args.PropertyName == nameof(PickerSelector.SelectedItem)) SetModified(true);
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
