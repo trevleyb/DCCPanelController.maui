@@ -7,62 +7,65 @@
              xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
              xmlns:fonts="clr-namespace:Fonts"
              xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
+             xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
              x:DataType="view:PanelEditorViewModel"
              Title="{Binding Title}"
              x:Class="DCCPanelController.View.PanelEditor">
 
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior x:DataType="view:PanelEditorViewModel" Command="{Binding BackButtonPressedCommand}"/>
+        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" x:DataType="view:PanelEditorViewModel" Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
-
+    
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Mode" x:Name="ModeToolbar"
-                     IsEnabled="{Binding SingleOrNoEntitiesSelected}"
-                     Command="{Binding Path=SwitchModeCommand}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{Binding EditModeToolbarIcon}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        <ToolbarItem
+            IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
+            Text="Mode" x:Name="ModeToolbar"
+            IsEnabled="{Binding CanSetModes}"
+            Command="{Binding Path=SwitchModeCommand}">
         </ToolbarItem>
-        <ToolbarItem Text="Rotate" x:Name="RotateToolbar" IsEnabled="{Binding HasSelectedEntities}"
-                     Command="{Binding Path=RotateTileCommand}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.rotate_left_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        
+        <ToolbarItem
+            Text="Rotate" x:Name="RotateToolbar" 
+            IsEnabled="{Binding CanRotateTiles}"
+            Command="{Binding Path=RotateTileCommand}"
+            IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}">
         </ToolbarItem>
-        <ToolbarItem Text="Delete" x:Name="DeleteToolbar" IsEnabled="{Binding HasSelectedEntities}"
-                     Command="{Binding Path=DeleteTileCommand}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.delete_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        
+        <ToolbarItem 
+            IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
+            Text="Delete" x:Name="DeleteToolbar" 
+            IsEnabled="{Binding CanDeleteTiles}"
+            Command="{Binding Path=DeleteTileCommand}">
         </ToolbarItem>
-        <ToolbarItem Text="Edit" x:Name="EditToolbar"
-                     Command="{Binding Path=EditPropertiesCommand}" IsEnabled="{Binding CanEditProperties}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{Binding EditPropertiesToolbarIcon}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+
+        <ToolbarItem 
+            IconImageSource="{Binding CanEditProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=settings}"
+            Text="Edit" x:Name="EditToolbar"
+            Command="{Binding Path=EditPropertiesCommand}" 
+            IsEnabled="{Binding CanEditProperties}">
         </ToolbarItem>
-        <ToolbarItem Text="Save" x:Name="SaveToolbar"
-                     Command="{Binding Path=SaveCommand}" IsEnabled="{Binding HavePropertiesChanged}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.save_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        
+        <ToolbarItem
+            IconImageSource="{Binding CanSavePanel, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
+            Text="Save" x:Name="SaveToolbar"
+            Command="{Binding Path=SaveCommand}" 
+            IsEnabled="{Binding CanSavePanel}">
         </ToolbarItem>
-        <ToolbarItem Text="Grid" x:Name="GridToolbar"
-                     Command="{Binding Path=ToggleGridCommand}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{Binding GridOnOffToolbarIcon}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        
+        <ToolbarItem 
+            IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
+            Text="Grid" x:Name="GridToolbar"
+            IsEnabled="{Binding CanToggleGrid}"
+            Command="{Binding Path=ToggleGridCommand}">
         </ToolbarItem>
     </ContentPage.ToolbarItems>
 
-
-    <navigationDrawer:SfNavigationDrawer x:Name="PropertiesDrawer">
+    <navigationDrawer:SfNavigationDrawer x:Name="PropertiesDrawer"
+                                         DrawerClosed="PropertiesDrawer_OnDrawerClosed"
+                                         DrawerOpened="PropertiesDrawer_OnDrawerOpened">
+    
         <navigationDrawer:SfNavigationDrawer.ContentView>
 
             <!-- <ContentPage.Content> -->
@@ -164,17 +167,39 @@
                         </Grid.RowDefinitions>
                         
                         <!-- iOS-style drag handle -->
-                        <Grid Grid.Row="0" Padding="0,12,0,8" BackgroundColor="White">
+                        <Grid Grid.Row="0" Padding="0,12,0,8" BackgroundColor="White" ColumnDefinitions="*,Auto,*">
+                            <!-- Left spacer to help center the grab handle -->
+                            <BoxView Grid.Column="0" IsVisible="False" />
+    
+                            <!-- Grab handle - centered -->
                             <BoxView 
                                 x:Name="GrabHandle"
+                                Grid.Column="1"
                                 BackgroundColor="LightGray" 
                                 WidthRequest="36" 
                                 HeightRequest="4" 
                                 CornerRadius="2"
                                 HorizontalOptions="Center" 
                                 VerticalOptions="Center" />
+    
+                            <!-- iOS-style close button - right aligned -->
+                            <Button 
+                                Grid.Column="2"
+                                ImageSource="x_circle.png"
+                                FontSize="18"
+                                FontAttributes="Bold"
+                                TextColor="Gray"
+                                BackgroundColor="Transparent"
+                                BorderColor="Transparent"
+                                WidthRequest="30"
+                                HeightRequest="12"
+                                CornerRadius="15"
+                                HorizontalOptions="End"
+                                VerticalOptions="Center"
+                                Margin="0,0,12,0"
+                                Command="{Binding CloseNavigationDrawerCommand}" />
                         </Grid>
-            
+                        
                         <!-- Your actual properties content -->
                         <ScrollView Grid.Row="1" >
                             <ContentView x:Name="DrawerContentView"/>

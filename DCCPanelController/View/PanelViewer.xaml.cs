@@ -18,6 +18,12 @@ public partial class PanelViewer {
         _viewModel = viewModel;
         _viewModel.NavigationService = Navigation;
         BindingContext = viewModel;
+        
+        // Make sure we refresh on a change in the Panels Collection
+        // ---------------------------------------------------------
+        _viewModel.PropertyChanged += (sender, args) => {
+            if (args.PropertyName == nameof(PanelViewerViewModel.Panels)) SetActiveZoomIcons();
+        };
     }
 
     protected override void OnSizeAllocated(double width, double height) {
@@ -52,7 +58,6 @@ public partial class PanelViewer {
     }
 
     private void SetWideScreenLayout(double width) {
-
         switch (width) {
         case > 1000:
             _activeSpan = (_activeSpan == -1) ? 3 : _activeSpan;
@@ -70,15 +75,20 @@ public partial class PanelViewer {
 
         PanelsLayout.Span = _activeSpan;
         PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["VerticalTemplate"];
+        SetActiveZoomIcons();
     }
     
     private void SetZoomLevel(int? adjustment = null) {
         if (adjustment is { } adjustBy ) _activeSpan += adjustBy;
         if (_activeSpan < _minSpan) _activeSpan = _minSpan;
         if (_activeSpan > _maxSpan) _activeSpan = _maxSpan;
-        ZoomOutIcon.IsEnabled = _activeSpan < _maxSpan;
-        ZoomInIcon.IsEnabled = _activeSpan > _minSpan;
         PanelsLayout.Span = _activeSpan;
+        SetActiveZoomIcons();
+    }
+
+    private void SetActiveZoomIcons() {
+        _viewModel?.CanZoomOut = _viewModel.Panels.Count > 0 && _activeSpan < _maxSpan;
+        _viewModel?.CanZoomIn  = _viewModel.Panels.Count > 0 && _activeSpan > _minSpan;
     }
 
     private void OnZoomInClicked(object? sender, EventArgs e) => SetZoomLevel(-1);

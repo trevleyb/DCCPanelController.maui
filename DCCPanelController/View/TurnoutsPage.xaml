@@ -17,38 +17,34 @@
     xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.add_circle_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        <ToolbarItem 
+            Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}"
+            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=add}">
         </ToolbarItem>
 
-        <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.edit_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
+                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}">
         </ToolbarItem>
 
-        <ToolbarItem Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.delete_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        <ToolbarItem 
+            Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
+            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=delete}">
         </ToolbarItem>
 
-        <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.row_triple_20}"
-                                 FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
+        <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
         </ToolbarItem>
 
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}">
+        <ToolbarItem 
+            Command="{Binding ToggleConnectionCommand}" 
+            IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{Binding ConnectionIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}"
-                                 Color="{StaticResource White}"/>
+                <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
+                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IconWifiOn"/>
+                    <Binding Path="IconWifiOff"/>
+                </MultiBinding>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
 

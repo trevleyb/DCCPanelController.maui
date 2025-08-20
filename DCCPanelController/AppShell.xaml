@@ -18,10 +18,6 @@
     xmlns:dccPanelController="clr-namespace:DCCPanelController">
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
-        <Tab Icon="control.png" Title="TEST">
-            <ShellContent ContentTemplate="{DataTemplate view:TestPage}"/>
-        </Tab>
-
         <Tab Icon="control.png"
              Title="Operate"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">

@@ -161,46 +161,14 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem x:Name="ZoomOutIcon" Clicked="OnZoomOutClicked">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.zoom_out_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem x:Name="ZoomInIcon" Clicked="OnZoomInClicked">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.zoom_in_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem Text="Add"         Command="{Binding Path=AddPanelCommand}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.add_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem Text="Duplicate"   Command="{Binding Path=DuplicatePanelCommand}" IsEnabled="{Binding IsPanelSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.copy_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem Text="Delete"      Command="{Binding Path=DeletePanelCommand}" IsEnabled="{Binding IsPanelSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.delete_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem Text="Edit"        Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.edit_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem Text="Upload"      Command="{Binding UploadPanelCommand}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.arrow_upload_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}" />
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
-        <ToolbarItem Text="Download"    Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.arrow_download_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"/>
-            </ToolbarItem.IconImageSource>
-        </ToolbarItem>
+        <ToolbarItem Text="ZoomOut"     Clicked="OnZoomOutClicked"              IsEnabled="{Binding CanZoomOut}" x:Name="ZoomOutIcon"  IconImageSource="{Binding CanZoomOut, Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_out}"/>
+        <ToolbarItem Text="ZoomIn"      Clicked="OnZoomInClicked"               IsEnabled="{Binding CanZoomIn}"  x:Name="ZoomInIcon"    IconImageSource="{Binding CanZoomIn,  Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_in}"/>
+        <ToolbarItem Text="Add"         Command="{Binding Path=AddPanelCommand}"  IconImageSource="plus_active"/>
+        <ToolbarItem Text="Duplicate"   Command="{Binding Path=DuplicatePanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=copy}"/>
+        <ToolbarItem Text="Delete"      Command="{Binding Path=DeletePanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"/>
+        <ToolbarItem Text="Edit"        Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit_3}"/>
+        <ToolbarItem Text="Upload"      Command="{Binding UploadPanelCommand}" IconImageSource="upload_active"/>
+        <ToolbarItem Text="Download"    Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>

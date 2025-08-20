@@ -15,7 +15,11 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showWelcomePage;
     [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private Panel? _activePanel;
+    [ObservableProperty] private bool _isMaximized;
 
+    public string IconMinimize => "minimize_2";
+    public string IconMaximize => "maximize_2";
+    
     public Color BackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; private set; }
 

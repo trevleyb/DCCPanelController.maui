@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text;
+using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -49,10 +50,12 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void OnBeginPushModal() {
+        Console.WriteLine("Begin Push Modal");
         _isPushingModal = true;
     }
 
     private void OnBeginPopModal() {
+        Console.WriteLine("Begin Pop Modal");
         _isPushingModal = false;
     }
 
@@ -60,8 +63,10 @@ public partial class PanelEditor : ContentPage {
         base.OnNavigatedFrom(args);
 
         if (_isPushingModal) {
+            Console.WriteLine("Pop Modal");
             _isPushingModal = false;
         } else {
+            Console.WriteLine("Close Modal");
             _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
             _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
             PanelView.TileSelected -= PanelViewOnTileSelected;
@@ -73,11 +78,15 @@ public partial class PanelEditor : ContentPage {
     }
 
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
-        if (BindingContext is PanelEditorViewModel viewModel) {
-            if (e.Tile is ITileInteractive { } tile) {
-                if (e.IsSingleTap) await tile.Interact(null);
-                if (e.IsDoubleTap) await tile.Secondary(null);
+        try {
+            if (BindingContext is PanelEditorViewModel) {
+                if (e.Tile is ITileInteractive { } tile) {
+                    if (e.IsSingleTap) await tile.Interact(null);
+                    if (e.IsDoubleTap) await tile.Secondary(null);
+                }
             }
+        } catch (Exception ex) {
+            Console.WriteLine($"Exception in PanelViewOnTileTapped: {ex.Message}");
         }
     }
 
@@ -92,7 +101,8 @@ public partial class PanelEditor : ContentPage {
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
         _viewModel.SetCanEditProperties();
-
+        var editIcon = _viewModel.SelectedTiles.Count == 0 ? "settings.png" : "edit.png";
+        ToolbarIconHelper.BindIcon(EditToolbar, nameof(_viewModel.CanEditProperties), editIcon);
         SelectionText.Text = _viewModel.SelectedTiles.Count switch {
             0   => "No tiles selected",
             1   => $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}",
@@ -118,17 +128,19 @@ public partial class PanelEditor : ContentPage {
             PanelView.ShowGrid = _viewModel.GridVisible;
             PanelView.DesignMode = _viewModel.GridVisible;
             PanelView.ClearAllSelectedTiles();
-            GridToolbar.IconImageSource = _viewModel.GridVisible ? "grid_on.png" : "grid_off.png";
+            var gridIcon = _viewModel.GridVisible ? "grid_on.png" : "grid_off.png";
+            ToolbarIconHelper.BindIcon(GridToolbar, nameof(_viewModel.CanToggleGrid), gridIcon);
             break;
 
         case nameof(PanelEditorViewModel.EditMode):
             PanelView.EditMode = _viewModel.EditMode;
-            ModeToolbar.IconImageSource = _viewModel.EditMode switch {
+            var editIcon = _viewModel.EditMode switch {
                 EditModeEnum.Move => "move.png",
                 EditModeEnum.Copy => "copy.png",
                 EditModeEnum.Size => "crop.png",
                 _                 => "move.png"
             };
+            ToolbarIconHelper.BindIcon(ModeToolbar, nameof(_viewModel.CanSetModes), editIcon);
             ShowSelectedMode();
             break;
         }
@@ -144,5 +156,15 @@ public partial class PanelEditor : ContentPage {
                 _                 => ""
             };
         }
+    }
+
+    private void PropertiesDrawer_OnDrawerOpened(object? sender, EventArgs e) {
+        Console.WriteLine("Drawer Opened");
+        _viewModel.IsNavigationDrawerOpen = true;
+    }
+
+    private void PropertiesDrawer_OnDrawerClosed(object? sender, EventArgs e) {
+        Console.WriteLine("Drawer Closed");
+        _viewModel.IsNavigationDrawerOpen = false;
     }
 }

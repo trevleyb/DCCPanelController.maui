@@ -13,7 +13,9 @@ namespace DCCPanelController.View;
 public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     private Panel? _draggedPanel;
     private readonly ProfileService _profileService;
-    
+
+    [ObservableProperty] private bool _canZoomOut;
+    [ObservableProperty] private bool _canZoomIn;
     [ObservableProperty] private bool _isPanelSelected;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Panel? _selectedPanel;

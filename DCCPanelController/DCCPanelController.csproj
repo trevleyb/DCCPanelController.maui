@@ -59,16 +59,30 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <!-- Base icons, as-is -->
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" />
+
+        <!-- Active (white) variants – force unique output name -->
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" TintColor="#FFFFFFFF">
+            <Link>Resources/Icons/%(Filename)_active.png</Link>
+        </MauiImage>
+
+        <!-- Inactive (grey) variants – force unique output name -->
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" TintColor="#FF929292">
+            <Link>Resources/Icons/%(Filename)_inactive.png</Link>
+        </MauiImage>
+    </ItemGroup>
+    
+    <ItemGroup>
         <!-- App Icon -->
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
         <MauiImage Include="Resources\Images\*"/>
-        <MauiImage Include="Resources\Icons\*"/>
         <MauiFont Include="Resources\Fonts\*"/>
         <MauiAsset Include="Resources\Help\**\*"/>
-        
+
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
@@ -121,17 +135,11 @@
         <EmbeddedResource Include="Models\TileImages\light.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_off.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_on.svg" />
-        <None Remove="Models\TileImages\track_turnout_left_diverging_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging_alt.svg" />
-        <None Remove="Models\TileImages\track_turnout_left_straight_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight_alt.svg" />
-        <None Remove="Models\TileImages\track_turnout_right_diverging_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging_alt.svg" />
-        <None Remove="Models\TileImages\track_turnout_right_straight_alt.svg" />
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight_alt.svg" />
-        <None Remove="Models\TileImages\track_angle_platform.svg" />
         <EmbeddedResource Include="Models\TileImages\track_angle_platform.svg" />
-        <None Remove="Models\TileImages\track_straight_platform.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight_platform.svg" />
     </ItemGroup>
 

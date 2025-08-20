@@ -27,9 +27,12 @@ public partial class ConnectionViewModel : BaseViewModel {
 
     private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"ConnectionViewModel: Active profile is not defined.");
     public ConnectionService ConnectionService { get; }
-    public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false; 
-    public string ConnectionIcon => IsConnected ? FluentUI.wifi_1_20 : FluentUI.wifi_off_20;
-
+    public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false;
+    
+    public string IconWifiOn => "wifi_on";
+    public string IconWifiOff => "wifi_off";
+    public string ConnectionIcon => IsConnected ? IconWifiOn : IconWifiOff;
+    
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {
         var result = await ConnectionService.ToggleConnectionAsync();

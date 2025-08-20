@@ -12,13 +12,12 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<OperatePage> _logger;
-    private bool _tabBarState = true;
 
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel) {
+        InitializeComponent();
         _logger = logger;
         BindingContext = viewModel;
         viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        InitializeComponent();
         SetTabBarState(true);
     }
 
@@ -62,17 +61,19 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
 
     private void HideUnHideTabBar(object? sender, EventArgs e) {
-        SetTabBarState(!_tabBarState);
+        if (BindingContext is OperateViewModel viewModel) {
+            SetTabBarState(!viewModel.IsMaximized);    
+        }
     }
 
     private void SetTabBarState(bool state) {
         if (state) {
             Shell.SetTabBarIsVisible(this, true);
-            HideUnHideToolbarIcon.Glyph = FluentUI.full_screen_maximize_20;
+            HideUnHide.IconImageSource = "maximize_2_active";
         } else {
             Shell.SetTabBarIsVisible(this, false);
-            HideUnHideToolbarIcon.Glyph = FluentUI.full_screen_minimize_20;
+            HideUnHide.IconImageSource = "minimize_2_active";
         }
-        _tabBarState = state;
+        if (BindingContext is OperateViewModel viewModel) viewModel.IsMaximized = state;
     }
 }

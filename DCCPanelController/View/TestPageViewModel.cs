@@ -1,4 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace DCCPanelController.View;
 
@@ -8,10 +9,16 @@ public struct SomeTestItem() {
 }
 
 public partial class TestPageViewModel : ObservableObject {
-    
+
+    [ObservableProperty] private bool _canSetModes;
     [ObservableProperty] private string _selectedValue;
     [ObservableProperty] private SomeTestItem _selectedItem;
     [ObservableProperty] private List<SomeTestItem> _testItems;
+
+    [RelayCommand]
+    public async Task SetMode() {
+        CanSetModes = !CanSetModes;
+    }
     
     public TestPageViewModel() {
         _testItems = new List<SomeTestItem>();

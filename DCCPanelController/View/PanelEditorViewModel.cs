@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Core.Extensions;
+using DCCPanelController.MauiMauiView.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -11,6 +12,7 @@ using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
 using Fonts;
+using LocalAuthentication;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.NavigationDrawer;
 using ILogger = Serilog.ILogger;
@@ -26,11 +28,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     private ProfileService _profileService;
     
     [ObservableProperty]
-    [NotifyPropertyChangedFor(nameof(GridOnOffToolbarIcon))]
     private bool _gridVisible;
     
     [ObservableProperty] 
-    [NotifyPropertyChangedFor(nameof(EditModeToolbarIcon))]
     private EditModeEnum _editMode = EditModeEnum.Move;
 
     [ObservableProperty] private bool _havePropertiesChanged;
@@ -48,11 +48,29 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(SingleOrNoEntitiesSelected))]
     [NotifyPropertyChangedFor(nameof(SelectedEntity))]
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
-    [NotifyPropertyChangedFor(nameof(EditPropertiesToolbarIcon))]
+    [NotifyPropertyChangedFor(nameof(CanSetModes))]
+    [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
+    [NotifyPropertyChangedFor(nameof(CanSavePanel))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     private ObservableCollection<ITile> _selectedTiles = [];
 
-    public bool CanEditProperties => SetCanEditProperties();
+    [NotifyPropertyChangedFor(nameof(CanEditProperties))]
+    [NotifyPropertyChangedFor(nameof(CanSetModes))]
+    [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
+    [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
+    [NotifyPropertyChangedFor(nameof(CanSavePanel))]
+    [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
+    [ObservableProperty] private bool _isNavigationDrawerOpen = false;
+    
+    public bool CanEditProperties => SetCanEditProperties() && !IsNavigationDrawerOpen;
+    public bool CanSetModes => SingleOrNoEntitiesSelected && !IsNavigationDrawerOpen;
+    public bool CanRotateTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
+    public bool CanDeleteTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
+    public bool CanSavePanel => HavePropertiesChanged && !IsNavigationDrawerOpen;
+    public bool CanToggleGrid => !IsNavigationDrawerOpen;
+    public bool CanPressBackButton => !IsNavigationDrawerOpen;
+    
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
@@ -74,24 +92,24 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
-    
+
+    public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
-    public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public string Title => Panel?.Title ?? "Panel";
 
-    public string EditPropertiesToolbarIcon => SelectedEntitiesCount > 0 ? FluentUI.edit_20 : FluentUI.settings_20;
-    public string GridOnOffToolbarIcon => GridVisible ? FluentUI.grid_20 : FluentUI.grid_dots_20;
-    public string EditModeToolbarIcon =>
-        EditMode switch {
-            EditModeEnum.Copy => FluentUI.copy_20,
-            EditModeEnum.Move => FluentUI.arrow_move_20,
-            EditModeEnum.Size => FluentUI.resize_20,
-            _                 => FluentUI.arrow_move_20
-        };
+    // public string EditPropertiesToolbarIcon => SelectedEntitiesCount > 0 ? FluentUI.edit_20 : FluentUI.settings_20;
+    // public string GridOnOffToolbarIcon => GridVisible ? FluentUI.grid_20 : FluentUI.grid_dots_20;
+    // public string EditModeToolbarIcon =>
+    //     EditMode switch {
+    //         EditModeEnum.Copy => FluentUI.copy_20,
+    //         EditModeEnum.Move => FluentUI.arrow_move_20,
+    //         EditModeEnum.Size => FluentUI.resize_20,
+    //         _                 => FluentUI.arrow_move_20
+    //     };
 
     
     public event Action? ForcePanelRefresh;
@@ -218,11 +236,20 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
+    public async Task CloseNavigationDrawerAsync() {
+        if (Panel is { } panel && _navigationDrawer is { } navigationDrawer && _navigationDrawerContent is { } navigationDrawerContent) {
+            navigationDrawer.ToggleDrawer();
+        }
+    }
+    
+    [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
         try {
             if (Panel is { } panel && _navigationDrawer is {} navigationDrawer && _navigationDrawerContent is {} navigationDrawerContent) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
+                navigationDrawer.DrawerSettings.DrawerWidth = _page.Width;
+                navigationDrawer.DrawerSettings.DrawerHeight = _page.Height;
                 navigationDrawerContent.Content = propertiesPage;
                 navigationDrawer.ToggleDrawer();
             }
@@ -239,8 +266,11 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && SelectedEntities?.Count > 0 && _navigationDrawer is {} navigationDrawer && _navigationDrawerContent is {} navigationDrawerContent) {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                navigationDrawer.DrawerSettings.DrawerWidth = 300;
+                var measuredSize = MauiViewSizeCalculator.CalculateTotalSize(propertiesPage, _page.Width, _page.Height);
+
                 navigationDrawerContent.Content = propertiesPage;
+                navigationDrawer.DrawerSettings.DrawerWidth = (measuredSize.Width + 20);
+                navigationDrawer.DrawerSettings.DrawerHeight = (measuredSize.Height + 20);
                 navigationDrawer.ToggleDrawer();
             }
 
@@ -255,4 +285,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
         CheckIfPanelChanged();
     }
+
+    
+    
 }

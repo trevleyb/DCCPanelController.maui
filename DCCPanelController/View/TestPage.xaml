@@ -4,11 +4,28 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:components="clr-namespace:DCCPanelController.View.Components"
              xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
              x:DataType="view:TestPageViewModel"
              BindingContext="TestPageViewModel"
              x:Class="DCCPanelController.View.TestPage">
+    
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            IconImageSource="plus_circle.png"
+            Command="{Binding SetModeCommand}">
+        </ToolbarItem>
+
+        <ToolbarItem
+            x:Name="ModeToolbar"
+            IsEnabled="{Binding CanSetModes}"
+            Text="Mode"
+            IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
+            Command="{Binding SetModeCommand}">
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+    <!-- IsEnabled="{Binding CanSetModes}" -->
+    
     <ContentPage.Content>
-        
         <StackLayout>
 
             <HorizontalStackLayout Margin="0,0,0,10">

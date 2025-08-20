@@ -15,15 +15,20 @@
     xmlns:fonts="clr-namespace:Fonts">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}">
-            <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{x:Static fonts:FluentUI.tray_item_remove_20}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
-            </ToolbarItem.IconImageSource>
+        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
         </ToolbarItem>
 
-        <ToolbarItem Command="{Binding ToggleConnectionCommand}" IsEnabled="{Binding IsConnectionAvailable}">
+        <ToolbarItem 
+            Command="{Binding ToggleConnectionCommand}" 
+            IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
-                <FontImageSource Glyph="{Binding ConnectionIcon}" FontFamily="{x:Static fonts:FluentUI.FontFamily}" Color="{StaticResource White}"  />
+                <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
+                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IconWifiOn"/>
+                    <Binding Path="IconWifiOff"/>
+                </MultiBinding>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
 
