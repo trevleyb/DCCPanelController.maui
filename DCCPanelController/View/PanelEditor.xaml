@@ -15,9 +15,10 @@
              x:Class="DCCPanelController.View.PanelEditor">
 
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" x:DataType="view:PanelEditorViewModel" Command="{Binding BackButtonPressedCommand}"/>
+        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" x:DataType="view:PanelEditorViewModel"
+                            Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
-    
+
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
@@ -25,36 +26,36 @@
             IsEnabled="{Binding CanSetModes}"
             Command="{Binding Path=SwitchModeCommand}">
         </ToolbarItem>
-        
+
         <ToolbarItem
-            Text="Rotate" x:Name="RotateToolbar" 
+            Text="Rotate" x:Name="RotateToolbar"
             IsEnabled="{Binding CanRotateTiles}"
             Command="{Binding Path=RotateTileCommand}"
             IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}">
         </ToolbarItem>
-        
-        <ToolbarItem 
+
+        <ToolbarItem
             IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
-            Text="Delete" x:Name="DeleteToolbar" 
+            Text="Delete" x:Name="DeleteToolbar"
             IsEnabled="{Binding CanDeleteTiles}"
             Command="{Binding Path=DeleteTileCommand}">
         </ToolbarItem>
 
-        <ToolbarItem 
+        <ToolbarItem
             IconImageSource="{Binding CanEditProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=settings}"
             Text="Edit" x:Name="EditToolbar"
-            Command="{Binding Path=EditPropertiesCommand}" 
+            Command="{Binding Path=EditPropertiesCommand}"
             IsEnabled="{Binding CanEditProperties}">
         </ToolbarItem>
-        
+
         <ToolbarItem
             IconImageSource="{Binding CanSavePanel, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
             Text="Save" x:Name="SaveToolbar"
-            Command="{Binding Path=SaveCommand}" 
+            Command="{Binding Path=SaveCommand}"
             IsEnabled="{Binding CanSavePanel}">
         </ToolbarItem>
-        
-        <ToolbarItem 
+
+        <ToolbarItem
             IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
             Text="Grid" x:Name="GridToolbar"
             IsEnabled="{Binding CanToggleGrid}"
@@ -62,156 +63,80 @@
         </ToolbarItem>
     </ContentPage.ToolbarItems>
 
-    <navigationDrawer:SfNavigationDrawer x:Name="PropertiesDrawer"
-                                         DrawerClosed="PropertiesDrawer_OnDrawerClosed"
-                                         DrawerOpened="PropertiesDrawer_OnDrawerOpened">
-    
-        <navigationDrawer:SfNavigationDrawer.ContentView>
+    <Grid>
+        <!-- <ContentPage.Content> -->
+        <Grid
+            BackgroundColor="WhiteSmoke"
+            ColumnDefinitions="*"
+            RowDefinitions="*,120,30"
+            HorizontalOptions="Fill"
+            VerticalOptions="Fill">
 
-            <!-- <ContentPage.Content> -->
-            <Grid
-                BackgroundColor="WhiteSmoke"
-                ColumnDefinitions="*"
-                RowDefinitions="*,120,30"
-                HorizontalOptions="Fill"
-                VerticalOptions="Fill">
+            <Border
+                Grid.Row="0"
+                Grid.Column="0"
+                Stroke="#FFF5F5F5"
+                StrokeThickness="0">
+                <Grid
+                    x:Name="DisplayBorder"
+                    BackgroundColor="WhiteSmoke"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill">
 
-                <Border
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Stroke="#FFF5F5F5"
-                    StrokeThickness="0">
-                    <Grid
-                        x:Name="DisplayBorder"
-                        BackgroundColor="WhiteSmoke"
+                    <view:ControlPanelView
+                        Margin="5"
+                        BackgroundColor="Transparent"
+                        DesignMode="true"
+                        Interactive="False"
+                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
+                        Grid.Column="0"
                         HorizontalOptions="Fill"
-                        VerticalOptions="Fill">
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
+                        VerticalOptions="Fill"
+                        x:Name="PanelView"/>
+                </Grid>
+            </Border>
 
-                        <view:ControlPanelView
-                            Margin="5"
-                            BackgroundColor="Transparent"
-                            DesignMode="true"
-                            Interactive="False"
-                            EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
-                            Grid.Column="0"
-                            HorizontalOptions="Fill"
-                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
-                            VerticalOptions="Fill"
-                            x:Name="PanelView"/>
+            <Grid
+                Grid.Row="1"
+                Margin="0,0,0,0">
+                <Border
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <tileSelectors:PillSelectorPanel
+                        HorizontalOptions="Center"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
+                        x:Name="TileSelector"/>
+                </Border>
+            </Grid>
+
+            <Grid Grid.Row="2" Margin="2,2,2,2">
+                <Border
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    StrokeThickness="0">
+                    <Grid ColumnDefinitions="*" Padding="5">
+                        <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center"
+                              VerticalOptions="Center">
+                            <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0"
+                                   TextColor="{StaticResource Primary}"/>
+                        </Grid>
                     </Grid>
                 </Border>
-
-                <Grid
-                    Grid.Row="1"
-                    Margin="0,0,0,0">
-                    <Border
-                        BackgroundColor="WhiteSmoke"
-                        Stroke="#FFF5F5F5"
-                        StrokeThickness="1"
-                        x:DataType="dataModel:Panel">
-                        <tileSelectors:PillSelectorPanel
-                            HorizontalOptions="Center"
-                            Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
-                            x:Name="TileSelector"/>
-                    </Border>
-                </Grid>
-
-                <Grid Grid.Row="2" Margin="2,2,2,2">
-                    <Border
-                        HorizontalOptions="Fill"
-                        VerticalOptions="Fill"
-                        StrokeThickness="0">
-                        <Grid ColumnDefinitions="100,*,100" Padding="5">
-
-                            <Grid Grid.Column="0" ColumnDefinitions="auto,auto">
-                                <HorizontalStackLayout>
-                                    <Label FontSize="15" FontFamily="OpenSansLight"
-                                           TextColor="{StaticResource Primary}"
-                                           Text="Edit Mode:"
-                                           Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                                    <Label FontSize="15" FontFamily="OpenSansMedium"
-                                           TextColor="{StaticResource Primary}"
-                                           x:Name="EditModeText"
-                                           Margin="10,0,0,0" HorizontalOptions="Start" VerticalOptions="Center"/>
-                                </HorizontalStackLayout>
-                            </Grid>
-                            <Grid Grid.Column="1" ColumnDefinitions="auto,*" HorizontalOptions="Center"
-                                  VerticalOptions="Center">
-                                <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" Margin="5,0,0,0"
-                                       TextColor="{StaticResource Primary}"/>
-                            </Grid>
-                            <Grid Grid.Column="2" HorizontalOptions="End" VerticalOptions="Center">
-                                <Label TextColor="{StaticResource Primary}" FontSize="15"
-                                       FontFamily="OpenSansBold" x:Name="NeedsSavingText"
-                                       Margin="10,0,0,0" HorizontalOptions="End" VerticalOptions="Center"/>
-                            </Grid>
-                        </Grid>
-                    </Border>
-                </Grid>
-
             </Grid>
-        </navigationDrawer:SfNavigationDrawer.ContentView>
 
-        <navigationDrawer:SfNavigationDrawer.DrawerSettings>
-            <navigationDrawer:DrawerSettings
-                DrawerWidth="400" 
-                EnableSwipeGesture="True"
-                TouchThreshold="10"
-                Position="Bottom">
+        </Grid>
 
-                <navigationDrawer:DrawerSettings.DrawerContentView>
-                    <Grid Margin="10" Padding="5" BackgroundColor="White">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        
-                        <!-- iOS-style drag handle -->
-                        <Grid Grid.Row="0" Padding="0,12,0,8" BackgroundColor="White" ColumnDefinitions="*,Auto,*">
-                            <!-- Left spacer to help center the grab handle -->
-                            <BoxView Grid.Column="0" IsVisible="False" />
-    
-                            <!-- Grab handle - centered -->
-                            <BoxView 
-                                x:Name="GrabHandle"
-                                Grid.Column="1"
-                                BackgroundColor="LightGray" 
-                                WidthRequest="36" 
-                                HeightRequest="4" 
-                                CornerRadius="2"
-                                HorizontalOptions="Center" 
-                                VerticalOptions="Center" />
-    
-                            <!-- iOS-style close button - right aligned -->
-                            <Button 
-                                Grid.Column="2"
-                                ImageSource="x_circle.png"
-                                FontSize="18"
-                                FontAttributes="Bold"
-                                TextColor="Gray"
-                                BackgroundColor="Transparent"
-                                BorderColor="Transparent"
-                                WidthRequest="30"
-                                HeightRequest="12"
-                                CornerRadius="15"
-                                HorizontalOptions="End"
-                                VerticalOptions="Center"
-                                Margin="0,0,12,0"
-                                Command="{Binding CloseNavigationDrawerCommand}" />
-                        </Grid>
-                        
-                        <!-- Your actual properties content -->
-                        <ScrollView Grid.Row="1" >
-                            <ContentView x:Name="DrawerContentView"/>
-                        </ScrollView>
-                    </Grid>
-
-                </navigationDrawer:DrawerSettings.DrawerContentView>
-
-            </navigationDrawer:DrawerSettings>
-        </navigationDrawer:SfNavigationDrawer.DrawerSettings>
-
-    </navigationDrawer:SfNavigationDrawer>
-
-    <!-- </ContentPage.Content> -->
+        <!-- Bottom Sheet for editing the Connection Details -->
+        <navigationDrawer:SfBottomSheet 
+             x:Name="BottomSheet"
+             CollapsedHeight="0"
+             AnimationDuration="0.5"
+             CornerRadius="15, 15, 0, 0"
+             HalfExpandedRatio="0.80" ContentPadding="10">
+             <navigationDrawer:SfBottomSheet.BottomSheetContent/>
+        </navigationDrawer:SfBottomSheet>
+    </Grid>
 </ContentPage>

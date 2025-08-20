@@ -278,7 +278,7 @@
         <textInputLayout:SfBottomSheet 
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0" 
-            HalfExpandedRatio="0.35" ContentPadding="10">
+            HalfExpandedRatio="0.5" ContentPadding="10">
             <textInputLayout:SfBottomSheet.BottomSheetContent/>
         </textInputLayout:SfBottomSheet>
     </Grid>

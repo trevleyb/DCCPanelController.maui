@@ -9,6 +9,7 @@ using DCCPanelController.Services;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Properties;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.BottomSheet;
 using Syncfusion.Maui.Toolkit.NavigationDrawer;
 
 namespace DCCPanelController.View;
@@ -44,8 +45,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public double ScreenWidth = 100;
     private ProfileService _profileService;
     private ILogger<TurnoutsViewModel> _logger;
-    private ContentView? _navigationContentView;
-    private SfNavigationDrawer? _navigationDrawer;
+
+    private SfBottomSheet? _bottomSheet;
     
     public TurnoutsViewModel(ILogger<TurnoutsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;        
@@ -59,11 +60,10 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         SetLabels();
     }
 
-    public void SetNavigationReferences(SfNavigationDrawer navigationDrawer, ContentView navigationContentView) {
-        _navigationDrawer = navigationDrawer;
-        _navigationContentView = navigationContentView;
+    public void SetNavigationReferences(SfBottomSheet bottomSheet) {
+        _bottomSheet = bottomSheet;
     }
-    
+
     public void SetToolbarItems() {
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Turnouts) ?? false;
         CanAddTurnout = _profileService.ActiveProfile?.Settings?.ClientSettings?.SupportsManualEntries == true && IsSupported;
@@ -83,6 +83,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             if (_profileService?.ActiveProfile is { } profile) profile.RefreshTurnouts();
             if (ConnectionService.Client is { } client) await client.ForceRefreshAsync();
             OnPropertyChanged(nameof(Turnouts));
+            SelectedTurnout = null;
+            IsTurnoutSelected = false;
         } catch { /* ignored */
         } finally {
             IsBusy = false;
@@ -125,6 +127,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
             Turnouts.Remove(turnout);
             OnPropertyChanged(nameof(Turnouts));
             await _profileService.SaveActiveProfileAsync();
+            SelectedTurnout = null;
+            IsTurnoutSelected = false;
         }
     }
 
@@ -141,6 +145,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         await EditTurnoutAsync(turnout);
         await _profileService.SaveActiveProfileAsync();
         OnPropertyChanged(nameof(Turnouts));
+        SelectedTurnout = null;
+        IsTurnoutSelected = false;
     }
 
     [RelayCommand]
@@ -157,10 +163,24 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public async Task EditTurnoutAsync(Turnout? turnout) {
         turnout ??= SelectedTurnout;
         try {
-            if (turnout is not null && _navigationContentView is { } navigationContent && _navigationDrawer is { } navigationDrawer) {
+            if (turnout is not null && _bottomSheet is { } sfBottomSheet) {
                 var turnoutsEditViewModel = new TurnoutsEditViewModel(LogHelper.CreateLogger<TurnoutsEditViewModel>(), turnout, ConnectionService);
-                navigationContent.Content = new TurnoutsEditView(LogHelper.CreateLogger<TurnoutsEditView>(), turnoutsEditViewModel);
-                navigationDrawer.ToggleDrawer();
+
+                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                } else {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    _bottomSheet.BottomSheetContentWidth = 400;
+                }
+
+                _bottomSheet.BottomSheetContent = new TurnoutsEditView(LogHelper.CreateLogger<TurnoutsEditView>(), turnoutsEditViewModel);
+                _bottomSheet.ShowGrabber = true;
+                _bottomSheet.EnableSwiping = true;
+                _bottomSheet.CollapsedHeight = 0;
+                _bottomSheet.CollapseOnOverlayTap = true;
+                _bottomSheet.State = BottomSheetState.HalfExpanded;
+                _bottomSheet.IsModal = true;
+                _bottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);

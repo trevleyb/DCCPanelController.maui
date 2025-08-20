@@ -63,12 +63,12 @@
         <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" />
 
         <!-- Active (white) variants – force unique output name -->
-        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" TintColor="#FFFFFFFF">
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" Resize="16,16"  TintColor="#FFFFFFFF">
             <Link>Resources/Icons/%(Filename)_active.png</Link>
         </MauiImage>
 
         <!-- Inactive (grey) variants – force unique output name -->
-        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" TintColor="#FF929292">
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" Resize="16,16" TintColor="#FF929292">
             <Link>Resources/Icons/%(Filename)_inactive.png</Link>
         </MauiImage>
     </ItemGroup>

@@ -10,6 +10,7 @@ using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
 using Serilog;
+using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
@@ -26,11 +27,10 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, PropertiesDrawer, DrawerContentView) {
+        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, BottomSheet) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
-        ShowSelectedMode();
 
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
@@ -101,7 +101,7 @@ public partial class PanelEditor : ContentPage {
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
         _viewModel.SelectedTiles = e.Tiles.ToObservableCollection();
         _viewModel.SetCanEditProperties();
-        var editIcon = _viewModel.SelectedTiles.Count == 0 ? "settings.png" : "edit.png";
+        var editIcon = _viewModel.SelectedTiles.Count == 0 ? "settings" : "edit";
         ToolbarIconHelper.BindIcon(EditToolbar, nameof(_viewModel.CanEditProperties), editIcon);
         SelectionText.Text = _viewModel.SelectedTiles.Count switch {
             0   => "No tiles selected",
@@ -120,51 +120,30 @@ public partial class PanelEditor : ContentPage {
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
         case nameof(PanelEditorViewModel.HavePropertiesChanged):
-            NeedsSavingText.Text = _viewModel.HavePropertiesChanged ? "Unsaved Changes" : "";
-            ShowSelectedMode();
             break;
 
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;
             PanelView.DesignMode = _viewModel.GridVisible;
             PanelView.ClearAllSelectedTiles();
-            var gridIcon = _viewModel.GridVisible ? "grid_on.png" : "grid_off.png";
+            var gridIcon = _viewModel.GridVisible ? "grid_on" : "grid_off";
             ToolbarIconHelper.BindIcon(GridToolbar, nameof(_viewModel.CanToggleGrid), gridIcon);
             break;
 
         case nameof(PanelEditorViewModel.EditMode):
             PanelView.EditMode = _viewModel.EditMode;
             var editIcon = _viewModel.EditMode switch {
-                EditModeEnum.Move => "move.png",
-                EditModeEnum.Copy => "copy.png",
-                EditModeEnum.Size => "crop.png",
-                _                 => "move.png"
+                EditModeEnum.Move => "move",
+                EditModeEnum.Copy => "copy",
+                EditModeEnum.Size => "crop",
+                _                 => "move"
             };
             ToolbarIconHelper.BindIcon(ModeToolbar, nameof(_viewModel.CanSetModes), editIcon);
-            ShowSelectedMode();
             break;
         }
     }
 
-    private void ShowSelectedMode() {
-        if (_viewModel is { } vm) {
-            DisplayBorder.BackgroundColor = vm.Panel?.DisplayBackgroundColor ?? Colors.WhiteSmoke;
-            EditModeText.Text = vm.EditMode switch {
-                EditModeEnum.Move => "Move Tiles Mode",
-                EditModeEnum.Copy => "Copy Tiles Mode",
-                EditModeEnum.Size => "Resize Tiles Mode",
-                _                 => ""
-            };
-        }
-    }
-
-    private void PropertiesDrawer_OnDrawerOpened(object? sender, EventArgs e) {
-        Console.WriteLine("Drawer Opened");
-        _viewModel.IsNavigationDrawerOpen = true;
-    }
-
-    private void PropertiesDrawer_OnDrawerClosed(object? sender, EventArgs e) {
-        Console.WriteLine("Drawer Closed");
-        _viewModel.IsNavigationDrawerOpen = false;
+    private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) {
+        Console.WriteLine($"Bottom Sheet State = {e.NewState}");
     }
 }

@@ -86,7 +86,12 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             BuildCommonPropertyUI();
         }
 
-        return _container;
+        // Wrap the container in a scroll view so we can scroll to the top of the page
+        // ---------------------------------------------------------------------------
+        var scrollContainer = new ScrollView {
+            Content = _container
+        };
+        return scrollContainer;
     }
 
     private void BuildCommonPropertyUI() {
@@ -96,7 +101,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
             AddNoCommonPropertiesMessage();
             return;
         }
-
         BuildUI();
     }
 
@@ -278,10 +282,11 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 10, 10);
         tableExpander.Header = expanderHeading;
         tableExpander.IsExpanded = true;
-
+        tableExpander.BackgroundColor = Colors.WhiteSmoke;
+        
         var stackLayout = new StackLayout {
             Margin = new Thickness(0, 10, 1, 0),
-            BackgroundColor = Colors.White
+            BackgroundColor = Colors.WhiteSmoke,
         };
         tableExpander.Content = stackLayout;
         return (tableExpander, stackLayout.Children);

@@ -2,7 +2,7 @@
 
 <ContentPage
     IconImageSource="turnouts_green.png"
-    Title="Turnouts List"
+    Title="Turnouts"
     ios:Page.UseSafeArea="False"
     x:Class="DCCPanelController.View.TurnoutsPage"
     x:DataType="view:TurnoutsViewModel"
@@ -17,16 +17,17 @@
     xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem 
-            Command="{Binding AddTurnoutCommand}" IsEnabled="{Binding CanAddTurnout}"
-            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=add}">
+        <ToolbarItem
+            Command="{Binding AddTurnoutCommand}"
+            IsEnabled="{Binding CanAddTurnout}"
+            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus}">
         </ToolbarItem>
 
         <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
                      IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}">
         </ToolbarItem>
 
-        <ToolbarItem 
+        <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
             IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=delete}">
         </ToolbarItem>
@@ -35,13 +36,13 @@
                      IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
         </ToolbarItem>
 
-        <ToolbarItem 
-            Command="{Binding ToggleConnectionCommand}" 
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
@@ -71,132 +72,104 @@
         </Style>
     </ContentPage.Resources>
 
-    <navigationDrawer:SfNavigationDrawer x:Name="NavigationDrawer">
-        <navigationDrawer:SfNavigationDrawer.ContentView>
-            <RefreshView IsRefreshing="{Binding IsBusy}"
-                         Command="{Binding RefreshTurnoutsCommand}">
-                <Grid>
-                    <!-- IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"> -->
-                    <CollectionView ItemsSource="{Binding Turnouts}"
-                                    SelectedItem="{Binding SelectedTurnout}"
-                                    SelectionMode="Single">
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding RefreshTurnoutsCommand}">
+            <Grid>
+                <!-- IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"> -->
+                <CollectionView ItemsSource="{Binding Turnouts}"
+                                SelectedItem="{Binding SelectedTurnout}"
+                                SelectionMode="Single">
 
-                        <CollectionView.Header>
-                            <StackLayout>
-                                <Grid ColumnDefinitions="120,*,100">
-                                    <Button
-                                        Grid.Column="0"
-                                        CommandParameter="{Binding LabelID}"
-                                        HorizontalOptions="Start"
-                                        Style="{StaticResource ColumnLabel}"
-                                        Text="{Binding ColumnLabelID}"/>
-                                    <Button
-                                        Grid.Column="1"
-                                        HorizontalOptions="Start"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                                        CommandParameter="{Binding LabelName}"
-                                        Style="{StaticResource ColumnLabel}"
-                                        Text="{Binding ColumnLabelName}"/>
-                                    <Button
-                                        Grid.Column="2"
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
-                                        CommandParameter="{Binding LabelState}"
-                                        HorizontalOptions="Start"
-                                        Style="{StaticResource ColumnLabel}"
-                                        Text="{Binding ColumnLabelState}"/>
-                                </Grid>
-                                <BoxView
-                                    BackgroundColor="{StaticResource Primary}"
-                                    HeightRequest="1"
-                                    HorizontalOptions="FillAndExpand"/>
+                    <CollectionView.Header>
+                        <StackLayout>
+                            <Grid ColumnDefinitions="120,*,100">
+                                <Button
+                                    Grid.Column="0"
+                                    CommandParameter="{Binding LabelID}"
+                                    HorizontalOptions="Start"
+                                    Style="{StaticResource ColumnLabel}"
+                                    Text="{Binding ColumnLabelID}"/>
+                                <Button
+                                    Grid.Column="1"
+                                    HorizontalOptions="Start"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                    CommandParameter="{Binding LabelName}"
+                                    Style="{StaticResource ColumnLabel}"
+                                    Text="{Binding ColumnLabelName}"/>
+                                <Button
+                                    Grid.Column="2"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                    CommandParameter="{Binding LabelState}"
+                                    HorizontalOptions="Start"
+                                    Style="{StaticResource ColumnLabel}"
+                                    Text="{Binding ColumnLabelState}"/>
+                            </Grid>
+                            <BoxView
+                                BackgroundColor="{StaticResource Primary}"
+                                HeightRequest="1"
+                                HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label IsVisible="{Binding IsSupported}" Text="No Turnouts available."/>
+                                <Label IsVisible="{Binding IsNotSupported}"
+                                       Text="The current server type does not support Turnouts."/>
                             </StackLayout>
-                        </CollectionView.Header>
+                        </Grid>
+                    </CollectionView.EmptyView>
 
-                        <CollectionView.EmptyView>
-                            <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
-                                <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
-                                    <Label IsVisible="{Binding IsSupported}" Text="No Turnouts available."/>
-                                    <Label IsVisible="{Binding IsNotSupported}"
-                                           Text="The current server type does not support Turnouts."/>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dataModel:Turnout">
+                            <Grid Style="{StaticResource SelectableItemStyle}">
+                                <StackLayout x:DataType="dataModel:Turnout">
+                                    <Grid ColumnDefinitions="120,*,100" Padding="5">
+                                        <Label
+                                            Grid.Column="0"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="TailTruncation"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Id}"
+                                            VerticalOptions="Center"/>
+                                        <Label
+                                            Grid.Column="1"
+                                            FontAttributes="Bold"
+                                            LineBreakMode="TailTruncation"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Name}"
+                                            VerticalOptions="Center"/>
+                                        <components:TurnoutStateControl
+                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
+                                            CanToggleState="true"
+                                            Grid.Column="2"
+                                            Margin="0,0,10,0"
+                                            State="{Binding State}"
+                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
+                                            Turnout="{Binding .}"/>
+                                    </Grid>
+
+                                    <BoxView
+                                        BackgroundColor="{StaticResource Primary}"
+                                        HeightRequest="1"
+                                        HorizontalOptions="FillAndExpand"/>
                                 </StackLayout>
                             </Grid>
-                        </CollectionView.EmptyView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
 
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="dataModel:Turnout">
-                                <Grid Style="{StaticResource SelectableItemStyle}">
-                                    <StackLayout x:DataType="dataModel:Turnout">
-                                        <Grid ColumnDefinitions="120,*,100" Padding="5">
-                                            <Label
-                                                Grid.Column="0"
-                                                HorizontalOptions="Start"
-                                                LineBreakMode="TailTruncation"
-                                                Style="{StaticResource MediumLabel}"
-                                                Text="{Binding Id}"
-                                                VerticalOptions="Center"/>
-                                            <Label
-                                                Grid.Column="1"
-                                                FontAttributes="Bold"
-                                                LineBreakMode="TailTruncation"
-                                                Style="{StaticResource MediumLabel}"
-                                                Text="{Binding Name}"
-                                                VerticalOptions="Center"/>
-                                            <components:TurnoutStateControl
-                                                IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
-                                                CanToggleState="true"
-                                                Grid.Column="2"
-                                                Margin="0,0,10,0"
-                                                State="{Binding State}"
-                                                StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
-                                                Turnout="{Binding .}"/>
-                                        </Grid>
+        <!-- Bottom Sheet for editing the Connection Details -->
+        <navigationDrawer:SfBottomSheet
+            x:Name="BottomSheet"
+            CornerRadius="15, 15, 0, 0"
+            HalfExpandedRatio="0.50" ContentPadding="10">
+            <navigationDrawer:SfBottomSheet.BottomSheetContent/>
+        </navigationDrawer:SfBottomSheet>
 
-                                        <BoxView
-                                            BackgroundColor="{StaticResource Primary}"
-                                            HeightRequest="1"
-                                            HorizontalOptions="FillAndExpand"/>
-                                    </StackLayout>
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </Grid>
-            </RefreshView>
-        </navigationDrawer:SfNavigationDrawer.ContentView>
-
-        <!-- Drawer Content View for editing -->
-        <navigationDrawer:SfNavigationDrawer.DrawerSettings>
-            <navigationDrawer:DrawerSettings
-                DrawerWidth="400"
-                DrawerHeight="400"
-                ContentBackground="Transparent"
-                EnableSwipeGesture="True"
-                TouchThreshold="10"
-                Position="Bottom">
-
-                <navigationDrawer:DrawerSettings.DrawerContentView>
-                    <Grid x:Name="DrawerContentGrid" Margin="10" Padding="5" BackgroundColor="White">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- iOS-style drag handle -->
-                        <Grid Grid.Row="0" Padding="0,12,0,8" BackgroundColor="White">
-                            <BoxView
-                                BackgroundColor="LightGray"
-                                WidthRequest="36"
-                                HeightRequest="4"
-                                CornerRadius="2"
-                                HorizontalOptions="Center"
-                                VerticalOptions="Center"/>
-                        </Grid>
-
-                        <ContentView Grid.Row="1" x:Name="DrawerContent"/>
-                    </Grid>
-                </navigationDrawer:DrawerSettings.DrawerContentView>
-            </navigationDrawer:DrawerSettings>
-        </navigationDrawer:SfNavigationDrawer.DrawerSettings>
-    </navigationDrawer:SfNavigationDrawer>
-
+    </Grid>
 </ContentPage>

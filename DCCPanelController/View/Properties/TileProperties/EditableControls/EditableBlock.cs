@@ -9,7 +9,7 @@ using Syncfusion.Maui.Toolkit.Picker;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
-public class EditableBlockAttribute(string label, string description = "", int order = 0, string? group = null, int width = 250, int dropDownWidth = 300, int dropDownHeight = 200)
+public class EditableBlockAttribute(string label, string description = "", int order = 0, string? group = null, int width = 200, int dropDownWidth = 300, int dropDownHeight = 200)
     : EditableProperty(label, description, order, group), IEditableProperty {
 
     public IView? CreateView(object owner, PropertyInfo info) {

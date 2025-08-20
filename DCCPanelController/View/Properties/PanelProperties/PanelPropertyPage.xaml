@@ -13,7 +13,7 @@
     SizeChanged="PanelPropertyPage_SizeChanged"> <!-- Add SizeChanged handler -->
 
     <ContentView.Content>
-        <ScrollView>
+        <ScrollView BackgroundColor="WhiteSmoke">
         <VerticalStackLayout>
 
             <Label Text="Panel Settings" Style="{StaticResource LargeLabel}"
@@ -24,9 +24,9 @@
 
             <!--  Panel Name  -->
             <VerticalStackLayout>
-                <HorizontalStackLayout>
-                    <Label Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
-                    <Border HeightRequest="35" WidthRequest="350">
+                <Grid ColumnDefinitions="100,*" Margin="0,5,0,5">
+                    <Label Grid.Column="0" Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
+                    <Border Grid.Column="1"  HeightRequest="35" MinimumWidthRequest="250" MaximumWidthRequest="350">
                         <Entry HorizontalOptions="Fill"
                                Margin="5,0,0,0"
                                Placeholder="Enter Panel Name"
@@ -35,11 +35,10 @@
                             <RoundRectangle CornerRadius="12,12,12,12"/>
                         </Border.StrokeShape>
                     </Border>
-                </HorizontalStackLayout>
-
-                <HorizontalStackLayout Margin="0,5,0,5">
-                    <Label Text="Description" VerticalOptions="Center" WidthRequest="100"/>
-                    <Border HeightRequest="35" WidthRequest="350">
+                </Grid>
+                <Grid ColumnDefinitions="100,*" Margin="0,5,0,5">
+                    <Label Grid.Column="0" Text="Description" VerticalOptions="Center" WidthRequest="100"/>
+                    <Border Grid.Column="1" HeightRequest="35" MinimumWidthRequest="250" MaximumWidthRequest="350">
                         <Entry HorizontalOptions="Fill"
                                Margin="5,0,0,0"
                                Placeholder="Panel Description"
@@ -48,7 +47,7 @@
                             <RoundRectangle CornerRadius="12,12,12,12"/>
                         </Border.StrokeShape>
                     </Border>
-                </HorizontalStackLayout>
+                    </Grid>
             </VerticalStackLayout>
             <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
                      Margin="0,5,0,5"/>
@@ -57,16 +56,26 @@
                 <VerticalStackLayout>
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label Text="Columns" VerticalOptions="Center" WidthRequest="100"/>
-                        <Entry Keyboard="Numeric" Margin="0,0,10,0" Text="{Binding Panel.Cols, Mode=TwoWay}"
-                               TextChanged="Cols_OnTextChanged" VerticalOptions="Center" WidthRequest="30"/>
+                        <Border  HeightRequest="35" WidthRequest="50" Margin="0,0,10,0">
+                       <Entry Keyboard="Numeric" Margin="10,0,10,0" Text="{Binding Panel.Cols, Mode=TwoWay}"
+                               TextChanged="Cols_OnTextChanged" VerticalOptions="Center" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
+                       <Border.StrokeShape>
+                           <RoundRectangle CornerRadius="12,12,12,12"/>
+                       </Border.StrokeShape>
+                       </Border>
                         <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="8"
                                  Value="{Binding Panel.Cols, Mode=TwoWay}" x:Name="ColsStepper"/>
                     </HorizontalStackLayout>
                     <!--  Panel Rows  -->
                     <HorizontalStackLayout Margin="0,5,0,5">
                         <Label Text="Rows" VerticalOptions="Center" WidthRequest="100"/>
-                        <Entry Keyboard="Numeric" Margin="0,0,10,0" Text="{Binding Panel.Rows, Mode=TwoWay}"
-                               TextChanged="Rows_OnTextChanged" VerticalOptions="Center" WidthRequest="30"/>
+                        <Border  HeightRequest="35" WidthRequest="50" Margin="0,0,10,0">
+                        <Entry Keyboard="Numeric" Margin="10,0,10,0" Text="{Binding Panel.Rows, Mode=TwoWay}"
+                                   TextChanged="Rows_OnTextChanged" VerticalOptions="Center" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12,12,12,12"/>
+                        </Border.StrokeShape>
+                        </Border>
                         <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="8"
                                  Value="{Binding Panel.Rows, Mode=TwoWay}" x:Name="RowsStepper"/>
                     </HorizontalStackLayout>
@@ -126,7 +135,7 @@
 
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="helpers:PanelColorItem">
-                            <Grid ColumnDefinitions="200,120" HorizontalOptions="Start" VerticalOptions="Center"
+                            <Grid ColumnDefinitions="175,150" HorizontalOptions="Start" VerticalOptions="Center"
                                   Padding="0,2">
                                 <Label Grid.Column="0" Text="{Binding LabelText}" VerticalOptions="Center"/>
                                 <components:ColorPickerButton

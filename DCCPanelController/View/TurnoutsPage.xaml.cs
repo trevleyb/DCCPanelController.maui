@@ -14,7 +14,7 @@ public partial class TurnoutsPage : ContentPage {
         _logger = logger; 
         _viewModel = viewModel;
         BindingContext = _viewModel;
-        _viewModel.SetNavigationReferences(NavigationDrawer, DrawerContent);
+        _viewModel.SetNavigationReferences(BottomSheet);
         On<iOS>().SetUseSafeArea(false);
         var safeInsets = On<iOS>().SafeAreaInsets();
     }

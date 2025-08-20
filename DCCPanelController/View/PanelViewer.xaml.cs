@@ -44,16 +44,14 @@ public partial class PanelViewer {
                     _activeSpan = 1;
                     _minSpan = 1;
                     _maxSpan = 2;
+                    PanelsLayout.Span = _activeSpan;
                     PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["HorizontalTemplate"];
-                } else {
-                    SetWideScreenLayout(width);
+                    SetActiveZoomIcons();
+                    return;
                 }
-            } else {
-                SetWideScreenLayout(width);
             }
-        } else {
-            SetWideScreenLayout(width);
         }
+        SetWideScreenLayout(width);
         SetZoomLevel();
     }
 

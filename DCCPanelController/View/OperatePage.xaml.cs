@@ -38,7 +38,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
                 BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
             } else {
                 PanelView.Panel = null;
-                _logger.LogDebug("ViewModelOnPropertyChanged: BindingContext is not OperateViewModel");
+                //_logger.LogDebug("ViewModelOnPropertyChanged: BindingContext is not OperateViewModel");
             }
         }
     }

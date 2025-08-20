@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Core.Extensions;
+using DCCPanelController.Helpers;
 using DCCPanelController.MauiMauiView.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -14,6 +15,7 @@ using DCCPanelController.View.Properties.TileProperties;
 using Fonts;
 using LocalAuthentication;
 using Microsoft.Extensions.Logging;
+using Syncfusion.Maui.Toolkit.BottomSheet;
 using Syncfusion.Maui.Toolkit.NavigationDrawer;
 using ILogger = Serilog.ILogger;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -22,8 +24,7 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
     private readonly ContentPage _page;
-    private readonly ContentView _navigationDrawerContent;
-    private readonly SfNavigationDrawer _navigationDrawer;
+    private readonly SfBottomSheet _bottomSheet;
     private ControlPanelView _panelView;
     private ProfileService _profileService;
     
@@ -75,15 +76,14 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
 
     private ILogger<PanelEditor> _logger;
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ContentPage page, ControlPanelView panelView, SfNavigationDrawer navigationDrawer, ContentView navigationDrawerContent) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ContentPage page, ControlPanelView panelView, SfBottomSheet bottomSheet) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
         _panel = panel.Clone(false);     // Make a clone so we are working on a clone
         _page = page;
         _panelView = panelView;
-        _navigationDrawer = navigationDrawer;
-        _navigationDrawerContent = navigationDrawerContent;
+        _bottomSheet = bottomSheet;
         
         CheckIfPanelChanged();
         if (HavePropertiesChanged == true) {
@@ -236,22 +236,23 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    public async Task CloseNavigationDrawerAsync() {
-        if (Panel is { } panel && _navigationDrawer is { } navigationDrawer && _navigationDrawerContent is { } navigationDrawerContent) {
-            navigationDrawer.ToggleDrawer();
-        }
-    }
-    
-    [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
         try {
-            if (Panel is { } panel && _navigationDrawer is {} navigationDrawer && _navigationDrawerContent is {} navigationDrawerContent) {
+            if (Panel is { } panel && _bottomSheet is {} sfBottomSheet) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
-                navigationDrawer.DrawerSettings.DrawerWidth = _page.Width;
-                navigationDrawer.DrawerSettings.DrawerHeight = _page.Height;
-                navigationDrawerContent.Content = propertiesPage;
-                navigationDrawer.ToggleDrawer();
+                
+                _bottomSheet.BottomSheetContent = propertiesPage;
+                _bottomSheet.Background = Colors.WhiteSmoke;
+                _bottomSheet.ShowGrabber = true;
+                _bottomSheet.EnableSwiping = true;
+                _bottomSheet.CollapseOnOverlayTap = true;
+                _bottomSheet.CollapsedHeight = 0;
+                _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                _bottomSheet.State = BottomSheetState.HalfExpanded;
+                _bottomSheet.IsModal = true;
+                _bottomSheet.StateChanged += PanelBottomSheetOnStateChanged;
+                _bottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -262,23 +263,28 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task EditTilePropertiesAsync() {
         try {
             var layer = SelectedEntities.First().Layer;
-            
-            if (Panel is { } panel && SelectedEntities?.Count > 0 && _navigationDrawer is {} navigationDrawer && _navigationDrawerContent is {} navigationDrawerContent) {
+            if (Panel is { } panel && SelectedEntities?.Count > 0 && _bottomSheet is {} sfBottomSheet) {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
                 var measuredSize = MauiViewSizeCalculator.CalculateTotalSize(propertiesPage, _page.Width, _page.Height);
 
-                navigationDrawerContent.Content = propertiesPage;
-                navigationDrawer.DrawerSettings.DrawerWidth = (measuredSize.Width + 20);
-                navigationDrawer.DrawerSettings.DrawerHeight = (measuredSize.Height + 20);
-                navigationDrawer.ToggleDrawer();
-            }
+                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                } else {
+                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    _bottomSheet.BottomSheetContentWidth = measuredSize.Width + 40;
+                }
 
-            // if the layer of the item changed, then we need to force a refresh of the panel
-            // ------------------------------------------------------------------------------
-            if (layer != SelectedEntities?.First()?.Layer) {
-                Console.WriteLine("Layer was changed, so forcing a Panel redraw");
-                ForcePanelRefresh?.Invoke();
+                _bottomSheet.BottomSheetContent = propertiesPage; 
+                _bottomSheet.Background = Colors.WhiteSmoke;
+                _bottomSheet.ShowGrabber = true;
+                _bottomSheet.EnableSwiping = true;
+                _bottomSheet.CollapseOnOverlayTap = true;
+                _bottomSheet.CollapsedHeight = 0;
+                _bottomSheet.IsModal = true;
+                _bottomSheet.State = BottomSheetState.HalfExpanded;
+                _bottomSheet.StateChanged += TileBottomSheetOnStateChanged;
+                _bottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
@@ -286,6 +292,24 @@ public partial class PanelEditorViewModel : ObservableObject {
         CheckIfPanelChanged();
     }
 
+    private void TileBottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
+        if (e.NewState == BottomSheetState.Hidden) {
+            IsNavigationDrawerOpen = false;
+            if (sender is SfBottomSheet bottomSheet) bottomSheet.StateChanged -= TileBottomSheetOnStateChanged;
+            ForcePanelRefresh?.Invoke();
+        } else {
+            IsNavigationDrawerOpen = true;
+        }
+    }
     
-    
+    private void PanelBottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
+        if (e.NewState == BottomSheetState.Hidden) {
+            IsNavigationDrawerOpen = false;
+            if (sender is SfBottomSheet bottomSheet) bottomSheet.StateChanged -= PanelBottomSheetOnStateChanged;
+            ForcePanelRefresh?.Invoke();
+        } else {
+            IsNavigationDrawerOpen = true;
+        }
+    }
+
 }

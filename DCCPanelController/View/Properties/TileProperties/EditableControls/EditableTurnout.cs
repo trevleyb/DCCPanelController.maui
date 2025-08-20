@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
-public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null, int width = 300, int dropDownWidth = 300, int dropDownHeight = 200)
+public class EditableTurnoutAttribute(string label, string description = "", int order = 0, string? group = null, int width = 200, int dropDownWidth = 300, int dropDownHeight = 200)
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
