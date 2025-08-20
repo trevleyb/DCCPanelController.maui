@@ -1,8 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using CommunityToolkit.Maui.Core.Extensions;
-using DCCPanelController.Helpers;
 using DCCPanelController.MauiMauiView.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -12,12 +10,8 @@ using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
-using Fonts;
-using LocalAuthentication;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
-using Syncfusion.Maui.Toolkit.NavigationDrawer;
-using ILogger = Serilog.ILogger;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
@@ -25,8 +19,8 @@ namespace DCCPanelController.View;
 public partial class PanelEditorViewModel : ObservableObject {
     private readonly ContentPage _page;
     private readonly SfBottomSheet _bottomSheet;
-    private ControlPanelView _panelView;
-    private ProfileService _profileService;
+    private readonly ControlPanelView _panelView;
+    private readonly ProfileService _profileService;
     
     [ObservableProperty]
     private bool _gridVisible;
@@ -62,7 +56,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanSavePanel))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
-    [ObservableProperty] private bool _isNavigationDrawerOpen = false;
+    [ObservableProperty] private bool _isNavigationDrawerOpen;
     
     public bool CanEditProperties => SetCanEditProperties() && !IsNavigationDrawerOpen;
     public bool CanSetModes => SingleOrNoEntitiesSelected && !IsNavigationDrawerOpen;
@@ -86,7 +80,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         _bottomSheet = bottomSheet;
         
         CheckIfPanelChanged();
-        if (HavePropertiesChanged == true) {
+        if (HavePropertiesChanged) {
             _logger.LogDebug($"Property comparison should NOT return true at this point.");
         }
     }
@@ -242,17 +236,17 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
                 
-                _bottomSheet.BottomSheetContent = propertiesPage;
-                _bottomSheet.Background = Colors.WhiteSmoke;
-                _bottomSheet.ShowGrabber = true;
-                _bottomSheet.EnableSwiping = true;
-                _bottomSheet.CollapseOnOverlayTap = true;
-                _bottomSheet.CollapsedHeight = 0;
-                _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-                _bottomSheet.State = BottomSheetState.HalfExpanded;
-                _bottomSheet.IsModal = true;
-                _bottomSheet.StateChanged += PanelBottomSheetOnStateChanged;
-                _bottomSheet.Show();
+                sfBottomSheet.BottomSheetContent = propertiesPage;
+                sfBottomSheet.Background = Colors.WhiteSmoke;
+                sfBottomSheet.ShowGrabber = true;
+                sfBottomSheet.EnableSwiping = true;
+                sfBottomSheet.CollapseOnOverlayTap = true;
+                sfBottomSheet.CollapsedHeight = 0;
+                sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                sfBottomSheet.State = BottomSheetState.HalfExpanded;
+                sfBottomSheet.IsModal = true;
+                sfBottomSheet.StateChanged += PanelBottomSheetOnStateChanged;
+                sfBottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -269,22 +263,22 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var measuredSize = MauiViewSizeCalculator.CalculateTotalSize(propertiesPage, _page.Width, _page.Height);
 
                 if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
                 } else {
-                    _bottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
-                    _bottomSheet.BottomSheetContentWidth = measuredSize.Width + 40;
+                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
+                    sfBottomSheet.BottomSheetContentWidth = measuredSize.Width + 40;
                 }
 
-                _bottomSheet.BottomSheetContent = propertiesPage; 
-                _bottomSheet.Background = Colors.WhiteSmoke;
-                _bottomSheet.ShowGrabber = true;
-                _bottomSheet.EnableSwiping = true;
-                _bottomSheet.CollapseOnOverlayTap = true;
-                _bottomSheet.CollapsedHeight = 0;
-                _bottomSheet.IsModal = true;
-                _bottomSheet.State = BottomSheetState.HalfExpanded;
-                _bottomSheet.StateChanged += TileBottomSheetOnStateChanged;
-                _bottomSheet.Show();
+                sfBottomSheet.BottomSheetContent = propertiesPage; 
+                sfBottomSheet.Background = Colors.WhiteSmoke;
+                sfBottomSheet.ShowGrabber = true;
+                sfBottomSheet.EnableSwiping = true;
+                sfBottomSheet.CollapseOnOverlayTap = true;
+                sfBottomSheet.CollapsedHeight = 0;
+                sfBottomSheet.IsModal = true;
+                sfBottomSheet.State = BottomSheetState.HalfExpanded;
+                sfBottomSheet.StateChanged += TileBottomSheetOnStateChanged;
+                sfBottomSheet.Show();
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);

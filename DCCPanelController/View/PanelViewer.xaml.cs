@@ -7,6 +7,7 @@ public partial class PanelViewer {
     private readonly ILogger<PanelViewer> _logger;
     private readonly ConnectionService? _connectionService;
     private readonly PanelViewerViewModel? _viewModel;
+
     private int _activeSpan = 3;
     private int _minSpan = 1;
     private int _maxSpan = 5;
@@ -19,6 +20,9 @@ public partial class PanelViewer {
         _viewModel.NavigationService = Navigation;
         BindingContext = viewModel;
         
+        DeviceDisplay.MainDisplayInfoChanged += OnDisplayInfoChanged;
+
+        
         // Make sure we refresh on a change in the Panels Collection
         // ---------------------------------------------------------
         _viewModel.PropertyChanged += (sender, args) => {
@@ -26,11 +30,17 @@ public partial class PanelViewer {
         };
     }
 
+    private void OnDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e) {
+        Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200), () => {
+            SetLayoutSpan(Width, Height);
+        });
+    }
+
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
         SetLayoutSpan(width, height);
     }
-
+    
     private void SetLayoutSpan(double width, double height) {
         if (PanelsLayout == null || PanelsCollectionView == null) return;
         if (_viewModel is null) return;
@@ -38,23 +48,29 @@ public partial class PanelViewer {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
-        if (DeviceInfo.Platform == DevicePlatform.iOS) {
-            if (DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                if (width < height) {
-                    _activeSpan = 1;
-                    _minSpan = 1;
-                    _maxSpan = 2;
-                    PanelsLayout.Span = _activeSpan;
-                    PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["HorizontalTemplate"];
-                    SetActiveZoomIcons();
-                    return;
-                }
-            }
-        }
-        SetWideScreenLayout(width);
-        SetZoomLevel();
-    }
+        // Detect small screen (phone in portrait)
+        var isSmallScreen  = (DeviceInfo.Platform == DevicePlatform.iOS && 
+                             DeviceInfo.Current.Idiom == DeviceIdiom.Phone) || 
+                             (width < height && width < 400);
 
+        if (isSmallScreen) {
+            _activeSpan = 1;
+            _minSpan = 1;
+            _maxSpan = 1;
+            PanelsLayout.Span = 1;
+            PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["HorizontalTemplate"];
+            _viewModel.CanZoomOut = false;
+            _viewModel.CanZoomIn = false;
+
+            // We can hide Toolbar Items, only remove them. Get rid of them on small screens
+            // -----------------------------------------------------------------------------
+            ToolbarItems.Remove(ZoomOutIcon);
+            ToolbarItems.Remove(ZoomInIcon);
+        } else {
+            SetWideScreenLayout(width);
+            SetZoomLevel();
+        }
+    }
     private void SetWideScreenLayout(double width) {
         switch (width) {
         case > 1000:

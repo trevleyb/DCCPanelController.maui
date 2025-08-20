@@ -30,7 +30,6 @@
             </Setter>
         </Style>
 
-
         <!-- Horizontal (Image left, text right) -->
         <DataTemplate x:Key="HorizontalTemplate" x:DataType="dataModel:Panel">
             <Border
@@ -39,37 +38,32 @@
                 StrokeShape="RoundRectangle 8"
                 Margin="5"
                 Background="#FAFAFA"
-                Padding="5">
-                <Grid ColumnDefinitions="Auto,*" VerticalOptions="Center">
-                    <Border x:Name="HorizontalBorder"
-                            Grid.Column="0" 
-                            Stroke="#CCCCCC" StrokeThickness="1"
+                Padding="5"
+                HeightRequest="100">
+                  
+                <Grid ColumnDefinitions="120,*" VerticalOptions="Center"> 
+                    <Border Grid.Column="0"
+                            x:Name="HorizontalBorder"
+                            Stroke="#CCCCCC"
+                            StrokeThickness="1"
                             Margin="5"
+                            WidthRequest="110"    
+                            HeightRequest="80"    
                             Background="{Binding DisplayBackgroundColor}">
-                        <Border.HeightRequest>
-                            <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
-                                <Binding Source="{x:Reference HorizontalBorder}" x:DataType="Border" Path="Width"/>
-                                <Binding Path="."/> <!-- Current item -->
-                            </MultiBinding>
-                        </Border.HeightRequest>
-                        <Grid>
-                            <!-- <Image IsVisible="true" -->
-                            <!-- Source="{Binding Thumbnail}" Aspect="AspectFill"/> -->
 
-                            <view:ControlPanelView
-                                IsVisible="true"
-                                BackgroundColor="{Binding PanelBackgroundColor}"
-                                HorizontalOptions="Fill"
-                                Panel="{Binding}"
-                                BindingContext="{Binding}"
-                                ShowGrid="false"
-                                VerticalOptions="Fill"/>
-
-                        </Grid>
+                        <view:ControlPanelView
+                            IsVisible="true"
+                            BackgroundColor="{Binding PanelBackgroundColor}"
+                            HorizontalOptions="Fill"
+                            Panel="{Binding}"
+                            BindingContext="{Binding}"
+                            ShowGrid="false"
+                            VerticalOptions="Fill"/>
                     </Border>
-                    <StackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start">
-                        <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="15"/>
-                        <Label Text="{Binding Description}" FontSize="10" TextColor="Gray"/>
+
+                    <StackLayout Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start" Margin="10,0,0,0">
+                        <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation"/>
+                        <Label Text="{Binding Description}" FontSize="12" TextColor="Gray" LineBreakMode="WordWrap"/>
                     </StackLayout>
 
                     <Grid.GestureRecognizers>
@@ -88,13 +82,12 @@
                             DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DropPanelCommand, x:DataType=view:PanelViewerViewModel}"
                             DropCommandParameter="{Binding}"/>
                     </Grid.GestureRecognizers>
-
                 </Grid>
             </Border>
         </DataTemplate>
 
         <!-- Vertical (Image above, text below) -->
-        <DataTemplate x:Key="VerticalTemplate" 
+        <DataTemplate x:Key="VerticalTemplate"
                       x:DataType="dataModel:Panel">
             <Border
                 Stroke="#CCCCCC"
@@ -105,9 +98,9 @@
                 Padding="5">
                 <Grid>
                     <StackLayout>
-                        <Border 
-                            x:Name="VerticalBorder" 
-                            Stroke="#CCCCCC" StrokeThickness="1" 
+                        <Border
+                            x:Name="VerticalBorder"
+                            Stroke="#CCCCCC" StrokeThickness="1"
                             Margin="5"
                             Background="{Binding DisplayBackgroundColor}">
                             <Grid>
@@ -161,14 +154,21 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="ZoomOut"     Clicked="OnZoomOutClicked"              IsEnabled="{Binding CanZoomOut}" x:Name="ZoomOutIcon"  IconImageSource="{Binding CanZoomOut, Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_out}"/>
-        <ToolbarItem Text="ZoomIn"      Clicked="OnZoomInClicked"               IsEnabled="{Binding CanZoomIn}"  x:Name="ZoomInIcon"    IconImageSource="{Binding CanZoomIn,  Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_in}"/>
-        <ToolbarItem Text="Add"         Command="{Binding Path=AddPanelCommand}"  IconImageSource="plus_active"/>
-        <ToolbarItem Text="Duplicate"   Command="{Binding Path=DuplicatePanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=copy}"/>
-        <ToolbarItem Text="Delete"      Command="{Binding Path=DeletePanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"/>
-        <ToolbarItem Text="Edit"        Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit_3}"/>
-        <ToolbarItem Text="Upload"      Command="{Binding UploadPanelCommand}" IconImageSource="upload_active"/>
-        <ToolbarItem Text="Download"    Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}" IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
+        <ToolbarItem Text="ZoomOut" Clicked="OnZoomOutClicked" IsEnabled="{Binding CanZoomOut}" x:Name="ZoomOutIcon"
+                     IconImageSource="{Binding CanZoomOut, Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_out}"/>
+        <ToolbarItem Text="ZoomIn" Clicked="OnZoomInClicked" IsEnabled="{Binding CanZoomIn}" x:Name="ZoomInIcon"
+                     IconImageSource="{Binding CanZoomIn,  Converter={StaticResource BoolToIcon}, ConverterParameter=zoom_in}"/>
+        <ToolbarItem Text="Add" Command="{Binding Path=AddPanelCommand}" IconImageSource="plus_active"/>
+        <ToolbarItem Text="Duplicate" Command="{Binding Path=DuplicatePanelCommand}"
+                     IsEnabled="{Binding IsPanelSelected}"
+                     IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=copy}"/>
+        <ToolbarItem Text="Delete" Command="{Binding Path=DeletePanelCommand}" IsEnabled="{Binding IsPanelSelected}"
+                     IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"/>
+        <ToolbarItem Text="Edit" Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
+                     IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit_3}"/>
+        <ToolbarItem Text="Upload" Command="{Binding UploadPanelCommand}" IconImageSource="upload_active"/>
+        <ToolbarItem Text="Download" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
+                     IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
@@ -209,7 +209,7 @@
                     <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1"/>
                 </CollectionView.ItemsLayout>
             </CollectionView>
-            
+
             <!-- Loading Overlay -->
             <Grid IsVisible="{Binding IsLoading}"
                   BackgroundColor="WhiteSmoke"
@@ -226,7 +226,7 @@
                         WidthRequest="200"
                         HeightRequest="120"
                         Padding="20">
-                
+
                     <StackLayout HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
                         <ActivityIndicator IsRunning="{Binding IsLoading}" Color="{StaticResource Primary}"
                                            HeightRequest="40"
