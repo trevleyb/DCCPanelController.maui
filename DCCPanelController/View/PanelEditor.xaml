@@ -15,7 +15,8 @@
              x:Class="DCCPanelController.View.PanelEditor">
 
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" x:DataType="view:PanelEditorViewModel"
+        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" 
+                            x:DataType="view:PanelEditorViewModel"
                             Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
 
@@ -65,24 +66,23 @@
 
     <Grid>
         <!-- <ContentPage.Content> -->
-        <Grid
-            BackgroundColor="WhiteSmoke"
-            ColumnDefinitions="*"
-            RowDefinitions="*,120,30"
-            HorizontalOptions="Fill"
-            VerticalOptions="Fill">
+        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
 
-            <Border
-                Grid.Row="0"
-                Grid.Column="0"
-                Stroke="#FFF5F5F5"
-                StrokeThickness="0">
-                <Grid
-                    x:Name="DisplayBorder"
-                    BackgroundColor="WhiteSmoke"
-                    HorizontalOptions="Fill"
-                    VerticalOptions="Fill">
+            <!-- Initially: 1 column, 3 rows (standard layout) -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" x:Name="LeftSidePalette"/>
+                <ColumnDefinition Width="*"   x:Name="MainColumn"/>
+                <ColumnDefinition Width="100" x:Name="RightSidePalette"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"   x:Name="PanelRow"/>       
+                <RowDefinition Height="120" x:Name="MiddlePalette"/>  
+                <RowDefinition Height="30"  x:Name="StatusRow"/>      
+            </Grid.RowDefinitions>
 
+            <!-- Row 0: Panel Editor -->
+            <Border x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="1" Stroke="#FFF5F5F5" StrokeThickness="0">
+                <Grid x:Name="DisplayBorder" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
                     <view:ControlPanelView
                         Margin="5"
                         BackgroundColor="Transparent"
@@ -97,9 +97,39 @@
                 </Grid>
             </Border>
 
-            <Grid
-                Grid.Row="1"
-                Margin="0,0,0,0">
+            <Grid x:Name="LeftSideContainer" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0">
+                <Border
+                    x:Name="LeftPaletteContent"
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <!-- <tileSelectors:SideSelectorPanel -->
+                    <!--     DockSide="Left" -->
+                    <!--     HorizontalOptions="Center" -->
+                    <!--     OnDockSideChanged="PaletteDockSideChanged" -->
+                    <!--     Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}" -->
+                    <!--     x:Name="LeftSideSelector"/> -->
+                </Border>
+            </Grid>
+            
+            <Grid x:Name="RightSideContainer" Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
+                <Border
+                    x:Name="RightPaletteContent"
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <!-- <tileSelectors:SideSelectorPanel -->
+                    <!--     DockSide="Right" -->
+                    <!--     HorizontalOptions="Center" -->
+                    <!--     OnDockSideChanged="PaletteDockSideChanged" -->
+                    <!--     Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}" -->
+                    <!--     x:Name="RightSideSelector"/> -->
+                </Border>
+            </Grid>
+
+            <Grid x:Name="MiddleSideContainer" Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
                 <Border
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"
@@ -107,12 +137,13 @@
                     x:DataType="dataModel:Panel">
                     <tileSelectors:PillSelectorPanel
                         HorizontalOptions="Center"
+                        OnDockSideChanged="PaletteDockSideChanged"
                         Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
-                        x:Name="TileSelector"/>
+                        x:Name="PillSelector"/>
                 </Border>
             </Grid>
 
-            <Grid Grid.Row="2" Margin="2,2,2,2">
+            <Grid x:Name="StatusContainer" Grid.Column="1" Grid.Row="2" Margin="2,2,2,2">
                 <Border
                     HorizontalOptions="Fill"
                     VerticalOptions="Fill"
@@ -129,6 +160,37 @@
 
         </Grid>
 
+        <!-- Overlay for drag operations -->
+        <Grid x:Name="OverlayGrid" IsVisible="False" BackgroundColor="#80000000">
+            <!-- Drop zone indicators -->
+            <Border x:Name="LeftDropZone" 
+                    BackgroundColor="Transparent" 
+                    HorizontalOptions="Start" 
+                    WidthRequest="100"
+                    Stroke="LightBlue"
+                    StrokeThickness="2"
+                    IsVisible="False" />
+                
+            <Border x:Name="RightDropZone" 
+                    BackgroundColor="Transparent" 
+                    HorizontalOptions="End" 
+                    WidthRequest="100"
+                    Stroke="LightBlue" 
+                    StrokeThickness="2"
+                    IsVisible="False" />
+                
+            <Border x:Name="BottomDropZone" 
+                    BackgroundColor="Transparent" 
+                    VerticalOptions="End" 
+                    HeightRequest="120"
+                    Stroke="LightBlue"
+                    StrokeThickness="2" 
+                    IsVisible="False" />
+        
+            <!-- Floating panel container -->
+            <ContentView x:Name="FloatingPanelContainer" />
+        </Grid>
+        
         <!-- Bottom Sheet for editing the Connection Details -->
         <navigationDrawer:SfBottomSheet 
              x:Name="BottomSheet"

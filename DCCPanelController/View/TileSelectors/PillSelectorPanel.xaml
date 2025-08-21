@@ -11,29 +11,69 @@
     Padding="0"
     xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
     xmlns:interfaces="clr-namespace:DCCPanelController.Models.ViewModel.Interfaces"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
-    <Border Padding="0" Margin="0" Stroke="{StaticResource Primary}" StrokeThickness="2" StrokeShape="RoundRectangle 15 15 5 5">
-        <Grid Padding="0" Margin="0" x:Name="PillSelectorGrid" RowDefinitions="38,2,auto" ColumnDefinitions="*" WidthRequest="400">
+    <Border BackgroundColor="White" Padding="0" Margin="0" Stroke="{StaticResource Primary}" StrokeThickness="2"
+            StrokeShape="RoundRectangle 15 15 5 5">
+
+        <Grid Padding="0" Margin="0" x:Name="PillSelectorGrid" RowDefinitions="7,38,2,auto" ColumnDefinitions="*"
+              WidthRequest="400">
+
+            <Border Grid.Row="0" Margin="12,3,0,0"
+                    Stroke="{StaticResource Primary}" Opacity="0.50"
+                    HorizontalOptions="Start" ZIndex="10"
+                    WidthRequest="20" StrokeThickness="2">
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+                        CurrentTouchStatusChanged="OnCurrentTouchStatusChangedLeft"
+                        DefaultBackgroundColor="{StaticResource Primary}"
+                        DefaultOpacity="0.50"
+                        HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                        HoveredOpacity="1.00"
+                        PressedOpacity="0.75"
+                        DefaultScale="1.0"
+                        HoveredScale="2.00"
+                        PressedScale="0.75"/>
+                </Border.Behaviors>
+            </Border>
+            
+            <Border Grid.Row="0" Margin="0,3,12,0"
+                    Stroke="{StaticResource Secondary}" Opacity="0.50"
+                    HorizontalOptions="End" WidthRequest="20" StrokeThickness="2">
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+                        CurrentTouchStatusChanged="OnCurrentTouchStatusChangedRight"
+                        DefaultBackgroundColor="{StaticResource Primary}"
+                        DefaultOpacity="0.50"
+                        HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                        HoveredOpacity="1.00"
+                        PressedOpacity="0.75"
+                        DefaultScale="1.0"
+                        HoveredScale="2.00"
+                        PressedScale="0.75"/>
+                </Border.Behaviors>
+            </Border>
+
             <sfac:SfSegmentedControl
                 x:Name="SegmentedControl"
-                Grid.Row="0"
+                Grid.Row="1"
                 Stroke="{StaticResource Primary}"
                 StrokeThickness="0"
-                CornerRadius="15,15,0,0"
+                CornerRadius="10,10,0,0"
                 EnableRippleEffect="True"
                 SegmentHeight="32"
                 SegmentBackground="{StaticResource WhiteBrush}"
-                ShowSeparator="True"
+                ShowSeparator="False"
                 VisibleSegmentsCount="4"
                 VerticalOptions="Start"
                 Margin="0"
                 Padding="0"
                 BackgroundColor="Transparent"
                 AutoScrollToSelectedSegment="True"
-                ItemsSource="{Binding Categories}"
+                ItemsSource="{Binding SfCategories}"
                 SelectionChanged="OnSelectionChanged">
-                
+
                 <sfac:SfSegmentedControl.TextStyle>
                     <sfac:SegmentTextStyle TextColor="Black" FontSize="15" FontFamily="OpenSansMedium"/>
                 </sfac:SfSegmentedControl.TextStyle>
@@ -43,10 +83,10 @@
             </sfac:SfSegmentedControl>
 
             <!-- Line -->
-            <Border Grid.Row="1" Stroke="{StaticResource Primary}" StrokeThickness="2"/>
+            <Border Grid.Row="2" Stroke="{StaticResource Primary}" StrokeThickness="2"/>
 
             <!-- Pill -->
-            <Grid Grid.Row="2"
+            <Grid Grid.Row="3"
                   Margin="3,3,3,3"
                   HorizontalOptions="Fill"
                   BackgroundColor="White">
@@ -62,6 +102,7 @@
                     InputTransparent="False">
                     <CollectionView
                         x:Name="TileCollection"
+                        x:DataType="tileSelectors:PillSelectorPanelViewModel"
                         ItemsSource="{Binding TilesForSelectedCategory}"
                         ItemsLayout="HorizontalList"
                         HorizontalOptions="Center"
@@ -70,7 +111,7 @@
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
                                 <Grid Padding="4,4,4,4" RowDefinitions="36,12" ColumnDefinitions="32" HorizontalOptions="Center">
-                                    <Border Grid.Row="0" 
+                                    <Border Grid.Row="0"
                                             x:DataType="interfaces:ITile"
                                             StrokeThickness="1"
                                             WidthRequest="32"

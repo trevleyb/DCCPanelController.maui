@@ -7,6 +7,7 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
+using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Plugin.Maui.Audio;
 using Serilog;
@@ -18,6 +19,9 @@ public partial class PanelEditor : ContentPage {
     private readonly ILogger<PanelEditor> _logger;
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly PanelEditorViewModel _viewModel;
+    private SideSelectorPanel? _sideSelectorPanel;
+
+    private TileSelectorDockSide _tileSelectorDockedSide = TileSelectorDockSide.Middle;
 
     private bool _isPushingModal; // Flag to track modal presentation
 
@@ -39,6 +43,7 @@ public partial class PanelEditor : ContentPage {
         PanelView.TileTapped += PanelViewOnTileTapped;
         BindingContext = _viewModel;
         AppState.Instance.IsEditingPanel = true;
+        SetDockedSide(TileSelectorDockSide.Middle);
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -57,6 +62,63 @@ public partial class PanelEditor : ContentPage {
     private void OnBeginPopModal() {
         Console.WriteLine("Begin Pop Modal");
         _isPushingModal = false;
+    }
+
+    private SideSelectorPanel SideSelector(TileSelectorDockSide side) {
+        if (_sideSelectorPanel is null) {
+            _sideSelectorPanel = new SideSelectorPanel() {
+                HorizontalOptions = LayoutOptions.Fill,
+                DockSide = side,
+            };
+            _sideSelectorPanel.OnDockSideChanged += PaletteDockSideChanged;
+            _sideSelectorPanel.Panel = _viewModel.Panel;
+        }
+        _sideSelectorPanel.DockSide = side;
+        return _sideSelectorPanel;
+    }
+
+    private void SetDockedSide(TileSelectorDockSide side) {
+        _tileSelectorDockedSide = side;
+        switch (side) {
+        case TileSelectorDockSide.Left:
+            LeftSidePalette.Width = new GridLength(80);
+            MiddlePalette.Height = new GridLength(0);
+            RightSidePalette.Width = new GridLength(0);
+
+            LeftSideContainer.IsVisible = true;
+            MiddleSideContainer.IsVisible = false;
+            RightSideContainer.IsVisible = false;
+
+            LeftPaletteContent.Content = SideSelector(side);
+            RightPaletteContent.Content = null;
+            break;
+
+        case TileSelectorDockSide.Right:
+            LeftSidePalette.Width = new GridLength(0);
+            MiddlePalette.Height = new GridLength(0);
+            RightSidePalette.Width = new GridLength(80);
+
+            LeftSideContainer.IsVisible = false;
+            MiddleSideContainer.IsVisible = false;
+            RightSideContainer.IsVisible = true;
+
+            LeftPaletteContent.Content = null;
+            RightPaletteContent.Content = SideSelector(side);
+            break;
+
+        case TileSelectorDockSide.Middle:
+            LeftSidePalette.Width = new GridLength(0);
+            MiddlePalette.Height = new GridLength(120);
+            RightSidePalette.Width = new GridLength(0);
+
+            LeftSideContainer.IsVisible = false;
+            MiddleSideContainer.IsVisible = true;
+            RightSideContainer.IsVisible = false;
+
+            LeftPaletteContent.Content = null;
+            RightPaletteContent.Content = null;
+            break;
+        }
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
@@ -145,5 +207,9 @@ public partial class PanelEditor : ContentPage {
 
     private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) {
         Console.WriteLine($"Bottom Sheet State = {e.NewState}");
+    }
+
+    private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) {
+        SetDockedSide(e);
     }
 }

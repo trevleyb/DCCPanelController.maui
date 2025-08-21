@@ -21,7 +21,6 @@ public partial class PanelViewer {
         BindingContext = viewModel;
         
         DeviceDisplay.MainDisplayInfoChanged += OnDisplayInfoChanged;
-
         
         // Make sure we refresh on a change in the Panels Collection
         // ---------------------------------------------------------

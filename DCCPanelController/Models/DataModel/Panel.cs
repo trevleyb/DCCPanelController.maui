@@ -108,6 +108,24 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return cloned ?? throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// This is a special Clone that does not clone the child elements
+    /// and it does not add this to the parent but references the parent
+    /// </summary>
+    public Panel CloneEmptyPanel(string id) {
+        ArgumentNullException.ThrowIfNull(Panels);
+        var clone = new Panel(Panels) {
+            Base64Image = string.Empty,
+            Id = id,
+            Description = Id,
+            SortOrder = 999,
+            Cols = Cols,
+            Rows = Rows
+        };
+        CopyColorsTo(clone);
+        return clone;
+    }
+
     public Panel Clone(bool generateNewId = true) {
         ArgumentNullException.ThrowIfNull(Panels);
         var clone = new Panel(Panels) {

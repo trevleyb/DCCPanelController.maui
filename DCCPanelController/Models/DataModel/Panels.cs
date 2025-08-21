@@ -12,6 +12,12 @@ public sealed class Panels : ObservableCollection<Panel> {
         return new Panel(this);
     }
 
+    public Panel CreatePanel(string name) {
+        var panel = new Panel(this);
+        panel.Id = name;
+        return panel;
+    }
+
     public Panel CreatePanelFrom(Panel panel) {
         return panel.Clone();
     }

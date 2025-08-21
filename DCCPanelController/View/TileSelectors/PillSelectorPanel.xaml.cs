@@ -1,5 +1,7 @@
+using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
+using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Controls;
 using Syncfusion.Maui.Toolkit;
 using Syncfusion.Maui.Toolkit.Accordion;
@@ -12,7 +14,10 @@ using CoreGraphics;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class PillSelectorPanel : ContentView {
+
+    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
     private double pillWidth = 600;
+    
     public static readonly BindableProperty PanelProperty =
         BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(PillSelectorPanel), propertyChanged: OnPanelChanged);
 
@@ -32,13 +37,13 @@ public partial class PillSelectorPanel : ContentView {
     
     public PillSelectorPanel() {
         InitializeComponent();
-        BindingContext = new PillSelectorPanelViewModel();
+        var viewModel = new PillSelectorPanelViewModel();
+        BindingContext = viewModel;
         SegmentedControl.SelectedIndex = 1;
-        SizePill();
     }
 
     private void SizePill() {
-        if (BindingContext is PillSelectorPanelViewModel vm && pillWidth > 0) {
+        if (BindingContext is PillSelectorPanelViewModel vm && pillWidth > 0 && vm.Categories.Count>0) {
             PillSelectorGrid.WidthRequest = pillWidth;
             SegmentedControl.SegmentWidth = pillWidth / vm.Categories.Count;
         }
@@ -55,7 +60,13 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is PillSelectorPanel { Vm: { } vm }) { }
+        if (bindable is PillSelectorPanel { BindingContext: PillSelectorPanelViewModel  vm } selector) {
+            if (newValue != oldValue && newValue is Panel panel) {
+                Console.WriteLine("Panel Changed: Setting up the tiles. ");
+                vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");;
+                selector.SizePill();
+            }
+        }
     }
 
     private void OnTileDragStarting(object? sender, DragStartingEventArgs e) {
@@ -82,4 +93,15 @@ public partial class PillSelectorPanel : ContentView {
         }
     }
 
+    private void OnCurrentTouchStatusChangedLeft(object? _ , TouchStatusChangedEventArgs e) {
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Left);
+    }
+
+    private void OnCurrentTouchStatusChangedMiddle(object? _, TouchStatusChangedEventArgs e) {
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Middle);
+    }
+
+    private void OnCurrentTouchStatusChangedRight(object? _, TouchStatusChangedEventArgs e) {
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Right);
+    }
 }

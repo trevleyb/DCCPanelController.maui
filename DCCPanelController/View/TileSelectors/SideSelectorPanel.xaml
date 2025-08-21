@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Name="Root"
+    x:Class="DCCPanelController.View.TileSelectors.SideSelectorPanel"
+    x:DataType="tileSelectors:SideSelectorPanelViewModel"
+
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
+    xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:interfaces="clr-namespace:DCCPanelController.Models.ViewModel.Interfaces"
+    xmlns:tiles="clr-namespace:DCCPanelController.Models.ViewModel.Tiles">
+
+    <ContentView.Resources>
+        <tileSelectors:CategoryToTilesConverter x:Key="CategoryToTilesConverter"/>
+    </ContentView.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="10"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="80"/>
+        </Grid.ColumnDefinitions>
+
+        <BoxView
+            Grid.Column="0"
+            Grid.RowSpan="2"
+            BackgroundColor="{StaticResource Primary}"
+            WidthRequest="2"
+            HorizontalOptions="Start"
+            VerticalOptions="Fill"
+            x:Name="ResizeHandle">
+        </BoxView>
+
+        <Grid Grid.Column="0" Grid.Row="0">
+            <Border Grid.Row="0" Margin="12,3,0,0"
+                    x:Name="LeftDockButton"
+                    Stroke="{StaticResource Primary}" Opacity="0.50"
+                    HorizontalOptions="Start" ZIndex="10"
+                    WidthRequest="15" StrokeThickness="2">
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+                        CurrentTouchStatusChanged="OnCurrentTouchStatusChangedLeft"
+                        DefaultBackgroundColor="{StaticResource Primary}"
+                        DefaultOpacity="0.50"
+                        HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                        HoveredOpacity="1.00"
+                        PressedOpacity="0.75"
+                        DefaultScale="1.0"
+                        HoveredScale="2.00"
+                        PressedScale="0.75"/>
+                </Border.Behaviors>
+            </Border>
+
+            <Border Grid.Row="0" Margin="0,3,0,0"
+                    x:Name="MiddleDockButton"
+                    Stroke="{StaticResource Primary}" Opacity="0.50"
+                    HorizontalOptions="Center" ZIndex="10"
+                    WidthRequest="15" StrokeThickness="2">
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+                        CurrentTouchStatusChanged="OnCurrentTouchStatusChangedMiddle"
+                        DefaultBackgroundColor="{StaticResource Primary}"
+                        DefaultOpacity="0.50"
+                        HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                        HoveredOpacity="1.00"
+                        PressedOpacity="0.75"
+                        DefaultScale="1.0"
+                        HoveredScale="2.00"
+                        PressedScale="0.75"/>
+                </Border.Behaviors>
+            </Border>
+
+            <Border Grid.Row="0" Margin="0,3,12,0"
+                    x:Name="RightDockButton"
+                    Stroke="{StaticResource Secondary}" Opacity="0.50"
+                    HorizontalOptions="End" WidthRequest="15" StrokeThickness="2">
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+                        CurrentTouchStatusChanged="OnCurrentTouchStatusChangedRight"
+                        DefaultBackgroundColor="{StaticResource Primary}"
+                        DefaultOpacity="0.50"
+                        HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                        HoveredOpacity="1.00"
+                        PressedOpacity="0.75"
+                        DefaultScale="1.0"
+                        HoveredScale="2.00"
+                        PressedScale="0.75"/>
+                </Border.Behaviors>
+            </Border>
+        </Grid>
+
+        <!-- ============================================================== -->
+
+        <!-- Main content area -->
+        <Grid Grid.Column="0" Grid.Row="1" Margin="5,5,5,5">
+            <ScrollView Orientation="Vertical">
+                <CollectionView ItemsSource="{Binding Categories}"
+                                SelectionMode="None"
+                                ItemSizingStrategy="MeasureAllItems">
+                    
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <VerticalStackLayout Spacing="0" Margin="0,0,0,10">
+                                <!-- Category header -->
+                                <Label 
+                                    x:DataType="x:String"
+                                    Text="{Binding .}"
+                                    FontFamily="OpenSansMedium"
+                                    HorizontalTextAlignment="Center"
+                                    HorizontalOptions="Center"
+                                    VerticalOptions="Center"
+                                    FontSize="9"
+                                    Margin="0,5,0,0"/>
+
+                                <!-- Separator -->
+                                <BoxView Margin="8,3,8,3"
+                                         BackgroundColor="DarkGray"
+                                         HeightRequest="1"
+                                         HorizontalOptions="FillAndExpand"/>
+                                
+                                <!-- Tiles for this category -->
+                                <CollectionView
+                                    SelectionMode="None"
+                                    ItemSizingStrategy="MeasureAllItems">
+                                    <CollectionView.ItemsSource>
+                                        <MultiBinding Converter="{StaticResource CategoryToTilesConverter}">
+                                            <Binding Path="." x:DataType="x:String"/>
+                                            <Binding Source="{RelativeSource AncestorType={x:Type tileSelectors:SideSelectorPanelViewModel}}"/>
+                                        </MultiBinding>
+                                    </CollectionView.ItemsSource>
+                                
+                                    <CollectionView.ItemsLayout>
+                                        <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
+                                    </CollectionView.ItemsLayout>
+                                
+                                    <CollectionView.ItemTemplate>
+                                        <!-- <DataTemplate x:DataType="entities:Entity"> -->
+                                        <DataTemplate x:DataType="tiles:Tile">
+                                            <ContentView
+                                            HeightRequest="32"
+                                            WidthRequest="32">
+                                                <Border
+                                                    BackgroundColor="White"
+                                                    HeightRequest="32"
+                                                    WidthRequest="32"
+                                                    HorizontalOptions="Fill"
+                                                    Padding="5"
+                                                    Stroke="{StaticResource Gray500}"
+                                                    StrokeShape="RoundRectangle 5,5,5,5"
+                                                    StrokeThickness="1"
+                                                    VerticalOptions="Fill"
+                                                    >
+                                                    <ContentView
+                                                        Content="{Binding .}"
+                                                        HorizontalOptions="Fill"
+                                                        VerticalOptions="Fill"
+                                                        x:DataType="View">
+                                                        
+                                                        <ContentView.GestureRecognizers>
+                                                            <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
+                                                        </ContentView.GestureRecognizers>
+                                                    </ContentView>
+                                                </Border>
+                                            </ContentView>
+                                        </DataTemplate>
+                                    </CollectionView.ItemTemplate>
+                                </CollectionView>
+                            </VerticalStackLayout>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </ScrollView>
+        </Grid>
+
+
+    </Grid>
+</ContentView>

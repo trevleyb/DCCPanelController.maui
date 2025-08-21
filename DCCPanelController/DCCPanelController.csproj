@@ -213,13 +213,16 @@
         <MauiXaml Update="View\SensorsPage.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
-        <MauiXaml Update="View\Components\TileSelectorPanel.xaml">
-          <SubType>Designer</SubType>
-        </MauiXaml>
         <MauiXaml Update="View\Settings\Simulator\SimulatorSettingsView.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="AppShell.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\TileSelectors\PillSelectorPanel.xaml">
+          <SubType>Designer</SubType>
+        </MauiXaml>
+        <MauiXaml Update="View\TileSelectors\SideSelectorPanel.xaml">
           <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
@@ -321,13 +324,6 @@
         <Compile Update="View\LightsViewModel.cs">
           <DependentUpon>LightsPage.xaml</DependentUpon>
         </Compile>
-        <Compile Update="View\Components\TileSelectorPanel.xaml.cs">
-          <DependentUpon>TileSelector.xaml</DependentUpon>
-          <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\Components\TileSelectorPanelViewModel.cs">
-          <DependentUpon>TileSelectorPanel.xaml</DependentUpon>
-        </Compile>
         <Compile Update="View\Settings\Simulator\SimulatorSettingsView.xaml.cs">
           <DependentUpon>JmriSettingsView.xaml</DependentUpon>
           <SubType>Code</SubType>
@@ -341,6 +337,14 @@
         </Compile>
         <Compile Update="View\TestPageViewModel.cs">
           <DependentUpon>TestPage.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\TileSelectors\PillSelectorPanel.xaml.cs">
+          <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
+          <SubType>Code</SubType>
+        </Compile>
+        <Compile Update="View\TileSelectors\SideSelectorPanel.xaml.cs">
+          <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
+          <SubType>Code</SubType>
         </Compile>
     </ItemGroup>
 

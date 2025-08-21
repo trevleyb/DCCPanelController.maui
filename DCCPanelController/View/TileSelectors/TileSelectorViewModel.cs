@@ -1,46 +1,47 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Tiles;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.Resources.Styles;
+using DCCPanelController.View.Base;
 using Syncfusion.Maui.Toolkit.SegmentedControl;
 
 namespace DCCPanelController.View.TileSelectors;
 
-public partial class PillSelectorPanelViewModel : Base.BaseViewModel {
-    private readonly Panels _symbolPanels;
+public abstract partial class TileSelectorViewModel : BaseViewModel {
+    
+    private Panel? _tilePanel;       // A Dummy Panel we create holding the palette tiles
+    public  ObservableCollection<string> Categories { get; } = [];
+    public Dictionary<string, ObservableCollection<ITile>> ByCategory { get; init; } = [];
 
-    [ObservableProperty] 
-    private string _selectedCategory = string.Empty;
-
-    // Category → tiles
-    public ObservableCollection<SfSegmentItem> Categories { get; } = [];
-    private readonly Dictionary<string, ObservableCollection<ITile>> _byCategory = new();
-
-    public ObservableCollection<ITile> TilesForSelectedCategory =>
-        string.IsNullOrEmpty(SelectedCategory) || !_byCategory.ContainsKey(SelectedCategory)
-            ? new ObservableCollection<ITile>()
-            : _byCategory[SelectedCategory];
-
-    public PillSelectorPanelViewModel() {
-        _symbolPanels = new Panels();
-        BuildAllTiles();
-        if (Categories.Count > 0) SelectedCategory = Categories[0].Text;
+    public Panel Panel {
+        // We add the Selector Panel to the Parent Panel collection so that when 
+        // we reference things like Color, it comes from the Globally set values
+        set {
+            _tilePanel  = value.CloneEmptyPanel("Selector");     // Create a clone of the Panel  
+            BuildAllTiles();                      
+        }
     }
 
-    private void BuildAllTiles(Panel? source = null) {
-        using (new CodeTimer("BuildPillTiles", false)) {
+    protected abstract void AfterBuildAllTiles();
+    
+    private void BuildAllTiles() {
+        if (_tilePanel is null) {
+            Console.WriteLine("We should not be here with the Tile Panel null.");
+            return;
+        }
+        using (new CodeTimer("BuildTiles", false)) {
             Categories.Clear();
-            _byCategory.Clear();
+            ByCategory.Clear();
 
-            var panel = source == null ? _symbolPanels.CreatePanel() : _symbolPanels.CreatePanelFrom(source);
+            var panel = _tilePanel;
 
             // ——— Build categories/tiles to match Swift defaults ———
-            // Swift categories: Actions, Track, Drawing (plus you had Branch & Shapes in the side panel)
+            // Categories: Actions, Track, Drawing (plus you had Branch & Shapes in the side panel)
             // (We’ll keep your existing groupings, since you already rely on them.)
             Add("Actions", [
                 new TurnoutButtonEntity(panel) { State = ButtonStateEnum.On },
@@ -86,10 +87,9 @@ public partial class PillSelectorPanelViewModel : Base.BaseViewModel {
                 new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new ImageEntity(panel),
             ]);
-
-            // Refresh currently shown tiles
-            OnPropertyChanged(nameof(TilesForSelectedCategory));
         }
+        AfterBuildAllTiles();
+        return;
 
         // Local helper to add a category
         void Add(string category, IEnumerable<Entity> entities) {
@@ -98,17 +98,25 @@ public partial class PillSelectorPanelViewModel : Base.BaseViewModel {
                 var tile = TileFactory.CreateTile(e, 32, TileDisplayMode.Symbol);
                 if (tile is not null) list.Add(tile);
             }
-            _byCategory[category] = list;
-            
-            // Add the item as a Segment Item
-            // ---------------------------------------------
-            var item = new SfSegmentItem {
-                Text = category,
-                SelectedSegmentBackground = new SolidColorBrush(StyleHelper.FromStyle("Primary")),
-            };
-            Categories.Add(item);
+            ByCategory[category] = list;
+            Categories.Add(category);
         }
     }
+}
 
-    partial void OnSelectedCategoryChanged(string value) => OnPropertyChanged(nameof(TilesForSelectedCategory));
+public class BindingProxy : BindableObject {
+    public static readonly BindableProperty DataProperty =
+        BindableProperty.Create(nameof(Data), typeof(object), typeof(BindingProxy), propertyChanged: OnProxyChanged);
+
+    private static void OnProxyChanged(BindableObject bindable, object oldValue, object newValue) {
+        Console.WriteLine($"BindingProxy Changed: Bindable is {bindable.GetType().Name} Value={newValue}");
+    }
+
+    public object Data {
+        get => GetValue(DataProperty);
+        set {
+            Console.WriteLine($"BindingProxy Changed: Value={value}");
+            SetValue(DataProperty, value);
+        }
+    }
 }

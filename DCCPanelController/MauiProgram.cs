@@ -8,6 +8,7 @@ using DCCPanelController.View;
 using DCCPanelController.View.Components;
 using Fonts;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls.Xaml.Diagnostics;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit;
 using Serilog;

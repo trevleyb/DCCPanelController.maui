@@ -66,7 +66,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             if (!result) return; // Exit if the user cancels the delete operation
             Panels.Remove(SelectedPanel);
             RefreshSortOrder();
-            SelectedPanel = Panels.FirstOrDefault();
+            SelectedPanel = null; //Panels.FirstOrDefault();
             await SaveAsync();
         }
         OnPropertyChanged(nameof(Panels));
@@ -135,6 +135,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         } catch (Exception ex) {
             _logger.LogCritical("Error loading Panel Editor: {Message}",ex.Message);
         } finally {
+            SelectedPanel = null;
             IsLoading = false;
         }
     }
