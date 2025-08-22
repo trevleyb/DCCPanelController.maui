@@ -12,7 +12,5 @@ using DCCPanelController.View.Helpers;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class SideSelectorPanelViewModel : TileSelectorViewModel {
-    protected override void AfterBuildAllTiles() {
-        Console.WriteLine("AfterBuildAllTiles");
-    }
+    protected override void AfterBuildAllTiles() { }
 }

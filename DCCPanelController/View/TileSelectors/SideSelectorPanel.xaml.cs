@@ -2,7 +2,6 @@ using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
-using MapKit;
 #if IOS || MACCATALYST
 using UIKit;
 using CoreGraphics;
@@ -22,17 +21,12 @@ public partial class SideSelectorPanel {
         BindingContext = ViewModel;
     }
     
-    protected override void OnBindingContextChanged() {
-        base.OnBindingContextChanged();
-        if (Resources.TryGetValue("VmProxy", out var o) && o is BindingProxy p) {
-            p.Data = BindingContext; // <-- hand the VM to the proxy
-        }
-    }
-    
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
     }
+
+    public void ForceReDraw() => (BindingContext as SideSelectorPanelViewModel)?.ForceReDraw();
 
     public TileSelectorDockSide DockSide {
         get => (TileSelectorDockSide)GetValue(DockSideProperty);
@@ -40,10 +34,9 @@ public partial class SideSelectorPanel {
     }
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is SideSelectorPanel { BindingContext: SideSelectorPanelViewModel vm } sideSelector) {
+        if (bindable is SideSelectorPanel { BindingContext: SideSelectorPanelViewModel vm }) {
             if (newValue != oldValue && newValue is Panel panel) {
-                Console.WriteLine("Panel Changed: Setting iu the tiles. ");
-                vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");;
+                vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");
             }
         }
     }
@@ -52,14 +45,20 @@ public partial class SideSelectorPanel {
         if (bindable is SideSelectorPanel selector && newValue is TileSelectorDockSide side) {
             switch (side) {
             case TileSelectorDockSide.Left:
-                selector.ResizeHandle.HorizontalOptions = LayoutOptions.End;
+                selector.ResizeHandleLeft.IsVisible = false;
+                selector.ResizeHandleRight.IsVisible = true;
+                selector.ResizeAreaLeft.Width = 2;
+                selector.ResizeAreaRight.Width = 0;
                 selector.LeftDockButton.IsVisible = false;
                 selector.RightDockButton.IsVisible = true;
                 break;
             case TileSelectorDockSide.Middle:
                 break;
             case TileSelectorDockSide.Right:
-                selector.ResizeHandle.HorizontalOptions = LayoutOptions.Start;
+                selector.ResizeHandleLeft.IsVisible = true;
+                selector.ResizeHandleRight.IsVisible = false;
+                selector.ResizeAreaLeft.Width = 0;
+                selector.ResizeAreaRight.Width = 2;
                 selector.LeftDockButton.IsVisible = true;
                 selector.RightDockButton.IsVisible = false;
                 break;
@@ -84,8 +83,7 @@ public partial class SideSelectorPanel {
                     imageView.Frame = new CGRect(0, 0, 32, 32);
                     return new UIDragPreview(imageView);
                 }
-
-                e?.PlatformArgs?.SetPreviewProvider(Action);
+                e.PlatformArgs?.SetPreviewProvider(Action);
 #endif
             }
         }

@@ -6,11 +6,9 @@
     x:DataType="tileSelectors:SideSelectorPanelViewModel"
 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:entities="clr-namespace:DCCPanelController.Models.DataModel.Entities"
     xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:interfaces="clr-namespace:DCCPanelController.Models.ViewModel.Interfaces"
     xmlns:tiles="clr-namespace:DCCPanelController.Models.ViewModel.Tiles">
 
     <ContentView.Resources>
@@ -23,25 +21,47 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="80"/>
+            <ColumnDefinition Width="2" x:Name="ResizeAreaRight"/>
+            <ColumnDefinition Width="74"/>
+            <ColumnDefinition Width="2" x:Name="ResizeAreaLeft"/>
         </Grid.ColumnDefinitions>
 
         <BoxView
             Grid.Column="0"
+            Grid.Row="0"
             Grid.RowSpan="2"
             BackgroundColor="{StaticResource Primary}"
             WidthRequest="2"
-            HorizontalOptions="Start"
             VerticalOptions="Fill"
-            x:Name="ResizeHandle">
+            x:Name="ResizeHandleLeft">
         </BoxView>
 
-        <Grid Grid.Column="0" Grid.Row="0">
-            <Border Grid.Row="0" Margin="12,3,0,0"
+        <BoxView
+            Grid.Column="2"
+            Grid.RowSpan="2"
+            Grid.Row="0"
+            BackgroundColor="{StaticResource Primary}"
+            WidthRequest="2"
+            VerticalOptions="Fill"
+            x:Name="ResizeHandleRight">
+        </BoxView>
+
+        <Grid Grid.Column="1" Grid.Row="0">
+            <Border Grid.Row="0" Margin="10,3,0,0"
+                    WidthRequest="10" HeightRequest="10"
                     x:Name="LeftDockButton"
                     Stroke="{StaticResource Primary}" Opacity="0.50"
                     HorizontalOptions="Start" ZIndex="10"
-                    WidthRequest="15" StrokeThickness="2">
+                    StrokeThickness="3">
+                <Border.StrokeShape>
+                    <PathGeometry>
+                        <PathFigure StartPoint="10,0" IsClosed="True">
+                            <LineSegment Point="0,5" />
+                            <LineSegment Point="10,10" />
+                            <LineSegment Point="10,0" />
+                        </PathFigure>
+                    </PathGeometry>
+                </Border.StrokeShape>
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
                         CurrentTouchStatusChanged="OnCurrentTouchStatusChangedLeft"
@@ -60,7 +80,16 @@
                     x:Name="MiddleDockButton"
                     Stroke="{StaticResource Primary}" Opacity="0.50"
                     HorizontalOptions="Center" ZIndex="10"
-                    WidthRequest="15" StrokeThickness="2">
+                    HeightRequest="10" WidthRequest="10" StrokeThickness="3">
+                <Border.StrokeShape>
+                    <PathGeometry>
+                        <PathFigure StartPoint="0,0" IsClosed="True">
+                            <LineSegment Point="10,0" />
+                            <LineSegment Point="5,10" />
+                            <LineSegment Point="0,0" />
+                        </PathFigure>
+                    </PathGeometry>
+                </Border.StrokeShape>
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
                         CurrentTouchStatusChanged="OnCurrentTouchStatusChangedMiddle"
@@ -75,10 +104,19 @@
                 </Border.Behaviors>
             </Border>
 
-            <Border Grid.Row="0" Margin="0,3,12,0"
+            <Border Grid.Row="0" Margin="0,3,10,0"
                     x:Name="RightDockButton"
                     Stroke="{StaticResource Secondary}" Opacity="0.50"
-                    HorizontalOptions="End" WidthRequest="15" StrokeThickness="2">
+                    HorizontalOptions="End" WidthRequest="10" HeightRequest="10" StrokeThickness="3">
+                <Border.StrokeShape>
+                    <PathGeometry>
+                        <PathFigure StartPoint="0,0" IsClosed="True">
+                            <LineSegment Point="10,5" />
+                            <LineSegment Point="0,10" />
+                            <LineSegment Point="0,0" />
+                        </PathFigure>
+                    </PathGeometry>
+                </Border.StrokeShape>
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
                         CurrentTouchStatusChanged="OnCurrentTouchStatusChangedRight"
@@ -97,7 +135,7 @@
         <!-- ============================================================== -->
 
         <!-- Main content area -->
-        <Grid Grid.Column="0" Grid.Row="1" Margin="5,5,5,5">
+        <Grid Grid.Column="1" Grid.Row="1" Margin="5,5,5,5">
             <ScrollView Orientation="Vertical">
                 <CollectionView ItemsSource="{Binding Categories}"
                                 SelectionMode="None"
@@ -106,7 +144,6 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <VerticalStackLayout Spacing="0" Margin="0,0,0,10">
-                                <!-- Category header -->
                                 <Label 
                                     x:DataType="x:String"
                                     Text="{Binding .}"
@@ -114,13 +151,12 @@
                                     HorizontalTextAlignment="Center"
                                     HorizontalOptions="Center"
                                     VerticalOptions="Center"
-                                    FontSize="9"
+                                    FontSize="10"
                                     Margin="0,5,0,0"/>
-
                                 <!-- Separator -->
-                                <BoxView Margin="8,3,8,3"
-                                         BackgroundColor="DarkGray"
-                                         HeightRequest="1"
+                                <BoxView Margin="2,3,2,3"
+                                         BackgroundColor="{StaticResource Primary}"
+                                         HeightRequest="2"
                                          HorizontalOptions="FillAndExpand"/>
                                 
                                 <!-- Tiles for this category -->
@@ -130,7 +166,7 @@
                                     <CollectionView.ItemsSource>
                                         <MultiBinding Converter="{StaticResource CategoryToTilesConverter}">
                                             <Binding Path="." x:DataType="x:String"/>
-                                            <Binding Source="{RelativeSource AncestorType={x:Type tileSelectors:SideSelectorPanelViewModel}}"/>
+                                            <Binding Source="{RelativeSource AncestorType={x:Type tileSelectors:SideSelectorPanelViewModel}}" x:DataType="tileSelectors:SideSelectorPanelViewModel" />
                                         </MultiBinding>
                                     </CollectionView.ItemsSource>
                                 

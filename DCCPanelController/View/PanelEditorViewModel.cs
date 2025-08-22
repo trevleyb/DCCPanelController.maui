@@ -79,6 +79,9 @@ public partial class PanelEditorViewModel : ObservableObject {
         _panelView = panelView;
         _bottomSheet = bottomSheet;
         
+        // Pre-build the palette cache
+        TileSelectorPaletteCache.Prebuild(_panel);
+        
         CheckIfPanelChanged();
         if (HavePropertiesChanged) {
             _logger.LogDebug($"Property comparison should NOT return true at this point.");

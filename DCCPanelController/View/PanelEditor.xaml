@@ -108,7 +108,6 @@
                     <!--     DockSide="Left" -->
                     <!--     HorizontalOptions="Center" -->
                     <!--     OnDockSideChanged="PaletteDockSideChanged" -->
-                    <!--     Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}" -->
                     <!--     x:Name="LeftSideSelector"/> -->
                 </Border>
             </Grid>
@@ -120,17 +119,17 @@
                     Stroke="#FFF5F5F5"
                     StrokeThickness="1"
                     x:DataType="dataModel:Panel">
-                    <!-- <tileSelectors:SideSelectorPanel -->
-                    <!--     DockSide="Right" -->
-                    <!--     HorizontalOptions="Center" -->
-                    <!--     OnDockSideChanged="PaletteDockSideChanged" -->
-                    <!--     Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}" -->
-                    <!--     x:Name="RightSideSelector"/> -->
+                    <tileSelectors:SideSelectorPanel
+                        DockSide="Right"
+                        HorizontalOptions="Center"
+                        OnDockSideChanged="PaletteDockSideChanged"
+                        x:Name="RightSideSelector"/>
                 </Border>
             </Grid>
 
             <Grid x:Name="MiddleSideContainer" Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
                 <Border
+                    x:Name="MiddlePaletteContent"
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"
                     StrokeThickness="1"
@@ -138,7 +137,6 @@
                     <tileSelectors:PillSelectorPanel
                         HorizontalOptions="Center"
                         OnDockSideChanged="PaletteDockSideChanged"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, x:DataType=view:PanelEditorViewModel, Path=Panel}"
                         x:Name="PillSelector"/>
                 </Border>
             </Grid>

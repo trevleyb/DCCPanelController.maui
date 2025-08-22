@@ -1,16 +1,11 @@
 using System.ComponentModel;
-using System.Text;
-using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core.Extensions;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
-using Plugin.Maui.Audio;
-using Serilog;
 using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
@@ -19,28 +14,25 @@ public partial class PanelEditor : ContentPage {
     private readonly ILogger<PanelEditor> _logger;
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly PanelEditorViewModel _viewModel;
-    private SideSelectorPanel? _sideSelectorPanel;
-
-    private TileSelectorDockSide _tileSelectorDockedSide = TileSelectorDockSide.Middle;
-
     private bool _isPushingModal; // Flag to track modal presentation
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
         _logger = logger;
-        InitializeComponent();
-        if (panel.Cols <= 0) panel.Cols = 18;
-        if (panel.Rows <= 0) panel.Rows = 10;
-
         _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, BottomSheet) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
-
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
+
+        InitializeComponent();
+        if (panel.Cols <= 0) panel.Cols = 18;
+        if (panel.Rows <= 0) panel.Rows = 10;
+
         PanelView.TileSelected += PanelViewOnTileSelected;
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;
+
         BindingContext = _viewModel;
         AppState.Instance.IsEditingPanel = true;
         SetDockedSide(TileSelectorDockSide.Middle);
@@ -64,61 +56,73 @@ public partial class PanelEditor : ContentPage {
         _isPushingModal = false;
     }
 
-    private SideSelectorPanel SideSelector(TileSelectorDockSide side) {
-        if (_sideSelectorPanel is null) {
-            _sideSelectorPanel = new SideSelectorPanel() {
-                HorizontalOptions = LayoutOptions.Fill,
-                DockSide = side,
-            };
-            _sideSelectorPanel.OnDockSideChanged += PaletteDockSideChanged;
-            _sideSelectorPanel.Panel = _viewModel.Panel;
-        }
-        _sideSelectorPanel.DockSide = side;
-        return _sideSelectorPanel;
-    }
+    // private SideSelectorPanel SideSelector(TileSelectorDockSide side) {
+    //     if (_sideSelectorPanel is null) {
+    //         _sideSelectorPanel = new SideSelectorPanel() {
+    //             HorizontalOptions = LayoutOptions.Fill,
+    //             DockSide = side,
+    //         };
+    //         _sideSelectorPanel.OnDockSideChanged += PaletteDockSideChanged;
+    //         _sideSelectorPanel.Panel = _viewModel.Panel;
+    //     }
+    //     _sideSelectorPanel.DockSide = side;
+    //     return _sideSelectorPanel;
+    // }
 
     private void SetDockedSide(TileSelectorDockSide side) {
-        _tileSelectorDockedSide = side;
+
+        // Unregister events before we clear the content
+        if (LeftPaletteContent.Content is SideSelectorPanel l) l.OnDockSideChanged -= PaletteDockSideChanged;
+        if (RightPaletteContent.Content is SideSelectorPanel r) r.OnDockSideChanged -= PaletteDockSideChanged;
+        if (MiddlePaletteContent.Content is PillSelectorPanel m) m.OnDockSideChanged -= PaletteDockSideChanged;
+        
+        LeftPaletteContent.Content = null;
+        RightPaletteContent.Content = null;
+        MiddlePaletteContent.Content = null;
+        
         switch (side) {
         case TileSelectorDockSide.Left:
-            LeftSidePalette.Width = new GridLength(80);
-            MiddlePalette.Height = new GridLength(0);
-            RightSidePalette.Width = new GridLength(0);
-
-            LeftSideContainer.IsVisible = true;
-            MiddleSideContainer.IsVisible = false;
-            RightSideContainer.IsVisible = false;
-
-            LeftPaletteContent.Content = SideSelector(side);
-            RightPaletteContent.Content = null;
+            SetPaletteVisibility(80,0,0);
+            var leftPalette = new SideSelectorPanel() {
+                DockSide = TileSelectorDockSide.Left,
+                HorizontalOptions = LayoutOptions.Center,
+                Panel = _viewModel.Panel,
+            };
+            leftPalette.OnDockSideChanged += PaletteDockSideChanged;
+            LeftPaletteContent.Content = leftPalette;
             break;
 
         case TileSelectorDockSide.Right:
-            LeftSidePalette.Width = new GridLength(0);
-            MiddlePalette.Height = new GridLength(0);
-            RightSidePalette.Width = new GridLength(80);
-
-            LeftSideContainer.IsVisible = false;
-            MiddleSideContainer.IsVisible = false;
-            RightSideContainer.IsVisible = true;
-
-            LeftPaletteContent.Content = null;
-            RightPaletteContent.Content = SideSelector(side);
+            SetPaletteVisibility(0,0,80);
+            var rightPalette = new SideSelectorPanel() {
+                DockSide = TileSelectorDockSide.Right,
+                HorizontalOptions = LayoutOptions.Center,
+                Panel = _viewModel.Panel,
+            };
+            rightPalette.OnDockSideChanged += PaletteDockSideChanged;
+            RightPaletteContent.Content = rightPalette;
             break;
 
         case TileSelectorDockSide.Middle:
-            LeftSidePalette.Width = new GridLength(0);
-            MiddlePalette.Height = new GridLength(120);
-            RightSidePalette.Width = new GridLength(0);
-
-            LeftSideContainer.IsVisible = false;
-            MiddleSideContainer.IsVisible = true;
-            RightSideContainer.IsVisible = false;
-
-            LeftPaletteContent.Content = null;
-            RightPaletteContent.Content = null;
+            SetPaletteVisibility(0,120,0);
+            var middlePalette = new PillSelectorPanel() {
+                HorizontalOptions = LayoutOptions.Center,
+                Panel = _viewModel.Panel,
+            };
+            middlePalette.OnDockSideChanged += PaletteDockSideChanged;
+            MiddlePaletteContent.Content = middlePalette;
             break;
         }
+    }
+
+    private void SetPaletteVisibility(int left, int middle, int right) {
+        LeftSidePalette.Width = new GridLength(left);
+        MiddlePalette.Height = new GridLength(middle);
+        RightSidePalette.Width = new GridLength(right);
+
+        LeftSideContainer.IsVisible = left > 0;
+        MiddleSideContainer.IsVisible = middle > 0;
+        RightSideContainer.IsVisible = right > 0;
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {

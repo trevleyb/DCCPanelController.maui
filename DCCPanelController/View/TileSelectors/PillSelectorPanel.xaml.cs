@@ -25,7 +25,9 @@ public partial class PillSelectorPanel : ContentView {
         get => (Panel?)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
     }
-
+    
+    public void ForceReDraw() => (BindingContext as PillSelectorPanelViewModel)?.ForceReDraw();
+    
     private PillSelectorPanelViewModel? Vm => BindingContext as PillSelectorPanelViewModel;
 
     private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {

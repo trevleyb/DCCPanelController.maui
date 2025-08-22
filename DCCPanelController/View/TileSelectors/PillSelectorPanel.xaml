@@ -20,10 +20,19 @@
         <Grid Padding="0" Margin="0" x:Name="PillSelectorGrid" RowDefinitions="7,38,2,auto" ColumnDefinitions="*"
               WidthRequest="400">
 
-            <Border Grid.Row="0" Margin="12,3,0,0"
+            <Border Grid.Row="0" Margin="5,8,0,0"
                     Stroke="{StaticResource Primary}" Opacity="0.50"
                     HorizontalOptions="Start" ZIndex="10"
-                    WidthRequest="20" StrokeThickness="2">
+                    WidthRequest="10" HeightRequest="10" StrokeThickness="3">
+                <Border.StrokeShape>
+                    <PathGeometry>
+                        <PathFigure StartPoint="10,0" IsClosed="True">
+                            <LineSegment Point="0,5" />
+                            <LineSegment Point="10,10" />
+                            <LineSegment Point="10,0" />
+                        </PathFigure>
+                    </PathGeometry>
+                </Border.StrokeShape>
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
                         CurrentTouchStatusChanged="OnCurrentTouchStatusChangedLeft"
@@ -38,9 +47,19 @@
                 </Border.Behaviors>
             </Border>
             
-            <Border Grid.Row="0" Margin="0,3,12,0"
+            <Border Grid.Row="0" Margin="0,8,5,0"
+                    ZIndex="10"
                     Stroke="{StaticResource Secondary}" Opacity="0.50"
-                    HorizontalOptions="End" WidthRequest="20" StrokeThickness="2">
+                    HorizontalOptions="End" WidthRequest="10" HeightRequest="10" StrokeThickness="3">
+                <Border.StrokeShape>
+                    <PathGeometry>
+                        <PathFigure StartPoint="0,0" IsClosed="True">
+                            <LineSegment Point="10,5" />
+                            <LineSegment Point="0,10" />
+                            <LineSegment Point="0,0" />
+                        </PathFigure>
+                    </PathGeometry>
+                </Border.StrokeShape>
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
                         CurrentTouchStatusChanged="OnCurrentTouchStatusChangedRight"
