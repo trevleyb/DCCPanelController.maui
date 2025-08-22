@@ -35,7 +35,6 @@ public partial class PanelEditor : ContentPage {
 
         BindingContext = _viewModel;
         AppState.Instance.IsEditingPanel = true;
-        SetDockedSide(TileSelectorDockSide.Middle);
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
@@ -44,6 +43,10 @@ public partial class PanelEditor : ContentPage {
         base.OnSizeAllocated(width, height);
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
+
+        Console.WriteLine($"OnSizeAllocated: {width} x {height}");;
+        if (width < height) SetDockedSide(TileSelectorDockSide.Middle);
+        if (width >= height) SetDockedSide(TileSelectorDockSide.Right);
     }
 
     private void OnBeginPushModal() {
@@ -55,19 +58,6 @@ public partial class PanelEditor : ContentPage {
         Console.WriteLine("Begin Pop Modal");
         _isPushingModal = false;
     }
-
-    // private SideSelectorPanel SideSelector(TileSelectorDockSide side) {
-    //     if (_sideSelectorPanel is null) {
-    //         _sideSelectorPanel = new SideSelectorPanel() {
-    //             HorizontalOptions = LayoutOptions.Fill,
-    //             DockSide = side,
-    //         };
-    //         _sideSelectorPanel.OnDockSideChanged += PaletteDockSideChanged;
-    //         _sideSelectorPanel.Panel = _viewModel.Panel;
-    //     }
-    //     _sideSelectorPanel.DockSide = side;
-    //     return _sideSelectorPanel;
-    // }
 
     private void SetDockedSide(TileSelectorDockSide side) {
 
