@@ -346,6 +346,12 @@
           <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
           <SubType>Code</SubType>
         </Compile>
+        <Compile Update="View\TileSelectors\SideSelectorPanelViewModel.cs">
+          <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
+        </Compile>
+        <Compile Update="View\TileSelectors\PillSelectorPanelViewModel.cs">
+          <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
+        </Compile>
     </ItemGroup>
 
     <ItemGroup>

@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
@@ -12,8 +13,8 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditor : ContentPage {
     private readonly ILogger<PanelEditor> _logger;
-    private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly PanelEditorViewModel _viewModel;
+    private readonly TaskCompletionSource<bool> _closeTcs = new();
     private bool _isPushingModal; // Flag to track modal presentation
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
@@ -22,8 +23,6 @@ public partial class PanelEditor : ContentPage {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };
-        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
 
         InitializeComponent();
         if (panel.Cols <= 0) panel.Cols = 18;
@@ -32,12 +31,13 @@ public partial class PanelEditor : ContentPage {
         PanelView.TileSelected += PanelViewOnTileSelected;
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;
+        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+        _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
 
         BindingContext = _viewModel;
         AppState.Instance.IsEditingPanel = true;
     }
 
-    public Task<bool> PageClosed => _closeTcs.Task;
 
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
@@ -49,6 +49,8 @@ public partial class PanelEditor : ContentPage {
         if (width >= height) SetDockedSide(TileSelectorDockSide.Right);
     }
 
+    public Task<bool> PageClosed => _closeTcs.Task;
+
     private void OnBeginPushModal() {
         Console.WriteLine("Begin Push Modal");
         _isPushingModal = true;
@@ -59,49 +61,79 @@ public partial class PanelEditor : ContentPage {
         _isPushingModal = false;
     }
 
+    protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
+        Console.WriteLine("Panel Editor: Navigated From");
+        base.OnNavigatedFrom(args);
+        AppState.Instance.IsEditingPanel = false;
+
+        if (_isPushingModal) {
+            Console.WriteLine("Pop Modal - Push Modal in progress");
+            _isPushingModal = false;
+        } else {
+            Console.WriteLine("Pop Modal - Push Modal not in progress");
+            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+            _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
+            PanelView.TileSelected -= PanelViewOnTileSelected;
+            PanelView.TileChanged -= PanelViewOnTileChanged;
+            PanelView.TileTapped -= PanelViewOnTileTapped;
+            _closeTcs.TrySetResult(true); // or return data as needed
+        }
+    }
+
+    private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) {
+        Console.WriteLine($"Bottom Sheet State = {e.NewState}");
+    }
+    
+    #region Manage the showing and hiding of the Palettes
+    private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) {
+        SetDockedSide(e);
+    }
+
     private void SetDockedSide(TileSelectorDockSide side) {
 
-        // Unregister events before we clear the content
-        if (LeftPaletteContent.Content is SideSelectorPanel l) l.OnDockSideChanged -= PaletteDockSideChanged;
-        if (RightPaletteContent.Content is SideSelectorPanel r) r.OnDockSideChanged -= PaletteDockSideChanged;
-        if (MiddlePaletteContent.Content is PillSelectorPanel m) m.OnDockSideChanged -= PaletteDockSideChanged;
-        
-        LeftPaletteContent.Content = null;
-        RightPaletteContent.Content = null;
-        MiddlePaletteContent.Content = null;
-        
-        switch (side) {
-        case TileSelectorDockSide.Left:
-            SetPaletteVisibility(80,0,0);
-            var leftPalette = new SideSelectorPanel() {
-                DockSide = TileSelectorDockSide.Left,
-                HorizontalOptions = LayoutOptions.Center,
-                Panel = _viewModel.Panel,
-            };
-            leftPalette.OnDockSideChanged += PaletteDockSideChanged;
-            LeftPaletteContent.Content = leftPalette;
-            break;
+        using (new CodeTimer("SetDockedSide")) {
+            // Unregister events before we clear the content
+            if (LeftPaletteContent.Content is SideSelectorPanel l) l.OnDockSideChanged -= PaletteDockSideChanged;
+            if (RightPaletteContent.Content is SideSelectorPanel r) r.OnDockSideChanged -= PaletteDockSideChanged;
+            if (MiddlePaletteContent.Content is PillSelectorPanel m) m.OnDockSideChanged -= PaletteDockSideChanged;
 
-        case TileSelectorDockSide.Right:
-            SetPaletteVisibility(0,0,80);
-            var rightPalette = new SideSelectorPanel() {
-                DockSide = TileSelectorDockSide.Right,
-                HorizontalOptions = LayoutOptions.Center,
-                Panel = _viewModel.Panel,
-            };
-            rightPalette.OnDockSideChanged += PaletteDockSideChanged;
-            RightPaletteContent.Content = rightPalette;
-            break;
+            LeftPaletteContent.Content = null;
+            RightPaletteContent.Content = null;
+            MiddlePaletteContent.Content = null;
 
-        case TileSelectorDockSide.Middle:
-            SetPaletteVisibility(0,120,0);
-            var middlePalette = new PillSelectorPanel() {
-                HorizontalOptions = LayoutOptions.Center,
-                Panel = _viewModel.Panel,
-            };
-            middlePalette.OnDockSideChanged += PaletteDockSideChanged;
-            MiddlePaletteContent.Content = middlePalette;
-            break;
+            switch (side) {
+            case TileSelectorDockSide.Left:
+                SetPaletteVisibility(84, 0, 0);
+                var leftPalette = new SideSelectorPanel() {
+                    DockSide = TileSelectorDockSide.Left,
+                    HorizontalOptions = LayoutOptions.Center,
+                    Panel = _viewModel.Panel,
+                };
+                leftPalette.OnDockSideChanged += PaletteDockSideChanged;
+                LeftPaletteContent.Content = leftPalette;
+                break;
+
+            case TileSelectorDockSide.Right:
+                SetPaletteVisibility(0, 0, 84);
+                var rightPalette = new SideSelectorPanel() {
+                    DockSide = TileSelectorDockSide.Right,
+                    HorizontalOptions = LayoutOptions.Center,
+                    Panel = _viewModel.Panel,
+                };
+                rightPalette.OnDockSideChanged += PaletteDockSideChanged;
+                RightPaletteContent.Content = rightPalette;
+                break;
+
+            case TileSelectorDockSide.Middle:
+                SetPaletteVisibility(0, 120, 0);
+                var middlePalette = new PillSelectorPanel() {
+                    HorizontalOptions = LayoutOptions.Center,
+                    Panel = _viewModel.Panel,
+                };
+                middlePalette.OnDockSideChanged += PaletteDockSideChanged;
+                MiddlePaletteContent.Content = middlePalette;
+                break;
+            }
         }
     }
 
@@ -114,25 +146,9 @@ public partial class PanelEditor : ContentPage {
         MiddleSideContainer.IsVisible = middle > 0;
         RightSideContainer.IsVisible = right > 0;
     }
-
-    protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
-        base.OnNavigatedFrom(args);
-
-        if (_isPushingModal) {
-            Console.WriteLine("Pop Modal");
-            _isPushingModal = false;
-        } else {
-            Console.WriteLine("Close Modal");
-            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-            _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
-            PanelView.TileSelected -= PanelViewOnTileSelected;
-            PanelView.TileChanged -= PanelViewOnTileChanged;
-            PanelView.TileTapped -= PanelViewOnTileTapped;
-            _closeTcs.TrySetResult(true); // or return data as needed
-            AppState.Instance.IsEditingPanel = false;
-        }
-    }
-
+    #endregion
+    
+    #region Manage Tiles being selected or tapped from the Control Panel View
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         try {
             if (BindingContext is PanelEditorViewModel) {
@@ -198,12 +214,5 @@ public partial class PanelEditor : ContentPage {
             break;
         }
     }
-
-    private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) {
-        Console.WriteLine($"Bottom Sheet State = {e.NewState}");
-    }
-
-    private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) {
-        SetDockedSide(e);
-    }
+    #endregion
 }

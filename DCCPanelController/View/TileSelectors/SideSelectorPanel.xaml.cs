@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
+using DCCPanelController.Resources.Styles;
 using DCCPanelController.View.Helpers;
 #if IOS || MACCATALYST
 using UIKit;
@@ -45,22 +46,18 @@ public partial class SideSelectorPanel {
         if (bindable is SideSelectorPanel selector && newValue is TileSelectorDockSide side) {
             switch (side) {
             case TileSelectorDockSide.Left:
-                selector.ResizeHandleLeft.IsVisible = false;
-                selector.ResizeHandleRight.IsVisible = true;
-                selector.ResizeAreaLeft.Width = 2;
-                selector.ResizeAreaRight.Width = 0;
-                selector.LeftDockButton.IsVisible = false;
-                selector.RightDockButton.IsVisible = true;
+                selector.LeftDockButton.IsEnabled = false;
+                selector.RightDockButton.IsEnabled = true;
+                selector.LeftDockButton.Stroke = StyleHelper.FromStyle("PrimaryDisabled");
+                selector.RightDockButton.Stroke = StyleHelper.FromStyle("Primary");
                 break;
             case TileSelectorDockSide.Middle:
                 break;
             case TileSelectorDockSide.Right:
-                selector.ResizeHandleLeft.IsVisible = true;
-                selector.ResizeHandleRight.IsVisible = false;
-                selector.ResizeAreaLeft.Width = 0;
-                selector.ResizeAreaRight.Width = 2;
-                selector.LeftDockButton.IsVisible = true;
-                selector.RightDockButton.IsVisible = false;
+                selector.LeftDockButton.IsEnabled = true;
+                selector.RightDockButton.IsEnabled = false;
+                selector.LeftDockButton.Stroke = StyleHelper.FromStyle("Primary");
+                selector.RightDockButton.Stroke = StyleHelper.FromStyle("PrimaryDisabled");
                 break;
             }
         }
