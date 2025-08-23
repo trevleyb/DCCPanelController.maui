@@ -1,3 +1,4 @@
+using System.Collections;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
@@ -13,15 +14,17 @@ namespace DCCPanelController.View.TileSelectors;
 public partial class SideSelectorPanel {
     public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(SideSelectorPanel), propertyChanged: OnPanelChanged);
-    public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(TileSelectorDockSide), typeof(SideSelectorPanel), TileSelectorDockSide.Middle, BindingMode.TwoWay, propertyChanged: OnDockSidePanelChanged);
+    public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(TileSelectorDockSide), typeof(SideSelectorPanel), TileSelectorDockSide.Side, BindingMode.TwoWay);
     public SideSelectorPanelViewModel ViewModel { get; set; }
+
+    private double scrollOffset = 0;
 
     public SideSelectorPanel() {
         InitializeComponent();
         ViewModel = new SideSelectorPanelViewModel();
         BindingContext = ViewModel;
     }
-    
+
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
@@ -41,61 +44,59 @@ public partial class SideSelectorPanel {
             }
         }
     }
-    
-    private static void OnDockSidePanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is SideSelectorPanel selector && newValue is TileSelectorDockSide side) {
-            switch (side) {
-            case TileSelectorDockSide.Left:
-                selector.LeftDockButton.IsEnabled = false;
-                selector.RightDockButton.IsEnabled = true;
-                selector.LeftDockButton.Stroke = StyleHelper.FromStyle("PrimaryDisabled");
-                selector.RightDockButton.Stroke = StyleHelper.FromStyle("Primary");
-                break;
-            case TileSelectorDockSide.Middle:
-                break;
-            case TileSelectorDockSide.Right:
-                selector.LeftDockButton.IsEnabled = true;
-                selector.RightDockButton.IsEnabled = false;
-                selector.LeftDockButton.Stroke = StyleHelper.FromStyle("Primary");
-                selector.RightDockButton.Stroke = StyleHelper.FromStyle("PrimaryDisabled");
-                break;
-            }
-        }
+
+    private void SwitchSidePosition(object? _, TouchStatusChangedEventArgs e) {
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Bottom);
     }
 
-    /// <summary>
-    ///     Capture the Symbol for use on the Control Surface
-    /// </summary>
-    private void SymbolDragStarting(object? sender, DragStartingEventArgs e) {
-        if (sender is DragGestureRecognizer { BindingContext: Tile { } tile }) {
-            if (e.Data.Properties is { } properties) {
-                properties.Add("Tile", tile);
-                properties.Add("Source", "Symbol");
+    private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
+        SetDragPreview(sender, e, "copy.png");
 
-#if IOS || MACCATALYST
-                UIDragPreview Action() {
-                    var image = UIImage.FromFile("copy.png");
-                    var imageView = new UIImageView(image);
-                    imageView.ContentMode = UIViewContentMode.Center;
-                    imageView.Frame = new CGRect(0, 0, 32, 32);
-                    return new UIDragPreview(imageView);
+        var child = (sender as GestureRecognizer)?.Parent;
+        if (child is not CollectionView childView) return;
+
+        var pointerRoot = e.GetPosition(TileCollection);
+        var pointerChild = e.GetPosition(childView);
+        if (!pointerRoot.HasValue || !pointerChild.HasValue) return;
+
+        var index = CollectionHitIndex.IndexOf(childView,
+                                               point: pointerChild.Value,
+                                               scrollXOffset: scrollOffset,
+                                               scrollYOffset: scrollOffset,
+                                               edgeMargin: 4,
+                                               topMargin: 4,
+                                               itemWidth: 40,
+                                               itemHeight: 40,
+                                               spacingH: 4,
+                                               spacingV: 4);
+
+        if (index is not null && childView.BindingContext is string category) {
+            if (ViewModel?.ByCategory.TryGetValue(category, out var tiles) == true) {
+                if (tiles.Count > index.Value) {
+                    var tile = tiles[index.Value];
+                    if (e.Data.Properties is { } props) {
+                        e.Data.Properties["Tile"] = tile;
+                        props["Source"] = "Symbol";
+                    }
                 }
-                e.PlatformArgs?.SetPreviewProvider(Action);
-#endif
             }
         }
     }
-    
-    private void OnCurrentTouchStatusChangedLeft(object? _ , TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Left);
+
+    private void SetDragPreview(object? sender, DragStartingEventArgs e, string imageName) {
+#if IOS || MACCATALYST
+        Func<UIKit.UIDragPreview> action = () => {
+            var image = UIKit.UIImage.FromFile(imageName);
+            UIKit.UIImageView imageView = new UIKit.UIImageView(image);
+            imageView.ContentMode = UIKit.UIViewContentMode.Center;
+            imageView.Frame = new CoreGraphics.CGRect(0, 0, 32, 32);
+            return new UIKit.UIDragPreview(imageView);
+        };
+        e?.PlatformArgs?.SetPreviewProvider(action);
+#endif
     }
 
-    private void OnCurrentTouchStatusChangedMiddle(object? _, TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Middle);
+    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {
+        scrollOffset = e.HorizontalOffset;
     }
-
-    private void OnCurrentTouchStatusChangedRight(object? _, TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Right);
-    }
-
 }

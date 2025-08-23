@@ -30,7 +30,7 @@ public class TileSelectorPaletteCache {
     public static void Clear(string key) => Cache.TryRemove(key, out _);
     public static void Clear() => Cache.Clear();
 
-    private static PaletteResult? BuildTilesForPanel(Panel editPanel) {
+    public static PaletteResult? BuildTilesForPanel(Panel editPanel) {
         try {
             var byCategory = new Dictionary<string, List<ITile>>();
             var categories = new List<string>();

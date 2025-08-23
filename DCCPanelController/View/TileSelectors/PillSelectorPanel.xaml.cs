@@ -1,8 +1,10 @@
+using System.Collections;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Controls;
+using SpriteKit;
 using Syncfusion.Maui.Toolkit;
 using Syncfusion.Maui.Toolkit.Accordion;
 using SelectionChangedEventArgs = Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs;
@@ -14,10 +16,10 @@ using CoreGraphics;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class PillSelectorPanel : ContentView {
-
     public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
     private double pillWidth = 600;
-    
+    private double scrollOffset = 0;
+
     public static readonly BindableProperty PanelProperty =
         BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(PillSelectorPanel), propertyChanged: OnPanelChanged);
 
@@ -25,9 +27,9 @@ public partial class PillSelectorPanel : ContentView {
         get => (Panel?)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
     }
-    
+
     public void ForceReDraw() => (BindingContext as PillSelectorPanelViewModel)?.ForceReDraw();
-    
+
     private PillSelectorPanelViewModel? Vm => BindingContext as PillSelectorPanelViewModel;
 
     private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
@@ -36,7 +38,7 @@ public partial class PillSelectorPanel : ContentView {
             OnPropertyChanged(nameof(vm.TilesForSelectedCategory));
         }
     }
-    
+
     public PillSelectorPanel() {
         InitializeComponent();
         var viewModel = new PillSelectorPanelViewModel();
@@ -45,7 +47,7 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private void SizePill() {
-        if (BindingContext is PillSelectorPanelViewModel vm && pillWidth > 0 && vm.Categories.Count>0) {
+        if (BindingContext is PillSelectorPanelViewModel vm && pillWidth > 0 && vm.Categories.Count > 0) {
             PillSelectorGrid.WidthRequest = pillWidth;
             SegmentedControl.SegmentWidth = pillWidth / vm.Categories.Count;
         }
@@ -62,48 +64,57 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is PillSelectorPanel { BindingContext: PillSelectorPanelViewModel  vm } selector) {
+        if (bindable is PillSelectorPanel { BindingContext: PillSelectorPanelViewModel vm } selector) {
             if (newValue != oldValue && newValue is Panel panel) {
-                Console.WriteLine("Panel Changed: Setting up the tiles. ");
-                vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");;
+                vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");
+                ;
                 selector.SizePill();
             }
         }
     }
 
-    private void OnTileDragStarting(object? sender, DragStartingEventArgs e) {
-        // Sender is the DragGestureRecognizer attached to the ContentView whose BindingContext is a Tile
-        if (sender is DragGestureRecognizer { BindingContext: Tile tile }) {
+    private void SwitchPillPosition(object? _, TouchStatusChangedEventArgs e) {
+        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Side);
+    }
+
+    private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
+        SetDragPreview(sender, e, "copy.png");
+        var pointerRoot = e.GetPosition(TileCollection);
+        if (!pointerRoot.HasValue) return;
+
+        var index = CollectionHitIndex.IndexOf(TileCollection,
+                                               point: pointerRoot.Value,
+                                               scrollXOffset: scrollOffset,
+                                               scrollYOffset: scrollOffset,
+                                               edgeMargin: 4,
+                                               topMargin: 4,
+                                               itemWidth: 40,
+                                               itemHeight: 40,
+                                               spacingH: 4,
+                                               spacingV: 4);
+        if (index is not null) {
+            var tile = Vm?.TilesForSelectedCategory[index.Value];
             if (e.Data.Properties is { } props) {
                 props["Tile"] = tile;
                 props["Source"] = "Symbol";
-
-#if IOS || MACCATALYST
-                UIDragPreview PreviewProvider()
-                {
-                    var image = UIImage.FromFile("copy.png"); // optional
-                    var imageView = new UIImageView(image)
-                    {
-                        ContentMode = UIViewContentMode.Center,
-                        Frame = new CGRect(0, 0, 32, 32)
-                    };
-                    return new UIDragPreview(imageView);
-                }
-                e?.PlatformArgs?.SetPreviewProvider(PreviewProvider);
-#endif
             }
         }
     }
 
-    private void OnCurrentTouchStatusChangedLeft(object? _ , TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Left);
+    private void SetDragPreview(object? sender, DragStartingEventArgs e, string imageName) {
+#if IOS || MACCATALYST
+        Func<UIKit.UIDragPreview> action = () => {
+            var image = UIKit.UIImage.FromFile(imageName);
+            UIKit.UIImageView imageView = new UIKit.UIImageView(image);
+            imageView.ContentMode = UIKit.UIViewContentMode.Center;
+            imageView.Frame = new CoreGraphics.CGRect(0, 0, 32, 32);
+            return new UIKit.UIDragPreview(imageView);
+        };
+        e?.PlatformArgs?.SetPreviewProvider(action);
+#endif
     }
 
-    private void OnCurrentTouchStatusChangedMiddle(object? _, TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Middle);
-    }
-
-    private void OnCurrentTouchStatusChangedRight(object? _, TouchStatusChangedEventArgs e) {
-        if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Right);
+    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {
+        scrollOffset = e.HorizontalOffset;
     }
 }

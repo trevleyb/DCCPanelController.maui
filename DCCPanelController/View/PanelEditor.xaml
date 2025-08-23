@@ -72,18 +72,17 @@
 
             <!-- Initially: 1 column, 3 rows (standard layout) -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="84" x:Name="LeftSidePalette"/>
                 <ColumnDefinition Width="*"  x:Name="MainColumn"/>
-                <ColumnDefinition Width="84" x:Name="RightSidePalette"/>
+                <ColumnDefinition Width="88" x:Name="SidePalette"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"   x:Name="PanelRow"/>       
-                <RowDefinition Height="120" x:Name="MiddlePalette"/>  
+                <RowDefinition Height="120" x:Name="BottomPalette"/>  
                 <RowDefinition Height="30"  x:Name="StatusRow"/>      
             </Grid.RowDefinitions>
 
             <!-- Row 0: Panel Editor -->
-            <Border x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="1" Stroke="#FFF5F5F5" StrokeThickness="0">
+            <Border x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" Stroke="#FFF5F5F5" StrokeThickness="0">
                 <Grid x:Name="DisplayBorder" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
                     <view:ControlPanelView
                         Margin="5"
@@ -98,38 +97,36 @@
                         x:Name="PanelView"/>
                 </Grid>
             </Border>
-
-            <Grid x:Name="LeftSideContainer" Grid.Column="0" Grid.Row="0" Margin="0,0,0,0">
-                <Border
-                    x:Name="LeftPaletteContent"
-                    BackgroundColor="WhiteSmoke"
-                    Stroke="#FFF5F5F5"
-                    StrokeThickness="1"
-                    x:DataType="dataModel:Panel">
-                </Border>
-            </Grid>
             
-            <Grid x:Name="RightSideContainer" Grid.Column="2" Grid.Row="0" Margin="0,0,0,0">
+            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
                 <Border
-                    x:Name="RightPaletteContent"
+                    x:Name="SidePaletteContent"
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"
                     StrokeThickness="1"
                     x:DataType="dataModel:Panel">
+                    <tileSelectors:SideSelectorPanel 
+                        x:Name="SidePaletteSelector"
+                        HorizontalOptions="Center"
+                        OnDockSideChanged="PaletteDockSideChanged"/>
                 </Border>
             </Grid>
 
-            <Grid x:Name="MiddleSideContainer" Grid.Column="1" Grid.Row="1" Margin="0,0,0,0">
+            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
                 <Border
-                    x:Name="MiddlePaletteContent"
+                    x:Name="BottomPaletteContent"
                     BackgroundColor="WhiteSmoke"
                     Stroke="#FFF5F5F5"
                     StrokeThickness="1"
                     x:DataType="dataModel:Panel">
+                    <tileSelectors:PillSelectorPanel
+                        x:Name="PillPaletteSelector"
+                        HorizontalOptions="Center"
+                        OnDockSideChanged="PaletteDockSideChanged"/>
                 </Border>
             </Grid>
 
-            <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="2" Margin="2" ColumnSpan="3" >
+            <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="2" Margin="2" ColumnSpan="2" >
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1" />   <!-- Top border -->
                     <RowDefinition Height="*" />   <!-- Content -->

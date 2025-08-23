@@ -17,7 +17,7 @@
         <tileSelectors:CategoryToTilesConverter x:Key="CategoryToTilesConverter"/>
     </ContentView.Resources>
 
-    <Border BackgroundColor="Transparent"
+    <Border BackgroundColor="White"
             StrokeShape="RoundRectangle 15 15 15 15"
             StrokeThickness="2"
             Stroke="{StaticResource Primary}"
@@ -27,108 +27,43 @@
         
         <Grid WidthRequest="80">
             <Grid.RowDefinitions>
-                <RowDefinition Height="10"/>
+                <RowDefinition Height="9"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <Grid Grid.Row="0">
-                <Border Grid.Row="0" Margin="10,10,0,0"
-                        WidthRequest="10" HeightRequest="10"
-                        x:Name="LeftDockButton"
-                        Stroke="{StaticResource Primary}"
-                        Opacity="0.50"
-                        HorizontalOptions="Start" ZIndex="10"
-                        StrokeThickness="3">
-                    <Border.StrokeShape>
-                        <PathGeometry>
-                            <PathFigure StartPoint="10,0" IsClosed="True">
-                                <LineSegment Point="0,5"/>
-                                <LineSegment Point="10,10"/>
-                                <LineSegment Point="10,0"/>
-                            </PathFigure>
-                        </PathGeometry>
-                    </Border.StrokeShape>
-                    <Border.Behaviors>
-                        <toolkit:TouchBehavior
-                            CurrentTouchStatusChanged="OnCurrentTouchStatusChangedLeft"
-                            DefaultBackgroundColor="{StaticResource Primary}"
-                            DefaultOpacity="0.50"
-                            HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
-                            HoveredOpacity="1.00"
-                            PressedOpacity="0.75"
-                            DefaultScale="1.0"
-                            HoveredScale="2.00"
-                            PressedScale="0.75"/>
-                    </Border.Behaviors>
-                </Border>
+            
+            <Border Grid.Row="0" Margin="0,4,0,0" HorizontalOptions="Center" WidthRequest="25" StrokeThickness="3"
+                    StrokeShape="RoundRectangle 15 15 5 5"
+                    Stroke="{StaticResource Primary}">
+                <Border.Behaviors>
+                    <toolkit:TouchBehavior
+                        CurrentTouchStatusChanged="SwitchSidePosition"            
+                        DefaultBackgroundColor="{StaticResource Primary}"
+                        DefaultOpacity="0.50"
+                        HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
+                        HoveredOpacity="1.00"
+                        PressedBackgroundColor="{StaticResource Primary}"
+                        PressedOpacity="0.75"
+                        DefaultScale="1.0"
+                        HoveredScale="2.00"
+                        PressedScale="0.75"/>
+                </Border.Behaviors>
+            </Border>
 
-                <Border Grid.Row="0" Margin="0,10,0,0"
-                        x:Name="MiddleDockButton"
-                        Stroke="{StaticResource Primary}" Opacity="0.50"
-                        HorizontalOptions="Center" ZIndex="10"
-                        HeightRequest="10" WidthRequest="10" StrokeThickness="3">
-                    <Border.StrokeShape>
-                        <PathGeometry>
-                            <PathFigure StartPoint="0,0" IsClosed="True">
-                                <LineSegment Point="10,0"/>
-                                <LineSegment Point="5,10"/>
-                                <LineSegment Point="0,0"/>
-                            </PathFigure>
-                        </PathGeometry>
-                    </Border.StrokeShape>
-                    <Border.Behaviors>
-                        <toolkit:TouchBehavior
-                            CurrentTouchStatusChanged="OnCurrentTouchStatusChangedMiddle"
-                            DefaultBackgroundColor="{StaticResource Primary}"
-                            DefaultOpacity="0.50"
-                            HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
-                            HoveredOpacity="1.00"
-                            PressedOpacity="0.75"
-                            DefaultScale="1.0"
-                            HoveredScale="2.00"
-                            PressedScale="0.75"/>
-                    </Border.Behaviors>
-                </Border>
-
-                <Border Grid.Row="0" Margin="0,10,10,0"
-                        x:Name="RightDockButton"
-                        Stroke="{StaticResource Secondary}" Opacity="0.50"
-                        HorizontalOptions="End" WidthRequest="10" HeightRequest="10" StrokeThickness="3">
-                    <Border.StrokeShape>
-                        <PathGeometry>
-                            <PathFigure StartPoint="0,0" IsClosed="True">
-                                <LineSegment Point="10,5"/>
-                                <LineSegment Point="0,10"/>
-                                <LineSegment Point="0,0"/>
-                            </PathFigure>
-                        </PathGeometry>
-                    </Border.StrokeShape>
-                    <Border.Behaviors>
-                        <toolkit:TouchBehavior
-                            CurrentTouchStatusChanged="OnCurrentTouchStatusChangedRight"
-                            DefaultBackgroundColor="{StaticResource Primary}"
-                            DefaultOpacity="0.50"
-                            HoveredBackgroundColor="{StaticResource PrimaryDisabled}"
-                            HoveredOpacity="1.00"
-                            PressedOpacity="0.75"
-                            DefaultScale="1.0"
-                            HoveredScale="2.00"
-                            PressedScale="0.75"/>
-                    </Border.Behaviors>
-                </Border>
-            </Grid>
 
             <!-- ============================================================== -->
 
             <!-- Main content area -->
-            <Grid Grid.Row="1" Margin="5,5,5,5">
-                <ScrollView Orientation="Vertical">
-                    <CollectionView ItemsSource="{Binding Categories}"
-                                    SelectionMode="None"
-                                    ItemSizingStrategy="MeasureAllItems">
+            <Grid Grid.Row="1" Margin="5,0,5,5">
+                    <CollectionView
+                        x:Name="TileCollection"
+                        HorizontalScrollBarVisibility="Never"
+                        ItemsSource="{Binding Categories}" 
+                        SelectionMode="None" 
+                        ItemSizingStrategy="MeasureAllItems">
 
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
@@ -153,7 +88,10 @@
                                     
                                     <!-- Tiles for this category -->
                                     <CollectionView
-                                        SelectionMode="None"
+                                        x:Name="TileCollectionByCategory"
+                                        HorizontalScrollBarVisibility="Never"
+                                        Scrolled="TileCollection_OnScrolled"
+                                        SelectionMode="Single"
                                         ItemSizingStrategy="MeasureAllItems">
                                         <CollectionView.ItemsSource>
                                             <MultiBinding Converter="{StaticResource CategoryToTilesConverter}">
@@ -163,16 +101,20 @@
                                                     x:DataType="tileSelectors:SideSelectorPanelViewModel"/>
                                             </MultiBinding>
                                         </CollectionView.ItemsSource>
+                                        
+                                        <CollectionView.GestureRecognizers>
+                                            <DragGestureRecognizer DragStarting="OnTileCollectionDragStarting" CanDrag="True" />
+                                        </CollectionView.GestureRecognizers>
 
                                         <CollectionView.ItemsLayout>
-                                            <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2"
-                                                             HorizontalItemSpacing="2"/>
+                                            <GridItemsLayout Orientation="Vertical" Span="2" VerticalItemSpacing="2" HorizontalItemSpacing="2"/>
                                         </CollectionView.ItemsLayout>
 
                                         <CollectionView.ItemTemplate>
                                             <!-- <DataTemplate x:DataType="entities:Entity"> -->
                                             <DataTemplate x:DataType="tiles:Tile">
                                                 <ContentView
+                                                    x:Name="TileItemTemplate"
                                                     HeightRequest="45"
                                                     WidthRequest="45">
                                                     <Grid RowDefinitions="36,10">
@@ -192,9 +134,6 @@
                                                             HorizontalOptions="Fill"
                                                             VerticalOptions="Fill"
                                                             x:DataType="View">
-                                                            <ContentView.GestureRecognizers>
-                                                                <DragGestureRecognizer DragStarting="SymbolDragStarting"/>
-                                                            </ContentView.GestureRecognizers>
                                                         </ContentView>
                                                     </Border>
                                                     <Label Grid.Row="1"
@@ -216,7 +155,6 @@
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                </ScrollView>
             </Grid>
         </Grid>
     </Border>
