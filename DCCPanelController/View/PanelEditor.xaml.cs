@@ -20,14 +20,15 @@ public partial class PanelEditor : ContentPage {
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
         _logger = logger;
-        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, BottomSheet) {
-            GridVisible = true,
-            EditMode = EditModeEnum.Move
-        };
 
         InitializeComponent();
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
+
+        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, BottomSheet) {
+            GridVisible = true,
+            EditMode = EditModeEnum.Move
+        };
 
         PanelView.TileSelected += PanelViewOnTileSelected;
         PanelView.TileChanged += PanelViewOnTileChanged;

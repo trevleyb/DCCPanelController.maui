@@ -97,17 +97,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public string Title => Panel?.Title ?? "Panel";
-
-    // public string EditPropertiesToolbarIcon => SelectedEntitiesCount > 0 ? FluentUI.edit_20 : FluentUI.settings_20;
-    // public string GridOnOffToolbarIcon => GridVisible ? FluentUI.grid_20 : FluentUI.grid_dots_20;
-    // public string EditModeToolbarIcon =>
-    //     EditMode switch {
-    //         EditModeEnum.Copy => FluentUI.copy_20,
-    //         EditModeEnum.Move => FluentUI.arrow_move_20,
-    //         EditModeEnum.Size => FluentUI.resize_20,
-    //         _                 => FluentUI.arrow_move_20
-    //     };
-
     
     public event Action? ForcePanelRefresh;
 
