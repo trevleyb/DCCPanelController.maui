@@ -1,5 +1,8 @@
+using AVFoundation;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using DCCPanelController.Resources.Styles;
+using Font = Microsoft.Maui.Font;
 
 namespace DCCPanelController.Services;
 
@@ -23,5 +26,22 @@ public static class DisplayAlertHelper {
         var cancellationTokenSource = new CancellationTokenSource();
         var toast = Toast.Make(message, duration, fontSize);
         await toast.Show(cancellationTokenSource.Token);
+    }
+
+    public static async Task DisplaySnackAlert(string message, double fontSize = 14, double duration = 2.5) {
+        var cancellationTokenSource = new CancellationTokenSource();
+        var snackbarOptions = new SnackbarOptions {
+            BackgroundColor = Colors.LightGray,
+            TextColor = StyleHelper.FromStyle("Primary"),
+            ActionButtonTextColor = Colors.Black,
+            CornerRadius = new CornerRadius(10),
+            Font = Font.SystemFontOfSize(fontSize),
+            ActionButtonFont = Font.SystemFontOfSize(fontSize),
+            CharacterSpacing = 0.5
+        };
+
+        var durationInSeconds = TimeSpan.FromSeconds(duration);
+        var snackbar = Snackbar.Make(message, null, "OK", durationInSeconds, snackbarOptions);
+        await snackbar.Show(cancellationTokenSource.Token);
     }
 }

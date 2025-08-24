@@ -33,7 +33,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _isJmriServer;
     [ObservableProperty] private bool _isWiThrottle;
     [ObservableProperty] private bool _isSimulator;
-
+    [ObservableProperty] private bool _isProfileActive;
+    
     [ObservableProperty] private int _selectedSegmentIndex;
     [ObservableProperty] private Microsoft.Maui.Controls.View? _currentSettingsView;
 
@@ -56,6 +57,26 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
     }
+
+    [RelayCommand]
+    public async Task SwitchProfileAsync() {
+        await DisplayAlertHelper.DisplayToastAlert($"Switched Active Profile");
+    }
+
+    [RelayCommand]
+    public async Task AddProfileAsync() {
+        await DisplayAlertHelper.DisplayToastAlert($"New Profile Created");
+    }
+
+    [RelayCommand]
+    public async Task DeleteProfileAsync() {
+        var profileName = Profile.ProfileName;
+        var result = await DisplayAlertHelper.DisplayAlertAsync("Delete Profile?", "This will delete the current profile. Are you sure you want to do this?", "Continue", "Cancel");
+        if (result) {
+            await DisplayAlertHelper.DisplayToastAlert($"Profile '{profileName}' Deleted");
+        }
+    }
+
 
     public void SetCapabilities() {
         Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
