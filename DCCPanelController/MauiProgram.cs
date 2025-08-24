@@ -4,6 +4,7 @@ using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using DCCPanelController.View.Components;
 using Fonts;

@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using Fonts;
 
 namespace DCCPanelController.View.Base;

@@ -12,6 +12,7 @@ using DCCPanelController.Clients.WiThrottle;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
@@ -153,7 +154,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             var filePath = await PromptUserForSaveLocation();
             if (!string.IsNullOrEmpty(filePath)) {
                 var saveFile = Path.Combine(filePath, "dccpanel.settings");
-                var jsonString = _profileService.DownloadActiveProfile();
+                var jsonString = await _profileService.DownloadActiveProfile();
                 await SaveJsonToFile(saveFile, jsonString);
                 await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
             }

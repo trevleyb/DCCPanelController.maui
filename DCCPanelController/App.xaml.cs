@@ -1,4 +1,5 @@
 ﻿using DCCPanelController.Helpers;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Xaml.Diagnostics;

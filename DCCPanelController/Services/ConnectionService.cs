@@ -15,7 +15,7 @@ public partial class ConnectionService : ObservableObject {
 
     private ILogger<ConnectionService> _logger = LogHelper.CreateLogger<ConnectionService>();
     private const int MaxServerMessages = 500;
-    private ProfileService _profileService;
+    private ProfileService.ProfileService _profileService;
 
     public IDccClient? Client { get; private set; }
     public event EventHandler<bool>? ConnectStateChanged;
@@ -23,7 +23,7 @@ public partial class ConnectionService : ObservableObject {
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
-    public ConnectionService(ProfileService profileService) {
+    public ConnectionService(ProfileService.ProfileService profileService) {
         _profileService = profileService;
         _ = Task.Run(async () => await InitializeConnectionAsync());
     }
@@ -50,8 +50,9 @@ public partial class ConnectionService : ObservableObject {
     public async Task<IResult> ConnectAsync() {
         try {
             if (Client is { IsConnected : true }) await DisconnectAsync();
-            if (_profileService?.ActiveProfile?.Settings.ClientSettings is { } settings) {
-                Client = DccClientFactory.CreateClient(_profileService.ActiveProfile, _profileService.ActiveProfile.Settings.ClientSettings);
+            var activeProfile = _profileService.ActiveProfile;
+            if (activeProfile?.Settings.ClientSettings is { } settings) {
+                Client = DccClientFactory.CreateClient(activeProfile, activeProfile.Settings.ClientSettings);
                 Client.ClientMessage += ClientOnClientMessage;
                 if (Client is null) {
                     OnConnectionChanged(false);
@@ -108,15 +109,17 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task ResetOccupancyStates() {
-        foreach (var sensor in _profileService.ActiveProfile.Sensors) {
-            sensor.State = false;
+        var profile = _profileService.ActiveProfile;
+        if (profile is not null) {
+            foreach (var sensor in profile.Sensors) sensor.State = false;
         }
     }
 
     public async Task SetTurnoutsToDefaultState() {
-        if (_profileService?.ActiveProfile?.Settings?.SetTurnoutStatesOnStartup ?? false) {
+        var profile = _profileService.ActiveProfile;
+        if (profile?.Settings?.SetTurnoutStatesOnStartup ?? false) {
             if (Client is { IsConnected: true }) {
-                foreach (var turnout in _profileService.ActiveProfile.Turnouts) {
+                foreach (var turnout in profile.Turnouts) {
                     if (turnout.Default != TurnoutStateEnum.Unknown && !string.IsNullOrEmpty(turnout?.Id)) {
                         await Client.SendTurnoutCmdAsync(turnout, turnout.State == TurnoutStateEnum.Thrown)!;
                     }

@@ -6,6 +6,8 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
+
+    [ObservableProperty] private string _filename;
     [ObservableProperty] private string _profileName;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Settings _settings;
@@ -18,6 +20,7 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName) {
+        _filename = Guid.NewGuid().ToString();
         _profileName = profileName;
         Panels = new Panels { Profile = this };
         Settings = new Settings();

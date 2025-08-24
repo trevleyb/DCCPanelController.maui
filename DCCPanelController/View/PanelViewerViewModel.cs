@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Properties;
 using Microsoft.Extensions.Logging;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;

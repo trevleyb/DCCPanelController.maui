@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -39,7 +40,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     
     private async Task LoadPanelsAsync() {
         try {
-            var profile = await _profileService.GetActiveProfileAsync();
+            var profile = _profileService.ActiveProfile;
             Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
             ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
             

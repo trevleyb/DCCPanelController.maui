@@ -5,6 +5,7 @@ using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;

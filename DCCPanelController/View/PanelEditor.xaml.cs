@@ -4,6 +4,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;

@@ -1,5 +1,6 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
 
 namespace DCCPanelController.View;

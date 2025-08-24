@@ -6,6 +6,7 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.PanelProperties;
