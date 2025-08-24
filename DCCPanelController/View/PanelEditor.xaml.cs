@@ -182,4 +182,8 @@ public partial class PanelEditor : ContentPage {
         }
     }
     #endregion
+
+    private void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
+        _viewModel.BottomSheetOnStateChanged(sender, e);
+    }
 }

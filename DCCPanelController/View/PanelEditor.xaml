@@ -153,6 +153,7 @@
              CollapsedHeight="0"
              AnimationDuration="0.5"
              CornerRadius="15, 15, 0, 0"
+             StateChanged="BottomSheetOnStateChanged"
              HalfExpandedRatio="0.80" ContentPadding="10">
              <navigationDrawer:SfBottomSheet.BottomSheetContent/>
         </navigationDrawer:SfBottomSheet>

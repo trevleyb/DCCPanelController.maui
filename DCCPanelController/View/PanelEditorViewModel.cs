@@ -237,7 +237,6 @@ public partial class PanelEditorViewModel : ObservableObject {
                 sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
                 sfBottomSheet.State = BottomSheetState.HalfExpanded;
                 sfBottomSheet.IsModal = true;
-                sfBottomSheet.StateChanged += PanelBottomSheetOnStateChanged;
                 sfBottomSheet.Show();
             }
         } catch (Exception ex) {
@@ -254,13 +253,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
                 var measuredSize = MauiViewSizeCalculator.CalculateTotalSize(propertiesPage, _page.Width, _page.Height);
 
-                if (DeviceInfo.Platform == DevicePlatform.iOS && DeviceInfo.Current.Idiom == DeviceIdiom.Phone) {
-                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-                } else {
-                    sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Custom;
-                    sfBottomSheet.BottomSheetContentWidth = measuredSize.Width + 40;
-                }
-
+                sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
                 sfBottomSheet.BottomSheetContent = propertiesPage; 
                 sfBottomSheet.Background = Colors.WhiteSmoke;
                 sfBottomSheet.ShowGrabber = true;
@@ -269,7 +262,6 @@ public partial class PanelEditorViewModel : ObservableObject {
                 sfBottomSheet.CollapsedHeight = 0;
                 sfBottomSheet.IsModal = true;
                 sfBottomSheet.State = BottomSheetState.HalfExpanded;
-                sfBottomSheet.StateChanged += TileBottomSheetOnStateChanged;
                 sfBottomSheet.Show();
             }
         } catch (Exception ex) {
@@ -278,22 +270,13 @@ public partial class PanelEditorViewModel : ObservableObject {
         CheckIfPanelChanged();
     }
 
-    private void TileBottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
-        if (e.NewState == BottomSheetState.Hidden) {
+    public void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
+        if (e.NewState is BottomSheetState.Hidden or BottomSheetState.Collapsed) {
+            Console.WriteLine($"Panel Bottom Sheet State Changed: Hidden => {e.NewState}");
             IsNavigationDrawerOpen = false;
-            if (sender is SfBottomSheet bottomSheet) bottomSheet.StateChanged -= TileBottomSheetOnStateChanged;
             ForcePanelRefresh?.Invoke();
         } else {
-            IsNavigationDrawerOpen = true;
-        }
-    }
-    
-    private void PanelBottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
-        if (e.NewState == BottomSheetState.Hidden) {
-            IsNavigationDrawerOpen = false;
-            if (sender is SfBottomSheet bottomSheet) bottomSheet.StateChanged -= PanelBottomSheetOnStateChanged;
-            ForcePanelRefresh?.Invoke();
-        } else {
+            Console.WriteLine($"Panel Bottom Sheet State Changed: Not Hidden => {e.NewState}");
             IsNavigationDrawerOpen = true;
         }
     }
