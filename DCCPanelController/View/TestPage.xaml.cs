@@ -25,4 +25,12 @@ public partial class TestPage : ContentPage {
         PillSelectorContainer.IsVisible = true;
         SideSelectorContainer.IsVisible = false;
     }
+
+    private void TapGestureRecognizer_OnTapped1(object? sender, TappedEventArgs e) {
+        Console.WriteLine($"Tapped x1");
+    }
+    private void TapGestureRecognizer_OnTapped2(object? sender, TappedEventArgs e) {
+        Console.WriteLine("Tapped x2");
+    }
+
 }

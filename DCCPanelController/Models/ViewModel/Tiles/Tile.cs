@@ -46,7 +46,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         VisualProperties.Add(nameof(Entity.Rotation));
         SetContent();
     }
-
+    
     public void Dispose() {
         Dispose(true);
         GC.SuppressFinalize(this); // Only if you had a finalizer
@@ -59,7 +59,12 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
-    protected virtual void Cleanup() { }
+    protected virtual void Cleanup() {
+        Entity.PropertyChanged -= OnPropertyChanged;
+        PropertyChanged -= OnPropertyChanged;
+        _debounceRebuildCts?.Cancel();
+        _debounceRebuildCts = null;
+    }
 
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;

@@ -25,7 +25,11 @@ namespace DCCPanelController.View;
 public partial class ControlPanelView {
     [ObservableProperty] private bool _isPanelDrawing = false;
 
-    private const int DoubleTapTime = 150;
+    private const int DoubleTapThreshold = 150;
+    private int _tapCount = 0;
+    private Timer? _tapTimer;
+    private readonly object _tapLock = new();
+
     private readonly ILogger<ControlPanelView> _logger;
     private readonly PathTracingService _pathTracer = new();
     private readonly HashSet<ITile> _selectedTiles = [];
@@ -34,7 +38,6 @@ public partial class ControlPanelView {
     private int _dragStartRow;
     private int _lastDragCol;
     private int _lastDragRow;
-    private int _tapCount;
     private int _currentSelectionIndex;
 
     private double _gridSize;
@@ -253,60 +256,88 @@ public partial class ControlPanelView {
         }
     }
 
-    /// <summary>
-    /// Handles the tile tap interaction, including single tap and optionally double-tap,
-    /// to perform actions such as interaction, selection, rotation, or other context-specific operations.
-    /// </summary>
     private async void OnTileTapped(object? sender, TappedEventArgs e) {
-        try {
+        lock (_tapLock) {
             _tapCount++;
-            await Task.Delay(DoubleTapTime);
-
-            if (DesignMode) {
-                if (sender is ITile tile) {
-                    if (_tapCount == 1) {
-                        var tilesAtPosition = TilesInGrid(tile);
-
-                        // If there is only a single tile at this position, then we can 
-                        // toggle it on or off
-                        // -------------------------------------------------------
-                        if (tilesAtPosition.Count is 0 or 1) {
-                            if (tile.IsSelected) {
-                                MarkTileUnSelected(tile);
-                            } else {
-                                MarkTileSelected(tile);
-                            }
-                            _currentSelectionIndex = -1;
-                        }
-
-                        // There are multiple tiles at this position, so we need to
-                        // step through the tiles until we get to the last one. 
-                        // ---------------------------------------------------------
-                        else {
-                            _currentSelectionIndex++;
-                            foreach (var posTile in tilesAtPosition) MarkTileUnSelected(posTile);
-                            if (_currentSelectionIndex >= tilesAtPosition.Count) {
-                                _currentSelectionIndex = -1;
-                            } else {
-                                var selectedTile = tilesAtPosition[_currentSelectionIndex];
-                                MarkTileSelected(selectedTile);
-                            }
-                        }
-                        OnTileSelected(_tapCount);
-                    }
-                    if (_tapCount == 2) {
-                        ClearAllSelectedTiles();
-                        MarkTileSelected(tile);
-                        OnTileSelected(_tapCount);
-                    }
-                }
-            } else {
-                if (sender is ITile tile) OnTileTapped(tile, _tapCount);
-            }
-            _tapCount = 0;
-        } catch (Exception ex) {
-            _logger.LogDebug("Tap Tile failed due to: {ExMessage}", ex.Message);
+            _tapTimer?.Dispose();
+            _tapTimer = new Timer(TapTimerElapsed, sender, DoubleTapThreshold, Timeout.Infinite);
         }
+    }
+
+    private void TapTimerElapsed(object? state) {
+        int count;
+        lock (_tapLock) {
+            count = _tapCount;
+            _tapCount = 0;
+            _tapTimer?.Dispose();
+            _tapTimer = null;
+        }
+
+        var sender = state;
+
+        // Dispatch back to UI thread
+        MainThread.BeginInvokeOnMainThread(() => {
+            switch (count) {
+            case 1:
+                if (DesignMode) OnDesignModeSingleTap(sender); 
+                else OnOperateModeSingleTap(sender);
+                break;
+
+            case >= 2:
+                if (DesignMode) OnDesignModeDoubleTap(sender);
+                else OnOperateModeDoubleTap(sender);
+                break;
+            }
+        });
+    }
+
+    private async void OnDesignModeSingleTap(object? sender) {
+        if (sender is ITile tile) {
+            var tilesAtPosition = TilesInGrid(tile);
+
+            // If there is only a single tile at this position, then we can 
+            // toggle it on or off
+            // -------------------------------------------------------
+            if (tilesAtPosition.Count is 0 or 1) {
+                if (tile.IsSelected) {
+                    MarkTileUnSelected(tile);
+                } else {
+                    MarkTileSelected(tile);
+                }
+                _currentSelectionIndex = -1;
+            }
+
+            // There are multiple tiles at this position, so we need to
+            // step through the tiles until we get to the last one. 
+            // ---------------------------------------------------------
+            else {
+                _currentSelectionIndex++;
+                foreach (var posTile in tilesAtPosition) MarkTileUnSelected(posTile);
+                if (_currentSelectionIndex >= tilesAtPosition.Count) {
+                    _currentSelectionIndex = -1;
+                } else {
+                    var selectedTile = tilesAtPosition[_currentSelectionIndex];
+                    MarkTileSelected(selectedTile);
+                }
+            }
+            OnTileSelected(_tapCount);
+        }
+    }
+
+    private async void OnDesignModeDoubleTap(object? sender) {
+        if (sender is ITile tile) {
+            ClearAllSelectedTiles();
+            MarkTileSelected(tile);
+            OnTileSelected(_tapCount);
+        }
+    }
+
+    private async void OnOperateModeSingleTap(object? sender) {
+        if (sender is ITile tile) OnTileTapped(tile, _tapCount);
+    }
+
+    private async void OnOperateModeDoubleTap(object? sender) {
+        if (sender is ITile tile) OnTileTapped(tile, _tapCount);
     }
 
     /// <summary>
@@ -314,7 +345,7 @@ public partial class ControlPanelView {
     /// we have removed events and gestures. 
     /// </summary>
     private void RemoveAllTilesFromGrid() {
-        var children = DynamicGrid.Children.OfType<Tile>().ToList();
+        var children = DynamicGrid.Children.OfType<ITile>().ToList();
         DynamicGrid.BatchBegin();
         foreach (var tile in children) RemoveTileFromGrid(tile);
         DynamicGrid.BatchCommit();
@@ -323,15 +354,15 @@ public partial class ControlPanelView {
     /// <summary>
     /// Find all tiles in the grid that match the offset of the provided tile
     /// </summary>
-    private List<Tile> TilesInGrid(ITile tile) {
+    private List<ITile> TilesInGrid(ITile tile) {
         return TilesInGrid(tile.Entity.Col, tile.Entity.Row);
     }
 
     /// <summary>
     /// Find all tiles in the grid that match the offset of col, row
     /// </summary>
-    private List<Tile> TilesInGrid(int col, int row) {
-        return DynamicGrid.Children.OfType<Tile>()
+    private List<ITile> TilesInGrid(int col, int row) {
+        return DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity.Col == col && x.Entity.Row == row)
                           .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
                           .ToList();
@@ -343,6 +374,7 @@ public partial class ControlPanelView {
     private void RemoveTileFromGrid(ITile tile) {
         tile.TileChanged -= TileOnPropertiesChanged;
         RemoveEntityFromGrid(tile.Entity);
+        (tile as IDisposable)?.Dispose();
         OnTileChanged(tile);
     }
 
@@ -350,13 +382,20 @@ public partial class ControlPanelView {
     /// Remove an Entity from the Grid
     /// </summary>
     private void RemoveEntityFromGrid(Entity entity) {
-        var children = DynamicGrid.Children.OfType<Microsoft.Maui.Controls.View>().Where(x => x.ClassId != null && x.ClassId.Equals(entity.Guid.ToString())).ToList();
-        foreach (var child in children) {
-            child.GestureRecognizers.Clear();
-            DynamicGrid.Remove(child);
-            if (child is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
-            var tiles = DynamicGrid.Children.OfType<ITile>().Where(x => x.Entity.Guid == entity.Guid).ToList();
-            foreach (var tile in tiles) MarkTileUnSelected(tile);
+        var views = DynamicGrid.Children
+                               .OfType<Microsoft.Maui.Controls.View>()
+                               .Where(x => x.ClassId == entity.Guid.ToString())
+                               .ToList();
+
+        foreach (var view in views) {
+            if (view is ITile tile) {
+                tile.TileChanged -= TileOnPropertiesChanged;
+                (tile as IDisposable)?.Dispose();
+                MarkTileUnSelected(tile);
+            }
+            view.GestureRecognizers.Clear();
+            DynamicGrid.Remove(view);
+            if (view is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
         }
     }
 
