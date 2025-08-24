@@ -29,7 +29,7 @@ public partial class PanelPropertyViewModel : Base.BaseViewModel, IPropertiesVie
         return Task.CompletedTask;
     }
 
-    public Microsoft.Maui.Controls.View CreatePropertiesView() {
+    public ContentView CreatePropertiesView() {
         var propPage = new PanelPropertyPage(this);
         return propPage;
     }

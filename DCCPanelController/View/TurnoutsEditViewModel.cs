@@ -30,7 +30,7 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesView
         return Task.CompletedTask;
     }
 
-    public Microsoft.Maui.Controls.View CreatePropertiesView() {
+    public ContentView CreatePropertiesView() {
         var propPage = new TurnoutsEditView((ILogger<TurnoutsEditView>) _logger, this);
         return propPage;
     }

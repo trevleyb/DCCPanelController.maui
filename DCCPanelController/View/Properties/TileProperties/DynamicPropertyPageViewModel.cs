@@ -77,7 +77,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         await ApplyChangesToAllEntities();
     }
 
-    public Microsoft.Maui.Controls.View CreatePropertiesView() {
+    public ContentView CreatePropertiesView() {
         Title = Entities.Count == 1 ? $"{Entities[0].EntityName}" : $"Multiple Tiles ({Entities.Count})";
 
         if (Entities.Count == 0) {
@@ -88,10 +88,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
 
         // Wrap the container in a scroll view so we can scroll to the top of the page
         // ---------------------------------------------------------------------------
-        var scrollContainer = new ScrollView {
+        var container = new ContentView {
             Content = _container
         };
-        return scrollContainer;
+        return container;
     }
 
     private void BuildCommonPropertyUI() {

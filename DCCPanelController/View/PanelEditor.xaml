@@ -155,7 +155,6 @@
              CornerRadius="15, 15, 0, 0"
              StateChanged="BottomSheetOnStateChanged"
              HalfExpandedRatio="0.80" ContentPadding="10">
-             <navigationDrawer:SfBottomSheet.BottomSheetContent/>
         </navigationDrawer:SfBottomSheet>
     </Grid>
 </ContentPage>

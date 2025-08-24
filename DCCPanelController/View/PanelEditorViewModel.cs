@@ -218,7 +218,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         } else {
             await EditPanelPropertiesAsync();
         }
-        CheckIfPanelChanged();
     }
 
     [RelayCommand]
@@ -227,17 +226,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && _bottomSheet is {} sfBottomSheet) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
-                
-                sfBottomSheet.BottomSheetContent = propertiesPage;
-                sfBottomSheet.Background = Colors.WhiteSmoke;
-                sfBottomSheet.ShowGrabber = true;
-                sfBottomSheet.EnableSwiping = true;
-                sfBottomSheet.CollapseOnOverlayTap = true;
-                sfBottomSheet.CollapsedHeight = 0;
-                sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-                sfBottomSheet.State = BottomSheetState.HalfExpanded;
-                sfBottomSheet.IsModal = true;
-                sfBottomSheet.Show();
+                ShowBottomSheet(sfBottomSheet, propertiesPage);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -251,29 +240,32 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && SelectedEntities?.Count > 0 && _bottomSheet is {} sfBottomSheet) {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                var measuredSize = MauiViewSizeCalculator.CalculateTotalSize(propertiesPage, _page.Width, _page.Height);
-
-                sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-                sfBottomSheet.BottomSheetContent = propertiesPage; 
-                sfBottomSheet.Background = Colors.WhiteSmoke;
-                sfBottomSheet.ShowGrabber = true;
-                sfBottomSheet.EnableSwiping = true;
-                sfBottomSheet.CollapseOnOverlayTap = true;
-                sfBottomSheet.CollapsedHeight = 0;
-                sfBottomSheet.IsModal = true;
-                sfBottomSheet.State = BottomSheetState.HalfExpanded;
-                sfBottomSheet.Show();
+                ShowBottomSheet(sfBottomSheet, propertiesPage);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         }
-        CheckIfPanelChanged();
+    }
+
+    private static void ShowBottomSheet(SfBottomSheet sfBottomSheet, Microsoft.Maui.Controls.View propertiesPage) {
+        sfBottomSheet.BottomSheetContent = propertiesPage;
+        sfBottomSheet.Background = Colors.WhiteSmoke;
+        sfBottomSheet.ShowGrabber = true;
+        sfBottomSheet.EnableSwiping = true;
+        sfBottomSheet.CollapseOnOverlayTap = true;
+        sfBottomSheet.CollapsedHeight = 0;
+        sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+        sfBottomSheet.State = BottomSheetState.HalfExpanded;
+        sfBottomSheet.IsModal = true;
+        sfBottomSheet.Show();
     }
 
     public void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
         if (e.NewState is BottomSheetState.Hidden or BottomSheetState.Collapsed) {
+            if (sender is SfBottomSheet bottomSheet) bottomSheet.Content = null!;
             Console.WriteLine($"Panel Bottom Sheet State Changed: Hidden => {e.NewState}");
             IsNavigationDrawerOpen = false;
+            CheckIfPanelChanged();
             ForcePanelRefresh?.Invoke();
         } else {
             Console.WriteLine($"Panel Bottom Sheet State Changed: Not Hidden => {e.NewState}");
