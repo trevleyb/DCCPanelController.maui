@@ -89,7 +89,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
-
     public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
     public int SelectedEntitiesCount => SelectedEntities.Count;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;

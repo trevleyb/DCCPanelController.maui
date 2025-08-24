@@ -29,6 +29,8 @@ public partial class ControlPanelView {
     private int _tapCount = 0;
     private Timer? _tapTimer;
     private readonly object _tapLock = new();
+    private SelectionOutlineDrawable? _selectionOutlineDrawable;
+    private GraphicsView? _selectionOutlinegraphicsView;
 
     private readonly ILogger<ControlPanelView> _logger;
     private readonly PathTracingService _pathTracer = new();
@@ -46,6 +48,13 @@ public partial class ControlPanelView {
 
     public int Rows => Panel?.Rows ?? 27;
     public int Cols => Panel?.Cols ?? 18;
+
+    // Selection (bind if you want live UI)
+    public bool IsSelecting { get; set; } = false;
+    public int StartCol { get; private set; }
+    public int StartRow { get; private set; }
+    public int EndCol   { get; private set; }
+    public int EndRow   { get; private set; }
 
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
@@ -112,6 +121,8 @@ public partial class ControlPanelView {
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
 
+        (StartCol, StartRow, EndCol, EndRow) = (-1, -1, 0, 0);
+        
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
         try {
@@ -453,7 +464,11 @@ public partial class ControlPanelView {
     /// <param name="point">A point object of where the item was tapped</param>
     /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
     private (int Col, int Row)? GetGridPosition(Point? point) {
-        if (point is { } tapPosition) {
+        if (point is { } tapPosition) return GetGridPosition(tapPosition.X, tapPosition.Y);
+        return (0, 0);
+    }
+
+    private (int Col, int Row)? GetGridPosition(double posX, double posY) {
             var totalHeight = DynamicGrid.Height;
             var totalWidth = DynamicGrid.Width;
             var rowCount = DynamicGrid.RowDefinitions.Count;
@@ -467,21 +482,48 @@ public partial class ControlPanelView {
             }
 
             // Calculate row and column indices
-            var row = (int)(tapPosition.Y / cellHeight);
-            var col = (int)(tapPosition.X / cellWidth);
+            var row = (int)(posY / cellHeight);
+            var col = (int)(posX / cellWidth);
 
             // Ensure indices are within bounds
             row = Math.Min(row, rowCount - 1);
             col = Math.Min(col, colCount - 1);
 
             return (col, row);
-        }
-        _logger.LogError("Could not determine the Grid Position from the point provided: {S}", point.ToString());
-        return null;
     }
     #endregion
 
     #region Draw Grid when in Design Mode
+    private void DrawSelectorView(int startCol, int startRow, int endCol, int endRow) {
+        RemoveSelectorView();
+
+        _selectionOutlineDrawable = new SelectionOutlineDrawable();
+        _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
+        _selectionOutlinegraphicsView = new GraphicsView {
+            InputTransparent = true,
+            Drawable = _selectionOutlineDrawable,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            ClassId = "SelectorView"
+        };
+        // Add the GraphicsView directly to the AbsoluteLayout
+        AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
+        AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
+        ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
+        _selectionOutlinegraphicsView.Invalidate();
+    }
+
+    private void UpdateSelectorView(int startCol, int startRow, int endCol, int endRow) {
+        if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) return;
+        _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
+        _selectionOutlinegraphicsView.Invalidate();
+    }
+
+    private void RemoveSelectorView() {
+        _selectionOutlineDrawable = null;
+        RemoveChildView("SelectorView");
+    }
+
     private void DrawGrid() {
         RemoveGrid();
         if (ShowGrid) {
@@ -505,14 +547,17 @@ public partial class ControlPanelView {
     /// <summary>
     /// Draw the Grid Outline
     /// </summary>
-    private void RemoveGrid() {
+    private void RemoveGrid() => RemoveChildView("GridLines");
+
+    private void RemoveChildView(string classID) {
         if (ControlPanelLayout.Children.Count >= 1) {
-            var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().ToList();
+            var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().Where(x => x.ClassId == classID).ToList();
             foreach (var view in graphicsViewToRemove) {
                 ControlPanelLayout.Children.Remove(view);
             }
         }
     }
+
     #endregion
 
     #region Support Marking and UnMarking Tiles on the Panel
@@ -523,6 +568,7 @@ public partial class ControlPanelView {
         _selectedTiles.Add(tile);
         HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
         tile.IsSelected = true;
+        OnTileSelected(0);
     }
 
     /// <summary>
@@ -532,6 +578,7 @@ public partial class ControlPanelView {
         _selectedTiles.Remove(tile);
         UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
         tile.IsSelected = false;
+        OnTileSelected(0);
     }
 
     /// <summary>
@@ -580,6 +627,7 @@ public partial class ControlPanelView {
             CellHighlightAction.Resize      => Colors.MidnightBlue,
             CellHighlightAction.DragValid   => Colors.Green,
             CellHighlightAction.DragInvalid => Colors.Red,
+            CellHighlightAction.Selecting   => Colors.LightSkyBlue,
             _                               => Colors.Red
         };
 
@@ -617,6 +665,68 @@ public partial class ControlPanelView {
         foreach (var child in children.Where(child => DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col)) {
             DynamicGrid.Remove(child);
         }
+    }
+
+    private void DynamicGridPointerExited(object? sender, PointerEventArgs e) {
+        RemoveSelectorView();
+        ClearAllSelectedTiles();
+        IsSelecting = false;
+    }
+
+    private void DynamicGridPointerReleased(object? sender, PointerEventArgs e) {
+        RemoveSelectorView();
+        IsSelecting = false;
+    }
+
+    private void DynamicGridPointerMoved(object? sender, PointerEventArgs e) {
+        var cell = GetGridPosition( e.GetPosition(DynamicGrid) );
+       
+        if (cell is { } gridCell) {
+            if (!IsSelecting) {
+                StartCol = gridCell.Col;
+                StartRow = gridCell.Row;
+                EndCol = gridCell.Col;
+                EndRow = gridCell.Row;
+            } else {
+                EndCol = gridCell.Col;
+                EndRow = gridCell.Row;
+            }
+        }
+
+        var minCol = Math.Min(StartCol, EndCol);
+        var maxCol = Math.Max(StartCol, EndCol);
+        var minRow = Math.Min(StartRow, EndRow);
+        var maxRow = Math.Max(StartRow, EndRow);
+        
+        if (!IsSelecting) {
+            DrawSelectorView(minCol, minRow, maxCol, maxRow);
+            IsSelecting = true;
+        } else {
+            UpdateSelectorView(minCol, minRow, maxCol, maxRow);
+        }
+        MarkTilesSelectedInGrid(minCol, minRow, maxCol, maxRow);
+        
+    }
+    
+    private void MarkTilesSelectedInGrid(int startCol, int startRow, int endCol, int endRow) {
+        // @formatter:off
+        var unselectedTilesInRange = DynamicGrid.Children
+            .OfType<ITile>().Where(tile =>
+                tile.Entity.Col >= startCol && tile.Entity.Col <= endCol &&
+                tile.Entity.Row >= startRow && tile.Entity.Row <= endRow &&
+                !tile.IsSelected)
+                .ToList();
+
+        var selectedTilesOutsideRange = DynamicGrid.Children
+            .OfType<ITile>().Where(tile =>
+                tile.IsSelected &&
+                (tile.Entity.Col < startCol || tile.Entity.Col > endCol ||
+                tile.Entity.Row < startRow || tile.Entity.Row > endRow))
+                .ToList();
+        // @formatter:on
+
+        foreach (var tile in unselectedTilesInRange) MarkTileSelected(tile);
+        foreach (var tile in selectedTilesOutsideRange) MarkTileUnSelected(tile);        
     }
     #endregion
 
@@ -905,13 +1015,19 @@ public partial class ControlPanelView {
                 dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
                 control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
 
-                // In design mode, also support tapping anywhere that is not a tile so we clear selections.
-                // ----------------------------------------------------------------------------
-                if (control.Interactive || control.DesignMode) {
-                    var tapRecogniser = new TapGestureRecognizer();
-                    tapRecogniser.Tapped += control.DynamicGridTapped;
-                    control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
-                }
+                var pointerRecognizer = new PointerGestureRecognizer();
+                pointerRecognizer.PointerMoved += control.DynamicGridPointerMoved;
+                pointerRecognizer.PointerReleased += control.DynamicGridPointerReleased;
+                pointerRecognizer.PointerExited += control.DynamicGridPointerExited;
+                control.DynamicGrid.GestureRecognizers.Add(pointerRecognizer);
+            }
+
+            // In design mode, also support tapping anywhere that is not a tile so we clear selections.
+            // ----------------------------------------------------------------------------
+            if (control.Interactive || control.DesignMode) {
+                var tapRecogniser = new TapGestureRecognizer();
+                tapRecogniser.Tapped += control.DynamicGridTapped;
+                control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
             }
             await control.DrawPanel();
         }
@@ -1006,7 +1122,8 @@ public partial class ControlPanelView {
         Selected,
         DragInvalid,
         DragValid,
-        Resize
+        Resize,
+        Selecting
     }
 
     public string GetEditModeIconFilename =>

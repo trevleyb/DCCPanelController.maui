@@ -13,13 +13,21 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor = 0.75f;
 
-    protected bool disposed = false;
     protected readonly TileDisplayMode DisplayMode;
+    protected bool disposed = false;
     protected bool HaveVisualPropertiesChanged;
     protected bool HaveDimensionsChanged;
     protected HashSet<string> VisualProperties { get; } = [];
     protected HashSet<string> ChangedProperties { get; } = [];
     protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
+
+    // @formatter:off
+    public Entity Entity { get; init; }
+    public double TileWidth => GridSize * Entity.Width;
+    public double TileHeight => GridSize * Entity.Height;
+    public bool IsSelected {get; set => SetField(ref field, value); }
+    public double GridSize {get; set => SetField(ref field, value); }
+    // @formatter:on
 
     private DateTime _lastChangeTime = DateTime.Now;
     private const int DebounceDelay = 75;
@@ -65,10 +73,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         _debounceRebuildCts?.Cancel();
         _debounceRebuildCts = null;
     }
-
-    public double TileWidth => GridSize * Entity.Width;
-    public double TileHeight => GridSize * Entity.Height;
-    public Entity Entity { get; init; }
 
     public void ForceRedraw() {
         HaveDimensionsChanged = false;        
@@ -209,11 +213,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     protected virtual void OnTileChanged(string propertyName, object? oldValue, object? newValue) {
         TileChanged?.Invoke(this, new TileChangedEventArgs(this, propertyName, oldValue, newValue));
     }
-    
-    // @formatter:off
-    public bool IsSelected {get; set => SetField(ref field, value); }
-    public double GridSize {get; set => SetField(ref field, value); }
-    // @formatter:on
 }
 
 public enum TileDisplayMode {

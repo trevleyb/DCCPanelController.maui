@@ -220,7 +220,7 @@
                 <Border BackgroundColor="White"
                         StrokeShape="RoundRectangle 25"
                         Stroke="{StaticResource Primary}"
-                        StrokeThickness="2"
+                        StrokeThickness="3"
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         WidthRequest="200"

@@ -46,11 +46,13 @@
                 <Label Text="Loading"/>
             </progressBar:SfCircularProgressBar>
             
-            <Grid IsVisible="{Binding IsLoading}"
-                  BackgroundColor="WhiteSmoke"
+            <Grid BackgroundColor="WhiteSmoke"
                   Opacity="0.75"
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
+                <Grid.GestureRecognizers>
+                    <PanGestureRecognizer PanUpdated="DynamicGridPanUpdated"/>
+                </Grid.GestureRecognizers>  
 
                 <Border BackgroundColor="White"
                         StrokeShape="RoundRectangle 25"

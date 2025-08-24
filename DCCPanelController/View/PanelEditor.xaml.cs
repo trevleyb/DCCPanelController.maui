@@ -103,38 +103,6 @@ public partial class PanelEditor : ContentPage {
         default:
             throw new ArgumentOutOfRangeException(nameof(side), side, null);
         }
-
-        // using (new CodeTimer("SetDockedSide")) {
-        //     // Unregister events before we clear the content
-        //     if (SidePaletteContent.Content is SideSelectorPanel l) l.OnDockSideChanged -= PaletteDockSideChanged;
-        //     if (BottomPaletteContent.Content is PillSelectorPanel m) m.OnDockSideChanged -= PaletteDockSideChanged;
-        //
-        //     SidePaletteContent.Content = null;
-        //     BottomPaletteContent.Content = null;
-        //
-        //     switch (side) {
-        //     case TileSelectorDockSide.Side:
-        //         SetPaletteVisibility(84, 0);
-        //         var sidePalette = new SideSelectorPanel() {
-        //             DockSide = TileSelectorDockSide.Side,
-        //             HorizontalOptions = LayoutOptions.Center,
-        //             Panel = _viewModel.Panel,
-        //         };
-        //         sidePalette.OnDockSideChanged += PaletteDockSideChanged;
-        //         SidePaletteContent.Content = sidePalette;
-        //         break;
-        //
-        //     case TileSelectorDockSide.Bottom:
-        //         SetPaletteVisibility(0, 120);
-        //         var bottomPalette = new PillSelectorPanel() {
-        //             HorizontalOptions = LayoutOptions.Center,
-        //             Panel = _viewModel.Panel,
-        //         };
-        //         bottomPalette.OnDockSideChanged += PaletteDockSideChanged;
-        //         BottomPaletteContent.Content = bottomPalette;
-        //         break;
-        //     }
-        // }
     }
 
     private void SetPaletteVisibility(int side, int bottom) {
