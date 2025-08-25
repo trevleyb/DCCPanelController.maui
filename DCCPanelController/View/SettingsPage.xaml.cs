@@ -65,4 +65,14 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         }
     }
 
+    private async void SwitchProfileAction(object? sender, EventArgs e) {
+        if (_pageViewModel is not null) {
+            var choices = _pageViewModel.ProfileService.GetProfileNames().ToArray();
+            var selected = await DisplayActionSheet("Pick a Profile", "Cancel", null , FlowDirection.LeftToRight, choices);
+            if (selected is not null && selected != "Cancel") {
+                await _pageViewModel.SwitchProfileAsync(selected);
+                Console.WriteLine($"Selected: {selected}");
+            }
+        }
+    }
 }

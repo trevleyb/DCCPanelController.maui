@@ -4,25 +4,31 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Services.ProfileService;
 
 public class ProfileService {
-    protected static Profiles? ProfilesIndex;
+    protected static Profiles Profiles = new Profiles();
     public Profile? ActiveProfile { get; private set; }
 
     public ProfileService() {
         LoadProfiles();
     }
 
+    public List<string> GetProfileNames() => Profiles?.ProfileItems.Select(x => x.ProfileName).ToList() ?? new List<string>();
+    
+    public void SetActiveProfile(Profile profile) {
+        ActiveProfile = profile;
+    }
+    
     /// <summary>
     /// On Load ensure we always have an active profile
     /// </summary>
     public void LoadProfiles() {
-        if (ProfilesIndex != null && ActiveProfile != null) return;
+        if (ActiveProfile != null) return;
         
         Console.WriteLine("Loading Profiles");
-        ProfilesIndex = Profiles.LoadMetaData();
-        if (ProfilesIndex is null) throw new ApplicationException("Failed to load or create Profiles");
+        Profiles = Profiles.LoadMetaData();
+        if (Profiles is null) throw new ApplicationException("Failed to load or create Profiles");
 
         // Ensure there is at least one profile in the index
-        if (ProfilesIndex.ProfileItem.Count == 0) {
+        if (Profiles.ProfileItems.Count == 0) {
             var created = AddNewProfile("Default", true);
             ActiveProfile = created;
             Console.WriteLine("Profiles Loaded");
@@ -30,46 +36,31 @@ public class ProfileService {
         }
 
         // Get active filename (ensures one active if none already)
-        var activeFileName = ProfilesIndex.ActiveProfileFileName;
+        var activeFileName = Profiles.ActiveProfileFileName;
         if (string.IsNullOrWhiteSpace(activeFileName)) {
             // Promote first to active as a last resort
-            var first = ProfilesIndex.ProfileItem.First();
-            var fallback = LoadProfile(first.FileName, setActive: true);
+            var first = Profiles.ProfileItems.First();
+            var fallback = LoadProfile(first.FileName);
             ActiveProfile = fallback;
             Console.WriteLine("Profiles Loaded");
             return;
         }
 
-        ActiveProfile = LoadProfile(activeFileName, setActive: true);
+        ActiveProfile = LoadProfile(activeFileName);
         if (ActiveProfile is null) throw new ApplicationException("Failed to load or create Profiles");
         Console.WriteLine("Profiles Loaded");
     }
     
-    public async Task<Profile> LoadProfileAsync(ProfilesIndex profileIndex, bool setActive = true) => await LoadProfileAsync(profileIndex.FileName, setActive);
-    public async Task<Profile> LoadProfileAsync(string profileName, bool setActive = true) {
-        var profile = await JsonRepository.LoadAsync(profileName);
-        if (setActive) {
-            ProfilesIndex?.SetActive(profile);
-            ActiveProfile = profile;
-        }
-        return profile;
-    }
-
-    public Profile LoadProfile(string profileName, bool setActive = true) {
-        var profile = JsonRepository.Load(profileName);
-        if (setActive) {
-            ProfilesIndex?.SetActive(profile);
-            ActiveProfile = profile;
-        }
-        return profile;
-    }
+    public async Task<Profile> LoadProfileAsync(ProfileIndex profileIndex, bool setActive = true) => await LoadProfileAsync(profileIndex.FileName);
+    public async Task<Profile> LoadProfileAsync(string profileName) => await JsonRepository.LoadAsync(profileName);
+    public Profile LoadProfile(string profileName) => JsonRepository.Load(profileName);
     
     // Save the given profile (optionally as a new profile)
     public async Task SaveProfileAsync(Profile profile, bool setActive = true) {
         await JsonRepository.SaveAsync(profile, profile.Filename);
-        ProfilesIndex?.Add(profile);
+        Profiles?.AddOrUpdate(profile);
         if (setActive) {
-            ProfilesIndex?.SetActive(profile);
+            Profiles?.SetActive(profile);
             ActiveProfile = profile;
         }
     }
@@ -77,9 +68,9 @@ public class ProfileService {
     // Save the given profile (optionally as a new profile)
     public void SaveProfile(Profile profile, bool setActive = true) {
         JsonRepository.Save(profile, profile.Filename);
-        ProfilesIndex?.Add(profile);
+        Profiles?.AddOrUpdate(profile);
         if (setActive) {
-            ProfilesIndex?.SetActive(profile);
+            Profiles?.SetActive(profile);
             ActiveProfile = profile;
         }
     }
@@ -87,16 +78,16 @@ public class ProfileService {
     // Delete profile by name
     public async Task DeleteProfileAsync(Profile profile) {
         await JsonRepository.Delete(profile);
-        ProfilesIndex?.Delete(profile);
+        Profiles?.Delete(profile);
         
         // If we just deleted the active profile then set a new active profile
         if (ActiveProfile?.Filename == profile.Filename) {
-            if (ProfilesIndex?.ProfileItem?.Count > 0) {
-                var next = ProfilesIndex.ProfileItem[0];
-                ActiveProfile = await LoadProfileAsync(next.FileName, setActive: true);
+            if (Profiles?.ProfileItems?.Count > 0) {
+                var next = Profiles.ProfileItems[0];
+                ActiveProfile = await LoadProfileAsync(next.FileName);
             } else {
                 // Create a brand new default
-                ActiveProfile = await AddNewProfileAsync("Default", true);
+                ActiveProfile = await AddNewProfileAsync("Default");
             }
         }
     }
@@ -131,13 +122,15 @@ public class ProfileService {
     }
     
     // Add a new profile (with optional active, auto-naming)
-    public async Task<Profile> AddNewProfileAsync(string profileName, bool setActive = true) {
+    public async Task<Profile> AddNewProfileAsync(string? profileName = null, bool setActive = true) {
+        if (string.IsNullOrWhiteSpace(profileName)) profileName = Profiles?.GetUniqueProfileName("Profile") ?? "Profile";
         var profile = new Profile(profileName);
         await SaveProfileAsync(profile, setActive);
         return profile;
     }
 
-    public Profile AddNewProfile(string profileName, bool setActive = true) {
+    public Profile AddNewProfile(string? profileName = null, bool setActive = true) {
+        if (string.IsNullOrWhiteSpace(profileName)) profileName = Profiles?.GetUniqueProfileName("Profile") ?? "Profile";
         var profile = new Profile(profileName);
         SaveProfile(profile, setActive);
         return profile;

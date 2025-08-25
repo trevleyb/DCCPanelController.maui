@@ -1,8 +1,6 @@
-using AVFoundation;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Resources.Styles;
-using Font = Microsoft.Maui.Font;
 
 namespace DCCPanelController.Services;
 
@@ -35,8 +33,8 @@ public static class DisplayAlertHelper {
             TextColor = StyleHelper.FromStyle("Primary"),
             ActionButtonTextColor = Colors.Black,
             CornerRadius = new CornerRadius(10),
-            Font = Font.SystemFontOfSize(fontSize),
-            ActionButtonFont = Font.SystemFontOfSize(fontSize),
+            Font = Microsoft.Maui.Font.SystemFontOfSize(fontSize),
+            ActionButtonFont = Microsoft.Maui.Font.SystemFontOfSize(fontSize),
             CharacterSpacing = 0.5
         };
 

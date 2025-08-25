@@ -69,7 +69,6 @@ public static class JsonRepository {
             }
         }
     }
-
     
     public static Profile Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
@@ -134,6 +133,7 @@ public static class JsonRepository {
             return null;
         }
     }
+    
     private static string GetProfileStorageDir() {
         var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
         if (!Directory.Exists(storageDir)) Directory.CreateDirectory(storageDir);

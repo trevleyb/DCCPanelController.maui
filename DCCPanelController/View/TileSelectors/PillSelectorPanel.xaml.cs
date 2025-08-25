@@ -4,9 +4,6 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Controls;
-using SpriteKit;
-using Syncfusion.Maui.Toolkit;
-using Syncfusion.Maui.Toolkit.Accordion;
 using SelectionChangedEventArgs = Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs;
 #if IOS || MACCATALYST
 using UIKit;

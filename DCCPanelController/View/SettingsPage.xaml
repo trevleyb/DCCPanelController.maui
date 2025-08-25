@@ -60,7 +60,7 @@
                                           Margin="5,0,10,0">
                                         <Label Grid.Column="0" Text="Profile Settings"
                                                Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
-                                        <ImageButton Grid.Column="1" VerticalOptions="Center" Margin="4,0,4,0" Command="{Binding SwitchProfileCommand}"
+                                        <ImageButton Grid.Column="1" VerticalOptions="Center" Margin="4,0,4,0" Clicked="SwitchProfileAction"
                                                      Source="play_circle.png">
                                             <ImageButton.Behaviors>
                                                 <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
