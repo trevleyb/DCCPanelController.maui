@@ -15,18 +15,18 @@ public partial class TestPage : ContentPage {
         InitializeComponent();
         BindingContext = viewModel;
         
-        PillSelectorContainer.Panel = viewModel.Panel;
-        SideSelectorContainer.Panel = viewModel.Panel;
+        // PillSelectorContainer.Panel = viewModel.Panel;
+        // SideSelectorContainer.Panel = viewModel.Panel;
     }
 
     private void PillSelectorContainer_OnOnDockSideChanged(object? sender, TileSelectorDockSide e) {
-        PillSelectorContainer.IsVisible = false;
-        SideSelectorContainer.IsVisible = true;
+        // PillSelectorContainer.IsVisible = false;
+        // SideSelectorContainer.IsVisible = true;
     }
 
     private void SideSelectorContainer_OnOnDockSideChanged(object? sender, TileSelectorDockSide e) {
-        PillSelectorContainer.IsVisible = true;
-        SideSelectorContainer.IsVisible = false;
+        // PillSelectorContainer.IsVisible = true;
+        // SideSelectorContainer.IsVisible = false;
     }
 
     private void TapGestureRecognizer_OnTapped1(object? sender, TappedEventArgs e) {

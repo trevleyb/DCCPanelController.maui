@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <Shell
-    TabBarTitleColor="White"
-    TabBarForegroundColor="Black"
+    ForegroundColor="WhiteSmoke"
+    BackgroundColor="{StaticResource Primary}" 
     TabBarBackgroundColor="{StaticResource Primary}"
-    TabBarUnselectedColor="WhiteSmoke"
+    TabBarTitleColor="White"
+    TabBarForegroundColor="White"
+    TabBarUnselectedColor="Black"
+    PresentationMode="Animated"
     FlyoutBehavior="Disabled"
     Title="DCC Panel Controller"
     iOsSpecific:Page.UseSafeArea="True"
@@ -28,14 +31,14 @@
              IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:OperatePage}"/>
         </Tab>
-
+        
         <Tab
             Icon="panels.png"
             Title="Panel Editor"
             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
         </Tab>
-
+        
         <Tab Title="Tables" Icon="tables.png"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent
@@ -54,7 +57,7 @@
                 ContentTemplate="{DataTemplate view:LightsPage}"
                 Title="Lights"/>
         </Tab>
-
+        
         <Tab Title="Settings" Icon="settings.png"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
             <ShellContent
