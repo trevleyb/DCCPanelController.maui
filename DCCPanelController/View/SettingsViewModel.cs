@@ -97,7 +97,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     public async Task SwitchProfileAsync() {
-        var choices = ProfileService.GetProfileNames();
+        var choices = ProfileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
         if (index is {} selectedProfile and >= 0) await SwitchProfileByIndexAsync(selectedProfile);
         OnProfileChanged();

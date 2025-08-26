@@ -26,7 +26,17 @@ public class ProfileService {
     // =====================
     public List<string> GetProfileNames() => ProfilesIndex?.Profiles.Select(x => x.ProfileName).ToList() ?? new List<string>();
     public List<string> GetProfileFileNames() => ProfilesIndex?.Profiles.Select(x => x.FileName).ToList() ?? new List<string>();
-    
+    public List<string> GetProfileNamesWithDefault() {
+        var profileList = new List<string>();
+        foreach (var profile in ProfilesIndex.Profiles) {
+            var profileName = profile.ProfileName;
+            if (profile.IsDefault) profileName += " (default)";
+            if (profile.FileName == ActiveProfile?.Filename)  profileName += " (active)";
+            profileList.Add(profileName);
+        }
+        return profileList;
+    }
+
     public void MarkAsDefault(Profile profile) => ProfilesIndex.SetAsDefault(profile);
     public void MarkAsDefault() => ProfilesIndex.SetAsDefault(ActiveProfile ?? throw new ArgumentNullException(nameof(ActiveProfile), "Active profile is not defined."));
     public bool IsDefault(Profile profile) => ProfilesIndex.IsDefault(profile);

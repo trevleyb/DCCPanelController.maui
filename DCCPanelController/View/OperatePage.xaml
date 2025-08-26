@@ -23,21 +23,21 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem 
-            Command="{Binding ToggleConnectionCommand}" 
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
             </ToolbarItem.IconImageSource>
         </ToolbarItem>
 
-        <ToolbarItem Clicked="HideUnHideTabBar" Text="Hide" 
-                     ToolTipProperties.Text="Hide Bottom Tab Bar" x:Name="HideUnHide" 
+        <ToolbarItem Clicked="HideUnHideTabBar" Text="Hide"
+                     ToolTipProperties.Text="Hide Bottom Tab Bar" x:Name="HideUnHide"
                      IconImageSource="maximize_2"/>
     </ContentPage.ToolbarItems>
 
@@ -67,24 +67,8 @@
                     <!-- Empty View when no panels -->
                     <ContentView HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="{Binding ShowWelcomePage}">
                         <ScrollView>
-                            <Grid ColumnDefinitions="80,*,80">
-                                <ImageButton Grid.Column="0" WidthRequest="80" HeightRequest="80" 
-                                       Source="chevrons_left.png"
-                                       Command="{Binding SwipeLeftCommand}"
-                                       HorizontalOptions="Start" VerticalOptions="Center">
-                                    <Image.Behaviors>
-                                        <toolkit:IconTintColorBehavior TintColor="#ebebeb"/>
-                                    </Image.Behaviors>
-                                </ImageButton>
-                                <ImageButton Grid.Column="2" WidthRequest="80" HeightRequest="80"
-                                       Command="{Binding SwipeRightCommand}"
-                                       Source="chevrons_right.png" 
-                                       HorizontalOptions="End" VerticalOptions="Center">
-                                    <Image.Behaviors>
-                                        <toolkit:IconTintColorBehavior TintColor="#ebebeb"/>
-                                    </Image.Behaviors>
-                                </ImageButton>
-                                <StackLayout Grid.Column="1" HorizontalOptions="Center" VerticalOptions="Center">
+                            <Grid ColumnDefinitions="*">
+                                <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
                                     <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
                                     <Label
                                         Style="{StaticResource LargeLabel}"
@@ -137,7 +121,7 @@
                                             Margin="0,10,10,10"
                                             Style="{StaticResource ButtonOutline}"
                                             Text="Instructions"/>
-                                            
+
                                         <Button
                                             IsVisible="{Binding HasPanels}"
                                             WidthRequest="150"
@@ -154,42 +138,43 @@
                 </Grid>
             </ContentView>
 
-            <CollectionView Grid.Row="1"
-                            SelectionMode="None"
-                            IsVisible="True"
-                            ItemsSource="{Binding PanelIndicators, Mode=OneWay}"
-                            HorizontalOptions="Center"
-                            VerticalOptions="Start"
-                            Margin="0,10,0,10">
+            <Grid Grid.Row="1">
+                <CollectionView SelectionMode="None"
+                                IsVisible="True"
+                                ItemsSource="{Binding PanelIndicators, Mode=OneWay}"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Start"
+                                Margin="0,10,0,10">
 
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
-                </CollectionView.ItemsLayout>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+                    </CollectionView.ItemsLayout>
 
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="view:PanelIndicator">
-                        <Border 
-                            WidthRequest="12" 
-                            HeightRequest="12" 
-                            StrokeShape="Ellipse" 
-                            StrokeThickness="0">
-                            <Border.BackgroundColor>
-                                <MultiBinding Converter="{StaticResource IndicatorColorConverter}">
-                                    <Binding Path="Index"/>
-                                    <Binding Path="Active"/>
-                                </MultiBinding>
-                            </Border.BackgroundColor>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="view:PanelIndicator">
+                            <Border
+                                WidthRequest="12"
+                                HeightRequest="12"
+                                StrokeShape="Ellipse"
+                                StrokeThickness="0">
+                                <Border.BackgroundColor>
+                                    <MultiBinding Converter="{StaticResource IndicatorColorConverter}">
+                                        <Binding Path="Index"/>
+                                        <Binding Path="Active"/>
+                                    </MultiBinding>
+                                </Border.BackgroundColor>
 
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer
-                                    Command="{Binding x:DataType='view:OperateViewModel', Source={RelativeSource AncestorType={x:Type view:OperateViewModel}},Path=SelectPanelCommand }"
-                                    CommandParameter="{Binding .}" />
-                            </Border.GestureRecognizers>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding x:DataType='view:OperateViewModel', Source={RelativeSource AncestorType={x:Type view:OperateViewModel}},Path=SelectPanelCommand }"
+                                        CommandParameter="{Binding .}"/>
+                                </Border.GestureRecognizers>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+                <Label Margin="0,0,5,0" Text="{Binding ProfileName}" HorizontalOptions="End" VerticalOptions="End" BackgroundColor="Transparent" TextColor="Gainsboro"/>
+            </Grid>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

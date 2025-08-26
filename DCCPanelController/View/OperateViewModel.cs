@@ -26,7 +26,8 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     
     public Color BackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; private set; }
-
+    public string ProfileName => _profileService?.ActiveProfile?.ProfileName ?? "No Profile";
+    
     public bool HasPanels => Panels?.Any() == true;
     public bool HasNoPanels => !HasPanels;
     
@@ -34,6 +35,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     private ILogger<OperateViewModel> _logger;
     private readonly ProfileService _profileService;
+    
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
