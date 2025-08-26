@@ -2,16 +2,22 @@ using System.Globalization;
 
 namespace DCCPanelController.View.Converters;
 
-public class IndicatorColorConverter : IMultiValueConverter {
+public class IndicatorColorConverter: IMultiValueConverter {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-        if (values?.Length >= 2 &&
-            values[0] is int currentIndex &&
-            values[1] is OperateViewModel viewModel) {
-            
-            try {
-                return currentIndex == viewModel.CurrentPanelIndex ? Application.Current?.Resources["Primary"] as Color ?? Colors.Blue : Colors.DarkGray;
-            } catch {
-                return Colors.DarkGray;
+
+        // Dont ask: Had issues getting data to pass through as expected so 
+        // mace this super generic to pass anything and get the correct color
+        if (values is [int indicatorIndex, _, ..]) {
+            int? currentIndex = null;
+            if (values[1] is int) currentIndex = (int)values[1];
+            if (values[1] is string) currentIndex = int.Parse((string)values[1]);
+            if (values[1] is OperatePage { BindingContext: OperateViewModel vm }) currentIndex = vm.CurrentPanelIndex;
+            if (values[1] is OperateViewModel vm2) currentIndex = vm2.CurrentPanelIndex;
+            if (currentIndex is not null) {
+                var active = indicatorIndex == currentIndex;
+                return active
+                    ? (Application.Current?.Resources["Primary"] as Color ?? Colors.Blue)
+                    : Colors.DarkGray;
             }
         }
         return Colors.DarkGray;

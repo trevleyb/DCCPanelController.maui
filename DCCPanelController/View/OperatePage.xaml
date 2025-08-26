@@ -145,39 +145,36 @@
                 </Grid>
             </ContentView>
 
-            <CollectionView
-                Grid.Row="1"
-                SelectionMode="None"
-                SelectedItem="{Binding CurrentPanelIndex}"
-                ItemsSource="{Binding PanelIndicators, Mode=OneWay}"
-                HorizontalOptions="Center"
-                VerticalOptions="Start"
-                Margin="0,10,0,10"
-                IsVisible="{Binding HasPanels}">
+            <CollectionView Grid.Row="1"
+                            SelectionMode="None"
+                            IsVisible="True"
+                            ItemsSource="{Binding PanelIndicators, Mode=OneWay}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Start"
+                            Margin="0,10,0,10">
 
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
                 </CollectionView.ItemsLayout>
 
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="{x:Type x:Int32}">
-                        <Border
-                        WidthRequest="15"
-                        HeightRequest="15"
-                        StrokeShape="Ellipse"
-                        StrokeThickness="0">
-
+                    <DataTemplate x:DataType="view:PanelIndicator">
+                        <Border 
+                            WidthRequest="12" 
+                            HeightRequest="12" 
+                            StrokeShape="Ellipse" 
+                            StrokeThickness="0">
                             <Border.BackgroundColor>
                                 <MultiBinding Converter="{StaticResource IndicatorColorConverter}">
-                                    <Binding Path="."/>
-                                    <Binding Source="{RelativeSource AncestorType={x:Type view:OperateViewModel}}" x:DataType="view:OperateViewModel"/>
+                                    <Binding Path="Index"/>
+                                    <Binding Path="Active"/>
                                 </MultiBinding>
                             </Border.BackgroundColor>
 
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, Path=SelectPanelCommand, x:DataType=view:OperateViewModel}"
-                                    CommandParameter="{Binding .}"/>
+                                    Command="{Binding x:DataType='view:OperateViewModel', Source={RelativeSource AncestorType={x:Type view:OperateViewModel}},Path=SelectPanelCommand }"
+                                    CommandParameter="{Binding .}" />
                             </Border.GestureRecognizers>
                         </Border>
                     </DataTemplate>

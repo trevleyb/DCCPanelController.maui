@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Windows.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
@@ -12,10 +13,13 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<OperatePage> _logger;
-
+    public OperateViewModel ViewModel;
+    public ICommand SelectPanelCommandProxy => ViewModel.SelectPanelCommand;
+    
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel) {
         InitializeComponent();
         _logger = logger;
+        ViewModel = viewModel;
         BindingContext = viewModel;
         viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         SetTabBarState(true);
@@ -23,10 +27,14 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     protected override async void OnAppearing() {
         base.OnAppearing();
+        
+        // We reload the Panels at this point, whenever this screen is appearing
+        // because data may have changed and is out of sync with the ViewModel
+        // --------------------------------------------------------------------------
         if (BindingContext is OperateViewModel viewModel) {
             await viewModel.LoadPanelsAsync();
             PanelView.Panel = null;
-            //viewModel.SelectPanelCommand.Execute(viewModel.CurrentPanelIndex);
+            if (viewModel.CurrentPanelIndex >= 0) viewModel.SelectPanel(viewModel.CurrentPanelIndex);
         }
     }
 
