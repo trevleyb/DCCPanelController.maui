@@ -13,9 +13,9 @@ namespace DCCPanelController.View;
 public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
-    [ObservableProperty] private Panel? _activePanel;
-    [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private bool _isMaximized;
+    [ObservableProperty] private int _currentPanelIndex;
+    [ObservableProperty] private Panel? _activePanel;
 
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
