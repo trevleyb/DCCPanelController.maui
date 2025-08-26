@@ -58,7 +58,6 @@ public partial class ControlPanelView {
 
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
-        BindingContext = this;
         InitializeComponent();
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;

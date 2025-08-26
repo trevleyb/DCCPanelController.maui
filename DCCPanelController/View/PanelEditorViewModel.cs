@@ -166,7 +166,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             // the editing panel and make the original point to this new clone. 
             // ----------------------------------------------------------
             UpdateOriginalFromCopy();
-            await _profileService.SaveActiveProfileAsync();
+            await _profileService.SaveAsync();
             await DisplayAlertHelper.DisplayToastAlert("Changes Saved");
             CheckIfPanelChanged();
         }

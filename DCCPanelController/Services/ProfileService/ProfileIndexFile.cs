@@ -1,88 +1,99 @@
+using System.Runtime.CompilerServices;
 using System.Text.Json;
-using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 
-namespace DCCPanelController.Models.DataModel;
+namespace DCCPanelController.Services.ProfileService;
 
-public partial class Profiles {
+[Serializable]
+public partial class ProfileIndexFile {
+    public const string ProfileIndexFileName = "DCCPanelController.index"; 
+    
     public string Version { get; init; } = "1.0";
-    public List<ProfileIndex> ProfileItems = [];
+    public List<ProfileIndexItem> Profiles { get; set; } = [];
 
     public string ActiveProfileFileName {
         get {
-            if (ProfileItems.Count == 0) return string.Empty;
-            var active = ProfileItems.FirstOrDefault(x => x.IsActive);
+            if (Profiles.Count == 0) return string.Empty;
+            var active = Profiles.FirstOrDefault(x => x.IsDefault);
             if (active is null) {
-                active = ProfileItems[0];
-                active.IsActive = true;
+                active = Profiles[0];
+                active.IsDefault = true;
                 SaveMetaData();
             }
             return active.FileName;
         }
     }
 
-    public ProfileIndex? GetByFileName(string filename) {
-        return ProfileItems.FirstOrDefault(x => x.FileName == filename) ?? null;
+    public ProfileIndexItem? GetByFileName(string filename) {
+        return Profiles.FirstOrDefault(x => x.FileName == filename) ?? null;
     }
 
-    public ProfileIndex AddOrUpdate(Profile profile) {
-        ProfileIndex? item = null;
-        foreach (var index in ProfileItems.Where(index => index.FileName == profile.Filename)) {
+    public ProfileIndexItem AddOrUpdate(Profile profile) {
+        ProfileIndexItem? item = null;
+        foreach (var index in Profiles.Where(index => index.FileName == profile.Filename)) {
             item = index;
             item.ProfileName = profile.ProfileName;
             break;
         }
         
         if (item is null) {
-            item = new ProfileIndex(profile.ProfileName, profile.Filename, false);
-            ProfileItems.Add(item);
+            item = new ProfileIndexItem(profile.ProfileName, profile.Filename, false);
+            Profiles.Add(item);
         }
         SaveMetaData();
         return item;
     }
 
     public void Delete(Profile profile) {
-        var list = ProfileItems.Where(x => x.FileName == profile.Filename).ToList();
-        foreach (var index in list) ProfileItems.Remove(index);
+        var list = Profiles.Where(x => x.FileName == profile.Filename).ToList();
+        foreach (var index in list) Profiles.Remove(index);
         // Ensure one active remains if we deleted the active
-        if (!ProfileItems.Any(x => x.IsActive) && ProfileItems.Count > 0) {
-            ProfileItems[0].IsActive = true;
+        if (!Profiles.Any(x => x.IsDefault) && Profiles.Count > 0) {
+            Profiles[0].IsDefault = true;
         }
         SaveMetaData();
     }
 
-    public void SetActive(Profile profile) {
-        foreach (var index in ProfileItems) {
-            index.IsActive = index.FileName == profile.Filename;
+    public void SetAsDefault(Profile profile) {
+        foreach (var index in Profiles) {
+            index.IsDefault = index.FileName == profile.Filename;
         }
         SaveMetaData();   
+    }
+
+    public bool IsDefault(Profile profile) {
+        foreach (var index in Profiles) {
+            if (index.FileName == profile.Filename) return index.IsDefault;
+        }
+        return false;
     }
 
     /// <summary>
     /// Save the MetaData to storage
     /// </summary>
-    private void SaveMetaData() {
+    private void SaveMetaData([CallerMemberName] string? memberName = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
         var jsonString = JsonSerializer.Serialize(this, JsonOptions.Options);
         if (string.IsNullOrEmpty(jsonString)) return;
 
-        // IMPORTANT: use a consistent logical name ("index") - GetStorageFilePath adds ".json"
-        var fileName = JsonRepository.GetStorageFilePath("index");
+        var fileName = JsonRepository.GetStorageFilePath(ProfileIndexFileName);
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(fileName));
         File.WriteAllText(fileName, jsonString);
+        Console.WriteLine($"Saved MetaData {memberName}@{sourceLineNumber}: {fileName}");
     }
 
     /// <summary>
     /// Load a copy of the MetaData from storage
     /// </summary>
-    public static Profiles LoadMetaData() {
-        var fileName = JsonRepository.GetStorageFilePath("index");
+    public static ProfileIndexFile LoadMetaData() {
+        var fileName = JsonRepository.GetStorageFilePath(ProfileIndexFileName);
         if (File.Exists(fileName)) {
             try {
                 var jsonString = File.ReadAllText(fileName);
-                var indexFile = JsonSerializer.Deserialize<Profiles?>(jsonString, JsonOptions.Options) ?? new Profiles();
+                var indexFile = JsonSerializer.Deserialize<ProfileIndexFile?>(jsonString, JsonOptions.Options) ?? new ProfileIndexFile();
                 // Ensure one active profile exists
-                if (indexFile.ProfileItems.Count > 0 && !indexFile.ProfileItems.Any(x => x.IsActive)) {
-                    indexFile.ProfileItems[0].IsActive = true;
+                if (indexFile.Profiles.Count > 0 && !indexFile.Profiles.Any(x => x.IsDefault)) {
+                    indexFile.Profiles[0].IsDefault = true;
                     indexFile.SaveMetaData();
                 }
                 return indexFile;
@@ -90,10 +101,7 @@ public partial class Profiles {
                 Console.WriteLine($"Unable to load MetaData: {ex.Message}");
             }
         }
-        // No index found: create a fresh one with a default entry, mark it active
-        var profiles = new Profiles();
-        var defaultProfile = new Profile("Default");
-        profiles.ProfileItems.Add(new ProfileIndex(defaultProfile.ProfileName, defaultProfile.Filename, true));
+        var profiles = new ProfileIndexFile();
         profiles.SaveMetaData();
         return profiles;
     }
@@ -105,7 +113,7 @@ public partial class Profiles {
     // - "My Profile" -> "My Profile" if unused, else "My Profile 2", then 3, ...
     public string GetUniqueProfileName(string? desiredName) {
         var baseInput = string.IsNullOrWhiteSpace(desiredName) ? "Profile" : desiredName!.Trim();
-        var existing = new HashSet<string>(ProfileItems.Select(p => p.ProfileName), StringComparer.OrdinalIgnoreCase);
+        var existing = new HashSet<string>(Profiles.Select(p => p.ProfileName), StringComparer.OrdinalIgnoreCase);
 
         // If it's not taken, return as-is
         if (!existing.Contains(baseInput)) return baseInput;
@@ -141,16 +149,4 @@ public partial class Profiles {
 
     [System.Text.RegularExpressions.GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]
     private static partial System.Text.RegularExpressions.Regex MyRegex();
-}
-
-public class ProfileIndex {
-    public string ProfileName { get; set; }
-    public string FileName { get; set; }
-    public bool   IsActive { get; set; }
-    
-    public ProfileIndex(string profileName, string fileName, bool isActive) {
-        ProfileName = profileName;
-        FileName = fileName;
-        IsActive = isActive;
-    }
 }

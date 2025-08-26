@@ -7,6 +7,7 @@ public class IndicatorColorConverter : IMultiValueConverter {
         if (values?.Length >= 2 &&
             values[0] is int currentIndex &&
             values[1] is OperateViewModel viewModel) {
+            
             try {
                 return currentIndex == viewModel.CurrentPanelIndex ? Application.Current?.Resources["Primary"] as Color ?? Colors.Blue : Colors.DarkGray;
             } catch {

@@ -127,7 +127,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         if (turnout is not null) {
             Turnouts.Remove(turnout);
             OnPropertyChanged(nameof(Turnouts));
-            await _profileService.SaveActiveProfileAsync();
+            await _profileService.SaveAsync();
             SelectedTurnout = null;
             IsTurnoutSelected = false;
         }
@@ -144,7 +144,7 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
         };
         Turnouts.Add(turnout);
         await EditTurnoutAsync(turnout);
-        await _profileService.SaveActiveProfileAsync();
+        await _profileService.SaveAsync();
         OnPropertyChanged(nameof(Turnouts));
         SelectedTurnout = null;
         IsTurnoutSelected = false;

@@ -48,15 +48,11 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         }
     }
 
-    private async Task SaveAsync() {
-        await _profileService.SaveActiveProfileAsync();
-    }
-
     [RelayCommand]
     private async Task AddPanelAsync() {
         SelectedPanel = Panels.CreatePanel();
         Panels.Add(SelectedPanel);
-        await SaveAsync();
+        await _profileService.SaveAsync();
         OnPropertyChanged(nameof(Panels));
     }
 
@@ -68,7 +64,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             Panels.Remove(SelectedPanel);
             RefreshSortOrder();
             SelectedPanel = null; //Panels.FirstOrDefault();
-            await SaveAsync();
+            await _profileService.SaveAsync();
         }
         OnPropertyChanged(nameof(Panels));
     }
@@ -78,7 +74,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             var cloned = Panels.CreatePanelFrom(SelectedPanel);
             Panels.Add(cloned);
             RefreshSortOrder();
-            await SaveAsync();
+            await _profileService.SaveAsync();
         }
         OnPropertyChanged(nameof(Panels));
     }
@@ -112,7 +108,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
                     var panel = Panels.UploadPanel(jsonString);
                     if (panel is not null) {
                         await DisplayAlertHelper.DisplayToastAlert($"Uploaded Panel: {panel.Id ?? ""}");
-                        await SaveAsync();
+                        await _profileService.SaveAsync();
                     } else {
                         await DisplayAlertHelper.DisplayOkAlertAsync("Error", "Unable to upload the provided file as a Panel.");
                     }
@@ -155,7 +151,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
         RefreshSortOrder();
         OnPropertyChanged(nameof(Panels));
         OnPropertyChanged(nameof(SelectedPanel));
-        await _profileService.SaveActiveProfileAsync();
+        await _profileService.SaveAsync();
     }
 
     [RelayCommand]

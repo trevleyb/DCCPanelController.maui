@@ -3,6 +3,7 @@
 <ContentPage
     BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
     Title="{Binding ActivePanel.Title, FallbackValue='DCC Panel Controller'}"
+    x:Name="OperateRoot"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="view:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -11,14 +12,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:global="clr-namespace:"
-    xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
+    xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
     xmlns:fonts="clr-namespace:Fonts"
     xmlns:system="clr-namespace:System;assembly=System.Runtime">
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters1:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
-            <converters1:IndicatorColorConverter x:Key="IndicatorColorConverter"/>
+            <converters:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
+            <converters:IndicatorColorConverter x:Key="IndicatorColorConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -65,8 +66,7 @@
                         x:Name="PanelView"/>
 
                     <!-- Empty View when no panels -->
-                    <ContentView HorizontalOptions="Fill" VerticalOptions="Fill"
-                                 IsVisible="{Binding ShowWelcomePage}">
+                    <ContentView HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="{Binding ShowWelcomePage}">
                         <ScrollView>
                             <Grid ColumnDefinitions="80,*,80">
                                 <ImageButton Grid.Column="0" WidthRequest="80" HeightRequest="80" 
@@ -147,6 +147,8 @@
 
             <CollectionView
                 Grid.Row="1"
+                SelectionMode="None"
+                SelectedItem="{Binding CurrentPanelIndex}"
                 ItemsSource="{Binding PanelIndicators, Mode=OneWay}"
                 HorizontalOptions="Center"
                 VerticalOptions="Start"
@@ -160,21 +162,21 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="{x:Type x:Int32}">
                         <Border
-                            WidthRequest="15"
-                            HeightRequest="15"
-                            StrokeShape="Ellipse"
-                            StrokeThickness="0">
+                        WidthRequest="15"
+                        HeightRequest="15"
+                        StrokeShape="Ellipse"
+                        StrokeThickness="0">
 
                             <Border.BackgroundColor>
                                 <MultiBinding Converter="{StaticResource IndicatorColorConverter}">
                                     <Binding Path="."/>
-                                    <Binding Source="{RelativeSource AncestorType={x:Type view:OperateViewModel}}"/>
+                                    <Binding Source="{RelativeSource AncestorType={x:Type view:OperateViewModel}}" x:DataType="view:OperateViewModel"/>
                                 </MultiBinding>
                             </Border.BackgroundColor>
 
                             <Border.GestureRecognizers>
                                 <TapGestureRecognizer
-                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, x:DataType='view:OperateViewModel', Path=SelectPanelCommand}"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}}, Path=SelectPanelCommand, x:DataType=view:OperateViewModel}"
                                     CommandParameter="{Binding .}"/>
                             </Border.GestureRecognizers>
                         </Border>

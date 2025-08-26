@@ -42,33 +42,50 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     public Profile Profile => ProfileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"SettingsViewModel: Active profile is not defined.");
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     public readonly ProfileService ProfileService;
-    private ILogger<SettingsViewModel> _logger;
+    private readonly ILogger<SettingsViewModel> _logger;
     
     public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         ProfileService = profileService;
     }
 
+    public void OnProfileChanged() {
+        OnPropertyChanged(nameof(Profile));
+        OnPropertyChanged(nameof(Settings));
+        OnPropertyChanged(nameof(CurrentSettingsView));
+        OnPropertyChanged(nameof(Capabilities));
+
+        OnPropertyChanged(nameof(Profile.ProfileName));
+        OnPropertyChanged(nameof(Profile.Settings));
+        OnPropertyChanged(nameof(Profile.Settings.BackgroundColor));
+        OnPropertyChanged(nameof(Profile.Settings.ShowWelcomePage));
+        OnPropertyChanged(nameof(Profile.Settings.UseClickSounds));
+        OnPropertyChanged(nameof(Profile.Settings.ConnectOnStartup));
+        OnPropertyChanged(nameof(Profile.Settings.SetTurnoutStatesOnStartup));
+
+        IsProfileActive = ProfileService.IsDefault();
+    }
+    
     [RelayCommand]
     public async Task SaveSettingsAsync() {
         var reconnect = ConnectionService.IsConnected;
         if (reconnect) await ConnectionService.DisconnectAsync();
-        await ProfileService.SaveActiveProfileAsync();
+        await ProfileService.SaveAsync();
         if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
     }
 
     public async Task SwitchProfileAsync(string profileName) {
-        await ProfileService.LoadProfileAsync(profileName);
+        var profile = await ProfileService.LoadAsync(profileName);
+        if (profile is null) throw new ApplicationException($"Failed to load profile: {profileName}");
         OnPropertyChanged(nameof(Profile));
         await DisplayAlertHelper.DisplayToastAlert($"Switched Active Profile");
     }
 
     [RelayCommand]
     public async Task AddProfileAsync() {
-        var newProfile = await ProfileService.AddNewProfileAsync();
-        ProfileService.SetActiveProfile(newProfile);
-        OnPropertyChanged(nameof(Profile));
+        var newProfile = await ProfileService.CreateAsync();
+        OnProfileChanged();
         await DisplayAlertHelper.DisplayToastAlert($"New Profile Created");
     }
 
@@ -77,12 +94,12 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         var profileName = Profile.ProfileName;
         var result = await DisplayAlertHelper.DisplayAlertAsync("Delete Profile?", "This will delete the current profile. Are you sure you want to do this?", "Continue", "Cancel");
         if (result) {
-            await ProfileService.DeleteProfileAsync(Profile);
-            OnPropertyChanged(nameof(Profile));
+            await ProfileService.DeleteAsync(Profile);
+            OnProfileChanged();
             await DisplayAlertHelper.DisplayToastAlert($"Profile '{profileName}' Deleted");
         }
+        OnProfileChanged();
     }
-
 
     public void SetCapabilities() {
         Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
@@ -163,7 +180,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             if (result) {
                 var fileName = await PromptUserForConfigFile(); 
                 if (!string.IsNullOrEmpty(fileName)) {
-                    var loadedJson = await LoadJsonFromFile(fileName);
+                    var loadedJson = await LoadJsonFromFileAsync(fileName);
                     await ProfileService.UploadProfileAsync(loadedJson);
                     await DisplayAlertHelper.DisplayToastAlert("Success: File Loaded");
                 } else {
@@ -181,8 +198,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             var filePath = await PromptUserForSaveLocation();
             if (!string.IsNullOrEmpty(filePath)) {
                 var saveFile = Path.Combine(filePath, "dccpanel.settings");
-                var jsonString = await ProfileService.DownloadActiveProfile();
-                await SaveJsonToFile(saveFile, jsonString);
+                var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
+                await SaveJsonToFileAsync(saveFile, jsonBytes);
                 await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
             }
         } catch (Exception ex) {
@@ -201,12 +218,24 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         return result.Folder.Path ?? string.Empty;
     }
 
-    private async Task SaveJsonToFile(string filePath, string jsonData) {
+    private async Task SaveJsonToFileAsync(string filePath, string jsonData) {
         await using var streamWriter = new StreamWriter(filePath, false);
         await streamWriter.WriteAsync(jsonData);
     }
 
-    private async Task<string> LoadJsonFromFile(string filePath) {
+    private async Task SaveJsonToFileAsync(string filePath, ReadOnlyMemory<byte> jsonData, CancellationToken cancellationToken = default) {
+        if (string.IsNullOrWhiteSpace(filePath)) throw new ArgumentException("File path cannot be null or whitespace.", nameof(filePath));
+        if (jsonData.IsEmpty) return;
+
+        var directory = Path.GetDirectoryName(filePath);
+        if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
+
+        await using var fileStream = new FileStream(filePath, FileMode.Create,FileAccess.Write,FileShare.None, bufferSize: 81920, useAsync: true);
+        await fileStream.WriteAsync(jsonData, cancellationToken).ConfigureAwait(false);
+        await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<string> LoadJsonFromFileAsync(string filePath) {
         using var reader = new StreamReader(filePath);
         return await reader.ReadToEndAsync();
     }

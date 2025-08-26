@@ -21,24 +21,23 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         SetTabBarState(true);
     }
 
-    protected override void OnAppearing() {
+    protected override async void OnAppearing() {
         base.OnAppearing();
         if (BindingContext is OperateViewModel viewModel) {
+            await viewModel.LoadPanelsAsync();
             PanelView.Panel = null;
-            viewModel.SelectPanelCommand.Execute(viewModel.CurrentPanelIndex);
+            //viewModel.SelectPanelCommand.Execute(viewModel.CurrentPanelIndex);
         }
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {
-                _logger.LogDebug("ViewModelOnPropertyChanged: ActivePanel='Valid'");
                 PanelView.Panel = viewModel.ActivePanel;
                 PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
                 BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
             } else {
                 PanelView.Panel = null;
-                //_logger.LogDebug("ViewModelOnPropertyChanged: BindingContext is not OperateViewModel");
             }
         }
     }

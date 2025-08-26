@@ -14,8 +14,8 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
     [ObservableProperty] private bool _showWelcomePage;
-    [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private Panel? _activePanel;
+    [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private bool _isMaximized;
 
     public string IconMinimize => "minimize_2";
@@ -25,7 +25,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     public ObservableCollection<Panel> Panels { get; private set; }
 
     public bool HideWelcomePage => !ShowWelcomePage;
-    public bool HasPanels => Panels?.Any() == true || ShowWelcomePage;
+    public bool HasPanels => Panels?.Any() == true;
     public bool HasNoPanels => !HasPanels;
     public ObservableCollection<int> PanelIndicators { get; private set; } = [];
 
@@ -34,17 +34,16 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
-        Panels = [];        // Just set it to nothing until it is re-assigned. 
-        _ = Task.Run(async () => await LoadPanelsAsync());
+        Panels = [];  
     }
-    
-    private async Task LoadPanelsAsync() {
+
+    public async Task LoadPanelsAsync() {
         try {
-            var profile = _profileService.ActiveProfile;
-            Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
-            ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
-            
             MainThread.BeginInvokeOnMainThread(() => {
+                var profile = _profileService.ActiveProfile;
+                Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
+                ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
+            
                 UpdatePanelIndicators();
                 
                 CurrentPanelIndex = -1;
@@ -53,6 +52,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
                 OnPropertyChanged(nameof(HasPanels));
                 OnPropertyChanged(nameof(HasNoPanels));
                 OnPropertyChanged(nameof(PanelIndicators));
+                OnPropertyChanged(nameof(ShowWelcomePage));
             });
         } catch (Exception ex) {
             _logger.LogError("Error loading panels: {ExMessage}", ex.Message);
@@ -65,10 +65,10 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
             PanelIndicators.Add(i);
         }
     }
-
     
     [RelayCommand]
     private void SwipeLeft() {
+        ShowWelcomePage = Panels?.Count <= 0 ? true : false;
         if (Panels?.Any() == true) {
             SelectPanel((CurrentPanelIndex + 1) % Panels.Count);
         }
@@ -76,6 +76,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     private void SwipeRight() {
+        ShowWelcomePage = Panels?.Count <= 0 ? true : false;
         if (Panels?.Any() == true) {
             SelectPanel(CurrentPanelIndex <= 0 ? Panels.Count - 1 : CurrentPanelIndex - 1);
         }
@@ -93,6 +94,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(ShowWelcomePage));
         OnPropertyChanged(nameof(HideWelcomePage));
         UpdatePanelIndicators();
-        ShowWelcomePage = false;
+        ShowWelcomePage = Panels?.Count <= 0 ? true : false;
     }
 }

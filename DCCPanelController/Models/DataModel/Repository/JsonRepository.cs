@@ -43,56 +43,52 @@ public static class JsonRepository {
         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
     }
 
-    public static async Task<Profile> LoadAsync(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
+    public static async Task<Profile?> LoadAsync(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
         using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}")) {
             try {
                 if (File.Exists(filePath)) {
                     try {
                         var jsonString = await File.ReadAllTextAsync(filePath);
-                        var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? new Profile(profileName);
+                        var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
                         profile.FixLoadedPanels();
                         return profile;
                     } catch (Exception ex) {
                         Logger.LogError("Could not deserialize settings. New set created: {Message}",ex.Message);
-                        return new Profile(profileName);
+                        return null;
                     }
                 }
                 Logger.LogInformation("File not found: {profileName}",profileName);
-                var newProfile = new Profile(profileName);
-                LoggingLevelHelper.SetLogLevel(newProfile.Settings.LogLevel);
-                return newProfile;
+                return null;
             } catch (Exception ex) {
                 Logger.LogWarning("Could not access Profile. New Profile created. {Message}",ex.Message);
-                return new Profile(profileName);
+                return null;
             }
         }
     }
     
-    public static Profile Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
+    public static Profile? Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
         using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}")) {
             try {
                 if (File.Exists(filePath)) {
                     try {
                         var jsonString = File.ReadAllText(filePath);
-                        var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? new Profile(profileName);
+                        var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
                         profile.FixLoadedPanels();
                         return profile;
                     } catch (Exception ex) {
                         Logger.LogError("Could not deserialize settings. New set created: {Message}",ex.Message);
-                        return new Profile(profileName);
+                        return null;
                     }
                 }
                 Logger.LogInformation("File not found: {profileName}",profileName);
-                var newProfile = new Profile(profileName);
-                LoggingLevelHelper.SetLogLevel(newProfile.Settings.LogLevel);
-                return newProfile;
+                return null;
             } catch (Exception ex) {
                 Logger.LogWarning("Could not access Profile. New Profile created. {Message}",ex.Message);
-                return new Profile(profileName);
+                return null;
             }
         }
     }
@@ -100,7 +96,7 @@ public static class JsonRepository {
     /// <summary>
     ///     Deletes the specified file if it exists.
     /// </summary>
-    public static async Task Delete(Profile profile) {
+    public static void Delete(Profile profile) {
         try {
             var filePath = GetStorageFilePath(profile.Filename);
             if (File.Exists(filePath)) File.Delete(filePath);
@@ -133,7 +129,11 @@ public static class JsonRepository {
             return null;
         }
     }
-    
+
+    /// <summary>
+    /// Retrieves the directory path used to store profile-related configuration files.
+    /// Ensures the directory exists by creating it if necessary.
+    /// </summary>
     private static string GetProfileStorageDir() {
         var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
         if (!Directory.Exists(storageDir)) Directory.CreateDirectory(storageDir);
@@ -145,19 +145,13 @@ public static class JsonRepository {
     ///     associated with the provided profile name. Creates the necessary storage
     ///     directory if it does not already exist.
     /// </summary>
-    /// <param name="profileName">The name of the profile file. Defaults to "default" if not provided.</param>
-    /// <returns>A string representing the absolute file path for the specified profile's storage location.</returns>
-    /// <exception cref="Exception">
-    ///     Thrown if an error occurs while determining or creating the storage directory or full file
-    ///     path.
-    /// </exception>
     public static string GetStorageFilePath(string profileName = "default") {
         try {
             var storageDir = GetProfileStorageDir();
-            var storageFile = Path.Combine(storageDir, profileName + ".json");
-            return storageFile;
+            var file = profileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)  ? profileName : profileName + ".json";
+            return Path.Combine(storageDir, file);
         } catch (Exception ex) {
-            Logger.LogCritical("Unable to determine where to store the Config File. {Message}",ex.Message);
+            Logger.LogCritical("Unable to determine where to store the Config File. {Message}", ex.Message);
             throw;
         }
     }
