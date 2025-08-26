@@ -82,8 +82,9 @@ public partial class PanelEditor : ContentPage {
         }
     }
 
-    private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) {
-        Console.WriteLine($"Bottom Sheet State = {e.NewState}");
+    private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) { }
+    private void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
+        _viewModel.BottomSheetOnStateChanged(sender, e);
     }
     
     #region Manage the showing and hiding of the Palettes
@@ -183,7 +184,4 @@ public partial class PanelEditor : ContentPage {
     }
     #endregion
 
-    private void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
-        _viewModel.BottomSheetOnStateChanged(sender, e);
-    }
 }

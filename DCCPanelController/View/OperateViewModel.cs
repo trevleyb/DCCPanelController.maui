@@ -13,10 +13,13 @@ namespace DCCPanelController.View;
 public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
-    [ObservableProperty] private bool _showWelcomePage;
     [ObservableProperty] private Panel? _activePanel;
     [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private bool _isMaximized;
+
+    [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
+    [ObservableProperty] private bool _showWelcomePage;
+    public bool HideWelcomePage => !ShowWelcomePage;
 
     public string IconMinimize => "minimize_2";
     public string IconMaximize => "maximize_2";
@@ -24,7 +27,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     public Color BackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
     public ObservableCollection<Panel> Panels { get; private set; }
 
-    public bool HideWelcomePage => !ShowWelcomePage;
     public bool HasPanels => Panels?.Any() == true;
     public bool HasNoPanels => !HasPanels;
     
@@ -91,6 +93,9 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(ActivePanel));
         OnPropertyChanged(nameof(ShowWelcomePage));
         OnPropertyChanged(nameof(HideWelcomePage));
+        OnPropertyChanged(nameof(HasPanels));
+        OnPropertyChanged(nameof(HasNoPanels));
+        OnPropertyChanged(nameof(BackgroundColor));
         UpdatePanelIndicators();
         ShowWelcomePage = Panels?.Count <= 0 ? true : false;
     }

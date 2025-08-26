@@ -2,7 +2,6 @@
 
 <ContentPage
     BackgroundColor="{Binding BackgroundColor, Converter={StaticResource ColorFallbackConverter}}"
-    Title="{Binding ActivePanel.Title, FallbackValue='DCC Panel Controller'}"
     x:Name="OperateRoot"
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="view:OperateViewModel"
@@ -133,10 +132,20 @@
                                         Padding="10"
                                         VerticalOptions="End">
                                         <Button
+                                            WidthRequest="150"
                                             Clicked="ButtonInstructions_OnClicked"
-                                            Margin="0,10,0,10"
+                                            Margin="0,10,10,10"
                                             Style="{StaticResource ButtonOutline}"
                                             Text="Instructions"/>
+                                            
+                                        <Button
+                                            IsVisible="{Binding HasPanels}"
+                                            WidthRequest="150"
+                                            Clicked="ButtonCloseInstructions"
+                                            Margin="10,10,0,10"
+                                            Style="{StaticResource ButtonOutline}"
+                                            Text="Close"/>
+
                                     </HorizontalStackLayout>
                                 </StackLayout>
                             </Grid>

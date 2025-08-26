@@ -1,4 +1,7 @@
 using System.ComponentModel;
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Core;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Storage;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Jmri;
@@ -6,6 +9,7 @@ using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Clients.WiThrottle;
 using DCCPanelController.MauiMauiView.Helpers;
 using DCCPanelController.Models.DataModel.Repository;
+using DCCPanelController.View.Components;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
@@ -17,7 +21,7 @@ using SelectionChangedEventArgs = Syncfusion.Maui.Toolkit.SegmentedControl.Selec
 namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
-    
+
     private readonly ILogger<SettingsPage> _logger;
     private readonly SettingsPageViewModel? _pageViewModel;
 
@@ -56,6 +60,8 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             BottomSheet.ShowGrabber = true;
             BottomSheet.EnableSwiping = true;
             BottomSheet.CollapseOnOverlayTap = true;
+            BottomSheet.CollapsedHeight = 0;
+            BottomSheet.Background = Colors.WhiteSmoke;
             BottomSheet.State = BottomSheetState.HalfExpanded;
             if (size.Height > 150) {
                 BottomSheet.State = BottomSheetState.FullExpanded;
@@ -65,14 +71,17 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         }
     }
 
-    private async void SwitchProfileAction(object? sender, EventArgs e) {
-        if (_pageViewModel is not null) {
-            var choices = _pageViewModel.ProfileService.GetProfileNames().ToArray();
-            var selected = await DisplayActionSheet("Pick a Profile", "Cancel", null , FlowDirection.LeftToRight, choices);
-            if (selected is not null && selected != "Cancel") {
-                await _pageViewModel.SwitchProfileAsync(selected);
-                Console.WriteLine($"Selected: {selected}");
-            }
+    public void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
+        if (e.NewState is BottomSheetState.Hidden or BottomSheetState.Collapsed) {
+            if (sender is SfBottomSheet bottomSheet) bottomSheet.Content = null!;
+            _pageViewModel?.IsNavigationDrawerOpen = false;
+        } else {
+            _pageViewModel?.IsNavigationDrawerOpen = true;
         }
+    }
+    
+    private void IsProfileActiveChanged(object? sender, EventArgs eventArgs) {
+        _pageViewModel?.MarkActiveProfileDefault();;
+        OnPropertyChanged(nameof(_pageViewModel.IsProfileDefault));
     }
 }

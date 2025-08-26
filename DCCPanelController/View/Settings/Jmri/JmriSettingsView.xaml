@@ -44,8 +44,8 @@
             <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
                    Text="Device Name (unique name for this Device)"/>
             <HorizontalStackLayout>
-                <Border Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
-                    <Entry HorizontalOptions="Fill" Text="{Binding JmriSettings.Name}"/>
+                <Border WidthRequest="250" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                    <Entry Margin="10,0,10,0" HorizontalOptions="Fill" Text="{Binding JmriSettings.Name}"/>
                 </Border>
                 <ImageButton Margin="2,0,0,0" Aspect="Center"
                              Source="target.png" WidthRequest="15" HeightRequest="15"
@@ -59,7 +59,7 @@
         </VerticalStackLayout>
 
         <HorizontalStackLayout Margin="10,10,0,0">
-            <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="200"/>
+            <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="260"/>
             <Switch IsToggled="{Binding JmriSettings.SetAutomatically}"
                     OnColor="{StaticResource Primary}"
                     ThumbColor="{StaticResource Gray200}"
@@ -147,7 +147,7 @@
             Margin="20,0,20,20"
             Style="{StaticResource ButtonOutline}"
             Text="{Binding ConnectLabel}"
-            WidthRequest="150"/>
+            WidthRequest="180"/>
 
         <BoxView
             BackgroundColor="{StaticResource Primary}"

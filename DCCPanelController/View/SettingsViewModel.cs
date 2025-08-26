@@ -13,6 +13,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Components;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
@@ -29,27 +30,36 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _supportsSignals;
     [ObservableProperty] private bool _supportsLights;
     [ObservableProperty] private Capabilities _capabilities = new Capabilities();
-    
+
     [ObservableProperty] private bool _isJmriServer;
     [ObservableProperty] private bool _isWiThrottle;
     [ObservableProperty] private bool _isSimulator;
-    [ObservableProperty] private bool _isProfileActive;
     
+    [NotifyPropertyChangedFor(nameof(IsNavigationDrawerClosed))]
+    [ObservableProperty] private bool _isNavigationDrawerOpen;
+    public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
+    
+    [NotifyPropertyChangedFor(nameof(IsProfileNotDefault))]
+    [ObservableProperty] private bool _isProfileDefault;
+    public bool IsProfileNotDefault => !IsProfileDefault;
+
     [ObservableProperty] private int _selectedSegmentIndex;
     [ObservableProperty] private Microsoft.Maui.Controls.View? _currentSettingsView;
 
     public Models.DataModel.Settings? Settings => Profile.Settings;
-    public Profile Profile => ProfileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"SettingsViewModel: Active profile is not defined.");
+    public Profile Profile => ProfileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "SettingsViewModel: Active profile is not defined.");
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     public readonly ProfileService ProfileService;
     private readonly ILogger<SettingsViewModel> _logger;
-    
+
     public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         ProfileService = profileService;
     }
 
     public void OnProfileChanged() {
+        IsProfileDefault = ProfileService.IsDefault();
+
         OnPropertyChanged(nameof(Profile));
         OnPropertyChanged(nameof(Settings));
         OnPropertyChanged(nameof(CurrentSettingsView));
@@ -62,10 +72,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(Profile.Settings.UseClickSounds));
         OnPropertyChanged(nameof(Profile.Settings.ConnectOnStartup));
         OnPropertyChanged(nameof(Profile.Settings.SetTurnoutStatesOnStartup));
-
-        IsProfileActive = ProfileService.IsDefault();
     }
-    
+
     [RelayCommand]
     public async Task SaveSettingsAsync() {
         var reconnect = ConnectionService.IsConnected;
@@ -75,10 +83,24 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
     }
 
-    public async Task SwitchProfileAsync(string profileName) {
-        var profile = await ProfileService.LoadAsync(profileName);
-        if (profile is null) throw new ApplicationException($"Failed to load profile: {profileName}");
-        OnPropertyChanged(nameof(Profile));
+    private async Task SwitchProfileByIndexAsync(int index) {
+        var items = ProfileService.GetProfileFileNames();
+        if (items.Count > 0 && index >= 0 && index < items.Count) {
+            await SwitchProfileByFilenameAsync(items[index]);
+        }
+    }
+
+    private async Task SwitchProfileByFilenameAsync(string fileName) {
+        var profile = await ProfileService.LoadAsync(fileName);
+        if (profile is null) throw new ApplicationException($"Failed to load profile: {fileName}");
+    }
+
+    [RelayCommand]
+    public async Task SwitchProfileAsync() {
+        var choices = ProfileService.GetProfileNames();
+        var index = await ProfileSelector.ShowProfileSelector(choices);
+        if (index is {} selectedProfile and >= 0) await SwitchProfileByIndexAsync(selectedProfile);
+        OnProfileChanged();
         await DisplayAlertHelper.DisplayToastAlert($"Switched Active Profile");
     }
 
@@ -101,6 +123,15 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         OnProfileChanged();
     }
 
+    /// <summary>
+    /// If this profile is already the default, then there is no changed.
+    /// If this one is not the default, then we will mark it as the default 
+    /// </summary>
+    public void MarkActiveProfileDefault() {
+        if (!ProfileService.IsDefault()) ProfileService.MarkAsDefault();
+        IsProfileDefault = true;
+    }
+
     public void SetCapabilities() {
         Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
     }
@@ -118,13 +149,14 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             view = new WiThrottleSettingsView(Settings.ClientSettings, ConnectionService);
         } else if (IsSimulator) {
             Settings.ClientSettings = CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator);
-            view = new SimulatorSettingsView(Settings.ClientSettings, ConnectionService);            
+            view = new SimulatorSettingsView(Settings.ClientSettings, ConnectionService);
         }
         SetCapabilities();
         return view;
     }
 
     public void SetActiveSettings() => SetActiveSettings(Settings?.ClientSettings?.Type ?? DccClientType.Simulator);
+
     public void SetActiveSettings(DccClientType type) {
         switch (type) {
         case DccClientType.Simulator:
@@ -178,7 +210,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
             if (result) {
-                var fileName = await PromptUserForConfigFile(); 
+                var fileName = await PromptUserForConfigFile();
                 if (!string.IsNullOrEmpty(fileName)) {
                     var loadedJson = await LoadJsonFromFileAsync(fileName);
                     await ProfileService.UploadProfileAsync(loadedJson);
@@ -206,7 +238,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
         }
     }
-    
+
     private static async Task<string> PromptUserForConfigFile() {
         var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
         return result is not null ? result.FullPath : string.Empty;
@@ -230,7 +262,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         var directory = Path.GetDirectoryName(filePath);
         if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
 
-        await using var fileStream = new FileStream(filePath, FileMode.Create,FileAccess.Write,FileShare.None, bufferSize: 81920, useAsync: true);
+        await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true);
         await fileStream.WriteAsync(jsonData, cancellationToken).ConfigureAwait(false);
         await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
     }

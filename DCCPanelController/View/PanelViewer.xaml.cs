@@ -1,3 +1,4 @@
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using Microsoft.Extensions.Logging;
 
@@ -19,12 +20,13 @@ public partial class PanelViewer {
         _viewModel = viewModel;
         _viewModel.NavigationService = Navigation;
         BindingContext = viewModel;
+        Title = $"Panels Viewer ({_viewModel.Panels?.Profile?.ProfileName ?? "Unknown Profile"})";
         
         DeviceDisplay.MainDisplayInfoChanged += OnDisplayInfoChanged;
         
         // Make sure we refresh on a change in the Panels Collection
         // ---------------------------------------------------------
-        _viewModel.PropertyChanged += (sender, args) => {
+        _viewModel?.PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(PanelViewerViewModel.Panels)) SetActiveZoomIcons();
         };
     }

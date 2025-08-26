@@ -25,6 +25,8 @@ public class ProfileService {
     // Access Helpers
     // =====================
     public List<string> GetProfileNames() => ProfilesIndex?.Profiles.Select(x => x.ProfileName).ToList() ?? new List<string>();
+    public List<string> GetProfileFileNames() => ProfilesIndex?.Profiles.Select(x => x.FileName).ToList() ?? new List<string>();
+    
     public void MarkAsDefault(Profile profile) => ProfilesIndex.SetAsDefault(profile);
     public void MarkAsDefault() => ProfilesIndex.SetAsDefault(ActiveProfile ?? throw new ArgumentNullException(nameof(ActiveProfile), "Active profile is not defined."));
     public bool IsDefault(Profile profile) => ProfilesIndex.IsDefault(profile);
@@ -332,26 +334,26 @@ public class ProfileService {
     }
 
     // Load (sync) by filename or index item and make it active
-    public Profile Load(string fileName, bool markAsDefault = true) {
+    public Profile Load(string fileName, bool markAsDefault = false) {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("Filename is required.", nameof(fileName));
         var profile = JsonRepository.Load(fileName) ?? throw new ApplicationException($"Profile not found: {fileName}");
         SetActive(profile, markAsDefault);
         return profile;
     }
 
-    public Profile Load(ProfileIndexItem item, bool markAsDefault = true) {
+    public Profile Load(ProfileIndexItem item, bool markAsDefault = false) {
         ArgumentNullException.ThrowIfNull(item);
         return Load(item.FileName, markAsDefault);
     }
 
-    public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = true) {
+    public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = false) {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("Filename is required.", nameof(fileName));
         var profile = await JsonRepository.LoadAsync(fileName) ?? throw new ApplicationException($"Profile not found: {fileName}");
         SetActive(profile, markAsDefault);
         return profile;
     }
 
-    public async Task<Profile> LoadAsync(ProfileIndexItem item, bool markAsDefault = true) {
+    public async Task<Profile> LoadAsync(ProfileIndexItem item, bool markAsDefault = false) {
         ArgumentNullException.ThrowIfNull(item);
         return await LoadAsync(item.FileName, markAsDefault);
     }

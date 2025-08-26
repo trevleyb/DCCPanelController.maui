@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Reflection;
 using System.Windows.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
@@ -13,13 +14,10 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<OperatePage> _logger;
-    public OperateViewModel ViewModel;
-    public ICommand SelectPanelCommandProxy => ViewModel.SelectPanelCommand;
     
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel) {
         InitializeComponent();
         _logger = logger;
-        ViewModel = viewModel;
         BindingContext = viewModel;
         viewModel.PropertyChanged += ViewModelOnPropertyChanged;
         SetTabBarState(true);
@@ -27,7 +25,8 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     protected override async void OnAppearing() {
         base.OnAppearing();
-        
+        Title = "DCC Panel Controller";
+
         // We reload the Panels at this point, whenever this screen is appearing
         // because data may have changed and is out of sync with the ViewModel
         // --------------------------------------------------------------------------
@@ -41,9 +40,10 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (BindingContext is OperateViewModel {ActivePanel: not null} viewModel ) {
+                Title = $"{viewModel.ActivePanel.Title}";
                 PanelView.Panel = viewModel.ActivePanel;
-                PanelView.BackgroundColor = viewModel.ActivePanel.PanelBackgroundColor;
-                BackgroundColor = viewModel.ActivePanel.DisplayBackgroundColor;
+                PanelView.BackgroundColor = viewModel.ActivePanel?.PanelBackgroundColor;
+                BackgroundColor = viewModel.ActivePanel?.DisplayBackgroundColor;
             } else {
                 PanelView.Panel = null;
             }
@@ -67,6 +67,10 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         Navigation.PushAsync(new HelpPage());
     }
 
+    private void ButtonCloseInstructions(object? sender, EventArgs e) {
+        if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) viewModel.SelectPanel(0);
+    }
+
     private void HideUnHideTabBar(object? sender, EventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
             SetTabBarState(!viewModel.IsMaximized);    
@@ -83,4 +87,5 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         }
         if (BindingContext is OperateViewModel viewModel) viewModel.IsMaximized = state;
     }
+
 }

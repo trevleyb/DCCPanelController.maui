@@ -25,8 +25,12 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="upload_active.png"/>
-        <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="download_active.png"/>
+        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding AddProfileCommand}"    IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding DeleteProfileCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding SwitchProfileCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=repeat}"/>
+
+        <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=upload}"/>
+        <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
     </ContentPage.ToolbarItems>
 
     <Grid>
@@ -56,29 +60,9 @@
                                         </Image.Behaviors>
                                     </Image>
 
-                                    <Grid Grid.Column="1" Grid.Row="0" ColumnDefinitions="230,30,30,30"
-                                          Margin="5,0,10,0">
+                                    <Grid Grid.Column="1" Grid.Row="0" Margin="5,0,10,0">
                                         <Label Grid.Column="0" Text="Profile Settings"
                                                Style="{StaticResource LargeLabel}" TextColor="{StaticResource Primary}"/>
-                                        <ImageButton Grid.Column="1" VerticalOptions="Center" Margin="4,0,4,0" Clicked="SwitchProfileAction"
-                                                     Source="play_circle.png">
-                                            <ImageButton.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
-                                            </ImageButton.Behaviors>
-                                        </ImageButton>
-                                        <ImageButton Grid.Column="2" VerticalOptions="Center" Margin="4,0,4,0" Command="{Binding AddProfileCommand}"
-                                                     Source="plus_circle.png">
-                                            <ImageButton.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
-                                            </ImageButton.Behaviors>
-                                        </ImageButton>
-                                        <ImageButton Grid.Column="3" VerticalOptions="Center" Margin="4,0,4,0" Command="{Binding DeleteProfileCommand}"
-                                                     Source="minus_circle.png">
-                                            <ImageButton.Behaviors>
-                                                <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
-                                            </ImageButton.Behaviors>
-                                        </ImageButton>
-
                                     </Grid>
                                 </Grid>
                             </toolkit:Expander.Header>
@@ -86,13 +70,14 @@
                                 <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
                                     <!-- Profile Name -->
                                     <HorizontalStackLayout VerticalOptions="Center">
-                                        <Grid ColumnDefinitions="250,155,20" Margin="0,10,0,0">
-                                            <Label Grid.Column="0"  Text="Profile Name" Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
-                                            <Border Grid.Column="1" WidthRequest="150" Padding="10,0,0,0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                                        <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                            <Label Grid.Column="0" Text="Profile Name"
+                                                   Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
+                                            <Border Grid.Column="1" Padding="10,0,0,0" HeightRequest="35"
+                                                    Style="{StaticResource EntryBorderStyle}">
                                                 <Entry Text="{Binding Profile.ProfileName}"
                                                        HorizontalOptions="Fill"/>
                                             </Border>
-                                            <CheckBox Grid.Column="2" IsChecked="{Binding IsProfileActive}"/>
                                         </Grid>
                                     </HorizontalStackLayout>
 
@@ -165,7 +150,7 @@
                                  HorizontalOptions="FillAndExpand"/>
                     </StackLayout>
 
-                    <StackLayout Margin="10,0,10,0" Grid.Row="1" HeightRequest="120">
+                    <Grid Margin="10,0,10,0" Grid.Row="1" HeightRequest="200">
                         <toolkit:Expander IsExpanded="True" x:Name="ConnectionExpander" Margin="0,0,10,0">
                             <toolkit:Expander.Header>
                                 <Grid>
@@ -192,49 +177,39 @@
 
                             <toolkit:Expander.Content>
                                 <StackLayout Margin="0,10,0,0">
-                                    <Grid ColumnDefinitions="310,auto">
-                                        <textInputLayout:SfSegmentedControl
-                                            Grid.Column="0"
-                                            x:Name="SelectionSegmentControl"
-                                            HorizontalOptions="Start"
-                                            Stroke="{StaticResource Primary}"
-                                            EnableRippleEffect="True"
-                                            SelectedIndex="{Binding SelectedSegmentIndex, Mode=TwoWay}">
-                                            <textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
-                                                <textInputLayout:SelectionIndicatorSettings
-                                                    SelectionIndicatorPlacement="Fill"
-                                                    Background="{StaticResource Primary}"/>
-                                            </textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
-                                            <textInputLayout:SfSegmentedControl.ItemsSource>
-                                                <x:Array Type="{x:Type x:String}">
-                                                    <x:String>Simulator</x:String>
-                                                    <x:String>JMRI</x:String>
-                                                    <x:String>WiThrottle</x:String>
-                                                </x:Array>
-                                            </textInputLayout:SfSegmentedControl.ItemsSource>
-                                        </textInputLayout:SfSegmentedControl>
+                                    <textInputLayout:SfSegmentedControl
+                                        WidthRequest="350"
+                                        x:Name="SelectionSegmentControl"
+                                        BackgroundColor="White"
+                                        HorizontalOptions="Start"
+                                        Stroke="{StaticResource Primary}"
+                                        EnableRippleEffect="True"
+                                        AutoScrollToSelectedSegment="True"
+                                        ShowSeparator="True"
+                                        SegmentWidth="110"
+                                        SelectedIndex="{Binding SelectedSegmentIndex, Mode=TwoWay}">
+                                        <textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
+                                            <textInputLayout:SelectionIndicatorSettings
+                                                SelectionIndicatorPlacement="Fill"
+                                                Background="{StaticResource Primary}"/>
+                                        </textInputLayout:SfSegmentedControl.SelectionIndicatorSettings>
+                                        <textInputLayout:SfSegmentedControl.ItemsSource>
+                                            <x:Array Type="{x:Type x:String}">
+                                                <x:String>Simulator</x:String>
+                                                <x:String>JMRI</x:String>
+                                                <x:String>WiThrottle</x:String>
+                                            </x:Array>
+                                        </textInputLayout:SfSegmentedControl.ItemsSource>
+                                    </textInputLayout:SfSegmentedControl>
 
-                                        <Button Grid.Column="1"
-                                                HorizontalOptions="Center"
-                                                VerticalOptions="Center"
-                                                HeightRequest="30"
-                                                WidthRequest="30"
-                                                Clicked="EditConnectionButtonClicked"
-                                                Padding="0"
-                                                Margin="0,0,0,0"
-                                                Style="{StaticResource ButtonOutline}"
-                                                ImageSource="edit.png"/>
-
-                                    </Grid>
-                                    <StackLayout>
+                                    <StackLayout WidthRequest="350" HorizontalOptions="Start">
                                         <Label Margin="10,0,0,0" Text="Server Capabilities"
-                                               Style="{StaticResource MicroLabel}"/>
+                                               Style="{StaticResource MicroLabel}" HorizontalOptions="Center"/>
                                         <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}"
-                                                        Margin="10,0,30,0">
+                                                        HeightRequest="40" Margin="10,0,30,0" HorizontalOptions="Center">
                                             <CollectionView.ItemsLayout>
                                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
                                             </CollectionView.ItemsLayout>
-
                                             <CollectionView.ItemTemplate>
                                                 <DataTemplate x:DataType="helpers:CapabilityIcon">
                                                     <Grid RowDefinitions="auto,15">
@@ -283,14 +258,24 @@
                                             </CollectionView.ItemTemplate>
                                         </CollectionView>
                                     </StackLayout>
+                                    
+                                    <Button HorizontalOptions="Start"
+                                            VerticalOptions="Center"
+                                            WidthRequest="350"
+                                            Clicked="EditConnectionButtonClicked"
+                                            Padding="10"
+                                            Margin="0,10,0,10"
+                                            Text="Edit Connection Details"
+                                            Style="{StaticResource ButtonOutline}"
+                                            ImageSource="edit.png"/>
+
                                 </StackLayout>
                             </toolkit:Expander.Content>
                         </toolkit:Expander>
-                    </StackLayout>
-
+                    </Grid>
                 </Grid>
             </ScrollView>
-            <Grid Grid.Row="1" ColumnDefinitions="*" HorizontalOptions="Center"
+            <Grid Grid.Row="1" ColumnDefinitions="*,*,*" HorizontalOptions="Center"
                   VerticalOptions="Center">
                 <Button Grid.Column="0"
                         ImageSource="save.png"
@@ -298,10 +283,37 @@
                         HorizontalOptions="Center"
                         VerticalOptions="Center"
                         IsEnabled="{Binding IsNotBusy}"
-                        Margin="0,0,0,0"
+                        Margin="5,0,5,0"
                         Style="{StaticResource ButtonOutline}"
-                        Text="Save Settings"
-                        WidthRequest="200">
+                        Text="Save"
+                        WidthRequest="120">
+                    <Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                    </Button.Behaviors>
+                </Button>
+                <Button Grid.Column="2"
+                        ImageSource="star.png"
+                        Clicked="IsProfileActiveChanged"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        IsEnabled="{Binding IsProfileNotDefault}"
+                        Margin="5,0,5,0"
+                        Style="{StaticResource ButtonOutline}"
+                        Text="Default"
+                        WidthRequest="120">
+                    <Button.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                    </Button.Behaviors>
+                </Button>
+                <Button Grid.Column="1"
+                        ImageSource="repeat.png"
+                        Command="{Binding SwitchProfileCommand}"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        Margin="5,0,5,0"
+                        Style="{StaticResource ButtonOutline}"
+                        Text="Switch"
+                        WidthRequest="120">
                     <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>
@@ -313,6 +325,7 @@
         <textInputLayout:SfBottomSheet
             x:Name="BottomSheet"
             CornerRadius="15, 15, 0, 0"
+            StateChanged="BottomSheetOnStateChanged"
             HalfExpandedRatio="0.5" ContentPadding="10">
             <textInputLayout:SfBottomSheet.BottomSheetContent/>
         </textInputLayout:SfBottomSheet>

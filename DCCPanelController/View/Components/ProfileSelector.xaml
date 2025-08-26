@@ -1,0 +1,63 @@
+<ContentView
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    Padding="0"
+    Margin="15"
+    WidthRequest="300"
+    HeightRequest="300"
+    x:DataType="components:ProfileSelector"
+    x:Class="DCCPanelController.View.Components.ProfileSelector">
+
+    <ContentView.Resources>
+        <Style x:Key="SelectableItemStyle" TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="CornflowerBlue"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentView.Resources>
+    
+    <Grid RowDefinitions="30,*,40">
+        <Grid Grid.Row="0" RowDefinitions="25,3">
+            <Label Grid.Row="0" Text="Select a Profile" HorizontalOptions="Center" VerticalOptions="Center"/>
+            <BoxView Grid.Row="1" Color="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
+                     VerticalOptions="Center"/>
+        </Grid>
+        <Grid Grid.Row="1">
+            <CollectionView x:Name="ProfilesList"
+                SelectionChanged="ProfileSelectionChanged"
+                SelectedItem="{Binding SelectedItem}"
+                ItemsSource="{Binding Items}"  
+                SelectionMode="Single">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="components:ProfileItem">
+                        <Grid RowDefinitions="30,3">
+                            <Label Grid.Row="0" Text="{Binding Name}" Style="{StaticResource MediumLabel}"
+                                   HorizontalOptions="Fill" VerticalOptions="Center"/>
+                            <BoxView Grid.Row="1" Color="LightGray" HeightRequest="1" HorizontalOptions="Fill"
+                                     VerticalOptions="Center"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        <HorizontalStackLayout Grid.Row="2" HorizontalOptions="Center" >
+            <Button Text="Select" Margin="10" IsEnabled="{Binding IsOkEnabled}" HorizontalOptions="Start" WidthRequest="100" Style="{StaticResource ButtonOutline}" Clicked="OnSelectButtonClicked"/>
+            <Button Text="Cancel" Margin="10" HorizontalOptions="End" WidthRequest="100" Style="{StaticResource ButtonOutline}" Clicked="OnCancelButtonClicked"/>
+        </HorizontalStackLayout>
+    </Grid>
+
+</ContentView>
