@@ -24,15 +24,16 @@
         <MauiEnableXamlCBindingWithSourceCompilation>true</MauiEnableXamlCBindingWithSourceCompilation>
         <MauiStrictXamlCompilation>false</MauiStrictXamlCompilation>
 
-        <!-- Display name -->
         <ApplicationTitle>DCC Panel Controller</ApplicationTitle>
-
-        <!-- App Identifier -->
         <ApplicationId>com.trevleyb.dccpanelcontroller</ApplicationId>
+        <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
+        <ApplicationVersion>$(GitHeight)</ApplicationVersion>
 
-        <!-- Versions -->
-        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-        <ApplicationVersion>1</ApplicationVersion>
+        <Title>DCC Panel Controller</Title>
+        <Product>DCC Panel Controller</Product>
+        <Authors>Trevor Leybourne</Authors>
+        <Company>trevleyb</Company>
+        <LangVersion>preview</LangVersion>
 
         <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
         <WindowsPackageType>None</WindowsPackageType>
@@ -43,11 +44,7 @@
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</SupportedOSPlatformVersion>
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
         <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
-        <LangVersion>preview</LangVersion>
-        <Title>DCC Panel Controller</Title>
-        <Authors>Trevor Leybourne</Authors>
-        <Company>trevleyb</Company>
-        <Product>DCC Panel Controller</Product>
+
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -57,6 +54,13 @@
     <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
         <NoWarn>1701;1702;CS1998;XC0103</NoWarn>
     </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Nerdbank.GitVersioning" 
+                          Version="3.7.115" 
+                          PrivateAssets="all" 
+                          Condition="!Exists('packages.config')" />
+    </ItemGroup>
 
     <ItemGroup>
         <!-- Base icons, as-is -->
@@ -77,11 +81,11 @@
         <!-- App Icon -->
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
+        
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
-        <MauiImage Include="Resources\Images\*"/>
         <MauiFont Include="Resources\Fonts\*"/>
-        <MauiAsset Include="Resources\Help\**\*"/>
+        <MauiImage Include="Resources\Images\*"/>
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
@@ -247,9 +251,6 @@
         <Compile Update="View\AboutPage.xaml.cs">
             <DependentUpon>AboutPage.xaml</DependentUpon>
             <SubType>Code</SubType>
-        </Compile>
-        <Compile Update="View\AboutViewModel.cs">
-            <DependentUpon>AboutPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\PropertPages\DynamicPropertyPage.xaml.cs">
             <DependentUpon>DynamicPropertyPage.xaml</DependentUpon>

@@ -1,0 +1,10 @@
+{
+  "Version": "2025.08.27-1",
+  "Files": [
+    "index.json",
+    "getting-started.md",
+    "turnouts.md",
+    "images/overview.png",
+    "images/turnouts.png"
+  ]
+}

@@ -83,11 +83,17 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         }
     }
 
-    private void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new HelpPage());
+    private async void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
+        await HelpService.Current.InitializeAsync();
+        await Navigation.PushAsync(new HelpPage());
+        //await Shell.Current.GoToAsync("help");
     }
 
-    private void ButtonCloseInstructions(object? sender, EventArgs e) {
+    private async void ButtonAbout_OnClicked(object? sender, EventArgs e) {
+        await AboutPage.ShowAbout();
+    }
+
+    private async void ButtonCloseInstructions(object? sender, EventArgs e) {
         if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) viewModel.SelectPanel(0);
     }
 

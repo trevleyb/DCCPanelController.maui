@@ -105,6 +105,11 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     }
 
     [RelayCommand]
+    public async Task ShowAboutAsync() {
+        await AboutPage.ShowAbout();
+    }
+
+    [RelayCommand]
     public async Task AddProfileAsync() {
         var newProfile = await ProfileService.CreateAsync();
         OnProfileChanged();

@@ -44,14 +44,6 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
-    private void About_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new AboutPage());
-    }
-
-    private void Instructions_OnClicked(object? sender, EventArgs e) {
-        Navigation.PushAsync(new HelpPage());
-    }
-
     private void EditConnectionButtonClicked(object? sender, EventArgs e) {
         var content = _pageViewModel?.LoadSettingsPage();
         var size = MauiViewSizeCalculator.CalculateTotalSize(content,Width,Height);

@@ -1,0 +1,66 @@
+{
+  "getting-started": {
+    "Id": "getting-started",
+    "Title": "Getting Started",
+    "Keywords": ["intro", "first run", "overview", "help index"],
+    "Summary": "Install, first launch, and how to use the help system.",
+    "Order": 0,
+    "Related": ["operate-mode", "design-mode"]
+  },
+  "operate-mode": {
+    "Id": "operate-mode",
+    "Title": "Operate Mode",
+    "Keywords": ["run", "interact", "controls"],
+    "Summary": "Using the app in Run/Operate mode.",
+    "Order": 10,
+    "Related": ["shortcuts", "troubleshooting"]
+  },
+  "design-mode": {
+    "Id": "design-mode",
+    "Title": "Design Mode",
+    "Keywords": ["edit", "layout", "drag", "resize"],
+    "Summary": "Create and edit panels, tiles, and entities.",
+    "Order": 20,
+    "Related": ["tiles", "panels"]
+  },
+  "panels": {
+    "Id": "panels",
+    "Title": "Panels",
+    "Keywords": ["screens", "pages", "entities"],
+    "Summary": "Panels, layers, and z-order.",
+    "Order": 30,
+    "Related": ["tiles", "design-mode"]
+  },
+  "tiles": {
+    "Id": "tiles",
+    "Title": "Tiles",
+    "Keywords": ["entities", "icons", "drag", "select"],
+    "Summary": "Tile types, selection, and properties.",
+    "Order": 40,
+    "Related": ["turnouts", "design-mode"]
+  },
+  "turnouts": {
+    "Id": "turnouts",
+    "Title": "Turnouts",
+    "Keywords": ["points", "switches", "signals"],
+    "Summary": "Operating and configuring turnouts.",
+    "Order": 50,
+    "Related": ["operate-mode", "tiles"]
+  },
+  "shortcuts": {
+    "Id": "shortcuts",
+    "Title": "Keyboard & Gestures",
+    "Keywords": ["keys", "hotkeys", "gestures", "multi-select"],
+    "Summary": "All shortcuts and touch gestures.",
+    "Order": 60,
+    "Related": ["operate-mode", "design-mode"]
+  },
+  "troubleshooting": {
+    "Id": "troubleshooting",
+    "Title": "Troubleshooting",
+    "Keywords": ["faq", "errors", "problems", "logging"],
+    "Summary": "Common issues and fixes.",
+    "Order": 90,
+    "Related": ["getting-started"]
+  }
+}

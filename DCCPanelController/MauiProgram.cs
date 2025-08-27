@@ -68,10 +68,10 @@ public static class MauiProgram {
         services.AddSingleton<ProfileService>();
         services.AddSingleton<ConnectionService>();
         services.AddSingleton<HelpPage>();
+        services.AddSingleton<AboutPage>();
 
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
-        services.AddSingletonViewAndModel<AboutPage, AboutViewModel>();
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelViewer, PanelViewerViewModel>();
         services.AddSingletonViewAndModel<TestPage, TestPageViewModel>();
@@ -86,6 +86,8 @@ public static class MauiProgram {
         services.AddTransientViewAndModel<SettingsPage, SettingsPageViewModel>();
         services.AddTransientViewAndModel<ServerMessagesPage, ServerMessagesViewModel>();
         services.AddTransientPopup<ColorPickerGrid, ColorPickerGridViewModel>();
+        
+        Routing.RegisterRoute("help",typeof(HelpPage));
         
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
