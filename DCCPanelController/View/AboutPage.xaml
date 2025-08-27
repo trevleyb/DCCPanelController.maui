@@ -17,9 +17,9 @@
             <Grid RowDefinitions="auto,*,auto">
                 <Image Margin="0,10,0,0" Grid.Row="0" Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
                 <StackLayout Grid.Row="1" Margin="0,10,0,0" VerticalOptions="Center">
-                    <Label Text="DCC Panel Controller" Style="{StaticResource LargeLabel}" HorizontalOptions="Center" />
-                    <Label Text="(c) Copyright 2025 Trevor Leybourne" Margin="0,10,0,10" Style="{StaticResource SmallLabel}" HorizontalOptions="Center"/>
-                    <Label Text="{Binding VersionString}" Style="{StaticResource SmallLabel}" HorizontalOptions="Center"/>
+                    <Label Text="DCC Panel Controller" Style="{StaticResource LargeLabel}" HorizontalOptions="Center" FontFamily="OpenSansBold" />
+                    <Label Text="(c) Copyright 2025 Trevor Leybourne" Margin="0,10,0,10" Style="{StaticResource SmallLabel}" HorizontalOptions="Center" FontFamily="OpenSansLight"/>
+                    <Label Text="{Binding VersionString}" Style="{StaticResource SmallLabel}" HorizontalOptions="Center" FontFamily="OpenSansLightItalic"/>
                 </StackLayout>
                 <Button Grid.Row="2" Margin="15" VerticalOptions="Center" HorizontalOptions="Center"  WidthRequest="100" Style="{StaticResource ButtonOutline}" Text="Close" Clicked="CloseAbout"></Button>
             </Grid>

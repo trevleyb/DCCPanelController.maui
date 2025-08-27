@@ -5,6 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Serilog;
 
@@ -21,6 +22,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showWelcomePage;
     public bool HideWelcomePage => !ShowWelcomePage;
 
+    public string VersionNumber => VersionInfo.Version; 
     public string IconMinimize => "minimize_2";
     public string IconMaximize => "maximize_2";
     

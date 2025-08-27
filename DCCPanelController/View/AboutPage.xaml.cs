@@ -1,3 +1,4 @@
+using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
 using Microsoft.Maui.ApplicationModel;
@@ -13,8 +14,7 @@ public partial class AboutPage : ContentView {
     
     public AboutPage() {
         BindingContext = this;
-        VersionString = $"Version {AppInfo.Current.VersionString}"; // e.g., "1.2.3"
-        SystemVersion = AppInfo.Current.Version;       // System.Version if you prefer
+        VersionString = VersionInfo.Version;
         InitializeComponent();
     }
     

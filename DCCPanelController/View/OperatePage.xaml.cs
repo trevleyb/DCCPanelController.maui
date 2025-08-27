@@ -86,7 +86,6 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private async void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
         await HelpService.Current.InitializeAsync();
         await Navigation.PushAsync(new HelpPage());
-        //await Shell.Current.GoToAsync("help");
     }
 
     private async void ButtonAbout_OnClicked(object? sender, EventArgs e) {

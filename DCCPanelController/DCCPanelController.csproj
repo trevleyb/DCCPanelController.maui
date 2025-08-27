@@ -47,6 +47,22 @@
 
     </PropertyGroup>
 
+    <!-- Force NBGV to treat Release builds as public releases (no -beta in version) -->
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <PublicRelease>true</PublicRelease>
+    </PropertyGroup>
+
+    <!-- Informational version formatting -->
+    <PropertyGroup Condition="'$(PublicRelease)' == 'true'">
+        <!-- e.g., 1.0.103 or 1.0.103-beta depending on ref -->
+        <AssemblyInformationalVersion>$(NBGV_SemVer2)</AssemblyInformationalVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(PublicRelease)' != 'true'">
+        <!-- e.g., 1.0.103-beta (gabc1234) -->
+        <AssemblyInformationalVersion>$(NBGV_SemVer2) (g$(NBGV_GitCommitIdShort))</AssemblyInformationalVersion>
+    </PropertyGroup>
+
+
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
         <NoWarn>1701;1702;CS1998;XC0103</NoWarn>
     </PropertyGroup>

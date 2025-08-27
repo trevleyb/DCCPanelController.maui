@@ -69,14 +69,16 @@
                         <ScrollView>
                             <Grid ColumnDefinitions="*">
                                 <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-                                    <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/>
+                                    <Image Source="appiconimage.png" WidthRequest="150" HeightRequest="150"/>
+                                    <Label Text="DCC Panel Controller" HorizontalOptions="Center" Style="{StaticResource LargeLabel}" FontFamily="OpenSansBold"/>
+                                    <Label Text="{Binding VersionNumber}" HorizontalOptions="Center" Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
                                     <Label
                                         Style="{StaticResource LargeLabel}"
                                         FontFamily="OpenSansBold"
                                         HorizontalOptions="Center"
                                         LineBreakMode="WordWrap"
                                         HorizontalTextAlignment="Center"
-                                        Margin="0,20,0,10"
+                                        Margin="0,30,0,10"
                                         Text="Welcome to the DCC Model Layout Panel Controller"
                                         VerticalOptions="Center"/>
                                     <Label
