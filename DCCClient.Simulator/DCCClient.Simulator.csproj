@@ -5,7 +5,14 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
+    
+    <ItemGroup>
+        <PackageReference Include="Nerdbank.GitVersioning"
+                          Version="3.7.115"
+                          PrivateAssets="all"
+                          Condition="!Exists('packages.config')" />
+    </ItemGroup>
+    
     <ItemGroup>
       <ProjectReference Include="..\DCCClient\DCCClient.csproj" />
     </ItemGroup>
