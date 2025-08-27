@@ -27,7 +27,7 @@
         <ApplicationTitle>DCC Panel Controller</ApplicationTitle>
         <ApplicationId>com.trevleyb.dccpanelcontroller</ApplicationId>
         <ApplicationDisplayVersion>$(Version)</ApplicationDisplayVersion>
-        <ApplicationVersion>$(GitHeight)</ApplicationVersion>
+        <ApplicationVersion>$(VersionHeight)</ApplicationVersion>
 
         <Title>DCC Panel Controller</Title>
         <Product>DCC Panel Controller</Product>

@@ -12,6 +12,7 @@ public partial class AboutPage : ContentView {
     public Version SystemVersion { get; set; }
     
     public AboutPage() {
+        BindingContext = this;
         VersionString = $"Version {AppInfo.Current.VersionString}"; // e.g., "1.2.3"
         SystemVersion = AppInfo.Current.Version;       // System.Version if you prefer
         InitializeComponent();
