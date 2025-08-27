@@ -4,9 +4,7 @@ namespace DCCPanelController.View.Converters;
 
 public class IndicatorColorConverter: IMultiValueConverter {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-
-        // Dont ask: Had issues getting data to pass through as expected so 
-        // mace this super generic to pass anything and get the correct color
+        
         if (values is [int indicatorIndex, _, ..]) {
             int? currentIndex = null;
             if (values[1] is int) currentIndex = (int)values[1];

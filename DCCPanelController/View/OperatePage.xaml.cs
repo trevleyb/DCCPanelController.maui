@@ -16,56 +16,37 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<OperatePage> _logger;
-    private OperateViewModel? _viewModel;
+    private OperateViewModel _viewModel;
     private ConnectionService? _connectionService;
     private ProfileService? _profileService;
     
-    public OperatePage(ILogger<OperatePage> logger, ProfileService profileService, ConnectionService connectionService) {
+    public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel,  ProfileService profileService, ConnectionService connectionService) {
         InitializeComponent();
         _logger = logger;
         _profileService = profileService;
         _connectionService = connectionService;
+
+        _viewModel = viewModel;
+        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
+
+        BindingContext = _viewModel;
+        SetTabBarState(true);
     }
 
-    protected override async void OnAppearing() {
+    protected override void OnAppearing() {
         base.OnAppearing();
-        Title = "DCC Panel Controller";
-
-        var currentPanelIndex = -1;
-        var showWelcomePage = true;
-        
-        if (_viewModel is not null) {
-            currentPanelIndex = _viewModel.CurrentPanelIndex;
-            showWelcomePage = _viewModel.ShowWelcomePage;
-            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-            _viewModel = null;
-            BindingContext = null;
-        }
-
-        _viewModel = MauiProgram.ServiceHelper.GetService<OperateViewModel>();
-        _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        _viewModel.ShowWelcomePage = showWelcomePage;
-        _viewModel.CurrentPanelIndex = currentPanelIndex;
-        BindingContext = _viewModel;
-
-        // We reload the Panels at this point, whenever this screen is appearing
-        // because data may have changed and is out of sync with the ViewModel
-        // --------------------------------------------------------------------------
-        await _viewModel.LoadPanelsAsync();
-        PanelView.Panel = null;
-        if (_viewModel.CurrentPanelIndex >= 0) _viewModel.SelectPanel(_viewModel.CurrentPanelIndex);
-        SetTabBarState(true);
+        _viewModel.UpdatePanelIndicators();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
-            if (_viewModel is OperateViewModel {ActivePanel: not null} viewModel ) {
+            if (_viewModel is {ActivePanel: not null} viewModel ) {
                 Title = $"{viewModel.ActivePanel.Title}";
-                PanelView.Panel = viewModel.ActivePanel;
-                PanelView.BackgroundColor = viewModel.ActivePanel?.PanelBackgroundColor;
-                BackgroundColor = viewModel.ActivePanel?.DisplayBackgroundColor;
+                //PanelView.Panel = viewModel.ActivePanel;
+                PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
+                BackgroundColor = viewModel.DisplayBackgroundColor;
             } else {
-                PanelView.Panel = null;
+                Title = $"DCC Panel Controller";
             }
         }
     }
@@ -93,7 +74,9 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
 
     private async void ButtonCloseInstructions(object? sender, EventArgs e) {
-        if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) viewModel.SelectPanel(0);
+        if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) {
+            viewModel.SelectPanel(0);
+        }
     }
 
     private void HideUnHideTabBar(object? sender, EventArgs e) {
@@ -112,5 +95,4 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         }
         if (_viewModel is { } viewModel) viewModel.IsMaximized = state;
     }
-
 }

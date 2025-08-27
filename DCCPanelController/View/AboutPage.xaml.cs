@@ -10,7 +10,6 @@ public partial class AboutPage : ContentView {
     // Add events for the popup
     public event Action? AboutPageCompleted;
     public string VersionString { get; set; }
-    public Version SystemVersion { get; set; }
     
     public AboutPage() {
         BindingContext = this;

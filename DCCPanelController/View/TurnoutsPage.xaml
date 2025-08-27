@@ -20,16 +20,16 @@
         <ToolbarItem
             Command="{Binding AddTurnoutCommand}"
             IsEnabled="{Binding CanAddTurnout}"
-            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus}">
-        </ToolbarItem>
-
-        <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
-                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}">
+            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}">
         </ToolbarItem>
 
         <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
-            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=delete}">
+            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}">
+        </ToolbarItem>
+
+        <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
+                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}">
         </ToolbarItem>
 
         <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}"

@@ -37,6 +37,10 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     public PanelViewerViewModel(ILogger<PanelViewerViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
+        _profileService.ActiveProfileChanged += (sender, args) => {
+            Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
+            SelectedPanel = Panels.FirstOrDefault();
+        };
         Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService),"PanelViewerViewModel: Active profile is not defined.");
         PropertyChanged += OnPropertyChanged;
         SelectedPanel = Panels.FirstOrDefault();

@@ -38,9 +38,9 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     [NotifyPropertyChangedFor(nameof(IsNavigationDrawerClosed))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
     public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
-    
-    [NotifyPropertyChangedFor(nameof(IsProfileNotDefault))]
-    [ObservableProperty] private bool _isProfileDefault;
+
+    public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
+    public bool IsProfileDefault => ProfileService.IsDefault();
     public bool IsProfileNotDefault => !IsProfileDefault;
 
     [ObservableProperty] private int _selectedSegmentIndex;
@@ -58,12 +58,14 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     }
 
     public void OnProfileChanged() {
-        IsProfileDefault = ProfileService.IsDefault();
-
         OnPropertyChanged(nameof(Profile));
         OnPropertyChanged(nameof(Settings));
         OnPropertyChanged(nameof(CurrentSettingsView));
         OnPropertyChanged(nameof(Capabilities));
+        OnPropertyChanged(nameof(CanDeleteProfile));
+        OnPropertyChanged(nameof(IsNavigationDrawerOpen));
+        OnPropertyChanged(nameof(IsProfileNotDefault));
+        OnPropertyChanged(nameof(IsProfileDefault));
 
         OnPropertyChanged(nameof(Profile.ProfileName));
         OnPropertyChanged(nameof(Profile.Settings));
@@ -81,25 +83,14 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         await ProfileService.SaveAsync();
         if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
-    }
-
-    private async Task SwitchProfileByIndexAsync(int index) {
-        var items = ProfileService.GetProfileFileNames();
-        if (items.Count > 0 && index >= 0 && index < items.Count) {
-            await SwitchProfileByFilenameAsync(items[index]);
-        }
-    }
-
-    private async Task SwitchProfileByFilenameAsync(string fileName) {
-        var profile = await ProfileService.LoadAsync(fileName);
-        if (profile is null) throw new ApplicationException($"Failed to load profile: {fileName}");
+        OnProfileChanged();
     }
 
     [RelayCommand]
     public async Task SwitchProfileAsync() {
         var choices = ProfileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
-        if (index is {} selectedProfile and >= 0) await SwitchProfileByIndexAsync(selectedProfile);
+        if (index is {} selectedProfile and >= 0) await ProfileService.SwitchProfileByIndexAsync(selectedProfile);
         OnProfileChanged();
         await DisplayAlertHelper.DisplayToastAlert($"Switched Active Profile");
     }
@@ -111,13 +102,18 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     public async Task AddProfileAsync() {
-        var newProfile = await ProfileService.CreateAsync();
-        OnProfileChanged();
-        await DisplayAlertHelper.DisplayToastAlert($"New Profile Created");
+        var result = await DisplayAlertHelper.DisplayAlertAsync("Add New Profile?", "This will add a new Profile to the system and make it active. Do you wish to continue?", "Continue", "Cancel");
+        if (result) {
+            var newProfile = await ProfileService.CreateAsync();
+            await SaveSettingsAsync();
+            OnProfileChanged();
+            await DisplayAlertHelper.DisplayToastAlert($"New Profile Created");
+        }
     }
 
     [RelayCommand]
     public async Task DeleteProfileAsync() {
+        if (ProfileService.NumberOfProfiles <= 1) return;
         var profileName = Profile.ProfileName;
         var result = await DisplayAlertHelper.DisplayAlertAsync("Delete Profile?", "This will delete the current profile. Are you sure you want to do this?", "Continue", "Cancel");
         if (result) {
@@ -134,7 +130,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     /// </summary>
     public void MarkActiveProfileDefault() {
         if (!ProfileService.IsDefault()) ProfileService.MarkAsDefault();
-        IsProfileDefault = true;
+        OnProfileChanged();
     }
 
     public void SetCapabilities() {
@@ -143,9 +139,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     public Microsoft.Maui.Controls.View? LoadSettingsPage() {
         if (Settings is null) return null;
-
         ContentView? view = null;
-
         if (IsJmriServer) {
             Settings.ClientSettings = CheckSettingsCache<JmriSettings>(DccClientType.Jmri);
             view = new JmriSettingsView(Settings.ClientSettings, ConnectionService);

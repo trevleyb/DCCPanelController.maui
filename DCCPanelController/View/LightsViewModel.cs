@@ -34,6 +34,11 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
     public LightsViewModel(ILogger<LightsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
+        _profileService.ActiveProfileChanged += (sender, args) => {
+            Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService), "LightsViewModel: Active profile is not defined.");
+            IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
+            SetLabels();
+        };
         Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService),"LightsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
         SetLabels();

@@ -7,8 +7,8 @@ namespace DCCPanelController.Services.ProfileService;
 
 [Serializable]
 public partial class ProfileIndexFile {
-    public const string ProfileIndexFileName = "DCCPanelController.index"; 
-    
+    public const string ProfileIndexFileName = "DCCPanelController.index";
+
     public string Version { get; init; } = "1.0";
     public List<ProfileIndexItem> Profiles { get; set; } = [];
 
@@ -36,7 +36,7 @@ public partial class ProfileIndexFile {
             item.ProfileName = profile.ProfileName;
             break;
         }
-        
+
         if (item is null) {
             item = new ProfileIndexItem(profile.ProfileName, profile.Filename, false);
             Profiles.Add(item);
@@ -48,6 +48,7 @@ public partial class ProfileIndexFile {
     public void Delete(Profile profile) {
         var list = Profiles.Where(x => x.FileName == profile.Filename).ToList();
         foreach (var index in list) Profiles.Remove(index);
+
         // Ensure one active remains if we deleted the active
         if (!Profiles.Any(x => x.IsDefault) && Profiles.Count > 0) {
             Profiles[0].IsDefault = true;
@@ -59,7 +60,7 @@ public partial class ProfileIndexFile {
         foreach (var index in Profiles) {
             index.IsDefault = index.FileName == profile.Filename;
         }
-        SaveMetaData();   
+        SaveMetaData();
     }
 
     public bool IsDefault(Profile profile) {
@@ -70,9 +71,19 @@ public partial class ProfileIndexFile {
     }
 
     /// <summary>
+    /// We always need to ensure there is a DEFAULT profile for when
+    /// we start up. So if we save out MetaData and there is not default
+    /// item, then we need to mark one as being the default. 
+    /// </summary>
+    public void EnsureDefaultDefined() {
+        if (!Profiles.Any(index => index.IsDefault)) Profiles[0].IsDefault = true;
+    }
+
+/// <summary>
     /// Save the MetaData to storage
     /// </summary>
     private void SaveMetaData([CallerMemberName] string? memberName = "", [CallerLineNumber] int sourceLineNumber = 0 ) {
+        EnsureDefaultDefined();
         var jsonString = JsonSerializer.Serialize(this, JsonOptions.Options);
         if (string.IsNullOrEmpty(jsonString)) return;
 

@@ -26,8 +26,8 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
     public string LabelState => _labelState;
     public string LabelAddress => _labelAddress;
 
-    [ObservableProperty] private bool _isTurnoutSelected;
     [ObservableProperty] private Turnout? _selectedTurnout;
+    [ObservableProperty] private bool _isTurnoutSelected;
     [ObservableProperty] private bool _canAddTurnout;
 
     [ObservableProperty] private string _columnLabelAddress = _labelAddress;
@@ -44,14 +44,21 @@ public partial class TurnoutsViewModel : ConnectionViewModel {
 
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
+
     private ProfileService _profileService;
     private ILogger<TurnoutsViewModel> _logger;
-
     private SfBottomSheet? _bottomSheet;
     
     public TurnoutsViewModel(ILogger<TurnoutsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;        
         _profileService = profileService;
+        
+        _profileService.ActiveProfileChanged += (sender, args) => {
+            // If the profile has changed, we need to reset the Turnout Data Collection
+            Turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService),"TurnoutViewModel: Active profile is not defined.");
+            SetLabels();
+        };
+        
         Turnouts = _profileService?.ActiveProfile?.Turnouts ?? throw new ArgumentNullException(nameof(profileService),"TurnoutViewModel: Active profile is not defined.");
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(SelectedTurnout)) {

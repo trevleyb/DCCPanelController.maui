@@ -27,7 +27,7 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding ShowAboutCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=info}"/>
         <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding AddProfileCommand}"    IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
-        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding DeleteProfileCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+        <ToolbarItem IsEnabled="{Binding CanDeleteProfile}" Command="{Binding DeleteProfileCommand}" IconImageSource="{Binding CanDeleteProfile, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
         <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding SwitchProfileCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=repeat}"/>
         <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=upload}"/>
         <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
@@ -73,7 +73,7 @@
                                         <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
                                             <Label Grid.Column="0" Text="Profile Name"
                                                    Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
-                                            <Border Grid.Column="1" Padding="10,0,0,0" HeightRequest="35"
+                                            <Border Grid.Column="1" Padding="0,0,0,0" HeightRequest="35"
                                                     Style="{StaticResource EntryBorderStyle}">
                                                 <Entry Text="{Binding Profile.ProfileName}"
                                                        HorizontalOptions="Fill"/>

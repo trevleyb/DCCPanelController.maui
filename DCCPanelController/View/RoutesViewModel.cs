@@ -40,6 +40,11 @@ public partial class RoutesViewModel : ConnectionViewModel {
     public RoutesViewModel(ILogger<RoutesViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
+        _profileService.ActiveProfileChanged += (sender, args) => {
+            Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService), "RoutesViewModel: Active profile is not defined.");
+            IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
+            SetLabels();
+        };
         Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService),"RoutesViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
         SetLabels();

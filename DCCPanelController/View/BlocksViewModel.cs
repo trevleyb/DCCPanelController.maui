@@ -35,6 +35,11 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
     public BlocksViewModel(ILogger<BlocksViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
+        profileService.ActiveProfileChanged += (sender, args) => {
+            Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService),"BlocksViewModel: Active profile is not defined.");
+            IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
+            SetLabels();
+        };
         Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService),"BlocksViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         SetLabels();
