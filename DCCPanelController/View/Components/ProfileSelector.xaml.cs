@@ -6,7 +6,7 @@ namespace DCCPanelController.View.Components;
 public record ProfileItem(int Index, string Name);
 
 public partial class ProfileSelector : ContentView {
-    public ProfileSelector(IList<string> items, int? preselect = null) {
+    public ProfileSelector(IReadOnlyList<string> items, int? preselect = null) {
         BindingContext = this;
         InitializeComponent();
         IsOkEnabled = false;
@@ -35,7 +35,7 @@ public partial class ProfileSelector : ContentView {
         OnPropertyChanged(nameof(IsOkEnabled));
     }
 
-    public static async Task<int?> ShowProfileSelector(IList<string> items, int? preselect = null) {
+    public static async Task<int?> ShowProfileSelector(IReadOnlyList<string> items, int? preselect = null) {
         var tcs = new TaskCompletionSource<int?>();
         var selector = new ProfileSelector(items, preselect);
         var popup = new SfPopup {

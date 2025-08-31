@@ -41,7 +41,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
 
     public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
-    public bool IsProfileDefault => ProfileService.IsDefault();
+    public bool IsProfileDefault => ProfileService.IsDefault(Profile);
     public bool IsProfileNotDefault => !IsProfileDefault;
 
     [ObservableProperty] private int _selectedSegmentIndex;
@@ -130,7 +130,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     /// If this one is not the default, then we will mark it as the default 
     /// </summary>
     public void MarkActiveProfileDefault() {
-        if (!ProfileService.IsDefault()) ProfileService.MarkAsDefault();
+        if (!ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
         OnProfileChanged();
     }
 

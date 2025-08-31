@@ -1,13 +1,21 @@
 ﻿using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
+using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Xaml.Diagnostics;
 
 namespace DCCPanelController;
 
 public partial class App : Application {
-    public App() {
+    
+    private ProfileService _profileService;
+    private IServiceProvider _serviceProvider;
+
+    public App(ProfileService profileService, IServiceProvider serviceProvider) {
+        _profileService = profileService;
+        _serviceProvider = serviceProvider;
         InitializeComponent();
         BindingDiagnostics.BindingFailed += BindingDiagnosticsOnBindingFailed;
     }
@@ -28,12 +36,24 @@ public partial class App : Application {
     }
 
     protected override Window CreateWindow(IActivationState? activationState) {
-        return new Window(new AppShell());
+        return new Window(new LoadingPage());
     }
 
     protected override async void OnStart() {
         base.OnStart();
-
+        
+        try {
+            await _profileService.EnsureInitializedAsync(); // async, no blocking
+            var shell = _serviceProvider.GetRequiredService<AppShell>(); // or new AppShell()
+            var window = Windows.FirstOrDefault();
+            if (window != null) {
+                MainThread.BeginInvokeOnMainThread(() => window.Page = shell);
+            }
+        }
+        catch (Exception ex) {
+            throw new ApplicationException($"Failed to start app: {ex.Message}");
+        }
+        
 #if DEBUG
 
         // 1) Ensure we extract/copy help to the app data folder
