@@ -67,6 +67,16 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(DisplayBackgroundColor));
     }
 
+    public PanelIndicator? SelectedIndicator {
+        get;
+        set {
+            if (SetProperty(ref field, value)) {
+                if (value is not null) SelectPanel(value.Index);
+                _ = MainThread.InvokeOnMainThreadAsync(() => SelectedIndicator = null);
+            }
+        }
+    }
+
     [RelayCommand]
     private async Task SwitchActiveProfileAsync() {
         var choices = _profileService.GetProfileNamesWithDefault();
@@ -101,9 +111,9 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         MainThread.BeginInvokeOnMainThread(() => {
             if (index < 0) index = 0;
             if (Panels?.Any() == true && index < Panels.Count) {
-               //ActivePanel = null;
-               //CurrentPanelIndex = index;
-               //ActivePanel = Panels[index];
+               ActivePanel = null;
+               CurrentPanelIndex = index;
+               ActivePanel = Panels[index];
             }
             OnPropertyChanged(nameof(ActivePanel));
             OnPropertyChanged(nameof(ShowWelcomePage));
@@ -118,14 +128,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         });
     }
 
-    public void UpdatePanelIndicatorsClean() {
-        MainThread.BeginInvokeOnMainThread(() => {
-            PanelIndicators = [];
-            for (var i = 0; i < Panels?.Count; i++) PanelIndicators.Add(new PanelIndicator(i, CurrentPanelIndex));
-        });
-        OnPropertyChanged(nameof(PanelIndicators));
-    }
-    
     public void UpdatePanelIndicators() {
         MainThread.BeginInvokeOnMainThread(() => {
             PanelIndicators ??= [];

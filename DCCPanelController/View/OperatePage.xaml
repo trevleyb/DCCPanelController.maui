@@ -46,9 +46,10 @@
         <Grid RowDefinitions="*,45">
 
             <!-- Main Panel Content with Swipe Gesture -->
-            <Grid Grid.Row="0" BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
+            <Grid Grid.Row="0"
+                  BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
                 <Grid.GestureRecognizers>
-                    <SwipeGestureRecognizer Direction="Left"  Command="{Binding SwipeLeftCommand}"/>
+                    <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
                     <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
                 </Grid.GestureRecognizers>
 
@@ -71,8 +72,10 @@
                             <Grid ColumnDefinitions="*">
                                 <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
                                     <Image Source="appiconimage.png" WidthRequest="150" HeightRequest="150"/>
-                                    <Label Text="DCC Panel Controller" HorizontalOptions="Center" Style="{StaticResource LargeLabel}" FontFamily="OpenSansBold"/>
-                                    <Label Text="{Binding VersionNumber}" HorizontalOptions="Center" Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
+                                    <Label Text="DCC Panel Controller" HorizontalOptions="Center"
+                                           Style="{StaticResource LargeLabel}" FontFamily="OpenSansBold"/>
+                                    <Label Text="{Binding VersionNumber}" HorizontalOptions="Center"
+                                           Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
                                     <Label
                                         Style="{StaticResource LargeLabel}"
                                         FontFamily="OpenSansBold"
@@ -160,43 +163,51 @@
 
             <Grid Grid.Row="1">
                 <Border StrokeThickness="0">
-                <CollectionView 
-                    x:Name="PanelIndicatorsView"
-                    ItemsSource="{Binding PanelIndicators,Mode=TwoWay}"
-                    SelectionMode="None"
-                    IsVisible="True"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Start"
-                    Margin="0,0,0,10">
+                    <CollectionView
+                        x:Name="PanelIndicatorsView"
+                        SelectedItem="{Binding SelectedIndicator, Mode=TwoWay}"
+                        ItemsSource="{Binding PanelIndicators,Mode=OneWay}"
+                        SelectionMode="Single"
+                        IsVisible="True"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Start"
+                        Margin="0,0,0,10">
 
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
-                    </CollectionView.ItemsLayout>
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+                        </CollectionView.ItemsLayout>
 
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="view:PanelIndicator">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="view:PanelIndicator">
                                 <Border
                                     WidthRequest="15"
                                     HeightRequest="15"
                                     StrokeShape="Ellipse"
                                     StrokeThickness="0">
-                                <Border.BackgroundColor>
-                                    <MultiBinding Converter="{StaticResource IndicatorColorConverter}">
-                                        <Binding Path="Index"/>
-                                        <Binding Path="Active"/>
-                                    </MultiBinding>
-                                </Border.BackgroundColor>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type view:OperateViewModel}, x:DataType='view:OperateViewModel' },Path=SelectPanelCommand, x:DataType='view:OperateViewModel' }"
-                                        CommandParameter="{Binding .}"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup Name="CommonStates">
+                                            <VisualState Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Gray300}"/>
+                                                    <Setter Property="Scale" Value="1"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                                    <Setter Property="Scale" Value="1"/>
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
                 </Border>
-                <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End" VerticalOptions="End" BackgroundColor="Transparent" TextColor="Gainsboro">
+                <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End" VerticalOptions="End"
+                       BackgroundColor="Transparent" TextColor="Gainsboro">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>
                     </Label.GestureRecognizers>

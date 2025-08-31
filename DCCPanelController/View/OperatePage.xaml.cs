@@ -37,6 +37,14 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         base.OnAppearing();
         _viewModel.UpdatePanelIndicators();
     }
+    
+    void OnPanelIndicatorChanged(object sender, SelectionChangedEventArgs e) {
+        if (e.CurrentSelection.FirstOrDefault() is PanelIndicator pi &&
+            BindingContext is OperateViewModel vm) {
+            vm.SelectPanel(pi.Index);
+        }
+    }
+
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
