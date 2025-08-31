@@ -30,7 +30,7 @@ public class PointsTile : Tile {
         }
     }
 
-    private bool SetPointColor(SvgImage svgImage, string elementID, bool isValid) {
+    private void SetPointColor(SvgImage svgImage, string elementID, bool isValid) {
         if (isValid) {
             svgImage.ApplyElementStyle(elementID, "Color", Colors.Transparent.ToRgbaHex());
             svgImage.ApplyElementStyle(elementID, "Opacity", "0");
@@ -38,7 +38,6 @@ public class PointsTile : Tile {
             svgImage.ApplyElementStyle(elementID, "Color", Colors.Red.ToRgbaHex());
             svgImage.ApplyElementStyle(elementID, "Opacity", "50");
         }
-        return isValid;
     }
 
     private string PointLabel(int direction) {

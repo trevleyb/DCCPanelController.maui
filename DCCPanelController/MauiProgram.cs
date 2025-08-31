@@ -7,10 +7,12 @@ using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using DCCPanelController.View.Components;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Handlers.Items2;
 using Serilog;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
+#if IOS || MACCATALYST
+using Microsoft.Maui.Controls.Handlers.Items2;
+#endif
 
 namespace DCCPanelController;
 

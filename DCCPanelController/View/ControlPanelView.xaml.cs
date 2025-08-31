@@ -82,10 +82,7 @@ public partial class ControlPanelView {
     #endregion
 
     #region Grid Management
-    public async Task ForceRefresh() {
-        await DrawPanel(true);
-    }
-
+    public Task ForceRefresh() => DrawPanel(true);
     private async void OnGridSizeChanged(object? sender, EventArgs e) {
         try {
             await DrawPanel();
@@ -98,11 +95,11 @@ public partial class ControlPanelView {
     ///     Determines whether the grid size has changed based on the provided width and height parameters.
     /// </summary>
     public bool HasGridSizeChanged(double width, double height) {
-        const double Epsilon = 0.01;
+        const double epsilon = 0.01;
         if (width < 1.0 || height < 1.0) return false;
         var newGridSize = CalculateGridSize(width, height);
         var difference = Math.Abs(newGridSize - _gridSize);
-        return difference > Epsilon;
+        return difference > epsilon;
     }
 
     /// <summary>
@@ -272,7 +269,7 @@ public partial class ControlPanelView {
                 await _pathTracer.StartPathTracing(trackTile!);
             }
         } catch (Exception ex) {
-            _logger.LogError($"Error in launching path Tracing: {ex.Message}");
+            _logger.LogError("Error in launching path Tracing: {ExMessage}", ex.Message);
         }
     }
 

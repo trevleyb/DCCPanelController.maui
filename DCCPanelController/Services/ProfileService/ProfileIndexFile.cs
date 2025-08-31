@@ -112,7 +112,10 @@ public partial class ProfileIndexFile {
                 Console.WriteLine($"Unable to load MetaData: {ex.Message}");
             }
         }
+        
+        // This is therefore a NEW file, so create a new one
         var profiles = new ProfileIndexFile();
+        profiles.Profiles.Add(new ProfileIndexItem("Default", "Default.json", true));
         profiles.SaveMetaData();
         return profiles;
     }
