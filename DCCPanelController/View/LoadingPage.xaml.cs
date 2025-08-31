@@ -10,14 +10,6 @@ public partial class LoadingPage : ContentPage {
     public LoadingPage()
     {
         InitializeComponent();
-
-        Title = "Starting…";
-        Content = new Grid {
-            Children = {
-                new ActivityIndicator { IsRunning = true, VerticalOptions = LayoutOptions.Center, HorizontalOptions = LayoutOptions.Fill },
-                new Label { Text = "Loading profile…", HorizontalOptions = LayoutOptions.Center, VerticalOptions = LayoutOptions.Fill }
-            }
-        };
         NavigationPage.SetHasNavigationBar(this, false);
     }
 }
