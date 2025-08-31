@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Clients;
 
-namespace DCCPanelController.Helpers;
+namespace DCCPanelController.View.Helpers;
 
 public class CapabilityIcon {
     public required ImageSource IconSource { get; set; }

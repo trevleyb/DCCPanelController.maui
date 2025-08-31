@@ -34,9 +34,9 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
         return Result.Ok();
     }
 
-    public async Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
+    public Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
         AddSimulatedData();
-        return await Task.FromResult(Result.Ok());
+        return Task.FromResult(Result.Ok());
     }
 
     public async Task<IResult> ValidateConnectionAsync() {
@@ -51,10 +51,10 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
 
     private void AddSimulatedData() {
         for (var i = 101; i < 110; i++) UpdateTurnout($"NT{i}",$"Turnout {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.TurnoutStateEnum.Closed : Models.DataModel.Entities.TurnoutStateEnum.Thrown);
-        for (var i = 201; i < 210; i++) UpdateRoute  ($"RT{i}",$"Route {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);;
-        for (var i = 301; i < 310; i++) UpdateSensor($"SN{i}", $"Sensor {i}", Random.Shared.Next(0, 2) == 0 ? true : false);
-        for (var i = 401; i < 410; i++) UpdateLight($"LT{i}", $"Light {i}", Random.Shared.Next(0, 2) == 0 ? true : false);
-        for (var i = 501; i < 510; i++) UpdateBlock($"BK{i}", $"Block {i}", Random.Shared.Next(0, 2) == 0 ? true : false);
+        for (var i = 201; i < 210; i++) UpdateRoute  ($"RT{i}",$"Route {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
+        for (var i = 301; i < 310; i++) UpdateSensor($"SN{i}", $"Sensor {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 401; i < 410; i++) UpdateLight($"LT{i}", $"Light {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 501; i < 510; i++) UpdateBlock($"BK{i}", $"Block {i}", Random.Shared.Next(0, 2) == 0);
     }
     #endregion 
     

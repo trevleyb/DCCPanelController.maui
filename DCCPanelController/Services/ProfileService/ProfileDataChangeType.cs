@@ -1,4 +1,4 @@
-namespace DCCPanelController.Services;
+namespace DCCPanelController.Services.ProfileService;
 
 public enum ProfileDataChangeType {
     PropertyChanged,

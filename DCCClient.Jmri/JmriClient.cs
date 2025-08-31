@@ -62,14 +62,14 @@ public class JmriClient : IDisposable {
         _refreshMs = int.Max(refreshMs, MinimumRefreshMs);
     }
 
-    public async Task ConnectAsync() {
+    public Task ConnectAsync() {
         lock (_connectionLock) {
-            if (_connectionTask is { IsCompleted: false }) return;
+            if (_connectionTask is { IsCompleted: false }) return Task.CompletedTask;
             _cancellationTokenSource?.Cancel();
             _cancellationTokenSource = new CancellationTokenSource();
             _connectionTask = MaintainConnectionAsync(_cancellationTokenSource.Token);
         }
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     public async Task DisconnectAsync() {
@@ -154,7 +154,7 @@ public class JmriClient : IDisposable {
         await listenTask;
     }
 
-    public async Task ResetUpdates() {
+    public Task ResetUpdates() {
         // To reset all data from JMRI, we clear the caches which will force the 
         // subscription to rebuild and event all data as changed data
         // -----------------------------------------------------------------------
@@ -164,7 +164,7 @@ public class JmriClient : IDisposable {
         _sensors.Clear();
         _blocks.Clear();
         _lights.Clear();
-        await Task.CompletedTask;
+        return Task.CompletedTask;
     }
 
     private async Task SubscribeToUpdatesAsync() {
@@ -320,66 +320,66 @@ public class JmriClient : IDisposable {
         }
     }
     
-    public async Task SetTurnoutStateAsync(string turnoutID, bool thrown) {
+    public Task SetTurnoutStateAsync(string turnoutID, bool thrown) {
         var command = BuildJmriMessage("turnout", "post", new Dictionary<string, object> {
             { "type", "turnout" },
             { "name", turnoutID },
             { "state", thrown ? 4 : 2 }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
 
-    public async Task SetSignalAppearanceAsync(string signalID, string appearance) {
+    public Task SetSignalAppearanceAsync(string signalID, string appearance) {
         var command = BuildJmriMessage("signalMast", "post", new Dictionary<string, object> {
             { "name", signalID },
             { "set", appearance }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
 
-    public async Task SetRouteStateAsync(string routeID, bool active) {
+    public Task SetRouteStateAsync(string routeID, bool active) {
         var command = BuildJmriMessage("route", "post", new Dictionary<string, object> {
             { "type", "route" },
             { "name", routeID },
             { "state", active ? 2 : 4 }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
 
-    public async Task SetSensorStateAsync(string sensorID, bool active) {
+    public Task SetSensorStateAsync(string sensorID, bool active) {
         var command = BuildJmriMessage("sensor", "post", new Dictionary<string, object> {
             { "type", "sensor" },
             { "name", sensorID },
             { "state", active ? 2 : 4 }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
 
-    public async Task SetLightStateAsync(string lightID, bool active) {
+    public Task SetLightStateAsync(string lightID, bool active) {
         var command = BuildJmriMessage("light", "post", new Dictionary<string, object> {
             { "type", "light" },
             { "name", lightID },
             { "state", active ? 2 : 4 }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
     
-    public async Task SetBlockValueAsync(string blockID, string value) {
+    public Task SetBlockValueAsync(string blockID, string value) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
             { "name", blockID },
             { "state", value }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
     
-    public async Task SetBlockAllocatedAsync(string blockID, bool allocated) {
+    public Task SetBlockAllocatedAsync(string blockID, bool allocated) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
             { "name", blockID },
             { "state", allocated ? 2 : 4 }
         });
-        await SendCommandAsync(command);
+        return SendCommandAsync(command);
     }
 
     public static string BuildJmriMessage(string type, string? method, Dictionary<string, object>? parameters) {
@@ -391,10 +391,11 @@ public class JmriClient : IDisposable {
         return JsonSerializer.Serialize(message);
     }
 
-    private async Task SendCommandAsync(string? jsonSerialisedCommand) {
+    private Task SendCommandAsync(string? jsonSerialisedCommand) {
         if (_isHandshakeComplete && !string.IsNullOrEmpty(jsonSerialisedCommand)) {
-            await SendMessageAsync(jsonSerialisedCommand);
+            return SendMessageAsync(jsonSerialisedCommand);
         }
+        return Task.CompletedTask;
     }
 
     private async Task SendMessageAsync(string? message) {

@@ -11,8 +11,7 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:services="clr-namespace:DCCPanelController.Services"
-    xmlns:clients="clr-namespace:DCCPanelController.Clients"
-    xmlns:fonts="clr-namespace:Fonts">
+    xmlns:clients="clr-namespace:DCCPanelController.Clients">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"

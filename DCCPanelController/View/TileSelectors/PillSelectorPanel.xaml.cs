@@ -64,7 +64,6 @@ public partial class PillSelectorPanel : ContentView {
         if (bindable is PillSelectorPanel { BindingContext: PillSelectorPanelViewModel vm } selector) {
             if (newValue != oldValue && newValue is Panel panel) {
                 vm.Panel = panel ?? throw new NullReferenceException("Panels cannot be null");
-                ;
                 selector.SizePill();
             }
         }

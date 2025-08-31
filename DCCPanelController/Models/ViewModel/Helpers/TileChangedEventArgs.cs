@@ -1,6 +1,6 @@
 using DCCPanelController.Models.ViewModel.Interfaces;
 
-namespace DCCPanelController.View.Helpers
+namespace DCCPanelController.Models.ViewModel.Helpers
 {
     public class TileChangedEventArgs : EventArgs
     {

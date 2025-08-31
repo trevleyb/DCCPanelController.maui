@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DCCPanelController.View.Helpers;
+using DCCPanelController.View.TileSelectors;
 
 namespace DCCPanelController.View;
 

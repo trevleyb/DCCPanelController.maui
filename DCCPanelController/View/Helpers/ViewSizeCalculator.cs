@@ -1,7 +1,7 @@
 using Microsoft.Maui.Layouts;
 using MauiView = Microsoft.Maui.Controls.View;
 
-namespace DCCPanelController.MauiMauiView.Helpers;
+namespace DCCPanelController.View.Helpers;
 
 public static class MauiViewSizeCalculator {
     public static Size CalculateTotalSize(MauiView? MauiView, double width, double height) {

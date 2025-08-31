@@ -7,9 +7,9 @@ using DCCPanelController.Clients;
 using DCCPanelController.Clients.Jmri;
 using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Clients.WiThrottle;
-using DCCPanelController.MauiMauiView.Helpers;
 using DCCPanelController.Models.DataModel.Repository;
 using DCCPanelController.View.Components;
+using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
@@ -73,7 +73,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     }
     
     private void IsProfileActiveChanged(object? sender, EventArgs eventArgs) {
-        _pageViewModel?.MarkActiveProfileDefault();;
+        _pageViewModel?.MarkActiveProfileDefault();
         OnPropertyChanged(nameof(_pageViewModel.IsProfileDefault));
     }
 }

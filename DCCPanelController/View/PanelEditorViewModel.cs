@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.MauiMauiView.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -11,6 +10,7 @@ using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
+using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;

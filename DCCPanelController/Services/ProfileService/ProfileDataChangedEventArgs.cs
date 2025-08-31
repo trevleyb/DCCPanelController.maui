@@ -1,4 +1,4 @@
-namespace DCCPanelController.Services;
+namespace DCCPanelController.Services.ProfileService;
 
 public class ProfileDataChangedEventArgs : EventArgs {
     public ProfileDataChangeType ChangeType { get; }

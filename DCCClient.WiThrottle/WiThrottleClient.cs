@@ -1,16 +1,16 @@
 using System.Data;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Timers;
 using DCCClient.Helpers;
+using DccClients.WiThrottle.Client;
 using DccClients.WiThrottle.Client.Commands;
 using DccClients.WiThrottle.Client.Events;
 using DccClients.WiThrottle.Client.Messages;
 using DccClients.WiThrottle.Helpers;
 using Timer = System.Timers.Timer;
 
-namespace DccClients.WiThrottle.Client;
+namespace DccClients.WiThrottle;
 
 public class WiThrottleClient {
     private TcpClient? _client;

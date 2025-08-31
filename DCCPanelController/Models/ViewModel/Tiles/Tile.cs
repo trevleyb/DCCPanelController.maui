@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Helpers;

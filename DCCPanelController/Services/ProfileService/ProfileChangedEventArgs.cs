@@ -1,6 +1,6 @@
 using DCCPanelController.Models.DataModel;
 
-namespace DCCPanelController.Services;
+namespace DCCPanelController.Services.ProfileService;
 
 public class ProfileChangedEventArgs : EventArgs {
     public Profile? OldProfile { get; }

@@ -1,6 +1,7 @@
 using System.Data;
 using DCCClient.Discovery;
 using DCCClient.Helpers;
+using DccClients.WiThrottle;
 using DccClients.WiThrottle.Client;
 using DccClients.WiThrottle.Client.Commands;
 using DccClients.WiThrottle.Client.Events;

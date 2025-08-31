@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
-[AttributeUsage(AttributeTargets.Property)]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.All, AllowMultiple = false, Inherited = true)]
 public abstract class EditableProperty(string label, string description = "", int order = 0, string? group = null) : Attribute, INotifyPropertyChanged {
     public string Label { get; } = label;              // Label/Prompt for the property
     public string Description { get; } = description;  // Description of the property

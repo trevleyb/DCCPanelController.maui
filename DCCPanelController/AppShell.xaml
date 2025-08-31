@@ -2,7 +2,8 @@
 
 <Shell
     ForegroundColor="WhiteSmoke"
-    BackgroundColor="{StaticResource Primary}" 
+    BackgroundColor="{StaticResource Primary}"
+    x:DataType="services:AppState"
     TabBarBackgroundColor="{StaticResource Primary}"
     TabBarTitleColor="White"
     TabBarForegroundColor="White"
@@ -28,19 +29,19 @@
 
         <Tab Icon="control.png"
              Title="Operate"
-             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
+             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:OperatePage}"/>
         </Tab>
         
         <Tab
             Icon="panels.png"
             Title="Panel Editor"
-            IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
+            IsEnabled="{Binding Source={x:Static services:AppState.Instance}, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
         </Tab>
         
         <Tab Title="Tables" Icon="tables.png"
-             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
+             IsEnabled="{Binding Source={x:Static services:AppState.Instance},Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:TurnoutsPage}"
                 Title="Turnouts"/>
@@ -59,7 +60,7 @@
         </Tab>
         
         <Tab Title="Settings" Icon="settings.png"
-             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, x:DataType=services:AppState, Path=IsNavigationAllowed}">
+             IsEnabled="{Binding Source={x:Static services:AppState.Instance},Path=IsNavigationAllowed}">
             <ShellContent
                 ContentTemplate="{DataTemplate view:SettingsPage}"
                 Title="Settings"/>

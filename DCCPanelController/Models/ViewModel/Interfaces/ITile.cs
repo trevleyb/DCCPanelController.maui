@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.ViewModel.Interfaces;

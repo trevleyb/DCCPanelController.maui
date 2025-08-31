@@ -9,7 +9,8 @@ public partial class BridgeEntity : StraightEntity, ITrackEntity {
     [JsonConstructor]
     public BridgeEntity() { }
 
-    [ObservableProperty] [property: EditableColor("Bridge Color", "Color of the Bridge rails", 6, "Track")]
+    [ObservableProperty] 
+    [property: EditableColor("Bridge Color", "Color of the Bridge rails", 6, "Track")]
     private Color? _bridgeColor;
     
     public BridgeEntity(Panel panel) : this() {

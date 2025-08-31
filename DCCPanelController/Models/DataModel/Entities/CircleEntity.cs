@@ -13,7 +13,8 @@ public partial class CircleEntity : Entity, IDrawingEntity {
     [ObservableProperty] [property: EditableColor("Border", "",0, "Circle")]
     private Color _borderColor = Colors.Black;
 
-    [ObservableProperty] [property: EditableInt("Border Width", "", 0, "Circle")]
+    [ObservableProperty]
+    [property: EditableInt("Border Width", "", 0, "Circle")]
     private int _borderWidth = 1;
     
     [JsonConstructor]

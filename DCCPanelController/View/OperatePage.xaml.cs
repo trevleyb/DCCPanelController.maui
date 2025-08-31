@@ -9,7 +9,6 @@ using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Helpers;
-using Fonts;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;

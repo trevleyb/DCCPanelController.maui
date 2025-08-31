@@ -37,12 +37,12 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
         _logger = logger;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (sender, args) => {
-            Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");;
+            Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
             SetLabels();
         };
 
-        Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");;
+        Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
     }

@@ -68,7 +68,7 @@ public partial class SettingsViewModel : Base.BaseViewModel {
                 Servers = new ObservableCollection<DiscoveredService>(servicesFound);
                 ConnectionService.AddServerMessage($"Found {Servers.Count} Server{(Servers.Count > 1 ? "s" : "")}");
             } else {
-                ConnectionService.AddServerMessage($"{result.Message}", DccClientOperation.System, DccClientMessageType.Error);;
+                ConnectionService.AddServerMessage($"{result.Message}", DccClientOperation.System, DccClientMessageType.Error);
             }
         } catch (Exception ex) {
             ConnectionService.AddServerMessage("Unable to Refresh Servers",DccClientOperation.System, DccClientMessageType.Error);

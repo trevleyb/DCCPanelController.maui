@@ -19,6 +19,7 @@ using DCCPanelController.View.Settings.Jmri;
 using DCCPanelController.View.Settings.Simulator;
 using DCCPanelController.View.Settings.WiThrottle;
 using Microsoft.Extensions.Logging;
+using Capabilities = DCCPanelController.View.Helpers.Capabilities;
 
 namespace DCCPanelController.View;
 
