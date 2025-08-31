@@ -6,7 +6,6 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.Settings.Simulator;
 
 public partial class SimulatorSettingsViewModel : SettingsViewModel {
-
     [ObservableProperty] private SimulatorSettings _SimulatorSettings;
 
     public SimulatorSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
@@ -16,5 +15,4 @@ public partial class SimulatorSettingsViewModel : SettingsViewModel {
     private async Task InitializeAsync() {
         await OnRefreshServersClickedAsync();
     }
-    
 }

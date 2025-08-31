@@ -6,22 +6,21 @@ namespace DCCPanelController.View.Components;
 public record ProfileItem(int Index, string Name);
 
 public partial class ProfileSelector : ContentView {
+    public ProfileSelector(IList<string> items, int? preselect = null) {
+        BindingContext = this;
+        InitializeComponent();
+        IsOkEnabled = false;
+        for (var i = 0; i < items.Count; i++) Items.Add(new ProfileItem(i, items[i]));
+        ProfilesList.ItemsSource = Items;
+    }
 
-    public bool IsOkEnabled { get; set; } = false;
+    public bool IsOkEnabled { get; set; }
     public ProfileItem? SelectedItem { get; set; }
     public ObservableCollection<ProfileItem> Items { get; set; } = [];
 
     // Add events for the popup
     public event Action<int>? SelectionCompleted;
     public event Action? SelectionCancelled;
-    
-    public ProfileSelector(IList<string> items, int? preselect = null) {
-        BindingContext = this;
-        InitializeComponent();
-        IsOkEnabled = false;
-        for (var i = 0; i < items.Count; i++) Items.Add(new ProfileItem(i,items[i]));
-        ProfilesList.ItemsSource = Items;
-    }
 
     private async void OnSelectButtonClicked(object? sender, EventArgs e) {
         SelectionCompleted?.Invoke(SelectedItem?.Index ?? -1);
@@ -35,17 +34,17 @@ public partial class ProfileSelector : ContentView {
         IsOkEnabled = SelectedItem is not null;
         OnPropertyChanged(nameof(IsOkEnabled));
     }
-    
+
     public static async Task<int?> ShowProfileSelector(IList<string> items, int? preselect = null) {
         var tcs = new TaskCompletionSource<int?>();
         var selector = new ProfileSelector(items, preselect);
-        var popup = new Syncfusion.Maui.Toolkit.Popup.SfPopup {
+        var popup = new SfPopup {
             ContentTemplate = new DataTemplate(() => selector),
             ShowHeader = false,
-            ShowFooter = false, 
+            ShowFooter = false,
             BackgroundColor = Colors.White,
             PopupStyle = new PopupStyle {
-                CornerRadius = 10, 
+                CornerRadius = 10,
                 HasShadow = false,
                 BlurIntensity = PopupBlurIntensity.Light
             },
@@ -54,7 +53,7 @@ public partial class ProfileSelector : ContentView {
             AnimationDuration = 300
         };
 
-        selector.SelectionCompleted += (index) => {
+        selector.SelectionCompleted += index => {
             popup.Dismiss();
             tcs.SetResult(index);
         };
@@ -66,7 +65,7 @@ public partial class ProfileSelector : ContentView {
 
         // Handle popup closing
         popup.Closed += (_, args) => {
-            Console.WriteLine($"Popup closed: {args.ToString()}");
+            Console.WriteLine($"Popup closed: {args}");
             if (!tcs.Task.IsCompleted) {
                 tcs.SetResult(null);
             }
@@ -76,4 +75,3 @@ public partial class ProfileSelector : ContentView {
         return await tcs.Task;
     }
 }
-

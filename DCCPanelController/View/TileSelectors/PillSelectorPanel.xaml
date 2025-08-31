@@ -6,27 +6,25 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:sfac="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
-    xmlns:accordion="http://schemas.syncfusion.com/maui/toolkit"
     BackgroundColor="Transparent"
     Padding="0"
     xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
     xmlns:interfaces="clr-namespace:DCCPanelController.Models.ViewModel.Interfaces"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
-    <Border BackgroundColor="White" 
-            Padding="0" Margin="5" 
-            Stroke="{StaticResource Primary}" 
+    <Border BackgroundColor="White"
+            Padding="0" Margin="5"
+            Stroke="{StaticResource Primary}"
             StrokeThickness="2"
             StrokeShape="RoundRectangle 15 15 5 5">
 
-        <Grid x:Name="PillSelectorGrid" 
-              Padding="0" 
-              Margin="0"  
-              RowDefinitions="8,36,2,auto" 
+        <Grid x:Name="PillSelectorGrid"
+              Padding="0"
+              Margin="0"
+              RowDefinitions="8,36,2,auto"
               ColumnDefinitions="*">
 
-            <Border Grid.Row="0" Margin="0,2,0,0" HorizontalOptions="Center" WidthRequest="30" StrokeThickness="3" 
+            <Border Grid.Row="0" Margin="0,2,0,0" HorizontalOptions="Center" WidthRequest="30" StrokeThickness="3"
                     StrokeShape="RoundRectangle 15 15 5 5" Stroke="{StaticResource Primary}">
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
@@ -44,27 +42,27 @@
             </Border>
 
             <sfac:SfSegmentedControl x:Name="SegmentedControl" Grid.Row="1"
-                HeightRequest="30"
-                Stroke="{StaticResource Primary}"
-                StrokeThickness="0"
-                EnableRippleEffect="True"
-                SegmentBackground="{StaticResource WhiteBrush}"
-                SegmentHeight="30"
-                ShowSeparator="False"
-                HorizontalOptions="Center"
-                VerticalOptions="Start"
-                Padding="0"
-                Margin="4,0,4,0"
-                BackgroundColor="Transparent"
-                AutoScrollToSelectedSegment="True"
-                ItemsSource="{Binding SfCategories}"
-                SelectionChanged="OnSelectionChanged">
+                                     HeightRequest="30"
+                                     Stroke="{StaticResource Primary}"
+                                     StrokeThickness="0"
+                                     EnableRippleEffect="True"
+                                     SegmentBackground="{StaticResource WhiteBrush}"
+                                     SegmentHeight="30"
+                                     ShowSeparator="False"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Start"
+                                     Padding="0"
+                                     Margin="4,0,4,0"
+                                     BackgroundColor="Transparent"
+                                     AutoScrollToSelectedSegment="True"
+                                     ItemsSource="{Binding SfCategories}"
+                                     SelectionChanged="OnSelectionChanged">
 
                 <sfac:SfSegmentedControl.TextStyle>
-                    <sfac:SegmentTextStyle TextColor="Black" FontSize="12" FontFamily="OpenSansMedium" />
+                    <sfac:SegmentTextStyle TextColor="Black" FontSize="12" FontFamily="OpenSansMedium"/>
                 </sfac:SfSegmentedControl.TextStyle>
                 <sfac:SfSegmentedControl.SelectionIndicatorSettings>
-                    <sfac:SelectionIndicatorSettings SelectionIndicatorPlacement="Fill" TextColor="White" />
+                    <sfac:SelectionIndicatorSettings SelectionIndicatorPlacement="Fill" TextColor="White"/>
                 </sfac:SfSegmentedControl.SelectionIndicatorSettings>
             </sfac:SfSegmentedControl>
 
@@ -87,28 +85,28 @@
                     HorizontalOptions="Center">
 
                     <CollectionView.ItemsLayout>
-                        <GridItemsLayout Orientation="Horizontal" Span="1" HorizontalItemSpacing="4" VerticalItemSpacing="4"/>
+                        <GridItemsLayout Orientation="Horizontal" Span="1" HorizontalItemSpacing="4"
+                                         VerticalItemSpacing="4"/>
                     </CollectionView.ItemsLayout>
 
                     <CollectionView.GestureRecognizers>
-                        <DragGestureRecognizer DragStarting="OnTileCollectionDragStarting" CanDrag="True" />
+                        <DragGestureRecognizer DragStarting="OnTileCollectionDragStarting" CanDrag="True"/>
                     </CollectionView.GestureRecognizers>
-                   
+
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
-                            <Grid x:Name="TileGrid" 
-                                Padding="4,4,4,4"
-                                RowDefinitions="32,12"
-                                ColumnDefinitions="32"
-                                HorizontalOptions="Center">
+                            <Grid x:Name="TileGrid"
+                                  Padding="4,4,4,4"
+                                  RowDefinitions="32,12"
+                                  ColumnDefinitions="32"
+                                  HorizontalOptions="Center">
                                 <Border Grid.Row="0"
                                         x:DataType="interfaces:ITile"
                                         StrokeThickness="1"
                                         WidthRequest="32"
                                         HeightRequest="32"
                                         StrokeShape="RoundRectangle 8"
-                                        Content="{Binding .}">
-                                </Border>
+                                        Content="{Binding .}"/>
                                 <Label Grid.Row="1"
                                        Margin="0,2,0,0"
                                        FontSize="7"

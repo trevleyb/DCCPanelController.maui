@@ -10,21 +10,19 @@
     xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:services="clr-namespace:DCCPanelController.Services"
     xmlns:clients="clr-namespace:DCCPanelController.Clients">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
-        </ToolbarItem>
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
 
-        <ToolbarItem 
-            Command="{Binding ToggleConnectionCommand}" 
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
@@ -49,57 +47,58 @@
                         <StackLayout Padding="0">
                             <Grid Margin="5">
                                 <HorizontalStackLayout>
-                                    <Image Margin="-5,0,5,0" HorizontalOptions="Start" VerticalOptions="Start"  Source="{Binding IconSource}" WidthRequest="24" HeightRequest="24"/>
+                                    <Image Margin="-5,0,5,0" HorizontalOptions="Start" VerticalOptions="Start"
+                                           Source="{Binding IconSource}" WidthRequest="24" HeightRequest="24"/>
                                     <StackLayout>
-                                    <HorizontalStackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label
+                                                WidthRequest="150"
+                                                FontAttributes="Bold"
+                                                HorizontalOptions="Fill"
+                                                LineBreakMode="WordWrap"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Operation }"
+                                                VerticalOptions="Center">
+                                                <Label.Triggers>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="Inbound">
+                                                        <Setter Property="TextColor" Value="Green"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="Outbound">
+                                                        <Setter Property="TextColor" Value="Blue"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="System">
+                                                        <Setter Property="TextColor" Value="Black"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="Error">
+                                                        <Setter Property="TextColor" Value="Red"/>
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                            <Label
+                                                HorizontalOptions="Start"
+                                                LineBreakMode="HeadTruncation"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding TimeStamp}"
+                                                VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
                                         <Label
-                                            WidthRequest="150"
-                                            FontAttributes="Bold"
+                                            Margin="0,0,0,5"
                                             HorizontalOptions="Fill"
-                                            LineBreakMode="WordWrap"
                                             Style="{StaticResource MediumLabel}"
-                                            Text="{Binding Operation }"
-                                            VerticalOptions="Center">
-                                            <Label.Triggers>
-                                                <DataTrigger
-                                                    Binding="{Binding MessageType}"
-                                                    TargetType="Label"
-                                                    Value="Inbound">
-                                                    <Setter Property="TextColor" Value="Green"/>
-                                                </DataTrigger>
-                                                <DataTrigger
-                                                    Binding="{Binding MessageType}"
-                                                    TargetType="Label"
-                                                    Value="Outbound">
-                                                    <Setter Property="TextColor" Value="Blue"/>
-                                                </DataTrigger>
-                                                <DataTrigger
-                                                    Binding="{Binding MessageType}"
-                                                    TargetType="Label"
-                                                    Value="System">
-                                                    <Setter Property="TextColor" Value="Black"/>
-                                                </DataTrigger>
-                                                <DataTrigger
-                                                    Binding="{Binding MessageType}"
-                                                    TargetType="Label"
-                                                    Value="Error">
-                                                    <Setter Property="TextColor" Value="Red"/>
-                                                </DataTrigger>
-                                            </Label.Triggers>
-                                        </Label>
-                                        <Label
-                                            HorizontalOptions="Start"
-                                            LineBreakMode="HeadTruncation"
-                                            Style="{StaticResource MediumLabel}"
-                                            Text="{Binding TimeStamp}"
+                                            Text="{Binding Message}"
                                             VerticalOptions="Center"/>
-                                    </HorizontalStackLayout>
-                                    <Label
-                                        Margin="0,0,0,5"
-                                        HorizontalOptions="Fill"
-                                        Style="{StaticResource MediumLabel}"
-                                        Text="{Binding Message}"
-                                        VerticalOptions="Center"/>
                                     </StackLayout>
                                 </HorizontalStackLayout>
                             </Grid>

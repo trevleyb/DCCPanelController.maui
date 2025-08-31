@@ -6,9 +6,8 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Services.ProfileService;
 
 public class ProfileService {
-    protected ProfileIndexFile ProfilesIndex = new ProfileIndexFile();
     private readonly SemaphoreSlim _gate = new(1, 1);
-    public Profile? ActiveProfile { get; set; }
+    protected ProfileIndexFile ProfilesIndex = new();
 
     public ProfileService() {
         LoadProfiles();
@@ -16,7 +15,9 @@ public class ProfileService {
             ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(null, ActiveProfile));
         }
     }
-    
+
+    public Profile? ActiveProfile { get; set; }
+
     #region Switch Profile Helpers
     public async Task SwitchProfileByIndexAsync(int index) {
         var items = GetProfileFileNames();
@@ -35,13 +36,24 @@ public class ProfileService {
     public event EventHandler<ProfileChangedEventArgs>? ActiveProfileChanged;
     public event EventHandler<ProfileDataChangedEventArgs>? ActiveProfileDataChanged;
 
-    private void RaiseActiveProfileChanged(Profile? oldP, Profile? newP) => ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(oldP, newP));
-    private void RaiseDataChanged(ProfileDataChangeType t, object? obj = null) => ActiveProfileDataChanged?.Invoke(this, new ProfileDataChangedEventArgs(t, obj));
+    private void RaiseActiveProfileChanged(Profile? oldP, Profile? newP) {
+        ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(oldP, newP));
+    }
+
+    private void RaiseDataChanged(ProfileDataChangeType t, object? obj = null) {
+        ActiveProfileDataChanged?.Invoke(this, new ProfileDataChangedEventArgs(t, obj));
+    }
     #endregion
 
     #region Helper Properties
-    public List<string> GetProfileNames() => ProfilesIndex?.Profiles.Select(x => x.ProfileName).ToList() ?? new List<string>();
-    public List<string> GetProfileFileNames() => ProfilesIndex?.Profiles.Select(x => x.FileName).ToList() ?? new List<string>();
+    public List<string> GetProfileNames() {
+        return ProfilesIndex?.Profiles.Select(x => x.ProfileName).ToList() ?? new List<string>();
+    }
+
+    public List<string> GetProfileFileNames() {
+        return ProfilesIndex?.Profiles.Select(x => x.FileName).ToList() ?? new List<string>();
+    }
+
     public List<string> GetProfileNamesWithDefault() {
         var profileList = new List<string>();
         foreach (var profile in ProfilesIndex.Profiles) {
@@ -54,15 +66,27 @@ public class ProfileService {
     }
 
     public int NumberOfProfiles => ProfilesIndex?.Profiles.Count ?? 0;
-    public void MarkAsDefault(Profile profile) => ProfilesIndex.SetAsDefault(profile);
-    public void MarkAsDefault() => ProfilesIndex.SetAsDefault(ActiveProfile ?? throw new ArgumentNullException(nameof(ActiveProfile), "Active profile is not defined."));
-    public bool IsDefault(Profile profile) => ProfilesIndex.IsDefault(profile);
-    public bool IsDefault() => ProfilesIndex.IsDefault(ActiveProfile ?? throw new ArgumentNullException(nameof(ActiveProfile), "Active profile is not defined."));
+
+    public void MarkAsDefault(Profile profile) {
+        ProfilesIndex.SetAsDefault(profile);
+    }
+
+    public void MarkAsDefault() {
+        ProfilesIndex.SetAsDefault(ActiveProfile ?? throw new ArgumentNullException(nameof(ActiveProfile), "Active profile is not defined."));
+    }
+
+    public bool IsDefault(Profile profile) {
+        return ProfilesIndex.IsDefault(profile);
+    }
+
+    public bool IsDefault() {
+        return ProfilesIndex.IsDefault(ActiveProfile ?? throw new ArgumentNullException(nameof(ActiveProfile), "Active profile is not defined."));
+    }
     #endregion
-    
+
     #region Upload and Download Helpers
     /// <summary>
-    /// Return the JSON for the provided profile (or the active profile if null) so it can be shared.
+    ///     Return the JSON for the provided profile (or the active profile if null) so it can be shared.
     /// </summary>
     public string DownloadProfile(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
@@ -70,21 +94,21 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Upload profile from raw bytes. Detects ZIP vs JSON automatically.
+    ///     Upload profile from raw bytes. Detects ZIP vs JSON automatically.
     /// </summary>
     public Profile? UploadProfile(byte[] content, bool setActive = true, string? displayName = null) {
         if (content == null || content.Length == 0) throw new ArgumentException("Empty content.", nameof(content));
-        string json = IsZip(content) ? ExtractJsonFromZipBytes(content) : Encoding.UTF8.GetString(content);
+        var json = IsZip(content) ? ExtractJsonFromZipBytes(content) : Encoding.UTF8.GetString(content);
         return UploadProfile(json, setActive, displayName);
     }
 
     /// <summary>
-    /// Load a profile from a JSON string, persist it, index it, and optionally set it active.
-    /// Returns the new Profile instance.
+    ///     Load a profile from a JSON string, persist it, index it, and optionally set it active.
+    ///     Returns the new Profile instance.
     /// </summary>
     public Profile? UploadProfile(string json, bool setActive = true, string? displayName = null) {
         Profile? uploaded;
-        bool raiseActiveChanged = false;
+        var raiseActiveChanged = false;
         _gate.Wait();
         try {
             uploaded = JsonRepository.UploadProfile(json).GetAwaiter().GetResult();
@@ -119,7 +143,7 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Async variant for bytes content. Detects ZIP vs JSON automatically.
+    ///     Async variant for bytes content. Detects ZIP vs JSON automatically.
     /// </summary>
     public async Task<Profile?> UploadProfileAsync(byte[] content, bool setActive = true, string? displayName = null) {
         if (content == null || content.Length == 0) throw new ArgumentException("Empty content.", nameof(content));
@@ -128,7 +152,7 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Async variant of UploadProfile.
+    ///     Async variant of UploadProfile.
     /// </summary>
     public async Task<Profile?> UploadProfileAsync(string json, bool setActive = true, string? displayName = null) {
         Profile? uploaded;
@@ -163,7 +187,7 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Import from a JSON file path (sync helper)
+    ///     Import from a JSON file path (sync helper)
     /// </summary>
     public Profile? UploadProfileFromFile(string filePath, bool setActive = true, string? displayName = null) {
         var bytes = File.ReadAllBytes(filePath);
@@ -174,7 +198,7 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Write the provided (or active) profile JSON to a file path.
+    ///     Write the provided (or active) profile JSON to a file path.
     /// </summary>
     public void ExportProfileToFile(string filePath, Profile? profile = null) {
         var json = DownloadProfile(profile);
@@ -182,7 +206,7 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Import from a JSON file path (async helper)
+    ///     Import from a JSON file path (async helper)
     /// </summary>
     public async Task<Profile?> UploadProfileFromFileAsync(string filePath, bool setActive = true, string? displayName = null) {
         var bytes = await File.ReadAllBytesAsync(filePath);
@@ -193,14 +217,14 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Return a ZIP (byte[]) containing the profile JSON as a single entry.
+    ///     Return a ZIP (byte[]) containing the profile JSON as a single entry.
     /// </summary>
     public byte[] DownloadProfileZip(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
         var json = JsonRepository.DownloadProfile(p);
         var entryName = string.IsNullOrWhiteSpace(p.Filename) ? "Profile.json" : p.Filename;
         using var mem = new MemoryStream();
-        using (var zip = new ZipArchive(mem, ZipArchiveMode.Create, leaveOpen: true)) {
+        using (var zip = new ZipArchive(mem, ZipArchiveMode.Create, true)) {
             var entry = zip.CreateEntry(entryName, CompressionLevel.Optimal);
             using var entryStream = entry.Open();
             using var writer = new StreamWriter(entryStream, Encoding.UTF8, leaveOpen: true);
@@ -210,14 +234,14 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Return a ZIP (byte[]) containing the profile JSON as a single entry.
+    ///     Return a ZIP (byte[]) containing the profile JSON as a single entry.
     /// </summary>
     public async Task<byte[]> DownloadProfileZipAsync(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
         var json = JsonRepository.DownloadProfile(p);
         var entryName = string.IsNullOrWhiteSpace(p.Filename) ? "Profile.json" : p.Filename;
         using var mem = new MemoryStream();
-        using (var zip = new ZipArchive(mem, ZipArchiveMode.Create, leaveOpen: true)) {
+        using (var zip = new ZipArchive(mem, ZipArchiveMode.Create, true)) {
             var entry = zip.CreateEntry(entryName, CompressionLevel.Optimal);
             await using var entryStream = entry.Open();
             await using var writer = new StreamWriter(entryStream, Encoding.UTF8, leaveOpen: true);
@@ -227,14 +251,16 @@ public class ProfileService {
     }
 
     /// <summary>
-    /// Write a ZIP file containing the profile JSON.
+    ///     Write a ZIP file containing the profile JSON.
     /// </summary>
     public void ExportProfileZipToFile(string filePath, Profile? profile = null) {
         var bytes = DownloadProfileZip(profile);
         File.WriteAllBytes(filePath, bytes);
     }
 
-    private static bool IsZip(byte[] data) => data.Length > 3 && data[0] == 0x50 && data[1] == 0x4B && (data[2] == 0x03 || data[2] == 0x05 || data[2] == 0x07);
+    private static bool IsZip(byte[] data) {
+        return data.Length > 3 && data[0] == 0x50 && data[1] == 0x4B && (data[2] == 0x03 || data[2] == 0x05 || data[2] == 0x07);
+    }
 
     private static string ExtractJsonFromZipBytes(byte[] zipBytes) {
         using var mem = new MemoryStream(zipBytes);
@@ -245,7 +271,7 @@ public class ProfileService {
         using var reader = new StreamReader(stream, Encoding.UTF8);
         return reader.ReadToEnd();
     }
-    #endregion 
+    #endregion
 
     #region CRUD Operators
     public void SetActive(Profile profile, bool markAsDefault = false) {
@@ -271,6 +297,7 @@ public class ProfileService {
             _gate.Release();
         }
     }
+
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
         await _gate.WaitAsync();
         try {
@@ -300,17 +327,18 @@ public class ProfileService {
                     var next = ProfilesIndex.Profiles[0];
                     var loaded = JsonRepository.Load(next.FileName);
                     if (loaded != null)
-                        SetActive(loaded, markAsDefault: true);
+                        SetActive(loaded, true);
                 } else {
                     // Ensure there is always at least one active profile
                     // SetActive already raised the event
-                    var _ = Create("Default", setActive: true);
+                    var _ = Create("Default");
                 }
             }
         } finally {
             _gate.Release();
         }
     }
+
     public async Task DeleteAsync(Profile profile) {
         await _gate.WaitAsync();
         try {
@@ -321,10 +349,10 @@ public class ProfileService {
                 if (ProfilesIndex.Profiles.Count > 0) {
                     var next = ProfilesIndex.Profiles[0];
                     var loaded = await JsonRepository.LoadAsync(next.FileName);
-                    if (loaded != null) SetActive(loaded, markAsDefault: true);
+                    if (loaded != null) SetActive(loaded, true);
                 } else {
                     // SetActive already raised the event
-                    var _ = await CreateAsync("Default", setActive: true);
+                    var _ = await CreateAsync("Default");
                 }
             }
         } finally {
@@ -338,7 +366,7 @@ public class ProfileService {
         ProfilesIndex.AddOrUpdate(ActiveProfile);
         RaiseDataChanged(ProfileDataChangeType.ProfileSaved, ActiveProfile);
     }
-    
+
     public async Task SaveAsync() {
         if (ActiveProfile is null) return;
         await JsonRepository.SaveAsync(ActiveProfile);
@@ -352,6 +380,7 @@ public class ProfileService {
         SetActive(profile, markAsDefault);
         return profile;
     }
+
     public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = false) {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("Filename is required.", nameof(fileName));
         var profile = await JsonRepository.LoadAsync(fileName) ?? throw new ApplicationException($"Profile not found: {fileName}");
@@ -363,6 +392,7 @@ public class ProfileService {
         ArgumentNullException.ThrowIfNull(item);
         return Load(item.FileName, markAsDefault);
     }
+
     public async Task<Profile> LoadAsync(ProfileIndexItem item, bool markAsDefault = false) {
         ArgumentNullException.ThrowIfNull(item);
         return await LoadAsync(item.FileName, markAsDefault);

@@ -10,7 +10,8 @@
 
         <!-- ON label -->
         <text x="24" y="20" font-family="Arial, sans-serif" font-size="6"
-              text-anchor="middle" fill="black">ON</text>
+              text-anchor="middle" fill="black">ON
+        </text>
 
         <!-- Switch bottom area (inactive) -->
         <rect id="Button" x="14" y="26" width="20" height="11" rx="2" ry="2"
@@ -18,6 +19,7 @@
 
         <!-- OFF label (inactive) -->
         <text x="24" y="34" font-family="Arial, sans-serif" font-size="8"
-              font-weight="bold" text-anchor="middle" fill="white">OFF</text>
+              font-weight="bold" text-anchor="middle" fill="white">OFF
+        </text>
     </g>
 </svg>

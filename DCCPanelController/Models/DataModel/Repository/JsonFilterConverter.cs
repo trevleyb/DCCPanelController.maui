@@ -12,11 +12,11 @@ public class ExpressionFilterConverter<T> : JsonConverter<List<T>> {
     }
 
     public override List<T> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) {
-        return JsonSerializer.Deserialize<List<T>>(ref reader, options) ?? new();
+        return JsonSerializer.Deserialize<List<T>>(ref reader, options) ?? new List<T>();
     }
 
     public override void Write(Utf8JsonWriter writer, List<T> value, JsonSerializerOptions options) {
-        var filteredList = value?.Where(_predicate).ToList() ?? new();
+        var filteredList = value?.Where(_predicate).ToList() ?? new List<T>();
         JsonSerializer.Serialize(writer, filteredList, options);
     }
 }

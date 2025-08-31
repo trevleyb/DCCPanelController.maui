@@ -13,15 +13,16 @@ using Timer = System.Timers.Timer;
 namespace DccClients.WiThrottle;
 
 public class WiThrottleClient {
+    private readonly string _address;
+
+    private readonly string _name;
+    private readonly int _port = 12090;
     private TcpClient? _client;
     private Timer? _heartbeatTimer;
     private NetworkStream? _stream;
 
-    private readonly string _name;
-    private readonly string _address;
-    private readonly int _port = 12090;
-    
     public WiThrottleClient(string address, int port) : this("", address, port) { }
+
     public WiThrottleClient(string name, string address, int port) {
         _name = name;
         _address = address;

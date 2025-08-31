@@ -3,7 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 
-public partial class PanelColorItem : ObservableObject {
+public class PanelColorItem : ObservableObject {
     private readonly Func<Panel, Color> _getColorFunc;
     private readonly Panel _panel;
     private readonly Action<Panel, Color> _setColorAction;
@@ -15,11 +15,10 @@ public partial class PanelColorItem : ObservableObject {
                           Func<Panel, Color> getColorFunc,
                           Action<Panel, Color> setColorAction,
                           bool allowsNoColor = true) {
-
         _panel = panel ?? throw new ArgumentNullException(nameof(panel));
         _getColorFunc = getColorFunc;
         _setColorAction = setColorAction;
-                
+
         LabelText = labelText;
         AllowsNoColor = allowsNoColor;
         Category = category;
@@ -36,13 +35,13 @@ public partial class PanelColorItem : ObservableObject {
     public string LabelText { get; }
     public string Category { get; }
     public bool AllowsNoColor { get; }
-    
+
     public Color ColorValue {
         get => _getColorFunc(_panel);
         set {
             if (!EqualityComparer<Color>.Default.Equals(_getColorFunc(_panel), value)) {
-                _setColorAction(_panel, value); 
-                OnPropertyChanged();            
+                _setColorAction(_panel, value);
+                OnPropertyChanged();
             }
         }
     }

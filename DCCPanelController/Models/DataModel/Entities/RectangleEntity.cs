@@ -21,13 +21,13 @@ public partial class RectangleEntity : Entity, IDrawingEntity {
     [JsonConstructor]
     public RectangleEntity() { }
 
-    [JsonIgnore] protected override int RotationFactor => 90;
-
     public RectangleEntity(Panel panel) : this() {
         Parent = panel;
     }
 
     public RectangleEntity(RectangleEntity entity) : base(entity) { }
+
+    [JsonIgnore] protected override int RotationFactor => 90;
 
     public override string EntityName => "Rectangle";
 

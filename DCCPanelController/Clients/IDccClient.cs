@@ -5,21 +5,20 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.Clients;
 
 public interface IDccClient {
+    DccClientType Type { get; }
+    DccClientStatus Status { get; }
+
+    bool IsConnected { get; }
+    bool IsDisconnected => !IsConnected;
 
     public event EventHandler<DccClientEvent>? ClientMessage;
 
-    DccClientType Type { get; }
-    DccClientStatus Status { get; }
-    
-    bool IsConnected { get; }
-    bool IsDisconnected => !IsConnected;
-    
     Task<IResult> ConnectAsync();
     Task<IResult> DisconnectAsync();
     Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null);
     Task<IResult> ValidateConnectionAsync();
     Task<IResult> SetAutomaticSettingsAsync();
-    
+
     Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown);
     Task<IResult> SendRouteCmdAsync(Route route, bool active);
     Task<IResult> SendSignalCmdAsync(Signal signal, SignalAspectEnum aspect);

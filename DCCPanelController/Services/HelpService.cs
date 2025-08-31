@@ -1,26 +1,28 @@
+using System.Net;
+using System.Text.Json;
+using System.Text.RegularExpressions;
+using Markdig;
+
 namespace DCCPanelController.Services;
 
 // App/Services/HelpService.cs
-using System.Text.Json;
-using Markdig;
 
 public sealed class HelpService {
-    static readonly Lazy<HelpService> _current = new(() => new HelpService());
-    public static HelpService Current => _current.Value;
-
     // You can tweak these:
     public const string DefaultTopicId = "getting-started";
     public const string UndefinedTopicTitle = "Help Topic Not Found";
+    private static readonly Lazy<HelpService> _current = new(() => new HelpService());
 
     public static readonly string PackedRoot = "help/en"; // localize later
     public static readonly string InstalledRoot = Path.Combine(FileSystem.AppDataDirectory, PackedRoot);
 
-    readonly MarkdownPipeline _md = new MarkdownPipelineBuilder()
-                                   .UseAdvancedExtensions()
-                                   .UseAutoIdentifiers()
-                                   .Build();
+    private readonly MarkdownPipeline _md = new MarkdownPipelineBuilder()
+                                           .UseAdvancedExtensions()
+                                           .UseAutoIdentifiers()
+                                           .Build();
 
-    Dictionary<string, HelpTopicMeta> _index = new();
+    private Dictionary<string, HelpTopicMeta> _index = new();
+    public static HelpService Current => _current.Value;
 
     public async Task InitializeAsync(bool force = false) {
 #if DEBUG
@@ -31,10 +33,12 @@ public sealed class HelpService {
         var indexPath = Path.Combine(InstalledRoot, "index.json");
         _index = JsonSerializer.Deserialize<Dictionary<string, HelpTopicMeta>>(
                      await File.ReadAllTextAsync(indexPath))
-              ?? new();
+              ?? new Dictionary<string, HelpTopicMeta>();
     }
 
-    public IEnumerable<HelpTopicMeta> GetAllTopics() => _index.Values.OrderBy(t => t.Title);
+    public IEnumerable<HelpTopicMeta> GetAllTopics() {
+        return _index.Values.OrderBy(t => t.Title);
+    }
 
     public async Task<HelpDocument> LoadTopicAsync(string? id, string? referrerId = null, string? anchor = null) {
         id = string.IsNullOrWhiteSpace(id) ? DefaultTopicId : id;
@@ -78,15 +82,18 @@ public sealed class HelpService {
         return BuildUndefinedDocument(id!, referrerId, baseFileUriFallback);
     }
 
-    public Task NavigateAsync(string id) => Shell.Current.GoToAsync($"help?topicId={Uri.EscapeDataString(id)}");
+    public Task NavigateAsync(string id) {
+        return Shell.Current.GoToAsync($"help?topicId={Uri.EscapeDataString(id)}");
+    }
 
-    string WrapHtml(string title, string body, string baseHrefFileUri) => $@"
+    private string WrapHtml(string title, string body, string baseHrefFileUri) {
+        return $@"
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset=""utf-8"" />
 <meta name=""viewport"" content=""width=device-width, initial-scale=1"" />
-<title>{System.Net.WebUtility.HtmlEncode(title)}</title>
+<title>{WebUtility.HtmlEncode(title)}</title>
 <base href=""{baseHrefFileUri}"">  <!-- ensures ./images/... resolves -->
 <style>
   :root {{
@@ -106,8 +113,9 @@ public sealed class HelpService {
 </head>
 <body>{body}</body>
 </html>";
+    }
 
-    HelpDocument BuildUndefinedDocument(string badId, string? referrerId, string baseFileUri) {
+    private HelpDocument BuildUndefinedDocument(string badId, string? referrerId, string baseFileUri) {
         // Suggest closest matches (simple ranking)
         var suggestions = _index.Values
                                 .OrderByDescending(t => Score(t, badId))
@@ -118,27 +126,27 @@ public sealed class HelpService {
             ? "<p>No similar topics found.</p>"
             : string.Join("", suggestions.Select(t =>
                                                      $@"<li><a href=""help://topic/{Uri.EscapeDataString(t.Id)}"">
-                 {System.Net.WebUtility.HtmlEncode(t.Title)}
+                 {WebUtility.HtmlEncode(t.Title)}
                </a></li>"));
 
         var chips = string.Join("", _index.Values
                                           .OrderBy(t => t.Title)
                                           .Take(10)
                                           .Select(t => $@"<a href=""help://topic/{Uri.EscapeDataString(t.Id)}"">
-                         {System.Net.WebUtility.HtmlEncode(t.Title)}
+                         {WebUtility.HtmlEncode(t.Title)}
                        </a>"));
 
         var refHtml = string.IsNullOrWhiteSpace(referrerId)
             ? ""
             : $@"<p class=""sub"">Linked from:
              <a href=""help://topic/{Uri.EscapeDataString(referrerId)}"">
-               {System.Net.WebUtility.HtmlEncode(referrerId)}
+               {WebUtility.HtmlEncode(referrerId)}
              </a>
            </p>";
 
         var body = $@"
 <h1>{UndefinedTopicTitle}</h1>
-<p>The requested topic <code>{System.Net.WebUtility.HtmlEncode(badId)}</code> was not found.</p>
+<p>The requested topic <code>{WebUtility.HtmlEncode(badId)}</code> was not found.</p>
 {refHtml}
 <p><a href=""help://topic/{Uri.EscapeDataString(DefaultTopicId)}"">Go to Help home</a></p>
 
@@ -166,7 +174,7 @@ public sealed class HelpService {
             var id = t.Id ?? "";
             var k = t.Keywords is null ? "" : string.Join(' ', t.Keywords);
 
-            int s = 0;
+            var s = 0;
             if (id.Equals(needle, StringComparison.OrdinalIgnoreCase)) s += 100;
             if (title.Equals(needle, StringComparison.OrdinalIgnoreCase)) s += 90;
             if (id.StartsWith(needle, StringComparison.OrdinalIgnoreCase)) s += 50;
@@ -178,17 +186,18 @@ public sealed class HelpService {
         }
 #if MACCATALYST
         static string SanitizeFileName(string value) {
-            foreach (var c in Path.GetInvalidFileNameChars())
+            foreach (var c in Path.GetInvalidFileNameChars()) {
                 value = value.Replace(c, '_');
+            }
             return value.Length == 0 ? "topic" : value;
         }
-#endif   
+#endif
     }
 
     // ------- existing install/update helpers (from your latest version) -------
     // ------------ Install / Update logic ------------
 
-    async Task EnsureInstalledAsync(bool force) {
+    private async Task EnsureInstalledAsync(bool force) {
         var pkgManifest = await ReadPackageManifestAsync();
 
         if (force || !Directory.Exists(InstalledRoot)) {
@@ -207,7 +216,7 @@ public sealed class HelpService {
             await File.ReadAllTextAsync(installedManifestPath));
 
         // Refresh if version changed or any file missing
-        bool missingAny = pkgManifest.Files.Any(rel => !File.Exists(Path.Combine(InstalledRoot, rel)));
+        var missingAny = pkgManifest.Files.Any(rel => !File.Exists(Path.Combine(InstalledRoot, rel)));
         if (installedManifest is null
          || !string.Equals(installedManifest.Version, pkgManifest.Version, StringComparison.Ordinal)
          || missingAny) {
@@ -215,7 +224,7 @@ public sealed class HelpService {
         }
     }
 
-    async Task<Manifest> ReadPackageManifestAsync() {
+    private async Task<Manifest> ReadPackageManifestAsync() {
         using var s = await FileSystem.OpenAppPackageFileAsync($"{PackedRoot}/manifest.json");
         using var r = new StreamReader(s);
         var json = await r.ReadToEndAsync();
@@ -224,9 +233,9 @@ public sealed class HelpService {
         return m;
     }
 
-    async Task ReinstallFromPackageAsync(Manifest manifest) {
+    private async Task ReinstallFromPackageAsync(Manifest manifest) {
         if (Directory.Exists(InstalledRoot))
-            Directory.Delete(InstalledRoot, recursive: true);
+            Directory.Delete(InstalledRoot, true);
         Directory.CreateDirectory(InstalledRoot);
 
         // Copy all listed files
@@ -241,13 +250,13 @@ public sealed class HelpService {
         await File.WriteAllTextAsync(installedManifestPath, JsonSerializer.Serialize(manifest));
     }
 
-    async Task CopyRawAsync(string rawPath, string dest) {
+    private async Task CopyRawAsync(string rawPath, string dest) {
         using var s = await FileSystem.OpenAppPackageFileAsync(rawPath);
         using var fs = File.Create(dest);
         await s.CopyToAsync(fs);
     }
 
-    static string RewriteRelativeImageSrcToAbsolute(string html, string installedRoot) {
+    private static string RewriteRelativeImageSrcToAbsolute(string html, string installedRoot) {
         // Ensure trailing slash and file:// URL
         var baseUri = new Uri(installedRoot.EndsWith(Path.DirectorySeparatorChar)
                                   ? installedRoot
@@ -255,7 +264,7 @@ public sealed class HelpService {
         var baseUrl = baseUri.AbsoluteUri; // e.g., file:///var/mobile/Containers/.../help/en/
 
         // Replace src="images/foo.png" or src="./images/foo.png" (but leave http/https/help/file alone)
-        string Rewriter(System.Text.RegularExpressions.Match m) {
+        string Rewriter(Match m) {
             var path = m.Groups["path"].Value;
             if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("file:", StringComparison.OrdinalIgnoreCase) ||
@@ -268,9 +277,9 @@ public sealed class HelpService {
             return $"src=\"{abs}\"";
         }
 
-        var rx = new System.Text.RegularExpressions.Regex(
+        var rx = new Regex(
             "src\\s*=\\s*\"(?<path>[^\"]+)\"",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+            RegexOptions.IgnoreCase);
         return rx.Replace(html, Rewriter);
     }
 }

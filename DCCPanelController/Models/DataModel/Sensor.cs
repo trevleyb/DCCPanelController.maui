@@ -9,14 +9,12 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Sensor : ObservableObject {
-    [ObservableProperty] private string? _id;
-    [ObservableProperty] private string? _name;
-    [ObservableProperty] private bool _isEditable = false;
-    [ObservableProperty] private bool _isModified = false;
-    [ObservableProperty] private bool _state;
     [ObservableProperty] private int _dccAddress;
-
-    public string DisplayFormat => $"{Name} ({Id})";
+    [ObservableProperty] private string? _id;
+    [ObservableProperty] private bool _isEditable;
+    [ObservableProperty] private bool _isModified;
+    [ObservableProperty] private string? _name;
+    [ObservableProperty] private bool _state;
 
     /// <summary>
     ///     Represents a Turnout with its current state.
@@ -25,4 +23,6 @@ public partial class Sensor : ObservableObject {
     public Sensor() {
         _dccAddress = 0;
     }
+
+    public string DisplayFormat => $"{Name} ({Id})";
 }

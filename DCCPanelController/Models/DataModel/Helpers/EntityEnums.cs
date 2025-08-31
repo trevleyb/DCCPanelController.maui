@@ -59,7 +59,7 @@ public static class EnumHelpers {
             "Top"    => TextAlignmentVerticalEnum.Top,
             "Bottom" => TextAlignmentVerticalEnum.Bottom,
             "Center" => TextAlignmentVerticalEnum.Center,
-            _        => TextAlignmentVerticalEnum.Center,
+            _        => TextAlignmentVerticalEnum.Center
         };
     }
 

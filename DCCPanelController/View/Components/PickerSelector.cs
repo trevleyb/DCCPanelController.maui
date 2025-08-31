@@ -1,20 +1,17 @@
 using System.Collections;
 using System.Globalization;
+using System.Text.RegularExpressions;
 using Microsoft.Maui.Controls.Shapes;
-using Syncfusion.Maui.Toolkit.Picker;
 using Picker = Microsoft.Maui.Controls.Picker;
-using VisualElement = Microsoft.Maui.Controls.VisualElement;
 
 namespace DCCPanelController.View.Components;
 
 public class PickerSelector : ContentView {
     private Image _clearImage = new();
+    private bool _isInitialized; // Track if we've been initialized
+    private Grid? _mainButtonLayout;
     private Border? _mainLayoutBox;
     private Label? _selectedItemLabel;
-    private Grid? _mainButtonLayout;
-    private bool _isInitialized = false; // Track if we've been initialized
-    
-    public PickerSelector() { }
 
     protected override void OnHandlerChanged() {
         base.OnHandlerChanged();
@@ -23,7 +20,7 @@ public class PickerSelector : ContentView {
             DrawPopup();
         }
     }
-    
+
     /// <summary>
     ///     Renders the dropdown menu, handling its visual update and ensuring
     ///     that it is properly displayed within the parent container.
@@ -34,7 +31,7 @@ public class PickerSelector : ContentView {
         if (SelectedItem is null && SelectedValue is not null) UpdateSelectedItem();
         if (SelectedItem is not null && SelectedValue is null) UpdateSelectedValue();
 
-        _mainLayoutBox = new Border() {
+        _mainLayoutBox = new Border {
             Margin = Margin,
             Padding = Padding,
             WidthRequest = WidthRequest,
@@ -45,7 +42,7 @@ public class PickerSelector : ContentView {
             StrokeThickness = BorderWidth,
             Stroke = BorderColor,
             StrokeShape = new RoundRectangle {
-                CornerRadius = CornerRadius 
+                CornerRadius = CornerRadius
             }
         };
 
@@ -86,7 +83,7 @@ public class PickerSelector : ContentView {
         // ----------------------------------------------------------------------------
         _mainButtonLayout = new Grid {
             VerticalOptions = LayoutOptions.Fill,
-            HorizontalOptions = LayoutOptions.Fill,
+            HorizontalOptions = LayoutOptions.Fill
         };
         _mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
         _mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -103,13 +100,13 @@ public class PickerSelector : ContentView {
                 Source = ClearFieldImageSource,
                 HorizontalOptions = LayoutOptions.End,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(1, 1, 2, 1),
+                Margin = new Thickness(1, 1, 2, 1)
             };
             _clearImage.GestureRecognizers.Add(clearGesture);
             _mainButtonLayout.Children.Add(_clearImage);
             _mainButtonLayout.SetColumn(_clearImage, 1);
         }
-        Content = _mainButtonLayout; 
+        Content = _mainButtonLayout;
     }
 
     private bool HasItems(IEnumerable itemsSource) {
@@ -145,7 +142,7 @@ public class PickerSelector : ContentView {
             SelectedValue = null;
         }
     }
-    
+
     /// <summary>
     ///     Retrieves the value of a specified property from the given object based on
     ///     the provided property path. If the value is null or the property path is invalid,
@@ -196,29 +193,29 @@ public class PickerSelector : ContentView {
         return 0;
     }
 
-    void ShowPicker() {
+    private void ShowPicker() {
         ShowStandardPicker();
     }
 
     /// <summary>
-    /// Main Show the picker function 
+    ///     Main Show the picker function
     /// </summary>
-    void ShowStandardPicker() {
+    private void ShowStandardPicker() {
         var displayItems = BuildDisplayItems(ItemsSource);
         if (displayItems == null) return;
 
         var pickerItems = displayItems.Keys.ToList();
         var picker = new Picker {
-            HorizontalOptions = LayoutOptions.Fill, 
+            HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
             WidthRequest = WidthRequest,
             Margin = new Thickness(10, 0, 0, 0),
             ItemsSource = pickerItems, // Use formatted display items
-            #if !MACCATALYST
+#if !MACCATALYST
             // Title is not supported on macOS
             Title = Placeholder ?? "Select an option",
-            #endif
-            IsVisible = false,
+#endif
+            IsVisible = false
         };
         var index = FindIndexOfSelectedValue(SelectedValue, displayItems);
         picker.SelectedIndex = index;
@@ -230,7 +227,7 @@ public class PickerSelector : ContentView {
                 UpdateSelectedValue();
             }
         };
-        
+
         UpdateSelectedItem();
 
         // Add picker to the layout temporarily to show it
@@ -246,9 +243,9 @@ public class PickerSelector : ContentView {
             };
         }
     }
-    
+
     /// <summary>
-    /// Formats an object using a format string with property placeholders like "{Name} ({Id})"
+    ///     Formats an object using a format string with property placeholders like "{Name} ({Id})"
     /// </summary>
     /// <param name="source">The object to format</param>
     /// <param name="formatString">The format string with property names in curly braces</param>
@@ -258,10 +255,10 @@ public class PickerSelector : ContentView {
         if (string.IsNullOrEmpty(formatString)) return source.ToString();
 
         var result = formatString;
-        var regex = new System.Text.RegularExpressions.Regex(@"\{(\w+)\}");
+        var regex = new Regex(@"\{(\w+)\}");
         var matches = regex.Matches(formatString);
 
-        foreach (System.Text.RegularExpressions.Match match in matches) {
+        foreach (Match match in matches) {
             var propertyName = match.Groups[1].Value;
             var propertyValue = GetPropertyValue(source, propertyName)?.ToString() ?? string.Empty;
             result = result.Replace(match.Value, propertyValue);
@@ -274,7 +271,7 @@ public class PickerSelector : ContentView {
     public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay);
     public static readonly BindableProperty SelectedValuePathProperty = BindableProperty.Create(nameof(SelectedValuePath), typeof(string), typeof(PickerSelector));
     public static readonly BindableProperty SelectedValueProperty = BindableProperty.Create(nameof(SelectedValue), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay);
-    
+
     public static readonly BindableProperty DisplayMemberPathProperty = BindableProperty.Create(nameof(DisplayMemberPath), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
     public static readonly BindableProperty DisplayFormatProperty = BindableProperty.Create(nameof(DisplayFormat), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
 
@@ -378,8 +375,8 @@ public class PickerSelector : ContentView {
     }
 
     /// <summary>
-    /// Gets or sets the property path that is used to get the display value for each item in the ItemsSource.
-    /// When null or empty, the item's ToString() method is used.
+    ///     Gets or sets the property path that is used to get the display value for each item in the ItemsSource.
+    ///     When null or empty, the item's ToString() method is used.
     /// </summary>
     public string DisplayMemberPath {
         get => (string)GetValue(DisplayMemberPathProperty);
@@ -387,8 +384,8 @@ public class PickerSelector : ContentView {
     }
 
     /// <summary>
-    /// Gets or sets the property path that is used to get the value from the selected item.
-    /// When null or empty, the entire object is used as the value.
+    ///     Gets or sets the property path that is used to get the value from the selected item.
+    ///     When null or empty, the entire object is used as the value.
     /// </summary>
     public string SelectedValuePath {
         get => (string)GetValue(SelectedValuePathProperty);
@@ -396,8 +393,8 @@ public class PickerSelector : ContentView {
     }
 
     /// <summary>
-    /// Gets or sets the value that is extracted from the selected item using the SelectedValuePath.
-    /// This is what gets bound to your model property (e.g., the ID).
+    ///     Gets or sets the value that is extracted from the selected item using the SelectedValuePath.
+    ///     This is what gets bound to your model property (e.g., the ID).
     /// </summary>
     public object? SelectedValue {
         get => GetValue(SelectedValueProperty);
@@ -421,7 +418,7 @@ public class PickerSelectedItemToDisplayTextConverter : IMultiValueConverter {
         var displayFormat = values[3] as string;
 
         if (selectedItem is null) return placeholder ?? "";
-        
+
         // If we have a display format, use it
         if (!string.IsNullOrEmpty(displayFormat)) {
             return PickerSelector.FormatObject(selectedItem, displayFormat) ?? placeholder;

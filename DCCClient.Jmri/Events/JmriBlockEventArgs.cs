@@ -1,11 +1,10 @@
 using System.Text.Json;
-using DccClients.Jmri.Events;
 using DccClients.Jmri.Helpers;
 
 namespace DccClients.Jmri.Events;
 
 public class JmriBlockEventArgs : JmriEventArgs<JmriBlockEventArgs>, IJmriEventArgs, IJmriProcessor<JmriBlockEventArgs> {
-    public string Name { get; private set; } = string.Empty;
+    private JmriBlockEventArgs() { }
     public string UserName { get; private set; } = string.Empty;
     public string Comment { get; private set; } = string.Empty;
     public string Value { get; private set; } = string.Empty;      // Current value (like loco address)
@@ -13,12 +12,11 @@ public class JmriBlockEventArgs : JmriEventArgs<JmriBlockEventArgs>, IJmriEventA
     public int State { get; private set; }                         // 2=Occupied, 4=Unoccupied
     public double Length { get; private set; }                     // Block length
     public bool Allocated { get; private set; }                    // Block allocation status
-
-    private JmriBlockEventArgs() { }
+    public string Name { get; private set; } = string.Empty;
 
     public static JmriBlockEventArgs? Create(JsonElement root) {
         if (!root.TryGetProperty("data", out var dataElement)) return null;
-        return new JmriBlockEventArgs() {
+        return new JmriBlockEventArgs {
             Name = dataElement.GetStringProperty("name"),
             UserName = dataElement.GetStringProperty("userName"),
             State = dataElement.GetIntProperty("state"),

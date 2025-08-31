@@ -3,7 +3,6 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Internals;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -12,12 +11,12 @@ public class EditableRouteAttribute(string label, string description = "", int o
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var initialValue = info.GetValue(owner);
-            var routes =((Entity)owner).Parent?.Routes.ToList() ?? new List<Route>();
+            var routes = ((Entity)owner).Parent?.Routes.ToList() ?? new List<Route>();
 
             _ = dropDownWidth;
             _ = dropDownHeight;
-            
-            var cell = new PickerSelector() {
+
+            var cell = new PickerSelector {
                 WidthRequest = width,
                 TextSize = 12,
                 DisplayMemberPath = "Name",
@@ -33,14 +32,14 @@ public class EditableRouteAttribute(string label, string description = "", int o
             cell.PropertyChanged += (sender, args) => {
                 if (args.PropertyName == nameof(PickerSelector.SelectedValue)) {
                     var currentValue = info.GetValue(owner);
-                    if (!object.Equals(currentValue, initialValue)) {
+                    if (!Equals(currentValue, initialValue)) {
                         SetModified(true);
                     }
                 }
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            PropertyLogger.LogDebug("Unable to create a Route: {Message}",e.Message);
+            PropertyLogger.LogDebug("Unable to create a Route: {Message}", e.Message);
             return null;
         }
     }

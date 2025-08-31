@@ -4,8 +4,7 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.Jmri;
 
-public partial class JmriSettingsView : ContentView{
-    
+public partial class JmriSettingsView : ContentView {
     public JmriSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
         var viewModel = new JmriSettingsViewModel(settings, connectionService);
         BindingContext = viewModel;

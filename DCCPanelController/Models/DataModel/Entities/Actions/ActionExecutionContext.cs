@@ -8,7 +8,7 @@ public enum StateChangeSource {
 public class ActionExecutionContext {
     private readonly HashSet<string> _currentCascade = new();
     private readonly int _maxDepth;
-    private int _currentDepth = 0;
+    private int _currentDepth;
 
     public ActionExecutionContext(int maxDepth = 10) {
         _maxDepth = maxDepth;
@@ -22,10 +22,10 @@ public class ActionExecutionContext {
         if (!CanCascade(entityId)) {
             return new NoOpDisposable();
         }
-        
+
         _currentCascade.Add(entityId);
         _currentDepth++;
-        
+
         return new CascadeScope(this, entityId);
     }
 

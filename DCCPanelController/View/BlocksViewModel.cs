@@ -6,44 +6,45 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
-public partial class BlocksViewModel : Base.ConnectionViewModel {
+public partial class BlocksViewModel : ConnectionViewModel {
     private const string _labelID = "ID";
     private const string _labelName = "Block";
     private const string _labelState = "Occupied?";
 
-    public string LabelID => _labelID;
-    public string LabelName => _labelName;
-    public string LabelState => _labelState;
+    private readonly ProfileService _profileService;
 
     [ObservableProperty] private ObservableCollection<Block> _blocks;
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
     private bool _isAscending;
+    private ILogger<BlocksViewModel> _logger;
     private string _sortColumn = "";
 
-    public bool IsSupported { get; private set; }
-    public bool IsNotSupported => !IsSupported;
-    
-    private readonly ProfileService _profileService;
-    private ILogger<BlocksViewModel> _logger;
-    
     public BlocksViewModel(ILogger<BlocksViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
         profileService.ActiveProfileChanged += (sender, args) => {
-            Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService),"BlocksViewModel: Active profile is not defined.");
+            Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService), "BlocksViewModel: Active profile is not defined.");
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
             SetLabels();
         };
-        Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService),"BlocksViewModel: Active profile is not defined.");
+        Blocks = profileService?.ActiveProfile?.Blocks ?? throw new ArgumentNullException(nameof(profileService), "BlocksViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Blocks) ?? false;
         SetLabels();
     }
+
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+
+    public bool IsSupported { get; private set; }
+    public bool IsNotSupported => !IsSupported;
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
@@ -83,10 +84,10 @@ public partial class BlocksViewModel : Base.ConnectionViewModel {
         if (block == null) return;
         block.IsOccupied = !block.IsOccupied;
         if (!string.IsNullOrEmpty(block.Id) && IsConnected) {
-            if (ConnectionService.Client is { } client) await client.SendBlockCmdAsync(block, block.IsOccupied )!;
+            if (ConnectionService.Client is { } client) await client.SendBlockCmdAsync(block, block.IsOccupied)!;
         }
     }
-    
+
     [RelayCommand]
     private async Task RefreshBlocksAsync() {
         IsBusy = true;

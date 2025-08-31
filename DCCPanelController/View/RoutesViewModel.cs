@@ -8,7 +8,6 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Base;
-using DCCPanelController.View.Properties;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
@@ -18,24 +17,16 @@ public partial class RoutesViewModel : ConnectionViewModel {
     private const string _labelName = "User Name";
     private const string _labelState = "State";
     private const string _labelAddress = "DCC Address";
-
-    public string LabelID => _labelID;
-    public string LabelName => _labelName;
-    public string LabelState => _labelState;
-    public string LabelAddress => _labelAddress;
+    private readonly ProfileService _profileService;
 
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
+    private bool _isAscending;
+    private ILogger<RoutesViewModel> _logger;
     [ObservableProperty] private ObservableCollection<Route> _routes;
 
     private string _sortColumn = "";
-    private bool _isAscending;
-    private ProfileService _profileService;
-    
-    public bool IsSupported { get; private set; }
-    public bool IsNotSupported => !IsSupported;
-    private ILogger<RoutesViewModel> _logger;
 
     public RoutesViewModel(ILogger<RoutesViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -45,10 +36,18 @@ public partial class RoutesViewModel : ConnectionViewModel {
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
             SetLabels();
         };
-        Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService),"RoutesViewModel: Active profile is not defined.");
+        Routes = _profileService?.ActiveProfile?.Routes ?? throw new ArgumentNullException(nameof(profileService), "RoutesViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Routes) ?? false;
         SetLabels();
     }
+
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+    public string LabelAddress => _labelAddress;
+
+    public bool IsSupported { get; private set; }
+    public bool IsNotSupported => !IsSupported;
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
@@ -98,7 +97,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task ToggleRoutesState(Route? route) {
-        if (route == null) return; 
+        if (route == null) return;
         route.State = route.State switch {
             RouteStateEnum.Active   => RouteStateEnum.Inactive,
             RouteStateEnum.Inactive => RouteStateEnum.Active,

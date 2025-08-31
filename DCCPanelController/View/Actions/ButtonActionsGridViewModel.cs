@@ -1,29 +1,27 @@
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
-public partial class ButtonActionsGridViewModel : ActionsGridViewModel<ButtonAction, ButtonActions>
-{
-    public ButtonActions ButtonPanelActions => _entity.ButtonPanelActions;
-    protected override ButtonActions PanelActions => ButtonPanelActions;
-    protected override string ItemTypeName => "Button";
-
+public class ButtonActionsGridViewModel : ActionsGridViewModel<ButtonAction, ButtonActions> {
     public ButtonActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableButtons) : base(entity, context, availableButtons) {
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(PanelActions)) {
                 OnPropertyChanged(nameof(ButtonPanelActions));
             }
-        };        
+        };
     }
 
+    public ButtonActions ButtonPanelActions => _entity.ButtonPanelActions;
+    protected override ButtonActions PanelActions => ButtonPanelActions;
+    protected override string ItemTypeName => "Button";
+
     protected override ButtonAction CreateNewAction(string id) {
-        return new ButtonAction { 
-            Id = id, 
-            WhenOn = ButtonStateEnum.On, 
-            WhenOff = ButtonStateEnum.Off 
+        return new ButtonAction {
+            Id = id,
+            WhenOn = ButtonStateEnum.On,
+            WhenOff = ButtonStateEnum.Off
         };
     }
 
@@ -31,9 +29,6 @@ public partial class ButtonActionsGridViewModel : ActionsGridViewModel<ButtonAct
         return action.Id;
     }
 }
-
-
-
 
 // using System.Collections.ObjectModel;
 // using CommunityToolkit.Mvvm.ComponentModel;

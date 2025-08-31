@@ -1,4 +1,3 @@
-
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
@@ -13,7 +12,7 @@ public static class ObjectCloner {
     private static readonly ConcurrentDictionary<Type, bool> SimpleTypeCache = new();
 
     /// <summary>
-    /// Creates a deep clone of the specified object
+    ///     Creates a deep clone of the specified object
     /// </summary>
     /// <typeparam name="T">The type of object to clone</typeparam>
     /// <param name="source">The source object to clone</param>
@@ -26,7 +25,7 @@ public static class ObjectCloner {
     }
 
     /// <summary>
-    /// Creates a deep clone of the specified object
+    ///     Creates a deep clone of the specified object
     /// </summary>
     /// <typeparam name="T">The type of object to clone</typeparam>
     /// <param name="source">The source object to clone</param>
@@ -37,7 +36,7 @@ public static class ObjectCloner {
     }
 
     /// <summary>
-    /// Copies all cloneable properties from source to target
+    ///     Copies all cloneable properties from source to target
     /// </summary>
     /// <param name="source">Source object to copy from</param>
     /// <param name="target">Target object to copy to</param>
@@ -45,17 +44,17 @@ public static class ObjectCloner {
     public static void CloneProperties(object source, object target, params string[] excludeProperties) {
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(target);
-        
+
         var sourceType = source.GetType();
         var targetType = target.GetType();
-        
+
         if (sourceType != targetType) {
             throw new ArgumentException("Source and target objects must be of the same type.");
         }
 
         var exclusions = new HashSet<string>(excludeProperties);
         var properties = GetCloneableProperties(sourceType, exclusions);
-        
+
         foreach (var property in properties) {
             try {
                 var value = property.GetValue(source);
@@ -68,7 +67,7 @@ public static class ObjectCloner {
     }
 
     /// <summary>
-    /// Copies all cloneable properties from source to target (without exclusions)
+    ///     Copies all cloneable properties from source to target (without exclusions)
     /// </summary>
     /// <param name="source">Source object to copy from</param>
     /// <param name="target">Target object to copy to</param>
@@ -92,7 +91,7 @@ public static class ObjectCloner {
         }
 
         // Handle DateTime, DateTimeOffset, TimeSpan, Guid
-        if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || 
+        if (type == typeof(DateTime) || type == typeof(DateTimeOffset) ||
             type == typeof(TimeSpan) || type == typeof(Guid)) {
             return source;
         }
@@ -127,16 +126,16 @@ public static class ObjectCloner {
     }
 
     private static bool IsSimpleType(Type type) {
-        return SimpleTypeCache.GetOrAdd(type, t => 
-            t.IsPrimitive || 
-            t.IsEnum || 
-            t == typeof(string) || 
-            t == typeof(Color) ||
-            t == typeof(decimal) ||
-            t == typeof(DateTime) ||
-            t == typeof(DateTimeOffset) ||
-            t == typeof(TimeSpan) ||
-            t == typeof(Guid)
+        return SimpleTypeCache.GetOrAdd(type, t =>
+                                            t.IsPrimitive ||
+                                            t.IsEnum ||
+                                            t == typeof(string) ||
+                                            t == typeof(Color) ||
+                                            t == typeof(decimal) ||
+                                            t == typeof(DateTime) ||
+                                            t == typeof(DateTimeOffset) ||
+                                            t == typeof(TimeSpan) ||
+                                            t == typeof(Guid)
         );
     }
 
@@ -153,14 +152,15 @@ public static class ObjectCloner {
             return true;
         }
 
-        return type.GetInterfaces().Any(i => 
-            i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
+        return type.GetInterfaces()
+                   .Any(i =>
+                            i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
     }
 
     private static object? CloneArray(Array sourceArray, Dictionary<object, object> referenceMap, HashSet<string> exclusions) {
         var elementType = sourceArray.GetType().GetElementType()!;
         var copiedArray = Array.CreateInstance(elementType, sourceArray.Length);
-        
+
         referenceMap[sourceArray] = copiedArray;
 
         for (var i = 0; i < sourceArray.Length; i++) {
@@ -273,30 +273,30 @@ public static class ObjectCloner {
 
     private static PropertyInfo[] GetCloneableProperties(Type type, HashSet<string>? exclusions = null) {
         if (exclusions == null || exclusions.Count == 0) {
-            return PropertyCache.GetOrAdd(type, t => 
-                t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                 .Where(p => p.CanRead && 
-                            p.CanWrite && 
-                            !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)))
-                 .ToArray()
+            return PropertyCache.GetOrAdd(type, t =>
+                                              t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                               .Where(p => p.CanRead &&
+                                                           p.CanWrite &&
+                                                           !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)))
+                                               .ToArray()
             );
         }
 
         // Create a key for caching that includes the exclusions
         var cacheKey = (type, exclusions);
-        
-        return PropertyCacheWithExclusions.GetOrAdd(cacheKey, key => 
-            key.Item1.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                     .Where(p => p.CanRead && 
-                                p.CanWrite && 
-                                !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)) &&
-                                !key.Item2.Contains(p.Name))
-                     .ToArray()
+
+        return PropertyCacheWithExclusions.GetOrAdd(cacheKey, key =>
+                                                        key.Item1.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                                                           .Where(p => p.CanRead &&
+                                                                       p.CanWrite &&
+                                                                       !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)) &&
+                                                                       !key.Item2.Contains(p.Name))
+                                                           .ToArray()
         );
     }
 
     /// <summary>
-    /// Updates all properties of the original object with values from the modified object
+    ///     Updates all properties of the original object with values from the modified object
     /// </summary>
     /// <param name="original">The object to update</param>
     /// <param name="modified">The object containing new values</param>
@@ -304,7 +304,7 @@ public static class ObjectCloner {
     public static void UpdateOriginal(object original, object modified, params string[] excludeProperties) {
         ArgumentNullException.ThrowIfNull(original);
         ArgumentNullException.ThrowIfNull(modified);
-        
+
         var originalType = original.GetType();
         var modifiedType = modified.GetType();
 
@@ -317,7 +317,7 @@ public static class ObjectCloner {
     }
 
     /// <summary>
-    /// Updates all properties of the original object with values from the modified object (without exclusions)
+    ///     Updates all properties of the original object with values from the modified object (without exclusions)
     /// </summary>
     /// <param name="original">The object to update</param>
     /// <param name="modified">The object containing new values</param>
@@ -376,7 +376,7 @@ public static class ObjectCloner {
                 var modifiedElement = modifiedArray.GetValue(i);
 
                 if (!Equals(originalElement, modifiedElement)) {
-                    if (originalElement != null && modifiedElement != null && 
+                    if (originalElement != null && modifiedElement != null &&
                         !IsSimpleType(originalElement.GetType())) {
                         UpdateObject(originalElement, modifiedElement, new HashSet<object>(), exclusions);
                     } else {
@@ -399,7 +399,7 @@ public static class ObjectCloner {
                 var modifiedItem = modifiedList[i];
 
                 if (!Equals(originalItem, modifiedItem)) {
-                    if (originalItem != null && modifiedItem != null && 
+                    if (originalItem != null && modifiedItem != null &&
                         !IsSimpleType(originalItem.GetType())) {
                         UpdateObject(originalItem, modifiedItem, new HashSet<object>(), exclusions);
                     } else {
@@ -429,7 +429,7 @@ public static class ObjectCloner {
                 var modifiedValue = entry.Value;
 
                 if (!Equals(originalValue, modifiedValue)) {
-                    if (originalValue != null && modifiedValue != null && 
+                    if (originalValue != null && modifiedValue != null &&
                         !IsSimpleType(originalValue.GetType())) {
                         UpdateObject(originalValue, modifiedValue, new HashSet<object>(), exclusions);
                     } else {

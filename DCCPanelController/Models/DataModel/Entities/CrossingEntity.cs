@@ -8,12 +8,13 @@ public class CrossingEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public CrossingEntity() { }
 
-    [JsonIgnore]  public override EntityConnections Connections => EntityConnections.TrackPatterns.CrossingTrack;
     public CrossingEntity(Panel panel) : this() {
         Parent = panel;
     }
 
     public CrossingEntity(CrossingEntity entity) : base(entity) { }
+
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CrossingTrack;
     public override string EntityName => "Crossing Track";
 
     public override Entity Clone() {

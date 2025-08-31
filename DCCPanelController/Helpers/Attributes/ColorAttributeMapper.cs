@@ -1,52 +1,53 @@
 using System.Collections.ObjectModel;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.Helpers.Attributes;
 
 /// <summary>
-/// Attribute to mark fields that should generate copyable properties with UI metadata
+///     Attribute to mark fields that should generate copyable properties with UI metadata
 /// </summary>
-[AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Field)]
 public class CopyableAttribute : Attribute {
+    public CopyableAttribute(string group) {
+        Group = group;
+    }
+
     public string Group { get; }
     public string DisplayName { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public int CategorySortOrder { get; set; } = 100; // Default sort order for categories
     public int ItemSortOrder { get; set; } = 100;     // Default sort order for items within category
-
-    public CopyableAttribute(string group) {
-        Group = group;
-    }
 }
 
 /// <summary>
-/// Represents a grouped collection of PanelColorItems
+///     Represents a grouped collection of PanelColorItems
 /// </summary>
 public class ColorItemGroup : List<PanelColorItem> {
-    public string CategoryName { get; set; } = string.Empty;
-    public int CategorySortOrder { get; set; } = 100;
-
     public ColorItemGroup(string categoryName, int categorySortOrder, IEnumerable<PanelColorItem> items) : base(items) {
         CategoryName = categoryName;
         CategorySortOrder = categorySortOrder;
     }
+
+    public string CategoryName { get; set; } = string.Empty;
+    public int CategorySortOrder { get; set; } = 100;
 }
 
 /// <summary>
-/// Generic mapper that copies properties and generates UI items based on field attributes
+///     Generic mapper that copies properties and generates UI items based on field attributes
 /// </summary>
 public static class AttributeMapper {
     /// <summary>
-    /// Copies all copyable properties from source to target
+    ///     Copies all copyable properties from source to target
     /// </summary>
     public static void CopyTo<T>(T source, T target) where T : class {
         CopyTo(source, target, null);
     }
 
     /// <summary>
-    /// Copies properties from source to target, optionally filtered by group
+    ///     Copies properties from source to target, optionally filtered by group
     /// </summary>
     public static void CopyTo<T>(T source, T target, string? group) where T : class {
         if (source == null) throw new ArgumentNullException(nameof(source));
@@ -62,14 +63,14 @@ public static class AttributeMapper {
     }
 
     /// <summary>
-    /// Generates grouped PanelColorItem collection for all copyable Color properties
+    ///     Generates grouped PanelColorItem collection for all copyable Color properties
     /// </summary>
     public static ObservableCollection<ColorItemGroup> GenerateGroupedColorItems(Panel instance) {
         return GenerateGroupedColorItems(instance, null);
     }
 
     /// <summary>
-    /// Generates grouped PanelColorItem collection for copyable Color properties, optionally filtered by group
+    ///     Generates grouped PanelColorItem collection for copyable Color properties, optionally filtered by group
     /// </summary>
     public static ObservableCollection<ColorItemGroup> GenerateGroupedColorItems(Panel instance, string? group) {
         if (instance == null) throw new ArgumentNullException(nameof(instance));
@@ -110,14 +111,14 @@ public static class AttributeMapper {
     }
 
     /// <summary>
-    /// Generates flat PanelColorItem collection for backward compatibility
+    ///     Generates flat PanelColorItem collection for backward compatibility
     /// </summary>
     public static ObservableCollection<PanelColorItem> GenerateColorItems(Panel instance) {
         return GenerateColorItems(instance, null);
     }
 
     /// <summary>
-    /// Generates flat PanelColorItem collection for copyable Color properties, optionally filtered by group
+    ///     Generates flat PanelColorItem collection for copyable Color properties, optionally filtered by group
     /// </summary>
     public static ObservableCollection<PanelColorItem> GenerateColorItems(Panel instance, string? group) {
         var groupedItems = GenerateGroupedColorItems(instance, group);
@@ -126,7 +127,7 @@ public static class AttributeMapper {
     }
 
     /// <summary>
-    /// Gets all available groups for copyable properties on the specified type
+    ///     Gets all available groups for copyable properties on the specified type
     /// </summary>
     public static IEnumerable<string> GetGroups<T>() where T : class {
         var type = typeof(T);
@@ -194,6 +195,6 @@ public static class AttributeMapper {
     }
 
     private static string SplitCamelCase(string input) {
-        return System.Text.RegularExpressions.Regex.Replace(input, "([A-Z])", " $1").Trim();
+        return Regex.Replace(input, "([A-Z])", " $1").Trim();
     }
 }

@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
@@ -8,21 +7,11 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.Settings.Jmri;
 
 public partial class JmriSettingsViewModel : SettingsViewModel {
-
     [ObservableProperty] private JmriSettings _jmriSettings;
 
     public JmriSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         JmriSettings = Settings as JmriSettings ?? throw new InvalidOperationException();
         if (string.IsNullOrEmpty(JmriSettings.Name)) JmriSettings.Name = DeviceInfo.Name;
-    }
-
-    private async Task InitializeAsync() {
-        await OnRefreshServersClickedAsync();
-    }
-
-    [RelayCommand]
-    private async Task OnDefaultDeviceNameClickedAsync() {
-        JmriSettings.Name = DeviceInfo.Name;
     }
 
     public int Port {
@@ -81,4 +70,12 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
         }
     }
 
+    private async Task InitializeAsync() {
+        await OnRefreshServersClickedAsync();
+    }
+
+    [RelayCommand]
+    private async Task OnDefaultDeviceNameClickedAsync() {
+        JmriSettings.Name = DeviceInfo.Name;
+    }
 }

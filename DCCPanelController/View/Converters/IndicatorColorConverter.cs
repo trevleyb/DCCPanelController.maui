@@ -2,9 +2,8 @@ using System.Globalization;
 
 namespace DCCPanelController.View.Converters;
 
-public class IndicatorColorConverter: IMultiValueConverter {
+public class IndicatorColorConverter : IMultiValueConverter {
     public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture) {
-        
         if (values is [int indicatorIndex, _, ..]) {
             int? currentIndex = null;
             if (values[1] is int) currentIndex = (int)values[1];
@@ -14,7 +13,7 @@ public class IndicatorColorConverter: IMultiValueConverter {
             if (currentIndex is not null) {
                 var active = indicatorIndex == currentIndex;
                 return active
-                    ? (Application.Current?.Resources["Primary"] as Color ?? Colors.Blue)
+                    ? Application.Current?.Resources["Primary"] as Color ?? Colors.Blue
                     : Colors.DarkGray;
             }
         }

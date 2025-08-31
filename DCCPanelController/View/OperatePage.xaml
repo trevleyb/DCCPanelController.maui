@@ -7,18 +7,13 @@
     x:Class="DCCPanelController.View.OperatePage"
     x:DataType="view:OperateViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    xmlns:global="clr-namespace:"
-    xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
-    xmlns:system="clr-namespace:System;assembly=System.Runtime">
+    xmlns:converters="clr-namespace:DCCPanelController.View.Converters">
 
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorFallbackConverter x:Key="ColorFallbackConverter"/>
-            <converters:IndicatorColorConverter x:Key="IndicatorColorConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 

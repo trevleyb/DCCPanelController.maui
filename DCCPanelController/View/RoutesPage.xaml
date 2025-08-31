@@ -14,15 +14,14 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshRoutesCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
-        </ToolbarItem>
-        <ToolbarItem 
-            Command="{Binding ToggleConnectionCommand}" 
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
@@ -61,13 +60,15 @@
             HeightRequest="1"
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshRoutesCommand}">
-            <Grid Padding="5" VerticalOptions="FillAndExpand" IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}">
+            <Grid Padding="5" VerticalOptions="FillAndExpand"
+                  IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:RoutesViewModel}}, x:DataType=view:RoutesViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Routes}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                                 <Label IsVisible="{Binding IsSupported}" Text="No Routes available."/>
-                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Routes."/>
+                                <Label IsVisible="{Binding IsNotSupported}"
+                                       Text="The current server type does not support Routes."/>
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>

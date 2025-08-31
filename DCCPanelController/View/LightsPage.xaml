@@ -13,18 +13,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem 
+        <ToolbarItem
             Command="{Binding RefreshLightsCommand}" IsEnabled="{Binding IsConnected}"
-            IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
-        </ToolbarItem>
+            IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
 
-        <ToolbarItem 
-            Command="{Binding ToggleConnectionCommand}" 
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
@@ -65,13 +64,15 @@
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshLightsCommand}">
 
-            <Grid Padding="5" VerticalOptions="FillAndExpand" IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}">
+            <Grid Padding="5" VerticalOptions="FillAndExpand"
+                  IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:LightsViewModel}}, x:DataType=view:LightsViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Lights}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                                 <Label IsVisible="{Binding IsSupported}" Text="No Lights available."/>
-                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Lights."/>
+                                <Label IsVisible="{Binding IsNotSupported}"
+                                       Text="The current server type does not support Lights."/>
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>

@@ -6,6 +6,7 @@ namespace DCCPanelController.View;
 
 public partial class BlocksPage : ContentPage {
     private readonly ILogger<BlocksPage> _logger;
+
     public BlocksPage(ILogger<BlocksPage> logger, BlocksViewModel viewModel) {
         _logger = logger;
         InitializeComponent();

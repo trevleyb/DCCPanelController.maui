@@ -1,6 +1,3 @@
-using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Core;
-using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using Syncfusion.Maui.Toolkit.Popup;
@@ -37,7 +34,7 @@ public partial class ColorPickerButton : ContentView {
         get => (Color)GetValue(SelectedColorProperty);
         set {
             SetValue(SelectedColorProperty, value);
-            OnPropertyChanged(nameof(SelectedColorProperty)); 
+            OnPropertyChanged(nameof(SelectedColorProperty));
             OnPropertyChanged(nameof(SelectedOffsetColor));
             OnPropertyChanged(nameof(SelectedColorText));
             OnPropertyChanged(nameof(ShowClearColorButton));
@@ -83,14 +80,14 @@ public partial class ColorPickerButton : ContentView {
         control.OnPropertyChanged(nameof(ShowClearColorButton));
         control.OnPropertyChanged(nameof(SelectedColorText));
         control.OnPropertyChanged(nameof(AllowsNoColor));
-        control.OnPropertyChanged(nameof(SelectedColorProperty)); 
+        control.OnPropertyChanged(nameof(SelectedColorProperty));
         control.OnPropertyChanged(nameof(SelectedOffsetColor));
     }
 
     [RelayCommand]
     private async Task ClearColorAsync() {
         SelectedColor = null;
-        OnPropertyChanged(nameof(SelectedColorProperty)); 
+        OnPropertyChanged(nameof(SelectedColorProperty));
         OnPropertyChanged(nameof(SelectedOffsetColor));
         OnPropertyChanged(nameof(SelectedColorText));
         OnPropertyChanged(nameof(ShowClearColorButton));
@@ -101,13 +98,13 @@ public partial class ColorPickerButton : ContentView {
         var colorPickerViewModel = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
         var colorPickerGrid = new ColorPickerGrid(colorPickerViewModel);
 
-        var popup = new Syncfusion.Maui.Toolkit.Popup.SfPopup {
+        var popup = new SfPopup {
             ContentTemplate = new DataTemplate(() => colorPickerGrid),
             ShowHeader = false,
-            ShowFooter = false, 
+            ShowFooter = false,
             BackgroundColor = Colors.Transparent,
             PopupStyle = new PopupStyle {
-                CornerRadius = 10, 
+                CornerRadius = 10,
                 HasShadow = false,
                 BlurIntensity = PopupBlurIntensity.Light
             },
@@ -119,7 +116,7 @@ public partial class ColorPickerButton : ContentView {
         var tcs = new TaskCompletionSource<Color?>();
 
         // Subscribe to events
-        colorPickerViewModel.ColorSelectionCompleted += (color) => {
+        colorPickerViewModel.ColorSelectionCompleted += color => {
             popup.Dismiss();
             tcs.SetResult(color);
         };

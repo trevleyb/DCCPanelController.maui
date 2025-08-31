@@ -11,7 +11,7 @@ public class TrackPlatformTile : TrackTile {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is PlatformEntity platform) {
             var style = new SvgStyleBuilder();
-            style.Add(e => e.WithName(SvgElementType.Platform).WithColor(platform.PlatformColor ?? platform.Parent?.PlatformColor ?? Colors.Gray ));
+            style.Add(e => e.WithName(SvgElementType.Platform).WithColor(platform.PlatformColor ?? platform.Parent?.PlatformColor ?? Colors.Gray));
             return CreateTrackTile("platform", Entity.Rotation, style.Build());
         }
         return CreateTrackTile("platform", Entity.Rotation);

@@ -4,7 +4,7 @@ namespace DCCPanelController.Models.ViewModel.PathFinder;
 
 public class TrackPathAnimator {
     public int PathAnimationDelayMs { get; set; } = 50;
-    public int PathDisplayDurationMs { get; set; }= 3000;
+    public int PathDisplayDurationMs { get; set; } = 3000;
 
     public async Task AnimatePathsAsync(List<TracedPath> paths,
                                         List<TrackTile> registeredTiles,

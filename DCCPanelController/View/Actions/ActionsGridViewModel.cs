@@ -1,22 +1,18 @@
-
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
-public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject 
+public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject
     where TAction : class, new()
-    where TCollection : ICollection<TAction>
-{
-    [ObservableProperty] private ObservableCollection<string> _selectableItems = [];
+    where TCollection : ICollection<TAction> {
+    protected readonly IActionEntity _entity;
 
     protected ActionsContext _actionContext;
     protected List<string> _availableItems;
-    protected readonly IActionEntity _entity;
+    [ObservableProperty] private ObservableCollection<string> _selectableItems = [];
 
     protected ActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableItems) {
         _entity = entity;
@@ -30,13 +26,11 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
     public bool IsButtonContext => _actionContext == ActionsContext.Button;
     public bool IsGridVisible => PanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableItems.Count > 0;
-    public double ControlHeight => 40 + (PanelActions.Count * 40);
+    public double ControlHeight => 40 + PanelActions.Count * 40;
 
     // Abstract properties and methods that subclasses must implement
     protected abstract TCollection PanelActions { get; }
     protected abstract string ItemTypeName { get; }
-    protected abstract TAction CreateNewAction(string id);
-    protected abstract string GetActionId(TAction action);
 
     public string NoDataText {
         get {
@@ -47,26 +41,29 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
         }
     }
 
+    protected abstract TAction CreateNewAction(string id);
+    protected abstract string GetActionId(TAction action);
+
     /// <summary>
-    /// Removes any actions from PanelActions where the Id doesn't exist in AvailableItems.
-    /// This ensures data integrity when available items change (e.g., items deleted elsewhere).
+    ///     Removes any actions from PanelActions where the Id doesn't exist in AvailableItems.
+    ///     This ensures data integrity when available items change (e.g., items deleted elsewhere).
     /// </summary>
     protected void CleanupInvalidActions() {
         // Work backwards through the collection to avoid index issues when removing items
         var actionsToRemove = new List<TAction>();
-    
+
         foreach (var action in PanelActions) {
             var actionId = GetActionId(action);
             if (!string.IsNullOrEmpty(actionId) && !_availableItems.Contains(actionId)) {
                 actionsToRemove.Add(action);
             }
         }
-    
+
         // Remove invalid actions
         foreach (var actionToRemove in actionsToRemove) {
             PanelActions.Remove(actionToRemove);
         }
-    
+
         // If we removed any actions, raise property change notifications
         if (actionsToRemove.Count > 0) {
             RaisePropertiesChanged();
@@ -82,7 +79,7 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
     }
-    
+
     [RelayCommand]
     private void AddRow() {
         if (SelectableItems.Count > 0) {
@@ -112,9 +109,9 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
         foreach (var item in _availableItems) {
             var used = PanelActions.Any(x => GetActionId(x) == item);
             var current = !string.IsNullOrEmpty(activeItem) && activeItem.Equals(item);
-            
-            if (used && !current && SelectableItems.Contains(item)) SelectableItems.Remove(item); 
-            if (((used && current) || !used) && !SelectableItems.Contains(item)) SelectableItems.Add(item);
+
+            if (used && !current && SelectableItems.Contains(item)) SelectableItems.Remove(item);
+            if ((used && current || !used) && !SelectableItems.Contains(item)) SelectableItems.Add(item);
         }
         RaisePropertiesChanged();
     }

@@ -1,4 +1,3 @@
-using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Views;
 
 // For PopupOpenedEventArgs
@@ -23,6 +22,7 @@ public partial class PropertyPopup : Popup {
         ViewModel = viewModel;
         BindingContext = ViewModel;
         PropertyViewContainer.Content = ViewModel.CreatePropertiesView();
+
         // TODO: FIX Opened += OnPopupOpened;
         // TODO: FIX Closed += OnPopupClosed;
     }
@@ -38,7 +38,7 @@ public partial class PropertyPopup : Popup {
     //         _initialSizeLocked = true;
     //     }
     // }
-    
+
     // TODO: FIX 
     // private void OnPopupClosed(object? sender, PopupClosedEventArgs e) {
     //     Opened -= OnPopupOpened;

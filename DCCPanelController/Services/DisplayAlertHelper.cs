@@ -1,6 +1,7 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Resources.Styles;
+using Font = Microsoft.Maui.Font;
 
 namespace DCCPanelController.Services;
 
@@ -17,8 +18,13 @@ public static class DisplayAlertHelper {
         return await mainPage.DisplayAlert(title, message, accept, cancel);
     }
 
-    public static async Task<bool> DisplayAlertOkCancelAsync(string title, string message) => await DisplayAlertAsync(title, message, "OK", "Cancel");
-    public static async Task<bool> DisplayAlertYesNoAsync(string title, string message) => await DisplayAlertAsync(title, message, "Yes", "No");
+    public static async Task<bool> DisplayAlertOkCancelAsync(string title, string message) {
+        return await DisplayAlertAsync(title, message, "OK", "Cancel");
+    }
+
+    public static async Task<bool> DisplayAlertYesNoAsync(string title, string message) {
+        return await DisplayAlertAsync(title, message, "Yes", "No");
+    }
 
     public static async Task DisplayToastAlert(string message, double fontSize = 14, ToastDuration duration = ToastDuration.Short) {
         var cancellationTokenSource = new CancellationTokenSource();
@@ -33,8 +39,8 @@ public static class DisplayAlertHelper {
             TextColor = StyleHelper.FromStyle("Primary"),
             ActionButtonTextColor = Colors.Black,
             CornerRadius = new CornerRadius(10),
-            Font = Microsoft.Maui.Font.SystemFontOfSize(fontSize),
-            ActionButtonFont = Microsoft.Maui.Font.SystemFontOfSize(fontSize),
+            Font = Font.SystemFontOfSize(fontSize),
+            ActionButtonFont = Font.SystemFontOfSize(fontSize),
             CharacterSpacing = 0.5
         };
 

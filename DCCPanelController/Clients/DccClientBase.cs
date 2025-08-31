@@ -7,17 +7,17 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.Clients;
 
 public abstract partial class DccClientBase(Profile profile) : ObservableObject {
-
     protected const int ReconnectDelayMs = 5000;
-    protected Profile Profile = profile;
-    public event EventHandler<DccClientEvent>? ClientMessage;
-    public DccClientStatus Status { get; protected set; } = DccClientStatus.Disconnected;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsDisconnected))]
     private bool _isConnected;
+
+    protected Profile Profile = profile;
+    public DccClientStatus Status { get; protected set; } = DccClientStatus.Disconnected;
     public bool IsDisconnected => !IsConnected;
-    
+    public event EventHandler<DccClientEvent>? ClientMessage;
+
     // Helper methods for populating the Profile data with new data that 
     // has been received from a server. 
     // ---------------------------------------------------------------------------
@@ -33,7 +33,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                 entity = new Turnout {
                     Id = id,
                     Name = name,
-                    DccAddress = dccAddress ??  id.FromDccAddressString(),
+                    DccAddress = dccAddress ?? id.FromDccAddressString(),
                     IsEditable = false,
                     State = state
                 };
@@ -68,10 +68,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             if (entity is not null) {
                 entity.State = isOccupied;
             } else {
-                entity = new Sensor() {
+                entity = new Sensor {
                     Id = id,
                     Name = name,
-                    DccAddress = dccAddress ??  id.FromDccAddressString(),
+                    DccAddress = dccAddress ?? id.FromDccAddressString(),
                     State = isOccupied
                 };
                 collection?.Add(entity);
@@ -88,17 +88,17 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                 entity.IsOccupied = isOccupied;
                 entity.Sensor = sensor;
             } else {
-                entity = new Block() {
+                entity = new Block {
                     Id = id,
                     Name = name,
                     IsOccupied = isOccupied,
-                    Sensor = sensor,
+                    Sensor = sensor
                 };
                 collection.Add(entity);
             }
         }
     }
-    
+
     protected void UpdateLight(string id, string name, bool isOccupied, int? dccAddress = null) {
         if (Profile?.Lights is { } collection) {
             Light? entity = null;
@@ -107,10 +107,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             if (entity is not null) {
                 entity.State = isOccupied;
             } else {
-                entity = new Light() {
+                entity = new Light {
                     Id = id,
                     Name = name,
-                    DccAddress = dccAddress ??  id.FromDccAddressString(),
+                    DccAddress = dccAddress ?? id.FromDccAddressString(),
                     IsEditable = false,
                     State = isOccupied
                 };
@@ -118,7 +118,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             }
         }
     }
-    
+
     protected void UpdateSignal(string id, string name, SignalAspectEnum aspect, int? dccAddress = null) {
         if (Profile?.Signals is { } collection) {
             Signal? entity = null;
@@ -127,10 +127,10 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             if (entity is not null) {
                 entity.Aspect = aspect.ToString();
             } else {
-                entity = new Signal() {
+                entity = new Signal {
                     Id = id,
                     Name = name,
-                    DccAddress = dccAddress ??  id.FromDccAddressString(),
+                    DccAddress = dccAddress ?? id.FromDccAddressString(),
                     IsEditable = false,
                     Aspect = aspect.ToString()
                 };
@@ -143,9 +143,19 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     // status of the connection and a message if that needs to be added to a queue 
     // or to be logged. 
     // ---------------------------------------------------------------------------
-    protected virtual void OnClientMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) =>OnClientMessage(new DccClientMessage(message, operation, msgType));       
-    protected virtual void OnClientMessage(DccClientMessage message) => OnClientMessage(new DccClientEvent(Status, message));        
-    protected virtual void OnClientMessage() => ClientMessage?.Invoke(this, new DccClientEvent(Status, null));
-    protected virtual void OnClientMessage(DccClientEvent e) => ClientMessage?.Invoke(this, e);
-    
+    protected virtual void OnClientMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) {
+        OnClientMessage(new DccClientMessage(message, operation, msgType));
+    }
+
+    protected virtual void OnClientMessage(DccClientMessage message) {
+        OnClientMessage(new DccClientEvent(Status, message));
+    }
+
+    protected virtual void OnClientMessage() {
+        ClientMessage?.Invoke(this, new DccClientEvent(Status, null));
+    }
+
+    protected virtual void OnClientMessage(DccClientEvent e) {
+        ClientMessage?.Invoke(this, e);
+    }
 }

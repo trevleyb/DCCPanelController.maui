@@ -1,19 +1,15 @@
-﻿using System.Diagnostics;
-using CommunityToolkit.Maui;
+﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Resources.Fonts;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using DCCPanelController.View.Components;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Xaml.Diagnostics;
-using SkiaSharp.Views.Maui.Controls.Hosting;
-using Syncfusion.Maui.Toolkit;
+using Microsoft.Maui.Controls.Handlers.Items2;
 using Serilog;
-using Serilog.Events;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
 
 namespace DCCPanelController;
@@ -29,14 +25,12 @@ public static class MauiProgram {
                .UseMauiCommunityToolkit()
                .UseMauiCommunityToolkitMarkup()
                .UseMauiCommunityToolkitMediaElement()
-               .ConfigureMauiHandlers(handlers =>
-                {
+               .ConfigureMauiHandlers(handlers => {
 #if IOS || MACCATALYST
-                    handlers.AddHandler<Microsoft.Maui.Controls.CollectionView, Microsoft.Maui.Controls.Handlers.Items2.CollectionViewHandler2>();
+                    handlers.AddHandler<CollectionView, CollectionViewHandler2>();
 #endif
                 })
-               .ConfigureFonts(fonts =>
-                {
+               .ConfigureFonts(fonts => {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 
@@ -52,7 +46,7 @@ public static class MauiProgram {
 
         FormHelper.RemoveBorders();
         builder.Services.AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true));
-        
+
 #if DEBUG
         builder.Logging.AddDebug();
 #endif
@@ -62,7 +56,7 @@ public static class MauiProgram {
         // Register the Main Entry Page that we will use 
         // --------------------------------------------------------------------------
         services.AddSingleton<AppShell>();
-        
+
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<ProfileService>();
@@ -75,20 +69,21 @@ public static class MauiProgram {
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
         services.AddSingletonViewAndModel<PanelViewer, PanelViewerViewModel>();
         services.AddSingletonViewAndModel<TestPage, TestPageViewModel>();
-        
+
         services.AddTransientViewAndModel<TurnoutsPage, TurnoutsViewModel>();
         services.AddTransientViewAndModel<RoutesPage, RoutesViewModel>();
         services.AddTransientViewAndModel<BlocksPage, BlocksViewModel>();
         services.AddTransientViewAndModel<SensorsPage, SensorsViewModel>();
         services.AddTransientViewAndModel<LightsPage, LightsViewModel>();
+
         //services.AddTransientViewAndModel<SignalsPage, LightsViewModel>();
 
         services.AddTransientViewAndModel<SettingsPage, SettingsPageViewModel>();
         services.AddTransientViewAndModel<ServerMessagesPage, ServerMessagesViewModel>();
         services.AddTransientPopup<ColorPickerGrid, ColorPickerGridViewModel>();
-        
-        Routing.RegisterRoute("help",typeof(HelpPage));
-        
+
+        Routing.RegisterRoute("help", typeof(HelpPage));
+
         var app = builder.Build();
         ServiceHelper.Initialize(app.Services);
         LogHelper.Initialize(app.Services.GetRequiredService<ILoggerFactory>());
@@ -129,6 +124,32 @@ public static class MauiProgram {
         Routing.RegisterRoute(routeName, typeof(TView));
     }
 
+    private static void ConfigureSerilog() {
+        var logFilePath = GetLogFilePath();
+        var levelSwitch = LoggingLevelHelper.Initialize();
+        Log.Logger = new LoggerConfiguration()
+                    .MinimumLevel.ControlledBy(levelSwitch)
+                    .WriteTo.File(
+                         logFilePath,
+                         rollingInterval: RollingInterval.Day,
+                         retainedFileCountLimit: 7,
+                         fileSizeLimitBytes: 10_000_000,
+                         rollOnFileSizeLimit: true,
+                         shared: true,
+                         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
+#if DEBUG
+                    .WriteTo.Debug()
+                    .WriteTo.Console()
+#endif
+                    .CreateLogger();
+
+        Log.Information("Logger Initialised.");
+    }
+
+    private static string GetLogFilePath() {
+        return Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");
+    }
+
     public static class ServiceHelper {
         private static IServiceProvider? ServiceProvider { get; set; }
 
@@ -141,28 +162,4 @@ public static class MauiProgram {
             return ServiceProvider.GetRequiredService<T>();
         }
     }
-    
-    private static void ConfigureSerilog() {
-        var logFilePath = GetLogFilePath();
-        var levelSwitch = LoggingLevelHelper.Initialize(LogEventLevel.Debug);
-        Log.Logger = new LoggerConfiguration()
-                    .MinimumLevel.ControlledBy(levelSwitch)
-                    .WriteTo.File(
-                         path: logFilePath,
-                         rollingInterval: RollingInterval.Day,
-                         retainedFileCountLimit: 7,
-                         fileSizeLimitBytes: 10_000_000,
-                         rollOnFileSizeLimit: true,
-                         shared: true,
-                         outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-#if DEBUG
-                    .WriteTo.Debug()
-                    .WriteTo.Console()
-#endif
-                    .CreateLogger();
-        
-        Log.Information("Logger Initialised.");
-    }
-
-    private static string GetLogFilePath() => Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");
 }

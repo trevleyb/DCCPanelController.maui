@@ -2,10 +2,7 @@
 
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:components="clr-namespace:DCCPanelController.View.Components"
              xmlns:view="clr-namespace:DCCPanelController.View"
-             xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
-             xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:progressBar="clr-namespace:Syncfusion.Maui.Toolkit.ProgressBar;assembly=Syncfusion.Maui.Toolkit"
              x:DataType="view:TestPageViewModel"
@@ -16,16 +13,14 @@
     <ContentPage.ToolbarItems>
         <ToolbarItem
             IconImageSource="plus_circle.png"
-            Command="{Binding SetModeCommand}">
-        </ToolbarItem>
+            Command="{Binding SetModeCommand}"/>
 
         <ToolbarItem
             x:Name="ModeToolbar"
             IsEnabled="{Binding CanSetModes}"
             Text="Mode"
             IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
-            Command="{Binding SetModeCommand}">
-        </ToolbarItem>
+            Command="{Binding SetModeCommand}"/>
     </ContentPage.ToolbarItems>
     <!-- IsEnabled="{Binding CanSetModes}" -->
 
@@ -33,27 +28,27 @@
 
         <StackLayout>
             <progressBar:SfCircularProgressBar
-                 WidthRequest="100"
-                 HeightRequest="100"
-                 TrackThickness="4"
-                 ProgressThickness="6"
-                 TrackFill="{StaticResource PrimaryDisabled}"
-                 ProgressFill="{StaticResource Primary}"
-                 BackgroundColor="Transparent"
-                 IndeterminateAnimationEasing="{x:Static Easing.Linear}"
-                 SegmentCount="10"
-                 SegmentGapWidth="2"
-                 IsIndeterminate="True">
+                WidthRequest="100"
+                HeightRequest="100"
+                TrackThickness="4"
+                ProgressThickness="6"
+                TrackFill="{StaticResource PrimaryDisabled}"
+                ProgressFill="{StaticResource Primary}"
+                BackgroundColor="Transparent"
+                IndeterminateAnimationEasing="{x:Static Easing.Linear}"
+                SegmentCount="10"
+                SegmentGapWidth="2"
+                IsIndeterminate="True">
                 <Label Text="Loading"/>
             </progressBar:SfCircularProgressBar>
-            
+
             <Grid BackgroundColor="WhiteSmoke"
                   Opacity="0.75"
                   HorizontalOptions="Fill"
                   VerticalOptions="Fill">
                 <Grid.GestureRecognizers>
                     <PanGestureRecognizer PanUpdated="DynamicGridPanUpdated"/>
-                </Grid.GestureRecognizers>  
+                </Grid.GestureRecognizers>
 
                 <Border BackgroundColor="White"
                         StrokeShape="RoundRectangle 25"
@@ -77,7 +72,7 @@
                     </StackLayout>
                 </Border>
             </Grid>
-            
+
             <Border Margin="0,2,0,0"
                     BackgroundColor="White"
                     HorizontalOptions="Center" WidthRequest="30" HeightRequest="30" StrokeThickness="3"
@@ -86,7 +81,7 @@
                     <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped1" NumberOfTapsRequired="1"/>
                     <TapGestureRecognizer Tapped="TapGestureRecognizer_OnTapped2" NumberOfTapsRequired="2"/>
                 </Border.GestureRecognizers>
-                
+
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
                         DefaultBackgroundColor="Red"

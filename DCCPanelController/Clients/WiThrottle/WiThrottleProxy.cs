@@ -9,18 +9,18 @@ using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Clients.WiThrottle;
 
-public partial class WiThrottleProxy : DccClientBase, IDccClient {
-    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes];
-    public DccClientType Type => DccClientType.Simulator;
-
-    private Profile _profile;
+public class WiThrottleProxy : DccClientBase, IDccClient {
+    private readonly Profile _profile;
+    private readonly WiThrottleSettings _settings;
     private WiThrottleClient? _client;
-    private WiThrottleSettings _settings;
 
     public WiThrottleProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
         _profile = profile;
         _settings = clientSettings as WiThrottleSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for WiThrottle");
     }
+
+    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes];
+    public DccClientType Type => DccClientType.Simulator;
 
     #region Connect and Disconnect Methods
     public async Task<IResult> ConnectAsync() {
@@ -43,7 +43,7 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
         try {
             _client = new WiThrottleClient(_settings.Name, _settings.Address, _settings.Port);
             await _client.ConnectAsync();
-            if (_client is null || _client.IsRunning != true) throw new ApplicationException("Unable to connect to WiThrottle server.");
+            if (_client is null || !_client.IsRunning) throw new ApplicationException("Unable to connect to WiThrottle server.");
 
             _client.ConnectionEvent += ClientOnConnectionEvent;
             _client.DataEvent += ClientOnDataEvent;
@@ -67,8 +67,8 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
     }
 
     /// <summary>
-    /// Find any servers on the network and attaches to the first one it finds
-    /// or returns a Result.Failed if it could not find any server. 
+    ///     Find any servers on the network and attaches to the first one it finds
+    ///     or returns a Result.Failed if it could not find any server.
     /// </summary>
     public async Task<IResult> SetAutomaticSettingsAsync() {
         var settings = await GetAutomaticConnectionDetailsAsync();
@@ -84,9 +84,9 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
     }
 
     /// <summary>
-    /// Forces a refresh of the data from the WiThrottleServer. The server only sends
-    /// throttle and routes on initial start-up. So to refresh, we need to disconnect,
-    /// wait 1/2 seconds and reconnect. 
+    ///     Forces a refresh of the data from the WiThrottleServer. The server only sends
+    ///     throttle and routes on initial start-up. So to refresh, we need to disconnect,
+    ///     wait 1/2 seconds and reconnect.
     /// </summary>
     public async Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
         if (_client is not null) _client.Disconnect();
@@ -97,8 +97,8 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
     }
 
     /// <summary>
-    /// This method attempts to connect to the server and then disconnects.
-    /// It returns either OK or FAILED based on attempting to connect. 
+    ///     This method attempts to connect to the server and then disconnects.
+    ///     It returns either OK or FAILED based on attempting to connect.
     /// </summary>
     public async Task<IResult> ValidateConnectionAsync() {
         if (_client is not null) await DisconnectAsync();
@@ -188,7 +188,7 @@ public partial class WiThrottleProxy : DccClientBase, IDccClient {
                 ConnectionState.Connecting => DccClientStatus.Initialising,
                 _                          => DccClientStatus.Disconnected
             };
-            OnClientMessage($"Connection to WiThrottle server");
+            OnClientMessage("Connection to WiThrottle server");
         }
     }
     #endregion

@@ -11,8 +11,6 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
-    xmlns:services="clr-namespace:DCCPanelController.Services"
-    xmlns:helpers="clr-namespace:DCCPanelController.Helpers"
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
     xmlns:textInputLayout="http://schemas.syncfusion.com/maui/toolkit"
@@ -20,18 +18,23 @@
 
     <ContentPage.Resources>
         <ResourceDictionary>
-            <converters1:BoolToColorConverter x:Key="BoolToColorConverter"/>
             <converters1:BoolToChevronConverter x:Key="BoolToChevronConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding ShowAboutCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=info}"/>
-        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding AddProfileCommand}"    IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
-        <ToolbarItem IsEnabled="{Binding CanDeleteProfile}" Command="{Binding DeleteProfileCommand}" IconImageSource="{Binding CanDeleteProfile, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
-        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding SwitchProfileCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=repeat}"/>
-        <ToolbarItem Command="{Binding UploadSettingsCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=upload}"/>
-        <ToolbarItem Command="{Binding DownloadSettingsCommand}" IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
+        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding ShowAboutCommand}"
+                     IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=info}"/>
+        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding AddProfileCommand}"
+                     IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+        <ToolbarItem IsEnabled="{Binding CanDeleteProfile}" Command="{Binding DeleteProfileCommand}"
+                     IconImageSource="{Binding CanDeleteProfile, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+        <ToolbarItem IsEnabled="{Binding IsNavigationDrawerClosed}" Command="{Binding SwitchProfileCommand}"
+                     IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=repeat}"/>
+        <ToolbarItem Command="{Binding UploadSettingsCommand}"
+                     IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=upload}"/>
+        <ToolbarItem Command="{Binding DownloadSettingsCommand}"
+                     IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
     </ContentPage.ToolbarItems>
 
     <Grid>
@@ -207,7 +210,8 @@
                                         <Label Margin="10,0,0,0" Text="Server Capabilities"
                                                Style="{StaticResource MicroLabel}" HorizontalOptions="Center"/>
                                         <CollectionView ItemsSource="{Binding Capabilities.CapabilityIcons}"
-                                                        HeightRequest="40" Margin="10,0,30,0" HorizontalOptions="Center">
+                                                        HeightRequest="40" Margin="10,0,30,0"
+                                                        HorizontalOptions="Center">
                                             <CollectionView.ItemsLayout>
                                                 <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
                                             </CollectionView.ItemsLayout>
@@ -259,7 +263,7 @@
                                             </CollectionView.ItemTemplate>
                                         </CollectionView>
                                     </StackLayout>
-                                    
+
                                     <Button HorizontalOptions="Start"
                                             VerticalOptions="Center"
                                             WidthRequest="350"

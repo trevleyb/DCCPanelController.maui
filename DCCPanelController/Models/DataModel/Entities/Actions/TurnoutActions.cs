@@ -13,6 +13,12 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
         foreach (var action in buttonActions) Add(new TurnoutAction(action));
     }
 
+    public object Clone() {
+        var turnoutActions = new TurnoutActions();
+        foreach (var action in this) turnoutActions.Add(new TurnoutAction(action));
+        return turnoutActions;
+    }
+
     public async void Apply(TurnoutEntity turnout, ConnectionService connectionService, ActionExecutionContext context) {
         var logger = LogHelper.CreateLogger("TurnoutActionsApply");
         try {
@@ -41,14 +47,8 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                 }
             }
         } catch (Exception ex) {
-            logger.LogError("Error in Async Void function: TurnoutActions:Apply => {Message}",ex.Message);
+            logger.LogError("Error in Async Void function: TurnoutActions:Apply => {Message}", ex.Message);
         }
-    }
-
-    public object Clone() {
-        var turnoutActions = new TurnoutActions();
-        foreach (var action in this) turnoutActions.Add(new TurnoutAction(action));
-        return turnoutActions;
     }
 }
 

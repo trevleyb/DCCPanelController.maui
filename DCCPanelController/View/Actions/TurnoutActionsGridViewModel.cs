@@ -1,29 +1,27 @@
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
-public partial class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutAction, TurnoutActions>
-{
-    public TurnoutActions TurnoutPanelActions => _entity.TurnoutPanelActions;
-    protected override TurnoutActions PanelActions => TurnoutPanelActions;
-    protected override string ItemTypeName => "Turnout";
-
+public class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutAction, TurnoutActions> {
     public TurnoutActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableTurnouts) : base(entity, context, availableTurnouts) {
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(PanelActions)) {
                 OnPropertyChanged(nameof(TurnoutPanelActions));
             }
-        };        
+        };
     }
 
+    public TurnoutActions TurnoutPanelActions => _entity.TurnoutPanelActions;
+    protected override TurnoutActions PanelActions => TurnoutPanelActions;
+    protected override string ItemTypeName => "Turnout";
+
     protected override TurnoutAction CreateNewAction(string id) {
-        return new TurnoutAction { 
-            Id = id, 
-            WhenClosed = TurnoutStateEnum.Closed, 
-            WhenThrown = TurnoutStateEnum.Thrown 
+        return new TurnoutAction {
+            Id = id,
+            WhenClosed = TurnoutStateEnum.Closed,
+            WhenThrown = TurnoutStateEnum.Thrown
         };
     }
 
@@ -31,7 +29,6 @@ public partial class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutA
         return action.Id;
     }
 }
-
 
 // using System.Collections.ObjectModel;
 // using CommunityToolkit.Mvvm.ComponentModel;

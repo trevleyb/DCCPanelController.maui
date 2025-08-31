@@ -1,8 +1,6 @@
 using System.Text;
 using System.Xml.Linq;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
-using Microsoft.Extensions.Logging;
 using SkiaSharp;
 using SkiaSharp.Views.Maui.Controls;
 using Svg.Skia;
@@ -14,7 +12,7 @@ public partial class SvgImageManager {
     private const int DefaultHeight = 48;
     private readonly XDocument _svgDocument;
     private string _imageSource;
-    
+
     /// <summary>
     ///     Creates an instance of the DisplayImage Manager with the given name of the
     ///     image to manage. This needs to be a part of the resource name as it will

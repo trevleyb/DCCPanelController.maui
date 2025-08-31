@@ -23,8 +23,7 @@
                   AbsoluteLayout.LayoutFlags="PositionProportional"
                   HorizontalOptions="Center"
                   Margin="5"
-                  VerticalOptions="Center">
-            </Grid>
+                  VerticalOptions="Center"/>
         </AbsoluteLayout>
 
         <ActivityIndicator

@@ -4,7 +4,6 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 namespace DCCPanelController.Models.DataModel.Helpers;
 
 public class EntityID {
-
     public static string GenerateNextID(IEnumerable<IEntityID> entities, string prefix) {
         return GenerateGetNextID(entities, t => t.Id, prefix);
     }

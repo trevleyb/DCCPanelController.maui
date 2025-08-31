@@ -5,9 +5,7 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Converters;
 using DCCPanelController.View.Properties.TileProperties.Attributes;
@@ -19,12 +17,11 @@ namespace DCCPanelController.View.Properties.TileProperties;
 public record CommonProperty(
     PropertyInfo Property,
     IEditableProperty Metadata,
-    object? CommonValue,        // null means "mixed values"
+    object? CommonValue, // null means "mixed values"
     bool HasMixedValues);
 
 public static class ValueComparer {
-    private static readonly HashSet<Type> MultipleEntityExcludedAttributeTypes = 
-    [
+    private static readonly HashSet<Type> MultipleEntityExcludedAttributeTypes = [
         typeof(EditableID),
         typeof(EditableButtonActions),
         typeof(EditableTurnoutActions)
@@ -52,14 +49,15 @@ public static class ValueComparer {
 
 public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
     private readonly StackBase _container = new VerticalStackLayout();
-    private List<CommonProperty> _commonProperties = [];
     private readonly Dictionary<string, object?> _originalValues = new();
+    private List<CommonProperty> _commonProperties = [];
+    [ObservableProperty] private List<Entity> _entities;
 
     [ObservableProperty] private Entity _proxyEntity;
-    [ObservableProperty] private List<Entity> _entities;
     [ObservableProperty] private string _title;
 
     public DynamicPropertyPageViewModel(Entity entity) : this([entity]) { }
+
     public DynamicPropertyPageViewModel(List<Entity> entities) {
         if (entities is null || entities.Count == 0)
             throw new ArgumentException("There must be at least 1 Entity for Properties.");
@@ -228,8 +226,8 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         var originalValue = _originalValues.GetValueOrDefault(propertyName);
 
         // Check if the value actually changed
-        var hasChanged = commonProperty.Metadata.IsModified;  //!ValueComparer.AreEqual(newValue, originalValue);
-        
+        var hasChanged = commonProperty.Metadata.IsModified; //!ValueComparer.AreEqual(newValue, originalValue);
+
         // Always update ButtonActions and TurnoutActions (as per original logic)
         var forceUpdate = Entities.Count > 1 && ValueComparer.IsExcludedForMultipleEntities(commonProperty.Metadata);
 
@@ -283,10 +281,10 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         tableExpander.Header = expanderHeading;
         tableExpander.IsExpanded = true;
         tableExpander.BackgroundColor = Colors.WhiteSmoke;
-        
+
         var stackLayout = new StackLayout {
             Margin = new Thickness(0, 10, 1, 0),
-            BackgroundColor = Colors.WhiteSmoke,
+            BackgroundColor = Colors.WhiteSmoke
         };
         tableExpander.Content = stackLayout;
         return (tableExpander, stackLayout.Children);
@@ -349,9 +347,13 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesVi
         };
     }
 
-    private void AddNoCommonPropertiesMessage() => AddNoPropertiesMessage("There are no common properties between the selected track elements.");
+    private void AddNoCommonPropertiesMessage() {
+        AddNoPropertiesMessage("There are no common properties between the selected track elements.");
+    }
 
-    private void AddNoEntitiesMessage() => AddNoPropertiesMessage("There are no available properties.");
+    private void AddNoEntitiesMessage() {
+        AddNoPropertiesMessage("There are no available properties.");
+    }
 
     private void AddNoPropertiesMessage(string message) {
         var labelTitle = new Label {

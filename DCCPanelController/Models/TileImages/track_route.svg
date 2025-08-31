@@ -13,7 +13,8 @@
                       stroke-linecap="square" transform="translate(2.45 3.998)"/>
                 <line id="Indicator" x1="2.297" y1="0" x2="0" y2="2.055" fill="none" stroke-width="1" stroke="#000000"
                       stroke-linecap="square" transform="translate(5.088 4.349)"/>
-                <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd" transform="translate(4 0)"/>
+                <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd"
+                      transform="translate(4 0)"/>
                 <path id="Indicator" d="M1 0L2 2L2.38419e-07 2L1 0Z" fill="#000000" fill-rule="evenodd"
                       transform="matrix(0.707 -0.707 0.707 0.707 0 3)"/>
                 <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd"

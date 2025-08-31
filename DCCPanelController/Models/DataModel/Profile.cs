@@ -1,22 +1,20 @@
 using System.Collections.ObjectModel;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Models.DataModel.Repository;
 
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Block> _blocks;
 
     [ObservableProperty] private string _filename;
-    [ObservableProperty] private string _profileName;
-    [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private Settings _settings;
-
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Block> _blocks;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Route> _routes;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Signal> _signals;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Sensor> _sensors;
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Light> _lights;
+    [ObservableProperty] private Panels _panels;
+    [ObservableProperty] private string _profileName;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Route> _routes;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Sensor> _sensors;
+    [ObservableProperty] private Settings _settings;
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Signal> _signals;
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName, string fileName) {
@@ -78,10 +76,27 @@ public partial class Profile : ObservableObject {
         RefreshSensors();
     }
 
-    public void RefreshTurnouts()   => RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
-    public void RefreshRoutes()     => RefreshCollection(Routes, t => t is { IsEditable  : false, IsModified: false });
-    public void RefreshBlocks()     => RefreshCollection(Blocks, t => t is { IsEditable  : false, IsModified: false });
-    public void RefreshSignals()    => RefreshCollection(Signals, t => t is { IsEditable : false, IsModified: false });
-    public void RefreshSensors()    => RefreshCollection(Sensors, t => t is { IsEditable : false, IsModified: false });
-    public void RefreshLights()     => RefreshCollection(Lights, t => t is { IsEditable  : false, IsModified: false });
+    public void RefreshTurnouts() {
+        RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
+    }
+
+    public void RefreshRoutes() {
+        RefreshCollection(Routes, t => t is { IsEditable : false, IsModified: false });
+    }
+
+    public void RefreshBlocks() {
+        RefreshCollection(Blocks, t => t is { IsEditable : false, IsModified: false });
+    }
+
+    public void RefreshSignals() {
+        RefreshCollection(Signals, t => t is { IsEditable : false, IsModified: false });
+    }
+
+    public void RefreshSensors() {
+        RefreshCollection(Sensors, t => t is { IsEditable : false, IsModified: false });
+    }
+
+    public void RefreshLights() {
+        RefreshCollection(Lights, t => t is { IsEditable : false, IsModified: false });
+    }
 }

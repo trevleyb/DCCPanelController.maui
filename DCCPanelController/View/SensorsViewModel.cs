@@ -6,46 +6,47 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
-public partial class SensorsViewModel : Base.ConnectionViewModel {
+public partial class SensorsViewModel : ConnectionViewModel {
     private const string _labelID = "ID";
     private const string _labelName = "Sensor";
     private const string _labelState = "Occupied?";
-
-    public string LabelID => _labelID;
-    public string LabelName => _labelName;
-    public string LabelState => _labelState;
-
-    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
+    private readonly ProfileService _profileService;
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
 
     private bool _isAscending;
-    private string _sortColumn = "";
-    private ProfileService _profileService;
-    
-    public bool IsSupported { get; private set; }
-    public bool IsNotSupported => !IsSupported;
 
     private ILogger<SensorsViewModel> _logger;
+
+    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
+    private string _sortColumn = "";
 
     public SensorsViewModel(ILogger<SensorsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (sender, args) => {
-            Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");
+            Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
             SetLabels();
         };
 
-        Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService),"SensorsViewModel: Active profile is not defined.");
+        Sensors = _profileService?.ActiveProfile?.Sensors ?? throw new ArgumentNullException(nameof(profileService), "SensorsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Sensors) ?? false;
         SetLabels();
     }
+
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+
+    public bool IsSupported { get; private set; }
+    public bool IsNotSupported => !IsSupported;
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
@@ -85,10 +86,10 @@ public partial class SensorsViewModel : Base.ConnectionViewModel {
         if (sensor == null) return;
         sensor.State = !sensor.State;
         if (!string.IsNullOrEmpty(sensor.Id) && IsConnected) {
-            if (ConnectionService.Client is { } client) await client.SendSensorCmdAsync(sensor, sensor.State )!;
+            if (ConnectionService.Client is { } client) await client.SendSensorCmdAsync(sensor, sensor.State)!;
         }
     }
-    
+
     [RelayCommand]
     private async Task RefreshSensorsAsync() {
         IsBusy = true;

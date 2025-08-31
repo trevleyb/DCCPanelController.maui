@@ -6,9 +6,8 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonRepository {
-
     private static readonly ILogger Logger = LogHelper.CreateLogger("PanelRepository");
-    
+
     public static async Task SaveAsync(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}")) {
             try {
@@ -18,9 +17,9 @@ public static class JsonRepository {
                 var fileName = GetStorageFilePath(profile.Filename);
                 if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
                 await File.WriteAllTextAsync(fileName, jsonString);
-                Logger.LogInformation("Saved Data: {fileName}",fileName);
+                Logger.LogInformation("Saved Data: {fileName}", fileName);
             } catch (Exception ex) {
-                Logger.LogError("Unable to SAVE Data: {Message}",ex.Message);
+                Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
             }
         }
         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
@@ -35,9 +34,9 @@ public static class JsonRepository {
                 var fileName = GetStorageFilePath(profile.Filename);
                 if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentNullException(nameof(profile.Filename));
                 File.WriteAllText(fileName, jsonString);
-                Logger.LogInformation("Saved Data: {fileName}",fileName);
+                Logger.LogInformation("Saved Data: {fileName}", fileName);
             } catch (Exception ex) {
-                Logger.LogError("Unable to SAVE Data: {Message}",ex.Message);
+                Logger.LogError("Unable to SAVE Data: {Message}", ex.Message);
             }
         }
         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
@@ -55,19 +54,19 @@ public static class JsonRepository {
                         profile.FixLoadedPanels();
                         return profile;
                     } catch (Exception ex) {
-                        Logger.LogError("Could not deserialize settings. New set created: {Message}",ex.Message);
+                        Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
                         return null;
                     }
                 }
-                Logger.LogInformation("File not found: {profileName}",profileName);
+                Logger.LogInformation("File not found: {profileName}", profileName);
                 return null;
             } catch (Exception ex) {
-                Logger.LogWarning("Could not access Profile. New Profile created. {Message}",ex.Message);
+                Logger.LogWarning("Could not access Profile. New Profile created. {Message}", ex.Message);
                 return null;
             }
         }
     }
-    
+
     public static Profile? Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
         using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}")) {
@@ -80,14 +79,14 @@ public static class JsonRepository {
                         profile.FixLoadedPanels();
                         return profile;
                     } catch (Exception ex) {
-                        Logger.LogError("Could not deserialize settings. New set created: {Message}",ex.Message);
+                        Logger.LogError("Could not deserialize settings. New set created: {Message}", ex.Message);
                         return null;
                     }
                 }
-                Logger.LogInformation("File not found: {profileName}",profileName);
+                Logger.LogInformation("File not found: {profileName}", profileName);
                 return null;
             } catch (Exception ex) {
-                Logger.LogWarning("Could not access Profile. New Profile created. {Message}",ex.Message);
+                Logger.LogWarning("Could not access Profile. New Profile created. {Message}", ex.Message);
                 return null;
             }
         }
@@ -101,15 +100,15 @@ public static class JsonRepository {
             var filePath = GetStorageFilePath(profile.Filename);
             if (File.Exists(filePath)) File.Delete(filePath);
         } catch (Exception ex) {
-            Logger.LogWarning("Could not delete settings. {Message}",ex.Message);
+            Logger.LogWarning("Could not delete settings. {Message}", ex.Message);
         }
     }
 
     public static string DownloadProfile(Profile profile) {
         try {
-            return JsonSerializer.Serialize (profile, JsonOptions.Options);
+            return JsonSerializer.Serialize(profile, JsonOptions.Options);
         } catch (Exception ex) {
-            Logger.LogWarning("Could not deserialize Profile. Trying to Reload Existing {Message}",ex.Message);
+            Logger.LogWarning("Could not deserialize Profile. Trying to Reload Existing {Message}", ex.Message);
             return string.Empty;
         }
     }
@@ -125,14 +124,14 @@ public static class JsonRepository {
             await SaveAsync(profile);
             return profile;
         } catch (Exception ex) {
-            Logger.LogWarning("Could not deserialize settings. Trying to Reload Existing {Message}",ex.Message);
+            Logger.LogWarning("Could not deserialize settings. Trying to Reload Existing {Message}", ex.Message);
             return null;
         }
     }
 
     /// <summary>
-    /// Retrieves the directory path used to store profile-related configuration files.
-    /// Ensures the directory exists by creating it if necessary.
+    ///     Retrieves the directory path used to store profile-related configuration files.
+    ///     Ensures the directory exists by creating it if necessary.
     /// </summary>
     private static string GetProfileStorageDir() {
         var storageDir = Path.Combine(FileSystem.AppDataDirectory, "DCCPanelController");
@@ -148,7 +147,7 @@ public static class JsonRepository {
     public static string GetStorageFilePath(string profileName = "default") {
         try {
             var storageDir = GetProfileStorageDir();
-            var file = profileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase)  ? profileName : profileName + ".json";
+            var file = profileName.EndsWith(".json", StringComparison.OrdinalIgnoreCase) ? profileName : profileName + ".json";
             return Path.Combine(storageDir, file);
         } catch (Exception ex) {
             Logger.LogCritical("Unable to determine where to store the Config File. {Message}", ex.Message);

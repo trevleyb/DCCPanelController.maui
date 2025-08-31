@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Net;
 using System.Net.WebSockets;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -11,30 +10,57 @@ namespace DccClients.Jmri;
 
 public class JmriClient : IDisposable {
     private const int MinimumRefreshMs = 250;
-    private readonly string _serverUrl;
+    private readonly ConcurrentDictionary<string, JmriBlockEventArgs> _blocks = new();
+    private readonly Lock _connectionLock = new();
+    private readonly ConcurrentDictionary<string, JmriLightEventArgs> _lights = new();
     private readonly int _reconnectDelayMs;
     private readonly int _refreshMs;
-    private readonly Lock _connectionLock = new();
-
-    private ClientWebSocket? _webSocket;
-    private CancellationTokenSource? _cancellationTokenSource;
-    private Task? _connectionTask;
-    private bool _isDisposed = false;
-
-    private bool _isHandshakeComplete = false;
-    private TaskCompletionSource<bool>? _handshakeCompletion;
-
-    private Timer? _heartbeatTimer;
-    private Timer? _refreshTimer;
+    private readonly ConcurrentDictionary<string, JmriRouteEventArgs> _routes = new();
+    private readonly ConcurrentDictionary<string, JmriSensorEventArgs> _sensors = new();
+    private readonly string _serverUrl;
+    private readonly ConcurrentDictionary<string, JmriSignalEventArgs> _signals = new();
 
     // Collections to store current-state
     private readonly ConcurrentDictionary<string, JmriTurnoutEventArgs> _turnouts = new();
-    private readonly ConcurrentDictionary<string, JmriSignalEventArgs> _signals = new();
-    private readonly ConcurrentDictionary<string, JmriRouteEventArgs> _routes = new();
-    private readonly ConcurrentDictionary<string, JmriSensorEventArgs> _sensors = new();
-    private readonly ConcurrentDictionary<string, JmriBlockEventArgs> _blocks = new();
-    private readonly ConcurrentDictionary<string, JmriLightEventArgs> _lights = new();
-    
+    private CancellationTokenSource? _cancellationTokenSource;
+    private Task? _connectionTask;
+    private TaskCompletionSource<bool>? _handshakeCompletion;
+
+    private Timer? _heartbeatTimer;
+    private bool _isDisposed;
+
+    private bool _isHandshakeComplete;
+    private Timer? _refreshTimer;
+
+    private ClientWebSocket? _webSocket;
+
+    public JmriClient(string serverHost = "localhost", int serverPort = 12080, double refreshMs = 5.0, int reconnectDelayMs = 5000) : this(serverHost, serverPort, (int)(refreshMs * 1000), reconnectDelayMs) { }
+
+    public JmriClient(string serverHost = "localhost", int serverPort = 12080, int refreshMs = 1000, int reconnectDelayMs = 5000) {
+        _serverUrl = $"ws://{serverHost}:{serverPort}/json/";
+        _reconnectDelayMs = reconnectDelayMs;
+        _refreshMs = int.Max(refreshMs, MinimumRefreshMs);
+    }
+
+    // Public accessors for current-state
+    public IReadOnlyDictionary<string, JmriTurnoutEventArgs> Turnouts => _turnouts;
+    public IReadOnlyDictionary<string, JmriSignalEventArgs> Signals => _signals;
+    public IReadOnlyDictionary<string, JmriRouteEventArgs> Routes => _routes;
+    public IReadOnlyDictionary<string, JmriSensorEventArgs> Sensors => _sensors;
+    public IReadOnlyDictionary<string, JmriBlockEventArgs> Blocks => _blocks;
+    public IReadOnlyDictionary<string, JmriLightEventArgs> Lights => _lights;
+
+    public ConnectionStateEnum ConnectionState { get; private set; }
+
+    public void Dispose() {
+        if (!_isDisposed) {
+            _cancellationTokenSource?.Cancel();
+            _webSocket?.Dispose();
+            _cancellationTokenSource?.Dispose();
+            _isDisposed = true;
+        }
+    }
+
     // Events
     public event EventHandler<JmriHandshakeEventArgs>? ConnectionEstablished;
     public event EventHandler<JmriConnectionChangedEventArgs>? ConnectionStateChanged;
@@ -44,23 +70,6 @@ public class JmriClient : IDisposable {
     public event EventHandler<JmriSensorEventArgs>? SensorChanged;
     public event EventHandler<JmriLightEventArgs>? LightChanged;
     public event EventHandler<JmriBlockEventArgs>? BlockChanged;
-
-    // Public accessors for current-state
-    public IReadOnlyDictionary<string, JmriTurnoutEventArgs> Turnouts => _turnouts;
-    public IReadOnlyDictionary<string, JmriSignalEventArgs> Signals => _signals;
-    public IReadOnlyDictionary<string, JmriRouteEventArgs> Routes => _routes;
-    public IReadOnlyDictionary<string, JmriSensorEventArgs> Sensors => _sensors;
-    public IReadOnlyDictionary<string, JmriBlockEventArgs> Blocks => _blocks;
-    public IReadOnlyDictionary<string, JmriLightEventArgs> Lights => _lights;
-    
-    public ConnectionStateEnum ConnectionState { get; private set; }
-
-    public JmriClient(string serverHost = "localhost", int serverPort = 12080, double refreshMs = 5.0, int reconnectDelayMs = 5000) : this(serverHost, serverPort, (int)(refreshMs * 1000), reconnectDelayMs) { }
-    public JmriClient(string serverHost = "localhost", int serverPort = 12080, int refreshMs = 1000, int reconnectDelayMs = 5000) {
-        _serverUrl = $"ws://{serverHost}:{serverPort}/json/";
-        _reconnectDelayMs = reconnectDelayMs;
-        _refreshMs = int.Max(refreshMs, MinimumRefreshMs);
-    }
 
     public Task ConnectAsync() {
         lock (_connectionLock) {
@@ -79,7 +88,7 @@ public class JmriClient : IDisposable {
 
         // Send a goodbye message to the server
         await SendCommandAsync(JmriHandshakeEventArgs.GoodbyeMessage);
-        
+
         if (_cancellationTokenSource is not null) {
             await _cancellationTokenSource.CancelAsync();
         }
@@ -198,7 +207,7 @@ public class JmriClient : IDisposable {
                     messageBuffer.Clear();
                 }
             } else if (result.MessageType == WebSocketMessageType.Close) {
-                Console.WriteLine($"WebSocket was CLOSED.");
+                Console.WriteLine("WebSocket was CLOSED.");
                 break;
             }
         }
@@ -221,7 +230,7 @@ public class JmriClient : IDisposable {
                 var type = typeElement.GetString();
                 if (string.IsNullOrEmpty(type)) continue;
                 var isValidMessage = type switch {
-                    "turnout"    => JmriTurnoutEventArgs.ProcessMessage(item, _turnouts, TurnoutChanged), 
+                    "turnout"    => JmriTurnoutEventArgs.ProcessMessage(item, _turnouts, TurnoutChanged),
                     "signalHead" => JmriSignalEventArgs.ProcessMessage(item, _signals, SignalChanged),
                     "route"      => JmriRouteEventArgs.ProcessMessage(item, _routes, RouteChanged),
                     "sensor"     => JmriSensorEventArgs.ProcessMessage(item, _sensors, SensorChanged),
@@ -262,7 +271,7 @@ public class JmriClient : IDisposable {
             _isHandshakeComplete = true;
             _handshakeCompletion?.SetResult(true);
             StartHeartbeat(hello.Heartbeat);
-            OnConnectionStateChanged(ConnectionState, $"Connection to JMRI has been established.");
+            OnConnectionStateChanged(ConnectionState, "Connection to JMRI has been established.");
             return true;
         }
         return false;
@@ -272,7 +281,7 @@ public class JmriClient : IDisposable {
         if (!root.TryGetProperty("data", out var dataElement)) return false;
         var code = dataElement.GetIntProperty("code");
         var message = dataElement.GetStringProperty("message");
-        OnConnectionStateChanged(ConnectionState,$"JMRI Raised an error: {code} => {message}");
+        OnConnectionStateChanged(ConnectionState, $"JMRI Raised an error: {code} => {message}");
         return true;
     }
 
@@ -319,7 +328,7 @@ public class JmriClient : IDisposable {
             Console.WriteLine($"Could not send refresh command: {ex.Message}");
         }
     }
-    
+
     public Task SetTurnoutStateAsync(string turnoutID, bool thrown) {
         var command = BuildJmriMessage("turnout", "post", new Dictionary<string, object> {
             { "type", "turnout" },
@@ -363,7 +372,7 @@ public class JmriClient : IDisposable {
         });
         return SendCommandAsync(command);
     }
-    
+
     public Task SetBlockValueAsync(string blockID, string value) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
@@ -372,7 +381,7 @@ public class JmriClient : IDisposable {
         });
         return SendCommandAsync(command);
     }
-    
+
     public Task SetBlockAllocatedAsync(string blockID, bool allocated) {
         var command = BuildJmriMessage("block", "post", new Dictionary<string, object> {
             { "type", "block" },
@@ -416,14 +425,5 @@ public class JmriClient : IDisposable {
             Message = message,
             CallerDetails = $"{member}@{line}"
         });
-    }
-
-    public void Dispose() {
-        if (!_isDisposed) {
-            _cancellationTokenSource?.Cancel();
-            _webSocket?.Dispose();
-            _cancellationTokenSource?.Dispose();
-            _isDisposed = true;
-        }
     }
 }

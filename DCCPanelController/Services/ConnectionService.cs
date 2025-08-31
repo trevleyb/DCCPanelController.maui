@@ -3,22 +3,17 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCClient.Helpers;
 using DCCPanelController.Clients;
-using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Helpers;
-using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Services;
 
 public partial class ConnectionService : ObservableObject {
-
-    private ILogger<ConnectionService> _logger = LogHelper.CreateLogger<ConnectionService>();
     private const int MaxServerMessages = 500;
-    private ProfileService.ProfileService _profileService;
 
-    public IDccClient? Client { get; private set; }
-    public event EventHandler<bool>? ConnectStateChanged;
+    private readonly ILogger<ConnectionService> _logger = LogHelper.CreateLogger<ConnectionService>();
+    private readonly ProfileService.ProfileService _profileService;
 
     [ObservableProperty] private bool _isConnected;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
@@ -28,14 +23,17 @@ public partial class ConnectionService : ObservableObject {
         _ = Task.Run(async () => await InitializeConnectionAsync());
     }
 
+    public IDccClient? Client { get; private set; }
+
     public static ConnectionService Instance => MauiProgram.ServiceHelper.GetService<ConnectionService>();
+    public event EventHandler<bool>? ConnectStateChanged;
 
     private async Task InitializeConnectionAsync() {
         try {
             if (_profileService?.ActiveProfile?.Settings.ConnectOnStartup ?? false) await ConnectAsync();
             _logger.LogInformation("Initialised Connection");
         } catch (Exception ex) {
-            _logger.LogError("Initialisation connection error: {Message}",ex.Message);
+            _logger.LogError("Initialisation connection error: {Message}", ex.Message);
         }
     }
 
@@ -66,14 +64,14 @@ public partial class ConnectionService : ObservableObject {
                     _logger.LogDebug("Unable to connect to the specified server.");
                     return Result.Fail("Unable to connect to the specified server.");
                 }
-                
+
                 OnConnectionChanged(true);
                 await SetTurnoutsToDefaultState();
                 await ResetOccupancyStates();
                 return connectResult;
             }
         } catch (Exception ex) {
-            _logger.LogDebug("Connection Failed: {Message}",ex.Message);
+            _logger.LogDebug("Connection Failed: {Message}", ex.Message);
             OnConnectionChanged(false);
             return Result.Fail("Unable to connect to the server.", ex);
         }
@@ -82,7 +80,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task DisconnectAsync() {
-        if (Client is { }) {
+        if (Client is not null) {
             await ResetOccupancyStates();
             if (Client.IsConnected) await Client.DisconnectAsync();
             Client.ClientMessage -= ClientOnClientMessage;
@@ -95,17 +93,17 @@ public partial class ConnectionService : ObservableObject {
         if (e.Message is null) return;
         IsConnected = e.Status switch {
             DccClientStatus.Connected => true,
-            _                         => false,
+            _                         => false
         };
         ConnectStateChanged?.Invoke(null, IsConnected);
         ServerMessages.Add(e.Message);
     }
 
     private void OnConnectionChanged(bool? isConnected = null) {
-        if (isConnected is {}) IsConnected = isConnected.Value;
+        if (isConnected is not null) IsConnected = isConnected.Value;
         OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(Client));
-        ConnectStateChanged?.Invoke(this,IsConnected);
+        ConnectStateChanged?.Invoke(this, IsConnected);
     }
 
     public async Task ResetOccupancyStates() {
@@ -129,13 +127,13 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public virtual void AddServerMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) {
-        AddServerMessage(new DccClientMessage(message, operation, msgType));       
-    } 
-    
+        AddServerMessage(new DccClientMessage(message, operation, msgType));
+    }
+
     public virtual void AddServerMessage(DccClientMessage message) {
         ServerMessages.Add(message);
     }
-    
+
     [RelayCommand]
     public void ClearMessages() {
         ServerMessages.Clear();

@@ -32,22 +32,22 @@
         <!-- Horizontal (Image left, text right) -->
         <DataTemplate x:Key="HorizontalTemplate" x:DataType="dataModel:Panel">
             <Border
-                    Stroke="#CCCCCC"
-                    StrokeThickness="1"
-                    StrokeShape="RoundRectangle 8"
-                    Margin="5"
-                    Background="#FAFAFA"
-                    Padding="5"
-                    HeightRequest="100">
-                  
-                <Grid ColumnDefinitions="120,*" VerticalOptions="Center"> 
+                Stroke="#CCCCCC"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 8"
+                Margin="5"
+                Background="#FAFAFA"
+                Padding="5"
+                HeightRequest="100">
+
+                <Grid ColumnDefinitions="120,*" VerticalOptions="Center">
                     <Border Grid.Column="0"
                             x:Name="HorizontalBorder"
                             Stroke="#CCCCCC"
                             StrokeThickness="1"
                             Margin="5"
-                            WidthRequest="110"    
-                            HeightRequest="80"    
+                            WidthRequest="110"
+                            HeightRequest="80"
                             Background="{Binding DisplayBackgroundColor}">
 
                         <view:ControlPanelView
@@ -59,7 +59,8 @@
                             VerticalOptions="Fill"/>
                     </Border>
 
-                    <StackLayout x:DataType="dataModel:Panel" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start" Margin="10,0,0,0">
+                    <StackLayout x:DataType="dataModel:Panel" Grid.Column="1" VerticalOptions="Center"
+                                 HorizontalOptions="Start" Margin="10,0,0,0">
                         <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation"/>
                         <Label Text="{Binding Description}" FontSize="12" TextColor="Gray" LineBreakMode="WordWrap"/>
                     </StackLayout>
@@ -117,7 +118,8 @@
                                 </MultiBinding>
                             </Border.HeightRequest>
                         </Border>
-                        <Label Text="{Binding Id}" HorizontalOptions="Center" FontAttributes="Bold" FontSize="15" Margin="0,0,0,4"/>
+                        <Label Text="{Binding Id}" HorizontalOptions="Center" FontAttributes="Bold" FontSize="15"
+                               Margin="0,0,0,4"/>
                         <Label Text="{Binding Description}" HorizontalOptions="Center" FontSize="10" TextColor="Gray"/>
                     </StackLayout>
 
@@ -222,7 +224,7 @@
 
                     <StackLayout
                         HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
-                        <ActivityIndicator IsRunning="{Binding IsLoading}" 
+                        <ActivityIndicator IsRunning="{Binding IsLoading}"
                                            Color="{StaticResource Primary}"/>
                         <Label Text="Loading Panel Editor"
                                HorizontalOptions="Center"

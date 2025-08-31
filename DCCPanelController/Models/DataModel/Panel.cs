@@ -1,7 +1,5 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -18,23 +16,15 @@ namespace DCCPanelController.Models.DataModel;
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
 
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
+
+    [ObservableProperty] [JsonIgnore] private bool _isRefreshing;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private int _sortOrder;
-
-    [ObservableProperty] [JsonIgnore] bool _isRefreshing = false;
-
-    [JsonIgnore] public Panels? Panels { get; set; }
-    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
-    [JsonIgnore] public ImageSource? Thumbnail =>
-        string.IsNullOrWhiteSpace(Base64Image)
-            ? null
-            : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
 
     [JsonConstructor]
     private Panel() {
@@ -46,6 +36,15 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         Id = NextID;
     }
 
+    [JsonIgnore] public Panels? Panels { get; set; }
+    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
+    [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
+
+    [JsonIgnore] public ImageSource? Thumbnail =>
+        string.IsNullOrWhiteSpace(Base64Image)
+            ? null
+            : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
+
     [JsonIgnore]
     public string Title {
         get {
@@ -55,22 +54,33 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
             return Id + $" - {Description}";
         }
     }
-    
+
     public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
     public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
     public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
     public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
     public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
-    
-    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
-    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Panels ?? [],"Panel");
 
-    public Entity? GetEntityAtPosition(int x, int y) =>  Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
-    public List<T> GetPanelEntitiesByType<T>() where T : Entity => Entities.OfType<T>().ToList() ?? [];
-    public List<T> GetAllEntitiesByType<T>() where T : Entity => Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
-    
-    public ActionButtonEntity? GetButtonEntity(string id) => GetAllEntitiesByType<ActionButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
+    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Panels ?? [], "Panel");
+
+    public Entity? GetEntityAtPosition(int x, int y) {
+        return Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
+    }
+
+    public List<T> GetPanelEntitiesByType<T>() where T : Entity {
+        return Entities.OfType<T>().ToList() ?? [];
+    }
+
+    public List<T> GetAllEntitiesByType<T>() where T : Entity {
+        return Panels?.SelectMany(panel => panel.GetPanelEntitiesByType<T>()).ToList() ?? [];
+    }
+
+    public ActionButtonEntity? GetButtonEntity(string id) {
+        return GetAllEntitiesByType<ActionButtonEntity>().FirstOrDefault(b => b.Id == id) ?? null;
+    }
+
     public TurnoutEntity? GetTurnoutEntity(string id) {
         var allEntitiesWithID = GetAllEntitiesByType<TurnoutEntity>();
         var foundItem = allEntitiesWithID.FirstOrDefault(b => b.TurnoutID == id) ?? null;
@@ -82,13 +92,30 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         var foundItem = allEntitiesWithID.FirstOrDefault(b => b?.Turnout?.Id == id) ?? null;
         return foundItem;
     }
-    
-    public Block? Block(string id) => Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    public Route? Route(string id) => Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    public Signal? Signal(string id) => Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
-    public Light? Light(string id) => Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+
+    public Block? Block(string id) {
+        return Blocks.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Route? Route(string id) {
+        return Routes.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Turnout? Turnout(string id) {
+        return Turnouts.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Signal? Signal(string id) {
+        return Signals.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Sensor? Sensor(string id) {
+        return Sensors.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    public Light? Light(string id) {
+        return Lights.FirstOrDefault(x => x.Id != null && x.Id.Equals(id, StringComparison.InvariantCultureIgnoreCase));
+    }
 
     public Entity AddEntity(Entity entity) {
         entity.Parent = this;
@@ -109,8 +136,8 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     }
 
     /// <summary>
-    /// This is a special Clone that does not clone the child elements
-    /// and it does not add this to the parent but references the parent
+    ///     This is a special Clone that does not clone the child elements
+    ///     and it does not add this to the parent but references the parent
     /// </summary>
     public Panel CloneEmptyPanel(string id) {
         ArgumentNullException.ThrowIfNull(Panels);
@@ -135,8 +162,8 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
             Cols = Cols,
             Rows = Rows
         };
-        if (!generateNewId) clone.Id = Id; 
-        
+        if (!generateNewId) clone.Id = Id;
+
         CopyColorsTo(clone);
         foreach (var entity in Entities) {
             var entityClone = clone.CreateEntityFrom(entity);
@@ -164,10 +191,10 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
             CompareCollectionsOrdered = false, // For entity collections
             IgnoreProperties = { "Parent", "Navigation", "Panels", "Guid", "Id", "Base64Image" }
         };
-        
+
         return GenericComparer.AreEqual(this, panel, comparerOptions);
     }
-    
+
     /// <summary>
     ///     Calculates the ratio of columns to rows in the format "x:y".
     /// </summary>

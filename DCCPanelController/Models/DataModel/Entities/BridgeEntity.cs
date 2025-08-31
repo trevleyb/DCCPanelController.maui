@@ -6,13 +6,13 @@ using DCCPanelController.View.Properties.TileProperties.EditableControls;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class BridgeEntity : StraightEntity, ITrackEntity {
+    [ObservableProperty]
+    [property: EditableColor("Bridge Color", "Color of the Bridge rails", 6, "Track")]
+    private Color? _bridgeColor;
+
     [JsonConstructor]
     public BridgeEntity() { }
 
-    [ObservableProperty] 
-    [property: EditableColor("Bridge Color", "Color of the Bridge rails", 6, "Track")]
-    private Color? _bridgeColor;
-    
     public BridgeEntity(Panel panel) : this() {
         Parent = panel;
     }

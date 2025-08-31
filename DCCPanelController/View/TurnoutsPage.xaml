@@ -19,21 +19,17 @@
         <ToolbarItem
             Command="{Binding AddTurnoutCommand}"
             IsEnabled="{Binding CanAddTurnout}"
-            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}">
-        </ToolbarItem>
+            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
 
         <ToolbarItem
             Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
-            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}">
-        </ToolbarItem>
+            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
 
         <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
-                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}">
-        </ToolbarItem>
+                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"/>
 
         <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
-        </ToolbarItem>
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
 
         <ToolbarItem
             Command="{Binding ToggleConnectionCommand}"

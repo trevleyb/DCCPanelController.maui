@@ -4,15 +4,15 @@ namespace DCCPanelController.View.TileSelectors;
 
 public static class CollectionHitIndex {
     public static int? IndexOf(CollectionView collectionView,
-                                Point point,          // point in the CollectionView's coordinate space
-                                double scrollXOffset, // horizontal scroll offset (if horizontally scrolling)
-                                double scrollYOffset, // vertical   scroll offset (if vertically   scrolling)
-                                double edgeMargin,    // left margin before the first column
-                                double topMargin,     // top margin before the first row
-                                double itemWidth,
-                                double itemHeight,
-                                double spacingH = 0,
-                                double spacingV = 0) {
+                               Point point,          // point in the CollectionView's coordinate space
+                               double scrollXOffset, // horizontal scroll offset (if horizontally scrolling)
+                               double scrollYOffset, // vertical   scroll offset (if vertically   scrolling)
+                               double edgeMargin,    // left margin before the first column
+                               double topMargin,     // top margin before the first row
+                               double itemWidth,
+                               double itemHeight,
+                               double spacingH = 0,
+                               double spacingV = 0) {
         // Determine layout & span
         ItemsLayoutOrientation orientation;
         int span;

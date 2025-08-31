@@ -5,34 +5,30 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
-using DCCPanelController.View.Properties;
+using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
-using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
 
-public partial class PanelViewerViewModel : Base.ConnectionViewModel {
-    private Panel? _draggedPanel;
+public partial class PanelViewerViewModel : ConnectionViewModel {
+    private readonly ILogger<PanelViewerViewModel> _logger;
     private readonly ProfileService _profileService;
+    [ObservableProperty] private bool _canZoomIn;
 
     [ObservableProperty] private bool _canZoomOut;
-    [ObservableProperty] private bool _canZoomIn;
-    [ObservableProperty] private bool _isPanelSelected;
-    [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private Panel? _selectedPanel;
+    private Panel? _draggedPanel;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotLoading))]
     private bool _isLoading;
 
+    [ObservableProperty] private bool _isPanelSelected;
+    [ObservableProperty] private Panels _panels;
+    [ObservableProperty] private Panel? _selectedPanel;
+
     public INavigation? NavigationService;
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
-    public bool ShowThumbnail => false;
-    public bool ShowLivePanel => !ShowThumbnail;
-    public bool IsNotLoading => !IsLoading;
-
-    private ILogger<PanelViewerViewModel> _logger;
 
     public PanelViewerViewModel(ILogger<PanelViewerViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -41,10 +37,14 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
             SelectedPanel = Panels.FirstOrDefault();
         };
-        Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService),"PanelViewerViewModel: Active profile is not defined.");
+        Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
         PropertyChanged += OnPropertyChanged;
         SelectedPanel = Panels.FirstOrDefault();
     }
+
+    public bool ShowThumbnail => false;
+    public bool ShowLivePanel => !ShowThumbnail;
+    public bool IsNotLoading => !IsLoading;
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(SelectedPanel)) {
@@ -87,7 +87,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     public async Task DownloadPanelAsync() {
         try {
             if (SelectedPanel is { } panel) {
-                var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel","This allows you to download a single Panel to local storage.", "Continue", "Cancel");
+                var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel", "This allows you to download a single Panel to local storage.", "Continue", "Cancel");
                 if (result) {
                     var panelAsJson = panel.DownloadPanel();
                     var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
@@ -105,7 +105,7 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
     [RelayCommand]
     public async Task UploadPanelAsync() {
         try {
-            var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Panel","This allows you to upload a previously downloaded panel.", "Continue", "Cancel");
+            var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Panel", "This allows you to upload a previously downloaded panel.", "Continue", "Cancel");
             if (result) {
                 var jsonString = await FileHelper.OpenFileAsync("Select a Panel File to upload");
                 if (!string.IsNullOrEmpty(jsonString)) {
@@ -129,12 +129,12 @@ public partial class PanelViewerViewModel : Base.ConnectionViewModel {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
                 await Task.Delay(100);
-                var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(),panel,_profileService);
+                var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(), panel, _profileService);
                 await navigation.PushAsync(editorPage);
                 await editorPage.PageClosed;
             }
         } catch (Exception ex) {
-            _logger.LogCritical("Error loading Panel Editor: {Message}",ex.Message);
+            _logger.LogCritical("Error loading Panel Editor: {Message}", ex.Message);
         } finally {
             SelectedPanel = null;
             IsLoading = false;

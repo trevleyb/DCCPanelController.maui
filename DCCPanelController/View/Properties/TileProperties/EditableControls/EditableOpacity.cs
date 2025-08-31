@@ -21,18 +21,18 @@ public class EditableOpacity(string label, string description = "", int order = 
                 Margin = new Thickness(10, 10, 10, 0),
                 Text = ConvertOpacityToPercentage((double)(info?.GetValue(owner) ?? 0.00))
             };
-            
+
             var stepperUpDown = new Stepper {
                 Minimum = 0, // Define the stepper min value if needed
                 Maximum = 1, // Define the stepper max value if needed
                 HeightRequest = 30,
                 Increment = 0.05, // Increment/decrement step
-                HorizontalOptions = LayoutOptions.End,
+                HorizontalOptions = LayoutOptions.End
             };
             stepperUpDown.SetBinding(Stepper.ValueProperty, new Binding(info?.Name) { Source = owner, Mode = BindingMode.TwoWay });
             stepperUpDown.ValueChanged += (s, e) => {
                 dataCell.Text = dataCell.Text = ConvertOpacityToPercentage(stepperUpDown.Value);
-                var testValue = (int)(stepperUpDown.Value * 100); 
+                var testValue = (int)(stepperUpDown.Value * 100);
                 SetModified(testValue != originalValue);
             };
             cell.Children.Add(stepperUpDown);

@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Clients;
@@ -7,18 +6,12 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.View.Settings.WiThrottle;
 
-public partial class WiThrottleSettingsViewModel: SettingsViewModel {
-    
+public partial class WiThrottleSettingsViewModel : SettingsViewModel {
     [ObservableProperty] private WiThrottleSettings _wiThrottleSettings;
 
     public WiThrottleSettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) : base(settings, connectionService) {
         WiThrottleSettings = Settings as WiThrottleSettings ?? throw new InvalidCastException("Invalid Client Settings type provided.");
         if (string.IsNullOrEmpty(WiThrottleSettings.Name)) WiThrottleSettings.Name = DeviceInfo.Name;
-    }
-    
-    [RelayCommand]
-    private async Task OnDefaultDeviceNameClickedAsync() {
-        WiThrottleSettings.Name = DeviceInfo.Name;
     }
 
     public int Port {
@@ -38,7 +31,6 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
             OnPropertyChanged(nameof(IpAddress2));
             OnPropertyChanged(nameof(IpAddress3));
             OnPropertyChanged(nameof(IpAddress4));
-
         }
     }
 
@@ -77,5 +69,9 @@ public partial class WiThrottleSettingsViewModel: SettingsViewModel {
             OnPropertyChanged();
         }
     }
-   
+
+    [RelayCommand]
+    private async Task OnDefaultDeviceNameClickedAsync() {
+        WiThrottleSettings.Name = DeviceInfo.Name;
+    }
 }

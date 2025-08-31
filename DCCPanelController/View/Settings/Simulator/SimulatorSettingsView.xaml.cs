@@ -1,12 +1,9 @@
-using DCCClient.Discovery;
 using DCCPanelController.Clients;
 using DCCPanelController.Services;
-using DCCPanelController.View.Settings.Jmri;
 
 namespace DCCPanelController.View.Settings.Simulator;
 
-public partial class SimulatorSettingsView : ContentView{
-    
+public partial class SimulatorSettingsView : ContentView {
     public SimulatorSettingsView(IDccClientSettings settings, ConnectionService connectionService) {
         var viewModel = new SimulatorSettingsViewModel(settings, connectionService);
         BindingContext = viewModel;

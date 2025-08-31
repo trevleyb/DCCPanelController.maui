@@ -9,17 +9,18 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class PlatformEntity : TrackEntity, ITrackEntity {
     [ObservableProperty] [property: EditableColor("Platform Color", "Color of the Platform", 6, "Track")]
     private Color? _platformColor;
-    
+
     [JsonConstructor]
     public PlatformEntity() { }
 
-    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.PlatformTrack;
     public PlatformEntity(Panel panel) : this() {
         Parent = panel;
     }
-    [JsonIgnore] protected override int RotationFactor => 90;
 
     public PlatformEntity(PlatformEntity entity) : base(entity) { }
+
+    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.PlatformTrack;
+    [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "Platform Track";
 
     public override Entity Clone() {

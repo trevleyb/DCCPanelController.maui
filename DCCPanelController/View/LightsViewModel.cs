@@ -6,30 +6,24 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Base;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
-public partial class LightsViewModel : Base.ConnectionViewModel {
+public partial class LightsViewModel : ConnectionViewModel {
     private const string _labelID = "ID";
     private const string _labelName = "Light";
     private const string _labelState = "Lit?";
-
-    public string LabelID => _labelID;
-    public string LabelName => _labelName;
-    public string LabelState => _labelState;
-
-    [ObservableProperty] private ObservableCollection<Light> _lights;
+    private readonly ProfileService _profileService;
     [ObservableProperty] private string _columnLabelID = _labelID;
     [ObservableProperty] private string _columnLabelName = _labelName;
     [ObservableProperty] private string _columnLabelState = _labelState;
     private bool _isAscending;
-    private string _sortColumn = "";
 
-    public bool IsSupported { get; private set; }
-    public bool IsNotSupported => !IsSupported;
-    private ProfileService _profileService;
+    [ObservableProperty] private ObservableCollection<Light> _lights;
     private ILogger<LightsViewModel> _logger;
+    private string _sortColumn = "";
 
     public LightsViewModel(ILogger<LightsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -39,10 +33,17 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
             IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
             SetLabels();
         };
-        Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService),"LightsViewModel: Active profile is not defined.");
+        Lights = _profileService?.ActiveProfile?.Lights ?? throw new ArgumentNullException(nameof(profileService), "LightsViewModel: Active profile is not defined.");
         IsSupported = _profileService.ActiveProfile?.Settings?.ClientSettings?.Capabilities.Contains(DccClientCapability.Lights) ?? false;
         SetLabels();
     }
+
+    public string LabelID => _labelID;
+    public string LabelName => _labelName;
+    public string LabelState => _labelState;
+
+    public bool IsSupported { get; private set; }
+    public bool IsNotSupported => !IsSupported;
 
     [RelayCommand]
     private async Task SortByColumnAsync(string columnName) {
@@ -81,10 +82,10 @@ public partial class LightsViewModel : Base.ConnectionViewModel {
         if (light == null) return;
         light.State = !light.State;
         if (!string.IsNullOrEmpty(light.Id) && IsConnected) {
-            if (ConnectionService.Client is { } client) await client.SendLightCmdAsync(light, light.State )!;
+            if (ConnectionService.Client is { } client) await client.SendLightCmdAsync(light, light.State)!;
         }
     }
-    
+
     [RelayCommand]
     private async Task RefreshLightsAsync() {
         IsBusy = true;

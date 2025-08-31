@@ -42,7 +42,7 @@ public static class SvgImages {
         AddImage("RouteLarge", "Track_Route_Large");
 
         AddImage("Straight", "Track_Straight", "Track_Angle");
-        AddImage("Platform", "Track_Straight_Platform","Track_Angle_Platform");
+        AddImage("Platform", "Track_Straight_Platform", "Track_Angle_Platform");
         AddImage("Tunnel", "Track_Straight_Tunnel", "Track_Angle_Tunnel");
         AddImage("Bridge", "Track_Straight_Bridge", "Track_Angle_Bridge");
         AddImage("Cross", "Track_Straight_Cross", "Track_Angle_Cross");
@@ -58,7 +58,7 @@ public static class SvgImages {
         AddImage("LeftTurnoutUnknown", "Track_Turnout_Left");
         AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight");
         AddImage("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging");
-        
+
         AddImage("LeftTurnoutUnknownAlt", "Track_Turnout_Left");
         AddImage("LeftTurnoutStraightAlt", "Track_Turnout_Left_Straight_alt");
         AddImage("LeftTurnoutDivergingAlt", "Track_Turnout_Left_Diverging_alt");
@@ -66,7 +66,7 @@ public static class SvgImages {
         AddImage("RightTurnoutUnknown", "Track_Turnout_Right");
         AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight");
         AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging");
-        
+
         AddImage("RightTurnoutUnknownAlt", "Track_Turnout_Right");
         AddImage("RightTurnoutStraightAlt", "Track_Turnout_Right_Straight_alt");
         AddImage("RightTurnoutDivergingAlt", "Track_Turnout_Right_Diverging_alt");
@@ -74,23 +74,25 @@ public static class SvgImages {
 
     public static SvgImage GetImage(string name, int direction = 0) {
         if (Images.TryGetValue(name.ToLowerInvariant(), out var images)) {
-            
             // If we are looking for a straight track piece (----) then return it.
             // -----------------------------------------------------------------------------
             if (direction % 90 == 0) return new SvgImage(images.straight, direction);
-            
+
             // If it is angled, we need, then we need to adjust as all the images have been 
             // built pointing up / but should be \ so need to add 45 to them to adjust
             // -----------------------------------------------------------------------------
             if (direction % 45 == 0) {
-                return new SvgImage(images.diagonal, ((direction + 45) % 360) - 90);
+                return new SvgImage(images.diagonal, (direction + 45) % 360 - 90);
             }
             throw new SvgImageException($"***** Image '{name}' invalid direction provided");
         }
         throw new SvgImageException($"***** Image '{name}' not found");
     }
 
-    private static void AddImage(string name, string filename) => AddImage(name, filename, filename);
+    private static void AddImage(string name, string filename) {
+        AddImage(name, filename, filename);
+    }
+
     private static void AddImage(string name, string filenameStraight, string filenameDiagonal) {
         if (Images.ContainsKey(name.ToLowerInvariant())) return;
         Images.Add(name.ToLowerInvariant(), (GetFullPathImage(filenameStraight), GetFullPathImage(filenameDiagonal)));

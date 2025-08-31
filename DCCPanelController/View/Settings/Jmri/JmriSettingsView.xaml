@@ -11,7 +11,7 @@
              x:Class="DCCPanelController.View.Settings.Jmri.JmriSettingsView">
 
     <ContentView.Resources>
-        <converters1:StepValueConverter x:Key="StepConverter" Step="0.25" />
+        <converters1:StepValueConverter x:Key="StepConverter" Step="0.25"/>
         <Style x:Key="SelectableItemStyle" TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
                 <VisualStateGroupList>
@@ -44,7 +44,7 @@
             <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
                    Text="Device Name (unique name for this Device)"/>
             <HorizontalStackLayout>
-                <Border WidthRequest="250" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="250" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
                     <Entry Margin="10,0,10,0" HorizontalOptions="Fill" Text="{Binding JmriSettings.Name}"/>
                 </Border>
                 <ImageButton Margin="2,0,0,0" Aspect="Center"
@@ -59,11 +59,11 @@
         </VerticalStackLayout>
 
         <HorizontalStackLayout Margin="10,10,0,0">
-            <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}" VerticalOptions="Center" WidthRequest="260"/>
+            <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
+                   VerticalOptions="Center" WidthRequest="260"/>
             <Switch IsToggled="{Binding JmriSettings.SetAutomatically}"
                     OnColor="{StaticResource Primary}"
-                    ThumbColor="{StaticResource Gray200}"
-            />
+                    ThumbColor="{StaticResource Gray200}"/>
         </HorizontalStackLayout>
 
         <VerticalStackLayout Margin="10,10,0,0" IsEnabled="{Binding JmriSettings.SetManually}">
@@ -72,8 +72,9 @@
                    Text="JMRI Server Address and Port"/>
 
             <HorizontalStackLayout HorizontalOptions="Start" Margin="0,-25,0,0">
-                <Border WidthRequest="45" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
-                    <Entry HorizontalOptions="Fill" Focused="OnEntryFocused" HorizontalTextAlignment="Center" Text="{Binding IpAddress1, Mode=TwoWay}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry HorizontalOptions="Fill" Focused="OnEntryFocused" HorizontalTextAlignment="Center"
+                           Text="{Binding IpAddress1, Mode=TwoWay}">
                         <Entry.Behaviors>
                             <settings:EntryValidationBehavior/>
                         </Entry.Behaviors>
@@ -81,11 +82,11 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
                     <Entry
-                               Focused="OnEntryFocused"
-                               HorizontalOptions="Fill"
-                               HorizontalTextAlignment="Center" Text="{Binding IpAddress2, Mode=TwoWay}">
+                        Focused="OnEntryFocused"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress2, Mode=TwoWay}">
                         <Entry.Behaviors>
                             <settings:EntryValidationBehavior/>
                         </Entry.Behaviors>
@@ -94,7 +95,7 @@
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
 
-                <Border WidthRequest="45" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -106,7 +107,7 @@
                 </Border>
                 <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
                        VerticalOptions="Center"/>
-                <Border WidthRequest="45" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -119,7 +120,7 @@
                 <Label FontSize="48" HorizontalOptions="Center" Margin="2,-5,2,2" Text=":"
                        TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
 
-                <Border WidthRequest="90" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
+                <Border WidthRequest="90" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
                     <Entry
                         Focused="OnEntryFocused"
                         HorizontalOptions="Fill"
@@ -133,9 +134,12 @@
             <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
                    Text="Monitor Layout Changes : Polling in Seconds"/>
             <HorizontalStackLayout>
-                <Slider HorizontalOptions="Start" WidthRequest="200" Maximum="10" Minimum="0.50" Value="{Binding JmriSettings.PollingInterval, Mode=TwoWay, Converter={StaticResource StepConverter}}"/>
-                <Border WidthRequest="150" Padding="0" HeightRequest="35"  Style="{StaticResource EntryBorderStyle}">
-                    <Label VerticalOptions="Center" HorizontalOptions="Center" Text="{Binding JmriSettings.PollingInterval, StringFormat='{0:F2} seconds'}" Style="{StaticResource MediumLabel}"/>
+                <Slider HorizontalOptions="Start" WidthRequest="200" Maximum="10" Minimum="0.50"
+                        Value="{Binding JmriSettings.PollingInterval, Mode=TwoWay, Converter={StaticResource StepConverter}}"/>
+                <Border WidthRequest="150" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Label VerticalOptions="Center" HorizontalOptions="Center"
+                           Text="{Binding JmriSettings.PollingInterval, StringFormat='{0:F2} seconds'}"
+                           Style="{StaticResource MediumLabel}"/>
                 </Border>
             </HorizontalStackLayout>
         </VerticalStackLayout>

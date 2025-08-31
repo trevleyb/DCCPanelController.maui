@@ -21,7 +21,6 @@ From here you can:
 
 ![Turnouts](./images/turnouts.png)
 
-
 ## Next Steps
 
 - [Operate Mode](help://topic/operate-mode)

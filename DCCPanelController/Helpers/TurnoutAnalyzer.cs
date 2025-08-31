@@ -31,8 +31,9 @@ public static class TurnoutAnalyzer {
 
         // Find the most common pattern
         var mostCommonPattern = patternCount
-            .OrderByDescending(kvp => kvp.Value)
-            .FirstOrDefault().Key ?? string.Empty;
+                               .OrderByDescending(kvp => kvp.Value)
+                               .FirstOrDefault()
+                               .Key ?? string.Empty;
 
         // Determine next number in sequence
         var nextNumber = 1;
@@ -40,6 +41,7 @@ public static class TurnoutAnalyzer {
 
         if (patternNumbers.TryGetValue(mostCommonPattern, out var found) && found.Count > 0) {
             nextNumber = found.Max(x => x.number) + 1;
+
             // Use the format from the highest numbered item
             formatToUse = found.OrderByDescending(x => x.number).First().originalFormat;
         }
@@ -50,7 +52,7 @@ public static class TurnoutAnalyzer {
         // Create new unique ID maintaining original format
         var numberPart = FormatNumber(nextNumber, formatToUse);
         var newUniqueId = $"{patternPrefix}{numberPart}{patternSuffix}";
-        
+
         return (patternPrefix, newUniqueId);
     }
 
@@ -63,10 +65,10 @@ public static class TurnoutAnalyzer {
             var numberStr = match.Groups[2].Value;
             var suffix = match.Groups[3].Value;
             var number = int.Parse(numberStr);
-            
+
             // Preserve original number formatting (leading zeros, etc.)
             var originalFormat = numberStr;
-            
+
             return (prefix, number, suffix, originalFormat);
         }
 
@@ -77,16 +79,16 @@ public static class TurnoutAnalyzer {
     private static (string prefix, string suffix) SplitPattern(string pattern) {
         // For most patterns, we need to intelligently split
         // This is tricky because "TX" could be prefix "T" + suffix "X" or prefix "TX" + no suffix
-        
+
         // Common patterns - you might need to expand this based on your data
         var knownSuffixes = new[] { "X", "Y", "Z", "A", "B", "C" };
-        
+
         foreach (var suffix in knownSuffixes) {
             if (pattern.EndsWith(suffix) && pattern.Length > suffix.Length) {
                 return (pattern[..^suffix.Length], suffix);
             }
         }
-        
+
         // If no known suffix found, treat entire pattern as prefix
         return (pattern, "");
     }

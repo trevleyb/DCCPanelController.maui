@@ -5,12 +5,16 @@ using Serilog.Events;
 
 namespace DCCPanelController.Helpers;
 
-public static class LoggingLevelHelper
-{
+public static class LoggingLevelHelper {
     private static LoggingLevelSwitch? _levelSwitch;
 
     /// <summary>
-    /// Initialize the logging level switch. Call this during Serilog configuration.
+    ///     Check if the helper has been initialized
+    /// </summary>
+    public static bool IsInitialized => _levelSwitch != null;
+
+    /// <summary>
+    ///     Initialize the logging level switch. Call this during Serilog configuration.
     /// </summary>
     /// <param name="initialLevel">The initial logging level</param>
     /// <returns>The LoggingLevelSwitch to use in Serilog configuration</returns>
@@ -20,11 +24,10 @@ public static class LoggingLevelHelper
     }
 
     /// <summary>
-    /// Change the logging level at runtime
+    ///     Change the logging level at runtime
     /// </summary>
     /// <param name="level">The new logging level</param>
-    public static void SetLogLevel(LogEventLevel level)
-    {
+    public static void SetLogLevel(LogEventLevel level) {
         if (_levelSwitch == null)
             throw new InvalidOperationException("LoggingLevelHelper has not been initialized. Call Initialize() during Serilog setup.");
 
@@ -33,17 +36,16 @@ public static class LoggingLevelHelper
     }
 
     /// <summary>
-    /// Change the logging level using Microsoft.Extensions.Logging LogLevel enum
+    ///     Change the logging level using Microsoft.Extensions.Logging LogLevel enum
     /// </summary>
     /// <param name="level">The Microsoft LogLevel</param>
-    public static void SetLogLevel(LogLevel level)
-    {
+    public static void SetLogLevel(LogLevel level) {
         var serilogLevel = ConvertToSerilogLevel(level);
         SetLogLevel(serilogLevel);
     }
 
     /// <summary>
-    /// Change the logging level using a string value
+    ///     Change the logging level using a string value
     /// </summary>
     /// <param name="levelString">The logging level as a string (Debug, Information, Warning, Error, Fatal)</param>
     public static void SetLogLevel(string levelString) {
@@ -51,11 +53,10 @@ public static class LoggingLevelHelper
     }
 
     /// <summary>
-    /// Get the current logging level
+    ///     Get the current logging level
     /// </summary>
     /// <returns>The current LogEventLevel</returns>
-    public static LogEventLevel GetCurrentLogLevel()
-    {
+    public static LogEventLevel GetCurrentLogLevel() {
         if (_levelSwitch == null)
             throw new InvalidOperationException("LoggingLevelHelper has not been initialized.");
 
@@ -63,25 +64,18 @@ public static class LoggingLevelHelper
     }
 
     /// <summary>
-    /// Check if the helper has been initialized
+    ///     Convert Microsoft.Extensions.Logging.LogLevel to Serilog LogEventLevel
     /// </summary>
-    public static bool IsInitialized => _levelSwitch != null;
-
-    /// <summary>
-    /// Convert Microsoft.Extensions.Logging.LogLevel to Serilog LogEventLevel
-    /// </summary>
-    private static LogEventLevel ConvertToSerilogLevel(LogLevel logLevel)
-    {
-        return logLevel switch
-        {
-            LogLevel.Trace => LogEventLevel.Verbose,
-            LogLevel.Debug => LogEventLevel.Debug,
+    private static LogEventLevel ConvertToSerilogLevel(LogLevel logLevel) {
+        return logLevel switch {
+            LogLevel.Trace       => LogEventLevel.Verbose,
+            LogLevel.Debug       => LogEventLevel.Debug,
             LogLevel.Information => LogEventLevel.Information,
-            LogLevel.Warning => LogEventLevel.Warning,
-            LogLevel.Error => LogEventLevel.Error,
-            LogLevel.Critical => LogEventLevel.Fatal,
-            LogLevel.None => LogEventLevel.Fatal,
-            _ => LogEventLevel.Information
+            LogLevel.Warning     => LogEventLevel.Warning,
+            LogLevel.Error       => LogEventLevel.Error,
+            LogLevel.Critical    => LogEventLevel.Fatal,
+            LogLevel.None        => LogEventLevel.Fatal,
+            _                    => LogEventLevel.Information
         };
     }
 }

@@ -1,5 +1,4 @@
 using System.Reflection;
-using CommunityToolkit.Maui.Markup;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Shapes;
 
@@ -7,10 +6,9 @@ namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
 public class EditableString(string label, string description = "", int order = 0, string? group = null, int width = 300)
     : EditableProperty(label, description, order, group), IEditableProperty {
-    
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var box = new Border() {
+            var box = new Border {
                 Margin = new Thickness(0, 5, 5, 5),
                 WidthRequest = width,
                 HeightRequest = 30,
@@ -23,7 +21,7 @@ public class EditableString(string label, string description = "", int order = 0
                     CornerRadius = new CornerRadius(10) // All corners rounded with radius 10
                 }
             };
-            
+
             var cell = new Entry {
                 Margin = new Thickness(5, 5, 5, 5),
                 Placeholder = Label,
@@ -44,7 +42,7 @@ public class EditableString(string label, string description = "", int order = 0
             box.Content = cell;
             return CreateGroupCell(box);
         } catch (Exception e) {
-            PropertyLogger.LogDebug("Unable to create a String:  {Message}",e.Message);
+            PropertyLogger.LogDebug("Unable to create a String:  {Message}", e.Message);
             return null;
         }
     }

@@ -13,15 +13,15 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     private ServiceDiscovery? _sd;
 
     public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
-                  TimeSpan timeout,
-                  CancellationToken cancellationToken = default) {
+                                                                              TimeSpan timeout,
+                                                                              CancellationToken cancellationToken = default) {
         return await DiscoverServicesAsync(serviceType, "", timeout, cancellationToken);
     }
 
     public async Task<IResult<List<DiscoveredService>>> DiscoverServicesAsync(string serviceType,
-              string subType,
-              TimeSpan timeout,
-              CancellationToken cancellationToken = default) {
+                                                                              string subType,
+                                                                              TimeSpan timeout,
+                                                                              CancellationToken cancellationToken = default) {
         if (string.IsNullOrWhiteSpace(serviceType)) throw new ArgumentNullException(nameof(serviceType));
 
         var queryServiceType = serviceType.Trim();
@@ -220,7 +220,7 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
             }
             if (currentServiceUpdated) {
                 currentServiceUpdated = false;
-            } 
+            }
         }
 
         // The serviceUpdated flag wasn't driving any specific logic after the loop,

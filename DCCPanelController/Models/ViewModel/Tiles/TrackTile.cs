@@ -1,4 +1,3 @@
-using System.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -8,8 +7,7 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
-    public SvgImage? SvgImage { get; protected set; }
-    
+
     protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TrackEntity.Rotation));
         VisualProperties.Add(nameof(TrackEntity.TrackType));
@@ -18,7 +16,7 @@ public abstract class TrackTile : Tile, ITileTrack {
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
         VisualProperties.Add(nameof(IsOccupied));
         VisualProperties.Add(nameof(IsPath));
-        if (Entity is TrackEntity { Occupancy: {} occupancy }) {
+        if (Entity is TrackEntity { Occupancy: { } occupancy }) {
             if (occupancy.Id == entity?.Occupancy?.Id) IsOccupied = occupancy.IsOccupied;
             occupancy.PropertyChanged += (sender, args) => {
                 if (occupancy.Id == entity?.Occupancy?.Id) {
@@ -28,12 +26,14 @@ public abstract class TrackTile : Tile, ITileTrack {
         }
     }
 
+    public SvgImage? SvgImage { get; protected set; }
+
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
-        return CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor, null);
+        return CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor);
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale) {
-        return CreateTrackTileAsCanvas(trackName, trackRotation, scale, null);
+        return CreateTrackTileAsCanvas(trackName, trackRotation, scale);
     }
 
     protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) {
@@ -105,11 +105,11 @@ public abstract class TrackTile : Tile, ITileTrack {
 
             if (IsPath && DisplayMode == TileDisplayMode.Normal) {
                 var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
-                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());            
+                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
             } else if (IsOccupied && DisplayMode == TileDisplayMode.Normal) {
                 var color = Entity.Parent?.OccupiedColor ?? Colors.Tomato.WithAlpha(HighlightColorAlpha);
-                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());            
-            } 
+                style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
+            }
         }
         return style;
     }

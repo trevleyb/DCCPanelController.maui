@@ -13,6 +13,12 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
         foreach (var action in buttonActions) Add(new ButtonAction(action));
     }
 
+    public object Clone() {
+        var buttonActions = new ButtonActions();
+        foreach (var action in this) buttonActions.Add(new ButtonAction(action));
+        return buttonActions;
+    }
+
     public async void Apply(ActionButtonEntity button, ConnectionService connectionService, ActionExecutionContext context) {
         var logger = LogHelper.CreateLogger("ButtonActionsApply");
         try {
@@ -41,14 +47,8 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                 }
             }
         } catch (Exception ex) {
-            logger.LogError("Error in Async Void function: ButtonActions:Apply =>{Message}",ex.Message);
+            logger.LogError("Error in Async Void function: ButtonActions:Apply =>{Message}", ex.Message);
         }
-    }
-
-    public object Clone() {
-        var buttonActions = new ButtonActions();
-        foreach (var action in this) buttonActions.Add(new ButtonAction(action));
-        return buttonActions;
     }
 }
 

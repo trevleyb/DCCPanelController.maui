@@ -13,7 +13,7 @@ public class EditableUndefined(string label = "undefined", string description = 
                 VerticalOptions = LayoutOptions.Center
             };
         } catch (Exception e) {
-            PropertyLogger.LogDebug("Unable to create a Undefined Editable item {Message}",e.Message);
+            PropertyLogger.LogDebug("Unable to create a Undefined Editable item {Message}", e.Message);
             return null;
         }
     }

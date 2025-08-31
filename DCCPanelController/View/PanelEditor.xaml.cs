@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
@@ -13,9 +12,9 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 namespace DCCPanelController.View;
 
 public partial class PanelEditor : ContentPage {
+    private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly ILogger<PanelEditor> _logger;
     private readonly PanelEditorViewModel _viewModel;
-    private readonly TaskCompletionSource<bool> _closeTcs = new();
     private bool _isPushingModal; // Flag to track modal presentation
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
@@ -42,6 +41,8 @@ public partial class PanelEditor : ContentPage {
         PillPaletteSelector.Panel = _viewModel.Panel;
     }
 
+    public Task<bool> PageClosed => _closeTcs.Task;
+
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
         _viewModel.ScreenHeight = height;
@@ -50,8 +51,6 @@ public partial class PanelEditor : ContentPage {
         if (width < height) SetDockedSide(TileSelectorDockSide.Bottom);
         if (width >= height) SetDockedSide(TileSelectorDockSide.Side);
     }
-
-    public Task<bool> PageClosed => _closeTcs.Task;
 
     private void OnBeginPushModal() {
         Console.WriteLine("Begin Push Modal");
@@ -83,22 +82,22 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) { }
+
     private void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
         _viewModel.BottomSheetOnStateChanged(sender, e);
     }
-    
+
     #region Manage the showing and hiding of the Palettes
     private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) {
         SetDockedSide(e);
     }
 
     private void SetDockedSide(TileSelectorDockSide side) {
-
         switch (side) {
         case TileSelectorDockSide.Side:
             SetPaletteVisibility(84, 0);
             break;
-    
+
         case TileSelectorDockSide.Bottom:
             SetPaletteVisibility(0, 120);
             break;
@@ -115,7 +114,7 @@ public partial class PanelEditor : ContentPage {
         BottomPaletteContainer.IsVisible = bottom > 0;
     }
     #endregion
-    
+
     #region Manage Tiles being selected or tapped from the Control Panel View
     private async void PanelViewOnTileTapped(object? sender, TileSelectedEventArgs e) {
         try {
@@ -183,5 +182,4 @@ public partial class PanelEditor : ContentPage {
         }
     }
     #endregion
-
 }

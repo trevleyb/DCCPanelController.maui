@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>
         <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows'))">$(TargetFrameworks);net9.0-windows10.0.19041.0</TargetFrameworks>
-        
+
         <!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
         <!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
 
@@ -72,18 +72,18 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Nerdbank.GitVersioning" 
-                          Version="3.7.115" 
-                          PrivateAssets="all" 
-                          Condition="!Exists('packages.config')" />
+        <PackageReference Include="Nerdbank.GitVersioning"
+                          Version="3.7.115"
+                          PrivateAssets="all"
+                          Condition="!Exists('packages.config')"/>
     </ItemGroup>
 
     <ItemGroup>
         <!-- Base icons, as-is -->
-        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" />
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24"/>
 
         <!-- Active (white) variants – force unique output name -->
-        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" Resize="16,16"  TintColor="#FFFFFFFF">
+        <MauiImage Include="Resources\Icons\*.svg" BaseSize="24,24" Resize="16,16" TintColor="#FFFFFFFF">
             <Link>Resources/Icons/%(Filename)_active.png</Link>
         </MauiImage>
 
@@ -92,12 +92,12 @@
             <Link>Resources/Icons/%(Filename)_inactive.png</Link>
         </MauiImage>
     </ItemGroup>
-    
+
     <ItemGroup>
         <!-- App Icon -->
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
-        
+
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
         <MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#7CC504"/>
         <MauiFont Include="Resources\Fonts\*"/>
@@ -110,7 +110,7 @@
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
         <EmbeddedResource Include="Models\TileImages\sample.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_angle_bridge.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_angle_bridge.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_continuation_arrow.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg"/>
@@ -134,7 +134,7 @@
         <EmbeddedResource Include="Models\TileImages\track_route.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_route_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_bridge.svg" />
+        <EmbeddedResource Include="Models\TileImages\track_straight_bridge.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg"/>
@@ -152,38 +152,38 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_unknown.svg"/>
-        <EmbeddedResource Include="Models\TileImages\light.svg" />
-        <EmbeddedResource Include="Models\TileImages\switch_off.svg" />
-        <EmbeddedResource Include="Models\TileImages\switch_on.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging_alt.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight_alt.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging_alt.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight_alt.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_angle_platform.svg" />
-        <EmbeddedResource Include="Models\TileImages\track_straight_platform.svg" />
+        <EmbeddedResource Include="Models\TileImages\light.svg"/>
+        <EmbeddedResource Include="Models\TileImages\switch_off.svg"/>
+        <EmbeddedResource Include="Models\TileImages\switch_on.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging_alt.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight_alt.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging_alt.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight_alt.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_platform.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_platform.svg"/>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90" />
-        <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0" />
-        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.1" />
-        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2" />
+        <PackageReference Include="Microsoft.Maui.Controls" Version="9.0.90"/>
+        <PackageReference Include="CommunityToolkit.Maui" Version="12.2.0"/>
+        <PackageReference Include="CommunityToolkit.Maui.Markup" Version="6.0.1"/>
+        <PackageReference Include="CommunityToolkit.Maui.MediaElement" Version="6.1.2"/>
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8" />
-        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.90" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.8"/>
+        <PackageReference Include="Microsoft.Maui.Graphics.Skia" Version="9.0.90"/>
         <PackageReference Include="OnScreenSizeMarkup.Maui" Version="3.0.18"/>
         <PackageReference Include="Plugin.Maui.Audio" Version="4.0.0"/>
-        <PackageReference Include="Serilog" Version="4.3.0" />
-        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2" />
-        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
-        <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0" />
-        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
-        <PackageReference Include="SkiaSharp" Version="3.119.0" />
-        <PackageReference Include="SkiaSharp.Views" Version="3.119.0" />
-        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0" />
-        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.119.0" />
-        <PackageReference Include="Svg.Skia" Version="3.0.5" />
-        <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6" />
+        <PackageReference Include="Serilog" Version="4.3.0"/>
+        <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
+        <PackageReference Include="SkiaSharp" Version="3.119.0"/>
+        <PackageReference Include="SkiaSharp.Views" Version="3.119.0"/>
+        <PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.0"/>
+        <PackageReference Include="SkiaSharp.Views.Maui.Core" Version="3.119.0"/>
+        <PackageReference Include="Svg.Skia" Version="3.0.5"/>
+        <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6"/>
     </ItemGroup>
 
 
@@ -219,31 +219,31 @@
             <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Settings\Jmri\JmriSettingsView.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Settings\WiThrottle\WiThrottleSettingsView.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\ServerMessagePage.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\LightsPage.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\SensorsPage.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\Settings\Simulator\SimulatorSettingsView.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="AppShell.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\TileSelectors\PillSelectorPanel.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
         <MauiXaml Update="View\TileSelectors\SideSelectorPanel.xaml">
-          <SubType>Designer</SubType>
+            <SubType>Designer</SubType>
         </MauiXaml>
     </ItemGroup>
 
@@ -313,81 +313,81 @@
             <DependentUpon>PanelEditor.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\Settings\Jmri\JmriSettingsView.xaml.cs">
-          <DependentUpon>JmriSettingsView.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>JmriSettingsView.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\Settings\WiThrottle\WiThrottleSettingsView.xaml.cs">
-          <DependentUpon>WiThrottleSettingsView.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>WiThrottleSettingsView.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\ServerMessagePage.xaml.cs">
-          <DependentUpon>ServerMessage.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>ServerMessage.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\ServerMessagePagesViewModel.cs">
-          <DependentUpon>ServerMessagePage.xaml</DependentUpon>
+            <DependentUpon>ServerMessagePage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\LightsPage.xaml.cs">
-          <DependentUpon>LightsPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>LightsPage.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\SensorsPage.xaml.cs">
-          <DependentUpon>SensorsPage.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>SensorsPage.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\SensorsViewModel.cs">
-          <DependentUpon>SensorsPage.xaml</DependentUpon>
+            <DependentUpon>SensorsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\LightsViewModel.cs">
-          <DependentUpon>LightsPage.xaml</DependentUpon>
+            <DependentUpon>LightsPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\Settings\Simulator\SimulatorSettingsView.xaml.cs">
-          <DependentUpon>JmriSettingsView.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>JmriSettingsView.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\Components\ColorPickerGridViewModel.cs">
-          <DependentUpon>ColorPickerGrid.xaml</DependentUpon>
+            <DependentUpon>ColorPickerGrid.xaml</DependentUpon>
         </Compile>
         <Compile Update="AppShell.xaml.cs">
-          <DependentUpon>AppShell.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>AppShell.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\TestPageViewModel.cs">
-          <DependentUpon>TestPage.xaml</DependentUpon>
+            <DependentUpon>TestPage.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TileSelectors\PillSelectorPanel.xaml.cs">
-          <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\TileSelectors\SideSelectorPanel.xaml.cs">
-          <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
-          <SubType>Code</SubType>
+            <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
+            <SubType>Code</SubType>
         </Compile>
         <Compile Update="View\TileSelectors\SideSelectorPanelViewModel.cs">
-          <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
+            <DependentUpon>SideSelectorPanel.xaml</DependentUpon>
         </Compile>
         <Compile Update="View\TileSelectors\PillSelectorPanelViewModel.cs">
-          <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
+            <DependentUpon>PillSelectorPanel.xaml</DependentUpon>
         </Compile>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DCCClient.Jmri\DCCClient.Jmri.csproj" />
-        <ProjectReference Include="..\DCCClient.Simulator\DCCClient.Simulator.csproj" />
-        <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj" />
-        <ProjectReference Include="..\DCCClient\DCCClient.csproj" />
+        <ProjectReference Include="..\DCCClient.Jmri\DCCClient.Jmri.csproj"/>
+        <ProjectReference Include="..\DCCClient.Simulator\DCCClient.Simulator.csproj"/>
+        <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj"/>
+        <ProjectReference Include="..\DCCClient\DCCClient.csproj"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">
-      <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.NativeAssets.iOS" Version="3.119.0"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-maccatalyst'">
-      <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.NativeAssets.MacCatalyst" Version="3.119.0"/>
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-android'">
-      <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0" />
+        <PackageReference Include="SkiaSharp.NativeAssets.Android" Version="3.119.0"/>
     </ItemGroup>
 
 </Project>

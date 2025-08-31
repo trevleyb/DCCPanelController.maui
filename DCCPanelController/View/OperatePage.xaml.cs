@@ -1,11 +1,5 @@
 using System.ComponentModel;
-using System.Reflection;
-using System.Windows.Input;
-using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Helpers;
@@ -15,11 +9,11 @@ namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<OperatePage> _logger;
-    private OperateViewModel _viewModel;
+    private readonly OperateViewModel _viewModel;
     private ConnectionService? _connectionService;
     private ProfileService? _profileService;
-    
-    public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel,  ProfileService profileService, ConnectionService connectionService) {
+
+    public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel, ProfileService profileService, ConnectionService connectionService) {
         InitializeComponent();
         _logger = logger;
         _profileService = profileService;
@@ -36,24 +30,24 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         base.OnAppearing();
         _viewModel.UpdatePanelIndicators();
     }
-    
-    void OnPanelIndicatorChanged(object sender, SelectionChangedEventArgs e) {
+
+    private void OnPanelIndicatorChanged(object sender, SelectionChangedEventArgs e) {
         if (e.CurrentSelection.FirstOrDefault() is PanelIndicator pi &&
             BindingContext is OperateViewModel vm) {
             vm.SelectPanel(pi.Index);
         }
     }
 
-
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
-            if (_viewModel is {ActivePanel: not null} viewModel ) {
+            if (_viewModel is { ActivePanel: not null } viewModel) {
                 Title = $"{viewModel.ActivePanel.Title}";
+
                 //PanelView.Panel = viewModel.ActivePanel;
                 PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
                 BackgroundColor = viewModel.DisplayBackgroundColor;
             } else {
-                Title = $"DCC Panel Controller";
+                Title = "DCC Panel Controller";
             }
         }
     }
@@ -67,7 +61,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
                 }
             }
         } catch (Exception ex) {
-            _logger.LogError("OperatePage: PanelViewTileTapped: Error=>{ExMessage}", ex.Message); 
+            _logger.LogError("OperatePage: PanelViewTileTapped: Error=>{ExMessage}", ex.Message);
         }
     }
 
@@ -88,7 +82,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private void HideUnHideTabBar(object? sender, EventArgs e) {
         if (BindingContext is OperateViewModel viewModel) {
-            SetTabBarState(!viewModel.IsMaximized);    
+            SetTabBarState(!viewModel.IsMaximized);
         }
     }
 

@@ -1,8 +1,6 @@
 ﻿using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
-using DCCPanelController.Services.ProfileService;
-using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Xaml.Diagnostics;
 
@@ -22,11 +20,11 @@ public partial class App : Application {
     private void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
         var logger = LogHelper.CreateLogger("BindingDiagnostics");
         logger.LogWarning("Binding Failed: {BindingSource} | {BindingLine} | {BindingName} | {BindingMessage} | {BindingType}",
-                          (e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI"),
-                          (e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum"),
-                          (e?.Binding?.ToString() ?? "?Binding"),
-                          (e?.Message ?? "?Message"),
-                          (e?.Binding?.GetType().Name ?? "?BindingType"));
+                          e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI",
+                          e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum",
+                          e?.Binding?.ToString() ?? "?Binding",
+                          e?.Message ?? "?Message",
+                          e?.Binding?.GetType().Name ?? "?BindingType");
     }
 
     protected override Window CreateWindow(IActivationState? activationState) {
@@ -39,7 +37,7 @@ public partial class App : Application {
 #if DEBUG
 
         // 1) Ensure we extract/copy help to the app data folder
-        await HelpService.Current.InitializeAsync(force: true);
+        await HelpService.Current.InitializeAsync(true);
 
         // 2) Validate the bundle (Resources/Raw) paths
         await ValidateBundleAsync();
@@ -49,7 +47,7 @@ public partial class App : Application {
 #endif
     }
 
-    static async Task ValidateBundleAsync() {
+    private static async Task ValidateBundleAsync() {
         // Manifest is in the *bundle*
         await using var ms = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/manifest.json");
         using var reader = new StreamReader(ms);
@@ -68,7 +66,7 @@ public partial class App : Application {
         }
     }
 
-    static async Task ValidateExtractedAsync() {
+    private static async Task ValidateExtractedAsync() {
         // Read manifest again (from bundle is fine)
         await using var ms = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/manifest.json");
         using var reader = new StreamReader(ms);

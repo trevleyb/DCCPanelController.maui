@@ -11,13 +11,13 @@ public class EditableTurnoutAttribute(string label, string description = "", int
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
             var initialValue = info.GetValue(owner);
-            var turnouts =((Entity)owner).Parent?.Turnouts.ToList() ?? new List<Turnout>();
+            var turnouts = ((Entity)owner).Parent?.Turnouts.ToList() ?? new List<Turnout>();
 
             _ = dropDownWidth;
             _ = dropDownHeight;
-            
-            var cell = new PickerSelector() {
-                ShowClearFieldImage = turnouts.Count > 0, 
+
+            var cell = new PickerSelector {
+                ShowClearFieldImage = turnouts.Count > 0,
                 WidthRequest = width,
                 TextSize = 12,
                 IsEnabled = turnouts.Count > 0,
@@ -33,14 +33,14 @@ public class EditableTurnoutAttribute(string label, string description = "", int
             cell.PropertyChanged += (sender, args) => {
                 if (args.PropertyName == nameof(PickerSelector.SelectedItem)) {
                     var currentValue = info.GetValue(owner);
-                    if (!object.Equals(currentValue, initialValue)) {
+                    if (!Equals(currentValue, initialValue)) {
                         SetModified(true);
                     }
                 }
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            PropertyLogger.LogDebug("Unable to create a Turnout: {Message}",e.Message);
+            PropertyLogger.LogDebug("Unable to create a Turnout: {Message}", e.Message);
             return null;
         }
     }

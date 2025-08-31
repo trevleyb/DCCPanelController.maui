@@ -1,7 +1,7 @@
 namespace DCCPanelController.Models.DataModel.Helpers;
 
 /// <summary>
-/// Defines the connection points for an entity with 8-way rotation support
+///     Defines the connection points for an entity with 8-way rotation support
 /// </summary>
 public class EntityConnections {
     public const int MaxDirections = 8; // All entities support 8 compass directions
@@ -9,17 +9,24 @@ public class EntityConnections {
     private readonly ConnectionType[] _baseConnections;
 
     /// <summary>
-    /// Creates entity connections with 8-way rotation capability
+    ///     Creates entity connections with 8-way rotation capability
     /// </summary>
     /// <param name="connectionPattern">Connection pattern string (e.g., "**S***S*" for E-W straight track)</param>
     public EntityConnections(string connectionPattern, int rotations = 8) {
         _baseConnections = ParseConnectionPattern(connectionPattern);
     }
 
-    public string GetRotatedConnectionsStr(int rotation) => ConvertDirectionsToString(GetConnections(rotation));
+    /// <summary>
+    ///     Gets the step size for rotation (45° for 8-way rotation)
+    /// </summary>
+    public int RotationStepSize => 45;
+
+    public string GetRotatedConnectionsStr(int rotation) {
+        return ConvertDirectionsToString(GetConnections(rotation));
+    }
 
     /// <summary>
-    /// Gets the connections for the entity at its current rotation
+    ///     Gets the connections for the entity at its current rotation
     /// </summary>
     /// <param name="rotation">Current rotation of the entity in degrees</param>
     /// <returns>Array of connection types for each compass direction</returns>
@@ -32,7 +39,7 @@ public class EntityConnections {
     }
 
     /// <summary>
-    /// Gets the connection type in a specific direction for the current rotation
+    ///     Gets the connection type in a specific direction for the current rotation
     /// </summary>
     /// <param name="direction">Direction index (0=N, 1=NE, 2=E, etc.)</param>
     /// <param name="rotation">Current rotation of the entity in degrees</param>
@@ -43,7 +50,7 @@ public class EntityConnections {
     }
 
     /// <summary>
-    /// Gets all valid (non-None) connection directions for the current rotation
+    ///     Gets all valid (non-None) connection directions for the current rotation
     /// </summary>
     /// <param name="rotation">Current rotation of the entity in degrees</param>
     /// <returns>List of direction indices that have valid connections</returns>
@@ -51,7 +58,7 @@ public class EntityConnections {
         var connections = GetConnections(rotation);
         var validDirections = new List<int>();
 
-        for (int i = 0; i < MaxDirections; i++) {
+        for (var i = 0; i < MaxDirections; i++) {
             if (connections[i] != ConnectionType.None) {
                 validDirections.Add(i);
             }
@@ -61,7 +68,7 @@ public class EntityConnections {
     }
 
     /// <summary>
-    /// Checks if the entity can rotate to the specified angle (all entities support 45° increments)
+    ///     Checks if the entity can rotate to the specified angle (all entities support 45° increments)
     /// </summary>
     /// <param name="rotation">Desired rotation in degrees</param>
     /// <returns>True if the rotation is valid</returns>
@@ -69,11 +76,6 @@ public class EntityConnections {
         var normalizedRotation = NormalizeRotation(rotation);
         return normalizedRotation % 45 == 0;
     }
-
-    /// <summary>
-    /// Gets the step size for rotation (45° for 8-way rotation)
-    /// </summary>
-    public int RotationStepSize => 45;
 
     private ConnectionType[] ParseConnectionPattern(string pattern) {
         if (string.IsNullOrEmpty(pattern)) {
@@ -116,13 +118,15 @@ public class EntityConnections {
 
     private ConnectionType[] RotateConnections(ConnectionType[] connections, int rotationIndex) {
         var rotated = new ConnectionType[MaxDirections];
-        for (int i = 0; i < MaxDirections; i++) {
+        for (var i = 0; i < MaxDirections; i++) {
             rotated[(i + rotationIndex) % MaxDirections] = connections[i];
         }
         return rotated;
     }
 
-    public override string ToString() => ConvertDirectionsToString(_baseConnections);
+    public override string ToString() {
+        return ConvertDirectionsToString(_baseConnections);
+    }
 
     public static (int dx, int dy) GetDirectionOffset(int direction) {
         return direction switch {
@@ -138,7 +142,6 @@ public class EntityConnections {
         };
     }
 
-    
     public string ConvertDirectionsToString(ConnectionType[] connections) {
         var result = string.Empty;
         for (var i = 0; i < MaxDirections; i++) {

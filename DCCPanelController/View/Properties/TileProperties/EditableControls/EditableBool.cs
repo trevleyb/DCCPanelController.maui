@@ -13,13 +13,13 @@ public class EditableBool(string label, string description = "", int order = 0, 
             cell.VerticalOptions = LayoutOptions.Center;
             cell.SetBinding(Switch.IsToggledProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
-                if (sender is Switch sw){
+                if (sender is Switch sw) {
                     if (args.PropertyName == nameof(Switch.IsToggled)) SetModified(sw.IsToggled == (bool)(Value ?? false));
                 }
             };
-           return CreateGroupCell(cell);
+            return CreateGroupCell(cell);
         } catch (Exception e) {
-            PropertyLogger.LogDebug("Unable to create a Bool switch {Message}",e.Message);
+            PropertyLogger.LogDebug("Unable to create a Bool switch {Message}", e.Message);
             return null;
         }
     }

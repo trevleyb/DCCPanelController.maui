@@ -3,51 +3,49 @@ using DccClients.Jmri.Helpers;
 
 namespace DccClients.Jmri.Events;
 
-public class JmriHandshakeEventArgs : EventArgs, IJmriEventArgs{
-    public string Name => Railroad;
+public class JmriHandshakeEventArgs : EventArgs, IJmriEventArgs {
+    private JmriHandshakeEventArgs() { }
     public string JmriVersion { get; private set; } = string.Empty;
     public string JsonVersion { get; private set; } = string.Empty;
     public string Version { get; private set; } = string.Empty;
     public string Railroad { get; private set; } = string.Empty;
     public string Node { get; private set; } = string.Empty;
     public string Profile { get; private set; } = string.Empty;
-    public int Heartbeat { get; private set; } = 0;
+    public int Heartbeat { get; private set; }
 
-    private JmriHandshakeEventArgs() { }
+    public static string? HelloMessage =>
+        JsonSerializer.Serialize(new {
+            type = "hello",
+            client = "JMRI Layout Controller",
+            version = "1.0"
+        });
+
+    public static string? GoodbyeMessage =>
+        JsonSerializer.Serialize(new {
+            type = "goodbye"
+        });
+
+    public string Name => Railroad;
 
     public static JmriHandshakeEventArgs? Create(JsonElement root) {
         if (!root.TryGetProperty("data", out var dataElement)) return null;
-        return new JmriHandshakeEventArgs() {
+        return new JmriHandshakeEventArgs {
             JmriVersion = dataElement.GetStringProperty("JMRI"),
             JsonVersion = dataElement.GetStringProperty("json"),
             Version = dataElement.GetStringProperty("version"),
             Railroad = dataElement.GetStringProperty("railroad"),
             Node = dataElement.GetStringProperty("node"),
             Profile = dataElement.GetStringProperty("activeProfile"),
-            Heartbeat = dataElement.GetIntProperty("heartbeat"),
+            Heartbeat = dataElement.GetIntProperty("heartbeat")
         };
     }
-
-    public static string? HelloMessage =>
-        JsonSerializer.Serialize(new {
-            type = "hello",
-            client = "JMRI Layout Controller",
-            version = "1.0",
-        });
-    
-    public static string? GoodbyeMessage =>
-        JsonSerializer.Serialize(new {
-            type = "goodbye"
-        });
-
-    
 }
 
 /*
- 
+
  If needed, these are the known available capabilities
  ----------------------------------------------------------
- 
+
     throttle	Access locomotive throttles (speed, direction, functions)
     roster	    Read roster entries (locomotive info, decoder type)
     power	    Monitor and control track power

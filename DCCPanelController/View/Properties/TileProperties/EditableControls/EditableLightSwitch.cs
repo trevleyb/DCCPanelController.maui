@@ -3,7 +3,6 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Components;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Internals;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -16,7 +15,7 @@ public class EditableLightSwitchAttribute(string label, string description = "",
             _ = dropDownWidth;
             _ = dropDownHeight;
 
-            var cell = new PickerSelector() {
+            var cell = new PickerSelector {
                 WidthRequest = width,
                 TextSize = 12,
                 DisplayMemberPath = "Name",
@@ -34,7 +33,7 @@ public class EditableLightSwitchAttribute(string label, string description = "",
             };
             return CreateGroupCell(cell);
         } catch (Exception e) {
-            PropertyLogger.LogDebug("Unable to create a Light: {Message}",e.Message);
+            PropertyLogger.LogDebug("Unable to create a Light: {Message}", e.Message);
             return null;
         }
     }

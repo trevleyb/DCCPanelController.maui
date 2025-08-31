@@ -2,26 +2,15 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Models.ViewModel.Tiles;
-using DCCPanelController.Resources.Styles;
 using DCCPanelController.View.Base;
-using Syncfusion.Maui.Toolkit.SegmentedControl;
 
 namespace DCCPanelController.View.TileSelectors;
 
 public abstract partial class TileSelectorViewModel : BaseViewModel {
-    [ObservableProperty] private ObservableCollection<string> _categories = [];
     [ObservableProperty] private Dictionary<string, ObservableCollection<ITile>> _byCategory = [];
+    [ObservableProperty] private ObservableCollection<string> _categories = [];
 
-    public void ForceReDraw() {
-        foreach (var tile in ByCategory.SelectMany(category => category.Value)) {
-            tile.ForceRedraw();
-        }
-    }
-    
     public Panel? Panel {
         // We add the Selector Panel to the Parent Panel collection so that when 
         // we reference things like Color, it comes from the Globally set values
@@ -29,15 +18,15 @@ public abstract partial class TileSelectorViewModel : BaseViewModel {
             if (value is null) {
                 Categories = new ObservableCollection<string>();
                 ByCategory = new Dictionary<string, ObservableCollection<ITile>>();
-                return; 
+                return;
             }
-            
+
             using (new CodeTimer("Change Palette Panel")) {
                 MainThread.BeginInvokeOnMainThread(() => {
                     // For some reason, caching sometimes doesn't work due to UI timing issues
                     var palette = TileSelectorPaletteCache.BuildTilesForPanel(value); // e.GetOrBuild(value);
                     if (palette is null) throw new InvalidOperationException("Unable to build palette");
-                    
+
                     // Create a new dictionary and observable collections to avoid sharing the cached instances
                     // -----------------------------------------------------------------------------------------
                     Categories.Clear();
@@ -57,6 +46,12 @@ public abstract partial class TileSelectorViewModel : BaseViewModel {
                     OnPropertyChanged(nameof(ByCategory));
                 });
             }
+        }
+    }
+
+    public void ForceReDraw() {
+        foreach (var tile in ByCategory.SelectMany(category => category.Value)) {
+            tile.ForceRedraw();
         }
     }
 
