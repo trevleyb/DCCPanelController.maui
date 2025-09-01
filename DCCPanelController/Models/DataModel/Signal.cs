@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel;
@@ -9,13 +10,14 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Signal : ObservableObject {
+    [ObservableProperty] private string? _id;
+    [ObservableProperty] private string? _name;
     [ObservableProperty] private string _aspect = "Off";
     [ObservableProperty] private int _dccAddress;
-    [ObservableProperty] private string? _id;
     [ObservableProperty] private bool _isEditable = false;
     [ObservableProperty] private bool _isModified = false;
-    [ObservableProperty] private string? _name;
 
+    [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
 
     /// <summary>

@@ -24,7 +24,7 @@
               RowDefinitions="8,36,2,auto"
               ColumnDefinitions="*">
 
-            <Border Grid.Row="0" Margin="0,2,0,0" HorizontalOptions="Center" WidthRequest="30" StrokeThickness="3"
+            <Border Grid.Row="0" Margin="0,2,0,0" HorizontalOptions="Center" WidthRequest="30" StrokeThickness="6"
                     StrokeShape="RoundRectangle 15 15 5 5" Stroke="{StaticResource Primary}">
                 <Border.Behaviors>
                     <toolkit:TouchBehavior
@@ -48,6 +48,8 @@
                                      EnableRippleEffect="True"
                                      SegmentBackground="{StaticResource WhiteBrush}"
                                      SegmentHeight="30"
+                                     SegmentCornerRadius="0"
+                                     CornerRadius="0"
                                      ShowSeparator="False"
                                      HorizontalOptions="Center"
                                      VerticalOptions="Start"
@@ -79,6 +81,8 @@
                     x:Name="TileCollection"
                     x:DataType="tileSelectors:PillSelectorPanelViewModel"
                     Scrolled="TileCollection_OnScrolled"
+                    MinimumHeightRequest="45"
+                    MinimumWidthRequest="45"
                     ItemsSource="{Binding TilesForSelectedCategory}"
                     SelectionMode="None"
                     HorizontalScrollBarVisibility="Never"

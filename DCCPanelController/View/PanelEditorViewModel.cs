@@ -17,10 +17,9 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
-    private readonly SfBottomSheet _bottomSheet;
+    private readonly PanelEditor? _panelEditor;
 
     private readonly ILogger<PanelEditor> _logger;
-    private readonly ContentPage _page;
     private readonly ControlPanelView _panelView;
     private readonly ProfileService _profileService;
 
@@ -64,14 +63,13 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ContentPage page, ControlPanelView panelView, SfBottomSheet bottomSheet) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanelView panelView, PanelEditor panelEditor) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
         _panel = panel.Clone(false); // Make a clone so we are working on a clone
-        _page = page;
         _panelView = panelView;
-        _bottomSheet = bottomSheet;
+        _panelEditor = panelEditor;
 
         // Pre-build the palette cache
         TileSelectorPaletteCache.Prebuild(_panel);
@@ -224,10 +222,10 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     public async Task EditPanelPropertiesAsync() {
         try {
-            if (Panel is { } panel && _bottomSheet is { } sfBottomSheet) {
+            if (Panel is { } panel && _panelEditor is not null) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
-                ShowBottomSheet(sfBottomSheet, propertiesPage);
+                ShowBottomSheet(propertiesPage, "Panel Properties");
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -237,28 +235,42 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task EditTilePropertiesAsync() {
         try {
-            var layer = SelectedEntities.First().Layer;
-            if (Panel is { } panel && SelectedEntities?.Count > 0 && _bottomSheet is { } sfBottomSheet) {
+            var title = SelectedEntities.Count switch {
+                0 => "Unknown Entity",
+                1 => SelectedEntity?.EntityName + " Properties",
+                _ => "Multiple Entities Properties"
+            };
+            
+            if (Panel is { } panel && SelectedEntities?.Count > 0 && _panelEditor is not null) {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                ShowBottomSheet(sfBottomSheet, propertiesPage);
+                ShowBottomSheet(propertiesPage, title);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         }
     }
 
-    private static void ShowBottomSheet(SfBottomSheet sfBottomSheet, Microsoft.Maui.Controls.View propertiesPage) {
-        sfBottomSheet.BottomSheetContent = propertiesPage;
-        sfBottomSheet.Background = Colors.WhiteSmoke;
-        sfBottomSheet.ShowGrabber = true;
-        sfBottomSheet.EnableSwiping = true;
-        sfBottomSheet.CollapseOnOverlayTap = true;
-        sfBottomSheet.CollapsedHeight = 0;
-        sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-        sfBottomSheet.State = BottomSheetState.HalfExpanded;
-        sfBottomSheet.IsModal = true;
-        sfBottomSheet.Show();
+    [RelayCommand]
+    private async Task CloseBottomSheetAsync() {
+        if (_panelEditor?.BottomSheet is { } sfBottomSheet) {
+            sfBottomSheet.Close();
+        }
+    }
+    
+    private void ShowBottomSheet(Microsoft.Maui.Controls.View propertiesPage, string title = "Properties") {
+        if (_panelEditor?.BottomSheet is { } sfBottomSheet) {
+            sfBottomSheet.BottomSheetContent = propertiesPage;
+            sfBottomSheet.Background = Colors.WhiteSmoke;
+            sfBottomSheet.ShowGrabber = true;
+            sfBottomSheet.EnableSwiping = true;
+            sfBottomSheet.CollapseOnOverlayTap = true;
+            sfBottomSheet.CollapsedHeight = 0;
+            sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
+            sfBottomSheet.State = BottomSheetState.HalfExpanded;
+            sfBottomSheet.IsModal = true;
+            sfBottomSheet.Show();
+        }
     }
 
     public void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {

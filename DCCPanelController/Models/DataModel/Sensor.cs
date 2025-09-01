@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel;
@@ -9,12 +10,15 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Sensor : ObservableObject {
-    [ObservableProperty] private int _dccAddress;
     [ObservableProperty] private string? _id;
+    [ObservableProperty] private string? _name;
+    [ObservableProperty] private int _dccAddress;
     [ObservableProperty] private bool _isEditable;
     [ObservableProperty] private bool _isModified;
-    [ObservableProperty] private string? _name;
     [ObservableProperty] private bool _state;
+
+    [JsonIgnore]
+    public string DisplayFormat => $"{Name} ({Id})";
 
     /// <summary>
     ///     Represents a Turnout with its current state.
@@ -24,5 +28,4 @@ public partial class Sensor : ObservableObject {
         _dccAddress = 0;
     }
 
-    public string DisplayFormat => $"{Name} ({Id})";
 }

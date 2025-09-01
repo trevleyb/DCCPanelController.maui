@@ -24,7 +24,7 @@ public partial class PanelEditor : ContentPage {
         if (panel.Cols <= 0) panel.Cols = 18;
         if (panel.Rows <= 0) panel.Rows = 10;
 
-        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, BottomSheet) {
+        _viewModel = new PanelEditorViewModel(_logger, panel, profileService, PanelView, this) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
         };

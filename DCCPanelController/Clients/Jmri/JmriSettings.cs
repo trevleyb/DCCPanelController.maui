@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Clients.Jmri;
@@ -13,11 +14,12 @@ public partial class JmriSettings : ObservableObject, IDccClientSettings {
     [NotifyPropertyChangedFor(nameof(SetManually))]
     private bool _setAutomatically;
 
-    public bool SetManually => !SetAutomatically;
-    public bool SupportsManualEntries => false;
-    public List<DccClientCapability> Capabilities => JmriProxy.Capabilities;
+    [JsonIgnore] public bool SetManually => !SetAutomatically;
+    [JsonIgnore] public bool SupportsManualEntries => false;
+    [JsonIgnore] public List<DccClientCapability> Capabilities => JmriProxy.Capabilities;
     public DccClientType Type => DccClientType.Jmri;
 
+    [JsonIgnore]
     public bool HasValidSettings {
         get {
             if (SetAutomatically) return true;

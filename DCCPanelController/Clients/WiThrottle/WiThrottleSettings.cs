@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Clients.WiThrottle;
@@ -12,11 +13,12 @@ public partial class WiThrottleSettings : ObservableObject, IDccClientSettings {
     [NotifyPropertyChangedFor(nameof(SetManually))]
     private bool _setAutomatically;
 
-    public bool SetManually => !SetAutomatically;
-    public bool SupportsManualEntries => true;
-    public List<DccClientCapability> Capabilities => WiThrottleProxy.Capabilities;
+    [JsonIgnore] public bool SetManually => !SetAutomatically;
+    [JsonIgnore] public bool SupportsManualEntries => true;
+    [JsonIgnore] public List<DccClientCapability> Capabilities => WiThrottleProxy.Capabilities;
     public DccClientType Type => DccClientType.WiThrottle;
 
+    [JsonIgnore]
     public bool HasValidSettings {
         get {
             if (SetAutomatically) return true;

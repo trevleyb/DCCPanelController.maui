@@ -8,12 +8,13 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Block> _blocks;
 
     [ObservableProperty] private string _filename;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Light> _lights;
     [ObservableProperty] private Panels _panels;
     [ObservableProperty] private string _profileName;
+    [ObservableProperty] private Settings _settings;
+
+    [ObservableProperty] [JsonIgnore] private ObservableCollection<Light> _lights;
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Route> _routes;
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Sensor> _sensors;
-    [ObservableProperty] private Settings _settings;
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Signal> _signals;
     [ObservableProperty] [JsonIgnore] private ObservableCollection<Turnout> _turnouts;
 

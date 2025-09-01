@@ -1,12 +1,14 @@
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Clients.Simulator;
 
 public class SimulatorSettings : ObservableObject, IDccClientSettings {
-    public bool SetManually => false;
-    public bool SetAutomatically => true;
-    public bool SupportsManualEntries => true;
-    public List<DccClientCapability> Capabilities => SimulatorProxy.Capabilities;
     public DccClientType Type => DccClientType.Simulator;
-    public bool HasValidSettings => true;
+
+    [JsonIgnore] public bool SetManually => false;
+    [JsonIgnore] public bool SetAutomatically => true;
+    [JsonIgnore] public bool SupportsManualEntries => true;
+    [JsonIgnore] public List<DccClientCapability> Capabilities => SimulatorProxy.Capabilities;
+    [JsonIgnore]public bool HasValidSettings => true;
 }

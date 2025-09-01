@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel;
@@ -16,6 +17,7 @@ public partial class Light : ObservableObject {
     [ObservableProperty] private bool _state;
     [ObservableProperty] private int _dccAddress;
 
+    [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
 
     /// <summary>

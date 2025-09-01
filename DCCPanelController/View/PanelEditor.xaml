@@ -104,7 +104,7 @@
                     Stroke="#FFF5F5F5"
                     StrokeThickness="1"
                     x:DataType="dataModel:Panel">
-                    <tileSelectors:SideSelectorPanel 
+                    <tileSelectors:SideSelectorPanel
                         x:Name="SidePaletteSelector"
                         HorizontalOptions="Center"
                         OnDockSideChanged="PaletteDockSideChanged"/>
@@ -149,6 +149,7 @@
         <!-- Bottom Sheet for editing the Connection Details -->
         <navigationDrawer:SfBottomSheet 
              x:Name="BottomSheet"
+             x:FieldModifier="public"
              CollapsedHeight="0"
              AnimationDuration="0.5"
              CornerRadius="15, 15, 0, 0"
