@@ -4,14 +4,14 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.View.Properties.PanelProperties;
 
 public partial class PanelPropertyPage : ContentView {
-    private readonly PanelPropertyViewModel _viewModel;
+    public readonly PanelPropertyViewModel ViewModel;
 
     public PanelPropertyPage(PanelPropertyViewModel viewModel) {
         InitializeComponent();
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
-        RowsStepper.Minimum = GetMaxRows(_viewModel.Panel);
-        ColsStepper.Minimum = GetMaxCols(_viewModel.Panel);
+        ViewModel = viewModel;
+        BindingContext = ViewModel;
+        RowsStepper.Minimum = GetMaxRows(ViewModel.Panel);
+        ColsStepper.Minimum = GetMaxCols(ViewModel.Panel);
     }
 
     private void PanelPropertyPage_SizeChanged(object sender, EventArgs e) {
@@ -25,8 +25,8 @@ public partial class PanelPropertyPage : ContentView {
                 < 900 => 2, // iPad portrait or smaller tablets - 2 columns  
                 _     => 3  // iPad landscape or desktop - 3 columns
             };
-            if (_viewModel.ColorGridSpan != newSpan) {
-                _viewModel.ColorGridSpan = newSpan;
+            if (ViewModel.ColorGridSpan != newSpan) {
+                ViewModel.ColorGridSpan = newSpan;
             }
         }
     }

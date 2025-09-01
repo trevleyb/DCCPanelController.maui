@@ -1,4 +1,6 @@
 using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
@@ -7,11 +9,13 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Helpers;
+using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
+using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
 namespace DCCPanelController.View;
@@ -22,7 +26,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ILogger<PanelEditor> _logger;
     private readonly ControlPanelView _panelView;
     private readonly ProfileService _profileService;
-
+    
     [ObservableProperty]
     private EditModeEnum _editMode = EditModeEnum.Move;
 
@@ -40,7 +44,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     [ObservableProperty] private bool _isNavigationDrawerOpen;
 
     private Panel? _original;
-
+    private IPropertyPage? _propertyPage;
+    
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
     private Panel? _panel;
@@ -213,14 +218,13 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     public async Task EditPropertiesAsync() {
         if (SelectedEntities?.Count > 0) {
-            await EditTilePropertiesAsync();
+            await EditTilePropertiesPopupAsync();
         } else {
-            await EditPanelPropertiesAsync();
+            await EditPanelPropertiesPopupAsync();
         }
     }
 
-    [RelayCommand]
-    public async Task EditPanelPropertiesAsync() {
+    private async Task EditPanelPropertiesAsync() {
         try {
             if (Panel is { } panel && _panelEditor is not null) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
@@ -232,7 +236,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    [RelayCommand]
     private async Task EditTilePropertiesAsync() {
         try {
             var title = SelectedEntities.Count switch {
@@ -251,6 +254,85 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
+    private async Task EditPanelPropertiesPopupAsync() {
+        try {
+            if (Panel is { } panel && _panelEditor is not null) {
+                var propertiesViewModel = new PanelPropertyViewModel(panel);
+                var propertiesPage = new PanelPropertyPage(propertiesViewModel);
+                ShowPropertyPopup("", propertiesViewModel, propertiesPage);
+            }
+        } catch (Exception ex) {
+            _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
+        }
+    }
+    
+    private async Task EditTilePropertiesPopupAsync() {
+        try {
+            var title = SelectedEntities.Count switch {
+                0 => "Unknown Entity",
+                1 => SelectedEntity?.EntityName + " Properties",
+                _ => "Multiple Entities Properties"
+            };
+            
+            if (Panel is { } panel && SelectedEntities?.Count > 0 && _panelEditor is not null) {
+                var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
+                var propertiesPage = propertiesViewModel.CreatePropertiesView();
+                ShowPropertyPopup(title, propertiesViewModel, propertiesPage);
+            }
+        } catch (Exception ex) {
+            _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
+        }
+    }
+
+    private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content) {
+        _propertyPage = propertyPage;
+        content.Margin = new Thickness(20);
+        var popup = new SfPopup {
+            ContentTemplate = new DataTemplate(() => content),
+            HeaderTitle = title,
+            ShowHeader = true,
+            ShowFooter = true,
+            BackgroundColor = Colors.WhiteSmoke,
+            PopupStyle = new PopupStyle {
+                CornerRadius = 10,
+                HasShadow = false,
+                BlurIntensity = PopupBlurIntensity.Light,
+                HeaderBackground = Colors.WhiteSmoke,
+                FooterBackground = Colors.LightGray,
+                MessageBackground = Colors.WhiteSmoke,
+            },
+            AppearanceMode = PopupButtonAppearanceMode.TwoButton,
+            ShowCloseButton = false,
+            StaysOpen = true,
+            IsFullScreen = true,
+            AcceptButtonText = "Save",
+            DeclineButtonText = "Cancel",
+            Padding = new Thickness(20),
+            Margin = new Thickness(20),
+            AutoSizeMode = PopupAutoSizeMode.None,
+            AnimationMode = PopupAnimationMode.Zoom,
+            AnimationDuration = 300,
+            OverlayMode = PopupOverlayMode.Transparent, 
+            AcceptCommand = AcceptPopupCommand,
+            DeclineCommand = DeclinePopupCommand
+        };
+        if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
+        popup.Show();
+
+    } 
+    
+    [RelayCommand]
+    private async Task AcceptPopupAsync() {
+        if (_propertyPage is not null) {
+            await _propertyPage.ApplyChangesAsync();
+        }
+    }
+
+    [RelayCommand]
+    private async Task DeclinePopupAsync() {
+        _propertyPage = null;
+    }
+    
     [RelayCommand]
     private async Task CloseBottomSheetAsync() {
         if (_panelEditor?.BottomSheet is { } sfBottomSheet) {

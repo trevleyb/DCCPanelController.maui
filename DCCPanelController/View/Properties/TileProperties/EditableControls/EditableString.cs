@@ -26,9 +26,9 @@ public class EditableString(string label, string description = "", int order = 0
                 Margin = new Thickness(5, 5, 5, 5),
                 Placeholder = Label,
                 Keyboard = Keyboard.Text,
-                WidthRequest = 500,
                 HeightRequest = 25,
-                HorizontalOptions = LayoutOptions.Start,
+                HorizontalTextAlignment = TextAlignment.Start, 
+                HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Center,
                 BindingContext = owner
             };

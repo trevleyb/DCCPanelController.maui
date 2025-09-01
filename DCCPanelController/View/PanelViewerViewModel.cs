@@ -13,10 +13,10 @@ namespace DCCPanelController.View;
 public partial class PanelViewerViewModel : ConnectionViewModel {
     private readonly ILogger<PanelViewerViewModel> _logger;
     private readonly ProfileService _profileService;
-    [ObservableProperty] private bool _canZoomIn;
-
-    [ObservableProperty] private bool _canZoomOut;
     private Panel? _draggedPanel;
+
+    [ObservableProperty] private bool _canZoomIn;
+    [ObservableProperty] private bool _canZoomOut;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotLoading))]
@@ -48,9 +48,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     public bool IsNotLoading => !IsLoading;
 
     private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(SelectedPanel)) {
-            IsPanelSelected = SelectedPanel is not null;
-        }
+        IsPanelSelected = SelectedPanel is not null;
     }
 
     [RelayCommand]

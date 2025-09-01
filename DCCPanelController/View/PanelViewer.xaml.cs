@@ -34,6 +34,7 @@ public partial class PanelViewer {
                 SetActiveZoomIcons();
             }
         };
+        
     }
         
     private void OnDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e) {

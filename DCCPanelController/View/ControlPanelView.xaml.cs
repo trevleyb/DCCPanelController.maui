@@ -34,17 +34,18 @@ public partial class ControlPanelView {
 
     private int _dragStartCol;
     private int _dragStartRow;
-
-    private double _gridSize;
-    [ObservableProperty] private bool _isPanelDrawing;
     private int _lastDragCol;
     private int _lastDragRow;
+
+    private double _gridSize;
     private SelectionOutlineDrawable? _selectionOutlineDrawable;
     private GraphicsView? _selectionOutlinegraphicsView;
     private int _tapCount;
     private Timer? _tapTimer;
     private double _viewHeight;
     private double _viewWidth;
+
+    [ObservableProperty] private bool _isPanelDrawing;
 
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
@@ -56,8 +57,8 @@ public partial class ControlPanelView {
     public int Rows => Panel?.Rows ?? 27;
     public int Cols => Panel?.Cols ?? 18;
 
-    // Selection (bind if you want live UI)
     public bool IsSelecting { get; set; }
+    public bool HasDrawnSelector { get; set; }
     public int StartCol { get; private set; }
     public int StartRow { get; private set; }
     public int EndCol { get; private set; }
@@ -83,6 +84,7 @@ public partial class ControlPanelView {
 
     #region Grid Management
     public Task ForceRefresh() => DrawPanel(true);
+
     private async void OnGridSizeChanged(object? sender, EventArgs e) {
         try {
             await DrawPanel();
@@ -385,6 +387,9 @@ public partial class ControlPanelView {
                           .ToList();
     }
 
+    private bool IsTileInGrid(int col, int row) => TilesInGrid(col, row).Count > 0;
+
+    
     /// <summary>
     ///     Remove an individual tile from the grid.
     /// </summary>
@@ -500,27 +505,46 @@ public partial class ControlPanelView {
     #endregion
 
     #region Draw Grid when in Design Mode
-    private void DrawSelectorView(int startCol, int startRow, int endCol, int endRow) {
-        RemoveSelectorView();
-
-        _selectionOutlineDrawable = new SelectionOutlineDrawable();
-        _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
-        _selectionOutlinegraphicsView = new GraphicsView {
-            InputTransparent = true,
-            Drawable = _selectionOutlineDrawable,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
-            ClassId = "SelectorView"
-        };
-
-        // Add the GraphicsView directly to the AbsoluteLayout
-        AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
-        AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
-        ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
-        _selectionOutlinegraphicsView.Invalidate();
-    }
+    // private void DrawSelectorView(int startCol, int startRow, int endCol, int endRow) {
+    //     RemoveSelectorView();
+    //
+    //     _selectionOutlineDrawable = new SelectionOutlineDrawable();
+    //     _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
+    //     _selectionOutlinegraphicsView = new GraphicsView {
+    //         InputTransparent = true,
+    //         Drawable = _selectionOutlineDrawable,
+    //         HorizontalOptions = LayoutOptions.Fill,
+    //         VerticalOptions = LayoutOptions.Fill,
+    //         ClassId = "SelectorView"
+    //     };
+    //
+    //     // Add the GraphicsView directly to the AbsoluteLayout
+    //     AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
+    //     AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
+    //     ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
+    //     _selectionOutlinegraphicsView.Invalidate();
+    // }
 
     private void UpdateSelectorView(int startCol, int startRow, int endCol, int endRow) {
+
+        if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) {
+            _selectionOutlineDrawable = new SelectionOutlineDrawable();
+            _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
+            _selectionOutlinegraphicsView = new GraphicsView {
+                InputTransparent = true,
+                Drawable = _selectionOutlineDrawable,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill,
+                ClassId = "SelectorView"
+            };
+        
+            // Add the GraphicsView directly to the AbsoluteLayout
+            AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
+            AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
+            ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
+            _selectionOutlinegraphicsView.Invalidate();
+        }
+        
         if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) return;
         _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
         _selectionOutlinegraphicsView.Invalidate();
@@ -683,30 +707,45 @@ public partial class ControlPanelView {
         }
     }
 
+    private void DynamicGridPointerPressed(object? sender, PointerEventArgs e) {
+        var cell = GetGridPosition(e.GetPosition(DynamicGrid));
+        if (cell is { } gridCell) {
+            
+            // First, work out if this is on an existing tile
+            // in which case we just ignore this and do nothing
+            // ------------------------------------------------
+            if (IsTileInGrid(gridCell.Col, gridCell.Row)) return;
+            
+            StartCol = gridCell.Col;
+            StartRow = gridCell.Row;
+            EndCol = gridCell.Col;
+            EndRow = gridCell.Row;
+            IsSelecting = true;
+        }
+    }
+
     private void DynamicGridPointerExited(object? sender, PointerEventArgs e) {
-        RemoveSelectorView();
-        ClearAllSelectedTiles();
+        if (IsSelecting) {
+            RemoveSelectorView();
+            ClearAllSelectedTiles();
+        }
         IsSelecting = false;
     }
 
     private void DynamicGridPointerReleased(object? sender, PointerEventArgs e) {
-        RemoveSelectorView();
+        if (IsSelecting) {
+            RemoveSelectorView();
+        }
         IsSelecting = false;
     }
 
     private void DynamicGridPointerMoved(object? sender, PointerEventArgs e) {
-        var cell = GetGridPosition(e.GetPosition(DynamicGrid));
+        if (!IsSelecting) return;
 
+        var cell = GetGridPosition(e.GetPosition(DynamicGrid));
         if (cell is { } gridCell) {
-            if (!IsSelecting) {
-                StartCol = gridCell.Col;
-                StartRow = gridCell.Row;
-                EndCol = gridCell.Col;
-                EndRow = gridCell.Row;
-            } else {
-                EndCol = gridCell.Col;
-                EndRow = gridCell.Row;
-            }
+            EndCol = gridCell.Col;
+            EndRow = gridCell.Row;
         }
 
         var minCol = Math.Min(StartCol, EndCol);
@@ -714,13 +753,10 @@ public partial class ControlPanelView {
         var minRow = Math.Min(StartRow, EndRow);
         var maxRow = Math.Max(StartRow, EndRow);
 
-        if (!IsSelecting) {
-            DrawSelectorView(minCol, minRow, maxCol, maxRow);
-            IsSelecting = true;
-        } else {
+        if (minCol != maxCol || minRow != maxRow) {
             UpdateSelectorView(minCol, minRow, maxCol, maxRow);
+            MarkTilesSelectedInGrid(minCol, minRow, maxCol, maxRow);
         }
-        MarkTilesSelectedInGrid(minCol, minRow, maxCol, maxRow);
     }
 
     private void MarkTilesSelectedInGrid(int startCol, int startRow, int endCol, int endRow) {
@@ -1031,6 +1067,7 @@ public partial class ControlPanelView {
                 control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
 
                 var pointerRecognizer = new PointerGestureRecognizer();
+                pointerRecognizer.PointerPressed += control.DynamicGridPointerPressed;
                 pointerRecognizer.PointerMoved += control.DynamicGridPointerMoved;
                 pointerRecognizer.PointerReleased += control.DynamicGridPointerReleased;
                 pointerRecognizer.PointerExited += control.DynamicGridPointerExited;

@@ -148,7 +148,6 @@ public partial class PanelEditor : ContentPage {
             > 1 => $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})",
             _   => SelectionText.Text
         };
-        if (e.IsLongTap) _viewModel.EditTilePropertiesCommand.Execute(e.Tile);
         _viewModel.CheckIfPanelChanged();
     }
 

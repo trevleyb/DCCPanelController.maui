@@ -59,17 +59,12 @@
                             VerticalOptions="Fill"/>
                     </Border>
 
-                    <StackLayout x:DataType="dataModel:Panel" Grid.Column="1" VerticalOptions="Center"
-                                 HorizontalOptions="Start" Margin="10,0,0,0">
+                    <StackLayout x:DataType="dataModel:Panel" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start" Margin="10,0,0,0">
                         <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation"/>
                         <Label Text="{Binding Description}" FontSize="12" TextColor="Gray" LineBreakMode="WordWrap"/>
                     </StackLayout>
 
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer
-                            NumberOfTapsRequired="2"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=EditPanelCommand, x:DataType=view:PanelViewerViewModel}"
-                            CommandParameter="{Binding}"/>
                         <DragGestureRecognizer
                             DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelCommand, x:DataType=view:PanelViewerViewModel}"
                             DragStartingCommandParameter="{Binding}"/>
@@ -125,11 +120,6 @@
 
                     <!-- Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, x:DataType='view:PanelEditorViewModel', Path=EditPanelCommand}" -->
                     <Grid.GestureRecognizers>
-                        <TapGestureRecognizer
-                            NumberOfTapsRequired="2"
-                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=EditPanelCommand, x:DataType=view:PanelViewerViewModel}"
-                            CommandParameter="{Binding}"/>
-
                         <DragGestureRecognizer
                             DragStartingCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DragPanelCommand, x:DataType=view:PanelViewerViewModel}"
                             DragStartingCommandParameter="{Binding}"/>
@@ -141,7 +131,6 @@
                             DropCommand="{Binding Source={RelativeSource AncestorType={x:Type view:PanelViewerViewModel}}, Path=DropPanelCommand, x:DataType=view:PanelViewerViewModel}"
                             DropCommandParameter="{Binding}"/>
                     </Grid.GestureRecognizers>
-
                 </Grid>
             </Border>
         </DataTemplate>

@@ -27,7 +27,7 @@
                 <Grid ColumnDefinitions="100,*" Margin="0,5,0,5">
                     <Label Grid.Column="0" Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
                     <Border Grid.Column="1" HorizontalOptions="Start"  HeightRequest="35" MinimumWidthRequest="250" MaximumWidthRequest="350">
-                        <Entry HorizontalOptions="Start"
+                        <Entry HorizontalOptions="Fill"
                                Margin="5,0,0,0"
                                Placeholder="Enter Panel Name"
                                Text="{Binding Panel.Id}"/>
