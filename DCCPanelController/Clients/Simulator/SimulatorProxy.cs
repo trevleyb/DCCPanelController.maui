@@ -7,6 +7,7 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.Clients.Simulator;
 
 public partial class SimulatorProxy: DccClientBase, IDccClient {
+    private const int ElementsToCreate = 1;
     public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts,DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors]; 
     public DccClientType Type => DccClientType.Simulator;
 
@@ -50,11 +51,11 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
     }
 
     private void AddSimulatedData() {
-        for (var i = 101; i < 110; i++) UpdateTurnout($"NT{i}",$"Turnout {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.TurnoutStateEnum.Closed : Models.DataModel.Entities.TurnoutStateEnum.Thrown);
-        for (var i = 201; i < 210; i++) UpdateRoute  ($"RT{i}",$"Route {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
-        for (var i = 301; i < 310; i++) UpdateSensor($"SN{i}", $"Sensor {i}", Random.Shared.Next(0, 2) == 0);
-        for (var i = 401; i < 410; i++) UpdateLight($"LT{i}", $"Light {i}", Random.Shared.Next(0, 2) == 0);
-        for (var i = 501; i < 510; i++) UpdateBlock($"BK{i}", $"Block {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 101; i < 110+ ElementsToCreate; i++) UpdateTurnout($"NT{i}",$"Turnout {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.TurnoutStateEnum.Closed : Models.DataModel.Entities.TurnoutStateEnum.Thrown);
+        for (var i = 201; i < 210+ ElementsToCreate; i++) UpdateRoute  ($"RT{i}",$"Route {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
+        for (var i = 301; i < 310+ ElementsToCreate; i++) UpdateSensor($"SN{i}", $"Sensor {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 401; i < 410+ ElementsToCreate; i++) UpdateLight($"LT{i}", $"Light {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 501; i < 510+ ElementsToCreate; i++) UpdateBlock($"BK{i}", $"Block {i}", Random.Shared.Next(0, 2) == 0);
     }
     #endregion 
     
