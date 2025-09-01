@@ -93,7 +93,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel", "This allows you to download a single Panel to local storage.", "Continue", "Cancel");
                 if (result) {
                     var panelAsJson = panel.DownloadPanel();
-                    var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id}.panel.json");
+                    var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id ?? "Panel"}.panel.json");
                     if (!string.IsNullOrEmpty(location)) {
                         _logger.LogInformation(location);
                         await DisplayAlertHelper.DisplayToastAlert("Panel Saved");
@@ -111,7 +111,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Panel", "This allows you to upload a previously downloaded panel.", "Continue", "Cancel");
             if (result) {
-                var jsonString = await FileHelper.OpenFileAsync("Select a Panel File to upload");
+                var jsonString = await FileHelper.LoadFileAsync("Select a Panel File to upload");
                 if (!string.IsNullOrEmpty(jsonString)) {
                     var panel = Panels.UploadPanel(jsonString);
                     if (panel is not null) {
