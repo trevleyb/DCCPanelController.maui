@@ -27,7 +27,7 @@ public class ProfileService {
         var activeFile = _catalog.ActiveFileName;
         ActiveProfile = string.IsNullOrWhiteSpace(activeFile)
             ? await CreateAsync("Default", setActive: true)
-            : await JsonRepository.LoadAsync(activeFile);
+            : await LoadAsync(activeFile);
         
         ActiveProfile ??= await CreateAsync("Default", setActive: true);
 
@@ -232,14 +232,14 @@ public class ProfileService {
         _catalog.Upsert(ActiveProfile);
         RaiseDataChanged(ProfileDataChangeType.ProfileSaved, ActiveProfile);
     }
-
+    
     public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = false) {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("Filename is required.", nameof(fileName));
         var profile = await JsonRepository.LoadAsync(fileName) ?? throw new ApplicationException($"Profile not found: {fileName}");
         SetActive(profile, markAsDefault);
         return profile;
     }
-
+    
     public Task<Profile> LoadAsync(ProfileRef item, bool markAsDefault = false) => LoadAsync(item.FileName, markAsDefault);
     #endregion
 }

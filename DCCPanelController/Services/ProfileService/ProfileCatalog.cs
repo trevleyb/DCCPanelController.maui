@@ -1,5 +1,6 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 
@@ -10,8 +11,9 @@ public sealed partial class ProfileCatalog {
     public const string FileNameOnDisk = "DCCPanelController.index";
 
     public string Version { get; init; } = "1.0";
-    public List<ProfileRef> Profiles { get; private set; } = new();
+    public List<ProfileRef> Profiles { get; set; } = new();
 
+    [JsonIgnore]
     public string ActiveFileName {
         get {
             if (Profiles.Count == 0) return string.Empty;
