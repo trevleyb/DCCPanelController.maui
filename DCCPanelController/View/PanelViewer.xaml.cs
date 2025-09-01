@@ -15,7 +15,8 @@ public partial class PanelViewer {
 
     public PanelViewer(ILogger<PanelViewer> logger, PanelViewerViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
-        
+        SetItemTemplate(DeviceDisplay.MainDisplayInfo.Height > DeviceDisplay.MainDisplayInfo.Width ? "HorizontalTemplate" : "VerticalTemplate");
+
         _logger = logger;
         _connectionService = connectionService;
         _viewModel = viewModel;

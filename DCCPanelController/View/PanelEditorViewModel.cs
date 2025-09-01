@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -287,6 +288,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content) {
         _propertyPage = propertyPage;
         content.Margin = new Thickness(20);
+        var propertySize = MauiViewSizeCalculator.CalculateTotalSize(content, ScreenWidth, ScreenHeight);
+        Console.WriteLine($"Property Page Size: {propertySize.Width} x {propertySize.Height}");
+        
         var popup = new SfPopup {
             ContentTemplate = new DataTemplate(() => content),
             HeaderTitle = title,
@@ -300,6 +304,10 @@ public partial class PanelEditorViewModel : ObservableObject {
                 HeaderBackground = Colors.WhiteSmoke,
                 FooterBackground = Colors.LightGray,
                 MessageBackground = Colors.WhiteSmoke,
+                AcceptButtonBackground = Colors.White,
+                DeclineButtonBackground = Colors.White,
+                AcceptButtonTextColor = Colors.Black,
+                DeclineButtonTextColor = Colors.Black,
             },
             AppearanceMode = PopupButtonAppearanceMode.TwoButton,
             ShowCloseButton = false,
@@ -318,7 +326,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         };
         if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
         popup.Show();
-
     } 
     
     [RelayCommand]
