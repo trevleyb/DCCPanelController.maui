@@ -292,7 +292,7 @@
                         Style="{StaticResource ButtonOutline}"
                         Text="{OnIdiom Phone='Save', Tablet='Save Profile', Desktop='Save Profile'}"
                         FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
-                        WidthRequest="{OnIdiom Phone=120, Tablet=150, Desktop=150}">                    <Button.Behaviors>
+                        WidthRequest="{OnIdiom Phone=120, Tablet=180, Desktop=180}">                    <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>
                 </Button>
@@ -305,7 +305,7 @@
                         Style="{StaticResource ButtonOutline}"
                         Text="{OnIdiom Phone='Switch', Tablet='Switch Profile', Desktop='Switch Profile'}"
                         FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
-                        WidthRequest="{OnIdiom Phone=120, Tablet=150, Desktop=150}">
+                        WidthRequest="{OnIdiom Phone=120, Tablet=180, Desktop=180}">
                     <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>
@@ -320,7 +320,7 @@
                         Style="{StaticResource ButtonOutline}"
                         Text="{OnIdiom Phone='Default', Tablet='Set Default', Desktop='Set Default'}"
                         FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
-                        WidthRequest="{OnIdiom Phone=120, Tablet=150, Desktop=150}">
+                        WidthRequest="{OnIdiom Phone=120, Tablet=180, Desktop=180}">
                     <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>

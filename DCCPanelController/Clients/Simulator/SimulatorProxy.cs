@@ -51,11 +51,11 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
     }
 
     private void AddSimulatedData() {
-        for (var i = 101; i < 110+ ElementsToCreate; i++) UpdateTurnout($"NT{i}",$"Turnout {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.TurnoutStateEnum.Closed : Models.DataModel.Entities.TurnoutStateEnum.Thrown);
-        for (var i = 201; i < 210+ ElementsToCreate; i++) UpdateRoute  ($"RT{i}",$"Route {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
-        for (var i = 301; i < 310+ ElementsToCreate; i++) UpdateSensor($"SN{i}", $"Sensor {i}", Random.Shared.Next(0, 2) == 0);
-        for (var i = 401; i < 410+ ElementsToCreate; i++) UpdateLight($"LT{i}", $"Light {i}", Random.Shared.Next(0, 2) == 0);
-        for (var i = 501; i < 510+ ElementsToCreate; i++) UpdateBlock($"BK{i}", $"Block {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 101; i < 101+ ElementsToCreate; i++) UpdateTurnout($"NT{i}",$"Turnout {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.TurnoutStateEnum.Closed : Models.DataModel.Entities.TurnoutStateEnum.Thrown);
+        for (var i = 201; i < 201+ ElementsToCreate; i++) UpdateRoute  ($"RT{i}",$"Route {i}", Random.Shared.Next(0, 2) == 0 ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
+        for (var i = 301; i < 301+ ElementsToCreate; i++) UpdateSensor ($"SN{i}", $"Sensor {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 401; i < 401+ ElementsToCreate; i++) UpdateLight  ($"LT{i}", $"Light {i}", Random.Shared.Next(0, 2) == 0);
+        for (var i = 501; i < 501+ ElementsToCreate; i++) UpdateBlock  ($"BK{i}", $"Block {i}", Random.Shared.Next(0, 2) == 0);
     }
     #endregion 
     

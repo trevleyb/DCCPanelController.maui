@@ -44,7 +44,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         CurrentPanelIndex = -1;
         OnProfileChanged();
     }
-
+    
     private void OnProfileChanged() {
         Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
         
@@ -55,15 +55,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings.ShowWelcomePage ?? true);
         if (!ShowWelcomePage) SelectPanel(0);
         UpdatePanelIndicators();
-
-        OnPropertyChanged(nameof(HasPanels));
-        OnPropertyChanged(nameof(HasNoPanels));
-        OnPropertyChanged(nameof(PanelIndicators));
-        OnPropertyChanged(nameof(ShowWelcomePage));
-        OnPropertyChanged(nameof(HideWelcomePage));
-        OnPropertyChanged(nameof(ProfileName));
-        OnPropertyChanged(nameof(PanelBackgroundColor));
-        OnPropertyChanged(nameof(DisplayBackgroundColor));
     }
 
     public PanelIndicator? SelectedIndicator {
@@ -102,7 +93,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     private async Task SelectPanelAsync(PanelIndicator indicator) {
-        Console.WriteLine("SelectPanelAsync: " + indicator.Index);
         SelectPanel(indicator.Index);
     }
 
@@ -114,17 +104,20 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
                CurrentPanelIndex = index;
                ActivePanel = Panels[index];
             }
-            OnPropertyChanged(nameof(ActivePanel));
-            OnPropertyChanged(nameof(ShowWelcomePage));
-            OnPropertyChanged(nameof(HideWelcomePage));
-            OnPropertyChanged(nameof(HasPanels));
-            OnPropertyChanged(nameof(HasNoPanels));
-            OnPropertyChanged(nameof(PanelBackgroundColor));
-            OnPropertyChanged(nameof(DisplayBackgroundColor));
-
             ShowWelcomePage = Panels?.Count <= 0 ? true : false;
             UpdatePanelIndicators();
         });
+    }
+
+    private void RaiseAllProperties() {
+        OnPropertyChanged(nameof(ActivePanel));
+        OnPropertyChanged(nameof(ShowWelcomePage));
+        OnPropertyChanged(nameof(HideWelcomePage));
+        OnPropertyChanged(nameof(HasPanels));
+        OnPropertyChanged(nameof(HasNoPanels));
+        OnPropertyChanged(nameof(PanelBackgroundColor));
+        OnPropertyChanged(nameof(DisplayBackgroundColor));
+        OnPropertyChanged(nameof(PanelIndicators));
     }
 
     public void UpdatePanelIndicators() {
@@ -137,6 +130,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
             }
         });
         OnPropertyChanged(nameof(PanelIndicators));
+        RaiseAllProperties();        
     }
 }
 
