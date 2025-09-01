@@ -6,6 +6,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 

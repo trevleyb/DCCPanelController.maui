@@ -19,8 +19,7 @@
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:services="clr-namespace:DCCPanelController.Services"
-    xmlns:dccPanelController="clr-namespace:DCCPanelController"
-    xmlns:views="clr-namespace:DCCPanelController.Views">
+    xmlns:dccPanelController="clr-namespace:DCCPanelController">
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
         <!-- <Tab Icon="control.png" -->
@@ -31,45 +30,45 @@
         <Tab Icon="control.png"
              Title="Operate"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance}, Path=IsNavigationAllowed}">
-            <ShellContent ContentTemplate="{DataTemplate views:OperatePage}"/>
+            <ShellContent ContentTemplate="{DataTemplate view:OperatePage}"/>
         </Tab>
         
         <Tab
             Icon="panels.png"
             Title="Panel Editor"
             IsEnabled="{Binding Source={x:Static services:AppState.Instance}, Path=IsNavigationAllowed}">
-            <ShellContent ContentTemplate="{DataTemplate views:PanelViewer}"/>
+            <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
         </Tab>
         
         <Tab Title="Tables" Icon="tables.png"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance},Path=IsNavigationAllowed}">
             <ShellContent
-                ContentTemplate="{DataTemplate views:TurnoutsPage}"
+                ContentTemplate="{DataTemplate view:TurnoutsPage}"
                 Title="Turnouts"/>
             <ShellContent
-                ContentTemplate="{DataTemplate views:RoutesPage}"
+                ContentTemplate="{DataTemplate view:RoutesPage}"
                 Title="Routes"/>
             <ShellContent
-                ContentTemplate="{DataTemplate views:BlocksPage}"
+                ContentTemplate="{DataTemplate view:BlocksPage}"
                 Title="Blocks"/>
             <ShellContent
-                ContentTemplate="{DataTemplate views:SensorsPage}"
+                ContentTemplate="{DataTemplate view:SensorsPage}"
                 Title="Sensors"/>
             <ShellContent
-                ContentTemplate="{DataTemplate views:LightsPage}"
+                ContentTemplate="{DataTemplate view:LightsPage}"
                 Title="Lights"/>
         </Tab>
         
         <Tab Title="Settings" Icon="settings.png"
              IsEnabled="{Binding Source={x:Static services:AppState.Instance},Path=IsNavigationAllowed}">
             <ShellContent
-                ContentTemplate="{DataTemplate views:SettingsPage}"
+                ContentTemplate="{DataTemplate view:SettingsPage}"
                 Title="Settings"/>
             <ShellContent
-                ContentTemplate="{DataTemplate views:ServerMessagesPage}"
+                ContentTemplate="{DataTemplate view:ServerMessagesPage}"
                 Title="Server Messages"/>
             <ShellContent
-                ContentTemplate="{DataTemplate views:HelpPage}"
+                ContentTemplate="{DataTemplate view:HelpPage}"
                 Title="Help"/>
         </Tab>
     </FlyoutItem>

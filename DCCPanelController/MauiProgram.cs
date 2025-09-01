@@ -4,22 +4,12 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Resources.Fonts;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
-using DCCPanelController.Views;
-using DCCPanelController.Views.Components;
+using DCCPanelController.View;
+using DCCPanelController.View.Components;
 using Microsoft.Extensions.Logging;
 using Serilog;
 using SkiaSharp.Views.Maui.Controls.Hosting;
 using Syncfusion.Maui.Toolkit.Hosting;
-using BlocksViewModel = DCCPanelController.Views.BlocksViewModel;
-using ColorPickerGridViewModel = DCCPanelController.Views.Components.ColorPickerGridViewModel;
-using LightsViewModel = DCCPanelController.Views.LightsViewModel;
-using OperateViewModel = DCCPanelController.Views.OperateViewModel;
-using PanelViewerViewModel = DCCPanelController.Views.PanelViewerViewModel;
-using RoutesViewModel = DCCPanelController.Views.RoutesViewModel;
-using SensorsViewModel = DCCPanelController.Views.SensorsViewModel;
-using SettingsPageViewModel = DCCPanelController.Views.SettingsPageViewModel;
-using TestPageViewModel = DCCPanelController.Views.TestPageViewModel;
-using TurnoutsViewModel = DCCPanelController.Views.TurnoutsViewModel;
 #if IOS || MACCATALYST
 using Microsoft.Maui.Controls.Handlers.Items2;
 #endif

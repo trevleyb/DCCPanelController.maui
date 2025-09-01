@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    WidthRequest="350"
+    HeightRequest="350"
+    BackgroundColor="White"
+    x:Class="DCCPanelController.View.AboutPage"
+    x:DataType="view:AboutPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentView.Content>
+        <Grid HorizontalOptions="Fill" VerticalOptions="Fill" BackgroundColor="White">
+            <Border Stroke="{StaticResource Primary}" StrokeThickness="4" StrokeShape="RoundRectangle 15">
+                <Grid RowDefinitions="auto,*,auto">
+                    <Image Margin="0,10,0,0" Grid.Row="0" Source="appiconimage.png" WidthRequest="100"
+                           HeightRequest="100"/>
+                    <StackLayout Grid.Row="1" Margin="0,10,0,0" VerticalOptions="Center">
+                        <Label Text="DCC Panel Controller" Style="{StaticResource LargeLabel}"
+                               HorizontalOptions="Center" FontFamily="OpenSansBold"/>
+                        <Label Text="(c) Copyright 2025 Trevor Leybourne" Margin="0,10,0,10"
+                               Style="{StaticResource SmallLabel}" HorizontalOptions="Center"
+                               FontFamily="OpenSansLight"/>
+                        <Label Text="{Binding VersionString}" Style="{StaticResource SmallLabel}"
+                               HorizontalOptions="Center" FontFamily="OpenSansLightItalic"/>
+                    </StackLayout>
+                    <Button Grid.Row="2" Margin="15" VerticalOptions="Center" HorizontalOptions="Center"
+                            WidthRequest="100" Style="{StaticResource ButtonOutline}" Text="Close" Clicked="CloseAbout"/>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- <Grid ColumnDefinitions="*"> -->
+        <!--     <Image Source="appiconimage.png" WidthRequest="100" HeightRequest="100"/> -->
+        <!--     <Label Text="About"></Label> -->
+        <!--     <Button Text="Close" Clicked="CloseAbout"></Button> -->
+        <!-- </Grid> -->
+    </ContentView.Content>
+</ContentView>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Class="DCCPanelController.View.Components.TurnoutStateControl"
+    x:DataType="components:TurnoutStateControl"
+    x:Name="TurnoutControl"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <HorizontalStackLayout>
+        <HorizontalStackLayout.GestureRecognizers>
+            <TapGestureRecognizer Command="{Binding Source={x:Reference TurnoutControl}, Path=ToggleStateCommand}"/>
+        </HorizontalStackLayout.GestureRecognizers>
+
+        <Image
+            HeightRequest="32"
+            HorizontalOptions="End"
+            VerticalOptions="Center"
+            WidthRequest="32">
+            <Image.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+                    TargetType="Image"
+                    Value="Closed">
+                    <Setter Property="Source" Value="turnout_closed.png"/>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+                    TargetType="Image"
+                    Value="Thrown">
+                    <Setter Property="Source" Value="turnout_thrown.png"/>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+                    TargetType="Image"
+                    Value="Unknown">
+                    <Setter Property="Source" Value="turnout_unknown.png"/>
+                </DataTrigger>
+            </Image.Triggers>
+        </Image>
+
+        <Label
+            HorizontalOptions="Fill"
+            Text="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+            VerticalOptions="Center">
+            <Label.Triggers>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+                    TargetType="Label"
+                    Value="Closed">
+                    <Setter Property="TextColor" Value="Green"/>
+                    <Setter Property="Text" Value="{Binding Source={x:Reference TurnoutControl}, Path=ClosedText}"/>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+                    TargetType="Label"
+                    Value="Thrown">
+                    <Setter Property="TextColor" Value="Red"/>
+                    <Setter Property="Text" Value="{Binding Source={x:Reference TurnoutControl}, Path=ThrownText}"/>
+                </DataTrigger>
+                <DataTrigger
+                    Binding="{Binding Source={x:Reference TurnoutControl}, Path=State}"
+                    TargetType="Label"
+                    Value="Unknown">
+                    <Setter Property="TextColor" Value="Grey"/>
+                    <Setter Property="Text" Value="{Binding Source={x:Reference TurnoutControl}, Path=UnknownText}"/>
+                </DataTrigger>
+            </Label.Triggers>
+        </Label>
+    </HorizontalStackLayout>
+</ContentView>

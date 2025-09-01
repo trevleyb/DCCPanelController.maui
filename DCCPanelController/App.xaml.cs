@@ -3,7 +3,7 @@ using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
-using DCCPanelController.Views;
+using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.Xaml.Diagnostics;
 

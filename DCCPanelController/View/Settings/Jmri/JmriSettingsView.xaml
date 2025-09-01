@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:settings="clr-namespace:DCCPanelController.View.Settings"
+             xmlns:jmri="clr-namespace:DCCPanelController.View.Settings.Jmri"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:discovery="clr-namespace:DCCClient.Discovery;assembly=DCCClient"
+             xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
+             x:DataType="jmri:JmriSettingsViewModel"
+             x:Class="DCCPanelController.View.Settings.Jmri.JmriSettingsView">
+
+    <ContentView.Resources>
+        <converters1:StepValueConverter x:Key="StepConverter" Step="0.25"/>
+        <Style x:Key="SelectableItemStyle" TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="DarkSeaGreen"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentView.Resources>
+
+
+    <VerticalStackLayout Margin="10,0,10,0">
+
+        <BoxView Margin="0,0,0,10"
+                 BackgroundColor="{StaticResource Primary}"
+                 HeightRequest="1"
+                 HorizontalOptions="FillAndExpand"/>
+
+        <VerticalStackLayout Margin="10,0,10,0">
+            <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
+                   Text="Device Name (unique name for this Device)"/>
+            <HorizontalStackLayout>
+                <Border WidthRequest="250" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry Margin="10,0,10,0" HorizontalOptions="Fill" Text="{Binding JmriSettings.Name}"/>
+                </Border>
+                <ImageButton Margin="2,0,0,0" Aspect="Center"
+                             Source="target.png" WidthRequest="15" HeightRequest="15"
+                             Command="{Binding DefaultDeviceNameClickedCommand}">
+                    <ImageButton.Behaviors>
+                        <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
+                    </ImageButton.Behaviors>
+
+                </ImageButton>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <HorizontalStackLayout Margin="10,10,0,0">
+            <Label Text="Auto Set Connection Details?" HorizontalOptions="Start" Style="{StaticResource MediumLabel}"
+                   VerticalOptions="Center" WidthRequest="260"/>
+            <Switch IsToggled="{Binding JmriSettings.SetAutomatically}"
+                    OnColor="{StaticResource Primary}"
+                    ThumbColor="{StaticResource Gray200}"/>
+        </HorizontalStackLayout>
+
+        <VerticalStackLayout Margin="10,10,0,0" IsEnabled="{Binding JmriSettings.SetManually}">
+            <Label Style="{StaticResource MediumLabel}"
+                   HorizontalOptions="Start" VerticalOptions="Start"
+                   Text="JMRI Server Address and Port"/>
+
+            <HorizontalStackLayout HorizontalOptions="Start" Margin="0,-25,0,0">
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry HorizontalOptions="Fill" Focused="OnEntryFocused" HorizontalTextAlignment="Center"
+                           Text="{Binding IpAddress1, Mode=TwoWay}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
+                       VerticalOptions="Center"/>
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry
+                        Focused="OnEntryFocused"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress2, Mode=TwoWay}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
+                       VerticalOptions="Center"/>
+
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry
+                        Focused="OnEntryFocused"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress3, Mode=TwoWay}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" Margin="2,2,2,30" Text="." TextColor="{StaticResource Primary}"
+                       VerticalOptions="Center"/>
+                <Border WidthRequest="45" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry
+                        Focused="OnEntryFocused"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center" Text="{Binding IpAddress4, Mode=TwoWay}">
+                        <Entry.Behaviors>
+                            <settings:EntryValidationBehavior/>
+                        </Entry.Behaviors>
+                    </Entry>
+                </Border>
+                <Label FontSize="48" HorizontalOptions="Center" Margin="2,-5,2,2" Text=":"
+                       TextColor="{StaticResource Primary}" VerticalOptions="Center"/>
+
+                <Border WidthRequest="90" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Entry
+                        Focused="OnEntryFocused"
+                        HorizontalOptions="Fill"
+                        HorizontalTextAlignment="Center"
+                        Text="{Binding JmriSettings.Port, Mode=TwoWay, FallbackValue='0'}"/>
+                </Border>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <VerticalStackLayout Margin="10,-10,10,0">
+            <Label Style="{StaticResource MediumLabel}" HorizontalOptions="Start" VerticalOptions="Start"
+                   Text="Monitor Layout Changes : Polling in Seconds"/>
+            <HorizontalStackLayout>
+                <Slider HorizontalOptions="Start" WidthRequest="200" Maximum="10" Minimum="0.50"
+                        Value="{Binding JmriSettings.PollingInterval, Mode=TwoWay, Converter={StaticResource StepConverter}}"/>
+                <Border WidthRequest="150" Padding="0" HeightRequest="35" Style="{StaticResource EntryBorderStyle}">
+                    <Label VerticalOptions="Center" HorizontalOptions="Center"
+                           Text="{Binding JmriSettings.PollingInterval, StringFormat='{0:F2} seconds'}"
+                           Style="{StaticResource MediumLabel}"/>
+                </Border>
+            </HorizontalStackLayout>
+        </VerticalStackLayout>
+
+        <Button
+            Command="{Binding ConnectClickedCommand}"
+            HorizontalOptions="Center"
+            IsEnabled="{Binding IsNotBusy}"
+            Margin="20,0,20,20"
+            Style="{StaticResource ButtonOutline}"
+            Text="{Binding ConnectLabel}"
+            WidthRequest="180"/>
+
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="2"
+            HorizontalOptions="FillAndExpand"/>
+
+        <Grid RowDefinitions="auto,2,*">
+            <StackLayout>
+                <Grid ColumnDefinitions="*,150">
+                    <Label
+                        Grid.Column="0"
+                        HorizontalOptions="Start"
+                        Style="{StaticResource MediumLabel}"
+                        TextColor="{StaticResource Primary}"
+                        VerticalOptions="Center">
+                        Available Servers :
+                    </Label>
+                    <Button
+                        BackgroundColor="{StaticResource Transparent}"
+                        Command="{Binding RefreshServersClickedCommand}"
+                        Grid.Column="1"
+                        HorizontalOptions="End"
+                        ImageSource="refresh_cw.png"
+                        Style="{StaticResource SmallLabel}"
+                        Text="Refresh"
+                        TextColor="{StaticResource Primary}"
+                        VerticalOptions="Center"/>
+                </Grid>
+                <BoxView
+                    BackgroundColor="{StaticResource Primary}"
+                    HeightRequest="1"
+                    HorizontalOptions="FillAndExpand"/>
+
+                <RefreshView VerticalOptions="Start" MinimumHeightRequest="100"
+                             Command="{Binding RefreshServersClickedCommand}"
+                             IsRefreshing="{Binding IsRefreshing}">
+                    <Grid>
+                        <CollectionView
+                            SelectionMode="Single"
+                            SelectionChanged="SelectableItemsView_OnSelectionChanged"
+                            ItemsSource="{Binding Servers}">
+
+                            <CollectionView.EmptyView>
+                                <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                                    <Label IsVisible="{Binding IsNotBusy}" HorizontalOptions="Center"
+                                           Text="Use Refresh to search for available servers"/>
+                                    <Label IsVisible="{Binding IsBusy}" HorizontalOptions="Center"
+                                           Text="Searching for available servers"/>
+                                </StackLayout>
+                            </CollectionView.EmptyView>
+
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate x:DataType="discovery:DiscoveredService">
+                                    <Grid Style="{StaticResource SelectableItemStyle}">
+                                        <StackLayout>
+                                            <Grid ColumnDefinitions="48,*">
+                                                <Label
+                                                    Grid.Column="0"
+                                                    HorizontalOptions="Start"
+                                                    Margin="5"
+                                                    Text="◉"
+                                                    VerticalOptions="Center"
+                                                    x:Name="SelectedServerTick"/>
+                                                <Label
+                                                    Grid.Column="1"
+                                                    HorizontalOptions="Start"
+                                                    LineBreakMode="NoWrap"
+                                                    Margin="0,5,0,5"
+                                                    Style="{StaticResource MediumLabel}"
+                                                    Text="{Binding FriendlyName}"
+                                                    VerticalOptions="Center"
+                                                    x:Name="SelectedServerText"/>
+                                            </Grid>
+                                            <BoxView
+                                                BackgroundColor="{StaticResource Primary}"
+                                                HeightRequest="0.5"
+                                                HorizontalOptions="FillAndExpand"/>
+                                        </StackLayout>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
+                </RefreshView>
+            </StackLayout>
+        </Grid>
+    </VerticalStackLayout>
+
+</ContentView>

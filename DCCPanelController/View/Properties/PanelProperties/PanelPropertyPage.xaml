@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Class="DCCPanelController.View.Properties.PanelProperties.PanelPropertyPage"
+    x:DataType="panelProperties:PanelPropertyViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:components="clr-namespace:DCCPanelController.View.Components"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:panelProperties="clr-namespace:DCCPanelController.View.Properties.PanelProperties"
+    xmlns:helpers="clr-namespace:DCCPanelController.Models.DataModel.Helpers"
+    xmlns:helpers1="clr-namespace:DCCPanelController.Helpers"
+    xmlns:attributes="clr-namespace:DCCPanelController.Helpers.Attributes"
+    SizeChanged="PanelPropertyPage_SizeChanged"> <!-- Add SizeChanged handler -->
+
+    <ContentView.Content>
+        <ScrollView BackgroundColor="WhiteSmoke">
+        <VerticalStackLayout>
+
+            <Label Text="Panel Settings" Style="{StaticResource LargeLabel}"
+                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+            <BoxView HeightRequest="1"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                     Margin="0,5,0,5"/>
+
+            <!--  Panel Name  -->
+            <VerticalStackLayout>
+                <Grid ColumnDefinitions="100,*" Margin="0,5,0,5">
+                    <Label Grid.Column="0" Text="Panel Name" VerticalOptions="Center" WidthRequest="100"/>
+                    <Border Grid.Column="1" HorizontalOptions="Start"  HeightRequest="35" MinimumWidthRequest="250" MaximumWidthRequest="350">
+                        <Entry HorizontalOptions="Fill"
+                               Margin="5,0,0,0"
+                               Placeholder="Enter Panel Name"
+                               Text="{Binding Panel.Id}"/>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12,12,12,12"/>
+                        </Border.StrokeShape>
+                    </Border>
+                </Grid>
+                <Grid ColumnDefinitions="100,*" Margin="0,5,0,5">
+                    <Label Grid.Column="0" Text="Description" VerticalOptions="Center" WidthRequest="100"/>
+                    <Border Grid.Column="1" HorizontalOptions="Start" HeightRequest="35" MinimumWidthRequest="250" MaximumWidthRequest="350">
+                        <Entry HorizontalOptions="Fill"
+                               Margin="5,0,0,0"
+                               Placeholder="Panel Description"
+                               Text="{Binding Panel.Description}"/>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12,12,12,12"/>
+                        </Border.StrokeShape>
+                    </Border>
+                    </Grid>
+            </VerticalStackLayout>
+            <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
+                     Margin="0,5,0,5"/>
+
+            <HorizontalStackLayout>
+                <VerticalStackLayout>
+                    <HorizontalStackLayout Margin="0,5,0,5">
+                        <Label Text="Columns" VerticalOptions="Center" WidthRequest="100"/>
+                        <Border  HeightRequest="35" WidthRequest="50" Margin="0,0,10,0">
+                       <Entry Keyboard="Numeric" Margin="10,0,10,0" Text="{Binding Panel.Cols, Mode=TwoWay}"
+                               TextChanged="Cols_OnTextChanged" VerticalOptions="Center" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
+                       <Border.StrokeShape>
+                           <RoundRectangle CornerRadius="12,12,12,12"/>
+                       </Border.StrokeShape>
+                       </Border>
+                        <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="8"
+                                 Value="{Binding Panel.Cols, Mode=TwoWay}" x:Name="ColsStepper"/>
+                    </HorizontalStackLayout>
+                    <!--  Panel Rows  -->
+                    <HorizontalStackLayout Margin="0,5,0,5">
+                        <Label Text="Rows" VerticalOptions="Center" WidthRequest="100"/>
+                        <Border  HeightRequest="35" WidthRequest="50" Margin="0,0,10,0">
+                        <Entry Keyboard="Numeric" Margin="10,0,10,0" Text="{Binding Panel.Rows, Mode=TwoWay}"
+                                   TextChanged="Rows_OnTextChanged" VerticalOptions="Center" HorizontalOptions="Fill" HorizontalTextAlignment="Center"/>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="12,12,12,12"/>
+                        </Border.StrokeShape>
+                        </Border>
+                        <Stepper HorizontalOptions="FillAndExpand" Increment="1" Maximum="48" Minimum="8"
+                                 Value="{Binding Panel.Rows, Mode=TwoWay}" x:Name="RowsStepper"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+                <VerticalStackLayout Margin="30,5,5,5" Padding="10" WidthRequest="80">
+                    <Label HorizontalOptions="Center" Style="{StaticResource SmallLabel}" Text="Panel Ratio"
+                           VerticalOptions="Center"/>
+                    <Label HorizontalOptions="Center" IsEnabled="False" Margin="0,0,0,0"
+                           Style="{StaticResource Headline}" Text="{Binding Panel.PanelRatio}" VerticalOptions="Center"/>
+                </VerticalStackLayout>
+
+                <Border Margin="20,5,10,10" BackgroundColor="WhiteSmoke" Padding="5">
+                    <VerticalStackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label Text="Suggested Ratios" FontAttributes="Bold" FontSize="12" Margin="2"/>
+                        <HorizontalStackLayout>
+                            <Label WidthRequest="100" Text="iPhone 7/SE (16:9)" Margin="2" FontSize="10"/>
+                            <Label WidthRequest="100" Text="iPhone 14+ (19.5:9)" Margin="2" FontSize="10"/>
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout>
+                            <Label WidthRequest="100" Text="iPad (4:3)" Margin="2" FontSize="10"/>
+                            <Label WidthRequest="100" Text="iPad Pro (10:7)" Margin="2" FontSize="10"/>
+                        </HorizontalStackLayout>
+                    </VerticalStackLayout>
+                </Border>
+            </HorizontalStackLayout>
+
+            <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
+                     Margin="0,0,0,15"/>
+
+            <Label Text="Panel Colors" Style="{StaticResource LargeLabel}"
+                   TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+            <BoxView HeightRequest="1"
+                     BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                     Margin="0,5,0,0"/>
+
+                <CollectionView ItemsSource="{Binding GroupedColorSettings}"
+                                VerticalScrollBarVisibility="Always"
+                                IsGrouped="True">
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical"
+                                         Span="{Binding ColorGridSpan}"
+                                         VerticalItemSpacing="5"
+                                         HorizontalItemSpacing="15"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.GroupHeaderTemplate>
+                        <DataTemplate x:DataType="attributes:ColorItemGroup">
+                            <StackLayout Orientation="Vertical" Padding="0,15,10,5">
+                                <Label Text="{Binding CategoryName}" FontSize="16" FontAttributes="Bold"
+                                       TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource PrimaryDark}}"/>
+                                <BoxView HeightRequest="1"
+                                         BackgroundColor="{AppThemeBinding Light={StaticResource Gray300}, Dark={StaticResource Gray600}}"
+                                         Margin="0,5,0,0"/>
+                            </StackLayout>
+                        </DataTemplate>
+                    </CollectionView.GroupHeaderTemplate>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="helpers:PanelColorItem">
+                            <Grid ColumnDefinitions="175,150" HorizontalOptions="Start" VerticalOptions="Center"
+                                  Padding="0,2">
+                                <Label Grid.Column="0" Text="{Binding LabelText}" VerticalOptions="Center"/>
+                                <components:ColorPickerButton
+                                    Grid.Column="1"
+                                    AllowsNoColor="{Binding Source={RelativeSource AncestorType={x:Type helpers:PanelColorItem}}, Path=AllowsNoColor, Mode=OneWay}"
+                                    HeightRequest="30"
+                                    SelectedColor="{Binding Source={RelativeSource AncestorType={x:Type helpers:PanelColorItem}}, Path=ColorValue, Mode=TwoWay}"
+                                    VerticalOptions="Center"
+                                    HorizontalOptions="Fill"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
+                     Margin="0,10,0,10"/>
+
+            <Grid HeightRequest="40" ColumnDefinitions="*" HorizontalOptions="Fill" VerticalOptions="Center">
+                <FlexLayout Grid.Column="0" HorizontalOptions="Center" AlignContent="SpaceEvenly" Wrap="NoWrap">
+                    <Button Command="{Binding ResetDefaultsClickedCommand}"
+                            FontSize="11" Margin="5,1,1,5"
+                            Text="Reset Defaults" WidthRequest="100"/>
+                    <Button Command="{Binding ResetOverridesClickedCommand}"
+                            FontSize="11" Margin="5,1,1,5"
+                            Text="Clear Overrides" WidthRequest="120"/>
+                    <Button Command="{Binding ToAllPanelsClickedCommand}"
+                            FontSize="11" Margin="5,1,1,5"
+                            Text="Copy To All" WidthRequest="100"/>
+                </FlexLayout>
+            </Grid>
+            <BoxView BackgroundColor="{StaticResource Primary}" HeightRequest="2" HorizontalOptions="Fill"
+                     Margin="0,0,0,15"/>
+        </VerticalStackLayout>
+        </ScrollView>
+    </ContentView.Content>
+</ContentView>

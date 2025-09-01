@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    IconImageSource="route_active.png"
+    Title="Blocks List"
+    ios:Page.UseSafeArea="False"
+    x:Class="DCCPanelController.View.BlocksPage"
+    x:DataType="view:BlocksViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem 
+            Command="{Binding RefreshBlocksCommand}" IsEnabled="{Binding IsConnected}"
+            IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
+        </ToolbarItem>
+
+        <ToolbarItem 
+            Command="{Binding ToggleConnectionCommand}" 
+            IsEnabled="{Binding IsConnectionAvailable}">
+            <ToolbarItem.IconImageSource>
+                <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
+                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IconWifiOn"/>
+                    <Binding Path="IconWifiOff"/>
+                </MultiBinding>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
+    </ContentPage.ToolbarItems>
+
+    <StackLayout x:Name="MainStackLayout">
+        <Grid
+            ColumnDefinitions="150,*,120"
+            HorizontalOptions="Fill">
+            <Button
+                Command="{Binding SortByColumnCommand}"
+                CommandParameter="{Binding LabelID}"
+                Grid.Column="0"
+                HorizontalOptions="CenterAndExpand"
+                Style="{StaticResource ColumnLabel}"
+                Text="{Binding ColumnLabelID}"/>
+            <Button
+                Command="{Binding SortByColumnCommand}"
+                CommandParameter="{Binding LabelName}"
+                Grid.Column="1"
+                Style="{StaticResource ColumnLabel}"
+                Text="{Binding ColumnLabelName}"/>
+            <Button
+                Command="{Binding SortByColumnCommand}"
+                CommandParameter="{Binding LabelState}"
+                Grid.Column="2"
+                Style="{StaticResource ColumnLabel}"
+                Text="{Binding ColumnLabelState}"/>
+        </Grid>
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"/>
+        <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshBlocksCommand}">
+
+            <Grid Padding="5" VerticalOptions="FillAndExpand" IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, x:DataType=view:BlocksViewModel, Path=IsConnected}">
+                <CollectionView ItemsSource="{Binding Blocks}" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label IsVisible="{Binding IsSupported}" Text="No Occupancy Block data available."/>
+                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Occupancy Blocks."/>
+                            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dataModel:Block">
+                            <StackLayout Padding="0">
+                                <Grid ColumnDefinitions="150,*,120" Padding="5">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type view:BlocksViewModel}}, Path=ToggleBlockStateCommand}"
+                                            CommandParameter="{Binding .}"
+                                            x:DataType="{x:Type view:BlocksViewModel}"/>
+                                    </Grid.GestureRecognizers>
+
+                                    <Label
+                                        Grid.Column="0"
+                                        HorizontalOptions="Start"
+                                        LineBreakMode="NoWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Id}"
+                                        VerticalOptions="Center"/>
+                                    <Label
+                                        FontAttributes="Bold"
+                                        Grid.Column="1"
+                                        HorizontalOptions="FillAndExpand"
+                                        LineBreakMode="WordWrap"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding Name}"
+                                        VerticalOptions="Center"/>
+                                    <Image
+                                        Grid.Column="3"
+                                        HeightRequest="32"
+                                        HorizontalOptions="End"
+                                        VerticalOptions="Center"
+                                        WidthRequest="42">
+                                        <Image.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Image"
+                                                Value="true">
+                                                <Setter Property="Source" Value="block_occupied.png"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Image"
+                                                Value="false">
+                                                <Setter Property="Source" Value="block_free.png"/>
+                                            </DataTrigger>
+                                        </Image.Triggers>
+                                    </Image>
+                                    <Label
+                                        Grid.Column="2"
+                                        HorizontalOptions="Fill"
+                                        Style="{StaticResource MediumLabel}"
+                                        Text="{Binding State}"
+                                        VerticalOptions="Center">
+                                        <Label.Triggers>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Label"
+                                                Value="true">
+                                                <Setter Property="TextColor" Value="Red"/>
+                                            </DataTrigger>
+                                            <DataTrigger
+                                                Binding="{Binding IsOccupied}"
+                                                TargetType="Label"
+                                                Value="false">
+                                                <Setter Property="TextColor" Value="Green"/>
+                                            </DataTrigger>
+                                        </Label.Triggers>
+                                    </Label>
+                                </Grid>
+                                <BoxView
+                                    BackgroundColor="{StaticResource Primary}"
+                                    HeightRequest="1"
+                                    HorizontalOptions="FillAndExpand"/>
+                            </StackLayout>
+
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"/>
+    </StackLayout>
+
+</ContentPage>

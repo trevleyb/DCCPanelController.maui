@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:settings="clr-namespace:DCCPanelController.View.Settings"
+             xmlns:jmri="clr-namespace:DCCPanelController.View.Settings.Simulator"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:discovery="clr-namespace:DCCClient.Discovery;assembly=DCCClient"
+             xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
+             x:DataType="jmri:SimulatorSettingsViewModel"
+             x:Class="DCCPanelController.View.Settings.Simulator.SimulatorSettingsView">
+
+    <ContentView.Resources>
+        <converters1:StepValueConverter x:Key="StepConverter" Step="0.25" />
+        <Style x:Key="SelectableItemStyle" TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="DarkSeaGreen"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentView.Resources>
+
+
+    <VerticalStackLayout Margin="10,0,10,0">
+
+        <BoxView Margin="0,0,0,10"
+                 BackgroundColor="{StaticResource Primary}"
+                 HeightRequest="1"
+                 HorizontalOptions="FillAndExpand"/>
+
+        <Label Text="There are no settings for the Simulator."/>
+
+    </VerticalStackLayout>
+
+</ContentView>
