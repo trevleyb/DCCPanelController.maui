@@ -35,7 +35,7 @@ public partial class PanelViewer {
             }
         };
     }
-
+        
     private void OnDisplayInfoChanged(object? sender, DisplayInfoChangedEventArgs e) {
         Dispatcher.DispatchDelayed(TimeSpan.FromMilliseconds(200), () => {
             SetLayoutSpan(Width, Height);

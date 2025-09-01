@@ -202,7 +202,7 @@
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1"/>
                 </CollectionView.ItemsLayout>
-                
+
                 <CollectionView.ItemTemplate>
                     <x:StaticResource Key="HorizontalTemplate"/>
                 </CollectionView.ItemTemplate>
