@@ -7,7 +7,6 @@
     <ContentPage.Content>
         <Grid>
             <ActivityIndicator Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" IsRunning="True"/>
-            <Label Text="Loading Profiles..." HorizontalOptions="Center" VerticalOptions="Center" FontSize="24"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

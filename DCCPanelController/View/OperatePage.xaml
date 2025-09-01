@@ -37,7 +37,7 @@
     </ContentPage.ToolbarItems>
 
     <ContentPage.Content>
-        <Grid RowDefinitions="*,45">
+        <Grid RowDefinitions="*,auto">
 
             <!-- Main Panel Content with Swipe Gesture -->
             <Grid Grid.Row="0"
@@ -155,52 +155,54 @@
                 </Grid>
             </Grid>
 
-            <Grid Grid.Row="1">
-                <Border StrokeThickness="0">
-                    <CollectionView
-                        x:Name="PanelIndicatorsView"
-                        SelectedItem="{Binding SelectedIndicator, Mode=TwoWay}"
-                        ItemsSource="{Binding PanelIndicators,Mode=OneWay}"
-                        SelectionMode="Single"
-                        IsVisible="True"
-                        HorizontalOptions="Center"
-                        VerticalOptions="Start"
-                        Margin="0,0,0,10">
+            <Grid Grid.Row="1" HeightRequest="32">
+                <CollectionView
+                    x:Name="PanelIndicatorsView"
+                    SelectedItem="{Binding SelectedIndicator, Mode=TwoWay}"
+                    ItemsSource="{Binding PanelIndicators,Mode=OneWay}"
+                    SelectionMode="Single"
+                    IsVisible="True"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Start"
+                    MinimumHeightRequest="32"
+                    MinimumWidthRequest="32"
+                    Margin="0,0,0,10">
 
-                        <CollectionView.ItemsLayout>
-                            <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
-                        </CollectionView.ItemsLayout>
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
+                    </CollectionView.ItemsLayout>
 
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="view:PanelIndicator">
-                                <Border
-                                    WidthRequest="15"
-                                    HeightRequest="15"
-                                    StrokeShape="Ellipse"
-                                    StrokeThickness="0">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="view:PanelIndicator">
+                            <Border
+                                WidthRequest="15"
+                                HeightRequest="15"
+                                StrokeShape="Ellipse"
+                                StrokeThickness="0">
 
-                                    <VisualStateManager.VisualStateGroups>
-                                        <VisualStateGroup Name="CommonStates">
-                                            <VisualState Name="Normal">
-                                                <VisualState.Setters>
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Gray300}"/>
-                                                    <Setter Property="Scale" Value="1"/>
-                                                </VisualState.Setters>
-                                            </VisualState>
-                                            <VisualState Name="Selected">
-                                                <VisualState.Setters>
-                                                    <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
-                                                    <Setter Property="Scale" Value="1"/>
-                                                </VisualState.Setters>
-                                            </VisualState>
-                                        </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
-                </Border>
-                <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End" VerticalOptions="End"
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Gray300}"/>
+                                                <Setter Property="Scale" Value="1"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                                                <Setter Property="Scale" Value="1"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End"
+                       VerticalOptions="End"
                        BackgroundColor="Transparent" TextColor="Gainsboro">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>

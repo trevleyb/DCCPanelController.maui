@@ -25,7 +25,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     public static string IconMinimize => "minimize_2";
     public static string IconMaximize => "maximize_2";
     
-    public ObservableCollection<PanelIndicator>? PanelIndicators { get; set; } = [];
+    public ObservableCollection<PanelIndicator> PanelIndicators { get; set; } = [];
     public ObservableCollection<Panel>? Panels { get; private set; }
     public Color PanelBackgroundColor => ActivePanel?.PanelBackgroundColor ?? Colors.White;
     public Color DisplayBackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
@@ -129,7 +129,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     public void UpdatePanelIndicators() {
         MainThread.BeginInvokeOnMainThread(() => {
-            PanelIndicators ??= [];
             while (PanelIndicators.Count < Panels?.Count) PanelIndicators.Add(new PanelIndicator(-1, -1));
             while (PanelIndicators.Count > Panels?.Count) PanelIndicators.RemoveAt(PanelIndicators.Count - 1);
             for (var i = 0; i < PanelIndicators.Count; i++) {
@@ -144,5 +143,4 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 public partial class PanelIndicator(int index, int active) : ObservableObject {
     [ObservableProperty] private int _index = index;
     [ObservableProperty] private int _active = active;
-    public bool IsActive => Active == Index; 
 }

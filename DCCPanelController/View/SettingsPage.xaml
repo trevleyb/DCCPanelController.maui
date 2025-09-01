@@ -79,7 +79,7 @@
                                                    Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
                                             <Border Grid.Column="1" Padding="0,0,0,0" HeightRequest="35"
                                                     Style="{StaticResource EntryBorderStyle}">
-                                                <Entry Text="{Binding Profile.ProfileName}"
+                                                <Entry Margin="8,0,0,0" Text="{Binding Profile.ProfileName}"
                                                        HorizontalOptions="Fill"/>
                                             </Border>
                                         </Grid>
@@ -304,8 +304,8 @@
                         IsEnabled="{Binding IsProfileNotDefault}"
                         Margin="5,0,5,0"
                         Style="{StaticResource ButtonOutline}"
-                        Text="Default"
-                        WidthRequest="120">
+                        Text="Set Default"
+                        WidthRequest="160">
                     <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>
@@ -317,8 +317,8 @@
                         VerticalOptions="Center"
                         Margin="5,0,5,0"
                         Style="{StaticResource ButtonOutline}"
-                        Text="Switch"
-                        WidthRequest="120">
+                        Text="Switch Profile"
+                        WidthRequest="180">
                     <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>

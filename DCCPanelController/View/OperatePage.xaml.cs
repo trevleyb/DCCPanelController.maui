@@ -42,8 +42,6 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (_viewModel is { ActivePanel: not null } viewModel) {
                 Title = $"{viewModel.ActivePanel.Title}";
-
-                //PanelView.Panel = viewModel.ActivePanel;
                 PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
                 BackgroundColor = viewModel.DisplayBackgroundColor;
             } else {

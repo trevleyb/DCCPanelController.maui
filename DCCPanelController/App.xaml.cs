@@ -10,7 +10,6 @@ using Microsoft.Maui.Controls.Xaml.Diagnostics;
 namespace DCCPanelController;
 
 public partial class App : Application {
-    
     private ProfileService _profileService;
     private IServiceProvider _serviceProvider;
 
@@ -38,61 +37,5 @@ public partial class App : Application {
 
     protected override Window CreateWindow(IActivationState? activationState) {
         return new Window(new LoadingPage());
-    }
-
-    protected override async void OnStart() {
-        base.OnStart();
-        
-        try {
-            await _profileService.EnsureInitializedAsync(); // async, no blocking
-            var shell = _serviceProvider.GetRequiredService<AppShell>(); // or new AppShell()
-            var window = Windows.FirstOrDefault();
-            if (window != null) {
-                MainThread.BeginInvokeOnMainThread(() => window.Page = shell);
-            }
-        }
-        catch (Exception ex) {
-            throw new ApplicationException($"Failed to start app: {ex.Message}");
-        }
-        
-#if DEBUG
-
-        // 1) Ensure we extract/copy help to the app data folder
-        await HelpService.Current.InitializeAsync(true);
-
-        // 2) Validate the bundle (Resources/Raw) paths
-        await ValidateBundleAsync();
-
-        // 3) Validate the extracted files in InstalledRoot
-        await ValidateExtractedAsync();
-#endif
-    }
-
-    private static async Task ValidateBundleAsync() {
-        await using var ms = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/manifest.json");
-        using var reader = new StreamReader(ms);
-        var manifestJson = await reader.ReadToEndAsync();
-        var manifest = JsonSerializer.Deserialize<Manifest>(manifestJson)!;
-
-        foreach (var file in manifest.Files) {
-            try {
-                await using var s = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/{file}");
-            } catch (Exception ex) {
-                Debug.WriteLine($"❌ Bundled '{file}' missing/inaccessible: {ex.Message}");
-            }
-        }
-    }
-
-    private static async Task ValidateExtractedAsync() {
-        await using var ms = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/manifest.json");
-        using var reader = new StreamReader(ms);
-        var manifestJson = await reader.ReadToEndAsync();
-        var manifest = JsonSerializer.Deserialize<Manifest>(manifestJson)!;
-
-        foreach (var file in manifest.Files) {
-            var p = Path.Combine(HelpService.InstalledRoot, file);
-            if (!File.Exists(p))
-                Debug.WriteLine($"❌ Extracted '{file}' missing at {p}");
-        }
     }
 }
