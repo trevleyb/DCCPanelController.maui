@@ -5,18 +5,18 @@ using CommunityToolkit.Mvvm.ComponentModel;
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Block> _blocks;
 
     [ObservableProperty] private string _filename;
-    [ObservableProperty] private Panels _panels;
     [ObservableProperty] private string _profileName;
+    [ObservableProperty] private Panels _panels;
     [ObservableProperty] private Settings _settings;
 
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Light> _lights;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Route> _routes;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Sensor> _sensors;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Signal> _signals;
-    [ObservableProperty] [JsonIgnore] private ObservableCollection<Turnout> _turnouts;
+    [ObservableProperty] private ObservableCollection<Light> _lights;
+    [ObservableProperty] private ObservableCollection<Block> _blocks;
+    [ObservableProperty] private ObservableCollection<Route> _routes;
+    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
+    [ObservableProperty] private ObservableCollection<Signal> _signals;
+    [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName, string fileName) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;
@@ -31,21 +31,12 @@ public partial class Profile : ObservableObject {
         Lights = [];
     }
 
-    public Turnout? Turnout(string id) {
-        return Turnouts.FirstOrDefault(t => t.Id == id);
-    }
-
-    public Route? Route(string id) {
-        return Routes.FirstOrDefault(r => r.Id == id);
-    }
-
-    public Signal? Signal(string id) {
-        return Signals.FirstOrDefault(s => s.Id == id);
-    }
-
-    public Block? Block(string id) {
-        return Blocks.FirstOrDefault(s => s.Id == id);
-    }
+    public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(t => t.Id == id);
+    public Route? Route(string id) => Routes.FirstOrDefault(r => r.Id == id);
+    public Signal? Signal(string id) => Signals.FirstOrDefault(s => s.Id == id);
+    public Block? Block(string id) => Blocks.FirstOrDefault(s => s.Id == id);
+    public Sensor? Sensor(string id) => Sensors.FirstOrDefault(s => s.Id == id);
+    public Light? Light(string id) => Lights.FirstOrDefault(s => s.Id == id);
 
     /// <summary>
     ///     This method ensures that each panel in the collection of panels is properly initialized with the reference to the
@@ -77,27 +68,10 @@ public partial class Profile : ObservableObject {
         RefreshSensors();
     }
 
-    public void RefreshTurnouts() {
-        RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
-    }
-
-    public void RefreshRoutes() {
-        RefreshCollection(Routes, t => t is { IsEditable : false, IsModified: false });
-    }
-
-    public void RefreshBlocks() {
-        RefreshCollection(Blocks, t => t is { IsEditable : false, IsModified: false });
-    }
-
-    public void RefreshSignals() {
-        RefreshCollection(Signals, t => t is { IsEditable : false, IsModified: false });
-    }
-
-    public void RefreshSensors() {
-        RefreshCollection(Sensors, t => t is { IsEditable : false, IsModified: false });
-    }
-
-    public void RefreshLights() {
-        RefreshCollection(Lights, t => t is { IsEditable : false, IsModified: false });
-    }
+    public void RefreshTurnouts() => RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
+    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshSignals() => RefreshCollection(Signals, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshLights() => RefreshCollection(Lights, t => t is { IsEditable : false, IsModified: false });
 }

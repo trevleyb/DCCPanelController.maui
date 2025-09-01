@@ -15,13 +15,11 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
-
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
-
     [ObservableProperty] [JsonIgnore] private bool _isRefreshing;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private int _sortOrder;
@@ -55,12 +53,12 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         }
     }
 
-    public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
-    public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
-    public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
-    public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
-    public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
-    public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
+    [JsonIgnore] public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
+    [JsonIgnore] public ObservableCollection<Route> Routes => Panels?.Profile?.Routes ?? [];
+    [JsonIgnore] public ObservableCollection<Turnout> Turnouts => Panels?.Profile?.Turnouts ?? [];
+    [JsonIgnore] public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
+    [JsonIgnore] public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
+    [JsonIgnore] public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
 
     [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
     [JsonIgnore] public string NextID => EntityID.GenerateNextID(Panels ?? [], "Panel");
