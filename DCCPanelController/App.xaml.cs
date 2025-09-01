@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Diagnostics;
+using System.Text.Json;
 using DCCPanelController.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
@@ -68,38 +69,30 @@ public partial class App : Application {
     }
 
     private static async Task ValidateBundleAsync() {
-        // Manifest is in the *bundle*
         await using var ms = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/manifest.json");
         using var reader = new StreamReader(ms);
         var manifestJson = await reader.ReadToEndAsync();
         var manifest = JsonSerializer.Deserialize<Manifest>(manifestJson)!;
 
-        Console.WriteLine("— Bundle validation —");
         foreach (var file in manifest.Files) {
             try {
-                // NOTE: Use PackedRoot + filename for bundle access
                 await using var s = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/{file}");
-                Console.WriteLine($"✅ Bundled '{file}' length={s.Length}");
             } catch (Exception ex) {
-                Console.WriteLine($"❌ Bundled '{file}' missing/inaccessible: {ex.Message}");
+                Debug.WriteLine($"❌ Bundled '{file}' missing/inaccessible: {ex.Message}");
             }
         }
     }
 
     private static async Task ValidateExtractedAsync() {
-        // Read manifest again (from bundle is fine)
         await using var ms = await FileSystem.OpenAppPackageFileAsync($"{HelpService.PackedRoot}/manifest.json");
         using var reader = new StreamReader(ms);
         var manifestJson = await reader.ReadToEndAsync();
         var manifest = JsonSerializer.Deserialize<Manifest>(manifestJson)!;
 
-        Console.WriteLine("— Extracted validation —");
         foreach (var file in manifest.Files) {
             var p = Path.Combine(HelpService.InstalledRoot, file);
-            if (File.Exists(p))
-                Console.WriteLine($"✅ Extracted '{file}' length={new FileInfo(p).Length} at {p}");
-            else
-                Console.WriteLine($"❌ Extracted '{file}' missing at {p}");
+            if (!File.Exists(p))
+                Debug.WriteLine($"❌ Extracted '{file}' missing at {p}");
         }
     }
 }
