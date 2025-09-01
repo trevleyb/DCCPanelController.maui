@@ -18,7 +18,7 @@ public partial class Profile : ObservableObject {
     [ObservableProperty] private ObservableCollection<Signal> _signals;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
-    public Profile(string profileName, string fileName) {
+    public Profile(string profileName, string? fileName = null) {
         _filename = string.IsNullOrWhiteSpace(fileName) ? Guid.NewGuid().ToString() : fileName;
         _profileName = profileName;
         Panels = new Panels { Profile = this };

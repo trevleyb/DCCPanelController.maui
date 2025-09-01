@@ -30,7 +30,7 @@ public partial class LoadingPage : ContentPage {
 
                 try {
                     // 1) Initialize domain state
-                    await profileService.EnsureInitializedAsync();
+                    await profileService.InitializeAsync();
 
                     // Optional: any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);

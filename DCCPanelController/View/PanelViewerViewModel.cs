@@ -23,7 +23,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     private bool _isLoading;
 
     [ObservableProperty] private bool _isPanelSelected;
-    [ObservableProperty] private Panels _panels;
+    [ObservableProperty] private Panels? _panels;
     [ObservableProperty] private Panel? _selectedPanel;
 
     public INavigation? NavigationService;
@@ -34,6 +34,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         _logger = logger;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (sender, args) => {
+            Panels = null;
             Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
             SelectedPanel = Panels.FirstOrDefault();
         };
@@ -54,6 +55,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task AddPanelAsync() {
+        ArgumentNullException.ThrowIfNull(Panels);
         SelectedPanel = Panels.CreatePanel();
         Panels.Add(SelectedPanel);
         await _profileService.SaveAsync();
@@ -62,6 +64,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task DeletePanelAsync() {
+        ArgumentNullException.ThrowIfNull(Panels);
         if (SelectedPanel is not null) {
             var result = await DisplayAlertHelper.DisplayAlertYesNoAsync("Delete Panel?", $"Are you sure you want to delete the panel '{SelectedPanel.Id}'");
             if (!result) return; // Exit if the user cancels the delete operation
@@ -74,6 +77,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     }
 
     [RelayCommand] private async Task DuplicatePanelAsync() {
+        ArgumentNullException.ThrowIfNull(Panels);
         if (SelectedPanel != null) {
             var cloned = Panels.CreatePanelFrom(SelectedPanel);
             Panels.Add(cloned);
@@ -85,6 +89,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task DownloadPanelAsync() {
+        ArgumentNullException.ThrowIfNull(Panels);
         try {
             if (SelectedPanel is { } panel) {
                 var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel", "This allows you to download a single Panel to local storage.", "Continue", "Cancel");
@@ -104,6 +109,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task UploadPanelAsync() {
+        ArgumentNullException.ThrowIfNull(Panels);
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Panel", "This allows you to upload a previously downloaded panel.", "Continue", "Cancel");
             if (result) {
@@ -125,6 +131,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     public async Task EditPanelAsync() {
+        ArgumentNullException.ThrowIfNull(Panels);
         try {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
@@ -160,6 +167,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     [RelayCommand]
     private async Task DragPanelOverAsync(Panel? panel) {
+        ArgumentNullException.ThrowIfNull(Panels);
         if (_draggedPanel == null) return;
         if (panel == null || panel == _draggedPanel) return;
 
@@ -184,6 +192,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     }
 
     public void RefreshSortOrder() {
+        ArgumentNullException.ThrowIfNull(Panels);
         for (var i = 0; i < Panels.Count; i++) {
             Panels[i].SortOrder = i + 1;
         }

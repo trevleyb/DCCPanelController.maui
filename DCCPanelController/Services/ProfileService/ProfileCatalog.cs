@@ -100,13 +100,12 @@ public sealed partial class ProfileCatalog {
                 // swallow and recreate
             }
         }
-        var fresh = new ProfileCatalog {
-            Profiles = new List<ProfileRef> { new("Default", "Default.json", true) }
-        };
+
+        var fresh = new ProfileCatalog();
         fresh.Save();
         return fresh;
     }
-
+    
     private void EnsureOneDefault() {
         if (Profiles.Count == 0) return;
         if (!Profiles.Any(p => p.IsDefault)) {
@@ -123,7 +122,7 @@ public sealed partial class ProfileCatalog {
         File.WriteAllText(path, json);
         Console.WriteLine($"Saved ProfileCatalog {member}@{line}: {path}");
     }
-
+    
     [System.Text.RegularExpressions.GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]
     private static partial System.Text.RegularExpressions.Regex NameRegex();
 }

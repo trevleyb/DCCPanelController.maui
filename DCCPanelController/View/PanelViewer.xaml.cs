@@ -15,6 +15,7 @@ public partial class PanelViewer {
 
     public PanelViewer(ILogger<PanelViewer> logger, PanelViewerViewModel viewModel, ConnectionService connectionService) {
         InitializeComponent();
+        
         _logger = logger;
         _connectionService = connectionService;
         _viewModel = viewModel;
@@ -27,7 +28,11 @@ public partial class PanelViewer {
         // Make sure we refresh on a change in the Panels Collection
         // ---------------------------------------------------------
         _viewModel?.PropertyChanged += (sender, args) => {
-            if (args.PropertyName == nameof(PanelViewerViewModel.Panels)) SetActiveZoomIcons();
+            if (args.PropertyName == nameof(PanelViewerViewModel.Panels)) {
+                PanelsCollectionView.ItemsSource = null;
+                PanelsCollectionView.ItemsSource = _viewModel.Panels;
+                SetActiveZoomIcons();
+            }
         };
     }
 
@@ -58,13 +63,8 @@ public partial class PanelViewer {
             _activeSpan = 1;
             _minSpan = 1;
             _maxSpan = 1;
-            PanelsLayout.Span = 1;
-            PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["HorizontalTemplate"];
-            _viewModel.CanZoomOut = false;
-            _viewModel.CanZoomIn = false;
+            SetItemTemplate("HorizontalTemplate", 1);
 
-            // We can hide Toolbar Items, only remove them. Get rid of them on small screens
-            // -----------------------------------------------------------------------------
             ToolbarItems.Remove(ZoomOutIcon);
             ToolbarItems.Remove(ZoomInIcon);
         } else {
@@ -87,10 +87,14 @@ public partial class PanelViewer {
             _maxSpan = 2;
             break;
         }
+        SetItemTemplate("VerticalTemplate", _activeSpan);
+    }
 
-        PanelsLayout.Span = _activeSpan;
-        PanelsCollectionView.ItemTemplate = (DataTemplate)Resources["VerticalTemplate"];
-        SetActiveZoomIcons();
+    private void SetItemTemplate(string template, int span = 1) {
+        PanelsLayout.Span = span;
+        PanelsCollectionView.ItemTemplate = (DataTemplate)Resources[template];
+        PanelsCollectionView.ItemsSource = null;
+        PanelsCollectionView.ItemsSource = _viewModel?.Panels;
     }
     
     private void SetZoomLevel(int? adjustment = null) {
@@ -102,8 +106,8 @@ public partial class PanelViewer {
     }
 
     private void SetActiveZoomIcons() {
-        _viewModel?.CanZoomOut = _viewModel.Panels.Count > 0 && _activeSpan < _maxSpan;
-        _viewModel?.CanZoomIn  = _viewModel.Panels.Count > 0 && _activeSpan > _minSpan;
+        _viewModel?.CanZoomOut = _viewModel?.Panels?.Count > 0 && _activeSpan < _maxSpan;
+        _viewModel?.CanZoomIn  = _viewModel?.Panels?.Count > 0 && _activeSpan > _minSpan;
     }
 
     private void OnZoomInClicked(object? sender, EventArgs e) => SetZoomLevel(-1);

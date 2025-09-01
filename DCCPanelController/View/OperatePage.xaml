@@ -120,7 +120,12 @@
                                         Text="You can turn this welcome page off in settings."
                                         VerticalOptions="Center"/>
 
-                                    <HorizontalStackLayout
+                                    <FlexLayout
+                                        Direction="Row"
+                                        Wrap="Wrap"
+                                        JustifyContent="Center"
+                                        AlignItems="Center"
+                                        AlignContent="Center"
                                         HorizontalOptions="Center"
                                         Margin="0,20,0,0"
                                         Padding="10"
@@ -147,7 +152,7 @@
                                             Style="{StaticResource ButtonOutline}"
                                             Text="Close"/>
 
-                                    </HorizontalStackLayout>
+                                    </FlexLayout>
                                 </StackLayout>
                             </Grid>
                         </ScrollView>

@@ -6,24 +6,20 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Services.ProfileService;
 
 public class ProfileService {
-    private Task? _initTask;
     private readonly SemaphoreSlim _gate = new(1, 1);
-    private ProfileCatalog _catalog = ProfileCatalog.Load();
+    private ProfileCatalog? _catalog;
 
     public Profile? ActiveProfile { get; private set; }
 
     #region Ctor
     public ProfileService() { }
 
-    public Task EnsureInitializedAsync() {
-        return _initTask ??= InitializeAsync();
-    }
-    
     public async Task InitializeAsync() {
         Console.WriteLine("Loading Profiles");
 
         _catalog = ProfileCatalog.Load();
-
+        if (_catalog is null) throw new ApplicationException("Failed to load profile catalog.");
+        
         var activeFile = _catalog.ActiveFileName;
         ActiveProfile = string.IsNullOrWhiteSpace(activeFile)
             ? await CreateAsync("Default", setActive: true)
@@ -44,10 +40,10 @@ public class ProfileService {
     #endregion
 
     #region Queries
-    public IReadOnlyList<string> GetProfileNames() => _catalog.Profiles.Select(p => p.ProfileName).ToList();
-    public IReadOnlyList<string> GetProfileFileNames() => _catalog.Profiles.Select(p => p.FileName).ToList();
-
+    public IReadOnlyList<string> GetProfileNames() => _catalog?.Profiles.Select(p => p.ProfileName).ToList() ?? [];
+    public IReadOnlyList<string> GetProfileFileNames() => _catalog?.Profiles.Select(p => p.FileName).ToList() ?? [];
     public IReadOnlyList<string> GetProfileNamesWithDefault() {
+        ArgumentNullException.ThrowIfNull(_catalog);
         var active = ActiveProfile?.Filename;
         return _catalog.Profiles.Select(p => {
             var name = p.ProfileName;
@@ -57,15 +53,17 @@ public class ProfileService {
         }).ToList();
     }
 
-    public int NumberOfProfiles => _catalog.Profiles.Count;
+    public int NumberOfProfiles => _catalog?.Profiles.Count ?? 0;
 
     public void MarkAsDefault(Profile profile) {
         ArgumentNullException.ThrowIfNull(profile);
+        ArgumentNullException.ThrowIfNull(_catalog);
         _catalog.SetDefault(profile.Filename);
     }
 
     public bool IsDefault(Profile profile) {
         ArgumentNullException.ThrowIfNull(profile);
+        ArgumentNullException.ThrowIfNull(_catalog);
         return _catalog.IsDefault(profile.Filename);
     }
     #endregion
@@ -130,6 +128,7 @@ public class ProfileService {
     }
 
     public async Task<Profile?> UploadProfileAsync(string json, bool setActive = true, string? displayName = null) {
+        ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();
         try {
             var uploaded = await JsonRepository.UploadProfile(json);
@@ -180,14 +179,15 @@ public class ProfileService {
 
     #region CRUD
     public void SetActive(Profile profile, bool markAsDefault = false) {
+        ArgumentNullException.ThrowIfNull(_catalog);
         var old = ActiveProfile;
         ActiveProfile = profile;
-        if (markAsDefault)
-            _catalog.SetDefault(profile.Filename);
+        if (markAsDefault) _catalog.SetDefault(profile.Filename);
         RaiseActiveProfileChanged(old, profile);
     }
     
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
+        ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();
         try {
             profileName ??= _catalog.GetUniqueProfileName("Profile");
@@ -205,6 +205,7 @@ public class ProfileService {
     }
 
     public async Task DeleteAsync(Profile profile) {
+        ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();
         try {
             JsonRepository.Delete(profile);
@@ -226,11 +227,17 @@ public class ProfileService {
         }
     }
 
-    public async Task SaveAsync() {
-        if (ActiveProfile is null) return;
-        await JsonRepository.SaveAsync(ActiveProfile);
-        _catalog.Upsert(ActiveProfile);
+    public async Task SaveAsync(Profile profile) {
+        ArgumentNullException.ThrowIfNull(_catalog);
+        await JsonRepository.SaveAsync(profile);
+        _catalog.Upsert(profile);
         RaiseDataChanged(ProfileDataChangeType.ProfileSaved, ActiveProfile);
+    }
+
+    public async Task SaveAsync() {
+        ArgumentNullException.ThrowIfNull(_catalog);
+        if (ActiveProfile is null) return;
+        await SaveAsync(ActiveProfile);
     }
     
     public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = false) {

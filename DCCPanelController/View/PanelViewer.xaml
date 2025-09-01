@@ -54,7 +54,7 @@
                             IsVisible="true"
                             BackgroundColor="{Binding PanelBackgroundColor}"
                             HorizontalOptions="Fill"
-                            Panel="{Binding}"
+                            Panel="{Binding .}"
                             ShowGrid="false"
                             VerticalOptions="Fill"/>
                     </Border>
@@ -108,7 +108,7 @@
                                     DesignMode="False"
                                     Interactive="False"
                                     HorizontalOptions="Fill"
-                                    Panel="{Binding}"
+                                    Panel="{Binding .}"
                                     VerticalOptions="Fill"/>
                             </Grid>
                             <Border.HeightRequest>
@@ -202,6 +202,10 @@
                 <CollectionView.ItemsLayout>
                     <GridItemsLayout x:Name="PanelsLayout" Orientation="Vertical" Span="1"/>
                 </CollectionView.ItemsLayout>
+                
+                <CollectionView.ItemTemplate>
+                    <x:StaticResource Key="HorizontalTemplate"/>
+                </CollectionView.ItemTemplate>
             </CollectionView>
 
             <!-- Loading Overlay -->
