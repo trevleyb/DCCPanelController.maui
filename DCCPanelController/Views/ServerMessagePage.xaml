@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    IconImageSource="route_active.png"
+    Title="Server Messages"
+    ios:Page.UseSafeArea="False"
+    x:Class="DCCPanelController.Views.ServerMessagesPage"
+    x:DataType="views:ServerMessagesViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:view="clr-namespace:DCCPanelController.View"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:clients="clr-namespace:DCCPanelController.Clients"
+    xmlns:views="clr-namespace:DCCPanelController.Views">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Command="{Binding ConnectionService.ClearMessagesCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
+
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
+            IsEnabled="{Binding IsConnectionAvailable}">
+            <ToolbarItem.IconImageSource>
+                <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IconWifiOn"/>
+                    <Binding Path="IconWifiOff"/>
+                </MultiBinding>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
+    </ContentPage.ToolbarItems>
+
+    <StackLayout x:Name="MainStackLayout">
+        <Grid Padding="5" VerticalOptions="FillAndExpand">
+            <CollectionView ItemsSource="{Binding ServerMessages}" SelectionMode="None">
+                <CollectionView.EmptyView>
+                    <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                        <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                            <Label Text="There are no server messages to display"/>
+                        </StackLayout>
+                    </Grid>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="clients:DccClientMessage">
+                        <StackLayout Padding="0">
+                            <Grid Margin="5">
+                                <HorizontalStackLayout>
+                                    <Image Margin="-5,0,5,0" HorizontalOptions="Start" VerticalOptions="Start"
+                                           Source="{Binding IconSource}" WidthRequest="24" HeightRequest="24"/>
+                                    <StackLayout>
+                                        <HorizontalStackLayout>
+                                            <Label
+                                                WidthRequest="150"
+                                                FontAttributes="Bold"
+                                                HorizontalOptions="Fill"
+                                                LineBreakMode="WordWrap"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding Operation }"
+                                                VerticalOptions="Center">
+                                                <Label.Triggers>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="Inbound">
+                                                        <Setter Property="TextColor" Value="Green"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="Outbound">
+                                                        <Setter Property="TextColor" Value="Blue"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="System">
+                                                        <Setter Property="TextColor" Value="Black"/>
+                                                    </DataTrigger>
+                                                    <DataTrigger
+                                                        Binding="{Binding MessageType}"
+                                                        TargetType="Label"
+                                                        Value="Error">
+                                                        <Setter Property="TextColor" Value="Red"/>
+                                                    </DataTrigger>
+                                                </Label.Triggers>
+                                            </Label>
+                                            <Label
+                                                HorizontalOptions="Start"
+                                                LineBreakMode="HeadTruncation"
+                                                Style="{StaticResource MediumLabel}"
+                                                Text="{Binding TimeStamp}"
+                                                VerticalOptions="Center"/>
+                                        </HorizontalStackLayout>
+                                        <Label
+                                            Margin="0,0,0,5"
+                                            HorizontalOptions="Fill"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Message}"
+                                            VerticalOptions="Center"/>
+                                    </StackLayout>
+                                </HorizontalStackLayout>
+                            </Grid>
+                            <BoxView
+                                BackgroundColor="{StaticResource Primary}"
+                                HeightRequest="1"
+                                HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </Grid>
+        <BoxView
+            BackgroundColor="{StaticResource Primary}"
+            HeightRequest="1"
+            HorizontalOptions="FillAndExpand"/>
+    </StackLayout>
+
+</ContentPage>

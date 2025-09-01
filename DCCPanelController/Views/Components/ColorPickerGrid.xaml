@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Class="DCCPanelController.Views.Components.ColorPickerGrid"
+    x:DataType="components:ColorPickerGridViewModel"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:DCCPanelController.Views.Components">
+
+    <StackLayout
+        BackgroundColor="Transparent"
+        HorizontalOptions="Fill"
+        Margin="0"
+        Padding="0"
+        VerticalOptions="Fill"
+        HeightRequest="264"
+        WidthRequest="388">
+        <Border
+            Background="White"
+            HorizontalOptions="Fill"
+            Stroke="{StaticResource Primary}"
+            StrokeShape="RoundRectangle 10,10,10,10"
+            StrokeThickness="3"
+            VerticalOptions="Fill">
+
+            <StackLayout>
+                <Grid
+                    BackgroundColor="{StaticResource Primary}"
+                    ColumnDefinitions="*,auto"
+                    HeightRequest="30"
+                    VerticalOptions="Center">
+                    <Label
+                        Grid.Column="0"
+                        Margin="10,5,0,5"
+                        Style="{StaticResource MediumLabel}"
+                        Text="Select a Color"
+                        TextColor="White"
+                        VerticalOptions="Center"/>
+                </Grid>
+
+                <CollectionView
+                    HorizontalOptions="FillAndExpand"
+                    ItemsSource="{Binding SelectableColors}"
+                    Margin="10"
+                    SelectedItem="{Binding SelectedColor, Mode=TwoWay}"
+                    SelectionMode="Single"
+                    VerticalOptions="FillAndExpand"
+                    x:Name="ColorsView"
+                    ItemSizingStrategy="MeasureFirstItem">
+
+                    <CollectionView.ItemsLayout>
+                        <GridItemsLayout Orientation="Vertical" Span="12" VerticalItemSpacing="2"/>
+                    </CollectionView.ItemsLayout>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="Color">
+                            <Border
+                                BackgroundColor="{Binding .}"
+                                HeightRequest="25"
+                                Stroke="{StaticResource Gray300}"
+                                StrokeThickness="2"
+                                WidthRequest="25"
+                                Margin="1">
+                                <VisualStateManager.VisualStateGroups>
+                                    <VisualStateGroup Name="CommonStates">
+                                        <VisualState Name="Normal"/>
+                                        <VisualState Name="Selected">
+                                            <VisualState.Setters>
+                                                <Setter Property="Stroke" Value="Black"/>
+                                                <Setter Property="StrokeThickness" Value="3"/>
+                                            </VisualState.Setters>
+                                        </VisualState>
+                                    </VisualStateGroup>
+                                </VisualStateManager.VisualStateGroups>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <Grid ColumnDefinitions="*,auto,auto,*">
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        Grid.Column="0"
+                        HeightRequest="1"
+                        HorizontalOptions="Fill"
+                        Margin="10,0,10,0"/>
+
+                    <Border
+                        BackgroundColor="{Binding SelectedColor}"
+                        Grid.Column="1"
+                        HeightRequest="20"
+                        HorizontalOptions="Fill"
+                        Stroke="{StaticResource Gray300}"
+                        StrokeThickness="2"
+                        WidthRequest="20"/>
+
+                    <Label
+                        FontSize="15"
+                        Grid.Column="2"
+                        HorizontalOptions="Center"
+                        Margin="5"
+                        Text="{Binding SelectedColorName}"
+                        TextColor="{StaticResource Primary}"/>
+
+                    <BoxView
+                        BackgroundColor="{StaticResource Primary}"
+                        Grid.Column="3"
+                        HeightRequest="1"
+                        HorizontalOptions="Fill"
+                        Margin="10,0,10,0"/>
+                </Grid>
+
+                <HorizontalStackLayout HorizontalOptions="Center">
+                    <Button
+                        Command="{Binding SaveCommand}"
+                        HorizontalOptions="Center"
+                        Margin="0,10,10,10"
+                        Style="{StaticResource ButtonOutline}"
+                        Text="Save"
+                        WidthRequest="80"/>
+
+                    <Button
+                        Command="{Binding CancelCommand}"
+                        HorizontalOptions="Center"
+                        Margin="10,10,0,10"
+                        Style="{StaticResource ButtonOutline}"
+                        Text="Close"
+                        WidthRequest="80"/>
+
+                </HorizontalStackLayout>
+            </StackLayout>
+        </Border>
+    </StackLayout>
+</ContentView>

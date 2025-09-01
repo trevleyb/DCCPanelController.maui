@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+             xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
+             xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
+             xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             xmlns:views="clr-namespace:DCCPanelController.Views"
+             xmlns:tileSelectors1="clr-namespace:DCCPanelController.Views.TileSelectors"
+             ios:Page.UseSafeArea="false"
+             x:DataType="views:PanelEditorViewModel"
+             Title="{Binding Title}"
+             x:Class="DCCPanelController.Views.PanelEditor">
+
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" 
+                            x:DataType="views:PanelEditorViewModel"
+                            Command="{Binding BackButtonPressedCommand}"/>
+    </Shell.BackButtonBehavior>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
+            Text="Mode" x:Name="ModeToolbar"
+            IsEnabled="{Binding CanSetModes}"
+            Command="{Binding Path=SwitchModeCommand}">
+        </ToolbarItem>
+
+        <ToolbarItem
+            Text="Rotate" x:Name="RotateToolbar"
+            IsEnabled="{Binding CanRotateTiles}"
+            Command="{Binding Path=RotateTileCommand}"
+            IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}">
+        </ToolbarItem>
+
+        <ToolbarItem
+            IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
+            Text="Delete" x:Name="DeleteToolbar"
+            IsEnabled="{Binding CanDeleteTiles}"
+            Command="{Binding Path=DeleteTileCommand}">
+        </ToolbarItem>
+
+        <ToolbarItem
+            IconImageSource="{Binding CanEditProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=settings}"
+            Text="Edit" x:Name="EditToolbar"
+            Command="{Binding Path=EditPropertiesCommand}"
+            IsEnabled="{Binding CanEditProperties}">
+        </ToolbarItem>
+
+        <ToolbarItem
+            IconImageSource="{Binding CanSavePanel, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
+            Text="Save" x:Name="SaveToolbar"
+            Command="{Binding Path=SaveCommand}"
+            IsEnabled="{Binding CanSavePanel}">
+        </ToolbarItem>
+
+        <ToolbarItem
+            IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
+            Text="Grid" x:Name="GridToolbar"
+            IsEnabled="{Binding CanToggleGrid}"
+            Command="{Binding Path=ToggleGridCommand}">
+        </ToolbarItem>
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+        <!-- <ContentPage.Content> -->
+        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
+
+            <!-- Initially: 1 column, 3 rows (standard layout) -->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"  x:Name="MainColumn"/>
+                <ColumnDefinition Width="88" x:Name="SidePalette"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"   x:Name="PanelRow"/>       
+                <RowDefinition Height="120" x:Name="BottomPalette"/>  
+                <RowDefinition Height="30"  x:Name="StatusRow"/>      
+            </Grid.RowDefinitions>
+
+            <!-- Row 0: Panel Editor -->
+            <Border x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" Stroke="#FFF5F5F5" StrokeThickness="0">
+                <Grid x:Name="DisplayBorder" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
+                    <views:ControlPanelView
+                        Margin="5"
+                        BackgroundColor="Transparent"
+                        DesignMode="true"
+                        Interactive="False"
+                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type views:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
+                        Grid.Column="0"
+                        HorizontalOptions="Fill"
+                        Panel="{Binding Source={RelativeSource AncestorType={x:Type views:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
+                        VerticalOptions="Fill"
+                        x:Name="PanelView"/>
+                </Grid>
+            </Border>
+            
+            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+                <Border
+                    x:Name="SidePaletteContent"
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <tileSelectors1:SideSelectorPanel
+                        x:Name="SidePaletteSelector"
+                        HorizontalOptions="Center"
+                        OnDockSideChanged="PaletteDockSideChanged"/>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
+                <Border
+                    x:Name="BottomPaletteContent"
+                    BackgroundColor="WhiteSmoke"
+                    Stroke="#FFF5F5F5"
+                    StrokeThickness="1"
+                    x:DataType="dataModel:Panel">
+                    <tileSelectors1:PillSelectorPanel
+                        x:Name="PillPaletteSelector"
+                        HorizontalOptions="Center"
+                        OnDockSideChanged="PaletteDockSideChanged"/>
+                </Border>
+            </Grid>
+
+            <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="2" Margin="2" ColumnSpan="2" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1" />   <!-- Top border -->
+                    <RowDefinition Height="*" />   <!-- Content -->
+                </Grid.RowDefinitions>
+
+                <!-- Top Border -->
+                <BoxView Grid.Row="0" HeightRequest="0.5" 
+                         BackgroundColor="{StaticResource Primary}" 
+                         HorizontalOptions="Fill" />
+
+                <!-- Content -->
+                <Grid Grid.Row="1">
+                    <Grid ColumnDefinitions="auto,*" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Label FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" TextColor="{StaticResource Primary}" />
+                    </Grid>
+                </Grid>
+            </Grid>
+
+        </Grid>
+        
+        <!-- Bottom Sheet for editing the Connection Details -->
+        <navigationDrawer:SfBottomSheet 
+             x:Name="BottomSheet"
+             x:FieldModifier="public"
+             CollapsedHeight="0"
+             AnimationDuration="0.5"
+             CornerRadius="15, 15, 0, 0"
+             StateChanged="BottomSheetOnStateChanged"
+             HalfExpandedRatio="0.80" ContentPadding="10">
+        </navigationDrawer:SfBottomSheet>
+    </Grid>
+</ContentPage>

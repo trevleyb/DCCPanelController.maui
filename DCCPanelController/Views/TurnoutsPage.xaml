@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    IconImageSource="turnouts_green.png"
+    Title="Turnouts"
+    ios:Page.UseSafeArea="False"
+    x:Class="DCCPanelController.Views.TurnoutsPage"
+    x:DataType="views:TurnoutsViewModel"
+    x:Name="Page"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:components="clr-namespace:DCCPanelController.Views.Components"
+    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
+    xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+    xmlns:view="clr-namespace:DCCPanelController.Views"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit"
+    xmlns:views="clr-namespace:DCCPanelController.Views"
+    xmlns:components1="clr-namespace:DCCPanelController.Views.Components">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem
+            Command="{Binding AddTurnoutCommand}"
+            IsEnabled="{Binding CanAddTurnout}"
+            IconImageSource="{Binding CanAddTurnout, Converter={StaticResource BoolToIcon}, ConverterParameter=plus_circle}"/>
+
+        <ToolbarItem
+            Command="{Binding DeleteTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
+            IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=minus_circle}"/>
+
+        <ToolbarItem Command="{Binding EditTurnoutCommand}" IsEnabled="{Binding IsTurnoutSelected}"
+                     IconImageSource="{Binding IsTurnoutSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit}"/>
+
+        <ToolbarItem Command="{Binding RefreshTurnoutsCommand}" IsEnabled="{Binding IsConnected}"
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
+
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
+            IsEnabled="{Binding IsConnectionAvailable}">
+            <ToolbarItem.IconImageSource>
+                <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IconWifiOn"/>
+                    <Binding Path="IconWifiOff"/>
+                </MultiBinding>
+            </ToolbarItem.IconImageSource>
+        </ToolbarItem>
+
+    </ContentPage.ToolbarItems>
+
+    <ContentPage.Resources>
+        <Style x:Key="SelectableItemStyle" TargetType="Grid">
+            <Setter Property="VisualStateManager.VisualStateGroups">
+                <VisualStateGroupList>
+                    <VisualStateGroup x:Name="CommonStates">
+                        <VisualState x:Name="Normal">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                        <VisualState x:Name="Selected">
+                            <VisualState.Setters>
+                                <Setter Property="BackgroundColor" Value="LightGrey"/>
+                            </VisualState.Setters>
+                        </VisualState>
+                    </VisualStateGroup>
+                </VisualStateGroupList>
+            </Setter>
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid>
+        <RefreshView IsRefreshing="{Binding IsBusy}"
+                     Command="{Binding RefreshTurnoutsCommand}">
+            <Grid>
+                <!-- IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:TurnoutsViewModel}}, x:DataType=view:TurnoutsViewModel, Path=IsConnected}"> -->
+                <CollectionView ItemsSource="{Binding Turnouts}"
+                                SelectedItem="{Binding SelectedTurnout}"
+                                SelectionMode="Single">
+
+                    <CollectionView.Header>
+                        <StackLayout>
+                            <Grid ColumnDefinitions="120,*,100">
+                                <Button
+                                    Grid.Column="0"
+                                    CommandParameter="{Binding LabelID}"
+                                    HorizontalOptions="Start"
+                                    Style="{StaticResource ColumnLabel}"
+                                    Text="{Binding ColumnLabelID}"/>
+                                <Button
+                                    Grid.Column="1"
+                                    HorizontalOptions="Start"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                    CommandParameter="{Binding LabelName}"
+                                    Style="{StaticResource ColumnLabel}"
+                                    Text="{Binding ColumnLabelName}"/>
+                                <Button
+                                    Grid.Column="2"
+                                    Command="{Binding Source={RelativeSource AncestorType={x:Type views:TurnoutsViewModel}}, Path=SortByColumnCommand}"
+                                    CommandParameter="{Binding LabelState}"
+                                    HorizontalOptions="Start"
+                                    Style="{StaticResource ColumnLabel}"
+                                    Text="{Binding ColumnLabelState}"/>
+                            </Grid>
+                            <BoxView
+                                BackgroundColor="{StaticResource Primary}"
+                                HeightRequest="1"
+                                HorizontalOptions="FillAndExpand"/>
+                        </StackLayout>
+                    </CollectionView.Header>
+
+                    <CollectionView.EmptyView>
+                        <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+                            <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
+                                <Label IsVisible="{Binding IsSupported}" Text="No Turnouts available."/>
+                                <Label IsVisible="{Binding IsNotSupported}"
+                                       Text="The current server type does not support Turnouts."/>
+                            </StackLayout>
+                        </Grid>
+                    </CollectionView.EmptyView>
+
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dataModel:Turnout">
+                            <Grid Style="{StaticResource SelectableItemStyle}">
+                                <StackLayout x:DataType="dataModel:Turnout">
+                                    <Grid ColumnDefinitions="120,*,100" Padding="5">
+                                        <Label
+                                            Grid.Column="0"
+                                            HorizontalOptions="Start"
+                                            LineBreakMode="TailTruncation"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Id}"
+                                            VerticalOptions="Center"/>
+                                        <Label
+                                            Grid.Column="1"
+                                            FontAttributes="Bold"
+                                            LineBreakMode="TailTruncation"
+                                            Style="{StaticResource MediumLabel}"
+                                            Text="{Binding Name}"
+                                            VerticalOptions="Center"/>
+                                        <components1:TurnoutStateControl
+                                            IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type views:TurnoutsViewModel}}, Path=IsConnected, x:DataType=view:TurnoutsViewModel}"
+                                            CanToggleState="true"
+                                            Grid.Column="2"
+                                            Margin="0,0,10,0"
+                                            State="{Binding State}"
+                                            StateChangedCommand="{Binding Source={RelativeSource AncestorType={x:Type views:TurnoutsViewModel}}, Path=SendTurnoutStateCommand, x:DataType=view:TurnoutsViewModel}"
+                                            Turnout="{Binding .}"/>
+                                    </Grid>
+
+                                    <BoxView
+                                        BackgroundColor="{StaticResource Primary}"
+                                        HeightRequest="1"
+                                        HorizontalOptions="FillAndExpand"/>
+                                </StackLayout>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </RefreshView>
+
+        <!-- Bottom Sheet for editing the Connection Details -->
+        <navigationDrawer:SfBottomSheet
+            x:Name="BottomSheet"
+            CornerRadius="15, 15, 0, 0"
+            HalfExpandedRatio="0.50" ContentPadding="10">
+            <navigationDrawer:SfBottomSheet.BottomSheetContent/>
+        </navigationDrawer:SfBottomSheet>
+
+    </Grid>
+</ContentPage>

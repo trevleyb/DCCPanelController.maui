@@ -4,8 +4,8 @@ using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
-using DCCPanelController.View.Actions;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.Views.Actions;
+using DCCPanelController.Views.Properties.TileProperties.EditableControls;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;

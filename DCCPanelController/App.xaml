@@ -4,7 +4,7 @@
     x:Class="DCCPanelController.App"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:converters="clr-namespace:DCCPanelController.View.Converters">
+    xmlns:converters="clr-namespace:DCCPanelController.Views.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <converters:SelectedBorderConverter x:Key="SelectedBorderConverter"/>

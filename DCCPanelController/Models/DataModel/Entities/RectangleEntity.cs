@@ -1,7 +1,7 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.Views.Properties.TileProperties.EditableControls;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 

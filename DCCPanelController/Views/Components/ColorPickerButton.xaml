@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentView
+    x:Class="DCCPanelController.Views.Components.ColorPickerButton"
+    x:DataType="components:ColorPickerButton"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:colorPickerControl="clr-namespace:DCCPanelController.View.Components"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:components="clr-namespace:DCCPanelController.Views.Components">
+
+    <Grid>
+        <Button
+            BackgroundColor="{Binding ActiveColor}"
+            BorderColor="{Binding BorderColor}"
+            BorderWidth="{Binding BorderWidth}"
+            Command="{Binding ShowDropdownCommand}"
+            CornerRadius="{Binding CornerRadius}"
+            Grid.Column="0"/>
+
+        <Label
+            FontSize="12"
+            Grid.Column="0"
+            HorizontalOptions="Start"
+            InputTransparent="True"
+            Margin="8,0,0,0"
+            TextColor="{Binding SelectedOffsetColor}"
+            Text="{Binding SelectedColorText}"
+            VerticalOptions="Center"/>
+
+        <!--  Clear button for resetting the color  -->
+        <ImageButton
+            BackgroundColor="White"
+            Command="{Binding ClearColorCommand}"
+            CornerRadius="21"
+            Grid.Column="0"
+            HorizontalOptions="End"
+            IsVisible="{Binding ShowClearColorButton}"
+            Margin="0,0,-5,0"
+            Scale="0.5"
+            Source="x_circle.png"
+            VerticalOptions="Center"/>
+    </Grid>
+</ContentView>
