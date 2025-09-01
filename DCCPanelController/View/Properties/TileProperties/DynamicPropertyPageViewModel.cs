@@ -47,7 +47,7 @@ public static class ValueComparer {
     }
 }
 
-public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertiesViewModel {
+public partial class DynamicPropertyPageViewModel : BaseViewModel {
     private readonly StackBase _container = new VerticalStackLayout();
     private readonly Dictionary<string, object?> _originalValues = new();
     private List<CommonProperty> _commonProperties = [];

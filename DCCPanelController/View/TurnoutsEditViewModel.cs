@@ -8,7 +8,7 @@ using Turnout = DCCPanelController.Models.DataModel.Turnout;
 
 namespace DCCPanelController.View;
 
-public partial class TurnoutsEditViewModel : Base.BaseViewModel, IPropertiesViewModel {
+public partial class TurnoutsEditViewModel : Base.BaseViewModel {
     [ObservableProperty] private string _title;
     [ObservableProperty] private Turnout _turnout;
     [ObservableProperty] private bool _isServerControlled;

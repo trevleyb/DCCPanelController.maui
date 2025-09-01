@@ -9,7 +9,7 @@ using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.Properties.PanelProperties;
 
-public partial class PanelPropertyViewModel : Base.BaseViewModel, IPropertiesViewModel {
+public partial class PanelPropertyViewModel : Base.BaseViewModel {
     [ObservableProperty] private int _colorGridSpan = 2; // Default to 2 columns
     [ObservableProperty] private Panel _panel;
     [ObservableProperty] private string _title;
