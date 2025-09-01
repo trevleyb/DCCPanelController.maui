@@ -90,6 +90,11 @@ public class ProfileService {
         return JsonRepository.DownloadProfile(p);
     }
 
+    public async Task<string?> DownloadProfileAsync(Profile? profile = null) {
+        var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
+        return JsonRepository.DownloadProfile(p);
+    }
+
     public byte[] DownloadProfileZip(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
         var json = JsonRepository.DownloadProfile(p);

@@ -33,14 +33,20 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     public PanelViewerViewModel(ILogger<PanelViewerViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
-        _profileService.ActiveProfileChanged += (sender, args) => {
-            Panels = null;
-            Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
-            SelectedPanel = Panels.FirstOrDefault();
-        };
+
         Panels = _profileService?.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
         PropertyChanged += OnPropertyChanged;
         SelectedPanel = Panels.FirstOrDefault();
+
+        // Refresh on the change of Panels - but do it on the main thread
+        // ------------------------------------------------------------
+        _profileService.ActiveProfileChanged += (_, __) =>
+            MainThread.BeginInvokeOnMainThread(() => {
+                Panels = null;
+                Panels = _profileService.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
+                SelectedPanel = Panels.FirstOrDefault();
+            });
+       
     }
 
     public bool ShowThumbnail => false;
@@ -57,7 +63,6 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         SelectedPanel = Panels.CreatePanel();
         Panels.Add(SelectedPanel);
         await _profileService.SaveAsync();
-        OnPropertyChanged(nameof(Panels));
     }
 
     [RelayCommand]
@@ -71,7 +76,6 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             SelectedPanel = null; //Panels.FirstOrDefault();
             await _profileService.SaveAsync();
         }
-        OnPropertyChanged(nameof(Panels));
     }
 
     [RelayCommand] private async Task DuplicatePanelAsync() {
@@ -82,7 +86,6 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
             RefreshSortOrder();
             await _profileService.SaveAsync();
         }
-        OnPropertyChanged(nameof(Panels));
     }
 
     [RelayCommand]
@@ -93,10 +96,12 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 var result = await DisplayAlertHelper.DisplayAlertAsync("Download Panel", "This allows you to download a single Panel to local storage.", "Continue", "Cancel");
                 if (result) {
                     var panelAsJson = panel.DownloadPanel();
-                    var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, $"{panel.Id ?? "Panel"}.panel.json");
+                    var fileName = string.IsNullOrEmpty(panel.Id) ? "Panel.panel.json" : $"{panel.Id}.panel.json";
+                    var location = await FileHelper.ShareFileAsync("Save Panel", panelAsJson, fileName);
+                    //var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
                     if (!string.IsNullOrEmpty(location)) {
-                        _logger.LogInformation(location);
-                        await DisplayAlertHelper.DisplayToastAlert("Panel Saved");
+                        await DisplayAlertHelper.DisplayToastAlert("Panel Downloaded");
+                        Console.WriteLine($"Panel Saved to: {location}");
                     }
                 }
             }
@@ -194,7 +199,6 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         for (var i = 0; i < Panels.Count; i++) {
             Panels[i].SortOrder = i + 1;
         }
-        OnPropertyChanged(nameof(Panels));
     }
     #endregion
 }

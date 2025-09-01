@@ -158,6 +158,7 @@
         <Grid>
             <CollectionView x:Name="PanelsCollectionView"
                             IsEnabled="{Binding IsNotLoading}"
+                            ItemSizingStrategy="MeasureAllItems"
                             SelectionMode="Single"
                             SelectedItem="{Binding SelectedPanel}"
                             ItemsSource="{Binding Panels}"

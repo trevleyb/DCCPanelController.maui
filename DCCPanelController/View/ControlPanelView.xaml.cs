@@ -32,6 +32,9 @@ public partial class ControlPanelView {
     private readonly object _tapLock = new();
     private int _currentSelectionIndex;
 
+    [ObservableProperty] private bool _isPanelDrawing = false;
+    private bool _pendingFirstDraw = false;
+    
     private int _dragStartCol;
     private int _dragStartRow;
     private int _lastDragCol;
@@ -44,8 +47,6 @@ public partial class ControlPanelView {
     private Timer? _tapTimer;
     private double _viewHeight;
     private double _viewWidth;
-
-    [ObservableProperty] private bool _isPanelDrawing;
 
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
@@ -80,6 +81,7 @@ public partial class ControlPanelView {
     private void OnTileSelected(int tapCount) {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
+    
     #endregion
 
     #region Grid Management
@@ -120,21 +122,22 @@ public partial class ControlPanelView {
     private async Task DrawPanel(bool forceRefresh = false,
                                  [CallerMemberName] string memberName = "",
                                  [CallerLineNumber] int sourceLineNumber = 0) {
-        //
+
+        if (Panel is null || IsPanelDrawing) return;
+        // Console.WriteLine($"DrawPanel: {Panel?.Id}/{Panel?.Guid} | {MainGrid.Width}w x {MainGrid.Height}h | Pending={_pendingFirstDraw} | {memberName}@{sourceLineNumber} ");
+        
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
         // -------------------------------------------------------------------------
-        if (Panel is null || Panel.IsRefreshing) return;
         if (MainGrid.Width < 1.0 || MainGrid.Height < 1.0) return;
         if (!forceRefresh && !HasGridSizeChanged(MainGrid.Width, MainGrid.Height)) return;
-
         (StartCol, StartRow, EndCol, EndRow) = (-1, -1, 0, 0);
 
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
         try {
-            Panel!.IsRefreshing = true;
+            IsPanelDrawing = true;
             await Task.Delay(10); // Yield to allow UI to update
 
             ClearAllSelectedTiles();
@@ -172,7 +175,7 @@ public partial class ControlPanelView {
                 DrawGrid();
             }
         } finally {
-            Panel!.IsRefreshing = false;
+            IsPanelDrawing = false;
         }
     }
 

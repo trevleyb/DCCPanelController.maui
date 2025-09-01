@@ -227,13 +227,23 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     [RelayCommand]
     private async Task DownloadSettingsAsync() {
         try {
-            var filePath = await PromptUserForSaveLocation();
-            if (!string.IsNullOrEmpty(filePath)) {
-                var saveFile = Path.Combine(filePath, "dccpanel.settings");
-                var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
-                await SaveJsonToFileAsync(saveFile, jsonBytes);
-                await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
+            var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
+            if (result) {
+               var saveFile = $"{Profile.ProfileName}.profile.json";
+               var jsonBytes = await ProfileService.DownloadProfileAsync(Profile);
+               var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
+               await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
+               Console.WriteLine($"Profile Saved to: {saveFile}");
             }
+
+            // var filePath = await PromptUserForSaveLocation();
+            // if (!string.IsNullOrEmpty(filePath)) {
+            //     var saveFile = Path.Combine(filePath, $"{Profile.ProfileName}.profile.json");
+            //     var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
+            //     await SaveJsonToFileAsync(saveFile, jsonBytes);
+            //     await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
+            //     Console.WriteLine($"Profile Saved to: {saveFile}");
+            // }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
         }

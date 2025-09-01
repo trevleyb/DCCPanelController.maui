@@ -4,6 +4,28 @@ using CommunityToolkit.Maui.Storage;
 namespace DCCPanelController.Helpers;
 
 public static class FileHelper {
+
+    public static async Task<string?> ShareFileAsync(string? text, string? content, string fileName, Microsoft.Maui.Controls.View? parent = null) {
+        try {
+            var tempPath = Path.Combine(FileSystem.CacheDirectory, fileName);
+            using (var fs = File.Open(tempPath, FileMode.Create, FileAccess.Write, FileShare.None)) {
+                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+                if (stream.CanSeek) stream.Position = 0;
+                await stream.CopyToAsync(fs);
+            }
+
+            var shareTitle = text ?? "Export File"; 
+            var shareFile = new ShareFile(tempPath);
+            var shareRequest = new ShareFileRequest(title: shareTitle, file: shareFile);
+            if (parent is not null) shareRequest.PresentationSourceBounds = parent.Bounds;
+            await Share.RequestAsync(shareRequest);
+            return tempPath;
+        } catch (Exception ex) {
+            Console.WriteLine($"Error saving file: {ex.Message}");
+            return null;
+        }
+    }
+
     /// <summary>
     ///     Prompts the user to choose a location to save the file and writes the specified content to that location.
     /// </summary>
@@ -12,7 +34,7 @@ public static class FileHelper {
             // Convert the content into a MemoryStream
             if (content is not null) {
                 using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
-                //var fileSaver = FileSaver.SaveAsync()   .Default;
+                stream.Position = 0;
                 var fileResult = await FileSaver.SaveAsync(fileName, stream, CancellationToken.None);
                 return fileResult.FilePath;
             }
