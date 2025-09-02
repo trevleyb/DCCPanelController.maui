@@ -402,6 +402,7 @@ public partial class ControlPanelView {
         // what we should do. Either move the tile to this position, or clone the selected tile
         else {
             Console.WriteLine("MOVE OR COPY TILES");
+            HandleDoubleTapEmptyCellMoveOrCopy(tapTimerState);
         }
     }
 
@@ -893,6 +894,130 @@ public partial class ControlPanelView {
 
         foreach (var tile in unselectedTilesInRange) MarkTileSelected(tile);
         foreach (var tile in selectedTilesOutsideRange) MarkTileUnSelected(tile);
+    }
+    #endregion
+
+    #region Move or Copy Selected
+    private void HandleDoubleTapEmptyCellMoveOrCopy(TapTimerState tap) {
+        var anchorCol = tap.Col;
+        var anchorRow = tap.Row;
+
+        // Must tap an empty cell to trigger move/copy by requirement
+        if (IsTileInGrid(anchorCol, anchorRow)) return;
+        if (_selectedTiles.Count == 0) return; // nothing to move/copy
+
+        // Only allow recognized modes
+        if (EditMode is not (EditModeEnum.Move or EditModeEnum.Copy)) return;
+
+        if (!CanPlaceSelectionAt(anchorCol, anchorRow, EditMode)) {
+            // Optional: briefly flash invalid destination rectangles if you want UX feedback
+            Console.WriteLine("Cannot place selection: destination blocked or out of bounds");
+            return;
+        }
+
+        if (EditMode == EditModeEnum.Move) {
+            PerformMoveSelection(anchorCol, anchorRow);
+        } else {
+            PerformCopySelection(anchorCol, anchorRow);
+        }
+    }
+
+    // Move the whole selection so top-left lands at anchorCol/Row
+    private void PerformMoveSelection(int anchorCol, int anchorRow) {
+        if (_selectedTiles.Count == 0) return;
+        var (minCol, minRow) = GetSelectionTopLeft()!.Value;
+
+        // Move: update entity rows/cols in-place, then refresh grid positions
+        UnMarkRotatedSelectedTiles();
+        foreach (var tile in _selectedTiles) {
+            //UnHighlightCell(tile);
+
+            var e = tile.Entity;
+            e.Col = anchorCol + (e.Col - minCol);
+            e.Row = anchorRow + (e.Row - minRow);
+            SetTileGridPosition(tile);
+            tile.ForceRedraw();
+            OnTileChanged(tile);
+            
+            //HighlightCell(tile, CellHighlightAction.Selected);
+        }
+        ReMarkRotatedSelectedTiles();
+    }
+
+    // Copy the whole selection to anchorCol/Row (select the copies)
+    private void PerformCopySelection(int anchorCol, int anchorRow) {
+        
+        if (_selectedTiles.Count == 0 || Panel is null) return;
+        var (minCol, minRow) = GetSelectionTopLeft()!.Value;
+
+        UnMarkRotatedSelectedTiles();
+        var tilesToCopy = _selectedTiles.ToList();
+        foreach (var tile in tilesToCopy) {
+            var e = tile.Entity;
+            var newEntity = Panel.CreateEntityFrom(e);
+            newEntity.Col = anchorCol + (e.Col - minCol);
+            newEntity.Row = anchorRow + (e.Row - minRow);
+            Panel.AddEntity(newEntity);
+            OnTileChanged(tile);
+        }
+        ReMarkRotatedSelectedTiles();
+    }
+    
+    // Returns the top-left (min col,row) of the current selection.
+    // Returns null if no tiles are selected.
+    private (int minCol, int minRow)? GetSelectionTopLeft() {
+        if (_selectedTiles.Count == 0) return null;
+        var minCol = _selectedTiles.Min(t => t.Entity.Col);
+        var minRow = _selectedTiles.Min(t => t.Entity.Row);
+        return (minCol, minRow);
+    }
+
+    // Axis-aligned rectangle overlap test
+    private static bool RectsOverlap(int aCol, int aRow, int aW, int aH,
+                                     int bCol, int bRow, int bW, int bH) {
+        return aCol < bCol + bW && aCol + aW > bCol &&
+               aRow < bRow + bH && aRow + aH > bRow;
+    }
+
+    // Is the destination area (col,row,width,height) fully inside the panel?
+    private bool InBounds(int col, int row, int w, int h) {
+        return col >= 0 && row >= 0 &&
+               w >= 1 && h >= 1 &&
+               col + w <= Cols &&
+               row + h <= Rows;
+    }
+
+    // Are ALL destination rectangles for the (copy/move) valid and free?
+    // - anchorCol/Row = where the "top-left" of the selection will land
+    // - If mode == Move we ignore collisions with the currently selected tiles (because they vacate)
+    private bool CanPlaceSelectionAt(int anchorCol, int anchorRow, EditModeEnum mode) {
+        if (_selectedTiles.Count == 0) return false;
+
+        var selTopLeft = GetSelectionTopLeft();
+        if (selTopLeft is null) return false;
+        var (minCol, minRow) = selTopLeft.Value;
+
+        // Snapshot of existing tiles to test collisions against
+        var existing = DynamicGrid.Children.OfType<ITile>().ToList();
+
+        foreach (var tile in _selectedTiles) {
+            var e = tile.Entity;
+
+            // Compute destination top-left for this tile (preserve relative offset)
+            var destCol = anchorCol + (e.Col - minCol);
+            var destRow = anchorRow + (e.Row - minRow);
+
+            // Bounds check
+            if (!InBounds(destCol, destRow, e.Width, e.Height)) return false;
+
+            // Collision check against *other* tiles
+            foreach (var other in existing) {
+                if (mode == EditModeEnum.Move && _selectedTiles.Contains(other)) continue; // selected tiles are moving away; ignore their current rects
+                var oe = other.Entity;
+                if (RectsOverlap(destCol, destRow, e.Width, e.Height, oe.Col, oe.Row, oe.Width, oe.Height)) return false;
+            }
+        }
+        return true;
     }
     #endregion
 
