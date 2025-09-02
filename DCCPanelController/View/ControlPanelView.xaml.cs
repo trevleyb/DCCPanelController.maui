@@ -13,7 +13,6 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.PathFinder;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
-using GameplayKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
@@ -25,7 +24,7 @@ namespace DCCPanelController.View;
 
 [ObservableObject]
 public partial class ControlPanelView {
-    private const int DoubleTapThreshold = 150;
+    private const int DoubleTapThreshold = 200;
 
     private readonly ILogger<ControlPanelView> _logger;
     private readonly PathTracingService _pathTracer = new();
@@ -34,6 +33,18 @@ public partial class ControlPanelView {
     private int _currentSelectionIndex;
 
     [ObservableProperty] private bool _isPanelDrawing = false;
+
+    private enum GestureOwner { None, Tap, LongPress, DragSelect }
+
+    private GestureOwner _gestureOwner = GestureOwner.None;
+    private bool _dragSelectionActive; // true once pointer travel passes slop and we’re selecting
+    private DateTime _suppressTapsUntilUtc = DateTime.MinValue;
+    private const double DragSlopPx = 6; // adjust as needed (logical pixels)
+    private Point? _pointerDownPos;
+    private TapGestureRecognizer? _gridTap;
+    private TouchBehavior? _gridTouch;
+    private bool _longPressActive;
+    private bool _lpInvokedThisPress; // guard: fire LP once per press
 
     private int _dragStartCol;
     private int _dragStartRow;
@@ -250,21 +261,45 @@ public partial class ControlPanelView {
 
     private async void DynamicGridLongPress(object? sender, LongPressCompletedEventArgs e) {
         try {
-            Console.WriteLine($"LONG PRESS: { StartCol}, {StartRow}");
+            if (_dragSelectionActive) return; // drag-select wins
+            if (_lpInvokedThisPress) return;  // already handled for this press
+
+            _lpInvokedThisPress = true; // mark handled
+            _longPressActive = true;
+            _gestureOwner = GestureOwner.LongPress;
+
+            // Hard-disable Tap & LongPress to prevent repeat callbacks on hold
+            // _gridTap?.SetValue(VisualElement.IsEnabledProperty, false);
+            // _gridTouch?.SetValue(VisualElement.IsEnabledProperty, false);
+
+            CancelTapTimer();
+            SuppressTapsFor(500); // eat any stray 'Tapped' on finger up
+
             var tapTimerState = new TapTimerState(sender, (StartCol, StartRow));
             if (DesignMode) OnDesignModeLongPress(tapTimerState);
             else OnOperateModeLongPress(tapTimerState);
-        } catch {
-            Console.WriteLine("Error in long press");
+        } catch (Exception ex) {
+            Console.WriteLine("Error in long press: " + ex.Message);
         }
+
+        // Re-enable in PointerReleased/Exited
     }
 
     private async void DynamicGridTapped(object? sender, TappedEventArgs e) {
+        if (_longPressActive) return;
+        if (TapsSuppressed()) return;                        // long-press just finished, ignore stray tap
+        if (_gestureOwner == GestureOwner.LongPress) return; // long-press owns this sequence
+        if (_dragSelectionActive) return;                    // drag-select in progress takes precedence
+
         lock (_tapLock) {
             var pos = GetGridPosition(e.GetPosition(DynamicGrid)) ?? (-1, -1);
             _tapCount++;
+            _gestureOwner = GestureOwner.Tap; // claim ownership as tap (tentative)
             _tapTimer?.Dispose();
-            _tapTimer = new Timer(DynamicGridTapTimerElapsed, new TapTimerState(sender, pos), DoubleTapThreshold, Timeout.Infinite);
+            _tapTimer = new Timer(DynamicGridTapTimerElapsed,
+                                  new TapTimerState(sender, pos),
+                                  DoubleTapThreshold,
+                                  Timeout.Infinite);
         }
     }
 
@@ -279,13 +314,11 @@ public partial class ControlPanelView {
             _tapTimer = null;
         }
 
+        // If long-press took over during the wait, ignore the pending tap(s)
+        if (_gestureOwner != GestureOwner.Tap) return;
+
         // Dispatch back to UI thread
         MainThread.BeginInvokeOnMainThread(() => {
-            var pos = tapTimerState.Position;
-            var tilesInGrid = IsTileInGrid(pos);
-            var interactive = IsInteractiveTileInGrid(pos);
-            Console.WriteLine($"TAPPED: {count} tiles={tilesInGrid} interactive={interactive} @ {pos.Col},{pos.Row} ");
-
             switch (count) {
             case 1:
                 if (DesignMode) OnDesignModeSingleTap(tapTimerState);
@@ -301,11 +334,13 @@ public partial class ControlPanelView {
                 Console.WriteLine("Tapped 3 times");
                 break;
             }
+
+            _gestureOwner = GestureOwner.None; // release ownership
         });
     }
 
     private async void OnDesignModeSingleTap(TapTimerState tapTimerState) {
-        Console.WriteLine($"OnDesignModeSingleTap @{tapTimerState.Col},{tapTimerState.Row}");
+        Console.WriteLine($"SINGLE TAP: DESIGN MODE => @{tapTimerState.Col},{tapTimerState.Row}");
 
         // look up the tile if it is in this grid
         // -------------------------------------------------------------------
@@ -352,7 +387,7 @@ public partial class ControlPanelView {
     }
 
     private async void OnDesignModeDoubleTap(TapTimerState tapTimerState) {
-        Console.WriteLine($"OnDesignModeDOUBLETap @{tapTimerState.Col},{tapTimerState.Row}");
+        Console.WriteLine($"DOUBLE TAP: DESIGN MODE => @{tapTimerState.Col},{tapTimerState.Row}");
         var tile = TilesInGrid(tapTimerState.Position).FirstOrDefault();
 
         // If we double-tapped on an actual tile, then unmark all tiles and mark this one
@@ -366,16 +401,16 @@ public partial class ControlPanelView {
         // If there was no tile in this grid position, then use the Edit Mode to determine 
         // what we should do. Either move the tile to this position, or clone the selected tile
         else {
-            Console.WriteLine("Add code here to MOVE or COPY the tiles");
+            Console.WriteLine("MOVE OR COPY TILES");
         }
     }
 
     private async void OnDesignModeLongPress(TapTimerState tapTimerState) {
-        Console.WriteLine($"OnDesignModeLongPress @{tapTimerState.Col},{tapTimerState.Row}");
+        Console.WriteLine($"LONG PRESS: DESIGN MODE => @{tapTimerState.Col},{tapTimerState.Row}");
     }
-    
+
     private async void OnOperateModeSingleTap(TapTimerState tapTimerState) {
-        Console.WriteLine($"OnOperateModeSingleTap @{tapTimerState.Col},{tapTimerState.Row}");
+        Console.WriteLine($"SINGLE TAP: OPERATE MODE => @{tapTimerState.Col},{tapTimerState.Row}");
 
         // Find the tile that was tapped and raise an event for that tile. 
         // In operating mode, it can only be an interactive tile 
@@ -385,7 +420,7 @@ public partial class ControlPanelView {
     }
 
     private async void OnOperateModeDoubleTap(TapTimerState tapTimerState) {
-        Console.WriteLine($"OnOperateModeDOUBLETap @{tapTimerState.Col},{tapTimerState.Row}");
+        Console.WriteLine($"DOUBLE TAP: OPERATE MODE => @{tapTimerState.Col},{tapTimerState.Row}");
 
         // Find the tile that was tapped and raise an event for that tile. 
         // In operating mode, it can only be an interactive tile 
@@ -395,7 +430,7 @@ public partial class ControlPanelView {
     }
 
     private async void OnOperateModeLongPress(TapTimerState tapTimerState) {
-        Console.WriteLine($"OnOperateModeLONGPress @{tapTimerState.Col},{tapTimerState.Row}");
+        Console.WriteLine($"LONG PRESS: OPERATE MODE => @{tapTimerState.Col},{tapTimerState.Row}");
         try {
             var tile = TrackTilesInGrid(tapTimerState.Position).FirstOrDefault();
             if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
@@ -435,6 +470,7 @@ public partial class ControlPanelView {
     }
 
     private List<ITile> InteractiveTilesInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row);
+
     private List<ITile> InteractiveTilesInGrid(int col, int row) {
         return DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity is IInteractiveEntity &&
@@ -445,6 +481,7 @@ public partial class ControlPanelView {
     }
 
     private List<ITile> TrackTilesInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row);
+
     private List<ITile> TrackTilesInGrid(int col, int row) {
         return DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity is ITrackEntity &&
@@ -754,43 +791,36 @@ public partial class ControlPanelView {
     }
 
     private void DynamicGridPointerPressed(object? sender, PointerEventArgs e) {
-        Console.WriteLine($"Mask: {e?.PlatformArgs?.GestureRecognizer.ButtonMask} Modifier: {e?.PlatformArgs?.GestureRecognizer.ModifierFlags} Touches: {e?.PlatformArgs?.GestureRecognizer.NumberOfTouches} String: {e?.PlatformArgs?.GestureRecognizer.ToString()}");
-        if (e is null) return;
+        _lpInvokedThisPress = false;
+        _longPressActive = false;
 
         var cell = GetGridPosition(e.GetPosition(DynamicGrid));
         if (cell is { } gridCell) {
-            // First, work out if this is on an existing tile
-            // in which case we just ignore this and do nothing
-            // ------------------------------------------------
             if (IsTileInGrid(gridCell.Col, gridCell.Row)) return;
 
-            StartCol = gridCell.Col;
-            StartRow = gridCell.Row;
-            EndCol = gridCell.Col;
-            EndRow = gridCell.Row;
+            StartCol = EndCol = gridCell.Col;
+            StartRow = EndRow = gridCell.Row;
+            _pointerDownPos = e.GetPosition(DynamicGrid);
+            _dragSelectionActive = false; // not active yet—wait for slop
             IsSelecting = true;
         }
-    }
-
-    private void DynamicGridPointerExited(object? sender, PointerEventArgs e) {
-        if (IsSelecting) {
-            RemoveSelectorView();
-            ClearAllSelectedTiles();
-        }
-        IsSelecting = false;
-    }
-
-    private void DynamicGridPointerReleased(object? sender, PointerEventArgs e) {
-        if (IsSelecting) {
-            RemoveSelectorView();
-        }
-        IsSelecting = false;
     }
 
     private void DynamicGridPointerMoved(object? sender, PointerEventArgs e) {
         if (!IsSelecting) return;
 
-        var cell = GetGridPosition(e.GetPosition(DynamicGrid));
+        var pos = e.GetPosition(DynamicGrid);
+        if (!_dragSelectionActive && _pointerDownPos is { } p0 && pos is { } p1) {
+            var dx = Math.Abs(p1.X - p0.X);
+            var dy = Math.Abs(p1.Y - p0.Y);
+            if (dx >= DragSlopPx || dy >= DragSlopPx) {
+                _dragSelectionActive = true;
+                _gestureOwner = GestureOwner.DragSelect; // drag-select owns the sequence now
+                CancelTapTimer();                        // cancel any pending taps
+            }
+        }
+
+        var cell = GetGridPosition(pos);
         if (cell is { } gridCell) {
             EndCol = gridCell.Col;
             EndRow = gridCell.Row;
@@ -805,6 +835,43 @@ public partial class ControlPanelView {
             UpdateSelectorView(minCol, minRow, maxCol, maxRow);
             MarkTilesSelectedInGrid(minCol, minRow, maxCol, maxRow);
         }
+    }
+
+    private void DynamicGridPointerReleased(object? sender, PointerEventArgs e) {
+        if (IsSelecting) RemoveSelectorView();
+
+        _gestureOwner = GestureOwner.None;
+        _dragSelectionActive = false;
+        _pointerDownPos = null;
+        IsSelecting = false;
+
+        if (_longPressActive) {
+            SuppressTapsFor(500);
+            _longPressActive = false;
+        }
+
+        // Re-enable recognizers and clear LP guard regardless
+        // _gridTap?.SetValue(VisualElement.IsEnabledProperty, true);
+        // _gridTouch?.SetValue(VisualElement.IsEnabledProperty, true);
+        _lpInvokedThisPress = false;
+    }
+
+    private void DynamicGridPointerExited(object? sender, PointerEventArgs e) {
+        if (IsSelecting) {
+            RemoveSelectorView();
+            ClearAllSelectedTiles();
+        }
+
+        _gestureOwner = GestureOwner.None;
+        _dragSelectionActive = false;
+        _pointerDownPos = null;
+        IsSelecting = false;
+
+        _longPressActive = false;
+
+        //_gridTap?.SetValue(VisualElement.IsEnabledProperty, true);
+        //_gridTouch?.SetValue(VisualElement.IsEnabledProperty, true);
+        _lpInvokedThisPress = false;
     }
 
     private void MarkTilesSelectedInGrid(int startCol, int startRow, int endCol, int endRow) {
@@ -843,6 +910,10 @@ public partial class ControlPanelView {
             args.Cancel = true;
             return;
         }
+
+        _gestureOwner = GestureOwner.DragSelect; // treat tile drag similar to owning the sequence
+        CancelTapTimer();
+        SuppressTapsFor(200);
 
         args.Data.Properties.Add("Tile", tile);
         args.Data.Properties.Add("Source", "Panel");
@@ -1112,6 +1183,8 @@ public partial class ControlPanelView {
         if (bindable is ControlPanelView control) {
             control.ShowGrid = control.DesignMode;
             control.DynamicGrid.GestureRecognizers.Clear();
+            control.Behaviors.Clear();
+
             if (control.DesignMode) {
                 // In design mode we need to support drag and drop for the tiles on the screen.
                 // ----------------------------------------------------------------------------
@@ -1131,13 +1204,15 @@ public partial class ControlPanelView {
 
             // In design mode, also support tapping anywhere that is not a tile so we clear selections.
             // ----------------------------------------------------------------------------
-            var tapRecogniser = new TapGestureRecognizer();
-            tapRecogniser.Tapped += control.DynamicGridTapped;
-            control.DynamicGrid.GestureRecognizers.Add(tapRecogniser); 
+            control._gridTap = new TapGestureRecognizer();
+            control._gridTap.Tapped += control.DynamicGridTapped;
+            control.DynamicGrid.GestureRecognizers.Add(control._gridTap);
 
-            var touchBehavior = new TouchBehavior();
-            touchBehavior.LongPressCompleted += control.DynamicGridLongPress;
-            control.DynamicGrid.Behaviors.Add(touchBehavior);
+            // Long-press via TouchBehavior (keep a reference)
+            control._gridTouch = new TouchBehavior();
+            control._gridTouch.LongPressCompleted += control.DynamicGridLongPress;
+            control.DynamicGrid.Behaviors.Add(control._gridTouch);
+
             await control.DrawPanel();
         }
     }
@@ -1258,6 +1333,20 @@ public partial class ControlPanelView {
             Row = row;
             Position = (col, row);
         }
+    }
+
+    private void CancelTapTimer() {
+        lock (_tapLock) {
+            _tapCount = 0;
+            _tapTimer?.Dispose();
+            _tapTimer = null;
+        }
+    }
+
+    private bool TapsSuppressed() => DateTime.UtcNow < _suppressTapsUntilUtc;
+
+    private void SuppressTapsFor(int ms) {
+        _suppressTapsUntilUtc = DateTime.UtcNow.AddMilliseconds(ms);
     }
     #endregion
 }
