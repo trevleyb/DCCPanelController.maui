@@ -52,7 +52,7 @@
 
                         <view:ControlPanelView
                             IsVisible="true"
-                            InputTransparent="False"
+                            InputTransparent="True"
                             BackgroundColor="{Binding PanelBackgroundColor}"
                             HorizontalOptions="Fill"
                             Panel="{Binding .}"
@@ -90,16 +90,17 @@
                 Margin="5"
                 Background="#FAFAFA"
                 Padding="5">
-                <Grid>
+                <Grid InputTransparent="False">
                     <StackLayout>
                         <Border
                             x:Name="VerticalBorder"
                             Stroke="#CCCCCC" StrokeThickness="1"
                             Margin="5"
+                            InputTransparent="False"
                             Background="{Binding DisplayBackgroundColor}">
                             <Grid>
                                 <view:ControlPanelView
-                                    InputTransparent="False"
+                                    InputTransparent="True"
                                     IsVisible="true"
                                     ShowGrid="false"
                                     DesignMode="False"
