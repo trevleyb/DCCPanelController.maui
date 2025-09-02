@@ -87,7 +87,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     public bool CanEditProperties => SetCanEditProperties() && !IsNavigationDrawerOpen;
-    public bool CanSetModes => SingleOrNoEntitiesSelected && !IsNavigationDrawerOpen;
+    public bool CanSetModes => !IsNavigationDrawerOpen;
     public bool CanRotateTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
     public bool CanDeleteTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
     public bool CanSavePanel => HavePropertiesChanged && !IsNavigationDrawerOpen;
@@ -180,23 +180,28 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
-            _panelView.UnMarkRotatedSelectedTiles();
+            _panelView.UnMarkSelectedCells();
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
-            _panelView.ReMarkRotatedSelectedTiles();
+            _panelView.MarkSelectedCells();
         }
         CheckIfPanelChanged();
     }
 
     [RelayCommand]
     private async Task SwitchModeAsync() {
-        EditMode = EditMode switch {
-            EditModeEnum.Move => EditModeEnum.Copy,
-            EditModeEnum.Copy => EditModeEnum.Size,
-            EditModeEnum.Size => EditModeEnum.Move,
-            _                 => EditModeEnum.Move
-        };
+        if (SingleOrNoEntitiesSelected) {
+            EditMode = EditMode switch {
+                EditModeEnum.Move => EditModeEnum.Copy,
+                EditModeEnum.Copy => EditModeEnum.Size,
+                EditModeEnum.Size => EditModeEnum.Move,
+                _                 => EditModeEnum.Move
+            };
+        } else {
+            // If multiple items selected, then only MOVE or COPY allowed
+            EditMode = EditMode == EditModeEnum.Move ? EditModeEnum.Copy : EditModeEnum.Move;
+        }
     }
 
     [RelayCommand]

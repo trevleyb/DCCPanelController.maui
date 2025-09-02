@@ -211,7 +211,7 @@ public partial class ControlPanelView {
     /// </summary>
     /// <returns>Returns an instance of the created tile or null if it could not create one. </returns>
     private ITile? AddEntityToGrid(Entity entity) {
-        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", false)) {
+        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", true)) {
             var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
             if (tile is not null) {
                 tile.TileChanged += TileOnPropertiesChanged;
@@ -245,7 +245,7 @@ public partial class ControlPanelView {
         if (tile is ContentView view) {
             view.Behaviors.Clear();
             view.GestureRecognizers.Clear();
-            view.InputTransparent = true;
+            view.InputTransparent = false;
 
             // If design mode, we need to be able to drag the tiles around on the design surface
             // but not if we are in operating mode. 
@@ -402,7 +402,7 @@ public partial class ControlPanelView {
         // what we should do. Either move the tile to this position, or clone the selected tile
         else {
             Console.WriteLine("MOVE OR COPY TILES");
-            HandleDoubleTapEmptyCellMoveOrCopy(tapTimerState);
+            await HandleDoubleTapEmptyCellMoveOrCopy(tapTimerState);
         }
     }
 
@@ -673,16 +673,40 @@ public partial class ControlPanelView {
     ///     without calling Mark/UnMark as we do not want to event that the
     ///     tile was marked or unmarked.
     /// </summary>
-    public void ReMarkRotatedSelectedTiles() {
-        foreach (var tile in _selectedTiles.Where(x => x.Entity.Width > 1 || x.Entity.Height > 1)) {
-            HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
+    public void MarkSelectedCells(CellHighlightAction action = CellHighlightAction.Selected) => MarkTiles(_selectedTiles, action);
+    public void MarkTiles(IEnumerable<ITile> tiles, CellHighlightAction action = CellHighlightAction.Selected) {
+        var rects = tiles.Select(t => (t.Entity.Col, t.Entity.Row, t.Entity.Width, t.Entity.Height));
+        MarkCells(rects, action); 
+    }
+    public void MarkCells(IEnumerable<(int col, int row, int width, int height)> tiles, CellHighlightAction action = CellHighlightAction.Selected) {
+        var iEnumerable = tiles.ToList();
+        foreach (var tile in iEnumerable.Where(x => x.width >= 1 || x.height >= 1)) {
+            HighlightCell(tile.col, tile.row, tile.width, tile.height, action);
         }
     }
 
-    public void UnMarkRotatedSelectedTiles() {
-        foreach (var tile in _selectedTiles.Where(x => x.Entity.Width > 1 || x.Entity.Height > 1)) {
-            UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
+    public void UnMarkSelectedCells() => UnMarkTiles(_selectedTiles);
+    public void UnMarkTiles(IEnumerable<ITile> tiles) {
+        var rects = tiles.Select(t => (t.Entity.Col, t.Entity.Row, t.Entity.Width, t.Entity.Height));
+        UnMarkCells(rects); 
+    }
+    public void UnMarkCells(IEnumerable<(int col, int row, int width, int height)> tiles) {
+        var iEnumerable = tiles.ToList();
+        foreach (var tile in iEnumerable.Where(x => x.width >= 1 || x.height >= 1)) {
+            UnHighlightCell(tile.col, tile.row);
         }
+    }
+
+    public void UnMarkAllTiles() {
+        var children = GetCellHighlights();
+        foreach (var child in children) DynamicGrid.Remove(child);
+    }
+    
+    public void ReMarkSelectedCells() => ReMarkTiles(_selectedTiles);
+    public void ReMarkTiles(IEnumerable<ITile> tiles) {
+        var iEnumerable = tiles.ToList();
+        UnMarkTiles(iEnumerable);
+        MarkTiles(iEnumerable);
     }
 
     /// <summary>
@@ -690,23 +714,16 @@ public partial class ControlPanelView {
     /// </summary>
     public void ClearAllSelectedTiles() {
         foreach (var tile in _selectedTiles) MarkTileUnSelected(tile);
-        var children = DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
+        var children = GetCellHighlights();
         foreach (var child in children) DynamicGrid.Remove(child);
         _selectedTiles.Clear();
         OnTileSelected(0);
     }
 
-    /// <summary>
-    ///     Only highlight a cell if we are in Design Mode
-    /// </summary>
-    public void HighlightCell(ITile tile, CellHighlightAction action) {
-        HighlightCell(tile.Entity, action);
-    }
-
-    public void HighlightCell(Entity entity, CellHighlightAction action) {
-        HighlightCell(entity.Col, entity.Row, entity.Width, entity.Height, action);
-    }
-
+    private List<IView> GetCellHighlights() => DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
+    
+    public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity, action);
+    public void HighlightCell(Entity entity, CellHighlightAction action) => HighlightCell(entity.Col, entity.Row, entity.Width, entity.Height, action);
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
 
@@ -717,6 +734,7 @@ public partial class ControlPanelView {
             CellHighlightAction.DragValid   => Colors.Green,
             CellHighlightAction.DragInvalid => Colors.Red,
             CellHighlightAction.Selecting   => Colors.LightSkyBlue,
+            CellHighlightAction.Error       => Colors.Red,
             _                               => Colors.Red
         };
 
@@ -754,7 +772,7 @@ public partial class ControlPanelView {
 
     public void UnHighlightCell(int col, int row) {
         if (!DesignMode) return;
-        var children = DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
+        var children = GetCellHighlights();
         foreach (var child in children.Where(child => DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col)) {
             DynamicGrid.Remove(child);
         }
@@ -898,20 +916,37 @@ public partial class ControlPanelView {
     #endregion
 
     #region Move or Copy Selected
-    private void HandleDoubleTapEmptyCellMoveOrCopy(TapTimerState tap) {
+    /// <summary>
+    /// Entry point for a MOVE ot COPY operation on a Double-Click
+    /// </summary>
+    private async Task HandleDoubleTapEmptyCellMoveOrCopy(TapTimerState tap) {
         var anchorCol = tap.Col;
         var anchorRow = tap.Row;
 
         // Must tap an empty cell to trigger move/copy by requirement
+        // -----------------------------------------------------------
         if (IsTileInGrid(anchorCol, anchorRow)) return;
         if (_selectedTiles.Count == 0) return; // nothing to move/copy
 
         // Only allow recognized modes
         if (EditMode is not (EditModeEnum.Move or EditModeEnum.Copy)) return;
 
-        if (!CanPlaceSelectionAt(anchorCol, anchorRow, EditMode)) {
-            // Optional: briefly flash invalid destination rectangles if you want UX feedback
-            Console.WriteLine("Cannot place selection: destination blocked or out of bounds");
+        var placeAt = CanPlaceSelectionAt(anchorCol, anchorRow, EditMode);
+        if (!placeAt.isInBounds) {
+            MainThread.BeginInvokeOnMainThread(async void () => {
+                try {
+                    UnMarkAllTiles();
+                    foreach (var cell in placeAt.bounds) {
+                        HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);;;
+                    }
+                    await Task.Yield();
+                    await Task.Delay(150);
+                    UnMarkAllTiles();
+                    ReMarkSelectedCells();
+                } catch (Exception e) {
+                    Console.WriteLine("Error marking tiles in Error: " + e.Message);
+                }
+            });
             return;
         }
 
@@ -922,35 +957,34 @@ public partial class ControlPanelView {
         }
     }
 
-    // Move the whole selection so top-left lands at anchorCol/Row
+    /// <summary>
+    /// Perform a MOVE operation on the selected tiles
+    /// </summary>
     private void PerformMoveSelection(int anchorCol, int anchorRow) {
         if (_selectedTiles.Count == 0) return;
         var (minCol, minRow) = GetSelectionTopLeft()!.Value;
 
         // Move: update entity rows/cols in-place, then refresh grid positions
-        UnMarkRotatedSelectedTiles();
+        // -------------------------------------------------------------------
+        UnMarkSelectedCells();
         foreach (var tile in _selectedTiles) {
-            //UnHighlightCell(tile);
-
             var e = tile.Entity;
             e.Col = anchorCol + (e.Col - minCol);
             e.Row = anchorRow + (e.Row - minRow);
             SetTileGridPosition(tile);
             tile.ForceRedraw();
             OnTileChanged(tile);
-            
-            //HighlightCell(tile, CellHighlightAction.Selected);
         }
-        ReMarkRotatedSelectedTiles();
+        MarkSelectedCells();
     }
 
-    // Copy the whole selection to anchorCol/Row (select the copies)
+    /// <summary>
+    /// Perform a COPY operation on the selected tiles
+    /// </summary>
     private void PerformCopySelection(int anchorCol, int anchorRow) {
-        
         if (_selectedTiles.Count == 0 || Panel is null) return;
         var (minCol, minRow) = GetSelectionTopLeft()!.Value;
 
-        UnMarkRotatedSelectedTiles();
         var tilesToCopy = _selectedTiles.ToList();
         foreach (var tile in tilesToCopy) {
             var e = tile.Entity;
@@ -960,11 +994,15 @@ public partial class ControlPanelView {
             Panel.AddEntity(newEntity);
             OnTileChanged(tile);
         }
-        ReMarkRotatedSelectedTiles();
+        
+        ClearAllSelectedTiles();
+        foreach (var tile in tilesToCopy) MarkTileSelected(tile);
     }
     
-    // Returns the top-left (min col,row) of the current selection.
-    // Returns null if no tiles are selected.
+    /// <summary>
+    /// Returns the top-left (min col,row) of the current selection.
+    /// Returns null if no tiles are selected.
+    /// </summary>
     private (int minCol, int minRow)? GetSelectionTopLeft() {
         if (_selectedTiles.Count == 0) return null;
         var minCol = _selectedTiles.Min(t => t.Entity.Col);
@@ -990,35 +1028,52 @@ public partial class ControlPanelView {
     // Are ALL destination rectangles for the (copy/move) valid and free?
     // - anchorCol/Row = where the "top-left" of the selection will land
     // - If mode == Move we ignore collisions with the currently selected tiles (because they vacate)
-    private bool CanPlaceSelectionAt(int anchorCol, int anchorRow, EditModeEnum mode) {
-        if (_selectedTiles.Count == 0) return false;
-
+    
+    
+    /// <summary>
+    /// Check if ALL destination rectangles for the (copy/move) valid and free?
+    /// - anchorCol/Row = where the "top-left" of the selection will land
+    /// - If mode == Move we ignore collisions with the currently selected tiles (because they vacate)
+    /// Return if the operation can progress and what places the operation would have impacted
+    /// </summary>
+    private (bool isInBounds, List<DestinationBounds> bounds) CanPlaceSelectionAt(int anchorCol, int anchorRow, EditModeEnum mode) {
+        List<DestinationBounds> rects = [];
+        if (_selectedTiles.Count == 0) return (true, rects);
+        
         var selTopLeft = GetSelectionTopLeft();
-        if (selTopLeft is null) return false;
-        var (minCol, minRow) = selTopLeft.Value;
+        if (selTopLeft is null) return (false, rects);
 
-        // Snapshot of existing tiles to test collisions against
+        var (minCol, minRow) = selTopLeft.Value;
         var existing = DynamicGrid.Children.OfType<ITile>().ToList();
 
+        var isInBounds = true;
         foreach (var tile in _selectedTiles) {
+            var tileInBounds = true;
             var e = tile.Entity;
 
             // Compute destination top-left for this tile (preserve relative offset)
             var destCol = anchorCol + (e.Col - minCol);
             var destRow = anchorRow + (e.Row - minRow);
-
+            
             // Bounds check
-            if (!InBounds(destCol, destRow, e.Width, e.Height)) return false;
+            if (!InBounds(destCol, destRow, e.Width, e.Height)) tileInBounds = false;;
 
             // Collision check against *other* tiles
             foreach (var other in existing) {
                 if (mode == EditModeEnum.Move && _selectedTiles.Contains(other)) continue; // selected tiles are moving away; ignore their current rects
                 var oe = other.Entity;
-                if (RectsOverlap(destCol, destRow, e.Width, e.Height, oe.Col, oe.Row, oe.Width, oe.Height)) return false;
+                if (RectsOverlap(destCol, destRow, e.Width, e.Height, oe.Col, oe.Row, oe.Width, oe.Height)) tileInBounds = false;
             }
+            
+            var bounds = new DestinationBounds((destCol, destRow, e.Width, e.Height), tileInBounds);
+            rects.Add(bounds);
+            if (isInBounds && !tileInBounds) isInBounds = false; 
         }
-        return true;
+        return (isInBounds, rects);
     }
+
+    private record DestinationBounds((int col, int row, int width, int height) Rects, bool InBounds);
+    
     #endregion
 
     #region Drag and Drop Support for the Tiles
@@ -1432,7 +1487,8 @@ public partial class ControlPanelView {
         DragInvalid,
         DragValid,
         Resize,
-        Selecting
+        Selecting,
+        Error
     }
 
     public string GetEditModeIconFilename =>
@@ -1459,7 +1515,7 @@ public partial class ControlPanelView {
             Position = (col, row);
         }
     }
-
+    
     private void CancelTapTimer() {
         lock (_tapLock) {
             _tapCount = 0;

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Text;
 using DCCPanelController.Helpers;
@@ -10,6 +11,7 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
+[DebuggerDisplay("{Entity?.Name} @ {Entity?.Col},{Entity?.Row}")]
 public abstract class Tile : ContentView, ITile, IDisposable {
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor = 0.75f;
