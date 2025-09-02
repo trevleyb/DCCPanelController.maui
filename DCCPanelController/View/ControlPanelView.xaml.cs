@@ -64,6 +64,7 @@ public partial class ControlPanelView {
         InitializeComponent();
         SizeChanged += OnGridSizeChanged;
         MainGrid.SizeChanged += OnGridSizeChanged;
+        SetupDynamicGridGestures(this);
     }
 
     public int Rows => Panel?.Rows ?? 27;
@@ -71,6 +72,8 @@ public partial class ControlPanelView {
 
     public bool IsSelecting { get; set; }
     public bool HasDrawnSelector { get; set; }
+    public int TappedCol { get; private set; }
+    public int TappedRow { get; private set; }
     public int StartCol { get; private set; }
     public int StartRow { get; private set; }
     public int EndCol { get; private set; }
@@ -275,7 +278,7 @@ public partial class ControlPanelView {
             CancelTapTimer();
             SuppressTapsFor(500); // eat any stray 'Tapped' on finger up
 
-            var tapTimerState = new TapTimerState(sender, (StartCol, StartRow));
+            var tapTimerState = new TapTimerState(sender, (TappedCol, TappedRow));
             if (DesignMode) OnDesignModeLongPress(tapTimerState);
             else OnOperateModeLongPress(tapTimerState);
         } catch (Exception ex) {
@@ -286,6 +289,8 @@ public partial class ControlPanelView {
     }
 
     private async void DynamicGridTapped(object? sender, TappedEventArgs e) {
+        Console.WriteLine("DynamicGridTapped");
+        
         if (_longPressActive) return;
         if (TapsSuppressed()) return;                        // long-press just finished, ignore stray tap
         if (_gestureOwner == GestureOwner.LongPress) return; // long-press owns this sequence
@@ -314,6 +319,8 @@ public partial class ControlPanelView {
             _tapTimer = null;
         }
 
+        Console.WriteLine($"DynamicGridTapped with {count} taps and owner={_gestureOwner}");
+        
         // If long-press took over during the wait, ignore the pending tap(s)
         if (_gestureOwner != GestureOwner.Tap) return;
 
@@ -464,33 +471,36 @@ public partial class ControlPanelView {
     private List<ITile> TilesInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row);
 
     private List<ITile> TilesInGrid(int col, int row) {
-        return DynamicGrid.Children.OfType<ITile>()
+        var children =  DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity.Col == col && x.Entity.Row == row)
                           .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
                           .ToList();
+        return children;
     }
 
     private List<ITile> InteractiveTilesInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row);
 
     private List<ITile> InteractiveTilesInGrid(int col, int row) {
-        return DynamicGrid.Children.OfType<ITile>()
+        var children = DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity is IInteractiveEntity &&
                                       x.Entity.Col == col &&
                                       x.Entity.Row == row)
                           .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
                           .ToList();
+        return children;
     }
 
     private List<ITile> TrackTilesInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row);
 
     private List<ITile> TrackTilesInGrid(int col, int row) {
-        return DynamicGrid.Children.OfType<ITile>()
+        var children = DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity is ITrackEntity &&
                                       x.Entity is not IInteractiveEntity &&
                                       x.Entity.Col == col &&
                                       x.Entity.Row == row)
                           .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
                           .ToList();
+        return children;
     }
 
     private bool IsTileInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row).Count > 0;
@@ -814,8 +824,13 @@ public partial class ControlPanelView {
         _longPressActive = false;
 
         var cell = GetGridPosition(e.GetPosition(DynamicGrid));
+        Console.WriteLine($"PointerPressed @{cell?.Col},{cell?.Row}");
         if (cell is { } gridCell) {
-            if (IsTileInGrid(gridCell.Col, gridCell.Row)) return;
+            if (IsTileInGrid(gridCell.Col, gridCell.Row)) {
+                TappedCol = gridCell.Col;
+                TappedRow = gridCell.Row;
+                return;
+            }
 
             StartCol = EndCol = gridCell.Col;
             StartRow = EndRow = gridCell.Row;
@@ -1083,6 +1098,12 @@ public partial class ControlPanelView {
     ///     a new tile to the panel.
     /// </summary>
     private void DragTileStarting(DragStartingEventArgs args, ITile tile) {
+        if (!DesignMode) {
+            Console.WriteLine("DragTileStarting (but not in Design Mode): " + args.Data.ToString());
+            return;
+        }
+        
+        Console.WriteLine("DragTileStarting");
         // Some edit modes do not support drag and drop, and also if the mode is Resize and
         // the tile does not support resizing, then we can't allow it to resize. 
         // -------------------------------------------------------------------------------------------------
@@ -1122,6 +1143,7 @@ public partial class ControlPanelView {
     ///     Called when we have left the bounds of thr Panel so we just reset everything
     /// </summary>
     private void DragLeaveTileOnPanel(object? sender, DragEventArgs e) {
+        if (!DesignMode) return;
         UnHighlightCell(_lastDragCol, _lastDragRow);
         _lastDragCol = 0;
         _lastDragRow = 0;
@@ -1196,6 +1218,7 @@ public partial class ControlPanelView {
     ///     Support dropping the dragged tile onto the panel in a new position (or the same position)
     /// </summary>
     private void DropTileOnPanel(object? sender, DropEventArgs e) {
+        if (!DesignMode) return;
         try {
             if (!e.Data.Properties.ContainsKey("Source") ||
                 !e.Data.Properties.ContainsKey("Tile")) {
@@ -1360,62 +1383,61 @@ public partial class ControlPanelView {
     }
 
     private static async void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is ControlPanelView control) {
-            control.ShowGrid = control.DesignMode;
-            control.DynamicGrid.GestureRecognizers.Clear();
-            control.Behaviors.Clear();
-
-            if (control.DesignMode) {
-                // In design mode we need to support drag and drop for the tiles on the screen.
-                // ----------------------------------------------------------------------------
-                var dropRecogniser = new DropGestureRecognizer();
-                dropRecogniser.Drop += control.DropTileOnPanel;
-                dropRecogniser.DragOver += control.DragOverTileOnPanel;
-                dropRecogniser.DragLeave += control.DragLeaveTileOnPanel;
-                control.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
-
-                var pointerRecognizer = new PointerGestureRecognizer();
-                pointerRecognizer.PointerPressed += control.DynamicGridPointerPressed;
-                pointerRecognizer.PointerMoved += control.DynamicGridPointerMoved;
-                pointerRecognizer.PointerReleased += control.DynamicGridPointerReleased;
-                pointerRecognizer.PointerExited += control.DynamicGridPointerExited;
-                control.DynamicGrid.GestureRecognizers.Add(pointerRecognizer);
-            }
-
-            // In design mode, also support tapping anywhere that is not a tile so we clear selections.
-            // ----------------------------------------------------------------------------
-            control._gridTap = new TapGestureRecognizer();
-            control._gridTap.Tapped += control.DynamicGridTapped;
-            control.DynamicGrid.GestureRecognizers.Add(control._gridTap);
-
-            // Long-press via TouchBehavior (keep a reference)
-            control._gridTouch = new TouchBehavior();
-            control._gridTouch.LongPressCompleted += control.DynamicGridLongPress;
-            control.DynamicGrid.Behaviors.Add(control._gridTouch);
-
-            await control.DrawPanel();
+        if (bindable is ControlPanelView panel) {
+            panel.ShowGrid = panel.DesignMode;
+            await panel.DrawPanel();
         }
+    }
+
+    private static void SetupDynamicGridGestures(ControlPanelView panel) {
+        panel.DynamicGrid.GestureRecognizers.Clear();
+        panel.DynamicGrid.Behaviors.Clear();
+
+        var dropRecogniser = new DropGestureRecognizer();
+        dropRecogniser.Drop += panel.DropTileOnPanel;
+        dropRecogniser.DragOver += panel.DragOverTileOnPanel;
+        dropRecogniser.DragLeave += panel.DragLeaveTileOnPanel;
+        panel.DynamicGrid.GestureRecognizers.Add(dropRecogniser);
+
+        var pointerRecognizer = new PointerGestureRecognizer();
+        pointerRecognizer.PointerPressed += panel.DynamicGridPointerPressed;
+        pointerRecognizer.PointerMoved += panel.DynamicGridPointerMoved;
+        pointerRecognizer.PointerReleased += panel.DynamicGridPointerReleased;
+        pointerRecognizer.PointerExited += panel.DynamicGridPointerExited;
+        panel.DynamicGrid.GestureRecognizers.Add(pointerRecognizer);
+
+        panel._gridTap = new TapGestureRecognizer();
+        panel._gridTap.Tapped += panel.DynamicGridTapped;
+        panel.DynamicGrid.GestureRecognizers.Add(panel._gridTap);
+
+        panel._gridTouch = new TouchBehavior();
+        panel._gridTouch.LongPressCompleted += panel.DynamicGridLongPress;
+        panel.DynamicGrid.Behaviors.Add(panel._gridTouch);
     }
 
     /// <summary>
     ///     If the Panel object is changed, then we need to clear and rebuild the whole Panel
     /// </summary>
     private static async void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is not ControlPanelView control) return;
+        try {
+            if (bindable is not ControlPanelView control) return;
 
-        // Unsubscribe from the old panel's events to prevent memory leaks and stop listening to it.
-        if (oldValue is Panel oldPanel) {
-            oldPanel.Entities.CollectionChanged -= control.EntitiesOnCollectionChanged;
-            oldPanel.PropertyChanged -= control.OnPanelPropertyChanged;
-        }
+            // Unsubscribe from the old panel's events to prevent memory leaks and stop listening to it.
+            if (oldValue is Panel oldPanel) {
+                oldPanel.Entities.CollectionChanged -= control.EntitiesOnCollectionChanged;
+                oldPanel.PropertyChanged -= control.OnPanelPropertyChanged;
+            }
 
-        // Subscribe to the new panel's events to react to its changes.
-        if (newValue is Panel newPanel) {
-            newPanel.Entities.CollectionChanged += control.EntitiesOnCollectionChanged;
-            newPanel.PropertyChanged += control.OnPanelPropertyChanged;
+            // Subscribe to the new panel's events to react to its changes.
+            if (newValue is Panel newPanel) {
+                newPanel.Entities.CollectionChanged += control.EntitiesOnCollectionChanged;
+                newPanel.PropertyChanged += control.OnPanelPropertyChanged;
 
-            control.ClearAllSelectedTiles();
-            await control.ForceRefresh();
+                control.ClearAllSelectedTiles();
+                await control.ForceRefresh();
+            }
+        } catch (Exception e) {
+            Console.WriteLine($"ERROR: OnPanelChanged: {e.Message}");
         }
     }
 

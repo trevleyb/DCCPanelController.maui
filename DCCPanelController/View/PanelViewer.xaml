@@ -52,6 +52,7 @@
 
                         <view:ControlPanelView
                             IsVisible="true"
+                            InputTransparent="False"
                             BackgroundColor="{Binding PanelBackgroundColor}"
                             HorizontalOptions="Fill"
                             Panel="{Binding .}"
@@ -98,6 +99,7 @@
                             Background="{Binding DisplayBackgroundColor}">
                             <Grid>
                                 <view:ControlPanelView
+                                    InputTransparent="False"
                                     IsVisible="true"
                                     ShowGrid="false"
                                     DesignMode="False"
