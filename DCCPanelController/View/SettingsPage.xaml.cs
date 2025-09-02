@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using DCCPanelController.Clients;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
@@ -17,7 +18,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
         BindingContext = _pageViewModel;
         PropertyChanged += OnPropertyChanged;
         InitializeComponent();
-
+       
         pageViewModel.SetActiveSettings();
         _pageViewModel.SelectedSegmentIndex = _pageViewModel.Settings?.ClientSettings?.Type switch {
             DccClientType.Simulator  => 0,
@@ -26,7 +27,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             _                        => 0
         };
     }
-
+   
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
 
     private void EditConnectionButtonClicked(object? sender, EventArgs e) {

@@ -230,7 +230,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
             if (result) {
                var saveFile = $"{Profile.ProfileName}.profile.json";
-               var jsonBytes = await ProfileService.DownloadProfileAsync(Profile);
+               var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
                var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
                await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
                Console.WriteLine($"Profile Saved to: {saveFile}");

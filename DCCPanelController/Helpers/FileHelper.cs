@@ -1,15 +1,18 @@
 using System.Text;
 using CommunityToolkit.Maui.Storage;
+using DCCPanelController.Services;
 
 namespace DCCPanelController.Helpers;
 
 public static class FileHelper {
 
-    public static async Task<string?> ShareFileAsync(string? text, string? content, string fileName, Microsoft.Maui.Controls.View? parent = null) {
+    public static async Task<string?> ShareFileAsync(string? text, string content, string fileName, Microsoft.Maui.Controls.View? parent = null) => await ShareFileAsync(text, Encoding.UTF8.GetBytes(content ?? ""), fileName, parent);
+    public static async Task<string?> ShareFileAsync(string? text, byte[] content, string fileName, Microsoft.Maui.Controls.View? parent = null) => await ShareFileAsync(text, content, fileName, parent?.Bounds ?? Rect.Zero);
+    public static async Task<string?> ShareFileAsync(string? text, byte[] content, string fileName, Rect bounds) {
         try {
             var tempPath = Path.Combine(FileSystem.CacheDirectory, fileName);
-            using (var fs = File.Open(tempPath, FileMode.Create, FileAccess.Write, FileShare.None)) {
-                using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
+            await using (var fs = File.Open(tempPath, FileMode.Create, FileAccess.Write, FileShare.None)) {
+                using var stream = new MemoryStream(content);
                 if (stream.CanSeek) stream.Position = 0;
                 await stream.CopyToAsync(fs);
             }
@@ -17,7 +20,7 @@ public static class FileHelper {
             var shareTitle = text ?? "Export File"; 
             var shareFile = new ShareFile(tempPath);
             var shareRequest = new ShareFileRequest(title: shareTitle, file: shareFile);
-            if (parent is not null) shareRequest.PresentationSourceBounds = parent.Bounds;
+            if (bounds != Rect.Zero) shareRequest.PresentationSourceBounds = bounds;
             await Share.RequestAsync(shareRequest);
             return tempPath;
         } catch (Exception ex) {

@@ -33,7 +33,6 @@ public partial class ControlPanelView {
     private int _currentSelectionIndex;
 
     [ObservableProperty] private bool _isPanelDrawing = false;
-    private bool _pendingFirstDraw = false;
     
     private int _dragStartCol;
     private int _dragStartRow;

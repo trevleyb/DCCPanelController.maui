@@ -33,7 +33,7 @@
                      IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=repeat}"/>
         <ToolbarItem Command="{Binding UploadSettingsCommand}"
                      IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=upload}"/>
-        <ToolbarItem Command="{Binding DownloadSettingsCommand}"
+        <ToolbarItem Command="{Binding DownloadSettingsCommand}" x:Name="DownloadToolbarItem"
                      IconImageSource="{Binding IsNavigationDrawerClosed, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
     </ContentPage.ToolbarItems>
 

@@ -4,16 +4,14 @@ using System.Runtime.CompilerServices;
 namespace DCCPanelController.Services;
 
 public class AppState : INotifyPropertyChanged {
-    // Singleton pattern to ensure there's only one instance
 
-    private bool _isEditingPanel;
     public static AppState Instance { get; } = new();
-
+    
     public bool IsEditingPanel {
-        get => _isEditingPanel;
+        get;
         set {
-            if (_isEditingPanel == value) return;
-            _isEditingPanel = value;
+            if (field == value) return;
+            field = value;
             OnPropertyChanged();
             OnPropertyChanged(nameof(IsNavigationAllowed));
         }

@@ -21,6 +21,7 @@ public partial class PanelViewer {
         _connectionService = connectionService;
         _viewModel = viewModel;
         _viewModel.NavigationService = Navigation;
+
         BindingContext = viewModel;
         Title = $"Panels Viewer ({_viewModel.Panels?.Profile?.ProfileName ?? "Unknown Profile"})";
         
