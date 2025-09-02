@@ -23,7 +23,7 @@ public partial class PanelViewer {
         _viewModel.NavigationService = Navigation;
 
         BindingContext = viewModel;
-        Title = $"Panels Viewer ({_viewModel.Panels?.Profile?.ProfileName ?? "Unknown Profile"})";
+        Title = $"{_viewModel.Panels?.Profile?.ProfileName ?? "Unknown Profile"}";
         
         DeviceDisplay.MainDisplayInfoChanged += OnDisplayInfoChanged;
         

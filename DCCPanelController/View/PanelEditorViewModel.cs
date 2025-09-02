@@ -260,7 +260,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && _panelEditor is not null) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
-                ShowPropertyPopup("", propertiesViewModel, propertiesPage);
+                ShowPropertyPopup("", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -278,14 +278,14 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && SelectedEntities?.Count > 0 && _panelEditor is not null) {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                ShowPropertyPopup(title, propertiesViewModel, propertiesPage);
+                ShowPropertyPopup(title, propertiesViewModel, propertiesPage, AcceptTilePropertiesPopupCommand);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         }
     }
 
-    private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content) {
+    private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
         _propertyPage = propertyPage;
         content.Margin = new Thickness(20);
         var propertySize = MauiViewSizeCalculator.CalculateTotalSize(content, ScreenWidth, ScreenHeight);
@@ -321,7 +321,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             AnimationMode = PopupAnimationMode.Zoom,
             AnimationDuration = 300,
             OverlayMode = PopupOverlayMode.Transparent, 
-            AcceptCommand = AcceptPopupCommand,
+            AcceptCommand = acceptPopupCommand,
             DeclineCommand = DeclinePopupCommand
         };
         if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
@@ -329,9 +329,19 @@ public partial class PanelEditorViewModel : ObservableObject {
     } 
     
     [RelayCommand]
-    private async Task AcceptPopupAsync() {
+    private async Task AcceptPanelPropertiesPopupAsync() {
         if (_propertyPage is not null) {
             await _propertyPage.ApplyChangesAsync();
+            await SaveAsync();
+            await _panelView.ForceRefresh();
+        }
+    }
+
+    [RelayCommand]
+    private async Task AcceptTilePropertiesPopupAsync() {
+        if (_propertyPage is not null) {
+            await _propertyPage.ApplyChangesAsync();
+            await SaveAsync();
         }
     }
 

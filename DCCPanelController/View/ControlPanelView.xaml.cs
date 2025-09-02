@@ -13,6 +13,7 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.PathFinder;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
+using GameplayKit;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
@@ -33,7 +34,7 @@ public partial class ControlPanelView {
     private int _currentSelectionIndex;
 
     [ObservableProperty] private bool _isPanelDrawing = false;
-    
+
     private int _dragStartCol;
     private int _dragStartRow;
     private int _lastDragCol;
@@ -80,7 +81,6 @@ public partial class ControlPanelView {
     private void OnTileSelected(int tapCount) {
         TileSelected?.Invoke(this, new TileSelectedEventArgs(_selectedTiles, tapCount));
     }
-    
     #endregion
 
     #region Grid Management
@@ -121,10 +121,10 @@ public partial class ControlPanelView {
     private async Task DrawPanel(bool forceRefresh = false,
                                  [CallerMemberName] string memberName = "",
                                  [CallerLineNumber] int sourceLineNumber = 0) {
-
         if (Panel is null || IsPanelDrawing) return;
+
         // Console.WriteLine($"DrawPanel: {Panel?.Id}/{Panel?.Guid} | {MainGrid.Width}w x {MainGrid.Height}h | Pending={_pendingFirstDraw} | {memberName}@{sourceLineNumber} ");
-        
+
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -234,15 +234,7 @@ public partial class ControlPanelView {
         if (tile is ContentView view) {
             view.Behaviors.Clear();
             view.GestureRecognizers.Clear();
-
-            // If we are in design mode OR if we are running in operating mode then we 
-            // need the ability to tap on the tile to interact with it. 
-            // -------------------------------------------------------------------------
-            if (Interactive || DesignMode) {
-                var tapGesture = new TapGestureRecognizer { NumberOfTapsRequired = 1 };
-                tapGesture.Tapped += (_, args) => OnTileTapped(tile, args);
-                view.GestureRecognizers.Add(tapGesture);
-            }
+            view.InputTransparent = true;
 
             // If design mode, we need to be able to drag the tiles around on the design surface
             // but not if we are in operating mode. 
@@ -252,40 +244,33 @@ public partial class ControlPanelView {
                 dragGesture.DragStarting += (_, args) => DragTileStarting(args, tile);
                 dragGesture.DropCompleted += DragCompleted;
                 view.GestureRecognizers.Add(dragGesture);
-            } else {
-                if (Interactive) {
-                    var touchBehavior = new TouchBehavior();
-                    touchBehavior.LongPressCompleted += (_, args) => OnTileLongPressed(tile, args);
-                    view.Behaviors.Add(touchBehavior);
-                }
             }
         }
     }
 
-    /// <summary>
-    ///     The Long Press Gesture is used to launch the path tracing process.
-    /// </summary>
-    private async void OnTileLongPressed(object? sender, LongPressCompletedEventArgs e) {
+    private async void DynamicGridLongPress(object? sender, LongPressCompletedEventArgs e) {
         try {
-            if (DesignMode) {
-                OnTileSelected(-1);
-            } else if (sender is TrackTile trackTile) {
-                await _pathTracer.StartPathTracing(trackTile!);
-            }
-        } catch (Exception ex) {
-            _logger.LogError("Error in launching path Tracing: {ExMessage}", ex.Message);
+            Console.WriteLine($"LONG PRESS: { StartCol}, {StartRow}");
+            var tapTimerState = new TapTimerState(sender, (StartCol, StartRow));
+            if (DesignMode) OnDesignModeLongPress(tapTimerState);
+            else OnOperateModeLongPress(tapTimerState);
+        } catch {
+            Console.WriteLine("Error in long press");
         }
     }
 
-    private async void OnTileTapped(object? sender, TappedEventArgs e) {
+    private async void DynamicGridTapped(object? sender, TappedEventArgs e) {
         lock (_tapLock) {
+            var pos = GetGridPosition(e.GetPosition(DynamicGrid)) ?? (-1, -1);
             _tapCount++;
             _tapTimer?.Dispose();
-            _tapTimer = new Timer(TapTimerElapsed, sender, DoubleTapThreshold, Timeout.Infinite);
+            _tapTimer = new Timer(DynamicGridTapTimerElapsed, new TapTimerState(sender, pos), DoubleTapThreshold, Timeout.Infinite);
         }
     }
 
-    private void TapTimerElapsed(object? state) {
+    private void DynamicGridTapTimerElapsed(object? state) {
+        if (state is not TapTimerState tapTimerState) return;
+
         int count;
         lock (_tapLock) {
             count = _tapCount;
@@ -294,71 +279,129 @@ public partial class ControlPanelView {
             _tapTimer = null;
         }
 
-        var sender = state;
-
         // Dispatch back to UI thread
         MainThread.BeginInvokeOnMainThread(() => {
+            var pos = tapTimerState.Position;
+            var tilesInGrid = IsTileInGrid(pos);
+            var interactive = IsInteractiveTileInGrid(pos);
+            Console.WriteLine($"TAPPED: {count} tiles={tilesInGrid} interactive={interactive} @ {pos.Col},{pos.Row} ");
+
             switch (count) {
             case 1:
-                if (DesignMode) OnDesignModeSingleTap(sender);
-                else OnOperateModeSingleTap(sender);
+                if (DesignMode) OnDesignModeSingleTap(tapTimerState);
+                else OnOperateModeSingleTap(tapTimerState);
                 break;
 
-            case >= 2:
-                if (DesignMode) OnDesignModeDoubleTap(sender);
-                else OnOperateModeDoubleTap(sender);
+            case 2:
+                if (DesignMode) OnDesignModeDoubleTap(tapTimerState);
+                else OnOperateModeDoubleTap(tapTimerState);
+                break;
+
+            case 3:
+                Console.WriteLine("Tapped 3 times");
                 break;
             }
         });
     }
 
-    private async void OnDesignModeSingleTap(object? sender) {
-        if (sender is ITile tile) {
-            var tilesAtPosition = TilesInGrid(tile);
+    private async void OnDesignModeSingleTap(TapTimerState tapTimerState) {
+        Console.WriteLine($"OnDesignModeSingleTap @{tapTimerState.Col},{tapTimerState.Row}");
 
-            // If there is only a single tile at this position, then we can 
-            // toggle it on or off
-            // -------------------------------------------------------
-            if (tilesAtPosition.Count is 0 or 1) {
-                if (tile.IsSelected) {
-                    MarkTileUnSelected(tile);
-                } else {
-                    MarkTileSelected(tile);
-                }
-                _currentSelectionIndex = -1;
-            }
-
-            // There are multiple tiles at this position, so we need to
-            // step through the tiles until we get to the last one. 
-            // ---------------------------------------------------------
-            else {
-                _currentSelectionIndex++;
-                foreach (var posTile in tilesAtPosition) MarkTileUnSelected(posTile);
-                if (_currentSelectionIndex >= tilesAtPosition.Count) {
-                    _currentSelectionIndex = -1;
-                } else {
-                    var selectedTile = tilesAtPosition[_currentSelectionIndex];
-                    MarkTileSelected(selectedTile);
-                }
-            }
+        // look up the tile if it is in this grid
+        // -------------------------------------------------------------------
+        var tilesAtPosition = TilesInGrid(tapTimerState.Position);
+        if (tilesAtPosition.Count == 0) {
+            ClearAllSelectedTiles();
             OnTileSelected(_tapCount);
+            return;
         }
+
+        // Determine if any tile at this position is currently selected
+        // -------------------------------------------------------------------
+        var selectedIndexAtPos = tilesAtPosition.FindIndex(t => t.IsSelected);
+
+        // Case 1: None selected at this position -> unselect all tiles globally,
+        // then select the first at this position.
+        // -----------------------------------------------------------------------
+        if (selectedIndexAtPos == -1) {
+            MarkTileSelected(tilesAtPosition[0]);
+            _currentSelectionIndex = 0;
+        }
+
+        // Case 2: A tile is selected at this position and there is only one tile -> unselect it.
+        // -------------------------------------------------------------------------------------
+        else if (tilesAtPosition.Count == 1) {
+            MarkTileUnSelected(tilesAtPosition[0]);
+            _currentSelectionIndex = -1;
+        }
+
+        // Case 3: A tile is selected at this position and there are multiple tiles -> cycle selection.
+        // -------------------------------------------------------------------------------------------
+        else {
+            var nextIndex = (selectedIndexAtPos + 1) % tilesAtPosition.Count;
+            foreach (var t in tilesAtPosition) {
+                if (t.IsSelected) MarkTileUnSelected(t);
+            }
+
+            // Select the next tile in the stack
+            MarkTileSelected(tilesAtPosition[nextIndex]);
+            _currentSelectionIndex = nextIndex;
+        }
+
+        OnTileSelected(_tapCount);
     }
 
-    private async void OnDesignModeDoubleTap(object? sender) {
-        if (sender is ITile tile) {
+    private async void OnDesignModeDoubleTap(TapTimerState tapTimerState) {
+        Console.WriteLine($"OnDesignModeDOUBLETap @{tapTimerState.Col},{tapTimerState.Row}");
+        var tile = TilesInGrid(tapTimerState.Position).FirstOrDefault();
+
+        // If we double-tapped on an actual tile, then unmark all tiles and mark this one
+        // ------------------------------------------------------------------------------
+        if (tile != null) {
             ClearAllSelectedTiles();
             MarkTileSelected(tile);
             OnTileSelected(_tapCount);
         }
+
+        // If there was no tile in this grid position, then use the Edit Mode to determine 
+        // what we should do. Either move the tile to this position, or clone the selected tile
+        else {
+            Console.WriteLine("Add code here to MOVE or COPY the tiles");
+        }
     }
 
-    private async void OnOperateModeSingleTap(object? sender) {
-        if (sender is ITile tile) OnTileTapped(tile, _tapCount);
+    private async void OnDesignModeLongPress(TapTimerState tapTimerState) {
+        Console.WriteLine($"OnDesignModeLongPress @{tapTimerState.Col},{tapTimerState.Row}");
+    }
+    
+    private async void OnOperateModeSingleTap(TapTimerState tapTimerState) {
+        Console.WriteLine($"OnOperateModeSingleTap @{tapTimerState.Col},{tapTimerState.Row}");
+
+        // Find the tile that was tapped and raise an event for that tile. 
+        // In operating mode, it can only be an interactive tile 
+        // ---------------------------------------------------------------------------
+        var interactiveTile = InteractiveTilesInGrid(tapTimerState.Position).FirstOrDefault();
+        if (interactiveTile != null) OnTileTapped(interactiveTile, 1);
     }
 
-    private async void OnOperateModeDoubleTap(object? sender) {
-        if (sender is ITile tile) OnTileTapped(tile, _tapCount);
+    private async void OnOperateModeDoubleTap(TapTimerState tapTimerState) {
+        Console.WriteLine($"OnOperateModeDOUBLETap @{tapTimerState.Col},{tapTimerState.Row}");
+
+        // Find the tile that was tapped and raise an event for that tile. 
+        // In operating mode, it can only be an interactive tile 
+        // ---------------------------------------------------------------------------
+        var interactiveTile = InteractiveTilesInGrid(tapTimerState.Position).FirstOrDefault();
+        if (interactiveTile != null) OnTileTapped(interactiveTile, 2);
+    }
+
+    private async void OnOperateModeLongPress(TapTimerState tapTimerState) {
+        Console.WriteLine($"OnOperateModeLONGPress @{tapTimerState.Col},{tapTimerState.Row}");
+        try {
+            var tile = TrackTilesInGrid(tapTimerState.Position).FirstOrDefault();
+            if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
+        } catch (Exception ex) {
+            Console.WriteLine($"Error in OnOperateModeLongPress: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -382,6 +425,8 @@ public partial class ControlPanelView {
     /// <summary>
     ///     Find all tiles in the grid that match the offset of col, row
     /// </summary>
+    private List<ITile> TilesInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row);
+
     private List<ITile> TilesInGrid(int col, int row) {
         return DynamicGrid.Children.OfType<ITile>()
                           .Where(x => x.Entity.Col == col && x.Entity.Row == row)
@@ -389,9 +434,34 @@ public partial class ControlPanelView {
                           .ToList();
     }
 
-    private bool IsTileInGrid(int col, int row) => TilesInGrid(col, row).Count > 0;
+    private List<ITile> InteractiveTilesInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row);
+    private List<ITile> InteractiveTilesInGrid(int col, int row) {
+        return DynamicGrid.Children.OfType<ITile>()
+                          .Where(x => x.Entity is IInteractiveEntity &&
+                                      x.Entity.Col == col &&
+                                      x.Entity.Row == row)
+                          .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
+                          .ToList();
+    }
 
-    
+    private List<ITile> TrackTilesInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row);
+    private List<ITile> TrackTilesInGrid(int col, int row) {
+        return DynamicGrid.Children.OfType<ITile>()
+                          .Where(x => x.Entity is ITrackEntity &&
+                                      x.Entity is not IInteractiveEntity &&
+                                      x.Entity.Col == col &&
+                                      x.Entity.Row == row)
+                          .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
+                          .ToList();
+    }
+
+    private bool IsTileInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row).Count > 0;
+    private bool IsTileInGrid(int col, int row) => TilesInGrid(col, row).Count > 0;
+    private bool IsInteractiveTileInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row).Count > 0;
+    private bool IsInteractiveTileInGrid(int col, int row) => InteractiveTilesInGrid(col, row).Count > 0;
+    private bool IsTrackTileInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row).Count > 0;
+    private bool IsTrackTileInGrid(int col, int row) => TrackTilesInGrid(col, row).Count > 0;
+
     /// <summary>
     ///     Remove an individual tile from the grid.
     /// </summary>
@@ -421,13 +491,6 @@ public partial class ControlPanelView {
             DynamicGrid.Remove(view);
             if (view is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
         }
-    }
-
-    // If we click on a grid that is NOT a track piece and in design mode, 
-    // then clear all the selected tracks.
-    // -------------------------------------------------------------------------
-    private void DynamicGridTapped(object? sender, TappedEventArgs e) {
-        if (DesignMode) ClearAllSelectedTiles();
     }
 
     private void ResizeTrack(ITile? tile, int newCol, int newRow) {
@@ -476,12 +539,12 @@ public partial class ControlPanelView {
     /// </summary>
     /// <param name="point">A point object of where the item was tapped</param>
     /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
-    private (int Col, int Row)? GetGridPosition(Point? point) {
+    protected (int Col, int Row)? GetGridPosition(Point? point) {
         if (point is { } tapPosition) return GetGridPosition(tapPosition.X, tapPosition.Y);
         return (0, 0);
     }
 
-    private (int Col, int Row)? GetGridPosition(double posX, double posY) {
+    protected (int Col, int Row)? GetGridPosition(double posX, double posY) {
         var totalHeight = DynamicGrid.Height;
         var totalWidth = DynamicGrid.Width;
         var rowCount = DynamicGrid.RowDefinitions.Count;
@@ -507,56 +570,6 @@ public partial class ControlPanelView {
     #endregion
 
     #region Draw Grid when in Design Mode
-    // private void DrawSelectorView(int startCol, int startRow, int endCol, int endRow) {
-    //     RemoveSelectorView();
-    //
-    //     _selectionOutlineDrawable = new SelectionOutlineDrawable();
-    //     _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
-    //     _selectionOutlinegraphicsView = new GraphicsView {
-    //         InputTransparent = true,
-    //         Drawable = _selectionOutlineDrawable,
-    //         HorizontalOptions = LayoutOptions.Fill,
-    //         VerticalOptions = LayoutOptions.Fill,
-    //         ClassId = "SelectorView"
-    //     };
-    //
-    //     // Add the GraphicsView directly to the AbsoluteLayout
-    //     AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
-    //     AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
-    //     ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
-    //     _selectionOutlinegraphicsView.Invalidate();
-    // }
-
-    private void UpdateSelectorView(int startCol, int startRow, int endCol, int endRow) {
-
-        if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) {
-            _selectionOutlineDrawable = new SelectionOutlineDrawable();
-            _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
-            _selectionOutlinegraphicsView = new GraphicsView {
-                InputTransparent = true,
-                Drawable = _selectionOutlineDrawable,
-                HorizontalOptions = LayoutOptions.Fill,
-                VerticalOptions = LayoutOptions.Fill,
-                ClassId = "SelectorView"
-            };
-        
-            // Add the GraphicsView directly to the AbsoluteLayout
-            AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
-            AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
-            ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
-            _selectionOutlinegraphicsView.Invalidate();
-        }
-        
-        if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) return;
-        _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
-        _selectionOutlinegraphicsView.Invalidate();
-    }
-
-    private void RemoveSelectorView() {
-        _selectionOutlineDrawable = null;
-        RemoveChildView("SelectorView");
-    }
-
     private void DrawGrid() {
         RemoveGrid();
         if (ShowGrid) {
@@ -708,16 +721,49 @@ public partial class ControlPanelView {
             DynamicGrid.Remove(child);
         }
     }
+    #endregion
+
+    #region Support for the Grid Selection
+    private void UpdateSelectorView(int startCol, int startRow, int endCol, int endRow) {
+        if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) {
+            _selectionOutlineDrawable = new SelectionOutlineDrawable();
+            _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
+            _selectionOutlinegraphicsView = new GraphicsView {
+                InputTransparent = true,
+                Drawable = _selectionOutlineDrawable,
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Fill,
+                ClassId = "SelectorView"
+            };
+
+            // Add the GraphicsView directly to the AbsoluteLayout
+            AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
+            AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
+            ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
+            _selectionOutlinegraphicsView.Invalidate();
+        }
+
+        if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) return;
+        _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
+        _selectionOutlinegraphicsView.Invalidate();
+    }
+
+    private void RemoveSelectorView() {
+        _selectionOutlineDrawable = null;
+        RemoveChildView("SelectorView");
+    }
 
     private void DynamicGridPointerPressed(object? sender, PointerEventArgs e) {
+        Console.WriteLine($"Mask: {e?.PlatformArgs?.GestureRecognizer.ButtonMask} Modifier: {e?.PlatformArgs?.GestureRecognizer.ModifierFlags} Touches: {e?.PlatformArgs?.GestureRecognizer.NumberOfTouches} String: {e?.PlatformArgs?.GestureRecognizer.ToString()}");
+        if (e is null) return;
+
         var cell = GetGridPosition(e.GetPosition(DynamicGrid));
         if (cell is { } gridCell) {
-            
             // First, work out if this is on an existing tile
             // in which case we just ignore this and do nothing
             // ------------------------------------------------
             if (IsTileInGrid(gridCell.Col, gridCell.Row)) return;
-            
+
             StartCol = gridCell.Col;
             StartRow = gridCell.Row;
             EndCol = gridCell.Col;
@@ -1004,10 +1050,17 @@ public partial class ControlPanelView {
 
                                                 // Check if there's a row overlap between the tracks
                                                 row < eTile.Entity.Row + eTile.Entity.Height && row + eTile.Entity.Height > eTile.Entity.Row
-                                      );
+                                      )
+                                     .ToList();
 
-        // If there are any tracks in the clashing list, return true
-        return tilesInGrid.Any();
+        // If there are noe tiles in the grid at the moment, then go-for-it
+        // ----------------------------------------------------------------
+        if (tilesInGrid.Count == 0) return false;
+
+        // If there is already an Interactive tile in the grid and this tile is an interactive tile
+        // then you cannot add it as we cannot have 2 interactive tiles in the same location
+        // ----------------------------------------------------------------
+        return tilesInGrid.Any(x => x.Entity is IInteractiveEntity) && tile.Entity is IInteractiveEntity;
     }
     #endregion
 
@@ -1078,11 +1131,13 @@ public partial class ControlPanelView {
 
             // In design mode, also support tapping anywhere that is not a tile so we clear selections.
             // ----------------------------------------------------------------------------
-            if (control.Interactive || control.DesignMode) {
-                var tapRecogniser = new TapGestureRecognizer();
-                tapRecogniser.Tapped += control.DynamicGridTapped;
-                control.DynamicGrid.GestureRecognizers.Add(tapRecogniser);
-            }
+            var tapRecogniser = new TapGestureRecognizer();
+            tapRecogniser.Tapped += control.DynamicGridTapped;
+            control.DynamicGrid.GestureRecognizers.Add(tapRecogniser); 
+
+            var touchBehavior = new TouchBehavior();
+            touchBehavior.LongPressCompleted += control.DynamicGridLongPress;
+            control.DynamicGrid.Behaviors.Add(touchBehavior);
             await control.DrawPanel();
         }
     }
@@ -1187,5 +1242,22 @@ public partial class ControlPanelView {
             EditModeEnum.Size => "crop.png",
             _                 => "move.png"
         };
+
+    // Helper to carry both sender and tap args into the timer callback
+    private sealed class TapTimerState {
+        public object? Sender { get; }
+        public (int Col, int Row) Position { get; }
+        public int Col { get; }
+        public int Row { get; }
+
+        public TapTimerState(object? sender, (int col, int row) gridPos) : this(sender, gridPos.col, gridPos.row) { }
+
+        public TapTimerState(object? sender, int col, int row) {
+            Sender = sender;
+            Col = col;
+            Row = row;
+            Position = (col, row);
+        }
+    }
     #endregion
 }

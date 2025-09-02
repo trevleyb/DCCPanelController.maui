@@ -45,7 +45,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
                 PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
                 BackgroundColor = viewModel.DisplayBackgroundColor;
             } else {
-                Title = "DCC Panel Controller";
+                Title = $"DCC Panel Controller ({_profileService?.ActiveProfile?.ProfileName ?? "No Profile"}";
             }
         }
     }
