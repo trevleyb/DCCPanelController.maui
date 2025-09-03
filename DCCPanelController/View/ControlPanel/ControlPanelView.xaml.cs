@@ -16,7 +16,6 @@ using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
-using CoreGraphics;
 using UIKit;
 #endif
 
@@ -32,7 +31,7 @@ public partial class ControlPanelView {
     private readonly object _tapLock = new();
     private int _currentSelectionIndex;
 
-    [ObservableProperty] private bool _isPanelDrawing = false;
+    [ObservableProperty] private bool _isPanelDrawing;
 
     private enum GestureOwner { None, Tap, LongPress, DragSelect }
 
@@ -56,7 +55,7 @@ public partial class ControlPanelView {
     private int _lastDragRow;
 
     private double _gridSize;
-    private SelectionOutlineDrawable? _selectionOutlineDrawable;
+    private GridSelectionOutline? _selectionOutlineDrawable;
     private GraphicsView? _selectionOutlinegraphicsView;
     private int _tapCount;
     private Timer? _tapTimer;
@@ -218,7 +217,7 @@ public partial class ControlPanelView {
     /// </summary>
     /// <returns>Returns an instance of the created tile or null if it could not create one. </returns>
     private ITile? AddEntityToGrid(Entity entity) {
-        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", true)) {
+        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}")) {
             var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
             if (tile is not null) {
                 tile.TileChanged += TileOnPropertiesChanged;
@@ -279,7 +278,7 @@ public partial class ControlPanelView {
         if (_dragSelectionActive) return;                    // drag-select in progress takes precedence
 
         lock (_tapLock) {
-            var pos = GetGridPosition(e.GetPosition(DynamicGrid)) ?? (-1, -1);
+            var pos = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid), DynamicGrid) ?? (-1, -1);
             _tapCount++;
             _gestureOwner = GestureOwner.Tap; // claim ownership as tap (tentative)
             _tapTimer?.Dispose();
@@ -333,7 +332,7 @@ public partial class ControlPanelView {
 
         // look up the tile if it is in this grid
         // -------------------------------------------------------------------
-        var tilesAtPosition = TilesInGrid(tapTimerState.Position);
+        var tilesAtPosition = GridPositionHelper.GetTilesAt(tapTimerState.Position, DynamicGrid);
         if (tilesAtPosition.Count == 0) {
             ClearAllSelectedTiles();
             OnTileSelected(_tapCount);
@@ -376,22 +375,26 @@ public partial class ControlPanelView {
     }
 
     private async void OnDesignModeDoubleTap(TapTimerState tapTimerState) {
-        Console.WriteLine($"DOUBLE TAP: DESIGN MODE => @{tapTimerState.Col},{tapTimerState.Row}");
-        var tile = TilesInGrid(tapTimerState.Position).FirstOrDefault();
+        try {
+            Console.WriteLine($"DOUBLE TAP: DESIGN MODE => @{tapTimerState.Col},{tapTimerState.Row}");
+            var tile = GridPositionHelper.GetTilesAt(tapTimerState.Position, DynamicGrid).FirstOrDefault();
 
-        // If we double-tapped on an actual tile, then unmark all tiles and mark this one
-        // ------------------------------------------------------------------------------
-        if (tile != null) {
-            ClearAllSelectedTiles();
-            MarkTileSelected(tile);
-            OnTileSelected(_tapCount);
-        }
+            // If we double-tapped on an actual tile, then unmark all tiles and mark this one
+            // ------------------------------------------------------------------------------
+            if (tile != null) {
+                ClearAllSelectedTiles();
+                MarkTileSelected(tile);
+                OnTileSelected(_tapCount);
+            }
 
-        // If there was no tile in this grid position, then use the Edit Mode to determine 
-        // what we should do. Either move the tile to this position, or clone the selected tile
-        else {
-            Console.WriteLine("MOVE OR COPY TILES");
-            await HandleDoubleTapEmptyCellMoveOrCopy(tapTimerState);
+            // If there was no tile in this grid position, then use the Edit Mode to determine 
+            // what we should do. Either move the tile to this position, or clone the selected tile
+            else {
+                Console.WriteLine("MOVE OR COPY TILES");
+                await HandleDoubleTapEmptyCellMoveOrCopy(tapTimerState);
+            }
+        } catch (Exception e) {
+            Console.WriteLine($"Error in OnDesignModeDoubleTap: {e.Message}");
         }
     }
 
@@ -405,7 +408,7 @@ public partial class ControlPanelView {
         // Find the tile that was tapped and raise an event for that tile. 
         // In operating mode, it can only be an interactive tile 
         // ---------------------------------------------------------------------------
-        var interactiveTile = InteractiveTilesInGrid(tapTimerState.Position).FirstOrDefault();
+        var interactiveTile = GridPositionHelper.GetInteractiveTilesAt(tapTimerState.Position,DynamicGrid).FirstOrDefault();
         if (interactiveTile != null) OnTileTapped(interactiveTile, 1);
     }
 
@@ -415,17 +418,21 @@ public partial class ControlPanelView {
         // Find the tile that was tapped and raise an event for that tile. 
         // In operating mode, it can only be an interactive tile 
         // ---------------------------------------------------------------------------
-        var interactiveTile = InteractiveTilesInGrid(tapTimerState.Position).FirstOrDefault();
+        var interactiveTile = GridPositionHelper.GetInteractiveTilesAt(tapTimerState.Position,DynamicGrid).FirstOrDefault();
         if (interactiveTile != null) OnTileTapped(interactiveTile, 2);
     }
 
     private async void OnOperateModeLongPress(TapTimerState tapTimerState) {
-        Console.WriteLine($"LONG PRESS: OPERATE MODE => @{tapTimerState.Col},{tapTimerState.Row}");
         try {
-            var tile = TrackTilesInGrid(tapTimerState.Position).FirstOrDefault();
-            if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
-        } catch (Exception ex) {
-            Console.WriteLine($"Error in OnOperateModeLongPress: {ex.Message}");
+            Console.WriteLine($"LONG PRESS: OPERATE MODE => @{tapTimerState.Col},{tapTimerState.Row}");
+            try {
+                var tile = GridPositionHelper.GetTrackTilesAt(tapTimerState.Position, DynamicGrid).FirstOrDefault();
+                if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
+            } catch (Exception ex) {
+                Console.WriteLine($"Error in OnOperateModeLongPress: {ex.Message}");
+            }
+        } catch (Exception e) {
+            Console.WriteLine($"Error in OnOperateModeLongPress: {e.Message}");
         }
     }
 
@@ -440,57 +447,12 @@ public partial class ControlPanelView {
         DynamicGrid.BatchCommit();
     }
 
-    /// <summary>
-    ///     Find all tiles in the grid that match the offset of the provided tile
-    /// </summary>
-    private List<ITile> TilesInGrid(ITile tile) {
-        return TilesInGrid(tile.Entity.Col, tile.Entity.Row);
-    }
-
-    /// <summary>
-    ///     Find all tiles in the grid that match the offset of col, row
-    /// </summary>
-    private List<ITile> TilesInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row);
-
-    private List<ITile> TilesInGrid(int col, int row) {
-        var children =  DynamicGrid.Children.OfType<ITile>()
-                          .Where(x => x.Entity.Col == col && x.Entity.Row == row)
-                          .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
-                          .ToList();
-        return children;
-    }
-
-    private List<ITile> InteractiveTilesInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row);
-
-    private List<ITile> InteractiveTilesInGrid(int col, int row) {
-        var children = DynamicGrid.Children.OfType<ITile>()
-                          .Where(x => x.Entity is IInteractiveEntity &&
-                                      x.Entity.Col == col &&
-                                      x.Entity.Row == row)
-                          .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
-                          .ToList();
-        return children;
-    }
-
-    private List<ITile> TrackTilesInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row);
-
-    private List<ITile> TrackTilesInGrid(int col, int row) {
-        var children = DynamicGrid.Children.OfType<ITile>()
-                          .Where(x => x.Entity is ITrackEntity &&
-                                      x.Entity is not IInteractiveEntity &&
-                                      x.Entity.Col == col &&
-                                      x.Entity.Row == row)
-                          .OrderByDescending(x => x.Entity.Layer) // Highest layer first for selection
-                          .ToList();
-        return children;
-    }
-
-    private bool IsTileInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row).Count > 0;
-    private bool IsTileInGrid(int col, int row) => TilesInGrid(col, row).Count > 0;
-    private bool IsInteractiveTileInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row).Count > 0;
-    private bool IsInteractiveTileInGrid(int col, int row) => InteractiveTilesInGrid(col, row).Count > 0;
-    private bool IsTrackTileInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row).Count > 0;
-    private bool IsTrackTileInGrid(int col, int row) => TrackTilesInGrid(col, row).Count > 0;
+    // private bool IsTileInGrid((int col, int row) grid) => TilesInGrid(grid.col, grid.row).Count > 0;
+    // private bool IsTileInGrid(int col, int row) => TilesInGrid(col, row).Count > 0;
+    // private bool IsInteractiveTileInGrid((int col, int row) grid) => InteractiveTilesInGrid(grid.col, grid.row).Count > 0;
+    // private bool IsInteractiveTileInGrid(int col, int row) => InteractiveTilesInGrid(col, row).Count > 0;
+    // private bool IsTrackTileInGrid((int col, int row) grid) => TrackTilesInGrid(grid.col, grid.row).Count > 0;
+    // private bool IsTrackTileInGrid(int col, int row) => TrackTilesInGrid(col, row).Count > 0;
 
     /// <summary>
     ///     Remove an individual tile from the grid.
@@ -560,42 +522,6 @@ public partial class ControlPanelView {
             DynamicGrid.SetColumnSpan(view, tile.Entity.Width);
             DynamicGrid.SetRowSpan(view, tile.Entity.Height);
         }
-    }
-    #endregion
-
-    #region Position Helpers
-    /// <summary>
-    ///     Convert a position in the grid (absolute) to a Grid position within the col/row definitions
-    /// </summary>
-    /// <param name="point">A point object of where the item was tapped</param>
-    /// <returns>Either a null, or (-1,-1) or (row,col) </returns>
-    protected (int Col, int Row)? GetGridPosition(Point? point) {
-        if (point is { } tapPosition) return GetGridPosition(tapPosition.X, tapPosition.Y);
-        return (0, 0);
-    }
-
-    protected (int Col, int Row)? GetGridPosition(double posX, double posY) {
-        var totalHeight = DynamicGrid.Height;
-        var totalWidth = DynamicGrid.Width;
-        var rowCount = DynamicGrid.RowDefinitions.Count;
-        var colCount = DynamicGrid.ColumnDefinitions.Count;
-        var cellHeight = totalHeight / rowCount;
-        var cellWidth = totalWidth / colCount;
-
-        if (cellHeight == 0 || cellWidth == 0) {
-            _logger.LogDebug("Cell Height or Width is zero? {CellHeight},{CellWidth}", cellHeight, cellWidth);
-            return null;
-        }
-
-        // Calculate row and column indices
-        var row = (int)(posY / cellHeight);
-        var col = (int)(posX / cellWidth);
-
-        // Ensure indices are within bounds
-        row = Math.Min(row, rowCount - 1);
-        col = Math.Min(col, colCount - 1);
-
-        return (col, row);
     }
     #endregion
 
@@ -726,7 +652,6 @@ public partial class ControlPanelView {
             CellHighlightAction.DragValid   => Colors.CornflowerBlue,
             CellHighlightAction.DragInvalid => Colors.Red,
             CellHighlightAction.Selecting   => Colors.LightSkyBlue,
-            CellHighlightAction.Error       => Colors.Red,
             _                               => Colors.Red
         };
 
@@ -774,7 +699,7 @@ public partial class ControlPanelView {
     #region Support for the Grid Selection
     private void UpdateSelectorView(int startCol, int startRow, int endCol, int endRow) {
         if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) {
-            _selectionOutlineDrawable = new SelectionOutlineDrawable();
+            _selectionOutlineDrawable = new GridSelectionOutline();
             _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
             _selectionOutlinegraphicsView = new GraphicsView {
                 InputTransparent = true,
@@ -805,12 +730,11 @@ public partial class ControlPanelView {
         _lpInvokedThisPress = false;
         _longPressActive = false;
 
-        var cell = GetGridPosition(e.GetPosition(DynamicGrid));
+        var cell = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid),DynamicGrid);
         Console.WriteLine($"PointerPressed @{cell?.Col},{cell?.Row}");
     
         if (cell is { } gridCell) {
-            var tilesAtPosition = TilesInGrid(gridCell.Col, gridCell.Row);
-        
+            var tilesAtPosition = GridPositionHelper.GetTilesAt(gridCell.Col, gridCell.Row, DynamicGrid);
             if (DesignMode && tilesAtPosition.Count > 0) {
                 // Store the tile for potential dragging
                 _draggedTile = tilesAtPosition.FirstOrDefault();
@@ -859,7 +783,7 @@ public partial class ControlPanelView {
     
         if (_tileDragActive && _draggedTile != null) {
             // Handle tile drag movement
-            var gridPosition = GetGridPosition(currentPos);
+            var gridPosition = GridPositionHelper.GetGridPosition(currentPos,DynamicGrid);
             if (gridPosition is { } position) {
                 ManualDragTileOver(_draggedTile, position.Col, position.Row);
             }
@@ -879,7 +803,7 @@ public partial class ControlPanelView {
             }
         }
 
-        var cell = GetGridPosition(pos);
+        var cell = GridPositionHelper.GetGridPosition(pos,DynamicGrid);
         if (cell is { } gridCell) {
             EndCol = gridCell.Col;
             EndRow = gridCell.Row;
@@ -899,7 +823,7 @@ public partial class ControlPanelView {
     private void DynamicGridPointerReleased(object? sender, PointerEventArgs e) {
         // Handle tile drag completion
         if (_tileDragActive && _draggedTile != null) {
-            var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
+            var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid),DynamicGrid);
             if (gridPosition is { } position) {
                 ManualDropTile(_draggedTile, position.Col, position.Row);
             }
@@ -967,7 +891,7 @@ public partial class ControlPanelView {
             _lastDragRow = tile.Entity.Row;
         } else {
             UnHighlightCell(_lastDragCol, _lastDragRow);
-            if (!DoesTrackClash(tile, col, row) && !IsTileOutOfBounds(tile, col, row)) {
+            if (!GridPositionHelper.WouldCollide(tile, col, row, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(tile, col, row, Cols, Rows)) {
                 HighlightCell(col, row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragValid);
             } else {
                 HighlightCell(col, row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragInvalid);
@@ -978,7 +902,8 @@ public partial class ControlPanelView {
     }
     
     private void ManualDropTile(ITile tile, int col, int row) {
-        if (!DoesTrackClash(tile, col, row) && !IsTileOutOfBounds(tile, col, row)) {
+        if (!GridPositionHelper.WouldCollide(tile, col, row,DynamicGrid,EditMode) && 
+             GridPositionHelper.IsInBounds(tile, col, row, Cols, Rows)) {
             switch (EditMode) {
             case EditModeEnum.Move:
                 tile.Entity.Col = col;
@@ -1041,7 +966,7 @@ public partial class ControlPanelView {
 
         // Must tap an empty cell to trigger move/copy by requirement
         // -----------------------------------------------------------
-        if (IsTileInGrid(anchorCol, anchorRow)) return;
+        if (GridPositionHelper.HasTileAt(anchorCol, anchorRow, DynamicGrid)) return;
         if (_selectedTiles.Count == 0) return; // nothing to move/copy
 
         // Only allow recognized modes
@@ -1053,7 +978,7 @@ public partial class ControlPanelView {
                 try {
                     UnMarkAllTiles();
                     foreach (var cell in placeAt.bounds) {
-                        HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);;;
+                        HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);
                     }
                     await Task.Yield();
                     await Task.Delay(150);
@@ -1172,7 +1097,7 @@ public partial class ControlPanelView {
             var destRow = anchorRow + (e.Row - minRow);
             
             // Bounds check
-            if (!InBounds(destCol, destRow, e.Width, e.Height)) tileInBounds = false;;
+            if (!InBounds(destCol, destRow, e.Width, e.Height)) tileInBounds = false;
 
             // Collision check against *other* tiles
             foreach (var other in existing) {
@@ -1194,53 +1119,6 @@ public partial class ControlPanelView {
 
     #region Drag and Drop Support for the Tiles
     /// <summary>
-    ///     If we have started a Drag and it is a Tile then store the tile we are dragging in the drag properties
-    ///     and also that the source is a Tile. We use this along with the mode to either move the tile or add
-    ///     a new tile to the panel.
-    /// </summary>
-    private void DragTileStarting(DragStartingEventArgs args, ITile tile) {
-        if (!DesignMode) {
-            Console.WriteLine("DragTileStarting (but not in Design Mode): " + args.Data.ToString());
-            return;
-        }
-        
-        Console.WriteLine("DragTileStarting");
-        // Some edit modes do not support drag and drop, and also if the mode is Resize and
-        // the tile does not support resizing, then we can't allow it to resize. 
-        // -------------------------------------------------------------------------------------------------
-        if (EditMode == EditModeEnum.Size && tile.Entity is not IDrawingEntity) {
-            args.Cancel = true;
-            return;
-        }
-
-        _gestureOwner = GestureOwner.DragSelect; // treat tile drag similar to owning the sequence
-        CancelTapTimer();
-        SuppressTapsFor(200);
-
-        args.Data.Properties.Add("Tile", tile);
-        args.Data.Properties.Add("Source", "Panel");
-        args.Data.Image = GetEditModeIconFilename;
-
-        ClearAllSelectedTiles();
-        _lastDragCol = tile.Entity.Col;
-        _lastDragRow = tile.Entity.Row;
-        _dragStartCol = tile.Entity.Col;
-        _dragStartRow = tile.Entity.Row;
-
-#if IOS || MACCATALYST
-        UIDragPreview Action() {
-            var image = UIImage.FromFile(GetEditModeIconFilename);
-            var imageView = new UIImageView(image);
-            imageView.ContentMode = UIViewContentMode.Center;
-            imageView.Frame = new CGRect(0, 0, 32, 32);
-            return new UIDragPreview(imageView);
-        }
-
-        args?.PlatformArgs?.SetPreviewProvider(Action);
-#endif
-    }
-
-    /// <summary>
     ///     Called when we have left the bounds of thr Panel so we just reset everything
     /// </summary>
     private void DragLeaveTileOnPanel(object? sender, DragEventArgs e) {
@@ -1258,14 +1136,14 @@ public partial class ControlPanelView {
     private void DragOverTileOnPanel(object? sender, DragEventArgs e) {
         if (!DesignMode) {
 #if IOS || MACCATALYST
-            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
+            e.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
 #endif
             return;
         }
 
         var source = e.Data.Properties["Source"] as string ?? null;
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
-        var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
+        var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid),DynamicGrid);
 
         if (gridPosition is { } position && tile is not null && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
             if (EditMode == EditModeEnum.Size && source == "Panel") {
@@ -1276,7 +1154,8 @@ public partial class ControlPanelView {
                 _lastDragRow = tile.Entity.Row;
             } else {
                 UnHighlightCell(_lastDragCol, _lastDragRow);
-                if (!DoesTrackClash(tile, position.Col, position.Row) && !IsTileOutOfBounds(tile, position.Col, position.Row)) {
+                if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, DynamicGrid, EditMode) && 
+                    GridPositionHelper.IsInBounds(tile, position.Col, position.Row, Cols, Rows)) {
                     e.AcceptedOperation = DataPackageOperation.Copy;
                     HighlightCell(position.Col, position.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
@@ -1290,9 +1169,9 @@ public partial class ControlPanelView {
 
 #if IOS || MACCATALYST
         if (source == "Symbol") {
-            e?.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
+            e.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
         } else {
-            e?.PlatformArgs?.SetDropProposal(EditMode switch {
+            e.PlatformArgs?.SetDropProposal(EditMode switch {
                 EditModeEnum.Copy => new UIDropProposal(UIDropOperation.Copy),
                 EditModeEnum.Move => new UIDropProposal(UIDropOperation.Move),
                 EditModeEnum.Size => new UIDropProposal(UIDropOperation.Move),
@@ -1306,13 +1185,6 @@ public partial class ControlPanelView {
         dragUI.IsCaptionVisible = false;
         dragUI.IsGlyphVisible = false;
 #endif
-    }
-
-    private void DragCompleted(object? sender, DropCompletedEventArgs e) {
-        if (sender is DragGestureRecognizer { Parent : ITile tile }) {
-            tile.ForceRedraw();
-            ClearAllSelectedTiles();
-        }
     }
 
     /// <summary>
@@ -1330,7 +1202,7 @@ public partial class ControlPanelView {
             ClearAllSelectedTiles();
             var source = e.Data.Properties["Source"] as string ?? null;
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
-            var gridPosition = GetGridPosition(e.GetPosition(DynamicGrid));
+            var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid),DynamicGrid);
 
             if (gridPosition is { } position && tile is not null) {
                 //_logger.LogInformation("DropTileOnPanel Source='{Source}' Tile='{Tile}' Position='{Col},{Row}'", source, tile.Entity.EntityName ?? "Undefined", position.Col, position.Row);
@@ -1339,7 +1211,7 @@ public partial class ControlPanelView {
                 // not already occupied unless the item being dropped is an overlay 
                 // item that has a higher Z factor. 
                 // -----------------------------------------------------------------
-                if (!DoesTrackClash(tile, position.Col, position.Row)) {
+                if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, DynamicGrid, EditMode)) {
                     if (Panel is { } panel) {
                         switch (source) {
                         case "Panel":
@@ -1403,40 +1275,6 @@ public partial class ControlPanelView {
         _lastDragCol = 0;
         _lastDragRow = 0;
     }
-
-    private bool IsTileOutOfBounds(ITile tile, int positionCol, int positionRow) {
-        return positionCol < 0 || positionCol >= Cols ||
-               positionRow < 0 || positionRow >= Rows ||
-               positionCol + tile.Entity.Width > Cols ||
-               positionRow + tile.Entity.Height > Rows;
-    }
-
-    private bool DoesTrackClash(ITile tile, int col, int row) {
-        if (tile.Entity is not ITrackEntity) return false;                                                  // No clashes possible if the track is not a track piece
-        if (tile.Entity.Col == col && tile.Entity.Row == row && EditMode != EditModeEnum.Move) return true; // Can't drop onto yourself. 
-        var tilesInGrid = DynamicGrid.OfType<ITile>()
-                                     .Where(eTile =>
-
-                                                // Exclude the same track we're checking against
-                                                eTile != tile && eTile.Entity is ITrackEntity &&
-
-                                                // Check if there's a column overlap between the tracks
-                                                col < eTile.Entity.Col + eTile.Entity.Width && col + eTile.Entity.Width > eTile.Entity.Col &&
-
-                                                // Check if there's a row overlap between the tracks
-                                                row < eTile.Entity.Row + eTile.Entity.Height && row + eTile.Entity.Height > eTile.Entity.Row
-                                      )
-                                     .ToList();
-
-        // If there are noe tiles in the grid at the moment, then go-for-it
-        // ----------------------------------------------------------------
-        if (tilesInGrid.Count == 0) return false;
-
-        // If there is already an Interactive tile in the grid and this tile is an interactive tile
-        // then you cannot add it as we cannot have 2 interactive tiles in the same location
-        // ----------------------------------------------------------------
-        return tilesInGrid.Any(x => x.Entity is IInteractiveEntity) && tile.Entity is IInteractiveEntity;
-    }
     #endregion
 
     #region Bindable Properties
@@ -1484,9 +1322,13 @@ public partial class ControlPanelView {
     }
 
     private static async void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is ControlPanelView panel) {
-            panel.ShowGrid = panel.DesignMode;
-            await panel.DrawPanel();
+        try {
+            if (bindable is ControlPanelView panel) {
+                panel.ShowGrid = panel.DesignMode;
+                await panel.DrawPanel();
+            }
+        } catch (Exception e) {
+            Console.WriteLine($"ERROR: OnDesignModeChanged: {e.Message}");
         }
     }
 
@@ -1583,25 +1425,27 @@ public partial class ControlPanelView {
         }
     }
 
-    private static void OnClientChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        if (bindable is ControlPanelView control) { }
-    }
-
-    private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        if (bindable is ControlPanelView control) { }
-    }
-
     private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
         if (bindable is ControlPanelView control) {
             control.DrawGrid();
         }
     }
 
-    private static void OnInteractiveChanged(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is ControlPanelView control) { }
+    private static void OnClientChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        //if (bindable is ControlPanelView control) { }
     }
 
-    private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) { }
+    private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        //if (bindable is ControlPanelView control) { }
+    }
+
+    private static void OnInteractiveChanged(BindableObject bindable, object oldValue, object newValue) {
+        //if (bindable is ControlPanelView control) { }
+    }
+
+    private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
+        //if (bindable is ControlPanelView control) { }
+    }
     #endregion
 
     #region Helpers
