@@ -25,7 +25,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly PanelEditor? _panelEditor;
 
     private readonly ILogger<PanelEditor> _logger;
-    private readonly ControlPanelView _panelView;
+    private readonly ControlPanel.ControlPanelView _panelView;
     private readonly ProfileService _profileService;
     
     [ObservableProperty]
@@ -69,7 +69,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
 
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanelView panelView, PanelEditor panelEditor) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanel.ControlPanelView panelView, PanelEditor panelEditor) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
@@ -196,7 +196,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 EditModeEnum.Move => EditModeEnum.Copy,
                 EditModeEnum.Copy => EditModeEnum.Size,
                 EditModeEnum.Size => EditModeEnum.Move,
-                _                 => EditModeEnum.Move
+                _                                  => EditModeEnum.Move
             };
         } else {
             // If multiple items selected, then only MOVE or COPY allowed

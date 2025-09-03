@@ -2,6 +2,7 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
+using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
@@ -31,10 +32,10 @@ public partial class TestPage : ContentPage {
         // ---------------------------------------------
         var panels = new Panels();
         var panel  = panels.CreatePanel();
-        var entity = panel.CreateEntity<CompassEntity>();
+        var entity = panel.CreateEntity<StraightEntity>();
         entity.Col = 2;
         entity.Row = 2;
-        var tile = new CompassTile(entity, 15);
+        var tile = new TrackStraightTile(entity, 15);
         TestGrid.Children.Add(tile);
         TestGrid.SetColumn(tile, tile.Entity.Col);
         TestGrid.SetRow(tile, tile.Entity.Row);

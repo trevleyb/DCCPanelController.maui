@@ -2,6 +2,7 @@ using System.ComponentModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 

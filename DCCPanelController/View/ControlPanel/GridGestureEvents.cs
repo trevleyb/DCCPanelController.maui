@@ -1,10 +1,6 @@
-using System.ComponentModel;
-using CommunityToolkit.Maui.Behaviors;
-using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using Microsoft.Extensions.Logging;
 
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.ControlPanel;
 
 /// <summary>
 /// Event arguments for basic grid gesture events (tap, long press)
@@ -31,13 +27,18 @@ public class TileDragEventArgs : EventArgs {
     public int StartRow { get; }
     public int CurrentCol { get; }
     public int CurrentRow { get; }
+    public int LastCol { get; }
+    public int LastRow { get; }
 
-    public TileDragEventArgs(ITile? tile, int startCol, int startRow, int currentCol, int currentRow) {
+    public TileDragEventArgs(ITile? tile, int col, int row) : this(tile, col, row, col, row, col, row) { }
+    public TileDragEventArgs(ITile? tile, int startCol, int startRow, int currentCol, int currentRow, int lastCol, int lastRow) {
         Tile = tile;
         StartCol = startCol;
         StartRow = startRow;
         CurrentCol = currentCol;
         CurrentRow = currentRow;
+        LastCol = lastCol;
+        LastRow = lastRow;
     }
 }
 

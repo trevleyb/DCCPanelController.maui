@@ -1,17 +1,16 @@
-using System.ComponentModel;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using Microsoft.Extensions.Logging;
 
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.ControlPanel;
 
 /// <summary>
 /// Manages all gesture recognition and coordination for the grid panel.
 /// Handles tap detection, long press, pointer events, and manual tile dragging.
 /// </summary>
 public class GridGestureHelper : IDisposable {
-    private const int DoubleTapThreshold = 200;
+    private const int DoubleTapThreshold = 300;
     private const double DragSlopPx = 6;
 
     private readonly Grid _grid;
@@ -163,12 +162,10 @@ public class GridGestureHelper : IDisposable {
         });
     }
 
-    private void OnLongPress(object? sender, LongPressCompletedEventArgs e) {
+    private async void OnLongPress(object? sender, LongPressCompletedEventArgs e) {
         try {
             if (_dragSelectionActive || _tileDragActive) return;
             if (_lpInvokedThisPress) return;
-
-            // Mark that long press duration has been reached, but don't fire event yet
             _longPressDetected = true;
         } catch (Exception ex) {
             Console.WriteLine("Error in long press handler: " + ex.Message);
@@ -227,7 +224,7 @@ public class GridGestureHelper : IDisposable {
                 _lastDragCol = _dragStartCol;
                 _lastDragRow = _dragStartRow;
 
-                var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, _dragStartCol, _dragStartRow);
+                var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow);
                 TileDragStarted?.Invoke(this, dragArgs);
             }
         }
@@ -236,7 +233,7 @@ public class GridGestureHelper : IDisposable {
         if (_tileDragActive && _draggedTile != null) {
             var gridPosition = GridPositionHelper.GetGridPosition(pos, _grid);
             if (gridPosition is { } position && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
-                var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, position.Col, position.Row);
+                var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, position.Col, position.Row, _lastDragCol, _lastDragRow);
                 TileDragMoved?.Invoke(this, dragArgs);
                 _lastDragCol = position.Col;
                 _lastDragRow = position.Row;
@@ -283,7 +280,7 @@ public class GridGestureHelper : IDisposable {
         if (_tileDragActive && _draggedTile != null) {
             var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid);
             if (gridPosition is { } position) {
-                var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, position.Col, position.Row);
+                var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, position.Col, position.Row, _lastDragCol, _lastDragRow);
                 TileDragCompleted?.Invoke(this, dragArgs);
             }
 
@@ -318,7 +315,6 @@ public class GridGestureHelper : IDisposable {
                 LongPress?.Invoke(this, gestureArgs);
             }
         }
-
         ResetGestureState();
     }
 
@@ -329,16 +325,15 @@ public class GridGestureHelper : IDisposable {
         }
 
         if (_tileDragActive) {
-            var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, -1,-1);
+            var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, -1, -1, _lastDragCol, _lastDragRow);
             TileDragCancelled?.Invoke(this, dragArgs);
-
         }
-
         ResetGestureState();
     }
     #endregion
 
     #region State Management
+    public void CancelCurrentGesture() => ResetGestureState();
     private void ResetGestureState() {
         _gestureOwner = GestureOwner.None;
         _dragSelectionActive = false;

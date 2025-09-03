@@ -1,6 +1,6 @@
 using DCCPanelController.Models.ViewModel.Interfaces;
 
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.ControlPanel;
 
 // Event records
 public class TileTappedEventArgs(ITile tile, int tapCount) : TileSelectedEventArgs([tile], tapCount);

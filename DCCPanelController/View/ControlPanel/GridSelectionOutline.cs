@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.ControlPanel;
 
 public class GridSelectionOutline : IDrawable {
     public bool IsActive { get; set; }

@@ -10,6 +10,7 @@
              xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
              xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
              xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
+             xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
              ios:Page.UseSafeArea="false"
              x:DataType="view:PanelEditorViewModel"
              Title="{Binding Title}"
@@ -83,7 +84,7 @@
             <!-- Row 0: Panel Editor -->
             <Border x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" Stroke="#FFF5F5F5" StrokeThickness="0">
                 <Grid x:Name="DisplayBorder" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
-                    <view:ControlPanelView
+                    <controlPanel:ControlPanelView
                         Margin="5"
                         BackgroundColor="Transparent"
                         DesignMode="true"

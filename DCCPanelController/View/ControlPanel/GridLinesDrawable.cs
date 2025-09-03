@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.ControlPanel;
 
 /// <summary>
 ///     This is a helper class that draws the Grid Lines on the Page.

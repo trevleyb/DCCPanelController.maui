@@ -4,6 +4,7 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
@@ -27,8 +28,8 @@ public partial class PanelEditor : ContentPage {
         _viewModel = new PanelEditorViewModel(_logger, panel, profileService, PanelView, this) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
-        };
-
+        }; 
+        
         PanelView.TileSelected += PanelViewOnTileSelected;
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;

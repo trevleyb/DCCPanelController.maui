@@ -1,9 +1,8 @@
-using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using Microsoft.Extensions.Logging;
+using DCCPanelController.View.Helpers;
 
-namespace DCCPanelController.View.Helpers;
+namespace DCCPanelController.View.ControlPanel;
 
 /// <summary>
 /// Utility class for grid position calculations and tile lookups.
@@ -179,31 +178,34 @@ public static class GridPositionHelper {
     /// <returns>True if there would be a collision</returns>
     public static bool WouldCollide(ITile tile, int col, int row, Grid grid,
                                     EditModeEnum mode, IEnumerable<ITile>? excludeTiles = null) {
+        
         // Non-track entities don't have collision restrictions
+        // Just can't have more than 1 Track Entity in the same grid location 
+        // or more than 1 interactive tile in the same grid location
+        // ----------------------------------------------------------------------
         if (tile.Entity is not ITrackEntity) return false;
 
         // Can't drop onto yourself (unless in Move mode where you're vacating the space)
-        if (tile.Entity.Col == col && tile.Entity.Row == row && mode != EditModeEnum.Move)
-            return true;
+        // ------------------------------------------------------------------------------
+        if (tile.Entity.Col == col && tile.Entity.Row == row && mode != EditModeEnum.Move) return true;
 
-        var exclusionSet = excludeTiles?.ToHashSet() ?? new HashSet<ITile>();
-
-        var conflictingTiles = grid.Children
-                                   .OfType<ITile>()
-                                   .Where(other =>
-                                              other != tile &&
-                                              !exclusionSet.Contains(other) &&
-                                              other.Entity is ITrackEntity &&
-                                              RectsOverlap(col, row, tile.Entity.Width, tile.Entity.Height,
-                                                           other.Entity.Col, other.Entity.Row, other.Entity.Width, other.Entity.Height))
-                                   .ToList();
+        var exclusionSet = excludeTiles?.ToHashSet() ?? [];
+        var conflictingTiles = grid.Children.OfType<ITile>()
+            .Where(other => other != tile &&
+                !exclusionSet.Contains(other) &&
+                other.Entity is ITrackEntity &&
+                RectsOverlap(col, row, tile.Entity.Width, tile.Entity.Height,
+                    other.Entity.Col, other.Entity.Row, other.Entity.Width, other.Entity.Height))
+                .ToList();
 
         // If there are no conflicts, no collision
+        // --------------------------------------------------
         if (conflictingTiles.Count == 0) return false;
-
+        
         // If there are conflicts and this tile is interactive, check if any conflicting tiles are also interactive
         // (Cannot have 2 interactive tiles in the same location)
-        return conflictingTiles.Any(x => x.Entity is IInteractiveEntity) && tile.Entity is IInteractiveEntity;
+        // ------------------------------------------------------------------------------------
+        return conflictingTiles.Count != 0;
     }
 
     /// <summary>
