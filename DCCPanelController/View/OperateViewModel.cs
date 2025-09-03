@@ -14,9 +14,13 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
-    [ObservableProperty] private bool _isMaximized;
     [ObservableProperty] private Panel? _activePanel;
 
+    
+    [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
+    [ObservableProperty] private bool _isMaximized;
+    public bool IsNotMaximized => !IsMaximized;
+    
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
     public bool HideWelcomePage => !ShowWelcomePage;

@@ -78,8 +78,8 @@ public partial class ControlPanelView {
     /// of event (Single, Double, Long Press) or Selection, and raises appropriate events. 
     /// </summary>
     private void SetupDynamicGridGestures(Grid dynamicGrid) {
-        dynamicGrid.GestureRecognizers.Clear();
-        
+        Console.WriteLine("SetupDynamicGridGestures called");
+
         _gridGestures = new GridGestureHelper(dynamicGrid);
         _gridGestures.SingleTap += GridGesturesOnSingleTap;
         _gridGestures.DoubleTap += GridGesturesOnDoubleTap;
@@ -98,11 +98,6 @@ public partial class ControlPanelView {
         // And wire up the Drop Recognisers for the Dropping of a tile from 
         // the tile palette. 
         // ----------------------------------------------------------------
-        if (DesignMode) SetupDropTileGestures(DynamicGrid);
-    }
-
-    private void SetupDropTileGestures(Grid dynamicGrid) {
-        Console.WriteLine("SetupDropTileGestures called");
         var dropGesture = new DropGestureRecognizer();
         dropGesture.Drop += DropTileOnPanel;
         dropGesture.DragOver += DragOverTileOnPanel;
@@ -116,7 +111,8 @@ public partial class ControlPanelView {
             if (DesignMode) {
                 // Look up the tile if it is in this grid. If no tiles, reset selected
                 // -------------------------------------------------------------------
-                var tilesAtPosition = GridPositionHelper.GetTilesAt(e.Col, e.Row, DynamicGrid);
+                //var tilesAtPosition = GridPositionHelper.GetTilesAt(e.Col, e.Row, DynamicGrid);
+                var tilesAtPosition = GridPositionHelper.GetTilesCovering(e.Col, e.Row, DynamicGrid);
                 if (tilesAtPosition.Count == 0) {
                     ClearAllSelectedTiles();
                 } else {
@@ -162,7 +158,8 @@ public partial class ControlPanelView {
     private async void GridGesturesOnDoubleTap(object? sender, GridGestureEventArgs e) {
         try {
             if (DesignMode) {
-                var tile = GridPositionHelper.GetTilesAt(e.Col, e.Row, DynamicGrid).FirstOrDefault();
+                //var tile = GridPositionHelper.GetTilesAt(e.Col, e.Row, DynamicGrid).FirstOrDefault();
+                var tile = GridPositionHelper.GetTilesCovering(e.Col, e.Row, DynamicGrid).FirstOrDefault();
 
                 // If we double-tapped on an actual tile, then unmark all tiles and mark this one
                 // ------------------------------------------------------------------------------
@@ -592,13 +589,14 @@ public partial class ControlPanelView {
     }
 
     private void RemoveGrid() => RemoveChildView("GridLines");
-
     private void RemoveChildView(string classID) {
         if (ControlPanelLayout.Children.Count >= 1) {
+            var controlPanelChildren = ControlPanelLayout.Children.ToList(); 
             var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().Where(x => x.ClassId == classID).ToList();
             foreach (var view in graphicsViewToRemove) {
                 ControlPanelLayout.Children.Remove(view);
             }
+            controlPanelChildren = ControlPanelLayout.Children.ToList(); 
         }
     }
     #endregion
@@ -1079,9 +1077,7 @@ public partial class ControlPanelView {
     private static async void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
         try {
             if (bindable is ControlPanelView panel) {
-                panel.DynamicGrid.Clear();
                 panel.ShowGrid = panel.DesignMode;
-                if (panel.DesignMode) panel.SetupDropTileGestures(panel.DynamicGrid);
                 await panel.DrawPanel();
             }
         } catch (Exception e) {

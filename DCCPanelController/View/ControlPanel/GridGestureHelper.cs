@@ -187,7 +187,8 @@ public class GridGestureHelper : IDisposable {
         _tappedRow = gridCell.Row;
         _longPressStartPos = e.GetPosition(_grid) ?? new Point(0, 0);
 
-        var tilesAtPosition = GridPositionHelper.GetTilesAt(gridCell.Col, gridCell.Row, _grid);
+        //var tilesAtPosition = GridPositionHelper.GetTilesAt(gridCell.Col, gridCell.Row, _grid);
+        var tilesAtPosition = GridPositionHelper.GetTilesCovering(gridCell.Col, gridCell.Row, _grid);
 
         // Check for potential tile drag in design mode
         if (tilesAtPosition.Count > 0) {

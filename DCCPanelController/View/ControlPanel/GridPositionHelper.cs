@@ -105,6 +105,25 @@ public static class GridPositionHelper {
     /// Find all track tiles at the specified position
     /// </summary>
     public static List<ITile> GetTrackTilesAt((int col, int row) position, Grid grid) => GetTrackTilesAt(position.col, position.row, grid);
+
+    /// <summary>
+    /// Find all tiles whose span covers the specified grid cell (col,row),
+    /// ordered by layer (highest first).
+    /// Use this when there is no exact top-left match but a tile may occupy the cell.
+    /// </summary>
+    public static ITile? GetTopmostTileCovering(int col, int row, Grid grid) => GetTilesCovering(col, row, grid).FirstOrDefault();
+    public static List<ITile> GetTilesCovering(int col, int row, Grid grid) {
+        return grid.Children
+                   .OfType<ITile>()
+                   .Where(t =>
+                              col >= t.Entity.Col &&
+                              col <  t.Entity.Col + t.Entity.Width &&
+                              row >= t.Entity.Row &&
+                              row <  t.Entity.Row + t.Entity.Height)
+                   .OrderByDescending(t => t.Entity.Layer)
+                   .ToList();
+    }
+
     #endregion
 
     #region Existence Check Methods

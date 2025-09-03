@@ -208,7 +208,8 @@
                 </CollectionView>
 
                 <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End"
-                       VerticalOptions="End"
+                       FontSize="8"
+                       VerticalOptions="End" IsVisible="{Binding IsNotMaximized}"
                        BackgroundColor="Transparent" TextColor="Gainsboro">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>
