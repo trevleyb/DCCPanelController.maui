@@ -723,7 +723,7 @@ public partial class ControlPanelView {
         var color = action switch {
             CellHighlightAction.Selected    => Colors.CornflowerBlue,
             CellHighlightAction.Resize      => Colors.MidnightBlue,
-            CellHighlightAction.DragValid   => Colors.Green,
+            CellHighlightAction.DragValid   => Colors.CornflowerBlue,
             CellHighlightAction.DragInvalid => Colors.Red,
             CellHighlightAction.Selecting   => Colors.LightSkyBlue,
             CellHighlightAction.Error       => Colors.Red,
