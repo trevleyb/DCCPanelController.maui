@@ -30,6 +30,13 @@ public class TileDragEventArgs : EventArgs {
     public int LastCol { get; }
     public int LastRow { get; }
 
+    public int AbsStartCol => Math.Min(StartCol, CurrentCol);
+    public int AbsStartRow => Math.Min(StartRow, CurrentRow);
+    public int AbsEndCol => Math.Max(StartCol, CurrentCol);
+    public int AbsEndRow => Math.Max(StartRow, CurrentRow);
+    public int AbsLastCol => Math.Min(LastCol, AbsStartCol);
+    public int AbsLastRow => Math.Min(LastRow, AbsStartRow);
+    
     public TileDragEventArgs(ITile? tile, int col, int row) : this(tile, col, row, col, row, col, row) { }
     public TileDragEventArgs(ITile? tile, int startCol, int startRow, int currentCol, int currentRow, int lastCol, int lastRow) {
         Tile = tile;

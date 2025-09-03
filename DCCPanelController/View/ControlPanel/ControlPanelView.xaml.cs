@@ -224,8 +224,9 @@ public partial class ControlPanelView {
         try {
             Console.WriteLine($"Tile MOVE Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
             if (EditMode is EditModeEnum.Size && e.Tile is { Entity: IDrawingEntity } sizeTile) {
-                UnHighlightCell(e.LastCol, e.LastRow);
-                ResizeTrack(sizeTile, e.CurrentCol, e.CurrentRow, e.StartCol, e.StartRow);
+                // TODO: Need to fix this. Offsets are not quite right
+                UnHighlightCell(e.AbsLastCol, e.AbsLastRow);
+                ResizeTrack(sizeTile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                 HighlightCell(sizeTile, CellHighlightAction.Resize);
             } else if (EditMode is EditModeEnum.Move && e.Tile is { } moveTile) {
                 UnHighlightCell(e.LastCol, e.LastRow);
@@ -273,7 +274,7 @@ public partial class ControlPanelView {
                         break;
 
                     case EditModeEnum.Size:
-                        ResizeTrack(tile, e.CurrentCol, e.CurrentRow, e.StartCol, e.StartRow);
+                        ResizeTrack(tile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                         MarkTileSelected(tile);
                         OnTileChanged(tile);
                         break;
@@ -527,25 +528,30 @@ public partial class ControlPanelView {
         }
     }
 
-    private void ResizeTrack(ITile? tile, int newCol, int newRow, int startCol, int startRow) {
+    private void ResizeTrack(ITile? tile, int startCol, int startRow, int endCol, int endRow) {
         if (tile is null) return; // Only resize tracks
 
-        // Work relative to the drag start position
-        if (newCol >= startCol) { // Dragging right - increase width and keep column the same
-            tile.Entity.Col = startCol;
-            tile.Entity.Width = newCol - startCol + 1;
-        } else { // Dragging left - move column left and increase width
-            tile.Entity.Col = newCol;
-            tile.Entity.Width = startCol - newCol + 1;
-        }
+        tile.Entity.Col = startCol;
+        tile.Entity.Row = startRow;
+        tile.Entity.Width = endCol - startCol + 1;
+        tile.Entity.Height = endRow - startRow + 1;
+        
+        // // Work relative to the drag start position
+        // if (newCol >= startCol) { // Dragging right - increase width and keep column the same
+        //     tile.Entity.Col = startCol;
+        //     tile.Entity.Width = newCol - startCol + 1;
+        // } else { // Dragging left - move column left and increase width
+        //     tile.Entity.Col = newCol;
+        //     tile.Entity.Width = startCol - newCol + 1;
+        // }
 
-        if (newRow >= startRow) { // Dragging down - increase height and keep row the same
-            tile.Entity.Row = startRow;
-            tile.Entity.Height = newRow - startRow + 1;
-        } else { // Dragging up - move row up and increase height
-            tile.Entity.Row = newRow;
-            tile.Entity.Height = startRow - newRow + 1;
-        }
+        // if (newRow >= startRow) { // Dragging down - increase height and keep row the same
+        //     tile.Entity.Row = startRow;
+        //     tile.Entity.Height = newRow - startRow + 1;
+        // } else { // Dragging up - move row up and increase height
+        //     tile.Entity.Row = newRow;
+        //     tile.Entity.Height = startRow - newRow + 1;
+        // }
 
         // Ensure minimum size limits (width and height shouldn't be less than 1)
         tile.Entity.Width = Math.Max(1, tile.Entity.Width);
