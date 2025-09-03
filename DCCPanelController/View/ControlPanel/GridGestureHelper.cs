@@ -14,7 +14,6 @@ public class GridGestureHelper : IDisposable {
     private const int DoubleTapThreshold = 200;
     private const double DragSlopPx = 6;
 
-    private readonly ILogger<GridGestureHelper> _logger;
     private readonly Grid _grid;
     private readonly object _tapLock = new();
 
@@ -33,27 +32,34 @@ public class GridGestureHelper : IDisposable {
     // Long press state
     private bool _longPressActive;
     private bool _lpInvokedThisPress;
+    private bool _longPressDetected; // Timer detected long press duration
+    private Point _longPressStartPos;
+
+    // Tile or element being dragged
+    private ITile? _draggedTile;
 
     // Manual tile drag state (for design mode)
-    private bool _tileDragActive;
-    private ITile? _draggedTile;
     private Point _tileDragStartPos;
+    private bool _tileDragActive;
     private int _dragStartCol;
     private int _dragStartRow;
     private int _lastDragCol;
     private int _lastDragRow;
+    private int _lastMoveCol;
+    private int _lastMoveRow;
 
     // Grid selection state
-    private bool _dragSelectionActive;
     private Point? _pointerDownPos;
+    private bool _dragSelectionActive;
+    private int _selectionStartCol;
+    private int _selectionStartRow;
 
     // Gesture recognizers (kept as references for enable/disable)
     private TapGestureRecognizer? _gridTap;
     private TouchBehavior? _gridTouch;
 
-    public GridGestureHelper(Grid grid, ILogger<GridGestureHelper> logger) {
+    public GridGestureHelper(Grid grid) {
         _grid = grid ?? throw new ArgumentNullException(nameof(grid));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         SetupGestureRecognizers();
     }
 
@@ -65,21 +71,16 @@ public class GridGestureHelper : IDisposable {
     public event EventHandler<TileDragEventArgs>? TileDragStarted;
     public event EventHandler<TileDragEventArgs>? TileDragMoved;
     public event EventHandler<TileDragEventArgs>? TileDragCompleted;
+    public event EventHandler<TileDragEventArgs>? TileDragCancelled;
 
     public event EventHandler<GridSelectionEventArgs>? GridSelectionStarted;
     public event EventHandler<GridSelectionEventArgs>? GridSelectionChanged;
     public event EventHandler<GridSelectionEventArgs>? GridSelectionCompleted;
+    public event EventHandler<GridSelectionEventArgs>? GridSelectionCancelled;
     #endregion
 
     #region Public Properties
-    public bool IsSelecting { get; private set; }
-    public bool IsTileDragActive => _tileDragActive;
-    public bool IsLongPressActive => _longPressActive;
-    public GestureOwner CurrentGestureOwner => _gestureOwner;
-
-    // Public properties to access stored tap position
-    public int TappedCol => _tappedCol;
-    public int TappedRow => _tappedRow;
+    public bool IsSelecting => _dragSelectionActive;
     #endregion
 
     #region Setup and Configuration
@@ -164,21 +165,13 @@ public class GridGestureHelper : IDisposable {
 
     private void OnLongPress(object? sender, LongPressCompletedEventArgs e) {
         try {
-            if (_dragSelectionActive) return;
+            if (_dragSelectionActive || _tileDragActive) return;
             if (_lpInvokedThisPress) return;
 
-            _lpInvokedThisPress = true;
-            _longPressActive = true;
-            _gestureOwner = GestureOwner.LongPress;
-
-            CancelTapTimer();
-            SuppressTapsFor(500);
-
-            // Use the stored tapped position since LongPressCompletedEventArgs doesn't have GetPosition()
-            var gestureArgs = new GridGestureEventArgs(sender, _tappedCol, _tappedRow);
-            LongPress?.Invoke(this, gestureArgs);
+            // Mark that long press duration has been reached, but don't fire event yet
+            _longPressDetected = true;
         } catch (Exception ex) {
-            _logger.LogError(ex, "Error in long press handler");
+            Console.WriteLine("Error in long press handler: " + ex.Message);
         }
     }
     #endregion
@@ -187,6 +180,7 @@ public class GridGestureHelper : IDisposable {
     private void OnPointerPressed(object? sender, PointerEventArgs e) {
         _lpInvokedThisPress = false;
         _longPressActive = false;
+        _longPressDetected = false;
 
         var cell = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid);
         if (cell is not { } gridCell) return;
@@ -194,6 +188,7 @@ public class GridGestureHelper : IDisposable {
         // Store the tapped position for long press events (which don't have position info)
         _tappedCol = gridCell.Col;
         _tappedRow = gridCell.Row;
+        _longPressStartPos = e.GetPosition(_grid) ?? new Point(0, 0);
 
         var tilesAtPosition = GridPositionHelper.GetTilesAt(gridCell.Col, gridCell.Row, _grid);
 
@@ -205,12 +200,12 @@ public class GridGestureHelper : IDisposable {
             return;
         }
 
-        // Start grid selection for empty cells
+        // Prepare for potential grid selection on empty cells - but don't start yet
         _pointerDownPos = e.GetPosition(_grid);
+        _selectionStartCol = gridCell.Col;
+        _selectionStartRow = gridCell.Row;
         _dragSelectionActive = false;
-        IsSelecting = true;
-
-        GridSelectionStarted?.Invoke(this, new GridSelectionEventArgs(gridCell.Col, gridCell.Row));
+        // Note: IsSelecting is now based on _dragSelectionActive, so it remains false here
     }
 
     private void OnPointerMoved(object? sender, PointerEventArgs e) {
@@ -249,29 +244,41 @@ public class GridGestureHelper : IDisposable {
             return;
         }
 
-        // Handle grid selection
-        if (!IsSelecting) return;
-
-        // Check if we should activate drag selection
-        if (!_dragSelectionActive && _pointerDownPos is { } startPos) {
+        // Handle potential grid selection activation
+        if (_pointerDownPos is { } startPos && !_dragSelectionActive) {
             var dx = Math.Abs(pos.X - startPos.X);
             var dy = Math.Abs(pos.Y - startPos.Y);
+            
             if (dx >= DragSlopPx || dy >= DragSlopPx) {
                 _dragSelectionActive = true;
                 _gestureOwner = GestureOwner.DragSelect;
                 CancelTapTimer();
+                
+                // Clear long press detection since we're now dragging
+                _longPressDetected = false;
+                
+                // NOW fire the GridSelectionStarted event
+                GridSelectionStarted?.Invoke(this, new GridSelectionEventArgs(_selectionStartCol, _selectionStartRow));
             }
         }
 
-        // Update selection bounds
-        var cell = GridPositionHelper.GetGridPosition(pos, _grid);
-        if (cell is { } gridCell) {
-            var selectionArgs = new GridSelectionEventArgs(_pointerDownPos, pos, gridCell.Col, gridCell.Row);
-            GridSelectionChanged?.Invoke(this, selectionArgs);
+        // Handle active grid selection
+        if (_dragSelectionActive) {
+            var cell = GridPositionHelper.GetGridPosition(pos, _grid);
+            if (cell is { } gridCell) {
+                if (gridCell.Col != _lastMoveCol || gridCell.Row != _lastMoveRow) {
+                    var selectionArgs = new GridSelectionEventArgs(_selectionStartCol,_selectionStartRow, gridCell.Col, gridCell.Row);
+                    GridSelectionChanged?.Invoke(this, selectionArgs);
+                    _lastMoveCol = gridCell.Col;
+                    _lastMoveRow = gridCell.Row;
+                }
+            }
         }
     }
 
     private void OnPointerReleased(object? sender, PointerEventArgs e) {
+        var currentPos = e.GetPosition(_grid) ?? new Point(0, 0);
+        
         // Handle tile drag completion
         if (_tileDragActive && _draggedTile != null) {
             var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid);
@@ -286,12 +293,29 @@ public class GridGestureHelper : IDisposable {
             return;
         }
 
-        // Handle grid selection completion
-        if (IsSelecting) {
+        // Handle grid selection completion - only if selection was actually active
+        if (_dragSelectionActive) {
             var cell = GridPositionHelper.GetGridPosition(e.GetPosition(_grid), _grid);
             if (cell is { } gridCell) {
-                var selectionArgs = new GridSelectionEventArgs(_pointerDownPos, e.GetPosition(_grid), gridCell.Col, gridCell.Row);
+                var selectionArgs = new GridSelectionEventArgs(_selectionStartCol, _selectionStartRow, gridCell.Col, gridCell.Row);
                 GridSelectionCompleted?.Invoke(this, selectionArgs);
+            }
+        }
+        // Check for long press on release (if timer detected it and pointer didn't move much)
+        else if (_longPressDetected && !_lpInvokedThisPress) {
+            var dx = Math.Abs(currentPos.X - _longPressStartPos.X);
+            var dy = Math.Abs(currentPos.Y - _longPressStartPos.Y);
+            
+            if (dx < DragSlopPx && dy < DragSlopPx) {
+                _lpInvokedThisPress = true;
+                _longPressActive = true;
+                _gestureOwner = GestureOwner.LongPress;
+
+                CancelTapTimer();
+                SuppressTapsFor(500);
+
+                var gestureArgs = new GridGestureEventArgs(sender, _tappedCol, _tappedRow);
+                LongPress?.Invoke(this, gestureArgs);
             }
         }
 
@@ -299,8 +323,15 @@ public class GridGestureHelper : IDisposable {
     }
 
     private void OnPointerExited(object? sender, PointerEventArgs e) {
-        if (IsSelecting) {
-            GridSelectionCompleted?.Invoke(this, new GridSelectionEventArgs(null, null, -1, -1));
+        Console.WriteLine("PointerExited");
+        if (_dragSelectionActive) {
+            GridSelectionCancelled?.Invoke(this, new GridSelectionEventArgs(_selectionStartCol, _selectionStartRow, -1, -1));
+        }
+
+        if (_tileDragActive) {
+            var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, -1,-1);
+            TileDragCancelled?.Invoke(this, dragArgs);
+
         }
 
         ResetGestureState();
@@ -312,9 +343,9 @@ public class GridGestureHelper : IDisposable {
         _gestureOwner = GestureOwner.None;
         _dragSelectionActive = false;
         _pointerDownPos = null;
-        IsSelecting = false;
         _longPressActive = false;
         _lpInvokedThisPress = false;
+        _longPressDetected = false;
         _tileDragActive = false;
         _draggedTile = null;
     }

@@ -26,13 +26,13 @@ public class GridGestureEventArgs : EventArgs {
 /// Event arguments for tile drag operations
 /// </summary>
 public class TileDragEventArgs : EventArgs {
-    public ITile Tile { get; }
+    public ITile? Tile { get; }
     public int StartCol { get; }
     public int StartRow { get; }
     public int CurrentCol { get; }
     public int CurrentRow { get; }
 
-    public TileDragEventArgs(ITile tile, int startCol, int startRow, int currentCol, int currentRow) {
+    public TileDragEventArgs(ITile? tile, int startCol, int startRow, int currentCol, int currentRow) {
         Tile = tile;
         StartCol = startCol;
         StartRow = startRow;
@@ -45,20 +45,23 @@ public class TileDragEventArgs : EventArgs {
 /// Event arguments for grid selection operations
 /// </summary>
 public class GridSelectionEventArgs : EventArgs {
-    public Point? StartPosition { get; }
-    public Point? CurrentPosition { get; }
-    public int Col { get; }
-    public int Row { get; }
+    public int StartCol { get; }
+    public int StartRow { get; }
+    public int EndCol { get; }
+    public int EndRow { get; }
 
-    public GridSelectionEventArgs(int col, int row) {
-        Col = col;
-        Row = row;
+    public int AbsStartCol => Math.Min(StartCol, EndCol);
+    public int AbsStartRow => Math.Min(StartRow, EndRow);
+    public int AbsEndCol => Math.Max(StartCol, EndCol);
+    public int AbsEndRow => Math.Max(StartRow, EndRow);
+    
+    public (int StartCol, int StartRow, int EndCol, int EndRow) AbsBounds => (AbsStartCol, AbsStartRow, AbsEndCol, AbsEndRow);
+    
+    public GridSelectionEventArgs(int startCol, int startRow) {
+        (StartCol,StartRow,EndCol,EndRow) = (startCol, startRow, startCol, startRow);
     }
 
-    public GridSelectionEventArgs(Point? startPos, Point? currentPos, int col, int row) {
-        StartPosition = startPos;
-        CurrentPosition = currentPos;
-        Col = col;
-        Row = row;
+    public GridSelectionEventArgs(int startCol, int startRow, int endCol, int endRow) {
+        (StartCol,StartRow,EndCol,EndRow) = (startCol, startRow, endCol, endRow);
     }
 }
