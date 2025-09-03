@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
@@ -79,8 +80,6 @@ public partial class ControlPanelView {
     /// of event (Single, Double, Long Press) or Selection, and raises appropriate events. 
     /// </summary>
     private void SetupDynamicGridGestures(Grid dynamicGrid) {
-        Console.WriteLine("SetupDynamicGridGestures called");
-
         _gridGestures = new GridGestureHelper(dynamicGrid);
         _gridGestures.SingleTap += GridGesturesOnSingleTap;
         _gridGestures.DoubleTap += GridGesturesOnDoubleTap;
@@ -108,7 +107,6 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) {
         try {
-            Console.WriteLine($"Single Tap @{e.Col},{e.Row}");
             if (DesignMode) {
                 // Look up the tile if it is in this grid. If no tiles, reset selected
                 // -------------------------------------------------------------------
@@ -152,7 +150,7 @@ public partial class ControlPanelView {
                 if (tile is not null) OnTileTapped(tile, 1);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnSingleTap: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnSingleTap: {ex.Message}");
         }
     }
 
@@ -181,13 +179,12 @@ public partial class ControlPanelView {
                 if (tile is not null) OnTileTapped(tile, 2);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnDoubleTap: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnDoubleTap: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnLongPress(object? sender, GridGestureEventArgs e) {
         try {
-            Console.WriteLine($"Long Press @{e.Col},{e.Row}");
             if (DesignMode) {
                 /* update here - if we support long press in design mode */
             } else {
@@ -195,14 +192,12 @@ public partial class ControlPanelView {
                 if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in OnOperateModeLongPress: {ex.Message}");
+            _logger.LogError($"Error in OnOperateModeLongPress: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnTileDragStarted(object? sender, TileDragEventArgs e) {
         try {
-            Console.WriteLine($"Tile START Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
-
             // You can't drag a Tile around if we are not in design mode
             // ---------------------------------------------------------
             if (!DesignMode) {
@@ -210,7 +205,7 @@ public partial class ControlPanelView {
                 return;
             }
 
-            if (EditMode == EditModeEnum.Size && e?.Tile?.Entity is not IDrawingEntity) {
+            if (EditMode == EditModeEnum.Size && e.Tile?.Entity is not IDrawingEntity) {
                 await ClickSounds.PlayError2SoundAsync();
                 _gridGestures?.CancelAllGestures();
                 return;
@@ -219,22 +214,21 @@ public partial class ControlPanelView {
             _startDragRow = e.StartRow;
             ClearAllSelectedTiles();
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnTileDragStarted: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnTileDragStarted: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnTileDragMoved(object? sender, TileDragEventArgs e) {
         try {
-            Console.WriteLine($"Tile MOVE Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
             switch (EditMode) {
             case EditModeEnum.Size when e.Tile is { Entity: IDrawingEntity } sizeTile:
-                RemoveAllHighlightCells();
+                RemoveHighlights();
                 ResizeTile(sizeTile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                 HighlightCell(sizeTile, CellHighlightAction.Resize);
                 break;
 
             case EditModeEnum.Move when e.Tile is { } moveTile: {
-                RemoveAllHighlightCells();
+                RemoveHighlights();
                 if (!GridPositionHelper.WouldCollide(moveTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(moveTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     moveTile.Entity.Col = e.CurrentCol;
                     moveTile.Entity.Row = e.CurrentRow;
@@ -247,7 +241,7 @@ public partial class ControlPanelView {
             }
 
             case EditModeEnum.Copy when e.Tile is { } copyTile: {
-                RemoveAllHighlightCells();
+                RemoveHighlights();
                 if (!GridPositionHelper.WouldCollide(copyTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(copyTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
@@ -257,13 +251,12 @@ public partial class ControlPanelView {
             }
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnTileDragMoved: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnTileDragMoved: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
         try {
-            Console.WriteLine($"Tile END Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
             if (e.Tile is { } tile) {
                 if (!GridPositionHelper.WouldCollide(tile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) &&
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
@@ -302,15 +295,13 @@ public partial class ControlPanelView {
                 }
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnTileDragCompleted: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnTileDragCompleted: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnTileDragCancelled(object? sender, TileDragEventArgs e) {
         try {
-            Console.WriteLine($"Tile CANCEL Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
-            RemoveAllHighlightCells();
-
+            RemoveHighlights();
             if (e.Tile is { } tile) {
                 // If we are in Move mode, then we need to put the item back where we found it. 
                 // ----------------------------------------------------------------------------
@@ -320,51 +311,47 @@ public partial class ControlPanelView {
                     SetTileGridPosition(tile);
                     OnTileChanged(tile);
                 }
-                RemoveAllHighlightCells();
+                RemoveHighlights();
                 HighlightCell(e.StartCol, e.StartRow, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
             }
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnTileDragCancelled: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnTileDragCancelled: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnGridSelectionStarted(object? sender, GridSelectionEventArgs e) {
         try {
-            Console.WriteLine($"START Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
             if (!DesignMode) _gridGestures?.CancelAllGestures();
             ClearAllSelectedTiles();
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnGridSelectionStarted: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnGridSelectionStarted: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnGridSelectionChanged(object? sender, GridSelectionEventArgs e) {
         try {
-            Console.WriteLine($"MOVE Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
             UpdateSelectorView(e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
             MarkTilesSelectedInGrid(e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnGridSelectionChanged: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnGridSelectionChanged: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnGridSelectionCompleted(object? sender, GridSelectionEventArgs e) {
         try {
-            Console.WriteLine($"STOP Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
             RemoveSelectorView();
             MarkTilesSelectedInGrid(e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnGridSelectionCompleted: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnGridSelectionCompleted: {ex.Message}");
         }
     }
 
     private async void GridGesturesOnGridSelectionCancelled(object? sender, GridSelectionEventArgs e) {
         try {
-            Console.WriteLine($"CANCELLED Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
             RemoveSelectorView();
             ClearAllSelectedTiles();
         } catch (Exception ex) {
-            Console.WriteLine($"Error in GridGesturesOnGridSelectionCancelled: {ex.Message}");
+            _logger.LogError($"Error in GridGesturesOnGridSelectionCancelled: {ex.Message}");
         }
     }
     #endregion
@@ -411,8 +398,6 @@ public partial class ControlPanelView {
                                  [CallerMemberName] string memberName = "",
                                  [CallerLineNumber] int sourceLineNumber = 0) {
         if (Panel is null || IsPanelDrawing) return;
-
-        // Console.WriteLine($"DrawPanel: {Panel?.Id}/{Panel?.Guid} | {MainGrid.Width}w x {MainGrid.Height}h | Pending={_pendingFirstDraw} | {memberName}@{sourceLineNumber} ");
 
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
@@ -588,7 +573,7 @@ public partial class ControlPanelView {
 
     #region Draw Grid when in Design Mode
     private void DrawGrid() {
-        RemoveGrid();
+        RemoveGridLines();
         if (ShowGrid) {
             var gridLines = new GridLinesDrawable(Rows, Cols, GridColor);
             var graphicsView = new GraphicsView {
@@ -607,16 +592,13 @@ public partial class ControlPanelView {
         }
     }
 
-    private void RemoveGrid() => RemoveChildView("GridLines");
+    private void RemoveGridLines() => RemoveChildView("GridLines");
 
     private void RemoveChildView(string classID) {
-        if (ControlPanelLayout.Children.Count >= 1) {
-            var controlPanelChildren = ControlPanelLayout.Children.ToList();
-            var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().Where(x => x.ClassId == classID).ToList();
-            foreach (var view in graphicsViewToRemove) {
-                ControlPanelLayout.Children.Remove(view);
+        for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
+            if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View view && view.ClassId == classID) {
+                ControlPanelLayout.Children.RemoveAt(i);
             }
-            controlPanelChildren = ControlPanelLayout.Children.ToList();
         }
     }
     #endregion
@@ -643,7 +625,7 @@ public partial class ControlPanelView {
     }
 
     public void MarkAllSelectedTiles() {
-        RemoveAllHighlightCells();
+        RemoveHighlights();
         foreach (var tile in _selectedTiles) MarkTileSelected(tile);
     }
 
@@ -652,7 +634,7 @@ public partial class ControlPanelView {
     /// </summary>
     public void ClearAllSelectedTiles() {
         foreach (var tile in _selectedTiles) MarkTileUnSelected(tile);
-        RemoveAllHighlightCells();
+        RemoveHighlights();
         _selectedTiles.Clear();
         OnTileSelected(0);
     }
@@ -683,13 +665,7 @@ public partial class ControlPanelView {
 
     // Clear all highlight views form the control panel
     // ------------------------------------------------------------------------
-    public void RemoveAllHighlightCells() {
-        for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
-            if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View { ClassId: "Highlight" }) {
-                ControlPanelLayout.Children.RemoveAt(i);
-            }
-        }
-    }
+    public void RemoveHighlights() => RemoveChildView("Highlight");
     #endregion
 
     #region Support for the Grid Selector
@@ -762,16 +738,16 @@ public partial class ControlPanelView {
         if (!placeAt.isInBounds) {
             MainThread.BeginInvokeOnMainThread(async void () => {
                 try {
-                    RemoveAllHighlightCells();
+                    RemoveHighlights();
                     foreach (var cell in placeAt.bounds) {
                         HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);
                     }
                     await Task.Yield();
                     await Task.Delay(150);
-                    RemoveAllHighlightCells();
+                    RemoveHighlights();
                     MarkAllSelectedTiles();
                 } catch (Exception ex) {
-                    Console.WriteLine("Error marking tiles in Error: " + ex.Message);
+                    _logger.LogError("Error marking tiles in Error: " + ex.Message);
                 }
             });
             return;
@@ -793,7 +769,7 @@ public partial class ControlPanelView {
 
         // Move: update entity rows/cols in-place, then refresh grid positions
         // -------------------------------------------------------------------
-        RemoveAllHighlightCells();
+        RemoveHighlights();
         foreach (var tile in _selectedTiles) {
             var e = tile.Entity;
             e.Col = anchorCol + (e.Col - minCol);
@@ -921,10 +897,8 @@ public partial class ControlPanelView {
             return;
         }
 
-        var source = e.Data.Properties["Source"] as string ?? null;
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
         var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid), DynamicGrid);
-
         if (gridPosition is { } position && tile is not null && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
             UnHighlightCell(_lastDragCol, _lastDragRow);
             if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, DynamicGrid, EditMode) &&
@@ -989,11 +963,11 @@ public partial class ControlPanelView {
     #region Bindable Properties
     public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(ControlPanelView), propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DesignModeProperty = BindableProperty.Create(nameof(DesignMode), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnDesignModeChanged);
-    public static readonly BindableProperty InteractiveProperty = BindableProperty.Create(nameof(Interactive), typeof(bool), typeof(ControlPanelView), true, BindingMode.Default, propertyChanged: OnInteractiveChanged);
+    public static readonly BindableProperty InteractiveProperty = BindableProperty.Create(nameof(Interactive), typeof(bool), typeof(ControlPanelView), true, BindingMode.Default);
     public static readonly BindableProperty ShowGridProperty = BindableProperty.Create(nameof(ShowGrid), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowGridChanged);
     public static readonly BindableProperty GridColorProperty = BindableProperty.Create(nameof(GridColor), typeof(Color), typeof(ControlPanelView), Colors.DarkGray, BindingMode.Default, propertyChanged: OnShowGridChanged);
-    public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default, propertyChanged: OnShowTrackErrorsChanged);
-    public static readonly BindableProperty EditModeProperty = BindableProperty.Create(nameof(EditMode), typeof(EditModeEnum), typeof(ControlPanelView), EditModeEnum.Move, BindingMode.Default, propertyChanged: OnEditModeChanged);
+    public static readonly BindableProperty ShowTrackErrorsProperty = BindableProperty.Create(nameof(ShowTrackErrors), typeof(bool), typeof(ControlPanelView), false, BindingMode.Default);
+    public static readonly BindableProperty EditModeProperty = BindableProperty.Create(nameof(EditMode), typeof(EditModeEnum), typeof(ControlPanelView), EditModeEnum.Move, BindingMode.Default);
 
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
@@ -1036,8 +1010,8 @@ public partial class ControlPanelView {
                 panel.ShowGrid = panel.DesignMode;
                 await panel.DrawPanel();
             }
-        } catch (Exception e) {
-            Console.WriteLine($"ERROR: OnDesignModeChanged: {e.Message}");
+        } catch (Exception ex) {
+            Debug.WriteLine($"ERROR: OnDesignModeChanged: {ex.Message}");
         }
     }
 
@@ -1063,7 +1037,7 @@ public partial class ControlPanelView {
                 await control.ForceRefresh();
             }
         } catch (Exception e) {
-            Console.WriteLine($"ERROR: OnPanelChanged: {e.Message}");
+            Debug.WriteLine($"ERROR: OnPanelChanged: {e.Message}");
         }
     }
 
@@ -1114,20 +1088,5 @@ public partial class ControlPanelView {
         }
     }
 
-    private static void OnClientChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        //if (bindable is ControlPanelView control) { }
-    }
-
-    private static void OnShowTrackErrorsChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        //if (bindable is ControlPanelView control) { }
-    }
-
-    private static void OnInteractiveChanged(BindableObject bindable, object oldValue, object newValue) {
-        //if (bindable is ControlPanelView control) { }
-    }
-
-    private static void OnEditModeChanged(BindableObject bindable, object oldvalue, object newvalue) {
-        //if (bindable is ControlPanelView control) { }
-    }
     #endregion
 }
