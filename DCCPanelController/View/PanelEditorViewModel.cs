@@ -180,11 +180,10 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
-            _panelView.UnMarkSelectedCells();
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
-            _panelView.MarkSelectedCells();
+            _panelView.MarkAllSelectedTiles();
         }
         CheckIfPanelChanged();
     }
@@ -196,7 +195,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 EditModeEnum.Move => EditModeEnum.Copy,
                 EditModeEnum.Copy => EditModeEnum.Size,
                 EditModeEnum.Size => EditModeEnum.Move,
-                _                                  => EditModeEnum.Move
+                _                 => EditModeEnum.Move
             };
         } else {
             // If multiple items selected, then only MOVE or COPY allowed

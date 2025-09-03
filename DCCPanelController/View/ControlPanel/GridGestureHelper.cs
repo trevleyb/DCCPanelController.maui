@@ -173,7 +173,7 @@ public class GridGestureHelper : IDisposable {
     }
     #endregion
 
-    #region Pointer Event Handlers (Manual Drag and Grid Selection)
+    #region Pointer Event Handlers 
     private void OnPointerPressed(object? sender, PointerEventArgs e) {
         _lpInvokedThisPress = false;
         _longPressActive = false;

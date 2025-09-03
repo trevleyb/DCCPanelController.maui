@@ -25,6 +25,8 @@ public partial class ControlPanelView {
 
     private int _lastDragCol;
     private int _lastDragRow;
+    private int _startDragCol;
+    private int _startDragRow;
     private double _gridSize;
     private double _viewHeight;
     private double _viewWidth;
@@ -93,7 +95,7 @@ public partial class ControlPanelView {
         _gridGestures.TileDragMoved += GridGesturesOnTileDragMoved;
         _gridGestures.TileDragCompleted += GridGesturesOnTileDragCompleted;
         _gridGestures.TileDragCancelled += GridGesturesOnTileDragCancelled;
-        
+
         // And wire up the Drop Recognisers for the Dropping of a tile from 
         // the tile palette. 
         // ----------------------------------------------------------------
@@ -103,7 +105,7 @@ public partial class ControlPanelView {
         dropGesture.DragLeave += DragLeaveTileOnPanel;
         dynamicGrid.GestureRecognizers.Add(dropGesture);
     }
-    
+
     private async void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) {
         try {
             Console.WriteLine($"Single Tap @{e.Col},{e.Row}");
@@ -200,7 +202,7 @@ public partial class ControlPanelView {
     private async void GridGesturesOnTileDragStarted(object? sender, TileDragEventArgs e) {
         try {
             Console.WriteLine($"Tile START Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
-            
+
             // You can't drag a Tile around if we are not in design mode
             // ---------------------------------------------------------
             if (!DesignMode) {
@@ -213,6 +215,8 @@ public partial class ControlPanelView {
                 _gridGestures?.CancelAllGestures();
                 return;
             }
+            _startDragCol = e.StartCol;
+            _startDragRow = e.StartRow;
             ClearAllSelectedTiles();
         } catch (Exception ex) {
             Console.WriteLine($"Error in GridGesturesOnTileDragStarted: {ex.Message}");
@@ -222,25 +226,35 @@ public partial class ControlPanelView {
     private async void GridGesturesOnTileDragMoved(object? sender, TileDragEventArgs e) {
         try {
             Console.WriteLine($"Tile MOVE Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
-            if (EditMode is EditModeEnum.Size && e.Tile is { Entity: IDrawingEntity } sizeTile) {
-                // TODO: Need to fix this. Offsets are not quite right
+            switch (EditMode) {
+            case EditModeEnum.Size when e.Tile is { Entity: IDrawingEntity } sizeTile:
                 RemoveAllHighlightCells();
                 ResizeTile(sizeTile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                 HighlightCell(sizeTile, CellHighlightAction.Resize);
-            } else if (EditMode is EditModeEnum.Move && e.Tile is { } moveTile) {
+                break;
+
+            case EditModeEnum.Move when e.Tile is { } moveTile: {
                 RemoveAllHighlightCells();
                 if (!GridPositionHelper.WouldCollide(moveTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(moveTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
-                    HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragValid);
+                    moveTile.Entity.Col = e.CurrentCol;
+                    moveTile.Entity.Row = e.CurrentRow;
+                    SetTileGridPosition(moveTile);
+                    MarkTileSelected(moveTile);
                 } else {
                     HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragInvalid);
                 }
-            } else if (EditMode is EditModeEnum.Copy && e.Tile is { } copyTile) {
+                break;
+            }
+
+            case EditModeEnum.Copy when e.Tile is { } copyTile: {
                 RemoveAllHighlightCells();
                 if (!GridPositionHelper.WouldCollide(copyTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(copyTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
                     HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragInvalid);
                 }
+                break;
+            }
             }
         } catch (Exception ex) {
             Console.WriteLine($"Error in GridGesturesOnTileDragMoved: {ex.Message}");
@@ -255,11 +269,6 @@ public partial class ControlPanelView {
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     switch (EditMode) {
                     case EditModeEnum.Move:
-                        tile.Entity.Col = e.CurrentCol;
-                        tile.Entity.Row = e.CurrentRow;
-                        SetTileGridPosition(tile);
-                        MarkTileSelected(tile);
-                        OnTileChanged(tile);
                         break;
 
                     case EditModeEnum.Copy:
@@ -278,6 +287,18 @@ public partial class ControlPanelView {
                         OnTileChanged(tile);
                         break;
                     }
+                } else {
+                    switch (EditMode) {
+
+                    // On move, put the tile back where you found it
+                    // ---------------------------------------------
+                    case EditModeEnum.Move:
+                        tile.Entity.Col = _startDragCol;
+                        tile.Entity.Row = _startDragRow;
+                        SetTileGridPosition(tile);
+                        OnTileChanged(tile);
+                        break;
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -289,7 +310,17 @@ public partial class ControlPanelView {
         try {
             Console.WriteLine($"Tile CANCEL Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
             RemoveAllHighlightCells();
+
             if (e.Tile is { } tile) {
+                // If we are in Move mode, then we need to put the item back where we found it. 
+                // ----------------------------------------------------------------------------
+                if (EditMode == EditModeEnum.Move) {
+                    tile.Entity.Col = _startDragCol;
+                    tile.Entity.Row = _startDragRow;
+                    SetTileGridPosition(tile);
+                    OnTileChanged(tile);
+                }
+                RemoveAllHighlightCells();
                 HighlightCell(e.StartCol, e.StartRow, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
             }
         } catch (Exception ex) {
@@ -528,7 +559,7 @@ public partial class ControlPanelView {
     }
 
     private void ResizeTile(ITile? tile, int startCol, int startRow, int endCol, int endRow) {
-        if (tile is null) return; 
+        if (tile is null) return;
 
         tile.Entity.Col = startCol;
         tile.Entity.Row = startRow;
@@ -577,14 +608,15 @@ public partial class ControlPanelView {
     }
 
     private void RemoveGrid() => RemoveChildView("GridLines");
+
     private void RemoveChildView(string classID) {
         if (ControlPanelLayout.Children.Count >= 1) {
-            var controlPanelChildren = ControlPanelLayout.Children.ToList(); 
+            var controlPanelChildren = ControlPanelLayout.Children.ToList();
             var graphicsViewToRemove = ControlPanelLayout.Children.OfType<GraphicsView>().Where(x => x.ClassId == classID).ToList();
             foreach (var view in graphicsViewToRemove) {
                 ControlPanelLayout.Children.Remove(view);
             }
-            controlPanelChildren = ControlPanelLayout.Children.ToList(); 
+            controlPanelChildren = ControlPanelLayout.Children.ToList();
         }
     }
     #endregion
@@ -626,11 +658,12 @@ public partial class ControlPanelView {
     }
 
     public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, action);
+
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
         UnHighlightCell(col, row);
-        
-        var gridHighlight = new GridHighlightOutline(col,row,width,height,_gridSize,action);
+
+        var gridHighlight = new GridHighlightOutline(col, row, width, height, _gridSize, action);
         AbsoluteLayout.SetLayoutBounds(gridHighlight, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
         AbsoluteLayout.SetLayoutFlags(gridHighlight, AbsoluteLayoutFlags.PositionProportional);
         ControlPanelLayout.Children.Add(gridHighlight);
@@ -639,6 +672,7 @@ public partial class ControlPanelView {
     // Given the start point of a highlighted cell, remove this cell highlight
     // ------------------------------------------------------------------------
     public void UnHighlightCell(ITile tile) => UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
+
     public void UnHighlightCell(int col, int row) {
         for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
             if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View { ClassId: "Highlight" } and GridHighlightOutline outline && outline.Col == col && outline.Row == row) {
