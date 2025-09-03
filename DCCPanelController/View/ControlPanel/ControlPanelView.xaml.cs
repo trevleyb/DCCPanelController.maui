@@ -13,7 +13,9 @@ using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
+#if IOS || MACCATALYST
 using UIKit;
+#endif
 
 namespace DCCPanelController.View.ControlPanel;
 
@@ -48,9 +50,6 @@ public partial class ControlPanelView {
     }
 
     #region Helpers
-
-    public enum CellHighlightAction { Selected, DragInvalid, DragValid, Resize, Selecting, Error }
-
     public string GetEditModeIconFilename =>
         EditMode switch {
             EditModeEnum.Copy => "copy.png",
@@ -225,18 +224,18 @@ public partial class ControlPanelView {
             Console.WriteLine($"Tile MOVE Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
             if (EditMode is EditModeEnum.Size && e.Tile is { Entity: IDrawingEntity } sizeTile) {
                 // TODO: Need to fix this. Offsets are not quite right
-                UnHighlightCell(e.AbsLastCol, e.AbsLastRow);
-                ResizeTrack(sizeTile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
+                RemoveAllHighlightCells();
+                ResizeTile(sizeTile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                 HighlightCell(sizeTile, CellHighlightAction.Resize);
             } else if (EditMode is EditModeEnum.Move && e.Tile is { } moveTile) {
-                UnHighlightCell(e.LastCol, e.LastRow);
+                RemoveAllHighlightCells();
                 if (!GridPositionHelper.WouldCollide(moveTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(moveTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
                     HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragInvalid);
                 }
             } else if (EditMode is EditModeEnum.Copy && e.Tile is { } copyTile) {
-                UnHighlightCell(e.LastCol, e.LastRow);
+                RemoveAllHighlightCells();
                 if (!GridPositionHelper.WouldCollide(copyTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(copyTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
@@ -274,7 +273,7 @@ public partial class ControlPanelView {
                         break;
 
                     case EditModeEnum.Size:
-                        ResizeTrack(tile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
+                        ResizeTile(tile, e.AbsStartCol, e.AbsStartRow, e.AbsEndCol, e.AbsEndRow);
                         MarkTileSelected(tile);
                         OnTileChanged(tile);
                         break;
@@ -289,7 +288,7 @@ public partial class ControlPanelView {
     private async void GridGesturesOnTileDragCancelled(object? sender, TileDragEventArgs e) {
         try {
             Console.WriteLine($"Tile CANCEL Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
-            UnHighlightCell(e.LastCol, e.LastRow);
+            RemoveAllHighlightCells();
             if (e.Tile is { } tile) {
                 HighlightCell(e.StartCol, e.StartRow, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
             }
@@ -528,30 +527,13 @@ public partial class ControlPanelView {
         }
     }
 
-    private void ResizeTrack(ITile? tile, int startCol, int startRow, int endCol, int endRow) {
-        if (tile is null) return; // Only resize tracks
+    private void ResizeTile(ITile? tile, int startCol, int startRow, int endCol, int endRow) {
+        if (tile is null) return; 
 
         tile.Entity.Col = startCol;
         tile.Entity.Row = startRow;
         tile.Entity.Width = endCol - startCol + 1;
         tile.Entity.Height = endRow - startRow + 1;
-        
-        // // Work relative to the drag start position
-        // if (newCol >= startCol) { // Dragging right - increase width and keep column the same
-        //     tile.Entity.Col = startCol;
-        //     tile.Entity.Width = newCol - startCol + 1;
-        // } else { // Dragging left - move column left and increase width
-        //     tile.Entity.Col = newCol;
-        //     tile.Entity.Width = startCol - newCol + 1;
-        // }
-
-        // if (newRow >= startRow) { // Dragging down - increase height and keep row the same
-        //     tile.Entity.Row = startRow;
-        //     tile.Entity.Height = newRow - startRow + 1;
-        // } else { // Dragging up - move row up and increase height
-        //     tile.Entity.Row = newRow;
-        //     tile.Entity.Height = startRow - newRow + 1;
-        // }
 
         // Ensure minimum size limits (width and height shouldn't be less than 1)
         tile.Entity.Width = Math.Max(1, tile.Entity.Width);
@@ -613,67 +595,24 @@ public partial class ControlPanelView {
     /// </summary>
     public void MarkTileSelected(ITile tile) {
         _selectedTiles.Add(tile);
-        HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.Selected);
+        HighlightCell(tile, CellHighlightAction.Selected);
         tile.IsSelected = true;
         OnTileSelected(0);
     }
 
     /// <summary>
-    ///  Unmark a tile, remove the border
+    /// Unmark a tile, remove the border
     /// </summary>
     public void MarkTileUnSelected(ITile tile) {
         _selectedTiles.Remove(tile);
-        UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
+        UnHighlightCell(tile);
         tile.IsSelected = false;
         OnTileSelected(0);
     }
 
-    /// <summary>
-    /// There are times, such as when we rotate a tile, that the bounds may have
-    /// changed, and we need to re-mark the tile. This code will unmark and
-    /// remark the tiles where the width or height > 1. This is done
-    /// without calling Mark/UnMark as we do not want to event that the
-    /// tile was marked or unmarked.
-    /// </summary>
-    public void MarkSelectedCells(CellHighlightAction action = CellHighlightAction.Selected) => MarkTiles(_selectedTiles, action);
-
-    public void MarkTiles(IEnumerable<ITile> tiles, CellHighlightAction action = CellHighlightAction.Selected) {
-        var rects = tiles.Select(t => (t.Entity.Col, t.Entity.Row, t.Entity.Width, t.Entity.Height));
-        MarkCells(rects, action);
-    }
-
-    public void MarkCells(IEnumerable<(int col, int row, int width, int height)> tiles, CellHighlightAction action = CellHighlightAction.Selected) {
-        var iEnumerable = tiles.ToList();
-        foreach (var tile in iEnumerable.Where(x => x.width >= 1 || x.height >= 1)) {
-            HighlightCell(tile.col, tile.row, tile.width, tile.height, action);
-        }
-    }
-
-    public void UnMarkSelectedCells() => UnMarkTiles(_selectedTiles);
-
-    public void UnMarkTiles(IEnumerable<ITile> tiles) {
-        var rects = tiles.Select(t => (t.Entity.Col, t.Entity.Row, t.Entity.Width, t.Entity.Height));
-        UnMarkCells(rects);
-    }
-
-    public void UnMarkCells(IEnumerable<(int col, int row, int width, int height)> tiles) {
-        var iEnumerable = tiles.ToList();
-        foreach (var tile in iEnumerable.Where(x => x.width >= 1 || x.height >= 1)) {
-            UnHighlightCell(tile.col, tile.row);
-        }
-    }
-
-    public void UnMarkAllTiles() {
-        var children = GetCellHighlights();
-        foreach (var child in children) DynamicGrid.Remove(child);
-    }
-
-    public void ReMarkSelectedCells() => ReMarkTiles(_selectedTiles);
-
-    public void ReMarkTiles(IEnumerable<ITile> tiles) {
-        var iEnumerable = tiles.ToList();
-        UnMarkTiles(iEnumerable);
-        MarkTiles(iEnumerable);
+    public void MarkAllSelectedTiles() {
+        RemoveAllHighlightCells();
+        foreach (var tile in _selectedTiles) MarkTileSelected(tile);
     }
 
     /// <summary>
@@ -681,63 +620,40 @@ public partial class ControlPanelView {
     /// </summary>
     public void ClearAllSelectedTiles() {
         foreach (var tile in _selectedTiles) MarkTileUnSelected(tile);
-        var children = GetCellHighlights();
-        foreach (var child in children) DynamicGrid.Remove(child);
+        RemoveAllHighlightCells();
         _selectedTiles.Clear();
         OnTileSelected(0);
     }
 
-    private List<IView> GetCellHighlights() => DynamicGrid.Children.Where(x => x is Border border && x.Parent is Grid && border.ClassId == "CellHighlight").ToList();
-
-    public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity, action);
-    public void HighlightCell(Entity entity, CellHighlightAction action) => HighlightCell(entity.Col, entity.Row, entity.Width, entity.Height, action);
-
+    public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, action);
     public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
         if (!DesignMode) return;
-
         UnHighlightCell(col, row);
-        var color = action switch {
-            CellHighlightAction.Selected    => Colors.CornflowerBlue,
-            CellHighlightAction.Resize      => Colors.MidnightBlue,
-            CellHighlightAction.DragValid   => Colors.CornflowerBlue,
-            CellHighlightAction.DragInvalid => Colors.Red,
-            CellHighlightAction.Selecting   => Colors.LightSkyBlue,
-            _                               => Colors.Red
-        };
-
-        var border = new Border {
-            ClassId = "CellHighlight",
-            Stroke = color,
-            StrokeThickness = 2,
-            BackgroundColor = color.WithAlpha(0.25f),
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Start,
-            WidthRequest = width * _gridSize,
-            HeightRequest = height * _gridSize,
-            ZIndex = EntityPresets.Highlight,
-            InputTransparent = true
-        };
-
-        // Add the Track DisplayImage to the appropriate grid position
-        // ------------------------------------------------------
-        DynamicGrid.SetRow(border, row);
-        DynamicGrid.SetColumn(border, col);
-        DynamicGrid.Children.Add(border);
+        
+        var gridHighlight = new GridHighlightOutline(col,row,width,height,_gridSize,action);
+        AbsoluteLayout.SetLayoutBounds(gridHighlight, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
+        AbsoluteLayout.SetLayoutFlags(gridHighlight, AbsoluteLayoutFlags.PositionProportional);
+        ControlPanelLayout.Children.Add(gridHighlight);
     }
 
-    /// <summary>
-    /// Only UnHighlight a cell if we are operating in Design mode
-    /// If we are in Operate mode, then we do not highlight cells so this has no function.
-    /// </summary>
-    public void UnHighlightCell(ITile tile) => UnHighlightCell(tile.Entity);
-
-    public void UnHighlightCell(Entity entity) => UnHighlightCell(entity.Col, entity.Row);
-
+    // Given the start point of a highlighted cell, remove this cell highlight
+    // ------------------------------------------------------------------------
+    public void UnHighlightCell(ITile tile) => UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
     public void UnHighlightCell(int col, int row) {
-        if (!DesignMode) return;
-        var children = GetCellHighlights();
-        foreach (var child in children.Where(child => DynamicGrid.GetRow(child) == row && DynamicGrid.GetColumn(child) == col)) {
-            DynamicGrid.Remove(child);
+        for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
+            if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View { ClassId: "Highlight" } and GridHighlightOutline outline && outline.Col == col && outline.Row == row) {
+                ControlPanelLayout.Children.RemoveAt(i);
+            }
+        }
+    }
+
+    // Clear all highlight views form the control panel
+    // ------------------------------------------------------------------------
+    public void RemoveAllHighlightCells() {
+        for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
+            if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View { ClassId: "Highlight" }) {
+                ControlPanelLayout.Children.RemoveAt(i);
+            }
         }
     }
     #endregion
@@ -812,14 +728,14 @@ public partial class ControlPanelView {
         if (!placeAt.isInBounds) {
             MainThread.BeginInvokeOnMainThread(async void () => {
                 try {
-                    UnMarkAllTiles();
+                    RemoveAllHighlightCells();
                     foreach (var cell in placeAt.bounds) {
                         HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);
                     }
                     await Task.Yield();
                     await Task.Delay(150);
-                    UnMarkAllTiles();
-                    ReMarkSelectedCells();
+                    RemoveAllHighlightCells();
+                    MarkAllSelectedTiles();
                 } catch (Exception ex) {
                     Console.WriteLine("Error marking tiles in Error: " + ex.Message);
                 }
@@ -843,7 +759,7 @@ public partial class ControlPanelView {
 
         // Move: update entity rows/cols in-place, then refresh grid positions
         // -------------------------------------------------------------------
-        UnMarkSelectedCells();
+        RemoveAllHighlightCells();
         foreach (var tile in _selectedTiles) {
             var e = tile.Entity;
             e.Col = anchorCol + (e.Col - minCol);
@@ -852,7 +768,7 @@ public partial class ControlPanelView {
             tile.ForceRedraw();
             OnTileChanged(tile);
         }
-        MarkSelectedCells();
+        MarkAllSelectedTiles();
     }
 
     /// <summary>
