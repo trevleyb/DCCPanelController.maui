@@ -43,13 +43,12 @@ public class DrawGridLines : GraphicsView, IDrawable {
         Rows = rows;
         Cols = columns;
         GridColor = gridColor ?? Colors.DarkGrey;
-        LineWidth = lineWidth ?? 1.0f;
+        LineWidth = lineWidth ?? 0.5f;
         GridWidth = gridWidth ?? 5.0f;
         Invalidate();
     }
 
     public void Draw(ICanvas canvas, RectF dirtyRect) {
-        Console.WriteLine($"Drawing Grid Lines: {Cols}x{Rows} Rect={dirtyRect.Width},{dirtyRect.Height} {dirtyRect.Size} {IsActive}");
         if (IsActive && Cols > 0 && Rows > 0) {
             IsVisible = true;
 

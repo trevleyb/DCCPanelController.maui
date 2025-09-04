@@ -31,11 +31,11 @@ public partial class ControlPanelView {
     private double _viewWidth;
 
     private GridGestureHelper? _gridGestures;
-    private readonly AbsoluteLayout PanelSurface = new AbsoluteLayout();
-    private readonly Grid DynamicGrid = new Grid();
-    private readonly DrawGridLines GridLinesOverlay = new DrawGridLines();
-    private readonly DrawGridSelection GridSelectionOverlay = new DrawGridSelection();
-    private readonly DrawGridHighlights GridHighlightOverlay = new DrawGridHighlights();
+    private readonly AbsoluteLayout _panelSurface = new AbsoluteLayout();
+    private readonly Grid _dynamicGrid = new Grid();
+    private readonly DrawGridLines _overlayGridLines = new DrawGridLines();
+    private readonly DrawGridSelection _overlayGridSelection = new DrawGridSelection();
+    private readonly DrawGridHighlights _overlayGridHighlights = new DrawGridHighlights();
 
     private CancellationTokenSource? _sizeChangedDebounceCts;
     private const int SizeChangedDebounceMs = 80; // try 50–100
@@ -52,48 +52,49 @@ public partial class ControlPanelView {
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
         InitializeComponent();
-        SetupDynamicGridGestures(DynamicGrid);
+        SetupDynamicGridGestures(_dynamicGrid);
         SetupGridOverlays();
         SizeChanged += OnSizeChangedDebounced;
     }
 
     #region Setup the Grid Overlays
     private void SetupGridOverlays() {
+        
         // Create the Surface of the Panel
         // -------------------------------------------------------------
-        AbsoluteLayout.SetLayoutFlags(PanelSurface, AbsoluteLayoutFlags.All);
-        AbsoluteLayout.SetLayoutBounds(PanelSurface, new Rect(0, 0, 1, 1));
+        AbsoluteLayout.SetLayoutFlags(_panelSurface, AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(_panelSurface, new Rect(0, 0, 1, 1));
 
         // Create the Dynamic Grid that our Tiles will render in
         // ---------------------------------------------------------------
-        DynamicGrid.HorizontalOptions = LayoutOptions.Fill;
-        DynamicGrid.VerticalOptions = LayoutOptions.Fill;
-        AbsoluteLayout.SetLayoutFlags(DynamicGrid, AbsoluteLayoutFlags.All);
-        AbsoluteLayout.SetLayoutBounds(DynamicGrid, new Rect(0, 0, 1, 1));
-        PanelSurface.Children.Add(DynamicGrid);
+        _dynamicGrid.HorizontalOptions = LayoutOptions.Fill;
+        _dynamicGrid.VerticalOptions = LayoutOptions.Fill;
+        AbsoluteLayout.SetLayoutFlags(_dynamicGrid, AbsoluteLayoutFlags.All);
+        AbsoluteLayout.SetLayoutBounds(_dynamicGrid, new Rect(0, 0, 1, 1));
+        _panelSurface.Children.Add(_dynamicGrid);
 
         // Add overlays (also fill the surface)
         // ---------------------------------------------------------------
-        foreach (var v in new GraphicsView[] { GridLinesOverlay, GridSelectionOverlay, GridHighlightOverlay }) {
+        foreach (var v in new GraphicsView[] { _overlayGridLines, _overlayGridSelection, _overlayGridHighlights }) {
             v.InputTransparent = true;
             v.HorizontalOptions = LayoutOptions.Fill;
             v.VerticalOptions = LayoutOptions.Fill;
             v.ZIndex = 10;
             AbsoluteLayout.SetLayoutFlags(v, AbsoluteLayoutFlags.All);
             AbsoluteLayout.SetLayoutBounds(v, new Rect(0, 0, 1, 1));
-            PanelSurface.Children.Add(v);
+            _panelSurface.Children.Add(v);
         }
 
         // Finally add the surface where the grid used to be:
         // ---------------------------------------------------------------
-        ControlPanelLayout.Children.Add(PanelSurface);
+        ControlPanelLayout.Children.Add(_panelSurface);
 
         // 5) Nudge a first repaint after size is known
-        PanelSurface.SizeChanged += (_, __) => {
-            if (PanelSurface.Width <= 0 || PanelSurface.Height <= 0) return;
-            GridLinesOverlay.Invalidate();
-            GridSelectionOverlay.Invalidate();
-            GridHighlightOverlay.Invalidate();
+        _panelSurface.SizeChanged += (_, __) => {
+            if (_panelSurface.Width <= 0 || _panelSurface.Height <= 0) return;
+            _overlayGridLines.Invalidate();
+            _overlayGridSelection.Invalidate();
+            _overlayGridHighlights.Invalidate();
         };
     }
     #endregion
@@ -104,6 +105,7 @@ public partial class ControlPanelView {
         if (Width <= 0 || Height <= 0) return;
 
         // Cancel any pending commit and schedule a new one
+        // --------------------------------------------------------------
         Interlocked.Exchange(ref _sizeChangedDebounceCts, null)?.Cancel();
         var cts = new CancellationTokenSource();
         _sizeChangedDebounceCts = cts;
@@ -117,7 +119,6 @@ public partial class ControlPanelView {
             if (token.IsCancellationRequested) return;
 
             await MainThread.InvokeOnMainThreadAsync(async () => {
-                Console.WriteLine("DebounceSizeCommitAsync - MainThread");
                 var newSize = new Size(Width, Height);
                 if (!HasMeaningfulSizeChange(newSize, _lastCommittedSize)) return;
                 _lastCommittedSize = newSize;
@@ -203,8 +204,7 @@ public partial class ControlPanelView {
             if (DesignMode) {
                 // Look up the tile if it is in this grid. If no tiles, reset selected
                 // -------------------------------------------------------------------
-                //var tilesAtPosition = GridPositionHelper.GetTilesAt(e.Col, e.Row, DynamicGrid);
-                var tilesAtPosition = GridPositionHelper.GetTilesCovering(e.Col, e.Row, DynamicGrid);
+                var tilesAtPosition = GridPositionHelper.GetTilesCovering(e.Col, e.Row, _dynamicGrid);
                 if (tilesAtPosition.Count == 0) {
                     ClearAllSelectedTiles();
                 } else {
@@ -239,7 +239,7 @@ public partial class ControlPanelView {
                 }
                 OnTileSelected(1);
             } else {
-                var tile = GridPositionHelper.GetInteractiveTilesAt(e.Col, e.Row, DynamicGrid).FirstOrDefault();
+                var tile = GridPositionHelper.GetInteractiveTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
                 if (tile is not null) OnTileTapped(tile, 1);
             }
         } catch (Exception ex) {
@@ -250,8 +250,7 @@ public partial class ControlPanelView {
     private async void GridGesturesOnDoubleTap(object? sender, GridGestureEventArgs e) {
         try {
             if (DesignMode) {
-                //var tile = GridPositionHelper.GetTilesAt(e.Col, e.Row, DynamicGrid).FirstOrDefault();
-                var tile = GridPositionHelper.GetTilesCovering(e.Col, e.Row, DynamicGrid).FirstOrDefault();
+                var tile = GridPositionHelper.GetTilesCovering(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
 
                 // If we double-tapped on an actual tile, then unmark all tiles and mark this one
                 // ------------------------------------------------------------------------------
@@ -268,7 +267,7 @@ public partial class ControlPanelView {
                     await HandleDoubleTapEmptyCellMoveOrCopy(e);
                 }
             } else {
-                var tile = GridPositionHelper.GetInteractiveTilesAt(e.Col, e.Row, DynamicGrid).FirstOrDefault();
+                var tile = GridPositionHelper.GetInteractiveTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
                 if (tile is not null) OnTileTapped(tile, 2);
             }
         } catch (Exception ex) {
@@ -281,7 +280,7 @@ public partial class ControlPanelView {
             if (DesignMode) {
                 /* update here - if we support long press in design mode */
             } else {
-                var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, DynamicGrid).FirstOrDefault();
+                var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
                 if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
             }
         } catch (Exception ex) {
@@ -320,7 +319,7 @@ public partial class ControlPanelView {
 
             case EditModeEnum.Move when e.Tile is { } moveTile: {
                 RemoveHighlights();
-                if (!GridPositionHelper.WouldCollide(moveTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(moveTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
+                if (!GridPositionHelper.WouldCollide(moveTile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) && GridPositionHelper.IsInBounds(moveTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
                     HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragInvalid);
@@ -330,7 +329,7 @@ public partial class ControlPanelView {
 
             case EditModeEnum.Copy when e.Tile is { } copyTile: {
                 RemoveHighlights();
-                if (!GridPositionHelper.WouldCollide(copyTile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) && GridPositionHelper.IsInBounds(copyTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
+                if (!GridPositionHelper.WouldCollide(copyTile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) && GridPositionHelper.IsInBounds(copyTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragValid);
                 } else {
                     HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragInvalid);
@@ -346,12 +345,11 @@ public partial class ControlPanelView {
     private async void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
         try {
             if (e.Tile is { } tile) {
-                if (!GridPositionHelper.WouldCollide(tile, e.CurrentCol, e.CurrentRow, DynamicGrid, EditMode) &&
+                if (!GridPositionHelper.WouldCollide(tile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) &&
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     switch (EditMode) {
                     case EditModeEnum.Move:
                         tile.Entity.Col = e.CurrentCol;
-                        ;
                         tile.Entity.Row = e.CurrentRow;
                         SetTileGridPosition(tile);
                         OnTileChanged(tile);
@@ -429,17 +427,6 @@ public partial class ControlPanelView {
     public Task ForceRefresh() => DrawPanel();
 
     /// <summary>
-    /// Determines whether the grid size has changed based on the provided width and height parameters.
-    /// </summary>
-    // public bool HasGridSizeChanged(double width, double height) {
-    //     const double epsilon = 1.5;
-    //     if (width < 1.0 || height < 1.0) return false;
-    //     var newGridSize = CalculateGridSize(width, height);
-    //     var difference = Math.Abs(newGridSize - _gridSize);
-    //     return difference > epsilon;
-    // }
-
-    /// <summary>
     /// Calculates the optimal grid size based on the specified width and height dimensions.
     /// </summary>
     public double CalculateGridSize(double width, double height) {
@@ -454,7 +441,8 @@ public partial class ControlPanelView {
     /// </summary>
     private async Task DrawPanel([CallerMemberName] string memberName = "",
                                  [CallerLineNumber] int sourceLineNumber = 0) {
-        Console.WriteLine($"DrawPanel: {memberName}@{sourceLineNumber} => Panel={(Panel == null ? "null" : "set")} IsDrawing={IsPanelDrawing} Size={MainGrid.Width}x{MainGrid.Height}");
+    
+        // Console.WriteLine($"DrawPanel: {memberName}@{sourceLineNumber} => Panel={(Panel == null ? "null" : "set")} IsDrawing={IsPanelDrawing} Size={MainGrid.Width}x{MainGrid.Height}");
 
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
@@ -465,15 +453,15 @@ public partial class ControlPanelView {
 
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
-        MainThread.BeginInvokeOnMainThread(async void () => {
-            ControlPanelLayout.IsVisible = false;
-            try {
-                IsPanelDrawing = true;
+        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", true)) {
+            MainThread.BeginInvokeOnMainThread(async void () => {
+                try {
+                    ControlPanelLayout.IsVisible = false;
+                    IsPanelDrawing = true;
 
-                await Task.Yield();
-                await Task.Delay(10);
+                    await Task.Yield();
+                    await Task.Delay(10);
 
-                using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", true)) {
                     ClearAllSelectedTiles();
                     RemoveAllTilesFromGrid();
 
@@ -481,42 +469,43 @@ public partial class ControlPanelView {
                     _viewWidth = _gridSize * Cols;
                     _viewHeight = _gridSize * Rows;
 
-                    PanelSurface.WidthRequest = _viewWidth;
-                    PanelSurface.HeightRequest = _viewHeight;
-                    DynamicGrid.WidthRequest = _viewWidth;
-                    DynamicGrid.HeightRequest = _viewHeight;
-                    DynamicGrid.BackgroundColor = Panel?.PanelBackgroundColor ?? Colors.Transparent;
+                    _panelSurface.WidthRequest = _viewWidth;
+                    _panelSurface.HeightRequest = _viewHeight;
+                    _dynamicGrid.WidthRequest = _viewWidth;
+                    _dynamicGrid.HeightRequest = _viewHeight;
+                    _dynamicGrid.BackgroundColor = Panel?.PanelBackgroundColor ?? Colors.Transparent;
 
                     // If the grid rows and or columns have changed, then recreate the Dynamic Grid
                     // ------------------------------------------------------------------------------
-                    DynamicGrid.Children.Clear();
+                    _dynamicGrid.Children.Clear();
 
-                    if (DynamicGrid.RowDefinitions.Count != Rows || DynamicGrid.ColumnDefinitions.Count != Cols) {
-                        DynamicGrid.RowDefinitions.Clear();
-                        DynamicGrid.ColumnDefinitions.Clear();
+                    if (_dynamicGrid.RowDefinitions.Count != Rows || _dynamicGrid.ColumnDefinitions.Count != Cols) {
+                        _dynamicGrid.RowDefinitions.Clear();
+                        _dynamicGrid.ColumnDefinitions.Clear();
 
                         for (var i = 0; i < Rows; i++) {
-                            DynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
+                            _dynamicGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Star });
                         }
 
                         for (var j = 0; j < Cols; j++) {
-                            DynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
+                            _dynamicGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
                         }
 
-                        GridLinesOverlay.Update(Cols, Rows);
+                        _overlayGridLines.Update(Cols, Rows);
                     }
 
                     // Add all Entities to the Grid and Draw the Grid Lines
                     // ------------------------------------------------------------------------------
                     await AddEntitiesToGrid(Panel);
+
+                } catch (Exception ex) {
+                    _logger.LogError($"Error in DrawPanel: {ex.Message}");
+                } finally {
+                    IsPanelDrawing = false;
+                    ControlPanelLayout.IsVisible = true;
                 }
-            } catch (Exception ex) {
-                _logger.LogError($"Error in DrawPanel: {ex.Message}");
-            } finally {
-                IsPanelDrawing = false;
-                ControlPanelLayout.IsVisible = true;
-            }
-        });
+            });
+        }
     }
 
     /// <summary>
@@ -527,12 +516,12 @@ public partial class ControlPanelView {
         _pathTracer.ClearTileRegistry();
 
         try {
-            DynamicGrid.BatchBegin();
+            _dynamicGrid.BatchBegin();
             foreach (var entity in panel.Entities.OrderBy(x => x.Layer)) {
                 AddEntityToGrid(entity);
             }
         } finally {
-            DynamicGrid.BatchCommit();
+            _dynamicGrid.BatchCommit();
         }
     }
 
@@ -547,7 +536,7 @@ public partial class ControlPanelView {
                 if (tile is ContentView view) {
                     view.ClassId = entity.Guid.ToString();
                     SetTileGridPosition(tile);
-                    DynamicGrid.Children.Add(view);
+                    _dynamicGrid.Children.Add(view);
                     if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
                 }
                 return tile;
@@ -574,10 +563,10 @@ public partial class ControlPanelView {
     /// we have removed events and gestures.
     /// </summary>
     private void RemoveAllTilesFromGrid() {
-        var children = DynamicGrid.Children.OfType<ITile>().ToList();
-        DynamicGrid.BatchBegin();
+        var children = _dynamicGrid.Children.OfType<ITile>().ToList();
+        _dynamicGrid.BatchBegin();
         foreach (var tile in children) RemoveTileFromGrid(tile);
-        DynamicGrid.BatchCommit();
+        _dynamicGrid.BatchCommit();
     }
 
     /// <summary>
@@ -594,7 +583,7 @@ public partial class ControlPanelView {
     /// Remove an Entity from the Grid
     /// </summary>
     private void RemoveEntityFromGrid(Entity entity) {
-        var views = DynamicGrid.Children
+        var views = _dynamicGrid.Children
                                .OfType<Microsoft.Maui.Controls.View>()
                                .Where(x => x.ClassId == entity.Guid.ToString())
                                .ToList();
@@ -606,7 +595,7 @@ public partial class ControlPanelView {
                 MarkTileUnSelected(tile);
             }
             view.GestureRecognizers.Clear();
-            DynamicGrid.Remove(view);
+            _dynamicGrid.Remove(view);
             if (view is TrackTile trackTile) _pathTracer.UnregisterTile(trackTile);
         }
     }
@@ -631,44 +620,12 @@ public partial class ControlPanelView {
 
     private void SetTileGridPosition(ITile tile) {
         if (tile is ContentView view) {
-            DynamicGrid.SetColumn(view, tile.Entity.Col);
-            DynamicGrid.SetRow(view, tile.Entity.Row);
-            DynamicGrid.SetColumnSpan(view, tile.Entity.Width);
-            DynamicGrid.SetRowSpan(view, tile.Entity.Height);
+            _dynamicGrid.SetColumn(view, tile.Entity.Col);
+            _dynamicGrid.SetRow(view, tile.Entity.Row);
+            _dynamicGrid.SetColumnSpan(view, tile.Entity.Width);
+            _dynamicGrid.SetRowSpan(view, tile.Entity.Height);
         }
     }
-    #endregion
-
-    #region Draw Grid when in Design Mode
-    // private void DrawGrid() {
-    //     RemoveGridLines();
-    //     if (ShowGrid) {
-    //         var gridLines = new GridLinesDrawable(Rows, Cols, GridColor);
-    //         var graphicsView = new GraphicsView {
-    //             InputTransparent = true,
-    //             Drawable = gridLines,
-    //             HorizontalOptions = LayoutOptions.Fill,
-    //             VerticalOptions = LayoutOptions.Fill,
-    //             ClassId = "GridLines"
-    //         };
-    //
-    //         // Add the GraphicsView directly to the AbsoluteLayout
-    //         AbsoluteLayout.SetLayoutBounds(graphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
-    //         AbsoluteLayout.SetLayoutFlags(graphicsView, AbsoluteLayoutFlags.PositionProportional);
-    //         ControlPanelLayout.Children.Add(graphicsView);
-    //         graphicsView.Invalidate();
-    //     }
-    // }
-    //
-    // private void RemoveGridLines() => RemoveChildView("GridLines");
-
-    // private void RemoveChildView(string classID) {
-    //     for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
-    //         if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View view && view.ClassId == classID) {
-    //             ControlPanelLayout.Children.RemoveAt(i);
-    //         }
-    //     }
-    // }
     #endregion
 
     #region Support Marking and UnMarking Tiles on the Panel
@@ -763,24 +720,24 @@ public partial class ControlPanelView {
         // _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
         // _selectionOutlinegraphicsView.Invalidate();
 
-        GridSelectionOverlay.Update(startCol, startRow, endCol, endRow, _gridSize);
-        GridSelectionOverlay.IsActive = true;
+        _overlayGridSelection.Update(startCol, startRow, endCol, endRow, _gridSize);
+        _overlayGridSelection.IsActive = true;
     }
 
     private void RemoveSelectorView() {
-        GridSelectionOverlay.IsActive = false;
+        _overlayGridSelection.IsActive = false;
     }
 
     private void MarkTilesSelectedInGrid(int startCol, int startRow, int endCol, int endRow) {
         // @formatter:off
-        var unselectedTilesInRange = DynamicGrid.Children
+        var unselectedTilesInRange = _dynamicGrid.Children
             .OfType<ITile>().Where(tile =>
                 tile.Entity.Col >= startCol && tile.Entity.Col <= endCol &&
                 tile.Entity.Row >= startRow && tile.Entity.Row <= endRow &&
                 !tile.IsSelected)
                 .ToList();
 
-        var selectedTilesOutsideRange = DynamicGrid.Children
+        var selectedTilesOutsideRange = _dynamicGrid.Children
             .OfType<ITile>().Where(tile =>
                 tile.IsSelected &&
                 (tile.Entity.Col < startCol || tile.Entity.Col > endCol ||
@@ -803,7 +760,7 @@ public partial class ControlPanelView {
 
         // Must tap an empty cell to trigger move/copy by requirement
         // -----------------------------------------------------------
-        if (GridPositionHelper.HasTileAt(anchorCol, anchorRow, DynamicGrid)) return;
+        if (GridPositionHelper.HasTileAt(anchorCol, anchorRow, _dynamicGrid)) return;
         if (_selectedTiles.Count == 0) return; // nothing to move/copy
         if (EditMode is not (EditModeEnum.Move or EditModeEnum.Copy)) return;
 
@@ -915,7 +872,7 @@ public partial class ControlPanelView {
         if (selTopLeft is null) return (false, rects);
 
         var (minCol, minRow) = selTopLeft.Value;
-        var existing = DynamicGrid.Children.OfType<ITile>().ToList();
+        var existing = _dynamicGrid.Children.OfType<ITile>().ToList();
 
         var isInBounds = true;
         foreach (var tile in _selectedTiles) {
@@ -971,10 +928,10 @@ public partial class ControlPanelView {
         }
 
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
-        var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid), DynamicGrid);
+        var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_dynamicGrid), _dynamicGrid);
         if (gridPosition is { } position && tile is not null && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
             UnHighlightCell(_lastDragCol, _lastDragRow);
-            if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, DynamicGrid, EditMode) &&
+            if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, _dynamicGrid, EditMode) &&
                 GridPositionHelper.IsInBounds(tile, position.Col, position.Row, Cols, Rows)) {
                 e.AcceptedOperation = DataPackageOperation.Copy;
                 HighlightCell(position.Col, position.Row, tile.Entity.Width, tile.Entity.Height, CellHighlightAction.DragValid);
@@ -1006,13 +963,13 @@ public partial class ControlPanelView {
             ClearAllSelectedTiles();
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
             if (Panel is { } panel && tile is not null) {
-                var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(DynamicGrid), DynamicGrid);
+                var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_dynamicGrid), _dynamicGrid);
                 if (gridPosition is { } position) {
                     // Make sure that the item we are placing is onto a point that is 
                     // not already occupied unless the item being dropped is an overlay 
                     // item that has a higher Z factor. 
                     // -----------------------------------------------------------------
-                    if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, DynamicGrid, EditMode)) {
+                    if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, _dynamicGrid, EditMode)) {
                         _logger.LogInformation("DropTileOnPanel: Mode=Symbol");
                         var dropEntity = panel.CreateEntityFrom(tile.Entity);
                         dropEntity.Col = position.Col;
@@ -1157,7 +1114,7 @@ public partial class ControlPanelView {
 
     private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {
         if (bindable is ControlPanelView control && newvalue is bool showGrid) {
-            control.GridLinesOverlay.IsActive = showGrid;
+            control._overlayGridLines.IsActive = showGrid;
         }
     }
     #endregion
