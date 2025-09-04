@@ -146,5 +146,13 @@
             </Grid>
 
         </Grid>
+        
+        <ActivityIndicator
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            IsRunning="{Binding Path=IsProcessing}"
+            IsVisible="{Binding Path=IsProcessing}"
+            Color="{StaticResource Primary}"/>
+        
     </Grid>
 </ContentPage>

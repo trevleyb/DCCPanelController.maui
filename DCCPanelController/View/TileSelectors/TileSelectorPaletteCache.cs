@@ -49,7 +49,6 @@ public class TileSelectorPaletteCache {
                 new ActionButtonEntity(panel) { State = ButtonStateEnum.On },
                 new RouteEntity(panel) { State = RouteStateEnum.Active },
                 new SwitchEntity(panel) { SwitchStyle = SwitchStyleEnum.Light, State = ButtonStateEnum.On },
-                new SwitchEntity(panel) { SwitchStyle = SwitchStyleEnum.Switch, State = ButtonStateEnum.On },
             ]);
 
             Add("Mainline", [

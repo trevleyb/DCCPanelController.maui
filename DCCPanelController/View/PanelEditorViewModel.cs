@@ -9,6 +9,7 @@ using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.PanelProperties;
@@ -25,7 +26,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly PanelEditor? _panelEditor;
 
     private readonly ILogger<PanelEditor> _logger;
-    private readonly ControlPanel.ControlPanelView _panelView;
+    private readonly ControlPanelView _panelView;
     private readonly ProfileService _profileService;
     
     [ObservableProperty]
@@ -34,6 +35,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [ObservableProperty]
     private bool _gridVisible;
 
+    [ObservableProperty] private bool _isProcessing;
     [ObservableProperty] private bool _havePropertiesChanged;
 
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
@@ -303,17 +305,31 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     private async Task AcceptPanelPropertiesPopupAsync() {
         if (_propertyPage is not null) {
-            await _propertyPage.ApplyChangesAsync();
-            await SaveAsync();
-            await _panelView.ForceRefresh();
+            try {
+                IsProcessing = true;
+                await Task.Yield();
+                await Task.Delay(10);
+                await _propertyPage.ApplyChangesAsync();
+                await SaveAsync();
+                await _panelView.ForceRefresh();
+            } finally {
+                IsProcessing = false;
+            }
         }
     }
 
     [RelayCommand]
     private async Task AcceptTilePropertiesPopupAsync() {
         if (_propertyPage is not null) {
-            await _propertyPage.ApplyChangesAsync();
-            await SaveAsync();
+            try {
+                IsProcessing = true;
+                await Task.Yield();
+                await Task.Delay(10);
+                await _propertyPage.ApplyChangesAsync();
+                await SaveAsync();
+            } finally {
+                IsProcessing = false;
+            }
         }
     }
 
