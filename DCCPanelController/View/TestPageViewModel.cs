@@ -7,10 +7,5 @@ public struct SomeTestItem  {
     public required string Id { get; set; }
 }
 
-public partial class TestPageViewModel : ObservableObject {
-    public TestPageViewModel() {
-        
-        
-    }
-}
+public partial class TestPageViewModel : ObservableObject { }
 

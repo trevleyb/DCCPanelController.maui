@@ -12,8 +12,6 @@ public class ProfileService {
     public Profile? ActiveProfile { get; private set; }
 
     #region Ctor
-    public ProfileService() { }
-
     public async Task InitializeAsync() {
         Console.WriteLine("Loading Profiles");
 
