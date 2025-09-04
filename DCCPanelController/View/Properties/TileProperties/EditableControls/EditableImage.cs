@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
+using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
 using Microsoft.Extensions.Logging;
 
@@ -34,7 +35,7 @@ public class EditableImage(string label, string description = "", int order = 0,
 
             var fileButton = new Button {
                 Text = "Select Image",
-                BackgroundColor = StyleColor.Get("Primary"),
+                BackgroundColor = StyleHelper.FromStyle("Primary"),
                 TextColor = Colors.White,
                 HeightRequest = 30,
                 FontSize = 15,
@@ -44,7 +45,7 @@ public class EditableImage(string label, string description = "", int order = 0,
 
             var photoButton = new Button {
                 Text = "Select Photo",
-                BackgroundColor = StyleColor.Get("Primary"),
+                BackgroundColor = StyleHelper.FromStyle("Primary"),
                 TextColor = Colors.White,
                 FontSize = 15,
                 HeightRequest = 30,

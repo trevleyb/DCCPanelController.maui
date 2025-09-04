@@ -6,6 +6,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Resources.Styles;
 using DCCPanelController.View.Base;
 using DCCPanelController.View.Converters;
 using DCCPanelController.View.Properties.TileProperties.Attributes;
@@ -325,7 +326,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertyPage
     private static Label GroupHeading(string groupKey) {
         return new Label {
             Text = FormatLabel(groupKey),
-            TextColor = StyleColor.Get("Primary"),
+            TextColor = StyleHelper.FromStyle("Primary"),
             FontSize = 18,
             Margin = new Thickness(0, 0, 0, 0)
         };
@@ -337,7 +338,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertyPage
     }
 
     private static BoxView GroupDivider(Color? color = null) {
-        color ??= StyleColor.Get("Primary");
+        color ??= StyleHelper.FromStyle("Primary");
         return new BoxView {
             BackgroundColor = color,
             HeightRequest = 1,

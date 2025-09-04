@@ -1,5 +1,6 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
+using DCCPanelController.Resources.Styles;
 using Microsoft.Extensions.Logging;
 using Switch = Microsoft.Maui.Controls.Switch;
 
@@ -9,7 +10,7 @@ public class EditableBool(string label, string description = "", int order = 0, 
     : EditableProperty(label, description, order, group), IEditableProperty {
     public IView? CreateView(object owner, PropertyInfo info) {
         try {
-            var cell = new Switch { BindingContext = owner, OnColor = StyleColor.Get("Primary"), ThumbColor = Colors.White };
+            var cell = new Switch { BindingContext = owner, OnColor = StyleHelper.FromStyle("Primary"), ThumbColor = Colors.White };
             cell.VerticalOptions = LayoutOptions.Center;
             cell.SetBinding(Switch.IsToggledProperty, new Binding(info.Name) { Source = owner, Mode = BindingMode.TwoWay });
             cell.PropertyChanged += (sender, args) => {
