@@ -29,12 +29,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ControlPanelView _panelView;
     private readonly ProfileService _profileService;
     
-    [ObservableProperty]
-    private EditModeEnum _editMode = EditModeEnum.Move;
-
-    [ObservableProperty]
-    private bool _gridVisible;
-
+    [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
+    [ObservableProperty] private bool _gridVisible;
     [ObservableProperty] private bool _isProcessing;
     [ObservableProperty] private bool _havePropertiesChanged;
 
@@ -49,11 +45,9 @@ public partial class PanelEditorViewModel : ObservableObject {
     private Panel? _original;
     private IPropertyPage? _propertyPage;
     
-    [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Title))]
-    private Panel? _panel;
-
-    [ObservableProperty]
+    [ObservableProperty] private Panel? _panel;
+    
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
     [NotifyPropertyChangedFor(nameof(MultipleEntitiesSelected))]
@@ -66,7 +60,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanSavePanel))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
-    private ObservableCollection<ITile> _selectedTiles = [];
+    [ObservableProperty] private ObservableCollection<ITile> _selectedTiles = [];
 
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
