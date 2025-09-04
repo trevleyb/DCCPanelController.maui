@@ -33,8 +33,6 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
-    private StateChangeSource _stateChangeSource = StateChangeSource.External;
-
     [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions")]
     private TurnoutActions _turnoutPanelActions = [];
 
@@ -64,7 +62,6 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
     public void SetState(ButtonStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
         if (State == newState) return;
 
-        _stateChangeSource = source;
         State = newState;
 
         // Only trigger cascading if this is an external change or we're not already cascading this entity

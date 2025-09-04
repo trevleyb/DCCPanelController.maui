@@ -11,7 +11,6 @@ public partial class SvgImageManager {
     private const int DefaultWidth = 48;
     private const int DefaultHeight = 48;
     private readonly XDocument _svgDocument;
-    private string _imageSource;
 
     /// <summary>
     ///     Creates an instance of the DisplayImage Manager with the given name of the
@@ -23,7 +22,6 @@ public partial class SvgImageManager {
     /// <exception cref="Exception">Will throw FileNot Found if it cannot find the file. </exception>
     public SvgImageManager(string imageName) {
         try {
-            _imageSource = imageName;
             _svgDocument = LoadSvg(imageName);
         } catch (Exception e) {
             throw new FileNotFoundException($"Unable to load image {imageName}: {e.Message}");

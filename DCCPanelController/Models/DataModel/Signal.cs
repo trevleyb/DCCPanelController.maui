@@ -8,7 +8,7 @@ namespace DCCPanelController.Models.DataModel;
 ///     Represents a Turnout with its current state.
 ///     This is controlled by data that comes in via the Withrottle Interface
 /// </summary>
-[DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
+[DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {DccAddress}")]
 public partial class Signal : ObservableObject {
     [ObservableProperty] private string? _id;
     [ObservableProperty] private string? _name;

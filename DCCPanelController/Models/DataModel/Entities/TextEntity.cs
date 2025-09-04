@@ -10,16 +10,19 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     private Color _backgroundColor = Colors.Transparent;
 
     [ObservableProperty] [property: EditableInt("Font Size", "", 1, "Text")]
-    private int _fontSize = 8;
+    private int _fontSize = 12;
 
-    [ObservableProperty] [property: EditableEnum("Horizontal", "", 3, "Text")]
-    private TextAlignmentHorizontalEnum _horizontalJustification = TextAlignmentHorizontalEnum.Center;
+    [ObservableProperty] [property: EditableEnum("Font Style", "", 2, "Text")]
+    private TextAttributeEnum _fontStyle = TextAttributeEnum.Normal;
 
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
     [ObservableProperty] [property: EditableColor("Text Color", "", 2, "Text")]
     private Color _textColor = Colors.Black;
+
+    [ObservableProperty] [property: EditableEnum("Horizontal", "", 3, "Text")]
+    private TextAlignmentHorizontalEnum _horizontalJustification = TextAlignmentHorizontalEnum.Center;
 
     [ObservableProperty] [property: EditableEnum("Vertical", "", 3, "Text")]
     private TextAlignmentVerticalEnum _verticalJustification = TextAlignmentVerticalEnum.Center;

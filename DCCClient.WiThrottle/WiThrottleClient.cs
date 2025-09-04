@@ -16,14 +16,14 @@ public class WiThrottleClient {
     private readonly string _address;
 
     private readonly string _name;
-    private readonly int _port = 12090;
+    private readonly int _port;
     private TcpClient? _client;
     private Timer? _heartbeatTimer;
     private NetworkStream? _stream;
 
-    public WiThrottleClient(string address, int port) : this("", address, port) { }
+    public WiThrottleClient(string address, int port = 12090) : this("", address, port) { }
 
-    public WiThrottleClient(string name, string address, int port) {
+    public WiThrottleClient(string name, string address, int port = 12090) {
         _name = name;
         _address = address;
         _port = port;

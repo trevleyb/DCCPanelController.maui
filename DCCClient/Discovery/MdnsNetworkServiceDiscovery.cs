@@ -8,7 +8,6 @@ namespace DCCClient.Discovery;
 public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     private readonly ConcurrentDictionary<string, DiscoveredService> _discoveredServicesCache = new();
     private readonly Lock _initializationLock = new();
-    private TaskCompletionSource<bool>? _discoveryCompletionSource;
     private MulticastService? _mdns;
     private ServiceDiscovery? _sd;
 
@@ -28,7 +27,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
         var querySubType = subType.Trim().ToLower();
 
         lock (_initializationLock) _discoveredServicesCache.Clear();
-        _discoveryCompletionSource = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         StartMdnsListener();
 
@@ -69,7 +67,6 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
 
     public void Dispose() {
         Dispose(true);
-        GC.SuppressFinalize(this);
     }
 
     private void EnsureComponentsInitialized() {

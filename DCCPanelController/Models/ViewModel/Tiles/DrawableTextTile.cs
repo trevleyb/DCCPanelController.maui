@@ -10,6 +10,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
         VisualProperties.Add(nameof(TextEntity.Label));
         VisualProperties.Add(nameof(entity.Label));
         VisualProperties.Add(nameof(entity.FontSize));
+        VisualProperties.Add(nameof(entity.FontStyle));
         VisualProperties.Add(nameof(entity.TextColor));
         VisualProperties.Add(nameof(entity.HorizontalJustification));
         VisualProperties.Add(nameof(entity.VerticalJustification));
@@ -28,6 +29,7 @@ public class DrawableTextTile : Tile, ITileDrawable {
                 LineBreakMode = LineBreakMode.TailTruncation,
                 Rotation = entity.Rotation,
                 FontSize = entity.FontSize,
+                FontAttributes = EnumHelpers.ConvertFontStyle(entity.FontStyle),
                 TextColor = entity.TextColor,
                 InputTransparent = true,
                 WidthRequest = TileWidth,
@@ -35,24 +37,6 @@ public class DrawableTextTile : Tile, ITileDrawable {
                 Text = entity.Label
             };
             return label;
-
-            //if (entity.BorderWidth == 0) return label;
-
-            //var border = new Border {
-            //    Content = label,
-            //    InputTransparent = true,
-            //    HorizontalOptions = LayoutOptions.Fill,
-            //    VerticalOptions = LayoutOptions.Fill,
-            //    Stroke = new SolidColorBrush(entity.BorderColor),
-            //    StrokeThickness = entity.BorderWidth,
-            //    StrokeShape = new RoundRectangle { CornerRadius = entity.BorderRadius },
-            //    Rotation = entity.Rotation,
-            //    Opacity = entity.Opacity,
-            //    BackgroundColor = entity.BackgroundColor,
-            //    WidthRequest = TileWidth,
-            //    HeightRequest = TileHeight,
-            //};
-            //return border;
         }
         return CreateSymbol(); // Fallback on error
     }

@@ -9,7 +9,7 @@ using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
-
+ 
 public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private int _currentPanelIndex;
     [ObservableProperty] private bool _showGrid;

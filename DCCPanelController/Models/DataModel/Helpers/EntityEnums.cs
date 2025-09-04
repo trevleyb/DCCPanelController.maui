@@ -24,7 +24,18 @@ public enum TextAlignmentHorizontalEnum { Left, Right, Center, Justify }
 
 public enum TextAlignmentVerticalEnum { Top, Bottom, Center }
 
+public enum TextAttributeEnum { Normal, Bold, Italic }
+
 public static class EnumHelpers {
+    public static FontAttributes ConvertFontStyle(TextAttributeEnum style) {
+        return style switch {
+            TextAttributeEnum.Normal => FontAttributes.None,
+            TextAttributeEnum.Bold   => FontAttributes.Bold,
+            TextAttributeEnum.Italic => FontAttributes.Italic,
+            _                        => FontAttributes.None,
+        };
+    }
+    
     public static HorizontalAlignment ConvertHorizontalAlignment(TextAlignmentHorizontalEnum alignment) {
         return alignment switch {
             TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,

@@ -1,5 +1,8 @@
 namespace DCCPanelController.Helpers;
 
+
+public record AppleCrayonColor(string Name, Color Color);
+
 public static class AppleCrayonColors {
     public enum AppleCrayonColorsEnum : uint {
         Licorice = 0xFF000000,
@@ -139,6 +142,4 @@ public static class AppleCrayonColors {
     private static Color EnumToColor(AppleCrayonColorsEnum color) {
         return Color.FromArgb($"{(uint)color:X8}");
     }
-
-    public record AppleCrayonColor(string Name, Color Color);
 }

@@ -11,7 +11,6 @@ public class EntityConnections {
     /// <summary>
     ///     Creates entity connections with 8-way rotation capability
     /// </summary>
-    /// <param name="connectionPattern">Connection pattern string (e.g., "**S***S*" for E-W straight track)</param>
     public EntityConnections(string connectionPattern, int rotations = 8) {
         _baseConnections = ParseConnectionPattern(connectionPattern);
     }

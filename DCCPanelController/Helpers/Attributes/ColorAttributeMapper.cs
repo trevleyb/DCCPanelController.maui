@@ -31,8 +31,8 @@ public class ColorItemGroup : List<PanelColorItem> {
         CategorySortOrder = categorySortOrder;
     }
 
-    public string CategoryName { get; set; } = string.Empty;
-    public int CategorySortOrder { get; set; } = 100;
+    public string CategoryName { get; set; } 
+    public int CategorySortOrder { get; set; } 
 }
 
 /// <summary>
