@@ -46,7 +46,6 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 Panels = _profileService.ActiveProfile?.Panels ?? throw new ArgumentNullException(nameof(profileService), "PanelViewerViewModel: Active profile is not defined.");
                 SelectedPanel = Panels.FirstOrDefault();
             });
-       
     }
 
     public bool ShowThumbnail => false;
@@ -138,7 +137,8 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
         try {
             if (SelectedPanel is { } panel && NavigationService is { } navigation) {
                 IsLoading = true;
-                await Task.Delay(100);
+                await Task.Yield();
+                await Task.Delay(10);
                 var editorPage = new PanelEditor(LogHelper.CreateLogger<PanelEditor>(), panel, _profileService);
                 await navigation.PushAsync(editorPage);
                 await editorPage.PageClosed;

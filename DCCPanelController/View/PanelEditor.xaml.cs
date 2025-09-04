@@ -34,7 +34,6 @@ public partial class PanelEditor : ContentPage {
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
 
         BindingContext = _viewModel;
         AppState.Instance.IsEditingPanel = true;
@@ -73,19 +72,12 @@ public partial class PanelEditor : ContentPage {
             _isPushingModal = false;
         } else {
             Console.WriteLine("Pop Modal - Push Modal not in progress");
-            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-            _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
             PanelView.TileSelected -= PanelViewOnTileSelected;
             PanelView.TileChanged -= PanelViewOnTileChanged;
             PanelView.TileTapped -= PanelViewOnTileTapped;
+            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
             _closeTcs.TrySetResult(true); // or return data as needed
         }
-    }
-
-    private void BottomSheetStateChanged(object? sender, StateChangedEventArgs e) { }
-
-    private void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
-        _viewModel.BottomSheetOnStateChanged(sender, e);
     }
 
     #region Manage the showing and hiding of the Palettes

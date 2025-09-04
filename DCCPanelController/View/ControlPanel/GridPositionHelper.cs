@@ -4,6 +4,10 @@ using DCCPanelController.View.Helpers;
 
 namespace DCCPanelController.View.ControlPanel;
 
+public readonly record struct PlacementRect(int Col, int Row, int Width, int Height, bool InBounds, bool Collides);
+
+public readonly record struct SelectionPlacementResult(bool CanPlace, List<PlacementRect> Cells);
+
 /// <summary>
 /// Utility class for grid position calculations and tile lookups.
 /// Consolidates all position-related logic that was scattered throughout ControlPanelView.
@@ -112,18 +116,18 @@ public static class GridPositionHelper {
     /// Use this when there is no exact top-left match but a tile may occupy the cell.
     /// </summary>
     public static ITile? GetTopmostTileCovering(int col, int row, Grid grid) => GetTilesCovering(col, row, grid).FirstOrDefault();
+
     public static List<ITile> GetTilesCovering(int col, int row, Grid grid) {
         return grid.Children
                    .OfType<ITile>()
                    .Where(t =>
                               col >= t.Entity.Col &&
-                              col <  t.Entity.Col + t.Entity.Width &&
+                              col < t.Entity.Col + t.Entity.Width &&
                               row >= t.Entity.Row &&
-                              row <  t.Entity.Row + t.Entity.Height)
+                              row < t.Entity.Row + t.Entity.Height)
                    .OrderByDescending(t => t.Entity.Layer)
                    .ToList();
     }
-
     #endregion
 
     #region Existence Check Methods
@@ -185,68 +189,115 @@ public static class GridPositionHelper {
                aRow < bRow + bHeight && aRow + aHeight > bRow;
     }
 
-    public static bool WouldCollide(
-        ITile tile, int col, int row, Grid grid, EditModeEnum mode,
-        ISet<ITile>? exclude = null) // prefer passing a HashSet here if you use exclusions often
+    public static bool WouldCollide(ITile tile, int col, int row, Grid grid, EditModeEnum mode,
+                                    ISet<ITile>? exclude = null) // prefer passing a HashSet here if you use exclusions often
     {
         // Rule 4: drawing-only tiles never collide
         var ent = tile.Entity;
         bool aIsTrack = ent is ITrackEntity;
         bool aIsInteractive = ent is IInteractiveEntity;
         if (!aIsTrack && !aIsInteractive) return false;
-    
+
         // Can't drop onto exact same top-left (unless Move mode)
         if (ent.Col == col && ent.Row == row && mode != EditModeEnum.Move) return true;
-    
+
         // Proposed destination rect (integer grid cells)
         int aCol = col, aRow = row;
         int aW = ent.Width, aH = ent.Height;
         int aRight = aCol + aW;
         int aBottom = aRow + aH;
-    
+
         // Iterate children without LINQ; bail early on first disallowed overlap
         var children = grid.Children;
         for (int i = 0, n = children.Count; i < n; i++) {
             if (children[i] is not ITile other) continue;
             if (ReferenceEquals(other, tile)) continue;
             if (exclude is not null && exclude.Contains(other)) continue;
-    
+
             var bEnt = other.Entity;
-    
+
             // Skip drawing-only targets (rule 4) early
             // (Don't compute types until we know they overlap)
             int bCol = bEnt.Col, bRow = bEnt.Row;
             int bW = bEnt.Width, bH = bEnt.Height;
-    
+
             // Fast AABB overlap in grid space
             // !(aRight <= bCol || aCol >= bCol + bW || aBottom <= bRow || aRow >= bRow + bH)
             if (aRight <= bCol || aCol >= bCol + bW || aBottom <= bRow || aRow >= bRow + bH)
                 continue;
-    
+
             // Now that we know they overlap, check types
             bool bIsTrack = bEnt is ITrackEntity;
             bool bIsInteractive = bEnt is IInteractiveEntity;
             if (!bIsTrack && !bIsInteractive) continue; // drawing-only target, allowed
-    
+
             // Rule 1: Track vs Track not allowed
             if (aIsTrack && bIsTrack) return true;
-    
+
             // Rule 2: Interactive vs Interactive not allowed
             if (aIsInteractive && bIsInteractive) return true;
-    
+
             // Rule 3: Track + Interactive is allowed → keep scanning
         }
         return false;
     }
-    
-    public static bool WouldCollide(
-        ITile tile, int col, int row, Grid grid, EditModeEnum mode, IEnumerable<ITile>? excludeTiles) {
+
+    public static bool WouldCollide(ITile tile, int col, int row, Grid grid, EditModeEnum mode, IEnumerable<ITile>? excludeTiles) {
         // Avoid per-call HashSet when possible
         ISet<ITile>? set = excludeTiles as ISet<ITile>;
         set ??= excludeTiles is null ? null : new HashSet<ITile>(excludeTiles);
         return WouldCollide(tile, col, row, grid, mode, set);
     }
-    
+
+    public static SelectionPlacementResult EvaluateSelectionPlacement(IReadOnlyCollection<ITile> selection,
+                                                                      int anchorCol,
+                                                                      int anchorRow,
+                                                                      Grid grid,
+                                                                      EditModeEnum mode,
+                                                                      int maxCols,
+                                                                      int maxRows) {
+        // Empty selection -> trivially placeable
+        if (selection is null || selection.Count == 0)
+            return new SelectionPlacementResult(true, new List<PlacementRect>(0));
+
+        // Find selection's current top-left to preserve relative offsets
+        int minCol = int.MaxValue, minRow = int.MaxValue;
+        foreach (var t in selection) {
+            var e = t.Entity;
+            if (e.Col < minCol) minCol = e.Col;
+            if (e.Row < minRow) minRow = e.Row;
+        }
+
+        // When moving, ignore collisions against tiles that are themselves moving away
+        ISet<ITile>? exclude = (mode == EditModeEnum.Move)
+            ? (selection as ISet<ITile> ?? new HashSet<ITile>(selection))
+            : null;
+
+        var cells = new List<PlacementRect>(selection.Count);
+        bool allOk = true;
+
+        foreach (var tile in selection) {
+            var e = tile.Entity;
+
+            // Destination for this tile keeping its offset within the selection
+            int destCol = anchorCol + (e.Col - minCol);
+            int destRow = anchorRow + (e.Row - minRow);
+
+            bool inBounds = IsInBounds(destCol, destRow, e.Width, e.Height, maxCols, maxRows);
+            bool collides = false;
+
+            if (inBounds) {
+                // Reuse the fast per-tile rule set (track/interactive/drawing + AABB)
+                collides = WouldCollide(tile, destCol, destRow, grid, mode, exclude);
+            }
+
+            cells.Add(new PlacementRect(destCol, destRow, e.Width, e.Height, inBounds, collides));
+            if (allOk && (!inBounds || collides)) allOk = false;
+        }
+
+        return new SelectionPlacementResult(allOk, cells);
+    }
+
     /// <summary>
     /// Calculate the optimal grid size based on available space and grid dimensions
     /// </summary>

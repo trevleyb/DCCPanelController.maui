@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using CommunityToolkit.Maui.Markup;
 using DCCPanelController.Helpers;
-using DCCPanelController.Resources.Fonts;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
@@ -43,7 +42,6 @@ public static class MauiProgram {
                     fonts.AddFont("OpenSans-LightItalic.ttf", "OpenSansLightItalic");
 
                     fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
-                    fonts.AddFont("FluentSystemIcons-Regular.ttf", FluentUI.FontFamily);
                 });
 
         FormHelper.RemoveBorders();

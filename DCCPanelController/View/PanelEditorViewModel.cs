@@ -103,8 +103,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public string Title => Panel?.Title ?? "Panel";
 
-    public event Action? ForcePanelRefresh;
-
     public void UpdateOriginalFromCopy() {
         ArgumentNullException.ThrowIfNull(_original, "Original Panel should never be undefined.");
         if (_original.Panels != null && Panel != null) {
@@ -229,36 +227,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    private async Task EditPanelPropertiesAsync() {
-        try {
-            if (Panel is { } panel && _panelEditor is not null) {
-                var propertiesViewModel = new PanelPropertyViewModel(panel);
-                var propertiesPage = new PanelPropertyPage(propertiesViewModel);
-                ShowBottomSheet(propertiesPage, "Panel Properties");
-            }
-        } catch (Exception ex) {
-            _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
-        }
-    }
-
-    private async Task EditTilePropertiesAsync() {
-        try {
-            var title = SelectedEntities.Count switch {
-                0 => "Unknown Entity",
-                1 => SelectedEntity?.EntityName + " Properties",
-                _ => "Multiple Entities Properties"
-            };
-            
-            if (Panel is { } panel && SelectedEntities?.Count > 0 && _panelEditor is not null) {
-                var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
-                var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                ShowBottomSheet(propertiesPage, title);
-            }
-        } catch (Exception ex) {
-            _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
-        }
-    }
-
     private async Task EditPanelPropertiesPopupAsync() {
         try {
             if (Panel is { } panel && _panelEditor is not null) {
@@ -354,38 +322,11 @@ public partial class PanelEditorViewModel : ObservableObject {
         _propertyPage = null;
     }
     
-    [RelayCommand]
-    private async Task CloseBottomSheetAsync() {
-        if (_panelEditor?.BottomSheet is { } sfBottomSheet) {
-            sfBottomSheet.Close();
-        }
-    }
-    
-    private void ShowBottomSheet(Microsoft.Maui.Controls.View propertiesPage, string title = "Properties") {
-        if (_panelEditor?.BottomSheet is { } sfBottomSheet) {
-            sfBottomSheet.BottomSheetContent = propertiesPage;
-            sfBottomSheet.Background = Colors.WhiteSmoke;
-            sfBottomSheet.ShowGrabber = true;
-            sfBottomSheet.EnableSwiping = true;
-            sfBottomSheet.CollapseOnOverlayTap = true;
-            sfBottomSheet.CollapsedHeight = 0;
-            sfBottomSheet.ContentWidthMode = BottomSheetContentWidthMode.Full;
-            sfBottomSheet.State = BottomSheetState.HalfExpanded;
-            sfBottomSheet.IsModal = true;
-            sfBottomSheet.Show();
-        }
-    }
-
-    public void BottomSheetOnStateChanged(object? sender, StateChangedEventArgs e) {
-        if (e.NewState is BottomSheetState.Hidden or BottomSheetState.Collapsed) {
-            if (sender is SfBottomSheet bottomSheet) bottomSheet.Content = null!;
-            Console.WriteLine($"Panel Bottom Sheet State Changed: Hidden => {e.NewState}");
-            IsNavigationDrawerOpen = false;
-            CheckIfPanelChanged();
-            ForcePanelRefresh?.Invoke();
-        } else {
-            Console.WriteLine($"Panel Bottom Sheet State Changed: Not Hidden => {e.NewState}");
-            IsNavigationDrawerOpen = true;
-        }
-    }
+    public string GetEditModeIconFilename =>
+        EditMode switch {
+            EditModeEnum.Copy => "copy.png",
+            EditModeEnum.Move => "move.png",
+            EditModeEnum.Size => "crop.png",
+            _                 => "move.png"
+        };
 }

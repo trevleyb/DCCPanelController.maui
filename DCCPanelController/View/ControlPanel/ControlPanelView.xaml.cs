@@ -25,6 +25,7 @@ namespace DCCPanelController.View.ControlPanel;
 public partial class ControlPanelView {
     [ObservableProperty] private bool _isPanelDrawing;
 
+    #region Instance Variables and Properties
     private int _lastDragCol;
     private int _lastDragRow;
     private double _gridSize;
@@ -57,10 +58,10 @@ public partial class ControlPanelView {
         SetupGridOverlays();
         SizeChanged += OnSizeChangedDebounced;
     }
+    #endregion
 
     #region Setup the Grid Overlays
     private void SetupGridOverlays() {
-        
         // Create the Surface of the Panel
         // -------------------------------------------------------------
         AbsoluteLayout.SetLayoutFlags(_panelSurface, AbsoluteLayoutFlags.All);
@@ -140,19 +141,10 @@ public partial class ControlPanelView {
             SizeChanged -= OnSizeChangedDebounced;
             try {
                 Interlocked.Exchange(ref _sizeChangedDebounceCts, null)?.Cancel();
-            } catch { /* ignore but should not happen */ }
+            } catch { /* ignore but should not happen */
+            }
         }
     }
-    #endregion
-
-    #region Helpers
-    public string GetEditModeIconFilename =>
-        EditMode switch {
-            EditModeEnum.Copy => "copy.png",
-            EditModeEnum.Move => "move.png",
-            EditModeEnum.Size => "crop.png",
-            _                 => "move.png"
-        };
     #endregion
 
     #region Setup the Gestures and Manage them
@@ -301,7 +293,17 @@ public partial class ControlPanelView {
                 _gridGestures?.CancelAllGestures();
                 return;
             }
-            ClearAllSelectedTiles();
+
+            // If the tile is in the selected tiles list then we are moving ALL selected
+            // tiles (or copying them). If it is not in the list, then we clear the list 
+            // and add this tile as a selected tile. 
+            // -------------------------------------------------------------------------
+            if (e.Tile is { } tile) {
+                if (!_selectedTiles.Contains(tile)) {
+                    ClearAllSelectedTiles();
+                    MarkTileSelected(tile);
+                }
+            }
         } catch (Exception ex) {
             _logger.LogError($"Error in GridGesturesOnTileDragStarted: {ex.Message}");
         }
@@ -316,23 +318,8 @@ public partial class ControlPanelView {
                 HighlightCell(sizeTile, CellHighlightAction.Resize);
                 break;
 
-            case EditModeEnum.Move when e.Tile is { } moveTile: {
-                RemoveHighlights();
-                if (!GridPositionHelper.WouldCollide(moveTile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) && GridPositionHelper.IsInBounds(moveTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
-                    HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragValid);
-                } else {
-                    HighlightCell(e.CurrentCol, e.CurrentRow, moveTile.Entity.Width, moveTile.Entity.Height, CellHighlightAction.DragInvalid);
-                }
-                break;
-            }
-
-            case EditModeEnum.Copy when e.Tile is { } copyTile: {
-                RemoveHighlights();
-                if (!GridPositionHelper.WouldCollide(copyTile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) && GridPositionHelper.IsInBounds(copyTile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
-                    HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragValid);
-                } else {
-                    HighlightCell(e.CurrentCol, e.CurrentRow, copyTile.Entity.Width, copyTile.Entity.Height, CellHighlightAction.DragInvalid);
-                }
+            case EditModeEnum.Move or EditModeEnum.Copy when e.Tile is { } moveTile: {
+                await HandleTileDragMoveOrCopy(e);
                 break;
             }
             }
@@ -349,20 +336,11 @@ public partial class ControlPanelView {
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
                     switch (EditMode) {
                     case EditModeEnum.Move:
-                        tile.Entity.Col = e.CurrentCol;
-                        tile.Entity.Row = e.CurrentRow;
-                        SetTileGridPosition(tile);
-                        OnTileChanged(tile);
+                        PerformMoveSelection(e.CurrentCol, e.CurrentRow);
                         break;
 
                     case EditModeEnum.Copy:
-                        if (Panel != null) {
-                            var newEntity = Panel.CreateEntityFrom(tile.Entity);
-                            newEntity.Col = e.CurrentCol;
-                            newEntity.Row = e.CurrentRow;
-                            Panel.AddEntity(newEntity);
-                            OnTileChanged(tile);
-                        }
+                        PerformCopySelection(e.CurrentCol, e.CurrentRow);
                         break;
 
                     case EditModeEnum.Size:
@@ -441,7 +419,6 @@ public partial class ControlPanelView {
     /// </summary>
     private async Task DrawPanel([CallerMemberName] string memberName = "",
                                  [CallerLineNumber] int sourceLineNumber = 0) {
-    
         // Console.WriteLine($"DrawPanel: {memberName}@{sourceLineNumber} => Panel={(Panel == null ? "null" : "set")} IsDrawing={IsPanelDrawing} Size={MainGrid.Width}x{MainGrid.Height}");
 
         // Only redraw the grid if we absolutely need to. Events may mean that this 
@@ -498,7 +475,6 @@ public partial class ControlPanelView {
                     // Add all Entities to the Grid and Draw the Grid Lines
                     // ------------------------------------------------------------------------------
                     await AddEntitiesToGrid(Panel);
-
                 } catch (Exception ex) {
                     _logger.LogError($"Error in DrawPanel: {ex.Message}");
                 } finally {
@@ -586,9 +562,9 @@ public partial class ControlPanelView {
     /// </summary>
     private void RemoveEntityFromGrid(Entity entity) {
         var views = _dynamicGrid.Children
-                               .OfType<Microsoft.Maui.Controls.View>()
-                               .Where(x => x.ClassId == entity.Guid.ToString())
-                               .ToList();
+                                .OfType<Microsoft.Maui.Controls.View>()
+                                .Where(x => x.ClassId == entity.Guid.ToString())
+                                .ToList();
 
         foreach (var view in views) {
             if (view is ITile tile) {
@@ -674,7 +650,7 @@ public partial class ControlPanelView {
     // Given the start point of a highlighted cell, remove this cell highlight
     // ------------------------------------------------------------------------
     public void UnHighlightCell(ITile tile) => _overlayGridHighlights.Remove(tile);
-    public void UnHighlightCell(int col, int row) => _overlayGridHighlights.Remove(col,row);
+    public void UnHighlightCell(int col, int row) => _overlayGridHighlights.Remove(col, row);
 
     // Clear all highlight views form the control panel
     // ------------------------------------------------------------------------
@@ -775,6 +751,23 @@ public partial class ControlPanelView {
         }
     }
 
+    private async Task HandleTileDragMoveOrCopy(TileDragEventArgs e) {
+        var anchorCol = e.CurrentCol;
+        var anchorRow = e.CurrentRow;
+
+        var placeAt = CanPlaceSelectionAt(anchorCol, anchorRow, EditMode);
+        MainThread.BeginInvokeOnMainThread(async void () => {
+            try {
+                RemoveHighlights();
+                foreach (var cell in placeAt.bounds) {
+                    HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);
+                }
+            } catch (Exception ex) {
+                _logger.LogError("Error marking for move or copy tiles: " + ex.Message);
+            }
+        });
+    }
+
     /// <summary>
     /// Perform a MOVE operation on the selected tiles
     /// </summary>
@@ -785,13 +778,16 @@ public partial class ControlPanelView {
         // Move: update entity rows/cols in-place, then refresh grid positions
         // -------------------------------------------------------------------
         RemoveHighlights();
-        foreach (var tile in _selectedTiles) {
-            var e = tile.Entity;
-            e.Col = anchorCol + (e.Col - minCol);
-            e.Row = anchorRow + (e.Row - minRow);
-            SetTileGridPosition(tile);
-            tile.ForceRedraw();
-            OnTileChanged(tile);
+        var placeAt = CanPlaceSelectionAt(anchorCol, anchorRow, EditMode);
+        if (placeAt.isInBounds) {
+            foreach (var tile in _selectedTiles) {
+                var e = tile.Entity;
+                e.Col = anchorCol + (e.Col - minCol);
+                e.Row = anchorRow + (e.Row - minRow);
+                SetTileGridPosition(tile);
+                tile.ForceRedraw();
+                OnTileChanged(tile);
+            }
         }
         MarkAllSelectedTiles();
     }
@@ -803,18 +799,22 @@ public partial class ControlPanelView {
         if (_selectedTiles.Count == 0 || Panel is null) return;
         var (minCol, minRow) = GetSelectionTopLeft()!.Value;
 
-        var tilesToCopy = _selectedTiles.ToList();
-        foreach (var tile in tilesToCopy) {
-            var e = tile.Entity;
-            var newEntity = Panel.CreateEntityFrom(e);
-            newEntity.Col = anchorCol + (e.Col - minCol);
-            newEntity.Row = anchorRow + (e.Row - minRow);
-            Panel.AddEntity(newEntity);
-            OnTileChanged(tile);
-        }
+        var placeAt = CanPlaceSelectionAt(anchorCol, anchorRow, EditMode);
+        if (placeAt.isInBounds) {
+            var tilesToCopy = _selectedTiles.ToList();
+            foreach (var tile in tilesToCopy) {
+                var e = tile.Entity;
+                var newEntity = Panel.CreateEntityFrom(e);
+                newEntity.Col = anchorCol + (e.Col - minCol);
+                newEntity.Row = anchorRow + (e.Row - minRow);
+                Panel.AddEntity(newEntity);
+                OnTileChanged(tile);
+            }
 
-        ClearAllSelectedTiles();
-        foreach (var tile in tilesToCopy) MarkTileSelected(tile);
+            ClearAllSelectedTiles();
+            foreach (var tile in tilesToCopy) MarkTileSelected(tile);
+        }
+        MarkAllSelectedTiles();
     }
 
     /// <summary>
@@ -843,46 +843,26 @@ public partial class ControlPanelView {
                row + h <= Rows;
     }
 
-    /// <summary>
-    /// Check if ALL destination rectangles for the (copy/move) valid and free?
-    /// - anchorCol/Row = where the "top-left" of the selection will land
-    /// - If mode == Move we ignore collisions with the currently selected tiles (because they vacate)
-    /// Return if the operation can progress and what places the operation would have impacted
-    /// </summary>
-    private (bool isInBounds, List<DestinationBounds> bounds) CanPlaceSelectionAt(int anchorCol, int anchorRow, EditModeEnum mode) {
-        List<DestinationBounds> rects = [];
-        if (_selectedTiles.Count == 0) return (true, rects);
+    private (bool isInBounds, List<DestinationBounds> bounds)
+        CanPlaceSelectionAt(int anchorCol, int anchorRow, EditModeEnum mode) {
+        if (_selectedTiles.Count == 0) return (true, new List<DestinationBounds>(0));
 
-        var selTopLeft = GetSelectionTopLeft();
-        if (selTopLeft is null) return (false, rects);
+        var result = GridPositionHelper.EvaluateSelectionPlacement(
+            selection: _selectedTiles,
+            anchorCol: anchorCol,
+            anchorRow: anchorRow,
+            grid: _dynamicGrid,
+            mode: mode,
+            maxCols: Cols,
+            maxRows: Rows);
 
-        var (minCol, minRow) = selTopLeft.Value;
-        var existing = _dynamicGrid.Children.OfType<ITile>().ToList();
-
-        var isInBounds = true;
-        foreach (var tile in _selectedTiles) {
-            var tileInBounds = true;
-            var e = tile.Entity;
-
-            // Compute destination top-left for this tile (preserve relative offset)
-            var destCol = anchorCol + (e.Col - minCol);
-            var destRow = anchorRow + (e.Row - minRow);
-
-            // Bounds check
-            if (!InBounds(destCol, destRow, e.Width, e.Height)) tileInBounds = false;
-
-            // Collision check against *other* tiles
-            foreach (var other in existing) {
-                if (mode == EditModeEnum.Move && _selectedTiles.Contains(other)) continue; // selected tiles are moving away; ignore their current rects
-                var oe = other.Entity;
-                if (RectsOverlap(destCol, destRow, e.Width, e.Height, oe.Col, oe.Row, oe.Width, oe.Height)) tileInBounds = false;
-            }
-
-            var bounds = new DestinationBounds((destCol, destRow, e.Width, e.Height), tileInBounds);
-            rects.Add(bounds);
-            if (isInBounds && !tileInBounds) isInBounds = false;
+        // Map helper’s PlacementRect -> existing DestinationBounds record
+        var mapped = new List<DestinationBounds>(result.Cells.Count);
+        foreach (var c in result.Cells) {
+            mapped.Add(new DestinationBounds((c.Col, c.Row, c.Width, c.Height), c.InBounds && !c.Collides));
         }
-        return (isInBounds, rects);
+
+        return (result.CanPlace, mapped);
     }
 
     private record DestinationBounds((int col, int row, int width, int height) Rects, bool InBounds);

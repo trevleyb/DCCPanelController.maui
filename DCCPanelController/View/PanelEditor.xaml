@@ -146,16 +146,5 @@
             </Grid>
 
         </Grid>
-        
-        <!-- Bottom Sheet for editing the Connection Details -->
-        <navigationDrawer:SfBottomSheet 
-             x:Name="BottomSheet"
-             x:FieldModifier="public"
-             CollapsedHeight="0"
-             AnimationDuration="0.5"
-             CornerRadius="15, 15, 0, 0"
-             StateChanged="BottomSheetOnStateChanged"
-             HalfExpandedRatio="0.80" ContentPadding="10">
-        </navigationDrawer:SfBottomSheet>
     </Grid>
 </ContentPage>
