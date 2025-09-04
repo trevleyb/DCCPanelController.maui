@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -10,8 +11,8 @@ namespace DCCPanelController.View.ControlPanel;
 /// Handles tap detection, long press, pointer events, and manual tile dragging.
 /// </summary>
 public class GridGestureHelper : IDisposable {
-    private const int DoubleTapThreshold = 300;
-    private const double DragSlopPx = 6;
+    private const int DoubleTapThreshold = 225;
+    private const double DragSlopPx = 3.5;
 
     private readonly Grid _grid;
     private readonly object _tapLock = new();
@@ -21,6 +22,12 @@ public class GridGestureHelper : IDisposable {
 
     private GestureOwner _gestureOwner = GestureOwner.None;
 
+    // Debouce Support
+    private const int MoveMinIntervalMs = 10; // try 8–12
+    private long _lastMoveProcessedMs = 0;
+    private int _lastProcessedCol = -1;
+    private int _lastProcessedRow = -1;
+    
     // Tap detection
     private int _tapCount;
     private Timer? _tapTimer;
@@ -168,7 +175,7 @@ public class GridGestureHelper : IDisposable {
             if (_lpInvokedThisPress) return;
             _longPressDetected = true;
         } catch (Exception ex) {
-            Console.WriteLine("Error in long press handler: " + ex.Message);
+            Debug.WriteLine("Error in long press handler: " + ex.Message);
         }
     }
     #endregion
@@ -209,7 +216,7 @@ public class GridGestureHelper : IDisposable {
     private void OnPointerMoved(object? sender, PointerEventArgs e) {
         var currentPos = e.GetPosition(_grid);
         if (currentPos is not { } pos) return;
-
+        
         // Handle potential tile drag activation
         if (_draggedTile != null && !_tileDragActive) {
             var dx = Math.Abs(pos.X - _tileDragStartPos.X);
@@ -229,10 +236,20 @@ public class GridGestureHelper : IDisposable {
                 TileDragStarted?.Invoke(this, dragArgs);
             }
         }
+        
+        var gridPosition = GridPositionHelper.GetGridPosition(pos, _grid);
 
+        var nowMs = Environment.TickCount64;
+        var cellChanged = gridPosition?.Col != _lastProcessedCol || gridPosition?.Row != _lastProcessedRow;
+        if (!cellChanged && (nowMs - _lastMoveProcessedMs) < MoveMinIntervalMs) return;
+
+        _lastMoveProcessedMs = nowMs;
+        _lastProcessedCol = gridPosition?.Col ?? -1;
+        _lastProcessedRow = gridPosition?.Row ?? -1;
+
+        
         // Handle active tile drag
         if (_tileDragActive && _draggedTile != null) {
-            var gridPosition = GridPositionHelper.GetGridPosition(pos, _grid);
             if (gridPosition is { } position && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
                 var dragArgs = new TileDragEventArgs(_draggedTile, _dragStartCol, _dragStartRow, position.Col, position.Row, _lastDragCol, _lastDragRow);
                 TileDragMoved?.Invoke(this, dragArgs);
@@ -262,8 +279,7 @@ public class GridGestureHelper : IDisposable {
 
         // Handle active grid selection
         if (_dragSelectionActive) {
-            var cell = GridPositionHelper.GetGridPosition(pos, _grid);
-            if (cell is { } gridCell) {
+            if (gridPosition is { } gridCell) {
                 if (gridCell.Col != _lastMoveCol || gridCell.Row != _lastMoveRow) {
                     var selectionArgs = new GridSelectionEventArgs(_selectionStartCol,_selectionStartRow, gridCell.Col, gridCell.Row);
                     GridSelectionChanged?.Invoke(this, selectionArgs);
@@ -276,6 +292,10 @@ public class GridGestureHelper : IDisposable {
 
     private void OnPointerReleased(object? sender, PointerEventArgs e) {
         var currentPos = e.GetPosition(_grid) ?? new Point(0, 0);
+        
+        _lastMoveProcessedMs = 0;
+        _lastProcessedCol = -1;
+        _lastProcessedRow = -1;
         
         // Handle tile drag completion
         if (_tileDragActive && _draggedTile != null) {
@@ -320,7 +340,10 @@ public class GridGestureHelper : IDisposable {
     }
 
     private void OnPointerExited(object? sender, PointerEventArgs e) {
-        Console.WriteLine("PointerExited");
+        _lastMoveProcessedMs = 0;
+        _lastProcessedCol = -1;
+        _lastProcessedRow = -1;
+
         if (_dragSelectionActive) {
             GridSelectionCancelled?.Invoke(this, new GridSelectionEventArgs(_selectionStartCol, _selectionStartRow, -1, -1));
         }

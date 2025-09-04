@@ -4,7 +4,7 @@ namespace DCCPanelController.View.ControlPanel;
 
 public enum CellHighlightAction { Selected, DragInvalid, DragValid, Resize, Selecting, Error }
 
-public class GridHighlightOutline : GraphicsView, IDrawable {
+public class DrawGridHighlights : GraphicsView, IDrawable {
     public int Col { get; set; }
     public int Row { get; set; }
     public int OutlineWidth { get; set; }
@@ -13,6 +13,8 @@ public class GridHighlightOutline : GraphicsView, IDrawable {
     public CellHighlightAction Action { get; set; }
     
     public void Draw(ICanvas canvas, RectF dirtyRect) {
+        Console.WriteLine("Drawing Grid Highlight");
+        
         var left    = (float)(Col * CellSize);
         var top     = (float)(Row * CellSize);
         var width   = (float)(OutlineWidth  * CellSize);
@@ -26,12 +28,12 @@ public class GridHighlightOutline : GraphicsView, IDrawable {
         canvas.DrawRectangle(left, top, width, height);
     }
 
-    public GridHighlightOutline(int col, int row, int width, int height, double cellSize, CellHighlightAction action) {
-        SetBounds(col, row, width, height, cellSize, action);
+    public DrawGridHighlights() {
         InputTransparent = true;
         HorizontalOptions = LayoutOptions.Fill;
         VerticalOptions = LayoutOptions.Fill;
-        ClassId = "Highlight";
+        ClassId = "GridHighlights";
+        ZIndex = 3;
         Drawable = this;
     }
     

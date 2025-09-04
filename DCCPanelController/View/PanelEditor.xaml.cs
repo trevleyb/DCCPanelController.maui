@@ -163,8 +163,8 @@ public partial class PanelEditor : ContentPage {
 
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;
-            PanelView.DesignMode = _viewModel.GridVisible;
-            PanelView.ClearAllSelectedTiles();
+            //PanelView.DesignMode = _viewModel.GridVisible;
+            //PanelView.ClearAllSelectedTiles();
             var gridIcon = _viewModel.GridVisible ? "grid_on" : "grid_off";
             ToolbarIconHelper.BindIcon(GridToolbar, nameof(_viewModel.CanToggleGrid), gridIcon);
             break;

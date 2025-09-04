@@ -16,15 +16,10 @@
         HorizontalOptions="Fill"
         VerticalOptions="Fill">
         <AbsoluteLayout
+            IsVisible="False"
             HorizontalOptions="Fill"
             VerticalOptions="Fill"
             x:Name="ControlPanelLayout">
-            <Grid x:Name="DynamicGrid"
-                  AbsoluteLayout.LayoutBounds="0.5,0.5,-1,-1"
-                  AbsoluteLayout.LayoutFlags="PositionProportional"
-                  HorizontalOptions="Center"
-                  Margin="5"
-                  VerticalOptions="Center"/>
         </AbsoluteLayout>
 
         <ActivityIndicator
