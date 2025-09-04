@@ -344,6 +344,7 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
         try {
+            RemoveHighlights();
             if (e.Tile is { } tile) {
                 if (!GridPositionHelper.WouldCollide(tile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) &&
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
@@ -536,6 +537,7 @@ public partial class ControlPanelView {
                 tile.TileChanged += TileOnPropertiesChanged;
                 if (tile is ContentView view) {
                     view.ClassId = entity.Guid.ToString();
+                    view.ZIndex = entity.Layer;
                     SetTileGridPosition(tile);
                     _dynamicGrid.Children.Add(view);
                     if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
