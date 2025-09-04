@@ -45,10 +45,12 @@ public abstract partial class Entity() : ObservableObject, IEntity {
 
     [JsonIgnore] protected abstract int RotationFactor { get; }
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-    public abstract string EntityName { get; }
     public virtual string Type => GetType().Name;
     [JsonIgnore] public Panel? Parent { get; set; }
 
+    public abstract string EntityName { get; }
+    public abstract string EntityDescription { get; }
+    
     public abstract Entity Clone();
 
     public virtual void RotateLeft() {

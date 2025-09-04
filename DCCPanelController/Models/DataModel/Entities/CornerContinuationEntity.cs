@@ -21,8 +21,9 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.CornerContinuationTrack;
 
-    public override string EntityName => "Corner Continuation Track";
-
+    public override string EntityName => "Corner...";
+    public override string EntityDescription => "Corner Track with Indicator";
+    
     public override Entity Clone() {
         return new CornerContinuationEntity(this);
     }

@@ -47,8 +47,8 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Text Block";
-
+    public override string EntityName => "Text";
+    public override string EntityDescription => "Text Label";
     public override void RotateLeft() {
         base.RotateLeft();
         HandleRotation();

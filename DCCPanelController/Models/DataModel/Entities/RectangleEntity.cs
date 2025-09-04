@@ -30,7 +30,8 @@ public partial class RectangleEntity : Entity, IDrawingEntity {
     [JsonIgnore] protected override int RotationFactor => 90;
 
     public override string EntityName => "Rectangle";
-
+    public override string EntityDescription => "Adjustable Box";
+    
     public override Entity Clone() {
         return new RectangleEntity(this);
     }

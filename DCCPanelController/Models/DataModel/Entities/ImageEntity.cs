@@ -33,7 +33,8 @@ public partial class ImageEntity : Entity, IDrawingEntity {
     public ImageEntity(ImageEntity entity) : base(entity) { }
 
     public override string EntityName => "Image";
-
+    public override string EntityDescription => "Selectable Image";
+    
     public override Entity Clone() {
         return new ImageEntity(this);
     }

@@ -239,8 +239,8 @@ public partial class PanelEditorViewModel : ObservableObject {
         try {
             var title = SelectedEntities.Count switch {
                 0 => "Unknown Entity",
-                1 => SelectedEntity?.EntityName + " Properties",
-                _ => "Multiple Entities Properties"
+                1 => $"{SelectedEntity?.EntityName} ({SelectedEntity?.EntityDescription}) properties.",
+                _ => AreAllTilesTheSame() ? $"Multiple {SelectedEntity?.EntityName} ({SelectedEntity?.EntityDescription}) properties." : "Multiple Selected Entities"
             };
             
             if (Panel is { } panel && SelectedEntities?.Count > 0 && _panelEditor is not null) {
@@ -253,14 +253,23 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
+    private bool AreAllTilesTheSame() {
+        if (SelectedEntities.Count <= 1) return true;
+        var first = SelectedEntities.FirstOrDefault();
+        return SelectedEntities.All(entity => entity.EntityName == first?.EntityName);
+    }
+
     private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
         _propertyPage = propertyPage;
-        content.Margin = new Thickness(20);
+        content.Margin = new Thickness(20,10,20,0);
         var propertySize = MauiViewSizeCalculator.CalculateTotalSize(content, ScreenWidth, ScreenHeight);
         Console.WriteLine($"Property Page Size: {propertySize.Width} x {propertySize.Height}");
+
+        var scrollContent = new ScrollView();
+        scrollContent.Content = content;
         
         var popup = new SfPopup {
-            ContentTemplate = new DataTemplate(() => content),
+            ContentTemplate = new DataTemplate(() => scrollContent),
             HeaderTitle = title,
             ShowHeader = true,
             ShowFooter = true,
@@ -270,7 +279,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 HasShadow = false,
                 BlurIntensity = PopupBlurIntensity.Light,
                 HeaderBackground = Colors.WhiteSmoke,
-                FooterBackground = Colors.LightGray,
+                FooterBackground = Colors.DarkGrey,
                 MessageBackground = Colors.WhiteSmoke,
                 AcceptButtonBackground = Colors.White,
                 DeclineButtonBackground = Colors.White,
@@ -285,6 +294,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             DeclineButtonText = "Cancel",
             Padding = new Thickness(20),
             Margin = new Thickness(20),
+            HeaderHeight = 60,
             AutoSizeMode = PopupAutoSizeMode.None,
             AnimationMode = PopupAnimationMode.Zoom,
             AnimationDuration = 300,

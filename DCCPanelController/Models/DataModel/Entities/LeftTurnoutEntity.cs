@@ -12,8 +12,9 @@ public class LeftTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity
     public LeftTurnoutEntity(LeftTurnoutEntity entity) : base(entity) { }
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.LeftTurnoutTrack;
-    public override string EntityName => "Left Turnout";
-
+    public override string EntityName => "LTurnout";
+    public override string EntityDescription => "Left Turnout/Switch";
+    
     public override Entity Clone() {
         return new LeftTurnoutEntity(this);
     }

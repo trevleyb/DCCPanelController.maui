@@ -21,8 +21,9 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightContinuationTrack;
 
-    public override string EntityName => "Continuation Track";
-
+    public override string EntityName => "Straight...";
+    public override string EntityDescription => "Straight Track with Indicator";
+    
     public override Entity Clone() {
         return new StraightContinuationEntity(this);
     }

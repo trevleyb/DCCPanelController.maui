@@ -52,8 +52,8 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
 
     public TurnoutButtonEntity(Panel panel) : base(panel) { }
     public TurnoutButtonEntity(TurnoutButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
-    public override string EntityName => "Turnout Button";
-
+    public override string EntityName => "T-Button";
+    public override string EntityDescription => "Turnout Toggle Switch";
     public override Entity Clone() {
         return new TurnoutButtonEntity(this);
     }

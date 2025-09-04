@@ -61,6 +61,7 @@
                 <CollectionView
                     x:Name="TileCollection"
                     HorizontalScrollBarVisibility="Never"
+                    VerticalScrollBarVisibility="Never"
                     ItemsSource="{Binding Categories}"
                     SelectionMode="None"
                     ItemSizingStrategy="MeasureAllItems">
@@ -90,6 +91,7 @@
                                 <CollectionView
                                     x:Name="TileCollectionByCategory"
                                     HorizontalScrollBarVisibility="Never"
+                                    VerticalScrollBarVisibility="Never"
                                     Scrolled="TileCollection_OnScrolled"
                                     MinimumHeightRequest="45"
                                     MinimumWidthRequest="45"

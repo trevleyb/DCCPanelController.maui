@@ -21,8 +21,9 @@ public partial class PlatformEntity : TrackEntity, ITrackEntity {
 
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.PlatformTrack;
     [JsonIgnore] protected override int RotationFactor => 90;
-    public override string EntityName => "Platform Track";
-
+    public override string EntityName => "Platform";
+    public override string EntityDescription => "Platform Track";
+    
     public override Entity Clone() {
         return new PlatformEntity(this);
     }

@@ -48,8 +48,9 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public override string EntityName => "Circle Label";
-
+    public override string EntityName => "Label";
+    public override string EntityDescription => "Circle Label";
+    
     public override Entity Clone() {
         return new CircleLabelEntity(this);
     }

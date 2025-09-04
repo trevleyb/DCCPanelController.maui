@@ -15,8 +15,8 @@ public class TerminatorEntity : TrackEntity, ITrackEntity {
     }
 
     public TerminatorEntity(TerminatorEntity entity) : base(entity) { }
-    public override string EntityName => "Terminator (Buffer Stop) Track";
-
+    public override string EntityName => "Terminator";
+    public override string EntityDescription => "Terminator or Buffer-Stop Track";
     public override Entity Clone() {
         return new TerminatorEntity(this);
     }

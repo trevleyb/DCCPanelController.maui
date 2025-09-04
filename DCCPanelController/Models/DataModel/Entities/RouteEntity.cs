@@ -36,7 +36,8 @@ public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
     public RouteEntity(Panel panel) : base(panel) { }
     public RouteEntity(RouteEntity entity) : base(entity) { }
     public override string EntityName => "Route";
-
+    public override string EntityDescription => "Route Trigger Button";
+    
     [JsonIgnore]
     public Route? Route => Parent?.Route(Id);
 

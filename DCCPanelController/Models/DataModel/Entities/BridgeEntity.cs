@@ -18,8 +18,9 @@ public partial class BridgeEntity : StraightEntity, ITrackEntity {
     }
 
     public BridgeEntity(BridgeEntity entity) : base(entity) { }
-    public override string EntityName => "Bridge Track";
-
+    public override string EntityName => "Bridge";
+    public override string EntityDescription => "Bridge Rails Track";
+    
     public override Entity Clone() {
         return new BridgeEntity(this);
     }

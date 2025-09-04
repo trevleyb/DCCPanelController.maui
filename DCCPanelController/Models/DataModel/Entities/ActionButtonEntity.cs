@@ -45,7 +45,8 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
     public ActionButtonEntity(ActionButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    public override string EntityName => "Button";
+    public override string EntityName => "A-Button";
+    public override string EntityDescription => "Trigger Actions Button";
 
     public void CloneActionsInto(IActionEntity entity) {
         entity.ButtonPanelActions = (ButtonActions)ButtonPanelActions.Clone();

@@ -13,7 +13,8 @@ public class CompassEntity : Entity {
     
     public CompassEntity(CompassEntity entity) : base(entity) { }
     public override string EntityName => "Compass";
-
+    public override string EntityDescription => "Directional Compass";
+    
     public override Entity Clone() {
         return new CompassEntity(this);
     }
