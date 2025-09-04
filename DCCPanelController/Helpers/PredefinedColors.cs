@@ -237,7 +237,7 @@ public static class PredefinedColors {
             var red = color.Color.GetByteRed();
             var blue = color.Color.GetByteBlue();
 
-            if ((red == 0 || red == 128 | red == 255) && (green == 0 || green == 128 || green == 255) && (blue == 0 || blue == 128 || blue == 255)) {
+            if ((red == 0 || red == 128 || red == 255) && (green == 0 || green == 128 || green == 255) && (blue == 0 || blue == 128 || blue == 255)) {
                 selectedColorOptions.Add(color);
             }
         }

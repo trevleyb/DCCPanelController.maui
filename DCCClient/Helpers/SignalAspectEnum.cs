@@ -3,6 +3,7 @@ namespace DCCClient.Helpers;
 [Flags]
 public enum SignalAspectEnum {
     Off = 0,         // 000000
+    None = 0,        // 000000
     Red = 1 << 0,    // 000001
     Yellow = 1 << 2, // 000100
     Green = 1 << 4,  // 010000

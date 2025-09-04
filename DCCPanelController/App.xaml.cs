@@ -10,12 +10,7 @@ using Microsoft.Maui.Controls.Xaml.Diagnostics;
 namespace DCCPanelController;
 
 public partial class App : Application {
-    private ProfileService _profileService;
-    private IServiceProvider _serviceProvider;
-
     public App(ProfileService profileService, IServiceProvider serviceProvider) {
-        _profileService = profileService;
-        _serviceProvider = serviceProvider;
         InitializeComponent();
         BindingDiagnostics.BindingFailed += BindingDiagnosticsOnBindingFailed;
     }
@@ -25,7 +20,7 @@ public partial class App : Application {
     /// </summary>
     public new static App Current => Application.Current as App ?? throw new InvalidOperationException("Current application is not an instance of App");
 
-    private void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
+    private static void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
         var logger = LogHelper.CreateLogger("BindingDiagnostics");
         logger.LogWarning("Binding Failed: {BindingSource} | {BindingLine} | {BindingName} | {BindingMessage} | {BindingType}",
                           e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI",

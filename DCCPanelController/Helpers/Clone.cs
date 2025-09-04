@@ -412,13 +412,8 @@ public static class ObjectCloner {
 
     private static void UpdateDictionary(IDictionary originalDict, IDictionary modifiedDict, HashSet<string> exclusions) {
         // Remove keys that are no longer present
-        var keysToRemove = new List<object>();
-        foreach (var key in originalDict.Keys) {
-            if (!modifiedDict.Contains(key)) {
-                keysToRemove.Add(key);
-            }
-        }
-        foreach (var key in keysToRemove) {
+        var keysToRemove = originalDict.Keys.Cast<object?>().Where(key => key is not null && !modifiedDict.Contains(key)).ToList();
+        foreach (var key in keysToRemove.OfType<object>()) {
             originalDict.Remove(key);
         }
 

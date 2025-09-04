@@ -13,7 +13,7 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel {
     [ObservableProperty] private Turnout _turnout;
     [ObservableProperty] private bool _isServerControlled;
     [ObservableProperty] private bool _isManualControlled;
-    private ILogger<TurnoutsEditViewModel> _logger;
+    private readonly ILogger<TurnoutsEditViewModel> _logger;
     
     public TurnoutsEditViewModel(ILogger<TurnoutsEditViewModel> logger, Turnout turnout, ConnectionService connectionService) {
         _logger = logger;
@@ -26,7 +26,7 @@ public partial class TurnoutsEditViewModel : Base.BaseViewModel {
 
     private ConnectionService ConnectionService { get; }
 
-    public Task ApplyChangesAsync() {
+    public static Task ApplyChangesAsync() {
         return Task.CompletedTask;
     }
 

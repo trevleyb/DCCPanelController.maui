@@ -30,7 +30,7 @@ public class PathTracingService {
             try {
                 var paths = await _tracer.TracePathsFromTrackAsync(startTrack, _currentTracingCts.Token);
                 var animator = new TrackPathAnimator();
-                await animator.AnimatePathsAsync(paths, _tracer.RegisteredTiles, _currentTracingCts.Token);
+                await animator.AnimatePathsAsync(paths, _tracer.RegisteredTiles(), _currentTracingCts.Token);
             } catch (OperationCanceledException) {
                 // Do nothing
             } finally {

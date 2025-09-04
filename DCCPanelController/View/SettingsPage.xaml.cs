@@ -27,8 +27,10 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             _                        => 0
         };
     }
-   
-    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) { }
+
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        /* not surrently used */
+    }
 
     private void EditConnectionButtonClicked(object? sender, EventArgs e) {
         var content = _pageViewModel?.LoadSettingsPage();

@@ -61,8 +61,13 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
         set => SetValue(UnknownTextProperty, value);
     }
 
-    private static void OnStateChanged(BindableObject bindable, object oldValue, object newValue) { }
-    private static void OnTurnoutChanged(BindableObject bindable, object oldValue, object newValue) { }
+    private static void OnStateChanged(BindableObject bindable, object oldValue, object newValue) {
+        /* Holding for future use if needed */
+    }
+
+    private static void OnTurnoutChanged(BindableObject bindable, object oldValue, object newValue) {
+        /* Holding for future use if needed */
+    }
 
     [RelayCommand]
     public async Task ToggleStateAsync() {

@@ -55,9 +55,7 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertyPage
 
     [ObservableProperty] private Entity _proxyEntity;
     [ObservableProperty] private string _title;
-
-    public DynamicPropertyPageViewModel(Entity entity) : this([entity]) { }
-
+    
     public DynamicPropertyPageViewModel(List<Entity> entities) {
         if (entities is null || entities.Count == 0)
             throw new ArgumentException("There must be at least 1 Entity for Properties.");

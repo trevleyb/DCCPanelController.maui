@@ -161,12 +161,12 @@ public partial class JmriProxy : DccClientBase, IDccClient {
         }
     }
 
-    public async Task<IResult> SendLightCmdAsync(Light light, bool isOn) {
+    public async Task<IResult> SendLightCmdAsync(Light light, bool isActive) {
         if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
         if (string.IsNullOrEmpty(light.Id)) return Result.Fail(new Error("Invalid Light Id provided."));
         try {
-            await _client.SetLightStateAsync(light.Id, isOn);
-            OnClientMessage($"Setting light {light.Name}({light.Id}) to {(isOn ? "ON" : "OFF")}", DccClientOperation.Light, DccClientMessageType.Outbound);
+            await _client.SetLightStateAsync(light.Id, isActive);
+            OnClientMessage($"Setting light {light.Name}({light.Id}) to {(isActive ? "ON" : "OFF")}", DccClientOperation.Light, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
             return Result.Fail(new Error("Failed to send light command to JMRI server").CausedBy(ex));

@@ -7,10 +7,13 @@ namespace DCCPanelController.Models.ViewModel.PathFinder;
 public class TrackPathTracer {
     // Dictionary to look up tiles by their track entities (optional for highlighting)
     private readonly Dictionary<TrackEntity, TrackTile> _trackToTileLookup = new();
-    public List<TrackTile> RegisteredTiles => _trackToTileLookup.Values.ToList();
     public void RegisterTile(TrackEntity track, TrackTile tile) => _trackToTileLookup[track] = tile;
     public void UnregisterTile(TrackEntity track) => _trackToTileLookup.Remove(track);
     public void ClearTileRegistry() => _trackToTileLookup.Clear();
+
+    public List<TrackTile> RegisteredTiles() {
+        return _trackToTileLookup.Values.ToList();
+    }
 
     public async Task<List<TracedPath>> TracePathsFromTrackAsync(TrackEntity startTrack,
                                                                  CancellationToken cancellationToken = default) {

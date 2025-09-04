@@ -22,8 +22,6 @@ public class DrawGridLines : GraphicsView, IDrawable {
     /// <summary>
     ///     This is a helper class that draws the Grid Lines on the Page.
     /// </summary>
-    public DrawGridLines() : this(null, null, null, null, null) { }
-
     public DrawGridLines(int? columns = null, int? rows = null, Color? gridColor = null, float? lineWidth = null, float? gridWidth = null) {
         Rows = rows ?? 0;
         Cols = columns ?? 0;

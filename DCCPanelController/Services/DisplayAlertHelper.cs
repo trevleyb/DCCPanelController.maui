@@ -27,13 +27,11 @@ public static class DisplayAlertHelper {
     }
 
     public static async Task DisplayToastAlert(string message, double fontSize = 14, ToastDuration duration = ToastDuration.Short) {
-        var cancellationTokenSource = new CancellationTokenSource();
         var toast = Toast.Make(message, duration, fontSize);
-        await toast.Show(cancellationTokenSource.Token);
+        await toast.Show(CancellationToken.None);
     }
 
     public static async Task DisplaySnackAlert(string message, double fontSize = 14, double duration = 2.5) {
-        var cancellationTokenSource = new CancellationTokenSource();
         var snackbarOptions = new SnackbarOptions {
             BackgroundColor = Colors.LightGray,
             TextColor = StyleHelper.FromStyle("Primary"),
@@ -46,6 +44,6 @@ public static class DisplayAlertHelper {
 
         var durationInSeconds = TimeSpan.FromSeconds(duration);
         var snackbar = Snackbar.Make(message, null, "OK", durationInSeconds, snackbarOptions);
-        await snackbar.Show(cancellationTokenSource.Token);
+        await snackbar.Show(CancellationToken.None);
     }
 }

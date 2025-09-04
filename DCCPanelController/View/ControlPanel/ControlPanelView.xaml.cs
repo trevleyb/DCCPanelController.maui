@@ -659,28 +659,6 @@ public partial class ControlPanelView {
 
     #region Support for the Grid Selector
     private void UpdateSelectorView(int startCol, int startRow, int endCol, int endRow) {
-        // if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) {
-        //     _selectionOutlineDrawable = new DrawGridSelection();
-        //     _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
-        //     _selectionOutlinegraphicsView = new GraphicsView {
-        //         InputTransparent = true,
-        //         Drawable = _selectionOutlineDrawable,
-        //         HorizontalOptions = LayoutOptions.Fill,
-        //         VerticalOptions = LayoutOptions.Fill,
-        //         ClassId = "SelectorView"
-        //     };
-        //
-        //     // Add the GraphicsView directly to the AbsoluteLayout
-        //     AbsoluteLayout.SetLayoutBounds(_selectionOutlinegraphicsView, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
-        //     AbsoluteLayout.SetLayoutFlags(_selectionOutlinegraphicsView, AbsoluteLayoutFlags.PositionProportional);
-        //     ControlPanelLayout.Children.Add(_selectionOutlinegraphicsView);
-        //     _selectionOutlinegraphicsView.Invalidate();
-        // }
-
-        // if (_selectionOutlineDrawable is null || _selectionOutlinegraphicsView is null) return;
-        // _selectionOutlineDrawable.SetBounds(startCol, startRow, endCol, endRow, _gridSize);
-        // _selectionOutlinegraphicsView.Invalidate();
-
         _overlayGridSelection.Update(startCol, startRow, endCol, endRow, _gridSize);
         _overlayGridSelection.IsActive = true;
     }
@@ -738,7 +716,7 @@ public partial class ControlPanelView {
                     RemoveHighlights();
                     MarkAllSelectedTiles();
                 } catch (Exception ex) {
-                    _logger.LogError("Error marking tiles in Error: " + ex.Message);
+                    _logger.LogError("Error marking tiles in Error: {Message}", ex.Message);
                 }
             });
             return;
@@ -763,7 +741,7 @@ public partial class ControlPanelView {
                     HighlightCell(cell.Rects.col, cell.Rects.row, cell.Rects.width, cell.Rects.height, cell.InBounds ? CellHighlightAction.Selected : CellHighlightAction.Error);
                 }
             } catch (Exception ex) {
-                _logger.LogError("Error marking for move or copy tiles: " + ex.Message);
+                _logger.LogError("Error marking for move or copy tiles: {Message}", ex.Message);
             }
         });
     }
@@ -865,7 +843,7 @@ public partial class ControlPanelView {
         return (result.CanPlace, mapped);
     }
 
-    private record DestinationBounds((int col, int row, int width, int height) Rects, bool InBounds);
+    private sealed record DestinationBounds((int col, int row, int width, int height) Rects, bool InBounds);
     #endregion
 
     #region Drag and Drop Support for the Tiles

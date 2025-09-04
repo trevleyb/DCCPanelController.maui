@@ -164,6 +164,8 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     /// </remarks>
     private void RebuildIfNecessary() {
         _debounceRebuildCts?.Cancel();
+        _debounceRebuildCts?.Dispose();
+        
         _debounceRebuildCts = new CancellationTokenSource();
         var token = _debounceRebuildCts.Token;
 
@@ -171,7 +173,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
             .ContinueWith(async t => {
                  if (t.IsCanceled) return;
                  try {
-                     // Ensure we're on the UI thread for UI updates
                      await MainThread.InvokeOnMainThreadAsync(() => {
                          if (HaveVisualPropertiesChanged) {
                              SetContent();
@@ -180,7 +181,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                          }
                      });
                      if (HaveDimensionsChanged) OnTileChanged(TileChangeType.Dimensions);
-                     // OnTileChanged(TileChangeType.Modified);
                  } catch (Exception) {
                      //Console.WriteLine($"Error rebuilding tile: {ex.Message}");
                  }
