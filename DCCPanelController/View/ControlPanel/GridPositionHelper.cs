@@ -185,48 +185,68 @@ public static class GridPositionHelper {
                aRow < bRow + bHeight && aRow + aHeight > bRow;
     }
 
-    /// <summary>
-    /// Check if placing a tile at the specified position would cause a collision
-    /// </summary>
-    /// <param name="tile">The tile to check</param>
-    /// <param name="col">Destination column</param>
-    /// <param name="row">Destination row</param>
-    /// <param name="grid">The grid to check against</param>
-    /// <param name="mode">Edit mode (affects collision rules)</param>
-    /// <param name="excludeTiles">Tiles to exclude from collision check (e.g., currently selected tiles in move mode)</param>
-    /// <returns>True if there would be a collision</returns>
-    public static bool WouldCollide(ITile tile, int col, int row, Grid grid,
-                                    EditModeEnum mode, IEnumerable<ITile>? excludeTiles = null) {
-        
-        // Non-track entities don't have collision restrictions
-        // Just can't have more than 1 Track Entity in the same grid location 
-        // or more than 1 interactive tile in the same grid location
-        // ----------------------------------------------------------------------
-        if (tile.Entity is not ITrackEntity) return false;
-
-        // Can't drop onto yourself (unless in Move mode where you're vacating the space)
-        // ------------------------------------------------------------------------------
-        if (tile.Entity.Col == col && tile.Entity.Row == row && mode != EditModeEnum.Move) return true;
-
-        var exclusionSet = excludeTiles?.ToHashSet() ?? [];
-        var conflictingTiles = grid.Children.OfType<ITile>()
-            .Where(other => other != tile &&
-                !exclusionSet.Contains(other) &&
-                other.Entity is ITrackEntity &&
-                RectsOverlap(col, row, tile.Entity.Width, tile.Entity.Height,
-                    other.Entity.Col, other.Entity.Row, other.Entity.Width, other.Entity.Height))
-                .ToList();
-
-        // If there are no conflicts, no collision
-        // --------------------------------------------------
-        if (conflictingTiles.Count == 0) return false;
-        
-        // If there are conflicts and this tile is interactive, check if any conflicting tiles are also interactive
-        // (Cannot have 2 interactive tiles in the same location)
-        // ------------------------------------------------------------------------------------
-        return conflictingTiles.Count != 0;
+    public static bool WouldCollide(
+        ITile tile, int col, int row, Grid grid, EditModeEnum mode,
+        ISet<ITile>? exclude = null) // prefer passing a HashSet here if you use exclusions often
+    {
+        // Rule 4: drawing-only tiles never collide
+        var ent = tile.Entity;
+        bool aIsTrack = ent is ITrackEntity;
+        bool aIsInteractive = ent is IInteractiveEntity;
+        if (!aIsTrack && !aIsInteractive) return false;
+    
+        // Can't drop onto exact same top-left (unless Move mode)
+        if (ent.Col == col && ent.Row == row && mode != EditModeEnum.Move) return true;
+    
+        // Proposed destination rect (integer grid cells)
+        int aCol = col, aRow = row;
+        int aW = ent.Width, aH = ent.Height;
+        int aRight = aCol + aW;
+        int aBottom = aRow + aH;
+    
+        // Iterate children without LINQ; bail early on first disallowed overlap
+        var children = grid.Children;
+        for (int i = 0, n = children.Count; i < n; i++) {
+            if (children[i] is not ITile other) continue;
+            if (ReferenceEquals(other, tile)) continue;
+            if (exclude is not null && exclude.Contains(other)) continue;
+    
+            var bEnt = other.Entity;
+    
+            // Skip drawing-only targets (rule 4) early
+            // (Don't compute types until we know they overlap)
+            int bCol = bEnt.Col, bRow = bEnt.Row;
+            int bW = bEnt.Width, bH = bEnt.Height;
+    
+            // Fast AABB overlap in grid space
+            // !(aRight <= bCol || aCol >= bCol + bW || aBottom <= bRow || aRow >= bRow + bH)
+            if (aRight <= bCol || aCol >= bCol + bW || aBottom <= bRow || aRow >= bRow + bH)
+                continue;
+    
+            // Now that we know they overlap, check types
+            bool bIsTrack = bEnt is ITrackEntity;
+            bool bIsInteractive = bEnt is IInteractiveEntity;
+            if (!bIsTrack && !bIsInteractive) continue; // drawing-only target, allowed
+    
+            // Rule 1: Track vs Track not allowed
+            if (aIsTrack && bIsTrack) return true;
+    
+            // Rule 2: Interactive vs Interactive not allowed
+            if (aIsInteractive && bIsInteractive) return true;
+    
+            // Rule 3: Track + Interactive is allowed → keep scanning
+        }
+        return false;
     }
-
+    
+    public static bool WouldCollide(
+        ITile tile, int col, int row, Grid grid, EditModeEnum mode, IEnumerable<ITile>? excludeTiles) {
+        // Avoid per-call HashSet when possible
+        ISet<ITile>? set = excludeTiles as ISet<ITile>;
+        set ??= excludeTiles is null ? null : new HashSet<ITile>(excludeTiles);
+        return WouldCollide(tile, col, row, grid, mode, set);
+    }
+    
     /// <summary>
     /// Calculate the optimal grid size based on available space and grid dimensions
     /// </summary>

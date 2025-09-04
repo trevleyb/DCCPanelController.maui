@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -90,7 +91,7 @@ public partial class ControlPanelView {
         ControlPanelLayout.Children.Add(_panelSurface);
 
         // 5) Nudge a first repaint after size is known
-        _panelSurface.SizeChanged += (_, __) => {
+        _panelSurface.SizeChanged += (_, _) => {
             if (_panelSurface.Width <= 0 || _panelSurface.Height <= 0) return;
             _overlayGridLines.Invalidate();
             _overlayGridSelection.Invalidate();
@@ -101,8 +102,7 @@ public partial class ControlPanelView {
 
     #region Manage the Layout changing in size
     private void OnSizeChangedDebounced(object? sender, EventArgs e) {
-        Console.WriteLine("OnSizeChangedDebounced");
-        if (Width <= 0 || Height <= 0) return;
+        if (Width <= 1 || Height <= 1) return;
 
         // Cancel any pending commit and schedule a new one
         // --------------------------------------------------------------
@@ -114,24 +114,23 @@ public partial class ControlPanelView {
 
     private async Task DebounceSizeCommitAsync(CancellationToken token) {
         try {
-            Console.WriteLine("DebounceSizeCommitAsync");
             await Task.Delay(SizeChangedDebounceMs, token);
             if (token.IsCancellationRequested) return;
 
-            await MainThread.InvokeOnMainThreadAsync(async () => {
+            await MainThread.InvokeOnMainThreadAsync(() => {
                 var newSize = new Size(Width, Height);
-                if (!HasMeaningfulSizeChange(newSize, _lastCommittedSize)) return;
+                if (!HasMeaningfulSizeChange(newSize, _lastCommittedSize)) return Task.CompletedTask;
                 _lastCommittedSize = newSize;
-                await DrawPanel();
+                return DrawPanel();
             });
         } catch (TaskCanceledException) { /* expected */
         }
     }
 
     private static bool HasMeaningfulSizeChange(Size a, Size b) {
-        const double MinPixelDelta = 1.0; // or use 2–3 px if needed
-        var result = Math.Abs(a.Width - b.Width) >= MinPixelDelta
-                  || Math.Abs(a.Height - b.Height) >= MinPixelDelta;
+        const double minPixelDelta = 1.0; // or use 2–3 px if needed
+        var result = Math.Abs(a.Width - b.Width) >= minPixelDelta
+                  || Math.Abs(a.Height - b.Height) >= minPixelDelta;
         Console.WriteLine($"HasMeaningfulSizeChange: {result}");
         return result;
     }
@@ -139,9 +138,10 @@ public partial class ControlPanelView {
     protected override void OnHandlerChanging(HandlerChangingEventArgs args) {
         base.OnHandlerChanging(args);
         if (args.NewHandler is null) {
-            Console.WriteLine("OnHandlerChanging - null");
-            this.SizeChanged -= OnSizeChangedDebounced;
-            Interlocked.Exchange(ref _sizeChangedDebounceCts, null)?.Cancel();
+            SizeChanged -= OnSizeChangedDebounced;
+            try {
+                Interlocked.Exchange(ref _sizeChangedDebounceCts, null)?.Cancel();
+            } catch { /* ignore but should not happen */ }
         }
     }
     #endregion
@@ -453,7 +453,7 @@ public partial class ControlPanelView {
 
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
-        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", true)) {
+        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", DebugMode.IsDebug)) {
             MainThread.BeginInvokeOnMainThread(async void () => {
                 try {
                     ControlPanelLayout.IsVisible = false;
@@ -468,6 +468,7 @@ public partial class ControlPanelView {
                     _gridSize = CalculateGridSize(MainGrid.Width, MainGrid.Height);
                     _viewWidth = _gridSize * Cols;
                     _viewHeight = _gridSize * Rows;
+                    _overlayGridHighlights.CellSize = _gridSize;
 
                     _panelSurface.WidthRequest = _viewWidth;
                     _panelSurface.HeightRequest = _viewHeight;
@@ -664,36 +665,19 @@ public partial class ControlPanelView {
         OnTileSelected(0);
     }
 
-    public void HighlightCell(ITile tile, CellHighlightAction action) => HighlightCell(tile.Entity.Col, tile.Entity.Row, tile.Entity.Width, tile.Entity.Height, action);
-
-    public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) {
-        if (!DesignMode) return;
-        UnHighlightCell(col, row);
-
-        // TODO: Update the code to support adding tiles or locations
-        //var gridHighlight = new DrawGridHighlights(col, row, width, height, _gridSize, action);
-        //AbsoluteLayout.SetLayoutBounds(gridHighlight, new Rect(0.5, 0.5, _viewWidth, _viewHeight));
-        //AbsoluteLayout.SetLayoutFlags(gridHighlight, AbsoluteLayoutFlags.PositionProportional);
-        //ControlPanelLayout.Children.Add(gridHighlight);
-    }
+    // Highlight a given cell or location
+    // ------------------------------------------------------------------------
+    public void HighlightCell(ITile tile, CellHighlightAction action) => _overlayGridHighlights.Add(tile, action);
+    public void HighlightCell(int col, int row, int width, int height, CellHighlightAction action) => _overlayGridHighlights.Add(col, row, width, height, action);
 
     // Given the start point of a highlighted cell, remove this cell highlight
     // ------------------------------------------------------------------------
-    public void UnHighlightCell(ITile tile) => UnHighlightCell(tile.Entity.Col, tile.Entity.Row);
-
-    public void UnHighlightCell(int col, int row) {
-        // TODO: Update the code to support adding tiles or locations
-        // for (var i = ControlPanelLayout.Children.Count - 1; i >= 0; i--) {
-        //     if (ControlPanelLayout.Children[i] is Microsoft.Maui.Controls.View { ClassId: "Highlight" } and DrawGridHighlights outline && outline.Col == col && outline.Row == row) {
-        //         ControlPanelLayout.Children.RemoveAt(i);
-        //     }
-        // }
-    }
+    public void UnHighlightCell(ITile tile) => _overlayGridHighlights.Remove(tile);
+    public void UnHighlightCell(int col, int row) => _overlayGridHighlights.Remove(col,row);
 
     // Clear all highlight views form the control panel
     // ------------------------------------------------------------------------
-    // TODO: Update to support highlights collection
-    public void RemoveHighlights() { }
+    public void RemoveHighlights() => _overlayGridHighlights.Clear();
     #endregion
 
     #region Support for the Grid Selector
@@ -1038,6 +1022,7 @@ public partial class ControlPanelView {
         try {
             if (bindable is ControlPanelView panel) {
                 panel.ShowGrid = panel.DesignMode;
+                panel._overlayGridHighlights.IsActive = panel.DesignMode;
                 await panel.DrawPanel();
             }
         } catch (Exception ex) {

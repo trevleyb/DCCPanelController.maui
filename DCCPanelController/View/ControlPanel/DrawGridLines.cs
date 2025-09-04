@@ -4,17 +4,17 @@ namespace DCCPanelController.View.ControlPanel;
 ///     This is a helper class that draws the Grid Lines on the Page.
 /// </summary>
 public class DrawGridLines : GraphicsView, IDrawable {
-    private int Cols {get; set; }
+    private int Cols { get; set; }
     private int Rows { get; set; }
 
     private float GridWidth { get; set; }
     private float LineWidth { get; set; }
     private Color GridColor { get; set; }
-    
+
     public bool IsActive {
-        get => field;
+        get;
         set {
-            field = value; 
+            field = value;
             Invalidate();
         }
     }
@@ -22,14 +22,15 @@ public class DrawGridLines : GraphicsView, IDrawable {
     /// <summary>
     ///     This is a helper class that draws the Grid Lines on the Page.
     /// </summary>
-    public DrawGridLines() : this(null,null,null,null,null) { }
+    public DrawGridLines() : this(null, null, null, null, null) { }
+
     public DrawGridLines(int? columns = null, int? rows = null, Color? gridColor = null, float? lineWidth = null, float? gridWidth = null) {
         Rows = rows ?? 0;
         Cols = columns ?? 0;
         GridColor = gridColor ?? Colors.DarkGrey;
         LineWidth = lineWidth ?? 1.0f;
         GridWidth = gridWidth ?? 5.0f;
-        
+
         ClassId = "GridLines";
         InputTransparent = true;
         HorizontalOptions = LayoutOptions.Fill;

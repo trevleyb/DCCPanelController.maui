@@ -1,22 +1,22 @@
 namespace DCCPanelController.View.ControlPanel;
 
 public class DrawGridSelection : GraphicsView, IDrawable {
-    private int StartCol { get; set; } = 0;
-    private int StartRow { get; set; } = 0;
-    private int EndCol { get; set; } = 0;
-    private int EndRow { get; set; } = 0;
-    private double CellWidth { get; set; } = 0;
-    private double CellHeight { get; set; } = 0;
+    private int StartCol { get; set; }
+    private int StartRow { get; set; }
+    private int EndCol { get; set; }
+    private int EndRow { get; set; }
+    private double CellWidth { get; set; }
+    private double CellHeight { get; set; }
 
     public bool IsActive {
-        get => field;
+        get;
         set {
-            field = value; 
+            field = value;
             Invalidate();
         }
     }
-    
-    public DrawGridSelection(Color? outlineColor = null)  {
+
+    public DrawGridSelection(Color? outlineColor = null) {
         InputTransparent = true;
         HorizontalOptions = LayoutOptions.Fill;
         VerticalOptions = LayoutOptions.Fill;
@@ -28,7 +28,6 @@ public class DrawGridSelection : GraphicsView, IDrawable {
     }
 
     public void Draw(ICanvas canvas, RectF dirtyRect) {
-        Console.WriteLine($"Drawing Grid Selection : {IsActive}");
         if (IsActive) {
             IsVisible = true;
             var left = (float)(Math.Min(StartCol, EndCol) * CellWidth);
@@ -52,13 +51,13 @@ public class DrawGridSelection : GraphicsView, IDrawable {
     }
 
     public Color OutlineColor {
-        private get => field;
+        get;
         set {
-            field = value ?? Colors.LightBlue;
+            field = value;
             Invalidate();
         }
     }
-    
+
     public void Update(int startCol, int startRow, int endCol, int endRow, double cellSize) {
         StartCol = startCol;
         StartRow = startRow;

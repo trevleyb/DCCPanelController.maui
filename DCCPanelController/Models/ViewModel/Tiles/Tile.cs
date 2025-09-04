@@ -25,6 +25,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
 
     // @formatter:off
+    public Guid Guid { get; init; } = Guid.NewGuid();
     public Entity Entity { get; init; }
     public double TileWidth => GridSize * Entity.Width;
     public double TileHeight => GridSize * Entity.Height;
