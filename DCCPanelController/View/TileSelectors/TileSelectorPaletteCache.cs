@@ -17,14 +17,12 @@ public class TileSelectorPaletteCache {
     private static readonly ConcurrentDictionary<string, PaletteResult> Cache = new();
 
     public static PaletteResult GetOrBuild(Panel panel) {
-        using (new CodeTimer("GetOrBuild")) {
-            var key = panel.Guid.ToString();
-            if (Cache.TryGetValue(key, out var cachedResult)) return cachedResult;
-            var result = BuildTilesForPanel(panel);
-            if (result is null) throw new InvalidOperationException("Unable to build palette");
-            Cache.TryAdd(key, result);
-            return result;
-        }
+        var key = panel.Guid.ToString();
+        if (Cache.TryGetValue(key, out var cachedResult)) return cachedResult;
+        var result = BuildTilesForPanel(panel);
+        if (result is null) throw new InvalidOperationException("Unable to build palette");
+        Cache.TryAdd(key, result);
+        return result;
     }
 
     public static void Prebuild(Panel panel) => GetOrBuild(panel);

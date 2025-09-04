@@ -21,31 +21,29 @@ public abstract partial class TileSelectorViewModel : BaseViewModel {
                 return;
             }
 
-            using (new CodeTimer("Change Palette Panel")) {
-                MainThread.BeginInvokeOnMainThread(() => {
-                    // For some reason, caching sometimes doesn't work due to UI timing issues
-                    var palette = TileSelectorPaletteCache.BuildTilesForPanel(value); // e.GetOrBuild(value);
-                    if (palette is null) throw new InvalidOperationException("Unable to build palette");
+            MainThread.BeginInvokeOnMainThread(() => {
+                // For some reason, caching sometimes doesn't work due to UI timing issues
+                var palette = TileSelectorPaletteCache.BuildTilesForPanel(value); // e.GetOrBuild(value);
+                if (palette is null) throw new InvalidOperationException("Unable to build palette");
 
-                    // Create a new dictionary and observable collections to avoid sharing the cached instances
-                    // -----------------------------------------------------------------------------------------
-                    Categories.Clear();
-                    foreach (var c in palette.Categories) Categories.Add(c);
+                // Create a new dictionary and observable collections to avoid sharing the cached instances
+                // -----------------------------------------------------------------------------------------
+                Categories.Clear();
+                foreach (var c in palette.Categories) Categories.Add(c);
 
-                    ByCategory.Clear();
-                    foreach (var kv in palette.ByCategory) {
-                        ByCategory[kv.Key] = [];
-                        foreach (var tile in kv.Value) {
-                            ByCategory[kv.Key].Add(tile);
-                        }
+                ByCategory.Clear();
+                foreach (var kv in palette.ByCategory) {
+                    ByCategory[kv.Key] = [];
+                    foreach (var tile in kv.Value) {
+                        ByCategory[kv.Key].Add(tile);
                     }
+                }
 
-                    AfterBuildAllTiles();
+                AfterBuildAllTiles();
 
-                    OnPropertyChanged(nameof(Categories));
-                    OnPropertyChanged(nameof(ByCategory));
-                });
-            }
+                OnPropertyChanged(nameof(Categories));
+                OnPropertyChanged(nameof(ByCategory));
+            });
         }
     }
 

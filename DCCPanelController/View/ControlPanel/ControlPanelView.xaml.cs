@@ -105,7 +105,7 @@ public partial class ControlPanelView {
         if (Width <= 1 || Height <= 1) return;
 
         // Cancel any pending commit and schedule a new one
-        // --------------------------------------------------------------
+        // ------------------------`--------------------------------------
         Interlocked.Exchange(ref _sizeChangedDebounceCts, null)?.Cancel();
         var cts = new CancellationTokenSource();
         _sizeChangedDebounceCts = cts;
@@ -131,7 +131,6 @@ public partial class ControlPanelView {
         const double minPixelDelta = 1.0; // or use 2–3 px if needed
         var result = Math.Abs(a.Width - b.Width) >= minPixelDelta
                   || Math.Abs(a.Height - b.Height) >= minPixelDelta;
-        Console.WriteLine($"HasMeaningfulSizeChange: {result}");
         return result;
     }
 
@@ -454,7 +453,7 @@ public partial class ControlPanelView {
 
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
-        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", DebugMode.IsDebug)) {
+        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}")) {
             MainThread.BeginInvokeOnMainThread(async void () => {
                 try {
                     ControlPanelLayout.IsVisible = false;
@@ -531,7 +530,7 @@ public partial class ControlPanelView {
     /// Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
     private ITile? AddEntityToGrid(Entity entity) {
-        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}")) {
+        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", 10)) {
             var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
             if (tile is not null) {
                 tile.TileChanged += TileOnPropertiesChanged;

@@ -3,27 +3,27 @@ using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Helpers;
 
-public class CodeTimer : IDisposable {
-    private readonly string _blockName;
-    private readonly Stopwatch _stopwatch;
-    private readonly bool _writeOutput;
+public sealed class CodeTimer : IDisposable {
+    private readonly Stopwatch _sw = Stopwatch.StartNew();
+    private readonly string _name;
+    private readonly TimeSpan _minLogThreshold;
+    private readonly Action<string> _logger;
 
-    public CodeTimer(string blockName, bool writeOutput = true) {
-#if DEBUG
-        _blockName = blockName;
-        _stopwatch = Stopwatch.StartNew();
-        _writeOutput = writeOutput;
-
-#endif
+    // New parameter: minLogThreshold (default 0 -> always prints)
+    public CodeTimer(string name, TimeSpan? minLogThreshold = null, Action<string>? logger = null) {
+        _name = name;
+        _minLogThreshold = minLogThreshold ?? TimeSpan.Zero;
+        _logger = logger ?? Console.WriteLine;
     }
 
+    // Convenience overload using milliseconds
+    public CodeTimer(string name, double minLogMilliseconds, Action<string>? logger = null)
+        : this(name, TimeSpan.FromMilliseconds(minLogMilliseconds), logger) { }
+
     public void Dispose() {
-#if DEBUG
-        _stopwatch.Stop();
-        var logger = LogHelper.CreateLogger("CodeTimer");
-        if (_writeOutput) {
-            logger.LogDebug("[{BlockName}] executed in {StopwatchElapsedMilliseconds}ms", _blockName, _stopwatch.ElapsedMilliseconds);
+        _sw.Stop();
+        if (_sw.Elapsed >= _minLogThreshold) {
+            _logger($"{_name} took {_sw.Elapsed.TotalMilliseconds:N1} ms");
         }
-#endif
     }
 }
