@@ -7,6 +7,7 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
              xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
+             xmlns:selectors="clr-namespace:DCCPanelController.View.Selectors"
              Title="Panels"
              x:Name="PanelViewerPage"
              x:DataType="view:PanelViewerViewModel"
@@ -14,6 +15,30 @@
 
     <ContentPage.Resources>
         <converters1:PanelToCardHeightConverter x:Key="PanelToCardHeightConverter"/>
+
+        <!-- ControlTemplates used to swap preview content -->
+        <ControlTemplate x:Key="ThumbnailPreviewTemplate" x:DataType="dataModel:Panel">
+            <Grid Padding="4">
+                <Image
+                    Source="{Binding Thumbnail}"
+                    Aspect="AspectFill"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"/>
+            </Grid>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="PanelPreviewTemplate" x:DataType="dataModel:Panel">
+            <Grid Padding="4">
+                <controlPanel:ControlPanelView
+                    IsVisible="true"
+                    InputTransparent="True"
+                    BackgroundColor="{Binding PanelBackgroundColor}"
+                    HorizontalOptions="Fill"
+                    Panel="{Binding .}"
+                    ShowGrid="false"
+                    VerticalOptions="Fill"/>
+            </Grid>
+        </ControlTemplate>
 
         <Style TargetType="Grid">
             <Setter Property="VisualStateManager.VisualStateGroups">
@@ -51,17 +76,26 @@
                             HeightRequest="80"
                             Background="{Binding DisplayBackgroundColor}">
 
-                        <controlPanel:ControlPanelView
-                            IsVisible="true"
-                            InputTransparent="True"
-                            BackgroundColor="{Binding PanelBackgroundColor}"
-                            HorizontalOptions="Fill"
-                            Panel="{Binding .}"
-                            ShowGrid="false"
-                            VerticalOptions="Fill"/>
+                        <ContentView ControlTemplate="{StaticResource PanelPreviewTemplate}">
+                            <ContentView.Triggers>
+                                <!-- When Thumbnail is present, show the Image -->
+                                <DataTrigger TargetType="ContentView"
+                                             Binding="{Binding HasThumbnail}"
+                                             Value="False">
+                                    <Setter Property="ControlTemplate" Value="{StaticResource PanelPreviewTemplate}"/>
+                                </DataTrigger>
+                                <DataTrigger TargetType="ContentView"
+                                             Binding="{Binding HasThumbnail}"
+                                             Value="True">
+                                    <Setter Property="ControlTemplate" Value="{StaticResource ThumbnailPreviewTemplate}"/>
+                                </DataTrigger>
+                            </ContentView.Triggers>
+                        </ContentView>
+
                     </Border>
 
-                    <StackLayout x:DataType="dataModel:Panel" Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Start" Margin="10,0,0,0">
+                    <StackLayout x:DataType="dataModel:Panel" Grid.Column="1" VerticalOptions="Center"
+                                 HorizontalOptions="Start" Margin="10,0,0,0">
                         <Label Text="{Binding Id}" FontAttributes="Bold" FontSize="16" LineBreakMode="TailTruncation"/>
                         <Label Text="{Binding Description}" FontSize="12" TextColor="Gray" LineBreakMode="WordWrap"/>
                     </StackLayout>
@@ -100,15 +134,21 @@
                             InputTransparent="False"
                             Background="{Binding DisplayBackgroundColor}">
                             <Grid>
-                                <controlPanel:ControlPanelView
-                                    InputTransparent="True"
-                                    IsVisible="true"
-                                    ShowGrid="false"
-                                    DesignMode="False"
-                                    Interactive="False"
-                                    HorizontalOptions="Fill"
-                                    Panel="{Binding .}"
-                                    VerticalOptions="Fill"/>
+                                <ContentView ControlTemplate="{StaticResource PanelPreviewTemplate}">
+                                    <ContentView.Triggers>
+                                        <!-- When Thumbnail is present, show the Image -->
+                                        <DataTrigger TargetType="ContentView"
+                                                     Binding="{Binding HasThumbnail}"
+                                                     Value="False">
+                                            <Setter Property="ControlTemplate" Value="{StaticResource PanelPreviewTemplate}"/>
+                                        </DataTrigger>
+                                        <DataTrigger TargetType="ContentView"
+                                                     Binding="{Binding HasThumbnail}"
+                                                     Value="True">
+                                            <Setter Property="ControlTemplate" Value="{StaticResource ThumbnailPreviewTemplate}"/>
+                                        </DataTrigger>
+                                    </ContentView.Triggers>
+                                </ContentView>
                             </Grid>
                             <Border.HeightRequest>
                                 <MultiBinding Converter="{StaticResource PanelToCardHeightConverter}">
@@ -154,7 +194,8 @@
         <ToolbarItem Text="Edit" Command="{Binding Path=EditPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=edit_3}"/>
         <ToolbarItem Text="Upload" Command="{Binding UploadPanelCommand}" IconImageSource="upload_active"/>
-        <ToolbarItem Text="Download" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}" x:Name="DownloadToolbarItem"
+        <ToolbarItem Text="Download" Command="{Binding DownloadPanelCommand}" IsEnabled="{Binding IsPanelSelected}"
+                     x:Name="DownloadToolbarItem"
                      IconImageSource="{Binding IsPanelSelected, Converter={StaticResource BoolToIcon}, ConverterParameter=download}"/>
     </ContentPage.ToolbarItems>
 

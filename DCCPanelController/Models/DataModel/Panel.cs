@@ -16,7 +16,6 @@ namespace DCCPanelController.Models.DataModel;
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Thumbnail))] private string _base64Image = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
@@ -37,11 +36,42 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
     [JsonIgnore] public string PanelRatio => CalculateRatio(Cols, Rows);
 
-    [JsonIgnore] public ImageSource? Thumbnail =>
-        string.IsNullOrWhiteSpace(Base64Image)
-            ? null
-            : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(Base64Image)));
+    #region Manage the Thumbnail
+    private ImageSource? _thumbnailImageSource;
 
+    // If we set the Base64Image property, we need to update the Thumbnail property
+    // ----------------------------------------------------------------------------
+    public string Base64Image {
+        get;
+        set {
+            _thumbnailImageSource = null;
+            field = value;
+            OnPropertyChanged();                  // Notifies Base64Image
+            OnPropertyChanged(nameof(Thumbnail)); // Also notify Thumbnail bindings
+        } 
+    } = string.Empty;
+    
+    // Cache the Thumbnail property so we dont recreate constantly
+    // -----------------------------------------------------------
+    [JsonIgnore] public bool HasThumbnail => !string.IsNullOrWhiteSpace(Base64Image);
+    [JsonIgnore] public bool HasNoThumbnail => string.IsNullOrWhiteSpace(Base64Image);
+    [JsonIgnore] public ImageSource? Thumbnail {
+        get {
+            if (string.IsNullOrWhiteSpace(Base64Image)) return null;
+            return _thumbnailImageSource ??= CreateThumbnailImageSource();
+
+            ImageSource CreateThumbnailImageSource() {
+                try {
+                    var bytes = Convert.FromBase64String(Base64Image);
+                    return ImageSource.FromStream(() => new MemoryStream(bytes, writable: false));
+                } catch {
+                    return null!;
+                }
+            }
+        }
+    }
+    #endregion
+    
     [JsonIgnore]
     public string Title {
         get {

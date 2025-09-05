@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -16,7 +15,6 @@ using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
-using Syncfusion.Maui.Toolkit.BottomSheet;
 using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
 
@@ -62,7 +60,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
     public bool ExitViaBackButton { get; set; }
 
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanel.ControlPanelView panelView, PanelEditor panelEditor) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanelView panelView, PanelEditor panelEditor) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
@@ -80,7 +78,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    public string Title => Panel?.Title ?? "Panel";
+    public string Title => Panel.Title ?? "Panel";
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
     public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
 
@@ -130,11 +128,16 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task SaveAsync() {
-        if (Panel?.Panels?.Profile is { } profile) {
-            Panel.Base64Image = await GetThumbnailImageAsync(_panelView);
-            UpdateOriginalFromCopy();
-            await _profileService.SaveAsync();
-            await DisplayAlertHelper.DisplayToastAlert("Changes Saved");
+        try {
+            IsProcessing = true;
+            if (Panel.Panels?.Profile is { } profile) {
+                Panel.Base64Image = await GetThumbnailImageAsync(_panelView);
+                UpdateOriginalFromCopy();
+                await _profileService.SaveAsync();
+                await DisplayAlertHelper.DisplayToastAlert("Changes Saved");
+            }
+        } finally {
+            IsProcessing = false;
         }
     }
 
@@ -143,14 +146,21 @@ public partial class PanelEditorViewModel : ObservableObject {
     // ----------------------------------------------------------------------
     public async Task<string> GetThumbnailImageAsync(Microsoft.Maui.Controls.View panelView) {
         try {
-            _panelView.ShowGrid = false;
-            await LetUICatchUpAsync();
-            var result = await _panelView.CaptureAsync();
-            if (result == null) return string.Empty;
-            using var memoryStream = new MemoryStream();
-            await result.CopyToAsync(memoryStream, ScreenshotFormat.Jpeg);
-            var imageBytes = memoryStream.ToArray();
-            return Convert.ToBase64String(imageBytes);
+            using (new CodeTimer("Capture to Thumbnail Image")) {
+                if (_panelView.ShowGrid) _panelView.ShowGrid = false;
+                await LetUICatchUpAsync();
+
+                var result = await _panelView.CaptureAsync();
+                if (result == null) return string.Empty;
+
+                //var base64 = Convert.ToBase64String(ms.GetBuffer(), 0, length);
+                var base64 = await Task.Run(async () => {
+                    using var ms = new MemoryStream(capacity: 64 * 1024); // small initial capacity; grows as needed
+                    await result.CopyToAsync(ms, ScreenshotFormat.Jpeg, quality: 75);
+                    var length = (int)ms.Length;
+                    return Convert.ToBase64String(ms.GetBuffer(), 0, length);
+                }).ConfigureAwait(false);
+                return base64;            }
         } catch (Exception ex) {
             _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
             return string.Empty;
@@ -159,7 +169,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     
     [RelayCommand]
     private async Task RotateTileAsync() {
-        if (HasSelectedEntities && Panel is not null) {
+        if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
                 entity.RotateRight();
             }
@@ -185,7 +195,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task DeleteTileAsync() {
-        if (HasSelectedEntities && Panel is not null) {
+        if (HasSelectedEntities) {
             foreach (var entity in SelectedEntities) {
                 Panel.Entities.Remove(entity);
             }
@@ -202,7 +212,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     public async Task EditPropertiesAsync() {
-        if (SelectedEntities?.Count > 0) {
+        if (SelectedEntities.Count > 0) {
             await EditTilePropertiesPopupAsync();
         } else {
             await EditPanelPropertiesPopupAsync();
@@ -229,7 +239,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 _ => AreAllTilesTheSame() ? $"Multiple {SelectedEntity?.EntityName} ({SelectedEntity?.EntityDescription}) properties." : "Multiple Selected Entities"
             };
             
-            if (Panel is { } panel && SelectedEntities?.Count > 0 && _panelEditor is not null) {
+            if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
                 var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
                 var propertiesPage = propertiesViewModel.CreatePropertiesView();
                 ShowPropertyPopup(title, propertiesViewModel, propertiesPage, AcceptTilePropertiesPopupCommand);
