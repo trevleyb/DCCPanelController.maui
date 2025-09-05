@@ -50,14 +50,7 @@
             Command="{Binding Path=EditPropertiesCommand}"
             IsEnabled="{Binding CanEditProperties}">
         </ToolbarItem>
-
-        <ToolbarItem
-            IconImageSource="{Binding CanSavePanel, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
-            Text="Save" x:Name="SaveToolbar"
-            Command="{Binding Path=SaveCommand}"
-            IsEnabled="{Binding CanSavePanel}">
-        </ToolbarItem>
-
+        
         <ToolbarItem
             IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
             Text="Grid" x:Name="GridToolbar"

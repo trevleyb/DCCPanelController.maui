@@ -23,9 +23,8 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
-    private readonly PanelEditor? _panelEditor;
-
     private readonly ILogger<PanelEditor> _logger;
+    private readonly PanelEditor? _panelEditor;
     private readonly ControlPanelView _panelView;
     private readonly ProfileService _profileService;
     
@@ -38,15 +37,13 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanSetModes))]
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
-    [NotifyPropertyChangedFor(nameof(CanSavePanel))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
-
-    private Panel? _original;
-    private IPropertyPage? _propertyPage;
     
     [NotifyPropertyChangedFor(nameof(Title))]
-    [ObservableProperty] private Panel? _panel;
+    [ObservableProperty] private Panel _panel;
+    private Panel _original;
+    private IPropertyPage? _propertyPage;
     
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
@@ -58,12 +55,12 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanSetModes))]
     [NotifyPropertyChangedFor(nameof(CanRotateTiles))]
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
-    [NotifyPropertyChangedFor(nameof(CanSavePanel))]
     [NotifyPropertyChangedFor(nameof(HavePropertiesChanged))]
     [ObservableProperty] private ObservableCollection<ITile> _selectedTiles = [];
 
     public double ScreenHeight = 100;
     public double ScreenWidth = 100;
+    public bool ExitViaBackButton { get; set; }
 
     public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanel.ControlPanelView panelView, PanelEditor panelEditor) {
         _profileService = profileService;
@@ -76,32 +73,34 @@ public partial class PanelEditorViewModel : ObservableObject {
         // Pre-build the palette cache
         TileSelectorPaletteCache.Prebuild(_panel);
 
+        ExitViaBackButton = false;
         CheckIfPanelChanged();
         if (HavePropertiesChanged) {
             _logger.LogDebug("Property comparison should NOT return true at this point.");
         }
     }
 
+    public string Title => Panel?.Title ?? "Panel";
+    public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
+    public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
+
     public bool CanEditProperties => SetCanEditProperties() && !IsNavigationDrawerOpen;
     public bool CanSetModes => !IsNavigationDrawerOpen;
     public bool CanRotateTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
     public bool CanDeleteTiles => HasSelectedEntities && !IsNavigationDrawerOpen;
-    public bool CanSavePanel => HavePropertiesChanged && !IsNavigationDrawerOpen;
     public bool CanToggleGrid => !IsNavigationDrawerOpen;
     public bool CanPressBackButton => !IsNavigationDrawerOpen;
 
-    public List<Entity> SelectedEntities => SelectedTiles.Select(x => x.Entity).ToList();
-    public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
     public int SelectedEntitiesCount => SelectedEntities.Count;
+    public bool SingleOrNoEntitiesSelected => SelectedEntitiesCount is 1 or 0;
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
-    public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
-    public string Title => Panel?.Title ?? "Panel";
+    public bool SetCanEditProperties() => true;
 
     public void UpdateOriginalFromCopy() {
         ArgumentNullException.ThrowIfNull(_original, "Original Panel should never be undefined.");
-        if (_original.Panels != null && Panel != null) {
+        if (_original.Panels != null) {
             var collection = _original.Panels;
             var index = collection.IndexOf(_original);
 
@@ -111,31 +110,6 @@ public partial class PanelEditorViewModel : ObservableObject {
                 _original = newPanel;
             }
         }
-    }
-
-    // This is a callback so that the Editor View Model can take a snapshot
-    // of the design for the thumbnail on the Panel Viewer Page
-    // ----------------------------------------------------------------------
-    public async Task<string> GetThumbnailImage() {
-        try {
-            var showGrid = _panelView.ShowGrid;
-            _panelView.ShowGrid = false;
-            var result = await _panelView.CaptureAsync();
-            _panelView.ShowGrid = showGrid;
-
-            if (result == null) return string.Empty;
-            using var memoryStream = new MemoryStream();
-            await result.CopyToAsync(memoryStream, ScreenshotFormat.Jpeg);
-            var imageBytes = memoryStream.ToArray();
-            return Convert.ToBase64String(imageBytes);
-        } catch (Exception ex) {
-            _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
-            return string.Empty;
-        }
-    }
-
-    public bool SetCanEditProperties() {
-        return true;
     }
 
     public void CheckIfPanelChanged() {
@@ -150,27 +124,39 @@ public partial class PanelEditorViewModel : ObservableObject {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Unsaved Changes", null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
         }
+        ExitViaBackButton = true;
         await Shell.Current.GoToAsync("..");
     }
 
     [RelayCommand]
     private async Task SaveAsync() {
         if (Panel?.Panels?.Profile is { } profile) {
-            // Take an image (thumbnail) of the Panel 
-            // Currently turned off as we render panels directly
-            // Panel.Base64Image = await GetThumbnailImage();
-
-            // If we are saving, then we need to update the original item
-            // but still work on the copied item. So just make a clone of 
-            // the editing panel and make the original point to this new clone. 
-            // ----------------------------------------------------------
+            Panel.Base64Image = await GetThumbnailImageAsync(_panelView);
             UpdateOriginalFromCopy();
             await _profileService.SaveAsync();
             await DisplayAlertHelper.DisplayToastAlert("Changes Saved");
-            CheckIfPanelChanged();
         }
     }
 
+    // Take a snapshot/thumnail of the panel and return it as a base64 string.
+    // Only call this on exiting this editor as it will turn off the Grid
+    // ----------------------------------------------------------------------
+    public async Task<string> GetThumbnailImageAsync(Microsoft.Maui.Controls.View panelView) {
+        try {
+            _panelView.ShowGrid = false;
+            await LetUICatchUpAsync();
+            var result = await _panelView.CaptureAsync();
+            if (result == null) return string.Empty;
+            using var memoryStream = new MemoryStream();
+            await result.CopyToAsync(memoryStream, ScreenshotFormat.Jpeg);
+            var imageBytes = memoryStream.ToArray();
+            return Convert.ToBase64String(imageBytes);
+        } catch (Exception ex) {
+            _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
+            return string.Empty;
+        }
+    }
+    
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities && Panel is not null) {
@@ -311,10 +297,8 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (_propertyPage is not null) {
             try {
                 IsProcessing = true;
-                await Task.Yield();
-                await Task.Delay(10);
+                await LetUICatchUpAsync();
                 await _propertyPage.ApplyChangesAsync();
-                await SaveAsync();
                 await _panelView.ForceRefresh();
             } finally {
                 IsProcessing = false;
@@ -327,10 +311,8 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (_propertyPage is not null) {
             try {
                 IsProcessing = true;
-                await Task.Yield();
-                await Task.Delay(10);
+                await LetUICatchUpAsync();
                 await _propertyPage.ApplyChangesAsync();
-                await SaveAsync();
             } finally {
                 IsProcessing = false;
             }
@@ -349,4 +331,9 @@ public partial class PanelEditorViewModel : ObservableObject {
             EditModeEnum.Size => "crop.png",
             _                 => "move.png"
         };
+    
+    private async Task LetUICatchUpAsync() {
+        await Task.Yield();
+        await Task.Delay(10);
+    }
 }

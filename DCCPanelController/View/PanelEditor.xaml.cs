@@ -71,6 +71,11 @@ public partial class PanelEditor : ContentPage {
             Console.WriteLine("Pop Modal - Push Modal in progress");
             _isPushingModal = false;
         } else {
+            Console.WriteLine($"Exiting Editor : via BackButton? {_viewModel.ExitViaBackButton}");
+            if (_viewModel.ExitViaBackButton == false) {
+                Console.WriteLine("WAARNING! Exiting Editor NOT via Back Button. No SAVE");
+            }
+            
             Console.WriteLine("Pop Modal - Push Modal not in progress");
             PanelView.TileSelected -= PanelViewOnTileSelected;
             PanelView.TileChanged -= PanelViewOnTileChanged;
