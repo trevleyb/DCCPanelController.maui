@@ -15,7 +15,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [ObservableProperty] private bool _showGrid;
     [ObservableProperty] private bool _showPath;
     [ObservableProperty] private Panel? _activePanel;
-
     
     [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
     [ObservableProperty] private bool _isMaximized;
@@ -66,7 +65,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         set {
             if (SetProperty(ref field, value)) {
                 if (value is not null) SelectPanel(value.Index);
-                _ = MainThread.InvokeOnMainThreadAsync(() => SelectedIndicator = null);
+                //_ = MainThread.InvokeOnMainThreadAsync(() => SelectedIndicator = null);
             }
         }
     }
@@ -102,15 +101,20 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     public void SelectPanel(int index) {
         MainThread.BeginInvokeOnMainThread(() => {
-            if (index < 0) index = 0;
-            if (Panels?.Any() == true && index < Panels.Count) {
-               ActivePanel = null;
-               CurrentPanelIndex = index;
-               ActivePanel = Panels[index];
+            try {
+                if (index < 0) index = 0;
+                if (Panels?.Count > 0 && index < Panels.Count) {
+                    ActivePanel = null;
+                    CurrentPanelIndex = index;
+                    ActivePanel = Panels[index];
+                }
+                SelectedIndicator = null;
+                ShowWelcomePage = Panels?.Count <= 0 ? true : false;
+            } catch (Exception ex) {
+                Console.WriteLine("Error selecting panel: " + ex.Message);
             }
-            ShowWelcomePage = Panels?.Count <= 0 ? true : false;
-            UpdatePanelIndicators();
         });
+        UpdatePanelIndicators();
     }
 
     private void RaiseAllProperties() {
@@ -133,7 +137,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
                 PanelIndicators[i].Active = CurrentPanelIndex;
             }
         });
-        OnPropertyChanged(nameof(PanelIndicators));
         RaiseAllProperties();        
     }
 }

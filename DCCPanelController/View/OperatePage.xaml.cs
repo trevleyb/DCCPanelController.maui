@@ -40,13 +40,17 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(PanelIndicatorsView)) {
+            PanelIndicatorsView.InvalidateMeasure();
+        }
+        
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (_viewModel is { ActivePanel: not null } viewModel) {
                 Title = $"{viewModel.ActivePanel.Title}";
                 PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
                 BackgroundColor = viewModel.DisplayBackgroundColor;
             } else {
-                Title = $"DCC Panel Controller ({_profileService?.ActiveProfile?.ProfileName ?? "No Profile"}";
+                Title = $"{_profileService?.ActiveProfile?.ProfileName ?? "DCC Panel Controller"}";
             }
         }
     }

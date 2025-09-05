@@ -68,10 +68,10 @@ public partial class PanelPropertyPage : ContentView {
     }
 
     private static int GetMaxRows(Panel panel) {
-        return int.Max(panel.Entities.Select(track => track.Row).Prepend(0).Max(), 12);
+        return int.Max(panel.Entities.Select(track => track.Row).Prepend(0).Max(), 4);
     }
 
     private static int GetMaxCols(Panel panel) {
-        return int.Max(panel.Entities.Select(track => track.Col).Prepend(0).Max(), 12);
+        return int.Max(panel.Entities.Select(track => track.Col).Prepend(0).Max(), 4);
     }
 }

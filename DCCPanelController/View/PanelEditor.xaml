@@ -128,7 +128,7 @@
                 <!-- Top Border -->
                 <BoxView Grid.Row="0" HeightRequest="0.5" 
                          BackgroundColor="{StaticResource Primary}" 
-                         HorizontalOptions="Fill" />
+                         HorizontalOptions="Fill"/>
 
                 <!-- Content -->
                 <Grid Grid.Row="1">

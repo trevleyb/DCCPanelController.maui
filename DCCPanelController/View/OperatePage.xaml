@@ -19,6 +19,9 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}"  IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
+        <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_right}"/>
+        
         <ToolbarItem
             Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
@@ -59,7 +62,14 @@
                         DesignMode="False"
                         ShowGrid="false"
                         Panel="{Binding ActivePanel}"
-                        x:Name="PanelView"/>
+                        x:Name="PanelView">
+                        
+                        <controlPanel:ControlPanelView.GestureRecognizers>
+                            <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
+                            <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
+                        </controlPanel:ControlPanelView.GestureRecognizers>
+                        
+                    </controlPanel:ControlPanelView>
 
                     <!-- Empty View when no panels -->
                     <ContentView HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="{Binding ShowWelcomePage}">
@@ -209,7 +219,7 @@
 
                 <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End"
                        FontSize="8"
-                       VerticalOptions="End" IsVisible="{Binding IsNotMaximized}"
+                       VerticalOptions="End" IsVisible="{Binding IsMaximized}"
                        BackgroundColor="Transparent" TextColor="Gainsboro">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding SwitchActiveProfileCommand}"/>

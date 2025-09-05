@@ -1,11 +1,14 @@
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Services;
 
 public class AppState : INotifyPropertyChanged {
 
     public static AppState Instance { get; } = new();
+    
+    public ITile? SelectedTile { get; set; }
     
     public bool IsEditingPanel {
         get;

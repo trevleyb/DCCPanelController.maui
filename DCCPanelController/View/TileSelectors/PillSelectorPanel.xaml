@@ -84,6 +84,7 @@
                     MinimumHeightRequest="45"
                     MinimumWidthRequest="45"
                     ItemsSource="{Binding TilesForSelectedCategory}"
+                    SelectedItem="{Binding SelectedTile}"
                     SelectionMode="None"
                     HorizontalScrollBarVisibility="Never"
                     HorizontalOptions="Center">

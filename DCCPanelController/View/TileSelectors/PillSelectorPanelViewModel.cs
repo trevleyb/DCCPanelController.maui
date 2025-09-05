@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Resources.Styles;
+using DCCPanelController.Services;
 using Syncfusion.Maui.Toolkit.SegmentedControl;
 
 namespace DCCPanelController.View.TileSelectors;
@@ -13,6 +14,7 @@ public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
     public PillSelectorPanelViewModel() {
         SfCategories.Clear();
         SfCategories.Add(new SfSegmentItem { Text = "Loading" });
+        SelectedTile = null;
     }
 
     public ObservableCollection<SfSegmentItem> SfCategories { get; } = [];
@@ -21,6 +23,14 @@ public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
         get {
             if (string.IsNullOrEmpty(SelectedCategory) || !ByCategory.ContainsKey(SelectedCategory)) return [];
             return ByCategory[SelectedCategory];
+        }
+    }
+
+    public ITile? SelectedTile {
+        get;
+        set {
+            AppState.Instance.SelectedTile = value;
+            field = value;
         }
     }
 

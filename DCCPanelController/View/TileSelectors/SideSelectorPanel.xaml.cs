@@ -1,8 +1,10 @@
 using System.Collections;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.Resources.Styles;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 #if IOS || MACCATALYST
 using UIKit;
@@ -36,7 +38,7 @@ public partial class SideSelectorPanel {
         get => (TileSelectorDockSide)GetValue(DockSideProperty);
         set => SetValue(DockSideProperty, value);
     }
-
+    
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is SideSelectorPanel { BindingContext: SideSelectorPanelViewModel vm }) {
             if (newValue != oldValue && newValue is Panel panel) {

@@ -62,10 +62,10 @@
                     x:Name="TileCollection"
                     HorizontalScrollBarVisibility="Never"
                     VerticalScrollBarVisibility="Never"
+                    SelectedItem="{Binding  SelectedTile}"
                     ItemsSource="{Binding Categories}"
-                    SelectionMode="None"
+                    SelectionMode="Single"
                     ItemSizingStrategy="MeasureAllItems">
-
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <VerticalStackLayout Spacing="0" Margin="0,0,0,10">
