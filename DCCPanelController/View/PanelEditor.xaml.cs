@@ -2,6 +2,7 @@ using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.ControlPanel;
@@ -16,7 +17,6 @@ public partial class PanelEditor : ContentPage {
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly ILogger<PanelEditor> _logger;
     private readonly PanelEditorViewModel _viewModel;
-    private bool _isPushingModal; // Flag to track modal presentation
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
         _logger = logger;
@@ -28,8 +28,8 @@ public partial class PanelEditor : ContentPage {
         _viewModel = new PanelEditorViewModel(_logger, panel, profileService, PanelView, this) {
             GridVisible = true,
             EditMode = EditModeEnum.Move
-        }; 
-        
+        };
+
         PanelView.TileSelected += PanelViewOnTileSelected;
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;
@@ -52,37 +52,19 @@ public partial class PanelEditor : ContentPage {
         if (width >= height) SetDockedSide(TileSelectorDockSide.Side);
     }
 
-    private void OnBeginPushModal() {
-        Console.WriteLine("Begin Push Modal");
-        _isPushingModal = true;
-    }
-
-    private void OnBeginPopModal() {
-        Console.WriteLine("Begin Pop Modal");
-        _isPushingModal = false;
-    }
-
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
-        Console.WriteLine("Panel Editor: Navigated From");
         base.OnNavigatedFrom(args);
         AppState.Instance.IsEditingPanel = false;
 
-        if (_isPushingModal) {
-            Console.WriteLine("Pop Modal - Push Modal in progress");
-            _isPushingModal = false;
-        } else {
-            Console.WriteLine($"Exiting Editor : via BackButton? {_viewModel.ExitViaBackButton}");
-            if (_viewModel.ExitViaBackButton == false) {
-                Console.WriteLine("WAARNING! Exiting Editor NOT via Back Button. No SAVE");
-            }
-            
-            Console.WriteLine("Pop Modal - Push Modal not in progress");
-            PanelView.TileSelected -= PanelViewOnTileSelected;
-            PanelView.TileChanged -= PanelViewOnTileChanged;
-            PanelView.TileTapped -= PanelViewOnTileTapped;
-            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-            _closeTcs.TrySetResult(true); // or return data as needed
+        if (_viewModel.ExitViaBackButton == false) {
+            Console.WriteLine("WAARNING! Exiting Editor NOT via Back Button. No SAVE");
         }
+
+        PanelView.TileSelected -= PanelViewOnTileSelected;
+        PanelView.TileChanged -= PanelViewOnTileChanged;
+        PanelView.TileTapped -= PanelViewOnTileTapped;
+        _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+        _closeTcs.TrySetResult(true); // or return data as needed
     }
 
     #region Manage the showing and hiding of the Palettes
@@ -146,6 +128,9 @@ public partial class PanelEditor : ContentPage {
             > 1 => $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})",
             _   => SelectionText.Text
         };
+
+        ChangesText.Text = _viewModel.HavePropertiesChanged ? "Changes" : "No Changes";
+        ChangesText.TextColor = _viewModel.HavePropertiesChanged ? Colors.Red : StyleHelper.FromStyle("Primary");
         _viewModel.CheckIfPanelChanged();
     }
 
@@ -160,6 +145,7 @@ public partial class PanelEditor : ContentPage {
 
         case nameof(PanelEditorViewModel.GridVisible):
             PanelView.ShowGrid = _viewModel.GridVisible;
+
             //PanelView.DesignMode = _viewModel.GridVisible;
             //PanelView.ClearAllSelectedTiles();
             var gridIcon = _viewModel.GridVisible ? "grid_on" : "grid_off";
