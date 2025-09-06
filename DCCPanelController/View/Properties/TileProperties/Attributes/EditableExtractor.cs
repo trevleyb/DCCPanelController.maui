@@ -18,12 +18,5 @@ public static class EditableExtractor {
                               .ToList();
 
         return props;
-
-        // var props  = properties
-        //       .Select(p => (entity, p))
-        //       .OrderBy(p => p.Item .Order) // Then sort by Order
-        //       .ThenBy(p => p.Item3.Group)  // Group by Group Name
-        //       .ToList();
-        // return props;
     }
 }

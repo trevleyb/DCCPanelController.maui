@@ -24,7 +24,7 @@ public partial class ColorPickerButton : ContentView {
 
     public Color? DefaultColor {
         get => (Color)GetValue(DefaultColorProperty);
-        init {
+        set {
             SetValue(DefaultColorProperty, value);
             OnPropertyChanged(nameof(DefaultColorProperty)); // Update DisplayText when the color changes
         }

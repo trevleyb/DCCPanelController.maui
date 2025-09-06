@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="DCCPanelController.View.Properties.DynamicProperties.DynamicTilePropertyPopupContent"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- Top-level container sized for a popup -->
+    <Grid Padding="16" RowDefinitions="Auto,*,Auto" ColumnDefinitions="*">
+        <!-- Header / actions -->
+        <HorizontalStackLayout Spacing="12" Grid.Row="0">
+            <Label Text="Properties" FontSize="Title" VerticalOptions="Center" />
+            <HorizontalStackLayout Spacing="8">
+                <Button Text="Validate" x:Name="BtnValidate" />
+                <Button Text="Apply" x:Name="BtnApply" />
+                <Button Text="Undo" x:Name="BtnUndo" />
+            </HorizontalStackLayout>
+        </HorizontalStackLayout>
+
+        <!-- Body -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout x:Name="PropertyHost" Spacing="10" />
+        </ScrollView>
+
+        <!-- Footer (optional) -->
+        <HorizontalStackLayout Grid.Row="2" Spacing="10" HorizontalOptions="End">
+            <Button Text="Close" x:Name="BtnClose" />
+        </HorizontalStackLayout>
+    </Grid>
+</ContentView>

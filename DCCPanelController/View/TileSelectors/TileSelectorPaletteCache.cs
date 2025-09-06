@@ -86,6 +86,7 @@ public class TileSelectorPaletteCache {
                 new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 3 },
                 new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new ImageEntity(panel),
+                new CompassEntity(panel)
             ]);
             return new PaletteResult(byCategory, categories);
         } catch (Exception ex) {

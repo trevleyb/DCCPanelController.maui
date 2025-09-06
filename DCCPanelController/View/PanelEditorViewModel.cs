@@ -11,6 +11,7 @@ using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
+using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.Properties.TileProperties;
 using DCCPanelController.View.TileSelectors;
@@ -243,9 +244,11 @@ public partial class PanelEditorViewModel : ObservableObject {
             };
             
             if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
-                var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
-                var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                ShowPropertyPopup(title, propertiesViewModel, propertiesPage, AcceptTilePropertiesPopupCommand);
+                await DynamicTilePropertyPopupAsync(title);
+
+                //var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
+                //var propertiesPage = propertiesViewModel.CreatePropertiesView();
+                //ShowPropertyPopup(title, propertiesViewModel, propertiesPage, AcceptTilePropertiesPopupCommand);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
@@ -256,6 +259,61 @@ public partial class PanelEditorViewModel : ObservableObject {
         if (SelectedEntities.Count <= 1) return true;
         var first = SelectedEntities.FirstOrDefault();
         return SelectedEntities.All(entity => entity.EntityName == first?.EntityName);
+    }
+
+    private async Task DynamicTilePropertyPopupAsync(string title) {
+        var scrollContent = new ScrollView();
+        var content = new DynamicTilePropertyPopupContent {
+            TilesSource = SelectedTiles 
+        };
+        content.Applied += ContentOnApplied;  
+        content.Closed  += ContentOnClosed;
+        scrollContent.Content = content;
+
+        var popup = new SfPopup {
+            ContentTemplate = new DataTemplate(() => scrollContent),
+            HeaderTitle = title,
+            ShowHeader = true,
+            ShowFooter = true,
+            BackgroundColor = Colors.WhiteSmoke,
+            PopupStyle = new PopupStyle {
+                CornerRadius = 10,
+                HasShadow = false,
+                BlurIntensity = PopupBlurIntensity.Light,
+                HeaderBackground = Colors.WhiteSmoke,
+                FooterBackground = Colors.DarkGrey,
+                MessageBackground = Colors.WhiteSmoke,
+                AcceptButtonBackground = Colors.White,
+                DeclineButtonBackground = Colors.White,
+                AcceptButtonTextColor = Colors.Black,
+                DeclineButtonTextColor = Colors.Black,
+            },
+            AppearanceMode = PopupButtonAppearanceMode.TwoButton,
+            ShowCloseButton = false,
+            StaysOpen = true,
+            IsFullScreen = true,
+            AcceptButtonText = "Save",
+            DeclineButtonText = "Cancel",
+            Padding = new Thickness(20),
+            Margin = new Thickness(20),
+            HeaderHeight = 60,
+            AutoSizeMode = PopupAutoSizeMode.None,
+            AnimationMode = PopupAnimationMode.Zoom,
+            AnimationDuration = 300,
+            OverlayMode = PopupOverlayMode.Transparent, 
+            //AcceptCommand = acceptPopupCommand,
+            //DeclineCommand = DeclinePopupCommand
+        };
+        if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
+        popup.Show();    
+    }
+
+    private void ContentOnClosed(object? sender, EventArgs e) {
+        Console.WriteLine("Content Closed");
+    }
+
+    private void ContentOnApplied(object? sender, EventArgs e) {
+        Console.WriteLine("Content Applied");
     }
 
     private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
