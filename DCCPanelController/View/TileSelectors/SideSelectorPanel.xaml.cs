@@ -1,4 +1,5 @@
 using System.Collections;
+using System.ComponentModel;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
@@ -38,7 +39,7 @@ public partial class SideSelectorPanel {
         get => (TileSelectorDockSide)GetValue(DockSideProperty);
         set => SetValue(DockSideProperty, value);
     }
-    
+
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is SideSelectorPanel { BindingContext: SideSelectorPanelViewModel vm }) {
             if (newValue != oldValue && newValue is Panel panel) {
@@ -51,37 +52,92 @@ public partial class SideSelectorPanel {
         if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Bottom);
     }
 
+    public static readonly BindableProperty SelectedTileProperty =
+        BindableProperty.Create(
+            nameof(SelectedTile),
+            typeof(ITile),
+            typeof(SideSelectorPanel),
+            defaultValue: null,
+            defaultBindingMode: BindingMode.TwoWay,
+            propertyChanged: OnSelectedTileChanged);
+
+    public ITile? SelectedTile {
+        get => (ITile?)GetValue(SelectedTileProperty);
+        set => SetValue(SelectedTileProperty, value);
+    }
+
+    private static void OnSelectedTileChanged(BindableObject bindable, object oldValue, object newValue) {
+        var view = (SideSelectorPanel)bindable;
+
+        // keep VM in sync if you’re using one
+        if (view.BindingContext is SideSelectorPanelViewModel vm) {
+            if (!ReferenceEquals(vm.SelectedTile, newValue))
+                vm.SelectedTile = (ITile?)newValue;
+        }
+
+        // (optional) if your VM can also change SelectedTile, you might already
+        // mirror that back to the control in OnBindingContextChanged or via VM event handlers.
+    }
+
+    protected override void OnBindingContextChanged() {
+        base.OnBindingContextChanged();
+        if (BindingContext is SideSelectorPanelViewModel vm) {
+            // keep control property synced from VM, too
+            if (!ReferenceEquals(SelectedTile, vm.SelectedTile))
+                SelectedTile = vm.SelectedTile;
+
+            // if you have an event in VM when SelectedTile changes, subscribe and mirror here
+            vm.PropertyChanged -= VmOnPropertyChanged;
+            vm.PropertyChanged += VmOnPropertyChanged;
+        }
+    }
+
+    private void VmOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e.PropertyName == nameof(SideSelectorPanelViewModel.SelectedTile) &&
+            sender is SideSelectorPanelViewModel vm &&
+            !ReferenceEquals(SelectedTile, vm.SelectedTile)) {
+            SelectedTile = vm.SelectedTile;
+        }
+    }
+
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
         SetDragPreview(sender, e, "copy.png");
+        SelectedTile = null;
 
-        var child = (sender as GestureRecognizer)?.Parent;
-        if (child is not CollectionView childView) return;
+        try {
+            var child = (sender as GestureRecognizer)?.Parent;
+            if (child is not CollectionView childView) return;
 
-        var pointerRoot = e.GetPosition(TileCollection);
-        var pointerChild = e.GetPosition(childView);
-        if (!pointerRoot.HasValue || !pointerChild.HasValue) return;
+            var pointerRoot = e.GetPosition(TileCollection);
+            var pointerChild = e.GetPosition(childView);
+            if (!pointerRoot.HasValue || !pointerChild.HasValue) return;
 
-        var index = CollectionHitIndex.IndexOf(childView,
-                                               point: pointerChild.Value,
-                                               scrollXOffset: scrollOffset,
-                                               scrollYOffset: scrollOffset,
-                                               edgeMargin: 4,
-                                               topMargin: 4,
-                                               itemWidth: 40,
-                                               itemHeight: 40,
-                                               spacingH: 4,
-                                               spacingV: 4);
+            var index = CollectionHitIndex.IndexOf(childView,
+                                                   point: pointerChild.Value,
+                                                   scrollXOffset: scrollOffset,
+                                                   scrollYOffset: scrollOffset,
+                                                   edgeMargin: 4,
+                                                   topMargin: 4,
+                                                   itemWidth: 40,
+                                                   itemHeight: 40,
+                                                   spacingH: 4,
+                                                   spacingV: 4);
 
-        if (index is not null && childView.BindingContext is string category) {
-            if (ViewModel?.ByCategory.TryGetValue(category, out var tiles) == true) {
-                if (tiles.Count > index.Value) {
-                    var tile = tiles[index.Value];
-                    if (e.Data.Properties is { } props) {
-                        e.Data.Properties["Tile"] = tile;
-                        props["Source"] = "Symbol";
+            if (index is not null && childView.BindingContext is string category) {
+                if (ViewModel?.ByCategory.TryGetValue(category, out var tiles) == true) {
+                    if (tiles.Count > index.Value) {
+                        var tile = tiles[index.Value];
+                        if (e.Data.Properties is { } props) {
+                            e.Data.Properties["Tile"] = tile;
+                            return;
+                        }
                     }
                 }
             }
+            Console.WriteLine("Unable to find tile at pointer location: Should not happen.");
+            e.Cancel = true;
+        } catch (Exception ex) {
+            Console.WriteLine("Error selecting tile: " + ex.Message);
         }
     }
 
@@ -100,5 +156,33 @@ public partial class SideSelectorPanel {
 
     private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {
         scrollOffset = e.HorizontalOffset;
+    }
+
+    private void OnTileTapped(object? sender, EventArgs e) {
+        if (e is not TappedEventArgs te) return;
+        if (te.Parameter is not ITile tile) return;
+
+        // Toggle behaviour: tap same tile -> null
+        ViewModel.SelectedTile = ReferenceEquals(ViewModel.SelectedTile, tile) ? null : tile;
+
+        // Keep AppState in sync if you still need it
+        AppStateService.Instance.SelectedTile = ViewModel.SelectedTile;
+    }
+
+    private void TileCollectionByCategory_OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
+        Console.WriteLine("Selection Changed");
+        var currentSelection = e.CurrentSelection.ToList().FirstOrDefault() as ITile;
+        var previousSelection = e.PreviousSelection.ToList().FirstOrDefault() as ITile;
+        if (currentSelection == previousSelection) {
+            Console.WriteLine("Selection did not change - turn off the item");
+            ViewModel.SelectedTile = null;
+        }
+        ViewModel.SelectedTile = currentSelection;
+        Console.WriteLine($"Selection Changed: {previousSelection?.Entity?.EntityName} -> {currentSelection?.Entity.EntityName} ==> {ViewModel?.SelectedTile?.Entity.EntityName}");
+
+        //if (e.CurrentSelection.ToList().FirstOrDefault() is Tile { } tile) {
+        AppStateService.Instance.SelectedTile = ViewModel?.SelectedTile;
+
+        //}
     }
 }

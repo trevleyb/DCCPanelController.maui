@@ -65,7 +65,6 @@ public partial class ProfileSelector : ContentView {
 
         // Handle popup closing
         popup.Closed += (_, args) => {
-            Console.WriteLine($"Popup closed: {args}");
             if (!tcs.Task.IsCompleted) {
                 tcs.SetResult(null);
             }

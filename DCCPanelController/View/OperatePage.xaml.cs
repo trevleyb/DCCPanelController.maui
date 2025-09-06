@@ -29,21 +29,10 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     protected override void OnAppearing() {
         base.OnAppearing();
-        _viewModel.UpdatePanelIndicators();
-    }
-
-    private void OnPanelIndicatorChanged(object sender, SelectionChangedEventArgs e) {
-        if (e.CurrentSelection.FirstOrDefault() is PanelIndicator pi &&
-            BindingContext is OperateViewModel vm) {
-            vm.SelectPanel(pi.Index);
-        }
+        if (_viewModel is { } viewModel) viewModel.ReselectActivePanelCommand.Execute(null);
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName == nameof(PanelIndicatorsView)) {
-            PanelIndicatorsView.InvalidateMeasure();
-        }
-        
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
             if (_viewModel is { ActivePanel: not null } viewModel) {
                 Title = $"{viewModel.ActivePanel.Title}";
@@ -79,7 +68,7 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
 
     private async void ButtonCloseInstructions(object? sender, EventArgs e) {
         if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) {
-            viewModel.SelectPanel(0);
+            await viewModel.SelectPanelAsync(0);
         }
     }
 

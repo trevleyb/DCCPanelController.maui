@@ -12,6 +12,7 @@ using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.PathFinder;
 using DCCPanelController.Models.ViewModel.Tiles;
+using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Layouts;
@@ -23,6 +24,7 @@ namespace DCCPanelController.View.ControlPanel;
 
 [ObservableObject]
 public partial class ControlPanelView {
+    private const bool ShowCodeTimer = false;
     [ObservableProperty] private bool _isPanelDrawing;
 
     #region Instance Variables and Properties
@@ -197,7 +199,14 @@ public partial class ControlPanelView {
                 // -------------------------------------------------------------------
                 var tilesAtPosition = GridPositionHelper.GetTilesCovering(e.Col, e.Row, _dynamicGrid);
                 if (tilesAtPosition.Count == 0) {
-                    ClearAllSelectedTiles();
+                    if (AppStateService.Instance.SelectedTile is {} tile && Panel is {} panel) {
+                        var dropEntity = panel.CreateEntityFrom(tile.Entity);
+                        dropEntity.Col = e.Col;
+                        dropEntity.Row = e.Row;
+                        panel.AddEntity(dropEntity);
+                    } else {
+                        ClearAllSelectedTiles();
+                    }
                 } else {
                     // Determine if any tile at this position is currently selected
                     // -------------------------------------------------------------------
@@ -241,6 +250,7 @@ public partial class ControlPanelView {
     private async void GridGesturesOnDoubleTap(object? sender, GridGestureEventArgs e) {
         try {
             if (DesignMode) {
+                AppStateService.Instance.SelectedTile = null;
                 var tile = GridPositionHelper.GetTilesCovering(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
 
                 // If we double-tapped on an actual tile, then unmark all tiles and mark this one
@@ -287,7 +297,8 @@ public partial class ControlPanelView {
                 _gridGestures?.CancelAllGestures();
                 return;
             }
-
+            
+            AppStateService.Instance.SelectedTile = null;
             if (EditMode == EditModeEnum.Size && e.Tile?.Entity is not IDrawingEntity) {
                 await ClickSounds.PlayError2SoundAsync();
                 _gridGestures?.CancelAllGestures();
@@ -367,6 +378,7 @@ public partial class ControlPanelView {
     private async void GridGesturesOnGridSelectionStarted(object? sender, GridSelectionEventArgs e) {
         try {
             if (!DesignMode) _gridGestures?.CancelAllGestures();
+            AppStateService.Instance.SelectedTile = null;
             ClearAllSelectedTiles();
         } catch (Exception ex) {
             _logger.LogError($"Error in GridGesturesOnGridSelectionStarted: {ex.Message}");
@@ -430,7 +442,7 @@ public partial class ControlPanelView {
 
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
-        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}")) {
+        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", ShowCodeTimer)) {
             MainThread.BeginInvokeOnMainThread(async void () => {
                 try {
                     ControlPanelLayout.IsVisible = false;
@@ -506,7 +518,7 @@ public partial class ControlPanelView {
     /// Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
     private ITile? AddEntityToGrid(Entity entity) {
-        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", 10)) {
+        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", ShowCodeTimer, 10)) {
             var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
             if (tile is not null) {
                 tile.TileChanged += TileOnPropertiesChanged;
@@ -871,8 +883,13 @@ public partial class ControlPanelView {
         }
 
         var tile = e.Data.Properties["Tile"] as ITile ?? null;
+        if (tile is null) {
+            Console.WriteLine("Got a Drop bt Tile is not set?");
+            return;
+        }
+        
         var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_dynamicGrid), _dynamicGrid);
-        if (gridPosition is { } position && tile is not null && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
+        if (gridPosition is { } position && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
             UnHighlightCell(_lastDragCol, _lastDragRow);
             if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, _dynamicGrid, EditMode) &&
                 GridPositionHelper.IsInBounds(tile, position.Col, position.Row, Cols, Rows)) {
@@ -905,7 +922,11 @@ public partial class ControlPanelView {
         try {
             ClearAllSelectedTiles();
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
-            if (Panel is { } panel && tile is not null) {
+            if (tile is null) {
+                Console.WriteLine("Got a Drop bt Tile is not set?");
+                return;
+            }
+            if (Panel is { } panel) {
                 var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_dynamicGrid), _dynamicGrid);
                 if (gridPosition is { } position) {
                     // Make sure that the item we are placing is onto a point that is 

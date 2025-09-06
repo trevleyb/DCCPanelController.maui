@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
@@ -28,7 +29,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     public static string IconMinimize => "minimize_2";
     public static string IconMaximize => "maximize_2";
     
-    public ObservableCollection<PanelIndicator> PanelIndicators { get; set; } = [];
     public ObservableCollection<Panel>? Panels { get; private set; }
     public Color PanelBackgroundColor => ActivePanel?.PanelBackgroundColor ?? Colors.White;
     public Color DisplayBackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
@@ -44,30 +44,23 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         _logger = logger;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (_, _) => OnProfileChanged();
-        CurrentPanelIndex = -1;
+        PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
     }
-    
-    private void OnProfileChanged() {
-        Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
-        
-        CurrentPanelIndex = -1;
-        var profile = _profileService.ActiveProfile;
-        Panels = [];
-        Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
-        ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings.ShowWelcomePage ?? true);
-        if (!ShowWelcomePage) SelectPanel(0);
-        UpdatePanelIndicators();
+
+    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (e?.PropertyName == nameof(CurrentPanelIndex)) {
+            await SelectPanelAsync(CurrentPanelIndex);
+        }
     }
 
-    public PanelIndicator? SelectedIndicator {
-        get;
-        set {
-            if (SetProperty(ref field, value)) {
-                if (value is not null) SelectPanel(value.Index);
-                //_ = MainThread.InvokeOnMainThreadAsync(() => SelectedIndicator = null);
-            }
-        }
+    public async void OnProfileChanged() {
+        Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
+        Panels = null;
+        var profile = _profileService.ActiveProfile;
+        Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
+        ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
+        await SelectPanelAsync(0);
     }
 
     [RelayCommand]
@@ -75,14 +68,23 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         var choices = _profileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
         if (index is {} selectedProfile and >= 0) await _profileService.SwitchProfileByIndexAsync(selectedProfile);
-        UpdatePanelIndicators();
     }
+    
+    [RelayCommand]
+    private async Task ReselectActivePanelAsync() {
+        try {
+            await SelectPanelAsync(CurrentPanelIndex);
+        } catch {
+            Console.WriteLine("Error reselecting panel:  probably should never happen.");
+        }
+    }
+
     
     [RelayCommand]
     private async Task SwipeLeftAsync() {
         ShowWelcomePage = Panels?.Count <= 0 ? true : false;
         if (Panels?.Any() == true) {
-            SelectPanel((CurrentPanelIndex + 1) % Panels.Count);
+            await SelectPanelAsync(CurrentPanelIndex <= 0 ? Panels.Count - 1 : CurrentPanelIndex - 1);
         }
     }
 
@@ -90,31 +92,23 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     private async Task SwipeRightAsync() {
         ShowWelcomePage = Panels?.Count <= 0 ? true : false;
         if (Panels?.Any() == true) {
-            SelectPanel(CurrentPanelIndex <= 0 ? Panels.Count - 1 : CurrentPanelIndex - 1);
+            await SelectPanelAsync((CurrentPanelIndex + 1) % Panels.Count);
         }
     }
 
     [RelayCommand]
-    private async Task SelectPanelAsync(PanelIndicator indicator) {
-        SelectPanel(indicator.Index);
-    }
-
-    public void SelectPanel(int index) {
-        MainThread.BeginInvokeOnMainThread(() => {
-            try {
-                if (index < 0) index = 0;
-                if (Panels?.Count > 0 && index < Panels.Count) {
-                    ActivePanel = null;
-                    CurrentPanelIndex = index;
-                    ActivePanel = Panels[index];
-                }
-                SelectedIndicator = null;
-                ShowWelcomePage = Panels?.Count <= 0 ? true : false;
-            } catch (Exception ex) {
-                Console.WriteLine("Error selecting panel: " + ex.Message);
+    public async Task SelectPanelAsync(int index) {
+        CurrentPanelIndex = index;
+        try {
+            if (index < 0) index = 0;
+            if (Panels?.Count > 0 && index < Panels.Count) {
+                ActivePanel = null;
+                ActivePanel = Panels[index];
             }
-        });
-        UpdatePanelIndicators();
+            ShowWelcomePage = Panels?.Count <= 0 ? true : false;
+        } catch (Exception ex) {
+            Console.WriteLine("Error selecting panel: " + ex.Message);
+        }
     }
 
     private void RaiseAllProperties() {
@@ -125,23 +119,5 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(HasNoPanels));
         OnPropertyChanged(nameof(PanelBackgroundColor));
         OnPropertyChanged(nameof(DisplayBackgroundColor));
-        OnPropertyChanged(nameof(PanelIndicators));
     }
-
-    public void UpdatePanelIndicators() {
-        MainThread.BeginInvokeOnMainThread(() => {
-            while (PanelIndicators.Count < Panels?.Count) PanelIndicators.Add(new PanelIndicator(-1, -1));
-            while (PanelIndicators.Count > Panels?.Count) PanelIndicators.RemoveAt(PanelIndicators.Count - 1);
-            for (var i = 0; i < PanelIndicators.Count; i++) {
-                PanelIndicators[i].Index = i;
-                PanelIndicators[i].Active = CurrentPanelIndex;
-            }
-        });
-        RaiseAllProperties();        
-    }
-}
-
-public partial class PanelIndicator(int index, int active) : ObservableObject {
-    [ObservableProperty] private int _index = index;
-    [ObservableProperty] private int _active = active;
 }

@@ -216,7 +216,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
             MaxDepth = 5,
             IncludePrivateProperties = false,
             CompareCollectionsOrdered = false, // For entity collections
-            IgnoreProperties = { "Parent", "Navigation", "Panels", "Guid", "Id", "Base64Image" }
+            IgnoreProperties = { "Parent", "Navigation", "Panels", "Guid", "Base64Image" }
         };
 
         return GenericComparer.AreEqual(this, panel, comparerOptions);

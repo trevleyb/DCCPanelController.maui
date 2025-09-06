@@ -15,6 +15,8 @@
 
     <ContentView.Resources>
         <tileSelectors:CategoryToTilesConverter x:Key="CategoryToTilesConverter"/>
+        <tileSelectors:RefEqualsConverter x:Key="RefEqualsConverter"/>
+
     </ContentView.Resources>
 
     <Border BackgroundColor="White"
@@ -25,7 +27,7 @@
             Margin="5"
             Padding="-2">
 
-        <Grid WidthRequest="80">
+        <Grid WidthRequest="90">
             <Grid.RowDefinitions>
                 <RowDefinition Height="9"/>
                 <RowDefinition Height="*"/>
@@ -62,10 +64,10 @@
                     x:Name="TileCollection"
                     HorizontalScrollBarVisibility="Never"
                     VerticalScrollBarVisibility="Never"
-                    SelectedItem="{Binding  SelectedTile}"
                     ItemsSource="{Binding Categories}"
-                    SelectionMode="Single"
+                    SelectionMode="None"
                     ItemSizingStrategy="MeasureAllItems">
+
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <VerticalStackLayout Spacing="0" Margin="0,0,0,10">
@@ -95,8 +97,10 @@
                                     Scrolled="TileCollection_OnScrolled"
                                     MinimumHeightRequest="45"
                                     MinimumWidthRequest="45"
-                                    SelectionMode="Single"
+                                    SelectionMode="None"
+                                    SelectionChanged="TileCollectionByCategory_OnSelectionChanged"
                                     ItemSizingStrategy="MeasureAllItems">
+
                                     <CollectionView.ItemsSource>
                                         <MultiBinding Converter="{StaticResource CategoryToTilesConverter}">
                                             <Binding Path="." x:DataType="x:String"/>
@@ -117,7 +121,6 @@
                                     </CollectionView.ItemsLayout>
 
                                     <CollectionView.ItemTemplate>
-                                        <!-- <DataTemplate x:DataType="entities:Entity"> -->
                                         <DataTemplate x:DataType="tiles:Tile">
                                             <ContentView
                                                 x:Name="TileItemTemplate"
@@ -151,6 +154,27 @@
                                                            HorizontalTextAlignment="Center"
                                                            LineBreakMode="TailTruncation"
                                                            Text="{Binding Entity.EntityName, FallbackValue=Tile}"/>
+                                                    <Grid.GestureRecognizers>
+                                                        <TapGestureRecognizer
+                                                            Tapped="OnTileTapped"
+                                                            CommandParameter="{Binding .}"/>
+                                                    </Grid.GestureRecognizers>
+                                                    <Grid.Style>
+                                                        <Style TargetType="Grid">
+                                                            <Style.Triggers>
+                                                                <DataTrigger TargetType="Grid" Value="True">
+                                                                    <DataTrigger.Binding>
+                                                                        <MultiBinding Converter="{StaticResource RefEqualsConverter}">
+                                                                            <Binding Path="."/> <!-- this tile -->
+                                                                            <Binding x:DataType="tileSelectors:SideSelectorPanel" Source="{x:Reference Root}" Path="SelectedTile"/>
+                                                                        </MultiBinding>
+                                                                    </DataTrigger.Binding>
+                                                                    <Setter Property="BackgroundColor" Value="{StaticResource Gray300}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Grid.Style>
+
                                                 </Grid>
                                             </ContentView>
 

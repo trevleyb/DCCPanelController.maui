@@ -45,13 +45,13 @@
 
             <!-- Main Panel Content with Swipe Gesture -->
             <Grid Grid.Row="0"
+                  IsVisible="{Binding HideWelcomePage}"
                   BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
                 <Grid.GestureRecognizers>
                     <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
                     <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
                 </Grid.GestureRecognizers>
 
-                <!-- Panel Content or Empty View -->
                 <Grid>
                     <!-- Active Panel View -->
                     <controlPanel:ControlPanelView
@@ -172,53 +172,21 @@
             </Grid>
 
             <Grid Grid.Row="1" HeightRequest="32">
-                <CollectionView
-                    x:Name="PanelIndicatorsView"
-                    SelectedItem="{Binding SelectedIndicator, Mode=TwoWay}"
-                    ItemsSource="{Binding PanelIndicators,Mode=OneWay}"
-                    SelectionMode="Single"
-                    IsVisible="True"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Start"
-                    MinimumHeightRequest="32"
-                    MinimumWidthRequest="32"
-                    Margin="0,0,0,10">
-
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Horizontal" ItemSpacing="8"/>
-                    </CollectionView.ItemsLayout>
-
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="view:PanelIndicator">
-                            <Border
-                                WidthRequest="15"
-                                HeightRequest="15"
-                                StrokeShape="Ellipse"
-                                StrokeThickness="0">
-
-                                <VisualStateManager.VisualStateGroups>
-                                    <VisualStateGroup Name="CommonStates">
-                                        <VisualState Name="Normal">
-                                            <VisualState.Setters>
-                                                <Setter Property="BackgroundColor" Value="{StaticResource Gray300}"/>
-                                                <Setter Property="Scale" Value="1"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                        <VisualState Name="Selected">
-                                            <VisualState.Setters>
-                                                <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
-                                                <Setter Property="Scale" Value="1"/>
-                                            </VisualState.Setters>
-                                        </VisualState>
-                                    </VisualStateGroup>
-                                </VisualStateManager.VisualStateGroups>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-
-                <Label Margin="0,0,10,5" Text="{Binding ProfileName}" HorizontalOptions="End"
+                
+                <IndicatorView
+                    x:Name="Indicators"
+                    ItemsSource="{Binding Panels}"
+                    IndicatorColor="{StaticResource Gray300}"
+                    SelectedIndicatorColor="{StaticResource Primary}"
+                    IndicatorsShape="Circle"
+                    HideSingle="True"
+                    IndicatorSize="12"
+                    Position="{Binding CurrentPanelIndex}" />
+                
+                <Label Margin="0,0,10,5" 
                        FontSize="8"
+                       Text="{Binding ProfileName}" 
+                       HorizontalOptions="End"
                        VerticalOptions="End" IsVisible="{Binding IsMaximized}"
                        BackgroundColor="Transparent" TextColor="Gainsboro">
                     <Label.GestureRecognizers>

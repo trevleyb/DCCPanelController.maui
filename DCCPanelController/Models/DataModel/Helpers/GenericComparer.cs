@@ -10,7 +10,7 @@ public static class GenericComparer {
         typeof(string), typeof(int), typeof(double), typeof(float), typeof(decimal),
         typeof(bool), typeof(DateTime), typeof(DateTimeOffset), typeof(TimeSpan),
         typeof(Guid), typeof(byte), typeof(short), typeof(long), typeof(char),
-        typeof(sbyte), typeof(ushort), typeof(uint), typeof(ulong)
+        typeof(sbyte), typeof(ushort), typeof(uint), typeof(ulong), typeof(Color)
     ];
 
     public static bool AreEqual<T>(T? obj1, T? obj2, GenericComparerOptions? options = null) {

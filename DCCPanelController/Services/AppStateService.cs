@@ -4,11 +4,28 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 
 namespace DCCPanelController.Services;
 
-public class AppState : INotifyPropertyChanged {
+public class AppStateService : INotifyPropertyChanged {
 
-    public static AppState Instance { get; } = new();
+    public event Action<ITile>? SelectedTileSet;
+    public event Action? SelectedTileCleared;
+
+    public static AppStateService Instance { get; } = new();
     
-    public ITile? SelectedTile { get; set; }
+    public ITile? SelectedTile {
+        get;
+        set {
+            if (field == value) return;
+
+            Console.WriteLine($"APPSTATE: Selected Tile Changed: {field?.Entity.EntityName} -> {value?.Entity.EntityName}");
+            field = value;
+            OnPropertyChanged();
+            if (field is not null) {
+                SelectedTileSet?.Invoke(field);
+            } else {
+                SelectedTileCleared?.Invoke();
+            }
+        }
+    }
     
     public bool IsEditingPanel {
         get;

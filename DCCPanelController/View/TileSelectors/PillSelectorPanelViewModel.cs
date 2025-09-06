@@ -8,12 +8,16 @@ using Syncfusion.Maui.Toolkit.SegmentedControl;
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
-    [ObservableProperty]
-    private string _selectedCategory = string.Empty;
+    [ObservableProperty] private string _selectedCategory = string.Empty;
 
     public PillSelectorPanelViewModel() {
         SfCategories.Clear();
         SfCategories.Add(new SfSegmentItem { Text = "Loading" });
+        SelectedTile = null;
+        AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
+    }
+
+    private void InstanceOnSelectedTileCleared() {
         SelectedTile = null;
     }
 
@@ -29,8 +33,9 @@ public partial class PillSelectorPanelViewModel : TileSelectorViewModel {
     public ITile? SelectedTile {
         get;
         set {
-            AppState.Instance.SelectedTile = value;
+            AppStateService.Instance.SelectedTile = value;
             field = value;
+            OnPropertyChanged();
         }
     }
 

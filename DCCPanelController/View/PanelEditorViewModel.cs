@@ -24,6 +24,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ILogger<PanelEditor> _logger;
     private readonly PanelEditor? _panelEditor;
     private readonly ControlPanelView _panelView;
+    private readonly Border _panelEditorContainer;
     private readonly ProfileService _profileService;
     
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
@@ -60,14 +61,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
     public bool ExitViaBackButton { get; set; }
 
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, ControlPanelView panelView, PanelEditor panelEditor) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Border panelEditorContainer) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
         _panel = panel.Clone(false); // Make a clone so we are working on a clone
         _panelView = panelView;
         _panelEditor = panelEditor;
-
+        _panelEditorContainer = panelEditorContainer;
+        
         // Pre-build the palette cache
         TileSelectorPaletteCache.Prebuild(_panel);
 
@@ -150,7 +152,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 if (_panelView.ShowGrid) _panelView.ShowGrid = false;
                 await LetUICatchUpAsync();
 
-                var result = await _panelView.CaptureAsync();
+                var result = await _panelEditorContainer.CaptureAsync();
                 if (result == null) return string.Empty;
 
                 //var base64 = Convert.ToBase64String(ms.GetBuffer(), 0, length);

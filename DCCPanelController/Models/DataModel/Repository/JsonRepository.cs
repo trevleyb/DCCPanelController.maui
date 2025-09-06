@@ -9,7 +9,7 @@ public static class JsonRepository {
     private static readonly ILogger Logger = LogHelper.CreateLogger("PanelRepository");
 
     public static async Task SaveAsync(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}")) {
+        using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}", false)) {
             try {
                 var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
                 if (string.IsNullOrEmpty(jsonString)) return;
@@ -26,7 +26,7 @@ public static class JsonRepository {
     }
 
     public static void Save(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
-        using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}")) {
+        using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}", false)) {
             try {
                 var jsonString = JsonSerializer.Serialize(profile, JsonOptions.Options);
                 if (string.IsNullOrEmpty(jsonString)) return;
@@ -44,7 +44,7 @@ public static class JsonRepository {
 
     public static async Task<Profile?> LoadAsync(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
-        using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}")) {
+        using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}", false)) {
             try {
                 if (File.Exists(filePath)) {
                     try {
@@ -69,7 +69,7 @@ public static class JsonRepository {
 
     public static Profile? Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
-        using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}")) {
+        using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}", false)) {
             try {
                 if (File.Exists(filePath)) {
                     try {

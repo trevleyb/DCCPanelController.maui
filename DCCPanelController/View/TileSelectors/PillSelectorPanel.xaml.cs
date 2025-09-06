@@ -92,9 +92,11 @@ public partial class PillSelectorPanel : ContentView {
             var tile = Vm?.TilesForSelectedCategory[index.Value];
             if (e.Data.Properties is { } props) {
                 props["Tile"] = tile;
-                props["Source"] = "Symbol";
-            }
+                return;
+            } 
         }
+        Console.WriteLine("Unable to find tile at pointer location: Should not happen.");
+        e.Cancel = true;
     }
 
     private void SetDragPreview(object? sender, DragStartingEventArgs e, string imageName) {
