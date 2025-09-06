@@ -1,6 +1,7 @@
 using System.Reflection;
 using DCCPanelController.Helpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Layouts;
 
 namespace DCCPanelController.View.Properties.TileProperties.EditableControls;
 
@@ -40,43 +41,55 @@ public class EditableEnum(string label, string description = "", int order = 0, 
         if (string.IsNullOrWhiteSpace(info.Name)) throw new ArgumentException("Field name cannot be null or whitespace.", nameof(info.Name));
 
         var initialValue = Value;
-        var radioGroup = new StackLayout {
-            HeightRequest = 30,
-            Orientation = StackOrientation.Horizontal,
-            HorizontalOptions = LayoutOptions.Start,
-            VerticalOptions = LayoutOptions.Center,
+        var radioGroup = new FlexLayout() {
+            Direction = FlexDirection.Column,
+            Wrap = FlexWrap.Wrap,
+            JustifyContent = FlexJustify.Start,
+            AlignItems = FlexAlignItems.Start,
+            AlignContent = FlexAlignContent.Start,
             Margin = new Thickness(-5, 0, 0, 0)
         };
-
-        var currentValue = info.GetValue(owner);
-        Console.WriteLine($"Current Enum Value: {currentValue ?? "null"}");
-
+        
         for (var i = 0; i < enumNames.Count; i++) {
-            var radioButton = new RadioButton {
-                HeightRequest = 30,
+            var rb = new RadioButton {
+                // Make the label NoWrap so it measures to its text width
+                Content = new Label {
+                    BackgroundColor = Colors.AliceBlue,
+                    Text = enumNames[i] ?? "Unknown",
+                    LineBreakMode = LineBreakMode.NoWrap,
+                    VerticalTextAlignment = TextAlignment.Center
+                },
+                Value = enumValues[i] ?? 0,
                 BorderWidth = 0,
-                FontSize = 10,
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Center,
-                Value = enumValues[i] ?? 0,
-                Content = enumNames[i] ?? "Unknown"
+                Margin = new Thickness(6, 4)
             };
 
+            // Critical: prevent full-row expansion
+            FlexLayout.SetBasis(rb, FlexBasis.Auto);
+            FlexLayout.SetGrow(rb, 0);
+            FlexLayout.SetShrink(rb, 1);
+            FlexLayout.SetAlignSelf(rb, FlexAlignSelf.Start);
+
             if (HasMixedValues) {
-                if (enumValues[i] == null!) radioButton.IsChecked = true;
+                if (enumValues[i] == null!) rb.IsChecked = true;
             } else {
-                radioButton.IsChecked = enumValues[i]?.Equals(currentValue) ?? false;
+                var currentValue = info.GetValue(owner);
+                rb.IsChecked = enumValues[i]?.Equals(currentValue) ?? false;
             }
 
-            radioButton.CheckedChanged += (sender, args) => {
+            rb.CheckedChanged += (sender, args) => {
                 if (sender is RadioButton button && args.Value) {
                     var buttonVal = button.Value;
                     PropertyHelper.SetEnumPropertyValue(owner, info.Name, buttonVal);
                     SetModified(buttonVal?.ToString() != initialValue?.ToString());
                 }
             };
-            radioGroup.Children.Add(radioButton);
+
+            radioGroup.Children.Add(rb);
         }
+
         SetModified(false);
         return CreateGroupCell(radioGroup);
     }

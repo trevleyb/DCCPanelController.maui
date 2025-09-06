@@ -13,7 +13,7 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     private int _fontSize = 12;
 
     [ObservableProperty] [property: EditableEnum("Font Style", "", 2, "Text")]
-    private TextAttributeEnum _fontStyle = TextAttributeEnum.Normal;
+    private TextAttributeEnum _fontStyle = TextAttributeEnum.Regular;
 
     [ObservableProperty] [property: EditableString("Label", "", 0, "Text")]
     private string _label = string.Empty;

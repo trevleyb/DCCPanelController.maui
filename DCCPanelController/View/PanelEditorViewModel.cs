@@ -24,7 +24,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     private readonly ILogger<PanelEditor> _logger;
     private readonly PanelEditor? _panelEditor;
     private readonly ControlPanelView _panelView;
-    private readonly Border _panelEditorContainer;
+    private readonly Microsoft.Maui.Controls.View _panelEditorContainer;
     private readonly ProfileService _profileService;
     
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
@@ -61,7 +61,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
     public bool ExitViaBackButton { get; set; }
 
-    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Border panelEditorContainer) {
+    public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Microsoft.Maui.Controls.View panelEditorContainer) {
         _profileService = profileService;
         _logger = logger;
         _original = panel;
@@ -150,6 +150,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         try {
             using (new CodeTimer("Capture to Thumbnail Image")) {
                 if (_panelView.ShowGrid) _panelView.ShowGrid = false;
+                _panelView.ClearAllSelectedTiles();
                 await LetUICatchUpAsync();
 
                 var result = await _panelEditorContainer.CaptureAsync();

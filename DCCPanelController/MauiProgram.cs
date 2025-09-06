@@ -32,16 +32,19 @@ public static class MauiProgram {
 #endif
                 })
                .ConfigureFonts(fonts => {
-                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-
+                    fonts.AddFont("OpenSans.ttf", "OpenSans");
                     fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");
-                    fonts.AddFont("OpenSans-Medium.ttf", "OpenSansMedium");
-                    fonts.AddFont("OpenSans-Heavy.ttf", "OpenSansHeavy");
+                    fonts.AddFont("OpenSans-BoldItalic.ttf", "OpenSansBoldItalic");
+                    fonts.AddFont("OpenSans-ExtraBold.ttf", "OpenSansExtraBold");
+                    fonts.AddFont("OpenSans-ExtraBoldItalic.ttf", "OpenSansExtraBoldItalic");
+                    fonts.AddFont("OpenSans-Italic.ttf", "OpenSansItalic");
                     fonts.AddFont("OpenSans-Light.ttf", "OpenSansLight");
                     fonts.AddFont("OpenSans-LightItalic.ttf", "OpenSansLightItalic");
-
-                    fonts.AddFont("SegoeUI-Semibold.ttf", "SegoeSemibold");
+                    fonts.AddFont("OpenSans-Medium.ttf", "OpenSansMedium");
+                    fonts.AddFont("OpenSans-MediumItalic.ttf", "OpenSansMediumItalic");
+                    fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
+                    fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansBold");
+                    fonts.AddFont("OpenSans-SemiBoldItalic.ttf", "OpenSansBoldItalic");
                 });
 
         FormHelper.RemoveBorders();

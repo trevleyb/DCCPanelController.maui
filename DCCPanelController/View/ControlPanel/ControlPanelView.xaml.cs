@@ -341,7 +341,7 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
         try {
-            RemoveHighlights();
+            ClearAllSelectedTiles();
             if (e.Tile is { } tile) {
                 if (!GridPositionHelper.WouldCollide(tile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) &&
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
@@ -800,11 +800,9 @@ public partial class ControlPanelView {
                 Panel.AddEntity(newEntity);
                 OnTileChanged(tile);
             }
-
-            ClearAllSelectedTiles();
             foreach (var tile in tilesToCopy) MarkTileSelected(tile);
         }
-        MarkAllSelectedTiles();
+        ClearAllSelectedTiles();
     }
 
     /// <summary>

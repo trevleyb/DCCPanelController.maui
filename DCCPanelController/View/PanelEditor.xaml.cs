@@ -17,8 +17,8 @@ public partial class PanelEditor : ContentPage {
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly ILogger<PanelEditor> _logger;
     private readonly PanelEditorViewModel _viewModel;
-    private int _sidePaletteWidth = 100;
-    private int _bottomPaletteHeight = 120;
+
+    private TileSelectorDockSide? _currentState = null;
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
         _logger = logger;
@@ -44,21 +44,24 @@ public partial class PanelEditor : ContentPage {
 
         AppStateService.Instance.SelectedTileSet += InstanceOnSelectedTileSet;
         AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
-
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
-
+    
     protected override void OnSizeAllocated(double width, double height) {
+        Console.WriteLine($"Size Allocated: {width}x{height}");
         base.OnSizeAllocated(width, height);
+        UpdateScreenDimensions(width, height);
+    }
+
+    private void UpdateScreenDimensions(double width, double height) {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
 
-        _sidePaletteWidth = (int)SidePalette.Width.Value;
-        _bottomPaletteHeight = (int)BottomPalette.Height.Value ;
-        
-        if (width < height) SetDockedSide(TileSelectorDockSide.Bottom);
-        if (width >= height) SetDockedSide(TileSelectorDockSide.Side);
+        var newState = width <= height ? TileSelectorDockSide.Bottom : TileSelectorDockSide.Side;
+        if (newState != _currentState) {
+            _currentState = SetDockedSide(newState);
+        }
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
@@ -82,26 +85,22 @@ public partial class PanelEditor : ContentPage {
         SetDockedSide(e);
     }
 
-    private void SetDockedSide(TileSelectorDockSide side) {
+    private TileSelectorDockSide SetDockedSide(TileSelectorDockSide side) {
         switch (side) {
         case TileSelectorDockSide.Side:
-            SetPaletteVisibility(_sidePaletteWidth, 0);
+            SidePaletteContainer.IsVisible = true;
+            BottomPaletteContainer.IsVisible = false;
             break;
 
         case TileSelectorDockSide.Bottom:
-            SetPaletteVisibility(0, _bottomPaletteHeight);
+            SidePaletteContainer.IsVisible = false;
+            BottomPaletteContainer.IsVisible = true;
             break;
 
         default:
             throw new ArgumentOutOfRangeException(nameof(side), side, null);
         }
-    }
-
-    private void SetPaletteVisibility(int side, int bottom) {
-        SidePalette.Width = new GridLength(side);
-        BottomPalette.Height = new GridLength(bottom);
-        SidePaletteContainer.IsVisible = side > 0;
-        BottomPaletteContainer.IsVisible = bottom > 0;
+        return side;
     }
     #endregion
 
@@ -138,7 +137,7 @@ public partial class PanelEditor : ContentPage {
     }
 
     private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
-        PanelViewOnTileSelected([]);
+        PanelViewOnTileSelected(e.Tiles);
     }
 
     private void PanelViewOnTileSelected(HashSet<ITile> tiles) {

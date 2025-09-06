@@ -5,10 +5,6 @@
              xmlns:view="clr-namespace:DCCPanelController.View"
              xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
              xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
-             xmlns:navigationDrawer="http://schemas.syncfusion.com/maui/toolkit"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:converters="clr-namespace:DCCPanelController.View.Converters"
-             xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers"
              xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
              ios:Page.UseSafeArea="false"
@@ -17,7 +13,7 @@
              x:Class="DCCPanelController.View.PanelEditor">
 
     <Shell.BackButtonBehavior>
-        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}" 
+        <BackButtonBehavior IsEnabled="{Binding CanPressBackButton}"
                             x:DataType="view:PanelEditorViewModel"
                             Command="{Binding BackButtonPressedCommand}"/>
     </Shell.BackButtonBehavior>
@@ -50,7 +46,7 @@
             Command="{Binding Path=EditPropertiesCommand}"
             IsEnabled="{Binding CanEditProperties}">
         </ToolbarItem>
-        
+
         <ToolbarItem
             IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
             Text="Grid" x:Name="GridToolbar"
@@ -65,94 +61,78 @@
 
             <!-- Initially: 1 column, 3 rows (standard layout) -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"  x:Name="MainColumn"/>
-                <ColumnDefinition Width="100" x:Name="SidePalette"/>
+                <ColumnDefinition Width="*"   x:Name="MainColumn"/>
+                <ColumnDefinition Width="auto" x:Name="SidePalette"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"   x:Name="PanelRow"/>       
-                <RowDefinition Height="120" x:Name="BottomPalette"/>  
-                <RowDefinition Height="30"  x:Name="StatusRow"/>      
+                <RowDefinition Height="*"   x:Name="PanelRow"/>
+                <RowDefinition Height="auto" x:Name="BottomPalette"/>
+                <RowDefinition Height="30"  x:Name="StatusRow"/>
             </Grid.RowDefinitions>
 
             <!-- Row 0: Panel Editor -->
-            <Border x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" Stroke="#FFF5F5F5" StrokeThickness="0">
-                <Grid x:Name="DisplayBorder" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
-                    <controlPanel:ControlPanelView
-                        Margin="5"
-                        BackgroundColor="Transparent"
-                        DesignMode="true"
-                        Interactive="False"
-                        EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
-                        Grid.Column="0"
-                        HorizontalOptions="Fill"
-                        Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
-                        VerticalOptions="Fill"
-                        x:Name="PanelView"/>
-                </Grid>
-            </Border>
-            
+            <Grid x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" HorizontalOptions="Fill" VerticalOptions="Fill">
+                <controlPanel:ControlPanelView
+                    Margin="5"
+                    BackgroundColor="Transparent"
+                    DesignMode="true"
+                    Interactive="False"
+                    EditMode="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=EditMode, Mode=OneWay}"
+                    Grid.Column="0"
+                    HorizontalOptions="Fill"
+                    Panel="{Binding Source={RelativeSource AncestorType={x:Type view:PanelEditorViewModel}}, Path=Panel, Mode=OneWay}"
+                    VerticalOptions="Fill"
+                    x:Name="PanelView"/>
+            </Grid>
+
             <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
-                <Border
-                    x:Name="SidePaletteContent"
-                    BackgroundColor="WhiteSmoke"
-                    Stroke="#FFF5F5F5"
-                    StrokeThickness="0"
-                    x:DataType="dataModel:Panel">
-                    <tileSelectors:SideSelectorPanel
-                        x:Name="SidePaletteSelector"
-                        HorizontalOptions="Center"
-                        OnDockSideChanged="PaletteDockSideChanged"/>
-                </Border>
+                <tileSelectors:SideSelectorPanel
+                    x:Name="SidePaletteSelector"
+                    HorizontalOptions="Center"
+                    OnDockSideChanged="PaletteDockSideChanged"/>
             </Grid>
 
             <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
-                <Border
-                    x:Name="BottomPaletteContent"
-                    BackgroundColor="WhiteSmoke"
-                    Stroke="#FFF5F5F5"
-                    StrokeThickness="0"
-                    x:DataType="dataModel:Panel">
-                    <tileSelectors:PillSelectorPanel
-                        x:Name="PillPaletteSelector"
-                        HorizontalOptions="Center"
-                        OnDockSideChanged="PaletteDockSideChanged"/>
-                </Border>
+                <tileSelectors:PillSelectorPanel
+                    x:Name="PillPaletteSelector"
+                    HorizontalOptions="Center"
+                    OnDockSideChanged="PaletteDockSideChanged"/>
             </Grid>
 
-            <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="2" Margin="2" ColumnSpan="2" >
+            <Grid x:Name="StatusContainer" Grid.Column="0" Grid.Row="2" Margin="2" ColumnSpan="2">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="1" />   <!-- Top border -->
-                    <RowDefinition Height="*" />   <!-- Content -->
+                    <RowDefinition Height="1"/>   <!-- Top border -->
+                    <RowDefinition Height="*"/>   <!-- Content -->
                 </Grid.RowDefinitions>
 
                 <!-- Top Border -->
-                <BoxView Grid.Row="0" HeightRequest="0.5" 
-                         BackgroundColor="{StaticResource Primary}" 
+                <BoxView Grid.Row="0" HeightRequest="0.5"
+                         BackgroundColor="{StaticResource Primary}"
                          HorizontalOptions="Fill"/>
 
                 <!-- Content -->
                 <Grid Grid.Row="1">
                     <Grid ColumnDefinitions="auto,*,auto" HorizontalOptions="Fill" VerticalOptions="Fill">
-                        <Label Grid.Column="0" HorizontalOptions="Start" FontSize="15" FontFamily="OpenSansLight" x:Name="SelectionText" TextColor="{StaticResource Primary}" />
-                        <Label Grid.Column="2" HorizontalOptions="End"   FontSize="15" FontFamily="OpenSansLight" x:Name="ChangesText"   TextColor="{StaticResource Primary}" />
+                        <Label Grid.Column="0" HorizontalOptions="Start" FontSize="15" FontFamily="OpenSansLight"
+                               x:Name="SelectionText" TextColor="{StaticResource Primary}"/>
+                        <Label Grid.Column="2" HorizontalOptions="End" FontSize="15" FontFamily="OpenSansLight"
+                               x:Name="ChangesText" TextColor="{StaticResource Primary}"/>
                     </Grid>
                 </Grid>
             </Grid>
 
         </Grid>
-        
+
         <!-- Loading Overlay -->
         <Grid IsVisible="{Binding IsProcessing}"
-              BackgroundColor="WhiteSmoke"
               Opacity="0.75"
               HorizontalOptions="Fill"
               VerticalOptions="Fill">
 
-                <StackLayout
-                    HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
-                    <ActivityIndicator IsRunning="{Binding IsProcessing}"
-                                       Color="{StaticResource Primary}"/>
-                </StackLayout>
+            <StackLayout
+                HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
+                <ActivityIndicator IsRunning="{Binding IsProcessing}" Color="{StaticResource Primary}"/>
+            </StackLayout>
         </Grid>
     </Grid>
 </ContentPage>

@@ -24,15 +24,24 @@ public enum TextAlignmentHorizontalEnum { Left, Right, Center, Justify }
 
 public enum TextAlignmentVerticalEnum { Top, Bottom, Center }
 
-public enum TextAttributeEnum { Normal, Bold, Italic }
+public enum TextAttributeEnum { Regular, Bold, Italic, BoldItalic, Light, LightItalic, Medium, MediumItalic, SemiBold, SemiBoldItalic, ExtraBold, ExtraBoldItalic }
 
 public static class EnumHelpers {
-    public static FontAttributes ConvertFontStyle(TextAttributeEnum style) {
+    public static string ConvertFontStyle(TextAttributeEnum style) {
         return style switch {
-            TextAttributeEnum.Normal => FontAttributes.None,
-            TextAttributeEnum.Bold   => FontAttributes.Bold,
-            TextAttributeEnum.Italic => FontAttributes.Italic,
-            _                        => FontAttributes.None,
+            TextAttributeEnum.Regular         => "OpenSansRegular",
+            TextAttributeEnum.Bold            => "OpenSansBold",
+            TextAttributeEnum.Italic          => "OpenSansItalic",
+            TextAttributeEnum.BoldItalic      => "OpenSansBoldItalic",
+            TextAttributeEnum.Light           => "OpenSansLight",
+            TextAttributeEnum.LightItalic     => "OpenSansLightItalic",
+            TextAttributeEnum.Medium          => "OpenSansMedium",
+            TextAttributeEnum.MediumItalic    => "OpenSansMediumItalic",
+            TextAttributeEnum.SemiBold        => "OpenSansSemiBold",
+            TextAttributeEnum.SemiBoldItalic  => "OpenSansSemiBoldItalic",
+            TextAttributeEnum.ExtraBold       => "OpenSansExtraBold",
+            TextAttributeEnum.ExtraBoldItalic => "OpenSansExtraBoldItalic",
+            _                                 => "OpenSansRegular"
         };
     }
     

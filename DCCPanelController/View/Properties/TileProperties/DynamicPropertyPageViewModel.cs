@@ -183,7 +183,6 @@ public partial class DynamicPropertyPageViewModel : BaseViewModel, IPropertyPage
         var lastGroup = "*";
 
         foreach (var commonProperty in _commonProperties) {
-            // Create the group if needed
             if (commonProperty.Metadata.Group != lastGroup) {
                 groupContainer = CreateExpanderGroup(commonProperty.Metadata.Group, lastGroup == "*");
                 _container.Children.Add(groupContainer.Group);

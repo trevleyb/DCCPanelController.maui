@@ -29,12 +29,12 @@ public class DrawableTextTile : Tile, ITileDrawable {
                 LineBreakMode = LineBreakMode.TailTruncation,
                 Rotation = entity.Rotation,
                 FontSize = entity.FontSize,
-                FontAttributes = EnumHelpers.ConvertFontStyle(entity.FontStyle),
                 TextColor = entity.TextColor,
                 InputTransparent = true,
                 WidthRequest = TileWidth,
                 HeightRequest = TileHeight,
-                Text = entity.Label
+                Text = entity.Label,
+                FontFamily = EnumHelpers.ConvertFontStyle(entity.FontStyle),
             };
             return label;
         }

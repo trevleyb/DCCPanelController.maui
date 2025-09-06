@@ -16,11 +16,14 @@ public abstract class EditableProperty(string label, string description = "", in
     public bool HasMixedValues { get; set; } = false; 
     
     protected ILogger<EditableProperty> PropertyLogger = LogHelper.CreateLogger<EditableProperty>();
-    
+
     protected IView CreateGroupCell(IView? view, int? height = null) {
 
         var vStack = new VerticalStackLayout();
+        vStack.VerticalOptions = LayoutOptions.Fill;
+        
         var hStack = new HorizontalStackLayout();
+        vStack.HorizontalOptions = LayoutOptions.Fill;
 
         // If there is a Label, then add the label to the first column. 
         // -----------------------------------------------------------------------------
