@@ -16,18 +16,18 @@ public sealed class ValidationSummary {
 
 public interface IValidationRule {
     bool AppliesTo(PropertyRow row);
-    Task<ValidationIssue?> EvaluateAsync(FormContext ctx, PropertyRow row);
+    Task<ValidationIssue?> EvaluateAsync(DynamicTilePropertyForm ctx, PropertyRow row);
 }
 
 public interface IValidator {
-    Task<ValidationSummary> ValidateAsync(FormContext ctx, IEnumerable<PropertyRow> rows);
+    Task<ValidationSummary> ValidateAsync(DynamicTilePropertyForm ctx, IEnumerable<PropertyRow> rows);
 }
 
 public sealed class CompositeValidator : IValidator {
     private readonly IReadOnlyList<IValidationRule> _rules;
     public CompositeValidator(IEnumerable<IValidationRule> rules) => _rules = rules.ToList();
 
-    public async Task<ValidationSummary> ValidateAsync(FormContext ctx, IEnumerable<PropertyRow> rows) {
+    public async Task<ValidationSummary> ValidateAsync(DynamicTilePropertyForm ctx, IEnumerable<PropertyRow> rows) {
         var issues = new List<ValidationIssue>();
         foreach (var row in rows) {
             row.Issues.Clear();

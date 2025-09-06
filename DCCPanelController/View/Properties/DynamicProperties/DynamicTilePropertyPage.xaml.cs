@@ -24,11 +24,11 @@ public partial class DynamicTilePropertyPopupContent {
     }
 
     public string Title { get; set; } = "Properties";
-    public FormContext? Form => _form;
+    public DynamicTilePropertyForm? Form => _form;
     public event EventHandler? Applied;
     public event EventHandler? Cancelled;
 
-    private FormContext? _form;
+    private DynamicTilePropertyForm? _form;
     private IUndoService _undo = new DefaultUndoService(); // from MauiAdapters
 
     private static async void OnTilesSourceChanged(BindableObject bindable, object oldValue, object newValue) {
@@ -42,7 +42,7 @@ public partial class DynamicTilePropertyPopupContent {
         if (tiles == null || tiles.Count == 0) return;
 
         var selection = tiles.Select(object (t) => t.Entity);
-        _form = Bootstrap.CreateForm(selection);
+        _form = DynamicTilePropertyForm.CreateForm(selection);
         await _form.ValidateAsync();
 
         bool isFirst = true;

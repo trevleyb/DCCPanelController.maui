@@ -2,7 +2,9 @@ using System.Globalization;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-public sealed class FormContext {
+public enum AppMode { Edit, Run }
+
+public sealed class DynamicTilePropertyForm {
     private readonly IEditableExtractor _extractor;
     private readonly IPropertyRendererRegistry _renderers;
     private readonly IValidator _validator;
@@ -16,7 +18,25 @@ public sealed class FormContext {
     public IReadOnlyList<PropertyGroup> Groups { get; }
     public bool CanApply { get; private set; }
 
-    public FormContext(IEnumerable<object> selectedEntities,
+    public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection) {
+        var extractor = new EditableExtractorCache();
+        var renderers = new PropertyRendererRegistry();
+        PropertyRenderers.RegisterDefaults(renderers);
+
+        var validator = new CompositeValidator([
+            new PropertyRendererRules.RequiredRule(),
+            new PropertyRendererRules.RangeRule(),
+            new PropertyRendererRules.RegexRule()
+        ]);
+
+        var equality = new DefaultEqualityPolicy();
+        var undo = new DefaultUndoService();
+        var kindResolver = new EditableExtractorResolver();
+
+        return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, AppMode.Edit);
+    }
+    
+    private DynamicTilePropertyForm(IEnumerable<object> selectedEntities,
                        IEditableExtractor extractor,
                        IPropertyRendererRegistry renderers,
                        IValidator validator,
@@ -52,7 +72,6 @@ public sealed class FormContext {
             
             var gname = string.IsNullOrWhiteSpace(f.Meta.Group) ? "General" : f.Meta.Group;
             if (!groups.TryGetValue(gname, out var g)) {
-                // group order = first field's Order within that group
                 g = new PropertyGroup(gname, f.Meta.Order);
                 groups[gname] = g;
             }
@@ -75,25 +94,6 @@ public sealed class FormContext {
                       .ToList(), rows);
     }
 
-    // private IReadOnlyList<PropertyRow> BuildRows() {
-    //     if (SelectedEntities.Count == 0) return [];
-    //     var first = SelectedEntities[0];
-    //     var fields = _extractor.Extract(first.GetType());
-    //     var rows = new List<PropertyRow>(fields.Count);
-    //
-    //     foreach (var f in fields) {
-    //         var row = new PropertyRow(f);
-    //         var values = SelectedEntities.Select(e => f.Accessor.Get(e)).ToList();
-    //         var firstVal = values[0];
-    //         var allEqual = values.All(v => _equality.AreEqual(v, firstVal, f.Accessor.PropertyType));
-    //         row.OriginalValue = allEqual ? firstVal : null;
-    //         row.CurrentValue = row.OriginalValue;
-    //         row.HasMixedValues = !allEqual;
-    //         rows.Add(row);
-    //     }
-    //     return rows;
-    // }
-    //
     public object GetRendererView(PropertyRow row) {
         var ctx = new PropertyContext(row, Mode);
         var kind = _kindResolver.Resolve(row.Field);

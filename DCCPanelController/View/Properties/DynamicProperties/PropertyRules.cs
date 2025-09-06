@@ -7,7 +7,7 @@ public class PropertyRendererRules {
     public sealed class RequiredRule : IValidationRule {
         public bool AppliesTo(PropertyRow row) => row.Field.Meta.GetParameters("required", false);
 
-        public Task<ValidationIssue?> EvaluateAsync(FormContext ctx, PropertyRow row) {
+        public Task<ValidationIssue?> EvaluateAsync(DynamicTilePropertyForm ctx, PropertyRow row) {
             if (row.HasMixedValues && !row.IsTouched) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(null);
             var v = row.CurrentValue;
             if (v is null) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(ValidationIssue.Error("required", $"{row.Field.Meta.Label} is required."));
@@ -19,7 +19,7 @@ public class PropertyRendererRules {
     public sealed class RangeRule : IValidationRule {
         public bool AppliesTo(PropertyRow row) => row.Field.Meta.Parameters.ContainsKey("min") || row.Field.Meta.Parameters.ContainsKey("max");
 
-        public Task<ValidationIssue?> EvaluateAsync(FormContext ctx, PropertyRow row) {
+        public Task<ValidationIssue?> EvaluateAsync(DynamicTilePropertyForm ctx, PropertyRow row) {
             if (row.CurrentValue is IComparable c) {
                 var hasMin = row.Field.Meta.Parameters.TryGetValue("min", out var minObj);
                 var hasMax = row.Field.Meta.Parameters.TryGetValue("max", out var maxObj);
@@ -33,7 +33,7 @@ public class PropertyRendererRules {
     public sealed class RegexRule : IValidationRule {
         public bool AppliesTo(PropertyRow row) => row.Field.Meta.Parameters.ContainsKey("regex");
 
-        public Task<ValidationIssue?> EvaluateAsync(FormContext ctx, PropertyRow row) {
+        public Task<ValidationIssue?> EvaluateAsync(DynamicTilePropertyForm ctx, PropertyRow row) {
             if (row.CurrentValue is string s) {
                 var pattern = row.Field.Meta.GetParameters<string>("regex", "");
                 if (!string.IsNullOrEmpty(pattern) && !Regex.IsMatch(s, pattern)) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(ValidationIssue.Error("regex", $"{row.Field.Meta.Label} is not in the correct format."));
