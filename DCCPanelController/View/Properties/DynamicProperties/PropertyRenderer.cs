@@ -116,17 +116,4 @@ public static class PropertyRenderers {
             errorLabel.Text = err?.Message ?? string.Empty;
         }
     }
-
-
-
-
-
-
-
-    
-
-
-    
-
-    
 }

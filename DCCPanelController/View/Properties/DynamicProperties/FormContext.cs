@@ -13,6 +13,7 @@ public sealed class FormContext {
     public AppMode Mode { get; }
     public IReadOnlyList<object> SelectedEntities { get; }
     public IReadOnlyList<PropertyRow> Rows { get; }
+    public IReadOnlyList<PropertyGroup> Groups { get; }
     public bool CanApply { get; private set; }
 
     public FormContext(IEnumerable<object> selectedEntities,
@@ -23,6 +24,7 @@ public sealed class FormContext {
                        IUndoService undo,
                        IEditorKindResolver kindResolver,
                        AppMode mode = AppMode.Edit) {
+        
         SelectedEntities = selectedEntities.ToList();
         _extractor = extractor;
         _renderers = renderers;
@@ -31,28 +33,67 @@ public sealed class FormContext {
         _undo = undo;
         _kindResolver = kindResolver;
         Mode = mode;
-        Rows = BuildRows();
+        (Groups,Rows) = BuildGroups();
     }
 
-    private IReadOnlyList<PropertyRow> BuildRows() {
-        if (SelectedEntities.Count == 0) return [];
+    private (IReadOnlyList<PropertyGroup>,IReadOnlyList<PropertyRow>) BuildGroups() {
+        if (SelectedEntities.Count == 0) return ([],[]);
+
         var first = SelectedEntities[0];
         var fields = _extractor.Extract(first.GetType());
-        var rows = new List<PropertyRow>(fields.Count);
 
-        foreach (var f in fields) {
+        // Group by attribute Group, then order groups and fields consistently
+        var groups = new Dictionary<string, PropertyGroup>(StringComparer.OrdinalIgnoreCase);
+        var rows = new List<PropertyRow>(fields.Count);
+        
+        foreach (var f in fields.OrderBy(f => f.Meta.Group)
+                                .ThenBy(f => f.Meta.Order)
+                                .ThenBy(f => f.Prop.Name)) {
+            
+            var gname = string.IsNullOrWhiteSpace(f.Meta.Group) ? "General" : f.Meta.Group;
+            if (!groups.TryGetValue(gname, out var g)) {
+                // group order = first field's Order within that group
+                g = new PropertyGroup(gname, f.Meta.Order);
+                groups[gname] = g;
+            }
+
             var row = new PropertyRow(f);
             var values = SelectedEntities.Select(e => f.Accessor.Get(e)).ToList();
             var firstVal = values[0];
             var allEqual = values.All(v => _equality.AreEqual(v, firstVal, f.Accessor.PropertyType));
+
             row.OriginalValue = allEqual ? firstVal : null;
             row.CurrentValue = row.OriginalValue;
             row.HasMixedValues = !allEqual;
+
+            g.Rows.Add(row);
             rows.Add(row);
         }
-        return rows;
+        return (groups.Values
+                      .OrderBy(g => g.Name) // primary by name
+                      .ThenBy(g => g.Order) // tie-break by first field order
+                      .ToList(), rows);
     }
 
+    // private IReadOnlyList<PropertyRow> BuildRows() {
+    //     if (SelectedEntities.Count == 0) return [];
+    //     var first = SelectedEntities[0];
+    //     var fields = _extractor.Extract(first.GetType());
+    //     var rows = new List<PropertyRow>(fields.Count);
+    //
+    //     foreach (var f in fields) {
+    //         var row = new PropertyRow(f);
+    //         var values = SelectedEntities.Select(e => f.Accessor.Get(e)).ToList();
+    //         var firstVal = values[0];
+    //         var allEqual = values.All(v => _equality.AreEqual(v, firstVal, f.Accessor.PropertyType));
+    //         row.OriginalValue = allEqual ? firstVal : null;
+    //         row.CurrentValue = row.OriginalValue;
+    //         row.HasMixedValues = !allEqual;
+    //         rows.Add(row);
+    //     }
+    //     return rows;
+    // }
+    //
     public object GetRendererView(PropertyRow row) {
         var ctx = new PropertyContext(row, Mode);
         var kind = _kindResolver.Resolve(row.Field);
@@ -70,7 +111,7 @@ public sealed class FormContext {
     public IReadOnlyList<PropertyChange> PreviewDiff() {
         var changes = new List<PropertyChange>();
         foreach (var row in Rows) {
-            bool shouldApply = row.IsTouched || !_equality.AreEqual(row.CurrentValue, row.OriginalValue, row.Field.Accessor.PropertyType);
+            var shouldApply = row.IsTouched || !_equality.AreEqual(row.CurrentValue, row.OriginalValue, row.Field.Accessor.PropertyType);
             if (!shouldApply) continue;
             foreach (var entity in SelectedEntities) {
                 var oldVal = row.Field.Accessor.Get(entity);
@@ -84,11 +125,17 @@ public sealed class FormContext {
 
     public async Task<bool> ApplyAsync(bool requireAtomic = false) {
         var summary = await ValidateAsync().ConfigureAwait(false);
-        if (summary.HasErrors) return false;
-        
+        if (summary.HasErrors) {
+            Console.WriteLine("Validation failed.");
+            return false;
+        }
+
         var changes = PreviewDiff();
-        if (changes.Count == 0) return true;
-        
+        if (changes.Count == 0) {
+            Console.WriteLine("No changes to apply.");
+            return true;
+        }
+
         var tx = new ApplyTransaction(changes);
         try {
             await tx.CommitAsync().ConfigureAwait(false);

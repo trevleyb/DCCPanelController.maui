@@ -64,7 +64,7 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
     // --- helpers ---
 
     // Read a Color from the row's value (supports Color or hex string)
-    private static bool TryGetRowColor(PropertyRow row, out Color result) {
+    private static bool TryGetRowColor(PropertyRow row, out Color? result) {
         if (row.OriginalValue is Color c1) {
             result = c1;
             return true;
@@ -81,12 +81,12 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
             result = c4;
             return true;
         }
-        result = default;
+        result = null;
         return false;
     }
 
     // Read a Color from attribute Params (accepts Color or hex string)
-    private static bool TryGetParamColor(EditableAttribute meta, string key, out Color result) {
+    private static bool TryGetParamColor(EditableAttribute meta, string key, out Color? result) {
         if (meta.Parameters.TryGetValue(key, out var obj)) {
             if (obj is Color c) {
                 result = c;
@@ -97,15 +97,15 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
                 return true;
             }
         }
-        result = default;
+        result = null;
         return false;
     }
 
     // naive hex parser: "#RGB", "#RRGGBB", or "#AARRGGBB"
-    private static bool TryParseColor(string s, out Color result) {
+    private static bool TryParseColor(string s, out Color? result) {
         try {
             if (string.IsNullOrWhiteSpace(s)) {
-                result = default;
+                result = null;
                 return false;
             }
             s = s.Trim();
@@ -128,7 +128,7 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
             }
         } catch { /* ignore */
         }
-        result = default;
+        result = null;
         return false;
     }
 }

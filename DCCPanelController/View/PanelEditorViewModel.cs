@@ -264,10 +264,11 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task DynamicTilePropertyPopupAsync(string title) {
         var scrollContent = new ScrollView();
         var content = new DynamicTilePropertyPopupContent {
+            Title = title,
             TilesSource = SelectedTiles 
         };
         content.Applied += ContentOnApplied;  
-        content.Closed  += ContentOnClosed;
+        content.Cancelled  += ContentOnClosed;
         scrollContent.Content = content;
 
         var popup = new SfPopup {
@@ -281,7 +282,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 HasShadow = false,
                 BlurIntensity = PopupBlurIntensity.Light,
                 HeaderBackground = Colors.WhiteSmoke,
-                FooterBackground = Colors.DarkGrey,
+                FooterBackground = Colors.LightGray,
                 MessageBackground = Colors.WhiteSmoke,
                 AcceptButtonBackground = Colors.White,
                 DeclineButtonBackground = Colors.White,
@@ -301,8 +302,8 @@ public partial class PanelEditorViewModel : ObservableObject {
             AnimationMode = PopupAnimationMode.Zoom,
             AnimationDuration = 300,
             OverlayMode = PopupOverlayMode.Transparent, 
-            //AcceptCommand = acceptPopupCommand,
-            //DeclineCommand = DeclinePopupCommand
+            AcceptCommand = content.ApplyCommand,
+            DeclineCommand = content.CancelCommand
         };
         if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
         popup.Show();    

@@ -1,5 +1,8 @@
+using System.Diagnostics;
+
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
+[DebuggerDisplay("{Field?.Meta?.Label} Touched: {IsTouched}")]
 public sealed class PropertyRow {
     public EditableField Field { get; }
     public object? OriginalValue { get; set; }
