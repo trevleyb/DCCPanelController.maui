@@ -3,9 +3,8 @@ using DCCPanelController.View.Components; // <-- your ColorPickerButton namespac
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-// Register this via registry.Register("color", new ColorPickerRenderer()); after defaults.
 public sealed class ColorPickerRenderer : IPropertyRenderer {
-    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == "color";
+    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Color;
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
 
@@ -58,7 +57,7 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
                 RenderBinding.SetValue(row, picker.SelectedColor);
             }
         };
-        return PropertyRenderers.WrapWithLabel(row, visual, labelColumnWidth: 150);
+        return PropertyRenderers.WrapWithLabel(row, visual);
     }
 
     // --- helpers ---

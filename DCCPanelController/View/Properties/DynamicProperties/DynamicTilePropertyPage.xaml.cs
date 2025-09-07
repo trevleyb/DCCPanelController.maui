@@ -48,6 +48,7 @@ public partial class DynamicTilePropertyPopupContent {
     }
     #endregion
 
+    #region Build the Properties form 
     /// <summary>
     /// Rebuild the Form if the collection of Tiles changes
     /// </summary>
@@ -107,14 +108,16 @@ public partial class DynamicTilePropertyPopupContent {
         Applied?.Invoke(this, EventArgs.Empty);
         return Result.Ok();
     }
-
+    
     [RelayCommand]
     private async Task CancelAsync() {
         await _undo.UndoAsync();
         await RebuildAsync();
         Cancelled?.Invoke(this, EventArgs.Empty);
     }
-
+    #endregion 
+    
+    #region Group Helpers
     private static (IView? expander, IList<IView>? children) CreateExpanderGroup(string groupKey, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey);
 
@@ -194,4 +197,5 @@ public partial class DynamicTilePropertyPopupContent {
             HorizontalOptions = LayoutOptions.Fill
         };
     }
+    #endregion
 }

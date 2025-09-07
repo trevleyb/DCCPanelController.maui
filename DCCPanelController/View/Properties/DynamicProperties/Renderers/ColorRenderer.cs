@@ -1,8 +1,8 @@
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class ColorRenderer : IPropertyRenderer {
+internal sealed class ColorRendererNotUsed : IPropertyRenderer {
     private static readonly Color[] Palette = new[] { Colors.Red, Colors.Green, Colors.Blue, Colors.Yellow, Colors.Orange, Colors.Purple, Colors.White, Colors.Black };
-    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == "color";
+    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Color;
 
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
@@ -14,7 +14,7 @@ internal sealed class ColorRenderer : IPropertyRenderer {
             btn.Text = "Select";
         };
         btn.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return PropertyRenderers.WrapWithLabel(row, btn, 150);
+        return PropertyRenderers.WrapWithLabel(row, btn);
         static Color ToColor(object? o) => o is Color c ? c : Colors.Transparent;
 
         static Color NextColor(Color current) {

@@ -1,7 +1,7 @@
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
     internal sealed class IntRenderer : IPropertyRenderer {
-        public bool CanRender(PropertyContext ctx) => ctx.EditorKind == "int";
+        public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Int;
         public object CreateView(PropertyContext ctx) {
             var row = ctx.Row;
             var min = row.Field.Meta.GetParameters("min", int.MinValue);
@@ -33,7 +33,7 @@ namespace DCCPanelController.View.Properties.DynamicProperties;
             grid.Add(minus, 1, 0);
             grid.Add(plus, 2, 0);
             grid.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-            return PropertyRenderers.WrapWithLabel(row, grid, 100);
+            return PropertyRenderers.WrapWithLabel(row, grid);
             static int Parse(string? s, int fallback) => int.TryParse(s, out var v) ? v : fallback;
         }
     }

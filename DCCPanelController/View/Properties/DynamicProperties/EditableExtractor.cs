@@ -42,6 +42,11 @@ public sealed class EditableExtractorCache : IEditableExtractor {
         foreach (var pi in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
             var meta = pi.GetCustomAttribute<EditableAttribute>(inherit: true);
             if (meta == null || !pi.CanRead || !pi.CanWrite) continue;
+            
+            meta.MaterializeParameters();
+            foreach (var p in pi.GetCustomAttributes<EditableParamAttribute>(inherit: true)) {
+                meta.Parameters[p.Key] = p.BoxedValue!;
+            }
             var accessor = CompileAccessor(pi);
             list.Add(new EditableField(type, pi, meta, accessor));
         }

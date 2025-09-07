@@ -28,24 +28,29 @@ public static class PropertyRenderers {
         registry.Register("date", new DateRenderer());
         registry.Register("timespan", new TimeSpanRenderer());
         registry.Register("url", new UrlRenderer());
+        registry.Register("enum", new EnumRadioRenderer());
+        registry.Register("enum.choice", new EnumChoiceRenderer());
+        registry.Register("enum.radio",  new EnumRadioRenderer());
 
-        // TODO: Need to add support for these types
-        registry.Register("actions", new TextRenderer());
-        registry.Register("block", new TextRenderer());
-        registry.Register("button", new TextRenderer());
-        registry.Register("image", new TextRenderer());
-        registry.Register("switch", new TextRenderer());
-        registry.Register("opacity", new TextRenderer());
-        registry.Register("route", new TextRenderer());
-        registry.Register("turnout", new TextRenderer());
+        registry.Register("actions", new ActionsRenderer());
+        registry.Register("block", new BlockRenderer());
+        registry.Register("button", new ButtonRenderer());
+        registry.Register("image", new ImageRenderer());
+        registry.Register("switch", new SwitchRenderer());
+        registry.Register("opacity", new OpacityRenderer());
+        registry.Register("route", new RouteRenderer());
+        registry.Register("turnout", new TurnoutRenderer());
     }
 
-    public static Microsoft.Maui.Controls.View WrapWithLabel(PropertyRow row,
-                                                              Microsoft.Maui.Controls.View control,
-                                                              double? fieldColumnWidth = -1,
-                                                              double labelColumnWidth = -1, 
-                                                              double columnSpacing = 12,
-                                                              double rowSpacing = 2) {
+    public static Microsoft.Maui.Controls.View WrapWithLabel(
+        PropertyRow row,
+        Microsoft.Maui.Controls.View control) {
+
+        double labelColumnWidth = 150;
+        double fieldColumnWidth = row?.Field?.Meta?.Width ?? 250;
+        double columnSpacing = 12;
+        double rowSpacing = 2;
+        
         var label = new Label {
             Text = row.Field.Meta.Label,
             FontSize = 15,
@@ -72,7 +77,7 @@ public static class PropertyRenderers {
         var grid = new Grid {
             ColumnDefinitions = {
                 labelColumnWidth > 0 ? new ColumnDefinition(labelColumnWidth) : new ColumnDefinition(150),
-                new ColumnDefinition((fieldColumnWidth ?? -1) >= 0 ? fieldColumnWidth ?? GridLength.Auto : GridLength.Auto)
+                new ColumnDefinition(fieldColumnWidth >= 0 ? fieldColumnWidth : GridLength.Auto)
             },
             RowDefinitions = {
                 new RowDefinition(50), // label + control

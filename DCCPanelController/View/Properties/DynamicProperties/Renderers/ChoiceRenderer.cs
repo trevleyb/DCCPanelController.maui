@@ -1,7 +1,7 @@
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 internal sealed class ChoiceRenderer : IPropertyRenderer {
-    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == "choice";
+    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Choice;
 
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;

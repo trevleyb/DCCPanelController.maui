@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView
+    x:Name="Root"
     x:Class="DCCPanelController.View.Properties.DynamicProperties.DynamicTilePropertyPopupContent"
     x:DataType="dynamicProperties:DynamicTilePropertyPopupContent"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
