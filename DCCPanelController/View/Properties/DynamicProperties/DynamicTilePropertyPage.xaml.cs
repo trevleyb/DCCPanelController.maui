@@ -83,8 +83,11 @@ public partial class DynamicTilePropertyPopupContent {
             var header = CreateExpanderGroup(group.Name, isFirst);
             isFirst = false;
             foreach (var row in group.Rows) {
-                if (Form!.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
-                    header.children?.Add(v);
+                Console.WriteLine($"Rendering: {row?.Field?.Meta?.EditorKind ?? "Unknown kind"}");
+                if (row is not null) {
+                    if (Form!.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
+                        header.children?.Add(v);
+                    }
                 }
             }
             PropertyHost.Children.Add(header.expander);

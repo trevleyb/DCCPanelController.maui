@@ -17,10 +17,10 @@ public sealed class DynamicTilePropertyForm {
     public IReadOnlyList<PropertyRow> Rows { get; }
     public IReadOnlyList<PropertyGroup> Groups { get; }
     private Dictionary<Type, Dictionary<string, EditableField>> _fieldsByTypeName = new();
-    
+
     public bool CanApply { get; private set; }
     public bool HasCommonProperties { get; private set; }
-    
+
     public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection) {
         var extractor = new EditableExtractorCache();
         var renderers = new PropertyRendererRegistry();
@@ -57,7 +57,7 @@ public sealed class DynamicTilePropertyForm {
         Mode = mode;
         (Groups, Rows) = BuildGroups();
         HasCommonProperties = Rows.Count > 0;
-        CanApply = false; 
+        CanApply = false;
     }
 
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
@@ -90,7 +90,7 @@ public sealed class DynamicTilePropertyForm {
                       })
                      .ToList();
 
-        if (commonNames.Count == 0) return ([], []); 
+        if (commonNames.Count == 0) return ([], []);
 
         // 4) Build groups + rows off a representative field (from the first entity’s type)
         var firstType = SelectedEntities[0].GetType();
@@ -154,7 +154,7 @@ public sealed class DynamicTilePropertyForm {
             CanApply = false;
             return new ValidationSummary([]);
         }
-        
+
         var summary = await _validator.ValidateAsync(this, Rows).ConfigureAwait(false);
         CanApply = !summary.HasErrors && Rows.Count > 0;
         return summary;
@@ -181,10 +181,9 @@ public sealed class DynamicTilePropertyForm {
         }
         return changes;
     }
-    
-    public async Task<bool> ApplyAsync(bool requireAtomic = false)
-    {
-        if (!HasCommonProperties) return false; 
+
+    public async Task<bool> ApplyAsync(bool requireAtomic = false) {
+        if (!HasCommonProperties) return false;
         var summary = await ValidateAsync().ConfigureAwait(false);
         if (summary.HasErrors || !CanApply) return false;
 
@@ -192,30 +191,32 @@ public sealed class DynamicTilePropertyForm {
         if (changes.Count == 0) return true;
 
         var tx = new ApplyTransaction(changes);
-        try
-        {
+        try {
             await tx.CommitAsync().ConfigureAwait(false);
             _undo.Push(tx);
 
-            foreach (var row in Rows)
-            {
+            foreach (var row in Rows) {
                 row.OriginalValue = row.CurrentValue;
                 row.IsTouched = false;
-
+                
                 var propName = row.Field.Prop.Name;
-                var values = SelectedEntities.Select(e =>
-                {
-                    var ef = _fieldsByTypeName[e.GetType()][propName];
-                    return ef.Accessor.Get(e);
-                }).ToList();
+                var values = SelectedEntities.Select(e => {
+                                                  var ef = _fieldsByTypeName[e.GetType()][propName];
+                                                  return ef.Accessor.Get(e);
+                                              })
+                                             .ToList();
 
                 var firstVal = values[0];
                 row.HasMixedValues = !values.All(v => _equality.AreEqual(v, firstVal, row.Field.Accessor.PropertyType));
             }
             return true;
+        } catch (Exception ex) when (!requireAtomic) {
+            Console.WriteLine("Requires Atomic? rolling back: " + ex.Message);;
+            return false;
+        } catch (Exception ex){
+            Console.WriteLine("Apply failed, rolling back: " + ex.Message);;
+            await tx.RollbackAsync().ConfigureAwait(false);
+            return false;
         }
-        catch when (!requireAtomic) { return false; }
-        catch { await tx.RollbackAsync().ConfigureAwait(false); return false; }
     }
-
 }

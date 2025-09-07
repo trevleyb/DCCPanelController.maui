@@ -39,7 +39,7 @@ public partial class CompassEntity : Entity {
     [ObservableProperty] [property: Editable("Image")] private string? _image;
 
     [ObservableProperty] [property: Editable("Integer", Group="Numbers")] private int _integer;
-    [ObservableProperty] [property: Editable("Opacity", Group="Numbers")] private int _opacity;
+    [ObservableProperty] [property: Editable("Opacity", Group="Numbers")] private double _opacity;
     
     [ObservableProperty] [property: Editable("Double Number", Group="Numbers")] private double _dNumber;
     [ObservableProperty] [property: Editable("Float Number", Group="Numbers")] private float _fNumber;

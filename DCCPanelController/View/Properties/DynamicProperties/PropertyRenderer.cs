@@ -46,22 +46,24 @@ public static class PropertyRenderers {
         PropertyRow row,
         Microsoft.Maui.Controls.View control) {
 
-        double labelColumnWidth = 150;
-        double fieldColumnWidth = row?.Field?.Meta?.Width ?? 250;
-        double columnSpacing = 12;
-        double rowSpacing = 2;
+        var editorKind = row.Field?.Meta?.EditorKind;
+        var labelWidth = EditorKinds.LabelWidth(editorKind);
+        var fieldWidth = row?.Field?.Meta?.Width ?? EditorKinds.FieldWidth(editorKind);
+        var fieldHeight = EditorKinds.FieldHeight(editorKind);
+        var columnSpacing = 12;
+        var rowSpacing = 2;
         
         var label = new Label {
-            Text = row.Field.Meta.Label,
+            Text = row?.Field?.Meta?.Label ?? "Unknown",
             FontSize = 15,
             TextColor = Colors.Black,
             FontAttributes = FontAttributes.Bold,
             VerticalOptions = LayoutOptions.Center,
-            HorizontalTextAlignment = TextAlignment.Start
+            HorizontalTextAlignment = TextAlignment.Start,
+            HorizontalOptions = LayoutOptions.Fill,
         };
-        if (labelColumnWidth > 0) label.WidthRequest = labelColumnWidth;
 
-        var descriptionKey = row.Field.Meta.Description;
+        var descriptionKey = row?.Field?.Meta?.Description ?? string.Empty;
         var description = string.IsNullOrWhiteSpace(descriptionKey)
             ? null
             : new Label { Text = descriptionKey, TextColor = Colors.Gray, FontSize = 10, Opacity = 0.7 };
@@ -76,11 +78,11 @@ public static class PropertyRenderers {
         // -----------------------------------------------------------------
         var grid = new Grid {
             ColumnDefinitions = {
-                labelColumnWidth > 0 ? new ColumnDefinition(labelColumnWidth) : new ColumnDefinition(150),
-                new ColumnDefinition(fieldColumnWidth >= 0 ? fieldColumnWidth : GridLength.Auto)
+                new ColumnDefinition(labelWidth),
+                new ColumnDefinition(fieldWidth >= 0 ? fieldWidth : GridLength.Star)
             },
             RowDefinitions = {
-                new RowDefinition(50), // label + control
+                new RowDefinition(fieldHeight), // label + control
                 new RowDefinition(GridLength.Auto)  // description + error under control
             },
             ColumnSpacing = columnSpacing,
@@ -90,8 +92,6 @@ public static class PropertyRenderers {
         // Row 0: label + control
         // -----------------------------------------------------------------
         grid.Add(label, 0, 0);
-        control.VerticalOptions = LayoutOptions.Center;
-        control.HorizontalOptions = LayoutOptions.Fill;
         grid.Add(control, 1, 0);
 
         // Row 1: description/error, indented under the control (col 1)

@@ -21,9 +21,8 @@ internal sealed class EnumRadioRenderer : IPropertyRenderer {
         var allowNull = Nullable.GetUnderlyingType(propType) != null;
 
         var items = BuildEnumItems(enumType, allowNull);
-
         var groupName = $"{row.Field.DeclaringType.Name}.{row.Field.Prop.Name}.{Guid.NewGuid():N}";
-        var stack = new VerticalStackLayout { Spacing = 4 };
+        var stack = new HorizontalStackLayout() { Spacing = 4 };
 
         // Create a radio for each item
         foreach (var it in items) {
@@ -48,8 +47,14 @@ internal sealed class EnumRadioRenderer : IPropertyRenderer {
             stack.Add(rb);
         }
 
+        stack.HorizontalOptions = LayoutOptions.Fill;
+        var scroll = new ScrollView {
+            HorizontalOptions = LayoutOptions.Fill,
+            Content = stack
+        };
+
         // Wrap with your standard label/description/error grid
-        return PropertyRenderers.WrapWithLabel(row, stack);
+        return PropertyRenderers.WrapWithLabel(row, scroll);
     }
 
     private static List<(string Text, object? Value)> BuildEnumItems(Type enumType, bool includeNone) {

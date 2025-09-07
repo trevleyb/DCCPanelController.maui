@@ -23,14 +23,14 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         // 3) name conventions
         // -----------------------------------------------------------------------------
         var name = field.Prop.Name;
-        if (name.Contains("Color", StringComparison.Ordinal)) return EditorKinds.Color;
+        if (name.Contains("Color", StringComparison.Ordinal) && t == typeof(Color) ) return EditorKinds.Color;
         if (name.Contains("Occupancy", StringComparison.Ordinal)) return EditorKinds.Block;
         if (name.EndsWith("Block", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Block;
         if (name.EndsWith("Url", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Url;
         if (name.Contains("Password", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Password;
         if (name.EndsWith("Width", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Int;
         if (name.EndsWith("Height", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Int;
-        if (name.Contains("Opacity", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Opacity;
+        if (name.Contains("Opacity", StringComparison.OrdinalIgnoreCase) && t == typeof(double)) return EditorKinds.Opacity;
         if (name.Contains("Image", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Image;
         
         // 4) type mapping
