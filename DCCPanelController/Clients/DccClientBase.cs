@@ -1,5 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCClient.Helpers;
+using DCCCommon;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;

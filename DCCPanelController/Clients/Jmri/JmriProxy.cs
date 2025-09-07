@@ -1,8 +1,9 @@
-using DCCClient.Discovery;
-using DCCClient.Helpers;
+using System.Runtime.InteropServices.JavaScript;
 using DccClients.Jmri;
 using DccClients.Jmri.Events;
 using DccClients.Jmri.Helpers;
+using DCCCommon;
+using DCCCommon.Discovery;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 
@@ -126,74 +127,74 @@ public partial class JmriProxy : DccClientBase, IDccClient {
 
     #region Sender Methods
     public async Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
-        if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail(new Error("Invalid Turnout Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to JMRI server");
+        if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail("Invalid Turnout Id provided.");
         try {
             await _client.SetTurnoutStateAsync(turnout.Id, thrown);
             OnClientMessage($"Setting turnout {turnout.Name}({turnout.Id}) to {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to send turnout command to JMRI server").CausedBy(ex));
+            return Result.Fail(ex,"Failed to send turnout command to JMRI server");
         }
     }
 
     public async Task<IResult> SendRouteCmdAsync(Route route, bool active) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
-        if (string.IsNullOrEmpty(route.Id)) return Result.Fail(new Error("Invalid Route Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to JMRI server");
+        if (string.IsNullOrEmpty(route.Id)) return Result.Fail("Invalid Route Id provided.");
         try {
             await _client.SetRouteStateAsync(route.Id, active);
             OnClientMessage($"Setting route {route.Name}({route.Id}) to {(active ? "ACTIVE" : "INACTIVE")}", DccClientOperation.Route, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to send route command to JMRI server").CausedBy(ex));
+            return Result.Fail(ex, "Failed to send route command to JMRI server");
         }
     }
 
     public async Task<IResult> SendSignalCmdAsync(Signal signal, SignalAspectEnum aspect) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
-        if (string.IsNullOrEmpty(signal.Id)) return Result.Fail(new Error("Invalid Signal Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to JMRI server");
+        if (string.IsNullOrEmpty(signal.Id)) return Result.Fail("Invalid Signal Id provided.");
         try {
             await _client.SetSignalAppearanceAsync(signal.Id, aspect.ToString());
             OnClientMessage($"Setting signal {signal.Name}({signal.Id}) to {aspect.ToString()}", DccClientOperation.Signal, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to send signal command to JMRI server").CausedBy(ex));
+            return Result.Fail(ex, "Failed to send signal command to JMRI server");
         }
     }
 
     public async Task<IResult> SendLightCmdAsync(Light light, bool isActive) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
-        if (string.IsNullOrEmpty(light.Id)) return Result.Fail(new Error("Invalid Light Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to JMRI server");
+        if (string.IsNullOrEmpty(light.Id)) return Result.Fail("Invalid Light Id provided.");
         try {
             await _client.SetLightStateAsync(light.Id, isActive);
             OnClientMessage($"Setting light {light.Name}({light.Id}) to {(isActive ? "ON" : "OFF")}", DccClientOperation.Light, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to send light command to JMRI server").CausedBy(ex));
+            return Result.Fail(ex,"Failed to send light command to JMRI server");
         }
     }
 
     public async Task<IResult> SendBlockCmdAsync(Block block, bool isOccupied) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
-        if (string.IsNullOrEmpty(block.Id)) return Result.Fail(new Error("Invalid Block Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to JMRI server");
+        if (string.IsNullOrEmpty(block.Id)) return Result.Fail("Invalid Block Id provided.");
         try {
             await _client.SetBlockAllocatedAsync(block.Id, isOccupied);
             OnClientMessage($"Setting block {block.Name}({block.Id}) to {(isOccupied ? "OCCUPIED" : "FREE")}", DccClientOperation.Block, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to send block command to JMRI server").CausedBy(ex));
+            return Result.Fail(ex,"Failed to send block command to JMRI server");
         }
     }
 
     public async Task<IResult> SendSensorCmdAsync(Sensor sensor, bool isOccupied) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to JMRI server"));
-        if (string.IsNullOrEmpty(sensor.Id)) return Result.Fail(new Error("Invalid Sensor Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to JMRI server");
+        if (string.IsNullOrEmpty(sensor.Id)) return Result.Fail("Invalid Sensor Id provided.");
         try {
             await _client.SetSensorStateAsync(sensor.Id, isOccupied);
             OnClientMessage($"Setting sensor {sensor.Name}({sensor.Id}) to {(isOccupied ? "OCCUPIED" : "FREE")}", DccClientOperation.Sensor, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to send sensor command to JMRI server").CausedBy(ex));
+            return Result.Fail(ex,"Failed to send sensor command to JMRI server");
         }
     }
     #endregion
@@ -249,7 +250,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             var result = await DiscoverServices.SearchForJmriServicesAsync();
             if (result is { IsSuccess: true, Value.Count: > 0 }) return result;
         } catch (Exception ex) {
-            return Result<List<DiscoveredService>>.Fail(new Error("Unable to find a Jmri server.").CausedBy(ex));
+            return Result<List<DiscoveredService>>.Fail(ex,"Unable to find a Jmri server.");
         }
         return Result<List<DiscoveredService>>.Fail("Unable to find a Jmri server.");
     }

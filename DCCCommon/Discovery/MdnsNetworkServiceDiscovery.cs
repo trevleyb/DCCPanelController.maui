@@ -1,9 +1,8 @@
 using System.Collections.Concurrent;
 using System.Net.Sockets;
-using DCCClient.Helpers;
 using Makaretu.Dns;
 
-namespace DCCClient.Discovery;
+namespace DCCCommon.Discovery;
 
 public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
     private readonly ConcurrentDictionary<string, DiscoveredService> _discoveredServicesCache = new();
@@ -50,7 +49,7 @@ public sealed class MdnsNetworkServiceDiscovery : INetworkServiceDiscovery {
         } catch (OperationCanceledException) {
             return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Discovery operation was cancelled.");
         } catch (Exception ex) {
-            return Result<List<DiscoveredService>>.Fail("MdnsNetworkServiceDiscovery: Error during service discovery", ex);
+            return Result<List<DiscoveredService>>.Fail(ex, "MdnsNetworkServiceDiscovery: Error during service discovery");
         }
 
         var values = _discoveredServicesCache.Values

@@ -15,16 +15,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\DCCClient\DCCClient.csproj"/>
-    </ItemGroup>
-
-    <ItemGroup>
         <PackageReference Include="Serilog" Version="4.3.0"/>
         <PackageReference Include="Serilog.Extensions.Logging" Version="9.0.2"/>
         <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0"/>
         <PackageReference Include="Serilog.Sinks.Debug" Version="3.0.0"/>
         <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
         <PackageReference Include="Syncfusion.Maui.Toolkit" Version="1.0.6"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\DCCCommon\DCCCommon.csproj" />
     </ItemGroup>
 
 </Project>

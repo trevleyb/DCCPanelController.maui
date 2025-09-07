@@ -8,7 +8,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClient.Jmri", "DCCClient
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClient.Simulator", "DCCClient.Simulator\DCCClient.Simulator.csproj", "{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCClient", "DCCClient\DCCClient.csproj", "{1E0EA685-AF79-4E1F-9B21-A7B7092A8DD2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DCCCommon", "DCCCommon\DCCCommon.csproj", "{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +32,9 @@ Global
 		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B2F6EDC-973B-40A7-870B-5CE8045C99BB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1E0EA685-AF79-4E1F-9B21-A7B7092A8DD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1E0EA685-AF79-4E1F-9B21-A7B7092A8DD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1E0EA685-AF79-4E1F-9B21-A7B7092A8DD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1E0EA685-AF79-4E1F-9B21-A7B7092A8DD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF0CFA97-7C36-4D53-AA6A-6F2DB0DD5F37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,6 +1,4 @@
-using DCCClient.Helpers;
-
-namespace DCCClient.Discovery;
+namespace DCCCommon.Discovery;
 
 /// <summary>
 ///     Factory for creating service discovery instances
@@ -21,7 +19,7 @@ public static class DiscoverServices {
                 var timeout = TimeSpan.FromSeconds(5);
                 return await discoveryService.DiscoverServicesAsync(serviceType, subtype, timeout);
             } catch (Exception ex) {
-                return Result<List<DiscoveredService>>.Fail("Error Occurred", ex);
+                return Result<List<DiscoveredService>>.Error(ex);
             }
         }
     }

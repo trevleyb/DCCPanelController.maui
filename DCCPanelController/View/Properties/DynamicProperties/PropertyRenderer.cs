@@ -48,7 +48,7 @@ public static class PropertyRenderers {
                                                               double rowSpacing = 2) {
         var label = new Label {
             Text = row.Field.Meta.Label,
-            FontSize = 12,
+            FontSize = 15,
             TextColor = Colors.Black,
             FontAttributes = FontAttributes.Bold,
             VerticalOptions = LayoutOptions.Center,
@@ -62,7 +62,7 @@ public static class PropertyRenderers {
             : new Label { Text = descriptionKey, TextColor = Colors.Gray, FontSize = 10, Opacity = 0.7 };
 
         var errorLabel = new Label {
-            FontSize = 12,
+            FontSize = 15,
             TextColor = Colors.Red,
             IsVisible = false
         };
@@ -109,7 +109,7 @@ public static class PropertyRenderers {
 
         void RefreshVisuals() {
             var modified = RenderBinding.IsModified(row);
-            label.TextColor = modified ? Colors.Red : Colors.Black;
+            label.TextColor = modified ? Colors.Red : (row.HasMixedValues) ? Colors.ForestGreen : Colors.Black;
 
             var err = row.Issues.FirstOrDefault(i => i.Severity == Severity.Error);
             errorLabel.IsVisible = err != null;

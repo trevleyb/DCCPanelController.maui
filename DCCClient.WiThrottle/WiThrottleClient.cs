@@ -2,12 +2,12 @@ using System.Data;
 using System.Net.Sockets;
 using System.Text;
 using System.Timers;
-using DCCClient.Helpers;
 using DccClients.WiThrottle.Client;
 using DccClients.WiThrottle.Client.Commands;
 using DccClients.WiThrottle.Client.Events;
 using DccClients.WiThrottle.Client.Messages;
 using DccClients.WiThrottle.Helpers;
+using DCCCommon;
 using Timer = System.Timers.Timer;
 
 namespace DccClients.WiThrottle;
@@ -45,7 +45,7 @@ public class WiThrottleClient {
             listenThread.Start();
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(new Error("Failed to connect").CausedBy(ex));
+            return Result.Fail(ex,"Failed to connect");
         }
     }
 

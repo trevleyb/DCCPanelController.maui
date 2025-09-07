@@ -1,10 +1,10 @@
 using System.Data;
-using DCCClient.Discovery;
-using DCCClient.Helpers;
 using DccClients.WiThrottle;
 using DccClients.WiThrottle.Client;
 using DccClients.WiThrottle.Client.Commands;
 using DccClients.WiThrottle.Client.Events;
+using DCCCommon;
+using DCCCommon.Discovery;
 using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Clients.WiThrottle;
@@ -111,8 +111,8 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
 
     #region Send Commands
     public async Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to WiThrottle server"));
-        if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail(new Error("Invalid Turnout Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to WiThrottle server");
+        if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail("Invalid Turnout Id provided.");
         try {
             _client.SendMessage(new TurnoutCommand(turnout.Id, thrown ? TurnoutStateEnum.Thrown : TurnoutStateEnum.Closed));
             OnClientMessage($"Setting turnout {turnout.Name}({turnout.Id}) to {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Outbound);
@@ -120,13 +120,13 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
             return Result.Ok();
         } catch (Exception ex) {
             await Task.CompletedTask;
-            return Result.Fail(new Error("Failed to send turnout command to WiThrottle server").CausedBy(ex));
+            return Result.Fail(ex,"Failed to send turnout command to WiThrottle server");
         }
     }
 
     public async Task<IResult> SendRouteCmdAsync(Route route, bool active) {
-        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail(new Error("Not connected to WiThrottle server"));
-        if (string.IsNullOrEmpty(route.Id)) return Result.Fail(new Error("Invalid Route Id provided."));
+        if (Status != DccClientStatus.Connected || _client is null) return Result.Fail("Not connected to WiThrottle server");
+        if (string.IsNullOrEmpty(route.Id)) return Result.Fail("Invalid Route Id provided.");
         try {
             _client.SendMessage(new RouteCommand(route.Id));
             OnClientMessage($"Setting route {route.Name}({route.Id}) to {(active ? "ACTIVE" : "INACTIVE")}", DccClientOperation.Route, DccClientMessageType.Outbound);
@@ -134,7 +134,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
             return Result.Ok();
         } catch (Exception ex) {
             await Task.CompletedTask;
-            return Result.Fail(new Error("Failed to send route command to WiThrottle server").CausedBy(ex));
+            return Result.Fail(ex, "Failed to send route command to WiThrottle server");
         }
     }
 
@@ -213,7 +213,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
             var result = await DiscoverServices.SearchForJmriServicesAsync();
             if (result is { IsSuccess: true, Value.Count: > 0 }) return result;
         } catch (Exception ex) {
-            return Result<List<DiscoveredService>>.Fail(new Error("Unable to find a WiThrottle server.").CausedBy(ex));
+            return Result<List<DiscoveredService>>.Fail(ex,"Unable to find a WiThrottle server.");
         }
         return Result<List<DiscoveredService>>.Fail("Unable to find a WiThrottle server.");
     }

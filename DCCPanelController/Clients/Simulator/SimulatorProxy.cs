@@ -1,7 +1,8 @@
+using System.Runtime.InteropServices.JavaScript;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCClient.Discovery;
-using DCCClient.Helpers;
 using DCCClient.Simulator;
+using DCCCommon;
+using DCCCommon.Discovery;
 using DCCPanelController.Models.DataModel;
 
 namespace DCCPanelController.Clients.Simulator;
@@ -37,7 +38,7 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
 
     public Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
         AddSimulatedData();
-        return Task.FromResult(Result.Ok());
+        return Task.FromResult<IResult>(Result.Ok());
     }
 
     public async Task<IResult> ValidateConnectionAsync() {
@@ -61,15 +62,15 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
     
     #region Sender Methods
     public async Task<IResult> SendTurnoutCmdAsync(Turnout turnout, bool thrown) {
-        if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail(new Error("Invalid Turnout Id provided."));
-        if (string.IsNullOrEmpty(turnout.Name)) return Result.Fail(new Error("Invalid Turnout Name provided."));
+        if (string.IsNullOrEmpty(turnout.Id)) return Result.Fail("Invalid Turnout Id provided.");
+        if (string.IsNullOrEmpty(turnout.Name)) return Result.Fail("Invalid Turnout Name provided.");
         UpdateTurnout(turnout.Id, turnout.Name, thrown ? Models.DataModel.Entities.TurnoutStateEnum.Thrown : Models.DataModel.Entities.TurnoutStateEnum.Closed);
         return await Task.FromResult(Result.Ok());
     }
     
     public async Task<IResult> SendRouteCmdAsync(Route route, bool active) {
-        if (string.IsNullOrEmpty(route.Id)) return Result.Fail(new Error("Invalid Route Id provided."));
-        if (string.IsNullOrEmpty(route.Name)) return Result.Fail(new Error("Invalid Route Name provided."));
+        if (string.IsNullOrEmpty(route.Id)) return Result.Fail("Invalid Route Id provided.");
+        if (string.IsNullOrEmpty(route.Name)) return Result.Fail("Invalid Route Name provided.");
         UpdateRoute(route.Id, route.Name, active ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
         return await Task.FromResult(Result.Ok());
 
@@ -80,22 +81,22 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
     }
     
     public async Task<IResult> SendLightCmdAsync(Light light, bool isActive) {
-        if (string.IsNullOrEmpty(light.Id)) return Result.Fail(new Error("Invalid Light Id provided."));
-        if (string.IsNullOrEmpty(light.Name)) return Result.Fail(new Error("Invalid Light Name provided."));
+        if (string.IsNullOrEmpty(light.Id)) return Result.Fail("Invalid Light Id provided.");
+        if (string.IsNullOrEmpty(light.Name)) return Result.Fail("Invalid Light Name provided.");
         UpdateLight(light.Id, light.Name, isActive);
         return await Task.FromResult(Result.Ok());
     }
     
     public async Task<IResult> SendBlockCmdAsync(Block block, bool isOccupied) {
-        if (string.IsNullOrEmpty(block.Id)) return Result.Fail(new Error("Invalid Block Id provided."));
-        if (string.IsNullOrEmpty(block.Name)) return Result.Fail(new Error("Invalid Block Name provided."));
+        if (string.IsNullOrEmpty(block.Id)) return Result.Fail("Invalid Block Id provided.");
+        if (string.IsNullOrEmpty(block.Name)) return Result.Fail("Invalid Block Name provided.");
         UpdateBlock(block.Id, block.Name, isOccupied);
         return await Task.FromResult(Result.Ok());
     }
     
     public async Task<IResult> SendSensorCmdAsync(Sensor sensor, bool isOccupied) {
-        if (string.IsNullOrEmpty(sensor.Id)) return Result.Fail(new Error("Invalid Sensor Id provided."));
-        if (string.IsNullOrEmpty(sensor.Name)) return Result.Fail(new Error("Invalid Sensor Name provided."));
+        if (string.IsNullOrEmpty(sensor.Id)) return Result.Fail("Invalid Sensor Id provided.");
+        if (string.IsNullOrEmpty(sensor.Name)) return Result.Fail("Invalid Sensor Name provided.");
         UpdateSensor(sensor.Id, sensor.Name, isOccupied);
         return await Task.FromResult(Result.Ok());
     }
@@ -125,7 +126,7 @@ public partial class SimulatorProxy: DccClientBase, IDccClient {
     }
     
     public async Task<IResult<IDccClientSettings?>> GetAutomaticConnectionDetailsAsync() {
-        return await Task.FromResult((IResult<IDccClientSettings?>)Result.Ok());
+        return await Task.FromResult(Result<IDccClientSettings?>.Ok());
     }
     #endregion
 

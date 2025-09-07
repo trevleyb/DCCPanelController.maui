@@ -72,6 +72,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Markdig" Version="0.41.3" />
         <PackageReference Include="Microsoft.Maui.Core" Version="9.0.100" />
         <PackageReference Include="Nerdbank.GitVersioning"
                           Version="3.7.115"
@@ -383,7 +384,6 @@
         <ProjectReference Include="..\DCCClient.Jmri\DCCClient.Jmri.csproj" />
         <ProjectReference Include="..\DCCClient.Simulator\DCCClient.Simulator.csproj" />
         <ProjectReference Include="..\DCCClient.WiThrottle\DCCClient.WiThrottle.csproj" />
-        <ProjectReference Include="..\DCCClient\DCCClient.csproj" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(TargetFramework)' == 'net9.0-ios'">

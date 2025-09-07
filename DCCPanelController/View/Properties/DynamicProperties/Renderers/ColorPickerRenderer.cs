@@ -32,25 +32,25 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
 
         // If mixed, overlay a small "— mixed —" chip until user edits
         Microsoft.Maui.Controls.View visual = picker;
-        if (row.HasMixedValues) {
-            var overlay = new Label {
-                Text = "— mixed —",
-                Opacity = 0.6,
-                VerticalTextAlignment = TextAlignment.Center,
-                HorizontalTextAlignment = TextAlignment.Center
-            };
-            var grid = new Grid();
-            grid.Add(picker);
-            grid.Add(overlay);
-
-            // hide overlay once the value changes
-            void HideOverlay() => overlay.IsVisible = false;
-            picker.PropertyChanged += (_, e) => {
-                if (e.PropertyName == nameof(ColorPickerButton.SelectedColor) || e.PropertyName == "SelectedColorProperty")
-                    HideOverlay();
-            };
-            visual = grid;
-        }
+        // if (row.HasMixedValues) {
+        //     var overlay = new Label {
+        //         Text = "— mixed —",
+        //         Opacity = 0.6,
+        //         VerticalTextAlignment = TextAlignment.Center,
+        //         HorizontalTextAlignment = TextAlignment.Center
+        //     };
+        //     var grid = new Grid();
+        //     grid.Add(picker);
+        //     grid.Add(overlay);
+        //
+        //     // hide overlay once the value changes
+        //     void HideOverlay() => overlay.IsVisible = false;
+        //     picker.PropertyChanged += (_, e) => {
+        //         if (e.PropertyName == nameof(ColorPickerButton.SelectedColor) || e.PropertyName == "SelectedColorProperty")
+        //             HideOverlay();
+        //     };
+        //     visual = grid;
+        // }
 
         // Push changes back into the form row
         picker.PropertyChanged += (_, e) => {

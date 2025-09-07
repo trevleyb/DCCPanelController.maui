@@ -5,7 +5,7 @@
              xmlns:settings="clr-namespace:DCCPanelController.View.Settings"
              xmlns:wiThrottle="clr-namespace:DCCPanelController.View.Settings.WiThrottle"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             xmlns:discovery="clr-namespace:DCCClient.Discovery;assembly=DCCClient"
+             xmlns:discovery="clr-namespace:DCCCommon.Discovery;assembly=DCCCommon"
              x:DataType="wiThrottle:WiThrottleSettingsViewModel"
              x:Class="DCCPanelController.View.Settings.WiThrottle.WiThrottleSettingsView">
 

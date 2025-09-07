@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClient.Discovery;
+using DCCCommon.Discovery;
 using DCCPanelController.Clients;
 using DCCPanelController.Services;
 using Microsoft.Maui.Controls;
@@ -35,9 +35,9 @@ public partial class SettingsViewModel : Base.BaseViewModel {
             var result = await ConnectionService.ConnectAsync();
             if (result.IsFailure) {
                 ConnectionService.AddServerMessage($"Unable to connect: {result.Message}", DccClientOperation.System, DccClientMessageType.Error);
-                foreach (var error in result.Errors) ConnectionService.AddServerMessage(error.Message, DccClientOperation.System, DccClientMessageType.Error);
-                
-                var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
+                if (result?.Message is {} errMessage) ConnectionService.AddServerMessage(errMessage, DccClientOperation.System, DccClientMessageType.Error);
+                if (result?.Exception is {} excMessage) ConnectionService.AddServerMessage(excMessage.Message, DccClientOperation.System, DccClientMessageType.Error);
+                var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result?.Message) ? "." : $" due to {result?.Exception?.Message ?? "?"}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
                 if (!reconnect) await ConnectionService.DisconnectAsync();

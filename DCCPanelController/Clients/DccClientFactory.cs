@@ -1,5 +1,5 @@
-using DCCClient.Discovery;
-using DCCClient.Helpers;
+using DCCCommon;
+using DCCCommon.Discovery;
 using DCCPanelController.Clients.Jmri;
 using DCCPanelController.Clients.Simulator;
 using DCCPanelController.Clients.WiThrottle;

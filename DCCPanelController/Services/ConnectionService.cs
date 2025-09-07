@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCClient.Helpers;
+using DCCCommon;
 using DCCPanelController.Clients;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
@@ -73,7 +73,7 @@ public partial class ConnectionService : ObservableObject {
         } catch (Exception ex) {
             _logger.LogDebug("Connection Failed: {Message}", ex.Message);
             OnConnectionChanged(false);
-            return Result.Fail("Unable to connect to the server.", ex);
+            return Result.Fail(ex, "Unable to connect to the server.");
         }
         _logger.LogDebug("Unable to connect to the specified server.");
         return Result.Fail("Unable to connect to the server.");

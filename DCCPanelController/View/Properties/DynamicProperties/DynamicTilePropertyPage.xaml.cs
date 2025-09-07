@@ -3,9 +3,9 @@ using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCCommon;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Resources.Styles;
-using DCCPanelController.Services;
 using DCCPanelController.View.Converters;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
@@ -16,44 +16,73 @@ public partial class DynamicTilePropertyPopupContent {
         InitializeComponent();
         BindingContext = this;
     }
+    
+    public enum FormState {Normal, Invalid, NoSelectedTiles, NoCommonProperties}
 
+    [ObservableProperty] private FormState _state = FormState.Normal;
+    [ObservableProperty] private string _title = "Properties";
+    [ObservableProperty] private bool _noCommonProperties = false;
+    [ObservableProperty] private bool _noSelectedProperties = false;
+    [ObservableProperty] private bool _hasCommonProperties = true;
+    
+    public DynamicTilePropertyForm? Form { get; private set; }
+    public event EventHandler? Applied;
+    public event EventHandler? Cancelled;
+
+    private IUndoService _undo = new DefaultUndoService(); // from MauiAdapters
+
+    #region Binadable Collection of Tiles
     public static readonly BindableProperty TilesSourceProperty = BindableProperty.Create(nameof(TilesSource), typeof(IEnumerable<ITile>), typeof(DynamicTilePropertyPopupContent), defaultValue: null, propertyChanged: OnTilesSourceChanged);
     public IEnumerable<ITile>? TilesSource {
         get => (IEnumerable<ITile>?)GetValue(TilesSourceProperty);
         set => SetValue(TilesSourceProperty, value);
     }
 
-    public string Title { get; set; } = "Properties";
-    public DynamicTilePropertyForm? Form => _form;
-    public event EventHandler? Applied;
-    public event EventHandler? Cancelled;
-
-    private DynamicTilePropertyForm? _form;
-    private IUndoService _undo = new DefaultUndoService(); // from MauiAdapters
-
     private static async void OnTilesSourceChanged(BindableObject bindable, object oldValue, object newValue) {
-        var view = (DynamicTilePropertyPopupContent)bindable;
-        await view.RebuildAsync();
+        try {
+            var view = (DynamicTilePropertyPopupContent)bindable;
+            await view.RebuildAsync();
+        } catch (Exception ex) {
+            Console.WriteLine($"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
+        }
     }
+    #endregion
 
+    /// <summary>
+    /// Rebuild the Form if the collection of Tiles changes
+    /// </summary>
     private async Task RebuildAsync() {
         PropertyHost.Children.Clear();
+        State = FormState.Normal;
+        
+        // Lets make sure we have some valid Tiles to work with
+        // ---------------------------------------------------------------
         var tiles = TilesSource?.ToList();
-        if (tiles == null || tiles.Count == 0) return;
+        if (tiles == null || tiles.Count == 0) {
+            State = FormState.NoSelectedTiles;
+            return;
+        }
 
+        // Valid the for and ensure we have some common properties
+        // ---------------------------------------------------------------
         var selection = tiles.Select(object (t) => t.Entity);
-        _form = DynamicTilePropertyForm.CreateForm(selection);
-        await _form.ValidateAsync();
+        Form = DynamicTilePropertyForm.CreateForm(selection);
+        await Form.ValidateAsync();
 
-        bool isFirst = true;
-        foreach (var group in _form.Groups) {
+        if (!Form.HasCommonProperties) {
+            State = FormState.NoCommonProperties;;
+            return;
+        }
+
+        // Build up the Properties by Group and Sort order. 
+        // Each Group is in its own Expander View so can be collaposed
+        // ---------------------------------------------------------------
+        var isFirst = true;
+        foreach (var group in Form.Groups) {
             var header = CreateExpanderGroup(group.Name, isFirst);
             isFirst = false;
-
-            // Group body: stack of labeled controls
-            //var body = new VerticalStackLayout { Spacing = 8 };
             foreach (var row in group.Rows) {
-                if (_form!.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
+                if (Form!.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
                     header.children?.Add(v);
                 }
             }
@@ -61,27 +90,22 @@ public partial class DynamicTilePropertyPopupContent {
         }
     }
 
-    public async Task Validate() {
-        if (_form == null) return;
-        var summary = await _form.ValidateAsync();
-        if (summary.HasErrors) {
-            await DisplayAlertHelper.DisplayOkAlertAsync("Validation Error", "Please fix errors.");
-        } else {
-            await DisplayAlertHelper.DisplayOkAlertAsync("Validation Passed", "All Validation Rules Passed.");
-        }
+    [RelayCommand]
+    private async Task<IResult<ValidationSummary>> ValidateAsync() {
+        if (Form == null) return Result<ValidationSummary>.Fail("Form is null");
+        var summary = await Form.ValidateAsync();
+        return summary.HasErrors 
+            ? Result<ValidationSummary>.Fail("Validation Failed").WithValue(summary)
+            : Result<ValidationSummary>.Ok();
     }
 
     [RelayCommand]
-    private async Task ApplyAsync() {
-        if (_form == null) return;
-
-        // Important: ensure PropertyChange uses row.Field (already fixed in your FormContext)
-        var ok = await _form.ApplyAsync(requireAtomic: false);
-        if (!ok) {
-            await DisplayAlertHelper.DisplayOkAlertAsync("Apply", "Nothing to apply or failed.");
-            return;
-        }
+    private async Task<IResult> ApplyAsync() {
+        if (Form == null) return Result.Fail("Form should not be null");
+        var ok = await Form.ApplyAsync(requireAtomic: false);
+        if (!ok) return Result.Fail("No Changes to apply");
         Applied?.Invoke(this, EventArgs.Empty);
+        return Result.Ok();
     }
 
     [RelayCommand]

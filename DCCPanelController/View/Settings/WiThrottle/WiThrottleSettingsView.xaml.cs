@@ -1,4 +1,4 @@
-using DCCClient.Discovery;
+using DCCCommon.Discovery;
 using DCCPanelController.Clients;
 using DCCPanelController.Services;
 

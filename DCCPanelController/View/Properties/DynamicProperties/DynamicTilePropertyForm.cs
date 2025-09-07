@@ -16,8 +16,11 @@ public sealed class DynamicTilePropertyForm {
     public IReadOnlyList<object> SelectedEntities { get; }
     public IReadOnlyList<PropertyRow> Rows { get; }
     public IReadOnlyList<PropertyGroup> Groups { get; }
+    private Dictionary<Type, Dictionary<string, EditableField>> _fieldsByTypeName = new();
+    
     public bool CanApply { get; private set; }
-
+    public bool HasCommonProperties { get; private set; }
+    
     public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection) {
         var extractor = new EditableExtractorCache();
         var renderers = new PropertyRendererRegistry();
@@ -35,16 +38,15 @@ public sealed class DynamicTilePropertyForm {
 
         return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, AppMode.Edit);
     }
-    
+
     private DynamicTilePropertyForm(IEnumerable<object> selectedEntities,
-                       IEditableExtractor extractor,
-                       IPropertyRendererRegistry renderers,
-                       IValidator validator,
-                       IEqualityPolicy equality,
-                       IUndoService undo,
-                       IEditorKindResolver kindResolver,
-                       AppMode mode = AppMode.Edit) {
-        
+                                    IEditableExtractor extractor,
+                                    IPropertyRendererRegistry renderers,
+                                    IValidator validator,
+                                    IEqualityPolicy equality,
+                                    IUndoService undo,
+                                    IEditorKindResolver kindResolver,
+                                    AppMode mode = AppMode.Edit) {
         SelectedEntities = selectedEntities.ToList();
         _extractor = extractor;
         _renderers = renderers;
@@ -53,45 +55,90 @@ public sealed class DynamicTilePropertyForm {
         _undo = undo;
         _kindResolver = kindResolver;
         Mode = mode;
-        (Groups,Rows) = BuildGroups();
+        (Groups, Rows) = BuildGroups();
+        HasCommonProperties = Rows.Count > 0;
+        CanApply = false; 
     }
 
-    private (IReadOnlyList<PropertyGroup>,IReadOnlyList<PropertyRow>) BuildGroups() {
-        if (SelectedEntities.Count == 0) return ([],[]);
+    private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
 
-        var first = SelectedEntities[0];
-        var fields = _extractor.Extract(first.GetType());
+    private (IReadOnlyList<PropertyGroup>, IReadOnlyList<PropertyRow>) BuildGroups() {
+        if (SelectedEntities.Count == 0) return ([], []);
 
-        // Group by attribute Group, then order groups and fields consistently
+        // 1) Index fields for every entity type
+        _fieldsByTypeName = new Dictionary<Type, Dictionary<string, EditableField>>();
+        foreach (var t in SelectedEntities.Select(e => e.GetType()).Distinct()) {
+            var nameMap = _extractor.Extract(t).ToDictionary(f => f.Prop.Name, f => f, StringComparer.Ordinal);
+            _fieldsByTypeName[t] = nameMap;
+        }
+
+        // 2) Compute intersection of property names across all types
+        var commonNames = _fieldsByTypeName.Values
+                                           .Select(d => d.Keys)
+                                           .Aggregate((IEnumerable<string>?)null,
+                                                      (acc, keys) => acc == null ? keys : acc.Intersect(keys, StringComparer.Ordinal))
+                                          ?.ToList() ?? new List<string>();
+
+        // 3) Keep only names whose CLR types match across all types
+        commonNames = commonNames
+                     .Where(name => {
+                          var distinctTypes = _fieldsByTypeName.Values
+                                                               .Select(d => UnwrapNullable(d[name].Accessor.PropertyType))
+                                                               .Distinct()
+                                                               .ToList();
+                          return distinctTypes.Count == 1; // same type in all entity types
+                      })
+                     .ToList();
+
+        if (commonNames.Count == 0) return ([], []); 
+
+        // 4) Build groups + rows off a representative field (from the first entity’s type)
+        var firstType = SelectedEntities[0].GetType();
         var groups = new Dictionary<string, PropertyGroup>(StringComparer.OrdinalIgnoreCase);
-        var rows = new List<PropertyRow>(fields.Count);
-        
-        foreach (var f in fields.OrderBy(f => f.Meta.Group)
-                                .ThenBy(f => f.Meta.Order)
-                                .ThenBy(f => f.Prop.Name)) {
-            
-            var gname = string.IsNullOrWhiteSpace(f.Meta.Group) ? "General" : f.Meta.Group;
-            if (!groups.TryGetValue(gname, out var g)) {
-                g = new PropertyGroup(gname, f.Meta.Order);
-                groups[gname] = g;
+        var flatRows = new List<PropertyRow>();
+
+        // order by Group, Order, then Name — using the representative field’s metadata
+        var orderedNames = commonNames
+                          .OrderBy(name => _fieldsByTypeName[firstType][name].Meta.Group)
+                          .ThenBy(name => _fieldsByTypeName[firstType][name].Meta.Order)
+                          .ThenBy(name => name, StringComparer.Ordinal)
+                          .ToList();
+
+        foreach (var name in orderedNames) {
+            var repField = _fieldsByTypeName[firstType][name];
+            var gname = string.IsNullOrWhiteSpace(repField.Meta.Group) ? "General" : repField.Meta.Group;
+
+            if (!groups.TryGetValue(gname, out var group)) {
+                group = new PropertyGroup(gname, repField.Meta.Order);
+                groups[gname] = group;
             }
 
-            var row = new PropertyRow(f);
-            var values = SelectedEntities.Select(e => f.Accessor.Get(e)).ToList();
+            var row = new PropertyRow(repField);
+
+            // gather values using the correct accessor for each entity's concrete type
+            var values = SelectedEntities.Select(e => {
+                                              var ef = _fieldsByTypeName[e.GetType()][name];
+                                              return ef.Accessor.Get(e);
+                                          })
+                                         .ToList();
+
             var firstVal = values[0];
-            var allEqual = values.All(v => _equality.AreEqual(v, firstVal, f.Accessor.PropertyType));
+            var allEqual = values.All(v => _equality.AreEqual(v, firstVal, repField.Accessor.PropertyType));
 
             row.OriginalValue = allEqual ? firstVal : null;
             row.CurrentValue = row.OriginalValue;
             row.HasMixedValues = !allEqual;
 
-            g.Rows.Add(row);
-            rows.Add(row);
+            group.Rows.Add(row);
+            flatRows.Add(row);
         }
-        return (groups.Values
-                      .OrderBy(g => g.Name) // primary by name
-                      .ThenBy(g => g.Order) // tie-break by first field order
-                      .ToList(), rows);
+
+        var orderedGroups = groups.Values
+                                  .OrderBy(g => g.Name, StringComparer.Ordinal)
+                                  .ThenBy(g => g.Order)
+                                  .ToList();
+
+        return (orderedGroups, flatRows);
     }
 
     public object GetRendererView(PropertyRow row) {
@@ -103,8 +150,13 @@ public sealed class DynamicTilePropertyForm {
     }
 
     public async Task<ValidationSummary> ValidateAsync() {
+        if (!HasCommonProperties) {
+            CanApply = false;
+            return new ValidationSummary([]);
+        }
+        
         var summary = await _validator.ValidateAsync(this, Rows).ConfigureAwait(false);
-        CanApply = !summary.HasErrors;
+        CanApply = !summary.HasErrors && Rows.Count > 0;
         return summary;
     }
 
@@ -113,46 +165,57 @@ public sealed class DynamicTilePropertyForm {
         foreach (var row in Rows) {
             var shouldApply = row.IsTouched || !_equality.AreEqual(row.CurrentValue, row.OriginalValue, row.Field.Accessor.PropertyType);
             if (!shouldApply) continue;
+
+            var propName = row.Field.Prop.Name;
+
             foreach (var entity in SelectedEntities) {
-                var oldVal = row.Field.Accessor.Get(entity);
+                var ef = _fieldsByTypeName[entity.GetType()][propName];
+                var oldVal = ef.Accessor.Get(entity);
                 var newVal = row.CurrentValue;
-                if (_equality.AreEqual(oldVal, newVal, row.Field.Accessor.PropertyType)) continue;
-                changes.Add(new PropertyChange(entity, row.Field, oldVal, newVal));
+
+                if (_equality.AreEqual(oldVal, newVal, ef.Accessor.PropertyType)) continue;
+
+                // record the concrete field for the entity’s type so Apply/Rollback can use it
+                changes.Add(new PropertyChange(entity, ef, oldVal, newVal));
             }
         }
         return changes;
     }
-
-    public async Task<bool> ApplyAsync(bool requireAtomic = false) {
+    
+    public async Task<bool> ApplyAsync(bool requireAtomic = false)
+    {
+        if (!HasCommonProperties) return false; 
         var summary = await ValidateAsync().ConfigureAwait(false);
-        if (summary.HasErrors) {
-            Console.WriteLine("Validation failed.");
-            return false;
-        }
+        if (summary.HasErrors || !CanApply) return false;
 
         var changes = PreviewDiff();
-        if (changes.Count == 0) {
-            Console.WriteLine("No changes to apply.");
-            return true;
-        }
+        if (changes.Count == 0) return true;
 
         var tx = new ApplyTransaction(changes);
-        try {
+        try
+        {
             await tx.CommitAsync().ConfigureAwait(false);
             _undo.Push(tx);
-            foreach (var row in Rows) {
+
+            foreach (var row in Rows)
+            {
                 row.OriginalValue = row.CurrentValue;
                 row.IsTouched = false;
-                var values = SelectedEntities.Select(e => row.Field.Accessor.Get(e)).ToList();
+
+                var propName = row.Field.Prop.Name;
+                var values = SelectedEntities.Select(e =>
+                {
+                    var ef = _fieldsByTypeName[e.GetType()][propName];
+                    return ef.Accessor.Get(e);
+                }).ToList();
+
                 var firstVal = values[0];
                 row.HasMixedValues = !values.All(v => _equality.AreEqual(v, firstVal, row.Field.Accessor.PropertyType));
             }
             return true;
-        } catch when (!requireAtomic) {
-            return false;
-        } catch {
-            await tx.RollbackAsync().ConfigureAwait(false);
-            return false;
         }
+        catch when (!requireAtomic) { return false; }
+        catch { await tx.RollbackAsync().ConfigureAwait(false); return false; }
     }
+
 }
