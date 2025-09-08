@@ -1,27 +1,27 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TrackEntity : Entity {
-    [ObservableProperty] [property: EditableBlock("Occupancy Block", "Indicates what block this track is in for showing Occupancy.", 8, "Track")]
+    [ObservableProperty] [property: Editable("Occupancy Block", "Indicates what block this track is in for showing Occupancy.", 8, "Track")]
     private string? _occupancyBlock;
 
-    [ObservableProperty] [property: EditableEnum("Track Style", "Dashed normally used for hidden track.", 4, "Track")]
+    [ObservableProperty] [property: Editable("Track Style", "Dashed normally used for hidden track.", 4, "Track")]
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
-    [ObservableProperty] [property: EditableColor("Border Color", "", 5, "Track")]
+    [ObservableProperty] [property: Editable("Border Color", "", 5, "Track")]
     private Color? _trackBorderColor;
 
-    [ObservableProperty] [property: EditableColor("Track Color", "", 5, "Track")]
+    [ObservableProperty] [property: Editable("Track Color", "", 5, "Track")]
     private Color? _trackColor;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMainLine))]
-    [property: EditableEnum("Track Type", "Mainline track has a border. Branch line does not.", 3, "Track")]
+    [property: Editable("Track Type", "Mainline track has a border. Branch line does not.", 3, "Track")]
     private TrackTypeEnum _trackType = TrackTypeEnum.MainLine;
 
     protected TrackEntity() { }

@@ -1,19 +1,19 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CircleEntity : Entity, IDrawingEntity {
-    [ObservableProperty] [property: EditableColor("Background","", 0, "Circle")]
+    [ObservableProperty] [property: Editable("Background","", 0, "Circle")]
     private Color _backgroundColor = Colors.Gray;
 
-    [ObservableProperty] [property: EditableColor("Border", "",0, "Circle")]
+    [ObservableProperty] [property: Editable("Border", "",0, "Circle")]
     private Color _borderColor = Colors.Black;
 
     [ObservableProperty]
-    [property: EditableInt("Border Width", "", 0, "Circle")]
+    [property: Editable("Border Width", "", 0, "Circle")]
     private int _borderWidth = 1;
     
     [JsonConstructor]

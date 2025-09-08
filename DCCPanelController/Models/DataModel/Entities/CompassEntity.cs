@@ -1,16 +1,25 @@
 using System.Runtime.InteropServices.JavaScript;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Models.DataModel.Entities.Actions;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.View.Actions;
 using DCCPanelController.View.Properties.DynamicProperties;
 using ExCSS;
 using Color = Microsoft.Maui.Graphics.Color;
 
 namespace DCCPanelController.Models.DataModel.Entities;
   
-public partial class CompassEntity : Entity {
+public partial class CompassEntity : Entity, IActionEntity {
     
     public CompassEntity() { }
 
+    [ObservableProperty] [property: Editable("Button Actions", Group="Actions", ActionsContext = ActionsContext.Turnout)]
+    private ButtonActions _buttonPanelActions = [];
+
+    [ObservableProperty] [property: Editable("Turnout Actions", Group="Actions", ActionsContext = ActionsContext.Turnout)]
+    private TurnoutActions _turnoutPanelActions = [];
+    
     [ObservableProperty] [property: Editable("Block", Group="Control")] private string? _block;
     [ObservableProperty] [property: Editable("Route", Group="Control")] private string? _route;
     [ObservableProperty] [property: Editable("Light", Group="Control")] private string? _light;
@@ -87,4 +96,10 @@ public partial class CompassEntity : Entity {
     public override Entity Clone() {
         return new CompassEntity(this);
     }
+
+    public void CloneActionsInto(IActionEntity entity) {
+        entity.ButtonPanelActions = (ButtonActions)ButtonPanelActions.Clone();
+        entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
+    }
+    
 }

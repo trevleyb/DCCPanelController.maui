@@ -1,30 +1,30 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
-    [ObservableProperty] [property: EditableEnum("Button Size")]
+    [ObservableProperty] [property: Editable("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: EditableRoute("Route", "Select the route triggered by this button", 10, "Actions")]
+    [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 10, "Actions", EditorKind = EditorKinds.Route)]
     private string _id = string.Empty;
 
-    [ObservableProperty] [property: EditableColor("Indicator Color", "Default color of the Indicator", 5, "Colors")]
+    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 5, "Colors")]
     private Color? _routeIndicator;
 
-    [ObservableProperty] [property: EditableColor("On Color", "Override default 'On' color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 5, "Colors")]
     private Color? _colorOn;
 
-    [ObservableProperty] [property: EditableColor("On Border Color", "Override default 'On' border color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 5, "Colors")]
     private Color? _colorOnBorder;
     
-    [ObservableProperty] [property: EditableColor("Off Color", "Override default 'Off' color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, "Colors")]
     private Color? _colorOff;
     
-    [ObservableProperty] [property: EditableColor("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
     private Color? _colorOffBorder;
     
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;

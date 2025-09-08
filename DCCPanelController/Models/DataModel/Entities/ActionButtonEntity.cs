@@ -4,36 +4,38 @@ using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
+using DCCPanelController.View.TileSelectors;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
-    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions")]
-    private ButtonActions _buttonPanelActions = [];
-
-    [ObservableProperty] [property: EditableEnum("Button Size", "", 1)]
-    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-
-    [ObservableProperty] [property: EditableColor("Off Color", "Override default 'Off' color", 5, "Colors")]
-    private Color? _colorOff;
-
-    [ObservableProperty] [property: EditableColor("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
-    private Color? _colorOffBorder;
-
-    [ObservableProperty] [property: EditableColor("On Color", "Override default 'On' color", 5, "Colors")]
-    private Color? _colorOn;
-
-    [ObservableProperty] [property: EditableColor("On Border Color", "Override default 'On' border color", 5, "Colors")]
-    private Color? _colorOnBorder;
-
-    [ObservableProperty] [property: EditableID("Button Name", "Unique Name for this Button so it can be referenced by actions.")]
-    private string _id = string.Empty;
 
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
-    [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions")]
+    [ObservableProperty] [property: Editable("Button Size")]
+    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
+
+    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, Group="Colors")]
+    private Color? _colorOff;
+
+    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 5, Group="Colors")]
+    private Color? _colorOffBorder;
+
+    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 5, "Colors")]
+    private Color? _colorOn;
+
+    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 5, Group="Colors")]
+    private Color? _colorOnBorder;
+
+    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.")]
+    private string _id = string.Empty;
+
+    [ObservableProperty] [property: Editable("Button Actions", Order=10, Group="Actions", EditorKind = EditorKinds.ButtonActions)]
+    private ButtonActions _buttonPanelActions = [];
+
+    [ObservableProperty] [property: Editable("Turnout Actions", Order=10, Group="Actions", EditorKind = EditorKinds.TurnoutActions)]
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]

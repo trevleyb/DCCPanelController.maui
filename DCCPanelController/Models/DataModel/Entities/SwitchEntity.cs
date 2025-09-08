@@ -1,32 +1,32 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
-    [ObservableProperty] [property: EditableColor("Off Color", "Override default 'Off' color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, "Colors")]
     private Color? _colorOff;
 
-    [ObservableProperty] [property: EditableColor("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
     private Color? _colorOffBorder;
 
-    [ObservableProperty] [property: EditableColor("On Color", "Override default 'On' color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 5, "Colors")]
     private Color? _colorOn;
 
-    [ObservableProperty] [property: EditableColor("On Border Color", "Override default 'On' border color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 5, "Colors")]
     private Color? _colorOnBorder;
 
     [ObservableProperty]
-    [property: EditableLightSwitch("DCC Light", "Select the ID of the light controlled by this button", 10, "Actions")]
+    [property: Editable("DCC Light", "Select the ID of the light controlled by this button", 10, "Actions", EditorKind = EditorKinds.Light)]
     private string _id = string.Empty;
 
-    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
-
     [ObservableProperty]
-    [property: EditableEnum("Use Switch")]
+    [property: Editable("Switch Style")]
     private SwitchStyleEnum _switchStyle = SwitchStyleEnum.Light;
+
+    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [JsonConstructor]
     public SwitchEntity() { }

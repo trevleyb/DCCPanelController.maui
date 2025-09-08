@@ -10,11 +10,6 @@ namespace DCCPanelController.Models.DataModel.Entities;
 public partial class PointsEntity : Entity, IDrawingEntity {
     [JsonConstructor]
     public PointsEntity() { }
-
-    [ObservableProperty] [property: Editable("Name")] private string? _name;
-    [ObservableProperty] [property: Editable("Text", Description = "Enter some text dufus" ,EditorKind = "text")] private string? text;
-    [ObservableProperty] [property: Editable("Toggle", EditorKind = "toggle")] private bool toggle;
-    [ObservableProperty] [property: Editable("Color", Order = 0)] private Color _color;
     
     public PointsEntity(Panel panel) : this() {
         Parent = panel;

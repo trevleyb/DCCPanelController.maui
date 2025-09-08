@@ -1,15 +1,15 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class LineEntity : Entity, IDrawingEntity {
-    [ObservableProperty] [property: EditableColor("Line Color", "",0, "Line")]
+    [ObservableProperty] [property: Editable("Line Color", "",0, "Line")]
     private Color _lineColor = Colors.Black;
-
-    [ObservableProperty] [property: EditableInt("Line Width", "",0, "Line")]
+    
+    [ObservableProperty] [property: Editable("Line Width", "",0, "Line")]
     private int _lineWidth = 3;
 
     [JsonConstructor]

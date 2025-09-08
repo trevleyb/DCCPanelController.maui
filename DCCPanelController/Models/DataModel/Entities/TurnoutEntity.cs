@@ -5,33 +5,34 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Actions;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, ITrackEntity, IActionEntity {
-    [ObservableProperty] [property: EditableButtonActions("Button Actions", "", 10, "Actions", ActionsContext.Turnout)]
-    private ButtonActions _buttonPanelActions = [];
-
+   
     [ObservableProperty]
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
 
-    [ObservableProperty] [property: EditableColor("Not Selected Track", "The color of the track of the track not selected", 6, "Track")]
+    [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Track")]
     private Color? _trackNotSelectedColor;
 
     // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
     // private string _id = string.Empty;
 
-    [ObservableProperty] [property: EditableTurnout("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout")]
+    [ObservableProperty] [property: Editable("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout", EditorKind = EditorKinds.Turnout)]
     private string _turnoutID = string.Empty;
 
-    [ObservableProperty] [property: EditableTurnoutActions("Turnout Actions", "", 10, "Actions", ActionsContext.Turnout)]
+    [ObservableProperty] [property: Editable("Button Actions", "", 10, "Actions", ActionsContext = ActionsContext.Turnout)]
+    private ButtonActions _buttonPanelActions = [];
+
+    [ObservableProperty] [property: Editable("Turnout Actions", "", 10, "Actions", ActionsContext = ActionsContext.Turnout)]
     private TurnoutActions _turnoutPanelActions = [];
 
-    [ObservableProperty] [property: EditableEnum("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
+    [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
 
     [JsonConstructor]

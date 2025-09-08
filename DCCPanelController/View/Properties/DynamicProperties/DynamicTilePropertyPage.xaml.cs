@@ -83,14 +83,21 @@ public partial class DynamicTilePropertyPopupContent {
         // ---------------------------------------------------------------
         var isFirst = true;
         foreach (var group in Form.Groups) {
+            if (group.Rows.Count == 0) continue;
+
             var header = CreateExpanderGroup(group.Name, isFirst);
             isFirst = false;
+            
+            // Add the rows to the expander
+            // -----------------------------------------------------------
+            var children = 0;
             foreach (var row in group.Rows) {
                 if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
                     header.children?.Add(v);
+                    children++;
                 }
             }
-            PropertyHost.Children.Add(header.expander);
+            if (children > 0) PropertyHost.Children.Add(header.expander);
         }
     }
 

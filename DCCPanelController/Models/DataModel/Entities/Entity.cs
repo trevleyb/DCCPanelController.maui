@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -11,20 +11,18 @@ namespace DCCPanelController.Models.DataModel.Entities;
 [DebuggerDisplay("{EntityName} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject, IEntity {
-    [ObservableProperty] private int _col;        // What Grid Position (Horizontal) is this component?
-    [ObservableProperty] private int _height = 1; // What Height is this component? 
-
+    [ObservableProperty] private int _col;               // What Grid Position (Horizontal) is this component?
+    [ObservableProperty] private int _row;               // What Grid Position (Vertical) is this component?
+    [ObservableProperty] private int _height = 1;        // What Height is this component? 
+    [ObservableProperty] private int _width = 1;         // What width is this component?
+    [ObservableProperty] private int _rotation;          // Is the track rotated?
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
 
-    [ObservableProperty] [property: EditableInt("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
+    [ObservableProperty] [property: Editable("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
     private int _layer = 1;
 
-    [ObservableProperty] [property: EditableOpacity("Opacity", "Allows for a level of transparency", 9, "Visibility")]
+    [ObservableProperty] [property: Editable("Opacity", "Allows for a level of transparency", 9, "Visibility", EditorKind = EditorKinds.Opacity)]
     private double _opacity = 1.0;
-
-    [ObservableProperty] private int _rotation;  // Is the track rotated?
-    [ObservableProperty] private int _row;       // What Grid Position (Vertical) is this component?
-    [ObservableProperty] private int _width = 1; // What width is this component?
 
     protected Entity(Panel panel) : this() {
         Parent = panel;

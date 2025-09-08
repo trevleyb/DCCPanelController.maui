@@ -1,12 +1,12 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TunnelEntity : StraightEntity, ITrackEntity {
-    [ObservableProperty] [property: EditableColor("Tunnel Color", "Color of the Tunnel Entrance", 6, "Track")]
+    [ObservableProperty] [property: Editable("Tunnel Color", "Color of the Tunnel Entrance", 6, "Track")]
     private Color? _tunnelColor;
 
     [JsonConstructor]

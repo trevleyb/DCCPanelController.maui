@@ -13,7 +13,6 @@ using DCCPanelController.View.Helpers;
 using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
-using DCCPanelController.View.Properties.TileProperties;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
@@ -43,7 +42,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(Title))]
     [ObservableProperty] private Panel _panel;
     private Panel _original;
-    private IPropertyPage? _propertyPage;
+    private PanelPropertyViewModel? _propertyPage;
     
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
@@ -318,7 +317,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         Console.WriteLine("Content Applied");
     }
 
-    private void ShowPropertyPopup(string title, IPropertyPage propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
+    private void ShowPropertyPopup(string title, PanelPropertyViewModel propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
         _propertyPage = propertyPage;
         content.Margin = new Thickness(20,10,20,0);
         var propertySize = MauiViewSizeCalculator.CalculateTotalSize(content, ScreenWidth, ScreenHeight);

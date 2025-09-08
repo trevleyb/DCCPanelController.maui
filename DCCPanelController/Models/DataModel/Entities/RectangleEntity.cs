@@ -1,21 +1,21 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RectangleEntity : Entity, IDrawingEntity {
-    [ObservableProperty] [property: EditableColor("Background Color", group: "Rectangle")]
+    [ObservableProperty] [property: Editable("Background Color", Group= "Rectangle")]
     private Color _backgroundColor = Colors.Transparent;
 
-    [ObservableProperty] [property: EditableColor("Border Color", group: "Rectangle")]
+    [ObservableProperty] [property: Editable("Border Color", Group= "Rectangle")]
     private Color _borderColor = Colors.Black;
 
-    [ObservableProperty] [property: EditableInt("Border Radius", group: "Rectangle")]
+    [ObservableProperty] [property: Editable("Border Radius", Group= "Rectangle")]
     private int _borderRadius;
 
-    [ObservableProperty] [property: EditableInt("Border Width", group: "Rectangle")]
+    [ObservableProperty] [property: Editable("Border Width", Group= "Rectangle")]
     private int _borderWidth = 1;
 
     [JsonConstructor]

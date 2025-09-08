@@ -2,12 +2,12 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.View.Properties.TileProperties.EditableControls;
+using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
-    [ObservableProperty] [property: EditableEnum("Continuation", "Page Continuation Indicator", 5, "Track")]
+    [ObservableProperty] [property: Editable("Continuation", "Page Continuation Indicator", 5, "Track")]
     private TrackTerminatorEnum _continuationStyle = TrackTerminatorEnum.Arrow;
 
     [JsonConstructor]
