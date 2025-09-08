@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class MultilineTextRenderer : BaseRenderer,IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Multiline;

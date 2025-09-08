@@ -1,7 +1,7 @@
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
     private bool _isBusy = false;

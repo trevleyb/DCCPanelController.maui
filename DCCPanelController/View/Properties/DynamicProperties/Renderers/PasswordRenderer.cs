@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class PasswordRenderer : BaseRenderer,IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Password;

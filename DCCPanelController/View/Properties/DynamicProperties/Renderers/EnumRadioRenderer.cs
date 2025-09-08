@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Reflection;
-using Microsoft.Maui.Controls;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) {

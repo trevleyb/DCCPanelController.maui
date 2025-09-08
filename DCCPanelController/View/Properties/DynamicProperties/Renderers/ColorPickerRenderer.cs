@@ -1,7 +1,8 @@
-using DCCPanelController.Helpers;
-using DCCPanelController.View.Components; // <-- your ColorPickerButton namespace
+using DCCPanelController.View.Components;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+// <-- your ColorPickerButton namespace
+
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
     protected override int FieldWidth => 150;

@@ -1,6 +1,6 @@
 using Microsoft.Maui.Controls.Shapes;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 public abstract class BaseRenderer {
     protected virtual int LabelWidth => 150; // Allow this to be overriden

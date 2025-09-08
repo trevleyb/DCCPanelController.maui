@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
     internal sealed class IntRenderer : BaseRenderer,IPropertyRenderer {
         protected override int FieldWidth => 150;

@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class NumberRenderer : BaseRenderer,IPropertyRenderer {
     protected override int FieldWidth => 100;

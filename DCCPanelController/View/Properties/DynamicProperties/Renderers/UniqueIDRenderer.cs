@@ -1,6 +1,6 @@
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class UniqueIDRenderer : BaseRenderer,IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Text;

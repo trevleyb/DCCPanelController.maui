@@ -1,4 +1,4 @@
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class DateRenderer : BaseRenderer,IPropertyRenderer {
     protected override int FieldWidth => 150;

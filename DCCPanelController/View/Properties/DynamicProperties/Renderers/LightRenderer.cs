@@ -1,7 +1,7 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class LightRenderer : BaseRenderer,IPropertyRenderer {
     protected override int FieldWidth => 200;

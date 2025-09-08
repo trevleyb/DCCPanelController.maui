@@ -1,6 +1,4 @@
-using Microsoft.Maui.Controls.Shapes;
-
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ChoiceRenderer : BaseRenderer,IPropertyRenderer {
     protected override int FieldWidth => 200;

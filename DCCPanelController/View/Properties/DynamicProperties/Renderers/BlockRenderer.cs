@@ -1,8 +1,7 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Properties.DynamicProperties;
 
-namespace DCCPanelController.View.Properties.DynamicProperties;
+namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class BlockRenderer : BaseRenderer,IPropertyRenderer {
     protected override int FieldWidth => 200;
