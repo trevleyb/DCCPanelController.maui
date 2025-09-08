@@ -110,7 +110,7 @@ public partial class ColorPickerButton : ContentView {
             },
             AutoSizeMode = PopupAutoSizeMode.Both,
             AnimationMode = PopupAnimationMode.Zoom,
-            AnimationDuration = 300
+            AnimationDuration = 300,
         };
 
         var tcs = new TaskCompletionSource<Color?>();
@@ -128,16 +128,11 @@ public partial class ColorPickerButton : ContentView {
 
         // Handle popup closing
         popup.Closed += (sender, args) => {
-            if (!tcs.Task.IsCompleted) {
-                tcs.SetResult(null);
-            }
+            if (!tcs.Task.IsCompleted) tcs.SetResult(null);
         };
 
         popup.Show();
         var result = await tcs.Task;
-
-        if (result is not null) {
-            SelectedColor = result;
-        }
+        if (result is { }) SelectedColor = result;
     }
 }

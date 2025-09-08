@@ -15,7 +15,8 @@ namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
             
             var grid = new Grid { ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(stepperWidth)] };
             var entry = new Entry {Keyboard = Keyboard.Numeric, Text = row.OriginalValue?.ToString() ?? string.Empty, Placeholder = MixedPlaceholder(row), HorizontalOptions = LayoutOptions.Fill, HorizontalTextAlignment = TextAlignment.End };
-            var stepper = new Stepper { Value=(int)(row.OriginalValue ?? 0.0),  Minimum = min, Maximum = max, Increment = step, Margin=new Thickness(10,0,0,0),  };
+            var stepper = new Stepper { Minimum = min, Maximum = max, Increment = step, Margin=new Thickness(10,0,0,0),  };
+            stepper.Value = (row.OriginalValue is int value) ? value : 0;  
             stepper.ValueChanged += (s, e) => {
                 var val = Math.Clamp(stepper.Value, min, max);
                 entry.Text = val.ToString(CultureInfo.InvariantCulture) ?? string.Empty;

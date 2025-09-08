@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
@@ -341,7 +342,6 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnTileDragCompleted(object? sender, TileDragEventArgs e) {
         try {
-            ClearAllSelectedTiles();
             if (e.Tile is { } tile) {
                 if (!GridPositionHelper.WouldCollide(tile, e.CurrentCol, e.CurrentRow, _dynamicGrid, EditMode) &&
                     GridPositionHelper.IsInBounds(tile, e.CurrentCol, e.CurrentRow, Cols, Rows)) {
@@ -873,6 +873,7 @@ public partial class ControlPanelView {
     /// you could have a non-track on top of a track or a track on top of an image.
     /// </summary>
     private void DragOverTileOnPanel(object? sender, DragEventArgs e) {
+
         if (!DesignMode) {
 #if IOS || MACCATALYST
             e.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
@@ -880,11 +881,8 @@ public partial class ControlPanelView {
             return;
         }
 
-        var tile = e.Data.Properties["Tile"] as ITile ?? null;
-        if (tile is null) {
-            Console.WriteLine("Got a Drop bt Tile is not set?");
-            return;
-        }
+        var tile = e.Data?.Properties["Tile"] as ITile ?? null;
+        if (tile is null) return;
         
         var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_dynamicGrid), _dynamicGrid);
         if (gridPosition is { } position && (position.Col != _lastDragCol || position.Row != _lastDragRow)) {
