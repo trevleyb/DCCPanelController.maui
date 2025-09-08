@@ -258,13 +258,17 @@
                         VerticalOptions="Center"
                         WidthRequest="200"
                         HeightRequest="120"
+                        Opacity="1"
                         Margin="20"
                         Padding="20">
 
                     <StackLayout
+                        BackgroundColor="White"
                         HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
-                        <ActivityIndicator IsRunning="{Binding IsLoading}"
-                                           Color="{StaticResource Primary}"/>
+                        <ActivityIndicator
+                            BackgroundColor="White"
+                            IsRunning="{Binding IsLoading}"
+                            Color="{StaticResource Primary}"/>
                         <Label Text="Loading Panel Editor"
                                HorizontalOptions="Center"
                                VerticalOptions="Center"

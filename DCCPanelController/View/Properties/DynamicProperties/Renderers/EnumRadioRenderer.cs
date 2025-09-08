@@ -7,11 +7,11 @@ using Microsoft.Maui.Controls;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class EnumRadioRenderer : IPropertyRenderer {
+internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) {
         var t = ctx.Row.Field.Accessor.PropertyType;
         var u = Nullable.GetUnderlyingType(t) ?? t;
-        return u.IsEnum && (ctx.EditorKind == EditorKinds.EnumButtons || ctx.EditorKind == EditorKinds.EnumRadio);
+        return u.IsEnum && ctx.EditorKind == EditorKinds.EnumRadio;
     }
 
     public object CreateView(PropertyContext ctx) {
@@ -40,7 +40,7 @@ internal sealed class EnumRadioRenderer : IPropertyRenderer {
 
             rb.CheckedChanged += (_, e) => {
                 if (e.Value == true) {
-                    RenderBinding.SetValue(row, it.Value);
+                    SetValue(row, it.Value);
                 }
             };
 
@@ -49,12 +49,13 @@ internal sealed class EnumRadioRenderer : IPropertyRenderer {
 
         stack.HorizontalOptions = LayoutOptions.Fill;
         var scroll = new ScrollView {
+            Orientation = ScrollOrientation.Horizontal,
             HorizontalOptions = LayoutOptions.Fill,
-            Content = stack
+            Content = stack,
         };
 
         // Wrap with your standard label/description/error grid
-        return PropertyRenderers.WrapWithLabel(row, scroll);
+        return WrapWithLabel(ctx, scroll);
     }
 
     private static List<(string Text, object? Value)> BuildEnumItems(Type enumType, bool includeNone) {

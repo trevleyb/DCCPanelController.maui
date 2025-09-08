@@ -2,10 +2,14 @@ using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Entities;
+using ShimSkiaSharp;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
+   
+    public EventHandler<ButtonStateEnum>? StateChanged { get; set; }
+   
     public static readonly BindableProperty ButtonProperty = BindableProperty.Create(nameof(Button), typeof(Button), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
     public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(ButtonStateEnum), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
     public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(ButtonStateControl), true);
@@ -71,6 +75,7 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
     [RelayCommand]
     public async Task ToggleStateAsync() {
         if (CanToggleState) {
+            var prevState = State;
             if (CanSetStateUnknown) {
                 State = State switch {
                     ButtonStateEnum.On      => ButtonStateEnum.Off,
@@ -85,9 +90,11 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
                     _                   => ButtonStateEnum.On
                 };
             }
-
-            if (StateChangedCommand is { } command) {
-                if (command.CanExecute(Button)) command.Execute(Button);
+            if (State != prevState) {
+                StateChanged?.Invoke(this, State);
+                if (StateChangedCommand is { } command) {
+                    if (command.CanExecute(Button)) command.Execute(Button);
+                }
             }
         }
         OnPropertyChanged(nameof(Button));

@@ -1,20 +1,27 @@
 using System.Diagnostics;
 using System.Globalization;
+using System.Reflection.Metadata;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 public sealed class PropertyContext {
-    public PropertyRow Row { get; }
     public AppMode Mode { get; }
+    public PropertyRow Row { get; }
     public CultureInfo Culture { get; }
     public string EditorKind { get; internal set; } = "text"; // resolved kind, set by FormContext
-    public System.Collections.Generic.IReadOnlyDictionary<string, object> Params => Row.Field.Meta.Parameters;
-
-    public PropertyContext(PropertyRow row, AppMode mode, CultureInfo? culture = null) {
+    public IReadOnlyDictionary<string, object> Params => Row.Field.Meta.Parameters;
+    public IReadOnlyList<object> Owners { get; }
+    
+    public PropertyContext(string kind, PropertyRow row, AppMode mode, IReadOnlyList<object>? owners = null, CultureInfo? culture = null) {
         Row = row;
         Mode = mode;
+        EditorKind = kind;
+        Owners = owners ?? [];
         Culture = culture ?? CultureInfo.InvariantCulture;
     }
+    
+    public IEnumerable<T> OwnersAs<T>() where T : class => Owners.OfType<T>();
+    public T? FirstOwnerAs<T>() where T : class => Owners.OfType<T>().FirstOrDefault();
 }
 
 [DebuggerDisplay("{Field?.Meta?.Label} Touched: {IsTouched}")]

@@ -7,6 +7,8 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.View.Components;
 
 public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
+    public EventHandler<TurnoutStateEnum>? StateChanged { get; set; }
+    
     public static readonly BindableProperty TurnoutProperty = BindableProperty.Create(nameof(Turnout), typeof(Turnout), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
     public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(TurnoutStateEnum), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
     public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(TurnoutStateControl), true);
@@ -72,6 +74,7 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
     [RelayCommand]
     public async Task ToggleStateAsync() {
         if (CanToggleState) {
+            var prevState = State;
             if (CanSetStateUnknown) {
                 State = State switch {
                     TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
@@ -86,9 +89,11 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
                     _                       => TurnoutStateEnum.Closed
                 };
             }
-
-            if (StateChangedCommand is { } command) {
-                if (command.CanExecute(Turnout)) command.Execute(Turnout);
+            if (prevState != State) {
+                StateChanged?.Invoke(this, State);;
+                if (StateChangedCommand is { } command) {
+                    if (command.CanExecute(Turnout)) command.Execute(Turnout);
+                }
             }
         }
         OnPropertyChanged(nameof(Turnout));

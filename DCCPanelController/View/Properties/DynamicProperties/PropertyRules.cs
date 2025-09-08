@@ -8,7 +8,7 @@ public class PropertyRendererRules {
         public bool AppliesTo(PropertyRow row) => row.Field.Meta.GetParameters("required", false);
 
         public Task<ValidationIssue?> EvaluateAsync(DynamicTilePropertyForm ctx, PropertyRow row) {
-            if (row.HasMixedValues && !row.IsTouched) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(null);
+            if (row is { HasMixedValues: true, IsTouched: false }) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(null);
             var v = row.CurrentValue;
             if (v is null) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(ValidationIssue.Error("required", $"{row.Field.Meta.Label} is required."));
             if (v is string s && string.IsNullOrWhiteSpace(s)) return System.Threading.Tasks.Task.FromResult<ValidationIssue?>(ValidationIssue.Error("required", $"{row.Field.Meta.Label} is required."));

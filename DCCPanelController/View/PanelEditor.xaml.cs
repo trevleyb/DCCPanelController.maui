@@ -49,7 +49,6 @@ public partial class PanelEditor : ContentPage {
     public Task<bool> PageClosed => _closeTcs.Task;
     
     protected override void OnSizeAllocated(double width, double height) {
-        Console.WriteLine($"Size Allocated: {width}x{height}");
         base.OnSizeAllocated(width, height);
         UpdateScreenDimensions(width, height);
     }

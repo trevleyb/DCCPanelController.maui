@@ -24,7 +24,7 @@ public sealed class DynamicTilePropertyForm {
     public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection) {
         var extractor = new EditableExtractorCache();
         var renderers = new PropertyRendererRegistry();
-        PropertyRenderers.RegisterDefaults(renderers);
+        EditorKinds.RegisterDefaults(renderers);
 
         var validator = new CompositeValidator([
             new PropertyRendererRules.RequiredRule(),
@@ -142,11 +142,10 @@ public sealed class DynamicTilePropertyForm {
     }
 
     public object GetRendererView(PropertyRow row) {
-        var ctx = new PropertyContext(row, Mode);
         var kind = _kindResolver.Resolve(row.Field);
-        ctx.EditorKind = kind;
+        var ctx = new PropertyContext(kind, row, Mode, SelectedEntities);
         var renderer = _renderers.Resolve(kind);
-        return !renderer.CanRender(ctx) ? throw new NotSupportedException($"Renderer cannot render kind '{kind}'") : renderer.CreateView(ctx);
+        return !renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
     }
 
     public async Task<ValidationSummary> ValidateAsync() {

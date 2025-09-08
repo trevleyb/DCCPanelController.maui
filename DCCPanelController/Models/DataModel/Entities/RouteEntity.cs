@@ -26,7 +26,6 @@ public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
     
     [ObservableProperty] [property: EditableColor("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
     private Color? _colorOffBorder;
-
     
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 

@@ -16,15 +16,15 @@ public partial class DynamicTilePropertyPopupContent {
         InitializeComponent();
         BindingContext = this;
     }
-    
-    public enum FormState {Normal, Invalid, NoSelectedTiles, NoCommonProperties}
+
+    public enum FormState { Normal, Invalid, NoSelectedTiles, NoCommonProperties }
 
     [ObservableProperty] private FormState _state = FormState.Normal;
     [ObservableProperty] private string _title = "Properties";
     [ObservableProperty] private bool _noCommonProperties = false;
     [ObservableProperty] private bool _noSelectedProperties = false;
     [ObservableProperty] private bool _hasCommonProperties = true;
-    
+
     public DynamicTilePropertyForm? Form { get; private set; }
     public event EventHandler? Applied;
     public event EventHandler? Cancelled;
@@ -33,6 +33,7 @@ public partial class DynamicTilePropertyPopupContent {
 
     #region Binadable Collection of Tiles
     public static readonly BindableProperty TilesSourceProperty = BindableProperty.Create(nameof(TilesSource), typeof(IEnumerable<ITile>), typeof(DynamicTilePropertyPopupContent), defaultValue: null, propertyChanged: OnTilesSourceChanged);
+
     public IEnumerable<ITile>? TilesSource {
         get => (IEnumerable<ITile>?)GetValue(TilesSourceProperty);
         set => SetValue(TilesSourceProperty, value);
@@ -40,6 +41,7 @@ public partial class DynamicTilePropertyPopupContent {
 
     private static async void OnTilesSourceChanged(BindableObject bindable, object oldValue, object newValue) {
         try {
+            Console.WriteLine("OnTilesSourceChanged");
             var view = (DynamicTilePropertyPopupContent)bindable;
             await view.RebuildAsync();
         } catch (Exception ex) {
@@ -48,14 +50,14 @@ public partial class DynamicTilePropertyPopupContent {
     }
     #endregion
 
-    #region Build the Properties form 
+    #region Build the Properties form
     /// <summary>
     /// Rebuild the Form if the collection of Tiles changes
     /// </summary>
     private async Task RebuildAsync() {
         PropertyHost.Children.Clear();
         State = FormState.Normal;
-        
+
         // Lets make sure we have some valid Tiles to work with
         // ---------------------------------------------------------------
         var tiles = TilesSource?.ToList();
@@ -71,7 +73,8 @@ public partial class DynamicTilePropertyPopupContent {
         await Form.ValidateAsync();
 
         if (!Form.HasCommonProperties) {
-            State = FormState.NoCommonProperties;;
+            State = FormState.NoCommonProperties;
+            ;
             return;
         }
 
@@ -83,11 +86,8 @@ public partial class DynamicTilePropertyPopupContent {
             var header = CreateExpanderGroup(group.Name, isFirst);
             isFirst = false;
             foreach (var row in group.Rows) {
-                Console.WriteLine($"Rendering: {row?.Field?.Meta?.EditorKind ?? "Unknown kind"}");
-                if (row is not null) {
-                    if (Form!.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
-                        header.children?.Add(v);
-                    }
+                if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
+                    header.children?.Add(v);
                 }
             }
             PropertyHost.Children.Add(header.expander);
@@ -98,7 +98,7 @@ public partial class DynamicTilePropertyPopupContent {
     private async Task<IResult<ValidationSummary>> ValidateAsync() {
         if (Form == null) return Result<ValidationSummary>.Fail("Form is null");
         var summary = await Form.ValidateAsync();
-        return summary.HasErrors 
+        return summary.HasErrors
             ? Result<ValidationSummary>.Fail("Validation Failed").WithValue(summary)
             : Result<ValidationSummary>.Ok();
     }
@@ -111,15 +111,15 @@ public partial class DynamicTilePropertyPopupContent {
         Applied?.Invoke(this, EventArgs.Empty);
         return Result.Ok();
     }
-    
+
     [RelayCommand]
     private async Task CancelAsync() {
         await _undo.UndoAsync();
-        await RebuildAsync();
+        //await RebuildAsync();
         Cancelled?.Invoke(this, EventArgs.Empty);
     }
-    #endregion 
-    
+    #endregion
+
     #region Group Helpers
     private static (IView? expander, IList<IView>? children) CreateExpanderGroup(string groupKey, bool isFirst) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey);

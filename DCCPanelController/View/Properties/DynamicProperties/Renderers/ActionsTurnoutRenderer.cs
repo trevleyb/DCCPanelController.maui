@@ -1,7 +1,9 @@
+using DCCPanelController.View.Properties.DynamicProperties;
+
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class ActionsRenderer : IPropertyRenderer {
-    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Actions;
+internal sealed class ActionsTurnoutRenderer : BaseRenderer, IPropertyRenderer {
+    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.TurnoutActions;
 
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
@@ -9,6 +11,6 @@ internal sealed class ActionsRenderer : IPropertyRenderer {
         //var entry = new Entry { Text = row.OriginalValue as string, Placeholder = RenderBinding.MixedPlaceholder(row) };
         //entry.TextChanged += (s, e) => RenderBinding.SetValue(row, e.NewTextValue);
         //entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return PropertyRenderers.WrapWithLabel(row, label);
+        return WrapWithLabel(ctx, label);
     }
 }

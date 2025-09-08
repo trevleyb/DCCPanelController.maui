@@ -2,7 +2,8 @@ using System.Globalization;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-    internal sealed class OpacityRenderer : IPropertyRenderer {
+    internal sealed class OpacityRenderer : BaseRenderer,IPropertyRenderer {
+        protected override int FieldWidth => 150;
         public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Opacity;
         public object CreateView(PropertyContext ctx) {
             var row = ctx.Row;
@@ -10,25 +11,27 @@ namespace DCCPanelController.View.Properties.DynamicProperties;
             var max = 1;
             var step = 0.05;
             
-            var grid = new Grid { ColumnDefinitions = [new ColumnDefinition(GridLength.Auto), new ColumnDefinition(GridLength.Auto)] };
-            var entry = new Entry {Keyboard = Keyboard.Numeric, Text = ConvertOpacityToPercentage(row.OriginalValue), Placeholder = RenderBinding.MixedPlaceholder(row), HorizontalOptions = LayoutOptions.Fill, HorizontalTextAlignment = TextAlignment.End };
+            var stepperWidth = 100;
+            var grid = new Grid { ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(stepperWidth)] };
+            var entry = new Entry {Keyboard = Keyboard.Numeric, Text = ConvertOpacityToPercentage(row.OriginalValue), Placeholder = MixedPlaceholder(row), HorizontalOptions = LayoutOptions.Fill, HorizontalTextAlignment = TextAlignment.End };
             var stepper = new Stepper { Value=(double)(row.OriginalValue ?? 0.0),  Minimum = min, Maximum = max, Increment = step, Margin=new Thickness(10,0,0,0) };
 
             stepper.ValueChanged += (s, e) => {
                 var val = Math.Clamp(stepper.Value, min, max);
                 entry.Text = ConvertOpacityToPercentage(val);
-                RenderBinding.SetValue(row, val);
+                SetValue(row, val);
             };
             
+            entry.Behaviors.Add(new CommunityToolkit.Maui.Behaviors.NumericValidationBehavior());
             entry.TextChanged += (s, e) => {
                 var val = ConvertToPercentageToOpacity(e.NewTextValue);
                     val = Math.Clamp(val, min, max);
-                    RenderBinding.SetValue(row, val);
+                    SetValue(row, val);
             };
-            grid.Add(entry, 0, 0);
+            grid.Add(AddBorder(entry), 0, 0);
             grid.Add(stepper, 1, 0);
             grid.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-            return PropertyRenderers.WrapWithLabel(row, grid);
+            return WrapWithLabel(ctx, grid);
         }
 
         private static string ConvertOpacityToPercentage(object? opacity) {

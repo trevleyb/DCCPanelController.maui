@@ -1,5 +1,6 @@
 using System.Collections;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
@@ -10,7 +11,7 @@ public interface IEditorKindResolver {
 public sealed class EditableExtractorResolver : IEditorKindResolver {
     public string Resolve(EditableField field) {
         var meta = field.Meta;
-        var t = UnwrapNullable(field.Accessor.PropertyType);
+        var t = EditorKinds.UnwrapNullable(field.Accessor.PropertyType);
 
         // 1) explicit override
         // -----------------------------------------------------------------------------
@@ -23,22 +24,35 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         // 3) name conventions
         // -----------------------------------------------------------------------------
         var name = field.Prop.Name;
-        if (name.Contains("Color", StringComparison.Ordinal) && t == typeof(Color) ) return EditorKinds.Color;
+        if (name.Contains("ID", StringComparison.Ordinal) && t == typeof(string)) return EditorKinds.UniqueID;
+        if (name.Contains("Choice", StringComparison.Ordinal) && t == typeof(string)) return EditorKinds.Choice;
+        if (name.Contains("Color", StringComparison.Ordinal) && t == typeof(Color)) return EditorKinds.Color;
         if (name.Contains("Occupancy", StringComparison.Ordinal)) return EditorKinds.Block;
-        if (name.EndsWith("Block", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Block;
         if (name.EndsWith("Url", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Url;
         if (name.Contains("Password", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Password;
         if (name.EndsWith("Width", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Int;
         if (name.EndsWith("Height", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Int;
         if (name.Contains("Opacity", StringComparison.OrdinalIgnoreCase) && t == typeof(double)) return EditorKinds.Opacity;
         if (name.Contains("Image", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Image;
+
+        if (name.EndsWith("Block", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Block;
+        if (name.EndsWith("Route", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Route;
+        if (name.EndsWith("Light", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Light;
+        if (name.EndsWith("Turnout", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Turnout;
+
         
         // 4) type mapping
         // -----------------------------------------------------------------------------
         if (t == typeof(bool)) return EditorKinds.Toggle;
-        if (t == typeof(ButtonStateEnum)) return EditorKinds.Button;
+        if (t == typeof(ButtonStateEnum)) return EditorKinds.ButtonState;
+        if (t == typeof(TurnoutStateEnum)) return EditorKinds.TurnoutState;
+        if (t == typeof(ButtonActions)) return EditorKinds.ButtonActions;
+        if (t == typeof(TurnoutActions)) return EditorKinds.TurnoutActions;
+
+        if (t.IsEnum) {
+            return Enum.GetNames(t).Length > 4 ? EditorKinds.EnumChoice : EditorKinds.EnumRadio;
+        }
         
-        if (t.IsEnum) return EditorKinds.EnumRadio;
         if (t == typeof(int) || t == typeof(long)) return EditorKinds.Int;
         if (t == typeof(float) || t == typeof(double) || t == typeof(decimal)) return EditorKinds.Number;
         if (t == typeof(string)) {
@@ -48,14 +62,16 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
             if (meta.Parameters.ContainsKey("choices")) return EditorKinds.Choice;
             return EditorKinds.Text;
         }
-        if (IsColorType(t)) return EditorKinds.Color;
+        if (EditorKinds.IsColorType(t)) return EditorKinds.Color;
         if (t == typeof(DateTime) || t.FullName == "System.DateOnly") return EditorKinds.Date;
         if (t == typeof(TimeSpan)) return EditorKinds.TimeSpan;
+        if (t == typeof(TimeOnly)) return EditorKinds.TimeSpan;
         if (typeof(IEnumerable).IsAssignableFrom(t) && t != typeof(string)) {
             if (meta.Parameters.ContainsKey("choices")) return EditorKinds.MultiSelect;
         }
 
         // 5) fallback
+        Console.WriteLine($"No editor kind found for {t.Name}");
         return EditorKinds.Text;
     }
 
@@ -86,7 +102,4 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         kind = EditorKinds.Text;
         return false;
     }
-
-    private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
-    private static bool IsColorType(Type t) => t.FullName == "Microsoft.Maui.Graphics.Color" || t.Name.Equals("Color", StringComparison.Ordinal);
 }

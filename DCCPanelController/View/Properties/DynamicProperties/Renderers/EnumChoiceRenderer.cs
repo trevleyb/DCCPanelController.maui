@@ -7,7 +7,9 @@ using Microsoft.Maui.Controls;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class EnumChoiceRenderer : IPropertyRenderer {
+internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
+    
+    protected override int FieldWidth => 200;
     public bool CanRender(PropertyContext ctx) {
         var t = ctx.Row.Field.Accessor.PropertyType;
         var u = Nullable.GetUnderlyingType(t) ?? t;
@@ -23,7 +25,13 @@ internal sealed class EnumChoiceRenderer : IPropertyRenderer {
         // Build items (DisplayAttribute-friendly)
         var items = BuildEnumItems(enumType, allowNull);
 
-        var picker = new Picker { Title = row.HasMixedValues ? "— mixed —" : null };
+        var picker = new Picker {
+            Title = (row.HasMixedValues ? "— mixed —" : null) ?? string.Empty,
+            FontSize = FieldFontSize,
+            WidthRequest = GetFieldWidth(row.Field.Meta.Width),
+            HorizontalOptions = LayoutOptions.Start,
+            VerticalOptions = LayoutOptions.Center,
+        };
         foreach (var it in items) picker.Items.Add(it.Text);
 
         // Initial selection (only if not mixed and value present)
@@ -35,13 +43,13 @@ internal sealed class EnumChoiceRenderer : IPropertyRenderer {
         picker.SelectedIndexChanged += (s, e) => {
             if (picker.SelectedIndex < 0) return;
             var selected = items[picker.SelectedIndex].Value;
-            RenderBinding.SetValue(row, selected);
+            SetValue(row, selected);
         };
 
         picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
 
         // wrap with your standard label/description/error grid
-        return PropertyRenderers.WrapWithLabel(row, picker);
+        return WrapWithLabel(ctx, AddBorder(picker));
     }
 
     private static List<(string Text, object? Value)> BuildEnumItems(Type enumType, bool includeNone) {

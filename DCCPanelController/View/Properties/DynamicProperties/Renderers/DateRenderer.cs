@@ -1,13 +1,20 @@
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class DateRenderer : IPropertyRenderer {
+internal sealed class DateRenderer : BaseRenderer,IPropertyRenderer {
+    protected override int FieldWidth => 150;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Date;
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
-        var dp = new DatePicker();
+        var dp = new DatePicker {
+            FontSize = FieldFontSize,
+            FontAttributes = FontAttributes.None,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Center,
+            Format = "D"
+        };
         if (row.OriginalValue is DateTime dt) dp.Date = dt;
-        dp.DateSelected += (s, e) => RenderBinding.SetValue(row, e.NewDate);
+        dp.DateSelected += (s, e) => SetValue(row, e.NewDate);
         dp.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return PropertyRenderers.WrapWithLabel(row, dp);
+        return WrapWithLabel(ctx, AddBorder(dp));
     }
 }

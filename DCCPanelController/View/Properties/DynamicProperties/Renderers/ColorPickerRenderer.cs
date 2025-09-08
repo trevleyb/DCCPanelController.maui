@@ -3,15 +3,14 @@ using DCCPanelController.View.Components; // <-- your ColorPickerButton namespac
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-public sealed class ColorPickerRenderer : IPropertyRenderer {
+public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
+    protected override int FieldWidth => 150;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Color;
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
 
         // Build your custom control
         var picker = new ColorPickerButton {
-            WidthRequest = 150,
-            HeightRequest = 30,
             SelectedColor = row.OriginalValue is Color c ? c : null,
             AllowsNoColor = row.Field.Meta.GetParameters("allowsNoColor", true),
             IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode),
@@ -29,35 +28,15 @@ public sealed class ColorPickerRenderer : IPropertyRenderer {
             picker.SelectedColor = null; // will render as "Use Default" in your control
         }
 
-        // If mixed, overlay a small "— mixed —" chip until user edits
         Microsoft.Maui.Controls.View visual = picker;
-        // if (row.HasMixedValues) {
-        //     var overlay = new Label {
-        //         Text = "— mixed —",
-        //         Opacity = 0.6,
-        //         VerticalTextAlignment = TextAlignment.Center,
-        //         HorizontalTextAlignment = TextAlignment.Center
-        //     };
-        //     var grid = new Grid();
-        //     grid.Add(picker);
-        //     grid.Add(overlay);
-        //
-        //     // hide overlay once the value changes
-        //     void HideOverlay() => overlay.IsVisible = false;
-        //     picker.PropertyChanged += (_, e) => {
-        //         if (e.PropertyName == nameof(ColorPickerButton.SelectedColor) || e.PropertyName == "SelectedColorProperty")
-        //             HideOverlay();
-        //     };
-        //     visual = grid;
-        // }
 
         // Push changes back into the form row
         picker.PropertyChanged += (_, e) => {
             if (e.PropertyName == nameof(ColorPickerButton.SelectedColor) || e.PropertyName == "SelectedColorProperty") {
-                RenderBinding.SetValue(row, picker.SelectedColor);
+                SetValue(row, picker.SelectedColor);
             }
         };
-        return PropertyRenderers.WrapWithLabel(row, visual);
+        return WrapWithLabel(ctx, visual);
     }
 
     // --- helpers ---

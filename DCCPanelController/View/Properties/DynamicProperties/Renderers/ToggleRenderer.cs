@@ -1,6 +1,6 @@
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class ToggleRenderer : IPropertyRenderer {
+internal sealed class ToggleRenderer : BaseRenderer,IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Toggle;
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
@@ -12,13 +12,13 @@ internal sealed class ToggleRenderer : IPropertyRenderer {
             stack.Add(label);
             sw.Toggled += (s, e) => {
                 label.IsVisible = false;
-                RenderBinding.SetValue(row, e.Value);
+                SetValue(row, e.Value);
             };
             stack.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-            return PropertyRenderers.WrapWithLabel(row, stack);
+            return WrapWithLabel(ctx, stack);
         }
-        sw.Toggled += (s, e) => RenderBinding.SetValue(row, e.Value);
+        sw.Toggled += (s, e) => SetValue(row, e.Value);
         sw.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return PropertyRenderers.WrapWithLabel(row, sw);
+        return WrapWithLabel(ctx, sw);
     }
 }

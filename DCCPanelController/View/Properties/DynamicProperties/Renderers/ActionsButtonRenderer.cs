@@ -1,14 +1,16 @@
+using DCCPanelController.View.Properties.DynamicProperties;
+
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-internal sealed class ButtonRenderer : IPropertyRenderer {
-    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Button;
+internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
+    public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.ButtonActions;
 
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
-        var label = new Label { Text = "Button", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Start, Opacity = 0.6 };
+        var label = new Label { Text = "Actions", VerticalTextAlignment = TextAlignment.Center, HorizontalTextAlignment = TextAlignment.Start, Opacity = 0.6 };
         //var entry = new Entry { Text = row.OriginalValue as string, Placeholder = RenderBinding.MixedPlaceholder(row) };
         //entry.TextChanged += (s, e) => RenderBinding.SetValue(row, e.NewTextValue);
         //entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return PropertyRenderers.WrapWithLabel(row, label);
+        return WrapWithLabel(ctx, label);
     }
 }

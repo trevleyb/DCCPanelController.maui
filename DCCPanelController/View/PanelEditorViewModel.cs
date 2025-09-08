@@ -245,10 +245,6 @@ public partial class PanelEditorViewModel : ObservableObject {
             
             if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
                 await DynamicTilePropertyPopupAsync(title);
-
-                //var propertiesViewModel = new DynamicPropertyPageViewModel(SelectedEntities);
-                //var propertiesPage = propertiesViewModel.CreatePropertiesView();
-                //ShowPropertyPopup(title, propertiesViewModel, propertiesPage, AcceptTilePropertiesPopupCommand);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
@@ -262,51 +258,56 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     private async Task DynamicTilePropertyPopupAsync(string title) {
-        var scrollContent = new ScrollView();
-        var content = new DynamicTilePropertyPopupContent {
-            Title = title,
-            TilesSource = SelectedTiles 
-        };
-        content.Applied += ContentOnApplied;  
-        content.Cancelled  += ContentOnClosed;
-        scrollContent.Content = content;
+        IsProcessing = true;
+        try {
+            var scrollContent = new ScrollView();
+            var content = new DynamicTilePropertyPopupContent {
+                Title = title,
+                TilesSource = SelectedTiles
+            };
+            content.Applied += ContentOnApplied;
+            content.Cancelled += ContentOnClosed;
+            scrollContent.Content = content;
 
-        var popup = new SfPopup {
-            ContentTemplate = new DataTemplate(() => scrollContent),
-            HeaderTitle = title,
-            ShowHeader = true,
-            ShowFooter = true,
-            BackgroundColor = Colors.WhiteSmoke,
-            PopupStyle = new PopupStyle {
-                CornerRadius = 10,
-                HasShadow = false,
-                BlurIntensity = PopupBlurIntensity.Light,
-                HeaderBackground = Colors.WhiteSmoke,
-                FooterBackground = Colors.LightGray,
-                MessageBackground = Colors.WhiteSmoke,
-                AcceptButtonBackground = Colors.White,
-                DeclineButtonBackground = Colors.White,
-                AcceptButtonTextColor = Colors.Black,
-                DeclineButtonTextColor = Colors.Black,
-            },
-            AppearanceMode = PopupButtonAppearanceMode.TwoButton,
-            ShowCloseButton = false,
-            StaysOpen = true,
-            IsFullScreen = true,
-            AcceptButtonText = "Save",
-            DeclineButtonText = "Cancel",
-            Padding = new Thickness(20),
-            Margin = new Thickness(20),
-            HeaderHeight = 60,
-            AutoSizeMode = PopupAutoSizeMode.None,
-            AnimationMode = PopupAnimationMode.Zoom,
-            AnimationDuration = 300,
-            OverlayMode = PopupOverlayMode.Transparent, 
-            AcceptCommand = content.ApplyCommand,
-            DeclineCommand = content.CancelCommand
-        };
-        if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
-        popup.Show();    
+            var popup = new SfPopup {
+                ContentTemplate = new DataTemplate(() => scrollContent),
+                HeaderTitle = title,
+                ShowHeader = true,
+                ShowFooter = true,
+                BackgroundColor = Colors.WhiteSmoke,
+                PopupStyle = new PopupStyle {
+                    CornerRadius = 10,
+                    HasShadow = false,
+                    BlurIntensity = PopupBlurIntensity.Light,
+                    HeaderBackground = Colors.WhiteSmoke,
+                    FooterBackground = Colors.LightGray,
+                    MessageBackground = Colors.WhiteSmoke,
+                    AcceptButtonBackground = Colors.White,
+                    DeclineButtonBackground = Colors.White,
+                    AcceptButtonTextColor = Colors.Black,
+                    DeclineButtonTextColor = Colors.Black,
+                },
+                AppearanceMode = PopupButtonAppearanceMode.TwoButton,
+                ShowCloseButton = false,
+                StaysOpen = true,
+                IsFullScreen = true,
+                AcceptButtonText = "Save",
+                DeclineButtonText = "Cancel",
+                Padding = new Thickness(20),
+                Margin = new Thickness(20),
+                HeaderHeight = 60,
+                AutoSizeMode = PopupAutoSizeMode.None,
+                AnimationMode = PopupAnimationMode.Zoom,
+                AnimationDuration = 300,
+                OverlayMode = PopupOverlayMode.Transparent,
+                AcceptCommand = content.ApplyCommand,
+                DeclineCommand = content.CancelCommand
+            };
+            if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
+            popup.Show();
+        } finally {
+            IsProcessing = false;
+        }
     }
 
     private void ContentOnClosed(object? sender, EventArgs e) {
