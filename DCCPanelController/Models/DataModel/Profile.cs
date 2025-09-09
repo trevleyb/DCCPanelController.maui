@@ -6,6 +6,8 @@ namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
 
+    public string Version { get; set; } = "1.0.1";  // Ensure we increment this version number when making changes to the schema
+    
     [ObservableProperty] private string _filename;
     [ObservableProperty] private string _profileName;
     [ObservableProperty] private Panels _panels;

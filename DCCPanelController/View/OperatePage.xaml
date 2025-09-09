@@ -19,8 +19,8 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}"  IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
-        <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_right}"/>
+        <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}" IsEnabled="{Binding HasPanels}" IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
+        <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IsEnabled="{Binding HasPanels}" IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_right}"/>
         
         <ToolbarItem
             Command="{Binding ToggleConnectionCommand}"
@@ -44,15 +44,14 @@
         <Grid RowDefinitions="*,auto">
 
             <!-- Main Panel Content with Swipe Gesture -->
-            <Grid Grid.Row="0"
-                  IsVisible="{Binding HideWelcomePage}"
-                  BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
-                <Grid.GestureRecognizers>
-                    <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
-                    <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
-                </Grid.GestureRecognizers>
+            <Grid Grid.Row="0">
+                <Grid
+                    BackgroundColor="{Binding PanelBackgroundColor, Converter={StaticResource ColorFallbackConverter}}">
+                    <Grid.GestureRecognizers>
+                        <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
+                        <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
+                    </Grid.GestureRecognizers>
 
-                <Grid>
                     <!-- Active Panel View -->
                     <controlPanel:ControlPanelView
                         TileTapped="PanelViewOnTileTapped"
@@ -61,13 +60,14 @@
                         Interactive="True"
                         DesignMode="False"
                         ShowGrid="false"
+                        IsVisible="{Binding HideWelcomePage}"
                         Panel="{Binding ActivePanel}"
                         x:Name="PanelView">
                         
-                        <controlPanel:ControlPanelView.GestureRecognizers>
-                            <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/>
-                            <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/>
-                        </controlPanel:ControlPanelView.GestureRecognizers>
+                        <!-- <controlPanel:ControlPanelView.GestureRecognizers> -->
+                        <!--     <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/> -->
+                        <!--     <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/> -->
+                        <!-- </controlPanel:ControlPanelView.GestureRecognizers> -->
                         
                     </controlPanel:ControlPanelView>
 

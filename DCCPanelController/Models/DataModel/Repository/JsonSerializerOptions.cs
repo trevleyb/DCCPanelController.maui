@@ -14,16 +14,23 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<DccClientType>(),
             new JsonEnumToStringConverter<Aspect>(),
             new JsonEnumToStringConverter<FontWeight>(),
-            new JsonEnumToStringConverter<TextAlignment>(),
-            new JsonEnumToStringConverter<TextAlignmentHorizontalEnum>(),
-            new JsonEnumToStringConverter<TextAlignmentVerticalEnum>(),
+
             new JsonEnumToStringConverter<SwitchStyleEnum>(),
             new JsonEnumToStringConverter<ButtonStateEnum>(),
             new JsonEnumToStringConverter<TurnoutStateEnum>(),
             new JsonEnumToStringConverter<RouteStateEnum>(),
+            new JsonEnumToStringConverter<ButtonSizeEnum>(),
+
             new JsonEnumToStringConverter<TrackTypeEnum>(),
-            new JsonEnumToStringConverter<TrackAttributeEnum>(),
             new JsonEnumToStringConverter<TrackTerminatorEnum>(),
+            new JsonEnumToStringConverter<TrackAttributeEnum>(),
+            new JsonEnumToStringConverter<TurnoutStyleEnum>(),
+            
+            new JsonEnumToStringConverter<TextAlignment>(),
+            new JsonEnumToStringConverter<TextAlignmentHorizontalEnum>(),
+            new JsonEnumToStringConverter<TextAlignmentVerticalEnum>(),
+            new JsonEnumToStringConverter<TextAttributeEnum>(),
+            
             new ExpressionFilterConverter<Turnout>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Route>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Sensor>(t => t.IsEditable || t.IsModified),

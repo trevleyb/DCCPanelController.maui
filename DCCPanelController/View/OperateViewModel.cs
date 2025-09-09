@@ -8,16 +8,17 @@ using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Components;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View;
  
 public partial class OperateViewModel : Base.ConnectionViewModel {
-    [ObservableProperty] private int _currentPanelIndex;
-    [ObservableProperty] private bool _showGrid;
-    [ObservableProperty] private bool _showPath;
+    [ObservableProperty] private int    _currentPanelIndex;
+    [ObservableProperty] private bool   _showGrid;
+    [ObservableProperty] private bool   _showPath;
+
     [ObservableProperty] private Panel? _activePanel;
-    
+    [ObservableProperty] private ObservableCollection<Panel>? _panels;
+
     [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
     [ObservableProperty] private bool _isMaximized;
     public bool IsNotMaximized => !IsMaximized;
@@ -25,19 +26,16 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
     public bool HideWelcomePage => !ShowWelcomePage;
-
-    public string VersionNumber => VersionInfo.Version; 
-    public static string IconMinimize => "minimize_2";
-    public static string IconMaximize => "maximize_2";
     
-    public ObservableCollection<Panel>? Panels { get; private set; }
     public Color PanelBackgroundColor => ActivePanel?.PanelBackgroundColor ?? Colors.White;
     public Color DisplayBackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
     public string ProfileName => _profileService.ActiveProfile?.ProfileName ?? "No Profile";
+    public string VersionNumber => VersionInfo.Version;
     
     public bool HasPanels => Panels?.Any() == true;
     public bool HasNoPanels => !HasPanels;
-
+    public bool HaveClosedWelcome = false;
+    
     private ILogger<OperateViewModel> _logger;
     private readonly ProfileService _profileService;
     
@@ -50,18 +48,27 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     }
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e?.PropertyName == nameof(CurrentPanelIndex)) {
-            await SelectPanelAsync(CurrentPanelIndex);
+        try {
+            if (e.PropertyName == nameof(CurrentPanelIndex)) {
+                await SelectPanelAsync(CurrentPanelIndex);
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error in OnPropertyChanged '{e.PropertyName}:{ex.Message}");
         }
     }
 
     public async void OnProfileChanged() {
-        Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
-        Panels = null;
-        var profile = _profileService.ActiveProfile;
-        Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
-        ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
-        await SelectPanelAsync(0);
+        try {
+            Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
+            Panels = null;
+            var profile = _profileService.ActiveProfile;
+            Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
+            ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
+            HaveClosedWelcome = !ShowWelcomePage;
+            await SelectPanelAsync(0);
+        } catch (Exception e) {
+            Console.WriteLine("Error loading profile: " + e.Message);
+        }
     }
 
     [RelayCommand]
@@ -69,10 +76,11 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         var choices = _profileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
         if (index is {} selectedProfile and >= 0) await _profileService.SwitchProfileByIndexAsync(selectedProfile);
+        HaveClosedWelcome = false;
     }
     
     [RelayCommand]
-    private async Task ReselectActivePanelAsync() {
+    public async Task ReselectActivePanelAsync() {
         try {
             await SelectPanelAsync(CurrentPanelIndex);
         } catch {
@@ -83,7 +91,8 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     
     [RelayCommand]
     private async Task SwipeLeftAsync() {
-        ShowWelcomePage = Panels?.Count <= 0 ? true : false;
+        HaveClosedWelcome = true;
+        ShowWelcomePage = Panels?.Count <= 0;
         if (Panels?.Any() == true) {
             await SelectPanelAsync(CurrentPanelIndex <= 0 ? Panels.Count - 1 : CurrentPanelIndex - 1);
         }
@@ -91,7 +100,8 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     private async Task SwipeRightAsync() {
-        ShowWelcomePage = Panels?.Count <= 0 ? true : false;
+        HaveClosedWelcome = true;
+        ShowWelcomePage = Panels?.Count <= 0;
         if (Panels?.Any() == true) {
             await SelectPanelAsync((CurrentPanelIndex + 1) % Panels.Count);
         }
@@ -99,14 +109,15 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     public async Task SelectPanelAsync(int index) {
+        if (index < 0 || index >= Panels?.Count) index = 0;
         CurrentPanelIndex = index;
         try {
-            if (index < 0) index = 0;
+            ActivePanel = null;
             if (Panels?.Count > 0 && index < Panels.Count) {
-                ActivePanel = null;
                 ActivePanel = Panels[index];
             }
-            ShowWelcomePage = Panels?.Count <= 0 ? true : false;
+            ShowWelcomePage = Panels?.Count <= 0 || !HaveClosedWelcome;
+            RaiseAllProperties();
         } catch (Exception ex) {
             Console.WriteLine("Error selecting panel: " + ex.Message);
         }

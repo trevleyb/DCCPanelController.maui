@@ -245,7 +245,12 @@ public class ProfileService {
     
     public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = false) {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("Filename is required.", nameof(fileName));
-        var profile = await JsonRepository.LoadAsync(fileName) ?? throw new ApplicationException($"Profile not found: {fileName}");
+        var profile = await JsonRepository.LoadAsync(fileName);
+        if (profile is null) {
+            _catalog?.Delete(fileName);
+            profile = await CreateAsync(fileName, setActive: false);
+            if (profile is null) throw new ApplicationException($"Failed to load profile: {fileName}");
+        }
         SetActive(profile, markAsDefault);
         return profile;
     }

@@ -6,6 +6,8 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonRepository {
+
+    public static string Version { get; set; } = "1.0.1";
     private static readonly ILogger Logger = LogHelper.CreateLogger("PanelRepository");
 
     public static async Task SaveAsync(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
@@ -49,6 +51,12 @@ public static class JsonRepository {
                 if (File.Exists(filePath)) {
                     try {
                         var jsonString = await File.ReadAllTextAsync(filePath);
+                        if (string.IsNullOrWhiteSpace(jsonString)) return null;
+                        
+                        // FUTURE: Add Support for difference Schema Versions and conversion between them
+                        var version = GetSchemaVersion(jsonString);
+                        Console.WriteLine($"Profile Version: {version} | Repository Version: {Version}");
+
                         var profile = JsonSerializer.Deserialize<Profile?>(jsonString, JsonOptions.Options) ?? throw new ApplicationException("Could not deserialize settings.");
                         LoggingLevelHelper.SetLogLevel(profile.Settings.LogLevel);
                         profile.FixLoadedPanels();
@@ -67,6 +75,29 @@ public static class JsonRepository {
         }
     }
 
+    private static string GetSchemaVersion(string jsonString) {
+        if (string.IsNullOrWhiteSpace(jsonString)) return "Undefined";
+        try {
+            // Match "schemaVersion" or "version" JSON keys and capture either a quoted string or a number (e.g., 1, 1.2.3)
+            // Ensures we only match a proper JSON key by requiring surrounding quotes.
+            var match = System.Text.RegularExpressions.Regex.Match(
+                jsonString,
+                "\"(?i:(schemaVersion|version|Version))\"\\s*:\\s*(?:\"(?<val>(?:[^\"\\\\]|\\\\.)*)\"|(?<val>-?\\d+(?:\\.\\d+)*))",
+                System.Text.RegularExpressions.RegexOptions.CultureInvariant
+            );
+            if (!match.Success) return "Unknown";
+
+            var raw = match.Groups["val"].Value;
+            try {
+                return System.Text.RegularExpressions.Regex.Unescape(raw);
+            } catch {
+                return raw;
+            }
+        } catch (Exception) {
+            return "Error";
+        }
+    }
+    
     public static Profile? Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
         using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}", false)) {

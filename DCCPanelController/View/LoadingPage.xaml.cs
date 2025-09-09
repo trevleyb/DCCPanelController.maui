@@ -42,10 +42,11 @@ public partial class LoadingPage : ContentPage {
                     var shell = services.GetRequiredService<AppShell>();
 
                     // Important: swap the root page instead of navigating
-                    var window = Application.Current?.Windows.FirstOrDefault();
+                    var window = Application.Current?.Windows[0];
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)
                 } catch (Exception ex) {
                     await DisplayAlert("Startup error", ex.Message, "OK");
+                    App.Current.Quit();
                 }
             }
         });

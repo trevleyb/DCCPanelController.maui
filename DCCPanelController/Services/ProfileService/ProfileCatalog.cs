@@ -26,8 +26,7 @@ public sealed partial class ProfileCatalog {
         }
     }
 
-    public ProfileRef? GetByFileName(string fileName)
-        => Profiles.FirstOrDefault(p => p.FileName == fileName);
+    public ProfileRef? GetByFileName(string fileName) => Profiles.FirstOrDefault(p => p.FileName == fileName);
 
     public ProfileRef Upsert(Profile profile) {
         // update if exists
@@ -52,6 +51,11 @@ public sealed partial class ProfileCatalog {
         Save();
     }
 
+    public void Delete(string fileName) {
+        Profiles.RemoveAll(p => p.FileName == fileName);
+        Save();
+    }
+
     public void SetDefault(string fileName) {
         for (var i = 0; i < Profiles.Count; i++) {
             var p = Profiles[i];
@@ -60,8 +64,7 @@ public sealed partial class ProfileCatalog {
         Save();
     }
 
-    public bool IsDefault(string fileName)
-        => Profiles.FirstOrDefault(p => p.FileName == fileName).IsDefault;
+    public bool IsDefault(string fileName) => Profiles.FirstOrDefault(p => p.FileName == fileName).IsDefault;
 
     public string GetUniqueProfileName(string? desiredName) {
         var baseInput = string.IsNullOrWhiteSpace(desiredName) ? "Profile" : desiredName!.Trim();
@@ -69,9 +72,9 @@ public sealed partial class ProfileCatalog {
         if (!existing.Contains(baseInput)) return baseInput;
 
         var m = NameRegex().Match(baseInput);
-        string root = baseInput;
-        string sep = baseInput.EndsWith(" ") ? "" : " ";
-        int start = 2;
+        var root = baseInput;
+        var sep = baseInput.EndsWith(" ") ? "" : " ";
+        var start = 2;
 
         if (m.Success) {
             root = m.Groups[1].Value;
@@ -84,7 +87,7 @@ public sealed partial class ProfileCatalog {
             if (!existing.Contains(candidate)) return candidate;
         }
 
-        return $"{root}{sep}{Guid.NewGuid():N}".Substring(0, Math.Min(root.Length + sep.Length + 8, 128));
+        return "Profile";
     }
 
     public static ProfileCatalog Load() {
@@ -105,7 +108,7 @@ public sealed partial class ProfileCatalog {
         fresh.Save();
         return fresh;
     }
-    
+
     private void EnsureOneDefault() {
         if (Profiles.Count == 0) return;
         if (!Profiles.Any(p => p.IsDefault)) {
@@ -122,7 +125,7 @@ public sealed partial class ProfileCatalog {
         File.WriteAllText(path, json);
         Console.WriteLine($"Saved ProfileCatalog {member}@{line}: {path}");
     }
-    
+
     [System.Text.RegularExpressions.GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]
     private static partial System.Text.RegularExpressions.Regex NameRegex();
 }

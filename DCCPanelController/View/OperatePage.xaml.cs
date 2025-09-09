@@ -15,21 +15,21 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private ProfileService? _profileService;
 
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel, ProfileService profileService, ConnectionService connectionService) {
-        InitializeComponent();
         _logger = logger;
         _profileService = profileService;
         _connectionService = connectionService;
-
         _viewModel = viewModel;
+        _viewModel.CurrentPanelIndex = 0;
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
 
         BindingContext = _viewModel;
+        InitializeComponent();
         SetTabBarState(true);
     }
 
-    protected override void OnAppearing() {
+    protected async override void OnAppearing() {
         base.OnAppearing();
-        if (_viewModel is { } viewModel) viewModel.ReselectActivePanelCommand.Execute(null);
+        await _viewModel.ReselectActivePanelAsync();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
@@ -58,17 +58,28 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     }
 
     private async void ButtonInstructions_OnClicked(object? sender, EventArgs e) {
-        await HelpService.Current.InitializeAsync();
-        await Navigation.PushAsync(new HelpPage());
+        try {
+            await HelpService.Current.InitializeAsync();
+            await Navigation.PushAsync(new HelpPage());
+        } catch (Exception ex) {
+            Console.WriteLine($"Unable to load the Help system: {ex.Message}");
+        }
     }
 
     private async void ButtonAbout_OnClicked(object? sender, EventArgs e) {
-        await AboutPage.ShowAbout();
+        try {
+            await AboutPage.ShowAbout();
+        } catch { /* Ignore */ }
     }
 
     private async void ButtonCloseInstructions(object? sender, EventArgs e) {
-        if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) {
-            await viewModel.SelectPanelAsync(0);
+        try {
+            if (BindingContext is OperateViewModel { Panels.Count: > 0 } viewModel) {
+                viewModel.HaveClosedWelcome = true;
+                await viewModel.SelectPanelAsync(0);
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Unable to close the Help Welcome page: {ex.Message}");
         }
     }
 
