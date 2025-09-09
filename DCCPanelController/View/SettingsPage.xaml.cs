@@ -8,17 +8,16 @@ using Syncfusion.Maui.Toolkit.BottomSheet;
 namespace DCCPanelController.View;
 
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
-    private readonly ILogger<SettingsPage> _logger;
+    private readonly ILogger<SettingsPage>  _logger;
     private readonly SettingsPageViewModel? _pageViewModel;
-
+    
     public SettingsPage(ILogger<SettingsPage> logger, SettingsPageViewModel pageViewModel) {
         _logger = logger;
         _pageViewModel = pageViewModel;
         ArgumentNullException.ThrowIfNull(_pageViewModel);
         BindingContext = _pageViewModel;
-        PropertyChanged += OnPropertyChanged;
         InitializeComponent();
-       
+
         pageViewModel.SetActiveSettings();
         _pageViewModel.SelectedSegmentIndex = _pageViewModel.Settings?.ClientSettings?.Type switch {
             DccClientType.Simulator  => 0,
@@ -26,16 +25,18 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             DccClientType.WiThrottle => 2,
             _                        => 0
         };
+        _pageViewModel.IsDirty = false;
     }
 
-    private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        /* not surrently used */
+    protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
+        base.OnNavigatedFrom(args);
+        if (_pageViewModel is {IsDirty: true } vm) await vm.SaveSettingsAsync();
     }
 
     private void EditConnectionButtonClicked(object? sender, EventArgs e) {
         var content = _pageViewModel?.LoadSettingsPage();
         var size = MauiViewSizeCalculator.CalculateTotalSize(content, Width, Height);
-        if (content is not null) {
+        if (content is { }) {
             BottomSheet.BottomSheetContent = content;
             BottomSheet.ShowGrabber = true;
             BottomSheet.EnableSwiping = true;
@@ -48,6 +49,7 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             }
             BottomSheet.IsModal = true;
             BottomSheet.Show();
+            _pageViewModel?.IsDirty = true;
         }
     }
 

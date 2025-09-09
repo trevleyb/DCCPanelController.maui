@@ -41,24 +41,39 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
 
     public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
-    public bool IsProfileDefault => ProfileService.IsDefault(Profile);
+    public bool IsProfileDefault => Profile != null && ProfileService.IsDefault(Profile);
     public bool IsProfileNotDefault => !IsProfileDefault;
 
     [ObservableProperty] private int _selectedSegmentIndex;
     [ObservableProperty] private Microsoft.Maui.Controls.View? _currentSettingsView;
+    [ObservableProperty] private Profile _profile;
 
-    public Models.DataModel.Settings? Settings => Profile.Settings;
-    public Profile Profile => ProfileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "SettingsViewModel: Active profile is not defined.");
+    public Models.DataModel.Settings? Settings => Profile?.Settings;
     private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
     public readonly ProfileService ProfileService;
     private readonly ILogger<SettingsViewModel> _logger;
-
+    public bool IsDirty = false;
+    
     public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
+        _profile = new Profile("Temporary");
         ProfileService = profileService;
+        OnProfileChanged();
+    }
+
+    private void ProfileOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        IsDirty = true;
     }
 
     public void OnProfileChanged() {
+        if (Profile is { } profile) {
+            Profile.PropertyChanged -= ProfileOnPropertyChanged;
+            Profile.Settings.PropertyChanged -= ProfileOnPropertyChanged;            
+        }
+        Profile = ProfileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "SettingsViewModel: Active profile is not defined.");
+        Profile.PropertyChanged += ProfileOnPropertyChanged;
+        Profile.Settings.PropertyChanged += ProfileOnPropertyChanged;
+        
         OnPropertyChanged(nameof(Profile));
         OnPropertyChanged(nameof(Settings));
         OnPropertyChanged(nameof(CurrentSettingsView));
@@ -75,6 +90,8 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(Profile.Settings.UseClickSounds));
         OnPropertyChanged(nameof(Profile.Settings.ConnectOnStartup));
         OnPropertyChanged(nameof(Profile.Settings.SetTurnoutStatesOnStartup));
+        
+        IsDirty = false;
     }
 
     [RelayCommand]
@@ -84,11 +101,12 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         await ProfileService.SaveAsync();
         if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
-        OnProfileChanged();
+        IsDirty =  false;
     }
 
     [RelayCommand]
     public async Task SwitchProfileAsync() {
+        await SaveSettingsAsync();
         var choices = ProfileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
         if (index is {} selectedProfile and >= 0) await ProfileService.SwitchProfileByIndexAsync(selectedProfile);
@@ -97,15 +115,14 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     }
 
     [RelayCommand]
-    public async Task ShowAboutAsync() {
-        await AboutPage.ShowAbout();
-    }
+    public async Task ShowAboutAsync() => await AboutPage.ShowAbout();
 
     [RelayCommand]
     public async Task AddProfileAsync() {
         var result = await DisplayAlertHelper.DisplayAlertAsync("Add New Profile?", "This will add a new Profile to the system and make it active. Do you wish to continue?", "Continue", "Cancel");
         if (result) {
-            var newProfile = await ProfileService.CreateAsync();
+            await SaveSettingsAsync();
+            _ = await ProfileService.CreateAsync();
             await SaveSettingsAsync();
             OnProfileChanged();
             await DisplayAlertHelper.DisplayToastAlert($"New Profile Created");
@@ -114,24 +131,23 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     public async Task DeleteProfileAsync() {
-        if (ProfileService.NumberOfProfiles <= 1) return;
-        var profileName = Profile.ProfileName;
+        if (ProfileService.NumberOfProfiles <= 1 || Profile is null) return;
+        var profileName = Profile?.ProfileName;
         var result = await DisplayAlertHelper.DisplayAlertAsync("Delete Profile?", "This will delete the current profile. Are you sure you want to do this?", "Continue", "Cancel");
-        if (result) {
-            await ProfileService.DeleteAsync(Profile);
-            OnProfileChanged();
+        if (result && Profile is {} profile) {
+            await ProfileService.DeleteAsync(profile);
             await DisplayAlertHelper.DisplayToastAlert($"Profile '{profileName}' Deleted");
+            OnProfileChanged();
         }
-        OnProfileChanged();
     }
 
     /// <summary>
     /// If this profile is already the default, then there is no changed.
     /// If this one is not the default, then we will mark it as the default 
     /// </summary>
-    public void MarkActiveProfileDefault() {
-        if (!ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
-        OnProfileChanged();
+    public async Task MarkActiveProfileDefault() {
+        if (Profile is not null && !ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
+        await SaveSettingsAsync();
     }
 
     public void SetCapabilities() {
@@ -210,6 +226,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Upload Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
             if (result) {
+                await SaveSettingsAsync();
                 var fileName = await PromptUserForConfigFile();
                 if (!string.IsNullOrEmpty(fileName)) {
                     var loadedJson = await LoadJsonFromFileAsync(fileName);
@@ -226,24 +243,17 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     [RelayCommand]
     private async Task DownloadSettingsAsync() {
+        if (Profile is null) return;
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
-            if (result) {
-               var saveFile = $"{Profile.ProfileName}.profile.json";
+            if (result) { 
+                await SaveSettingsAsync();
+               var saveFile = $"{Profile?.ProfileName}.profile.json";
                var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
                var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
                await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
                Console.WriteLine($"Profile Saved to: {saveFile}");
             }
-
-            // var filePath = await PromptUserForSaveLocation();
-            // if (!string.IsNullOrEmpty(filePath)) {
-            //     var saveFile = Path.Combine(filePath, $"{Profile.ProfileName}.profile.json");
-            //     var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
-            //     await SaveJsonToFileAsync(saveFile, jsonBytes);
-            //     await DisplayAlertHelper.DisplayToastAlert("Success: File Downloaded");
-            //     Console.WriteLine($"Profile Saved to: {saveFile}");
-            // }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
         }

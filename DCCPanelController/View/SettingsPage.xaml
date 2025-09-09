@@ -283,6 +283,7 @@
             <Grid Grid.Row="1" ColumnDefinitions="*,*,*" HorizontalOptions="Center"
                   VerticalOptions="Center">
                 <Button Grid.Column="0"
+                        IsVisible="False"
                         ImageSource="save.png"
                         Command="{Binding SaveSettingsCommand}"
                         HorizontalOptions="Center"
