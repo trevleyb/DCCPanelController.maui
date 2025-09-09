@@ -3,7 +3,7 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using CommunityToolkit.Mvvm.ComponentModel;
-
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Components;
 

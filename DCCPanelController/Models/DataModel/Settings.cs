@@ -1,6 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Clients;
 using DCCPanelController.Clients.Simulator;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel;
 

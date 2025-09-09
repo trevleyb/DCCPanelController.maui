@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Helpers;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Helpers.Attributes;
 

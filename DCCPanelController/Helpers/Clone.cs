@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 using DCCPanelController.Helpers.Attributes;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Helpers;
 

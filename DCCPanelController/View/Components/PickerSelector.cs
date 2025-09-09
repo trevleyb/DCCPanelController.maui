@@ -2,6 +2,7 @@ using System.Collections;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.Maui.Controls.Shapes;
+using Microsoft.Maui.Graphics;
 using Picker = Microsoft.Maui.Controls.Picker;
 
 namespace DCCPanelController.View.Components;

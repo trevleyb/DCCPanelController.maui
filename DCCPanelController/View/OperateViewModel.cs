@@ -8,6 +8,7 @@ using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.Components;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View;
  

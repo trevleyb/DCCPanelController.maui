@@ -160,8 +160,8 @@ public sealed class DynamicTilePropertyForm {
         }
 
         var orderedGroups = groups.Values
-                                  .OrderBy(g => g.Name, StringComparer.Ordinal)
-                                  .ThenBy(g => g.Order)
+                                  .OrderBy(g => g.Order)
+                                  .ThenBy(g => g.Name, StringComparer.Ordinal)
                                   .ToList();
 
         return(orderedGroups, flatRows);
@@ -237,11 +237,9 @@ public sealed class DynamicTilePropertyForm {
             return true;
         } catch (Exception ex) when (!requireAtomic) {
             Console.WriteLine("Requires Atomic? rolling back: " + ex.Message);
-            ;
             return false;
         } catch (Exception ex) {
             Console.WriteLine("Apply failed, rolling back: " + ex.Message);
-            ;
             await tx.RollbackAsync().ConfigureAwait(false);
             return false;
         }

@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
+using Microsoft.Maui.Graphics;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;

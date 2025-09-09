@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using Microsoft.Maui.Layouts;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -18,28 +19,28 @@ internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
 
         var items = BuildEnumItems(enumType, allowNull);
         var groupName = $"{row.Field.DeclaringType.Name}.{row.Field.Prop.Name}.{Guid.NewGuid():N}";
-        var stack = new HorizontalStackLayout() { Spacing = 4 };
+        //var stack = new HorizontalStackLayout() { Spacing = 4 };
+        var stack = new FlexLayout {
+            AlignContent = FlexAlignContent.Start,
+            AlignItems = FlexAlignItems.Start,
+            Direction = FlexDirection.Column,
+            Wrap = FlexWrap.Wrap,
+        };
 
         // Create a radio for each item
         foreach (var it in items) {
             var rb = new RadioButton {
                 Content = it.Text,
+                FontSize = FieldFontSize,
                 GroupName = groupName,
-                IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode)
+                Margin = new Thickness(0, 0, 10, 0),
+                IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode),
+                IsChecked = row is { HasMixedValues: false, OriginalValue: { } } && Equals(it.Value, row.OriginalValue), // nothing selected when mixed until the user chooses
             };
-
-            // Initial state (if not mixed)
-            if (!row.HasMixedValues && row.OriginalValue is not null)
-                rb.IsChecked = Equals(it.Value, row.OriginalValue);
-            else
-                rb.IsChecked = false; // nothing selected when mixed until the user chooses
 
             rb.CheckedChanged += (_, e) => {
-                if (e.Value == true) {
-                    SetValue(row, it.Value);
-                }
+                if (e.Value == true) SetValue(row, it.Value);
             };
-
             stack.Add(rb);
         }
 

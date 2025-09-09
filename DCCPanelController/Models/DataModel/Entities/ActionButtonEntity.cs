@@ -6,6 +6,7 @@ using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.TileSelectors;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 

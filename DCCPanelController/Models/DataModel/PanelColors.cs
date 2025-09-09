@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Models.DataModel.Helpers;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel;
 

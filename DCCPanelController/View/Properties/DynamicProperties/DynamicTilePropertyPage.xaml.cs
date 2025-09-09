@@ -4,9 +4,12 @@ using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCCommon;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.View.Converters;
+using Microsoft.Maui.Controls.Shapes;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
@@ -43,66 +46,16 @@ public partial class DynamicTilePropertyPopupContent {
         try {
             Console.WriteLine("OnTilesSourceChanged");
             var view = (DynamicTilePropertyPopupContent)bindable;
-            await view.RebuildAsync();
+            view.State = await view.RebuildAsync(view.PropertyHost);
         } catch (Exception ex) {
             Console.WriteLine($"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
     #endregion
 
-    #region Build the Properties form
-    /// <summary>
-    /// Rebuild the Form if the collection of Tiles changes
-    /// </summary>
-    private async Task RebuildAsync() {
-        PropertyHost.Children.Clear();
-        State = FormState.Normal;
-
-        // Lets make sure we have some valid Tiles to work with
-        // ---------------------------------------------------------------
-        var tiles = TilesSource?.ToList();
-        if (tiles == null || tiles.Count == 0) {
-            State = FormState.NoSelectedTiles;
-            return;
-        }
-
-        // Valid the for and ensure we have some common properties
-        // ---------------------------------------------------------------
-        var selection = tiles.Select(object (t) => t.Entity);
-        Form = DynamicTilePropertyForm.CreateForm(selection);
-        await Form.ValidateAsync();
-
-        if (!Form.HasCommonProperties) {
-            State = FormState.NoCommonProperties;
-            ;
-            return;
-        }
-
-        // Build up the Properties by Group and Sort order. 
-        // Each Group is in its own Expander View so can be collaposed
-        // ---------------------------------------------------------------
-        var isFirst = true;
-        foreach (var group in Form.Groups) {
-            if (group.Rows.Count == 0) continue;
-
-            var header = CreateExpanderGroup(group.Name, isFirst);
-            isFirst = false;
-            
-            // Add the rows to the expander
-            // -----------------------------------------------------------
-            var children = 0;
-            foreach (var row in group.Rows) {
-                if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
-                    header.children?.Add(v);
-                    children++;
-                }
-            }
-            if (children > 0) PropertyHost.Children.Add(header.expander);
-        }
-    }
-
+    #region Commands for Applying and Cancelling
     [RelayCommand]
-    private async Task<IResult<ValidationSummary>> ValidateAsync() {
+    public async Task<IResult<ValidationSummary>> ValidateAsync() {
         if (Form == null) return Result<ValidationSummary>.Fail("Form is null");
         var summary = await Form.ValidateAsync();
         return summary.HasErrors
@@ -111,7 +64,7 @@ public partial class DynamicTilePropertyPopupContent {
     }
 
     [RelayCommand]
-    private async Task<IResult> ApplyAsync() {
+    public async Task<IResult> ApplyAsync() {
         if (Form == null) return Result.Fail("Form should not be null");
         var ok = await Form.ApplyAsync(requireAtomic: false);
         if (!ok) return Result.Fail("No Changes to apply");
@@ -120,15 +73,59 @@ public partial class DynamicTilePropertyPopupContent {
     }
 
     [RelayCommand]
-    private async Task CancelAsync() {
+    public async Task CancelAsync() {
         await _undo.UndoAsync();
-        //await RebuildAsync();
         Cancelled?.Invoke(this, EventArgs.Empty);
     }
     #endregion
+    
+    #region Build the Properties form
+    /// <summary>
+    /// Rebuild the Form if the collection of Tiles changes
+    /// </summary>
+    private async Task<FormState> RebuildAsync(StackBase propertyHost) {
+        propertyHost.Children.Clear();
+        State = FormState.Normal;
 
+        // Lets make sure we have some valid Tiles to work with
+        // ---------------------------------------------------------------
+        var tiles = TilesSource?.ToList();
+        if (tiles == null || tiles.Count == 0) return FormState.NoSelectedTiles;
+
+        // Valid the for and ensure we have some common properties
+        // ---------------------------------------------------------------
+        var selection = tiles.Select(object (t) => t.Entity);
+        Form = DynamicTilePropertyForm.CreateForm(selection);
+        await Form.ValidateAsync();
+
+        if (!Form.HasCommonProperties) return FormState.NoCommonProperties;
+
+        // Build up the Properties by Group and Sort order. 
+        // Each Group is in its own Expander View so can be collaposed
+        // ---------------------------------------------------------------
+        var isFirst = true;
+        foreach (var group in Form.Groups) {
+            if (group.Rows.Count == 0) continue;
+
+            var expander = CreateExpanderGroup(group.Name);
+            
+            // Add the rows to the expander
+            // -----------------------------------------------------------
+            var children = 0;
+            foreach (var row in group.Rows) {
+                if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
+                    expander.children?.Add(v);
+                    if (++children < group.Rows.Count) expander.children?.Add(FieldDivider());
+                }
+            }
+            if (children > 0) PropertyHost.Children.Add(expander.expander);
+        }
+        return FormState.Normal;
+    }
+    #endregion 
+    
     #region Group Helpers
-    private static (IView? expander, IList<IView>? children) CreateExpanderGroup(string groupKey, bool isFirst) {
+    private static (IView? expander, IList<IView>? children) CreateExpanderGroup(string groupKey) {
         if (string.IsNullOrWhiteSpace(groupKey)) return CreateGroup(groupKey);
 
         var tableExpander = new Expander();
@@ -137,17 +134,26 @@ public partial class DynamicTilePropertyPopupContent {
         expanderTitle.Children.Add(GroupChevrons(tableExpander));
         expanderTitle.Children.Add(GroupHeading(groupKey));
         expanderHeading.Children.Add(expanderTitle);
-        expanderHeading.Children.Add(GroupDivider());
-        tableExpander.Margin = new Thickness(0, isFirst ? 10 : 20, 10, 10);
+        //expanderHeading.Children.Add(GroupDivider());
+        tableExpander.Margin = new Thickness(0, 10, 10, 10);
         tableExpander.Header = expanderHeading;
         tableExpander.IsExpanded = true;
         tableExpander.BackgroundColor = Colors.WhiteSmoke;
 
         var stackLayout = new StackLayout {
-            Margin = new Thickness(0, 10, 1, 0),
-            BackgroundColor = Colors.WhiteSmoke
+            Padding = new Thickness(10, 10, 10, 10),
+            BackgroundColor = Colors.White
         };
-        tableExpander.Content = stackLayout;
+        var border = new Border() {
+            StrokeThickness = 0,
+            StrokeShape = new RoundRectangle {
+                CornerRadius = new CornerRadius(12),
+                BackgroundColor = Colors.White,
+            },
+            BackgroundColor = Colors.White,
+            Content = stackLayout,
+        };
+        tableExpander.Content = border;
         return (tableExpander, stackLayout.Children);
     }
 
@@ -197,6 +203,16 @@ public partial class DynamicTilePropertyPopupContent {
     private static string FormatLabel(string groupKey) {
         if (groupKey.EndsWith("s")) return groupKey;
         return string.IsNullOrEmpty(groupKey) ? "Properties" : $"{groupKey}";
+    }
+
+    private static BoxView FieldDivider(Color? color = null) {
+        color ??= Colors.WhiteSmoke;
+        return new BoxView {
+            BackgroundColor = color,
+            HeightRequest = 3,
+            HorizontalOptions = LayoutOptions.Fill,
+            Margin = new Thickness(5, 5, 5, 5)
+        };
     }
 
     private static BoxView GroupDivider(Color? color = null) {

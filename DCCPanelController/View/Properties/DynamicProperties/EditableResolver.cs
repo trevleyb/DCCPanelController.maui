@@ -1,6 +1,7 @@
 using System.Collections;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
@@ -39,7 +40,6 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         if (name.EndsWith("Route", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Route;
         if (name.EndsWith("Light", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Light;
         if (name.EndsWith("Turnout", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Turnout;
-
         
         // 4) type mapping
         // -----------------------------------------------------------------------------

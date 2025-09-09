@@ -1,7 +1,7 @@
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class NumberRenderer : BaseRenderer,IPropertyRenderer {
-    protected override int FieldWidth => 100;
+    protected override int FieldWidth => 75;
 
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Number;
     public object CreateView(PropertyContext ctx) {

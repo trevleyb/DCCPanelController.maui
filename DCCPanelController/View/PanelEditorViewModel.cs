@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -61,6 +62,11 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
     public bool ExitViaBackButton { get; set; }
 
+    private DynamicTilePropertyPopupContent? _dynamicTileContent;
+    public enum PopupAction { None, Accept, Cancel }
+    public PopupAction LastAction { get; set; } = PopupAction.None;
+    public bool AcceptIsValid { get; set; } = true; // assume true by default
+    
     public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Microsoft.Maui.Controls.View panelEditorContainer) {
         _profileService = profileService;
         _logger = logger;
@@ -258,15 +264,14 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     private async Task DynamicTilePropertyPopupAsync(string title) {
         IsProcessing = true;
+        LastAction = PopupAction.None;
         try {
             var scrollContent = new ScrollView();
-            var content = new DynamicTilePropertyPopupContent {
+            _dynamicTileContent = new DynamicTilePropertyPopupContent {
                 Title = title,
                 TilesSource = SelectedTiles
             };
-            content.Applied += ContentOnApplied;
-            content.Cancelled += ContentOnClosed;
-            scrollContent.Content = content;
+            scrollContent.Content = _dynamicTileContent;
 
             var popup = new SfPopup {
                 ContentTemplate = new DataTemplate(() => scrollContent),
@@ -278,7 +283,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                     CornerRadius = 10,
                     HasShadow = false,
                     BlurIntensity = PopupBlurIntensity.Light,
-                    HeaderBackground = Colors.WhiteSmoke,
+                    HeaderBackground = Colors.LightGrey,
                     FooterBackground = Colors.LightGray,
                     MessageBackground = Colors.WhiteSmoke,
                     AcceptButtonBackground = Colors.White,
@@ -295,13 +300,15 @@ public partial class PanelEditorViewModel : ObservableObject {
                 Padding = new Thickness(20),
                 Margin = new Thickness(20),
                 HeaderHeight = 65,
+                FooterHeight = 55,
                 AutoSizeMode = PopupAutoSizeMode.None,
                 AnimationMode = PopupAnimationMode.Zoom,
                 AnimationDuration = 300,
                 OverlayMode = PopupOverlayMode.Transparent,
-                AcceptCommand = content.ApplyCommand,
-                DeclineCommand = content.CancelCommand
+                AcceptCommand = TilePropertiesPopupAcceptCommand,
+                DeclineCommand = TilePropertiesPopupDeclineCommand
             };
+            popup.Closing += PopupOnClosing;
             if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
             popup.Show();
         } finally {
@@ -309,12 +316,34 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    private void ContentOnClosed(object? sender, EventArgs e) {
-        Console.WriteLine("Content Closed");
+    [RelayCommand]
+    private async Task TilePropertiesPopupAcceptAsync() {
+        Console.WriteLine("Tile Properties Popup Accept");
+        LastAction = PopupAction.Accept;
+        if (_dynamicTileContent is { } content) {
+            var result = await content.ValidateAsync();
+            if (result.IsOk) {
+                var applied = await content.ApplyAsync();
+                AcceptIsValid = applied.IsOk;
+            } else {
+                AcceptIsValid = false;
+            }
+        }
     }
 
-    private void ContentOnApplied(object? sender, EventArgs e) {
-        Console.WriteLine("Content Applied");
+    [RelayCommand]
+    private async Task TilePropertiesPopupDeclineAsync() {
+        Console.WriteLine("Tile Properties Popup Decline");
+        LastAction = PopupAction.Cancel;
+        if (_dynamicTileContent is { } content) {
+            await content.CancelAsync();
+            AcceptIsValid = true;
+        }
+    }
+
+    private void PopupOnClosing(object? sender, CancelEventArgs e) {
+        Console.WriteLine("Popup On Closing");
+        e.Cancel = !AcceptIsValid;
     }
 
     private void ShowPropertyPopup(string title, PanelPropertyViewModel propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {

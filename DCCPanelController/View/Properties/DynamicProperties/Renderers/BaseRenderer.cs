@@ -1,4 +1,5 @@
 using Microsoft.Maui.Controls.Shapes;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -23,6 +24,7 @@ public abstract class BaseRenderer {
 
     protected bool IsModified(PropertyRow row) => row.IsTouched || !DefaultEquality.AreEqual(row.CurrentValue, row.OriginalValue);
     protected string MixedPlaceholder(PropertyRow row) => row.HasMixedValues ? "— mixed —" : string.Empty;
+    protected string MixedPlaceholderInt(PropertyRow row) => row.HasMixedValues ? "---" : string.Empty;
 
     protected event Action<PropertyRow>? RowValueChanged;
 
@@ -114,7 +116,6 @@ public abstract class BaseRenderer {
     protected Microsoft.Maui.Controls.View WrapWithLabel(PropertyContext ctx,
                                                          Microsoft.Maui.Controls.View control) {
         var row = ctx.Row;
-        var editorKind = ctx.EditorKind;
         var labelWidth = LabelWidth;
         var fieldHeight = FieldHeight;
         var fieldWidth = GetFieldWidth(row?.Field?.Meta?.Width);

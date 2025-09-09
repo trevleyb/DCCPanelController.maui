@@ -1,3 +1,5 @@
+using Microsoft.Maui.Graphics;
+
 namespace DCCPanelController.View.ControlPanel;
 
 public class DrawGridSelection : GraphicsView, IDrawable {

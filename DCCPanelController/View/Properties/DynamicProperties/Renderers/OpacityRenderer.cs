@@ -3,7 +3,7 @@ using System.Globalization;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
     internal sealed class OpacityRenderer : BaseRenderer,IPropertyRenderer {
-        protected override int FieldWidth => 150;
+        protected override int FieldWidth => 175;
         public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Opacity;
         public object CreateView(PropertyContext ctx) {
             var row = ctx.Row;
@@ -13,10 +13,18 @@ namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
             
             var stepperWidth = 100;
             var grid = new Grid { ColumnDefinitions = [new ColumnDefinition(GridLength.Star), new ColumnDefinition(stepperWidth)] };
-            var entry = new Entry {Keyboard = Keyboard.Numeric, Text = ConvertOpacityToPercentage(row.OriginalValue), Placeholder = MixedPlaceholder(row), HorizontalOptions = LayoutOptions.Fill, HorizontalTextAlignment = TextAlignment.End, Margin=new Thickness(5,0,5,0) };
-            var stepper = new Stepper { Minimum = min, Maximum = max, Increment = step, Margin=new Thickness(10,0,0,0) };
-            stepper.Value = (row.OriginalValue is double value) ? value : 0;
-            
+            var entry = new Entry {
+                Keyboard = Keyboard.Numeric, 
+                Text = row.OriginalValue != null ? ConvertOpacityToPercentage(row.OriginalValue) : string.Empty, 
+                Placeholder = MixedPlaceholderInt(row), 
+                HorizontalOptions = LayoutOptions.Fill, 
+                HorizontalTextAlignment = TextAlignment.End, 
+                Margin=new Thickness(5,0,5,0)
+            };
+            var stepper = new Stepper { Minimum = min, Maximum = max, Increment = step, Margin=new Thickness(10,0,0,0),
+                Value = (row.OriginalValue is double value) ? value : 0,
+            };
+
             stepper.ValueChanged += (s, e) => {
                 var val = Math.Clamp(stepper.Value, min, max);
                 entry.Text = ConvertOpacityToPercentage(val);

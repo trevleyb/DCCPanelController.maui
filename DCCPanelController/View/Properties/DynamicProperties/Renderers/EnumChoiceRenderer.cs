@@ -5,7 +5,7 @@ namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
     
-    protected override int FieldWidth => 200;
+    protected override int FieldWidth => 250;
     public bool CanRender(PropertyContext ctx) {
         var t = ctx.Row.Field.Accessor.PropertyType;
         var u = Nullable.GetUnderlyingType(t) ?? t;

@@ -6,6 +6,7 @@ using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Actions;
 using DCCPanelController.View.Properties.DynamicProperties;
+using Microsoft.Maui.Graphics;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -23,7 +24,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
     // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
     // private string _id = string.Empty;
 
-    [ObservableProperty] [property: Editable("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "Turnout", EditorKind = EditorKinds.Turnout)]
+    [ObservableProperty] [property: Editable("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "General", EditorKind = EditorKinds.Turnout)]
     private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: Editable("Button Actions", "", 10, "Actions", ActionsContext = ActionsContext.Turnout)]

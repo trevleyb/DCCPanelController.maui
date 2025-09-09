@@ -3,6 +3,7 @@ using System.Xml.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
+using Microsoft.Maui.Graphics;
 using SkiaSharp.Views.Maui.Controls;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;

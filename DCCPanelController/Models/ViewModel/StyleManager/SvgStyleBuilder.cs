@@ -1,3 +1,5 @@
+using Microsoft.Maui.Graphics;
+
 namespace DCCPanelController.Models.ViewModel.StyleManager;
 
 public class SvgStyleBuilder {

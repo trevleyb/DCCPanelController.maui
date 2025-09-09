@@ -1,3 +1,5 @@
+using Microsoft.Maui.Graphics;
+
 namespace DCCPanelController.Resources.Styles;
 
 public static class StyleHelper {

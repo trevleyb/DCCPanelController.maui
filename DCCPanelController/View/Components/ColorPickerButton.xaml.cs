@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
+using Microsoft.Maui.Graphics;
 using Syncfusion.Maui.Toolkit.Popup;
 
 namespace DCCPanelController.View.Components;

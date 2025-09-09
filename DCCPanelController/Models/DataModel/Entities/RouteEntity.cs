@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.DynamicProperties;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -9,7 +10,7 @@ public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Button Size")]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 10, "Actions", EditorKind = EditorKinds.Route)]
+    [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 10, "General", EditorKind = EditorKinds.Route)]
     private string _id = string.Empty;
 
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 5, "Colors")]

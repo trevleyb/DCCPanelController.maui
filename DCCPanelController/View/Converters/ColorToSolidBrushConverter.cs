@@ -1,4 +1,5 @@
 using System.Globalization;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Converters;
 
@@ -9,7 +10,7 @@ public class ColorToSolidColorConverter : IValueConverter {
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        if (value is SolidColorBrush brush) return brush.Color;
+        if (value is SolidColorBrush brush) return brush;
         return value;
     }
 }

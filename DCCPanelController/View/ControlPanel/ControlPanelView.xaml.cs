@@ -16,6 +16,7 @@ using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
 using UIKit;

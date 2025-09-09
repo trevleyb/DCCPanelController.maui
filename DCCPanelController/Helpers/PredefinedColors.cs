@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Helpers;
 

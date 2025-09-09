@@ -1,7 +1,7 @@
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ChoiceRenderer : BaseRenderer,IPropertyRenderer {
-    protected override int FieldWidth => 200;
+    protected override int FieldWidth => 250;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Choice;
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;

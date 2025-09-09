@@ -1,4 +1,5 @@
 using DCCPanelController.Models.ViewModel.Interfaces;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.ControlPanel;
 

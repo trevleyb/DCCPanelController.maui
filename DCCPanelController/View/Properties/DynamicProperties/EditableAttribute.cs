@@ -38,8 +38,8 @@ public sealed class EditableAttribute : Attribute {
 
     public string[] Choices { get; init; } = [];
     public bool IsRequired { get; init; } = false;
-    public double Min { get; init; } = int.MinValue;                // numeric editors (double/decimal)
-    public double Max { get; init; } = int.MaxValue;
+    public double Min { get; init; } = 0;                // numeric editors (double/decimal)
+    public double Max { get; init; } = 99;
     public double Step { get; init; } = 1;
 
     public ActionsContext ActionsContext { get; set; } = ActionsContext.Unknown;

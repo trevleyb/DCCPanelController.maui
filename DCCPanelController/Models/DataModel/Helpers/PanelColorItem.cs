@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 

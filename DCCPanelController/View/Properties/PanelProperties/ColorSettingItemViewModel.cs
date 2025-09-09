@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel;
+using Microsoft.Maui.Graphics;
 
 // Assuming Panel is here
 
