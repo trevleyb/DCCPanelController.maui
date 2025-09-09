@@ -103,7 +103,6 @@ public partial class DynamicTilePropertyPopupContent {
         // Build up the Properties by Group and Sort order. 
         // Each Group is in its own Expander View so can be collaposed
         // ---------------------------------------------------------------
-        var isFirst = true;
         foreach (var group in Form.Groups) {
             if (group.Rows.Count == 0) continue;
 
