@@ -11,19 +11,27 @@ namespace DCCPanelController.Models.DataModel.Entities;
 [DebuggerDisplay("{EntityName} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject, IEntity {
+    public abstract string EntityName { get; }
+    public abstract string EntityDescription { get; }
+    public virtual string Type => GetType().Name;
+    
     [ObservableProperty] private int _col;               // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int _row;               // What Grid Position (Vertical) is this component?
     [ObservableProperty] private int _height = 1;        // What Height is this component? 
     [ObservableProperty] private int _width = 1;         // What width is this component?
     [ObservableProperty] private int _rotation;          // Is the track rotated?
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
-
+    
     [ObservableProperty] [property: Editable("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
     private int _layer = 1;
 
     [ObservableProperty] [property: Editable("Opacity", "Allows for a level of transparency", 9, "Visibility", EditorKind = EditorKinds.Opacity)]
     private double _opacity = 1.0;
 
+    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
+    [JsonIgnore] public Panel? Parent { get; set; }
+    [JsonIgnore] protected abstract int RotationFactor { get; }
+    
     protected Entity(Panel panel) : this() {
         Parent = panel;
         Layer = EntityPresets.DefaultLayer(this);
@@ -31,8 +39,6 @@ public abstract partial class Entity() : ObservableObject, IEntity {
 
     protected Entity(Entity entity, params string[] excludeProperties) : this() {
         ArgumentNullException.ThrowIfNull(entity);
-
-        // Always exclude these base properties by default
         var defaultExclusions = new[] { "Parent", "Id", "Guid" };
         var allExclusions = defaultExclusions.Concat(excludeProperties).ToArray();
         ObjectCloner.CloneProperties(entity, this, allExclusions);
@@ -40,14 +46,6 @@ public abstract partial class Entity() : ObservableObject, IEntity {
         Parent = entity.Parent;
         Guid = Guid.NewGuid();
     }
-
-    [JsonIgnore] protected abstract int RotationFactor { get; }
-    [JsonIgnore] public Guid Guid { get; init; } = Guid.NewGuid();
-    public virtual string Type => GetType().Name;
-    [JsonIgnore] public Panel? Parent { get; set; }
-
-    public abstract string EntityName { get; }
-    public abstract string EntityDescription { get; }
     
     public abstract Entity Clone();
 

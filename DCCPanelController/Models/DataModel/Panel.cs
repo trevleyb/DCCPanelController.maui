@@ -15,11 +15,11 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("Panel: {Id}")]
 public partial class Panel : ObservableObject, IEntityGeneratingID {
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _id = string.Empty;
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _id = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))] private string _description = string.Empty;
-    [ObservableProperty] private ObservableCollection<Entity> _entities = [];
+    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
+    [ObservableProperty] private ObservableCollection<Entity> _entities = [];
     [ObservableProperty] private int _sortOrder;
 
     [JsonConstructor]
@@ -156,9 +156,11 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return entity ?? throw new InvalidOperationException();
     }
 
-    public T CreateEntityFrom<T>(T entity) where T : Entity {
+    public T CreateEntityFrom<T>(T entity, bool generateNextID = true) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
-        if (cloned is IEntityGeneratingID entityID) entityID.Id = entityID.NextID;
+        if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
+            clonedID.Id = generateNextID ? clonedID.NextID : entityID.Id;
+        }
         return cloned ?? throw new InvalidOperationException();
     }
 
@@ -193,7 +195,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
 
         CopyColorsTo(clone);
         foreach (var entity in Entities) {
-            var entityClone = clone.CreateEntityFrom(entity);
+            var entityClone = clone.CreateEntityFrom(entity, generateNewId);
             clone.AddEntity(entityClone);
         }
         return clone;

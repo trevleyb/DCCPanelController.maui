@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using Microsoft.Maui.Graphics;
 
@@ -20,7 +21,8 @@ public static class GenericComparer {
         return AreEqualInternal(obj1, obj2, options, visited, 0);
     }
 
-    private static bool CompareResult(bool result, string? message = "", object? obj1 = null, object? obj2 = null ) {
+    private static bool CompareResult(bool result, string? message = "", object? obj1 = null, object? obj2 = null, [CallerLineNumber] int lineNumber = 0 ) {
+        //if (!result) Console.WriteLine($"[{lineNumber}] {message}: {obj1} == {obj2} = {result}");
         return result;
     }
     
