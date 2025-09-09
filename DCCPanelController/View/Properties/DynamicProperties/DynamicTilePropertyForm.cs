@@ -6,12 +6,12 @@ namespace DCCPanelController.View.Properties.DynamicProperties;
 public enum AppMode { Edit, Run }
 
 public sealed class DynamicTilePropertyForm {
-    private readonly IEditableExtractor _extractor;
+    private readonly IEditableExtractor        _extractor;
     private readonly IPropertyRendererRegistry _renderers;
-    private readonly IValidator _validator;
-    private readonly IEqualityPolicy _equality;
-    private readonly IUndoService _undo;
-    private readonly IEditorKindResolver _kindResolver;
+    private readonly IValidator                _validator;
+    private readonly IEqualityPolicy           _equality;
+    private readonly IUndoService              _undo;
+    private readonly IEditorKindResolver       _kindResolver;
 
     public AppMode Mode { get; }
     public IReadOnlyList<object> SelectedEntities { get; }
@@ -41,13 +41,13 @@ public sealed class DynamicTilePropertyForm {
     }
 
     private DynamicTilePropertyForm(IEnumerable<object> selectedEntities,
-                                    IEditableExtractor extractor,
-                                    IPropertyRendererRegistry renderers,
-                                    IValidator validator,
-                                    IEqualityPolicy equality,
-                                    IUndoService undo,
-                                    IEditorKindResolver kindResolver,
-                                    AppMode mode = AppMode.Edit) {
+        IEditableExtractor extractor,
+        IPropertyRendererRegistry renderers,
+        IValidator validator,
+        IEqualityPolicy equality,
+        IUndoService undo,
+        IEditorKindResolver kindResolver,
+        AppMode mode = AppMode.Edit) {
         SelectedEntities = selectedEntities.ToList();
         _extractor = extractor;
         _renderers = renderers;
@@ -63,54 +63,79 @@ public sealed class DynamicTilePropertyForm {
 
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
 
+    private static Dictionary<string, int> GroupOrders = new() {
+        ["General"] = 1,
+        ["Track"] = 2,
+        ["Turnouts"] = 2,
+        ["Layout"] = 3,
+        ["Attributes"] = 4,
+        ["Colors"] = 5,
+        ["Actions"] = 7,
+        ["Visibility"] = 8,
+    };
+    
     private (IReadOnlyList<PropertyGroup>, IReadOnlyList<PropertyRow>) BuildGroups() {
-        if (SelectedEntities.Count == 0) return ([], []);
+        if (SelectedEntities.Count == 0) return([], []);
 
         // 1) Index fields for every entity type
-        _fieldsByTypeName = new Dictionary<Type, Dictionary<string, EditableField>>();
+        // ---------------------------------------------------------------------------------------
+        _fieldsByTypeName = new();
         foreach (var t in SelectedEntities.Select(e => e.GetType()).Distinct()) {
             var nameMap = _extractor.Extract(t).ToDictionary(f => f.Prop.Name, f => f, StringComparer.Ordinal);
             _fieldsByTypeName[t] = nameMap;
         }
 
         // 2) Compute intersection of property names across all types
+        // ---------------------------------------------------------------------------------------
         var commonNames = _fieldsByTypeName.Values
                                            .Select(d => d.Keys)
                                            .Aggregate((IEnumerable<string>?)null,
-                                                      (acc, keys) => acc == null ? keys : acc.Intersect(keys, StringComparer.Ordinal))
+                                                (acc, keys) => acc == null ? keys : acc.Intersect(keys, StringComparer.Ordinal))
                                           ?.ToList() ?? new List<string>();
 
         // 3) Keep only names whose CLR types match across all types
+        // ---------------------------------------------------------------------------------------
         commonNames = commonNames
                      .Where(name => {
                           var distinctTypes = _fieldsByTypeName.Values
-                                                               .Select(d => UnwrapNullable(d[name].Accessor.PropertyType))
-                                                               .Distinct()
-                                                               .ToList();
-                          return distinctTypes.Count == 1; // same type in all entity types
+                              .Select(d => UnwrapNullable(d[name].Accessor.PropertyType))
+                              .Distinct().ToList();
+                          var distinctEditorKinds = _fieldsByTypeName.Values
+                              .Select(d => _kindResolver.Resolve(d[name]))
+                              .Distinct().ToList();
+                          return distinctTypes.Count == 1 && distinctEditorKinds.Count == 1;
                       })
                      .ToList();
 
-        if (commonNames.Count == 0) return ([], []);
+        if (commonNames.Count == 0) return([], []);
 
         // 4) Build groups + rows off a representative field (from the first entity’s type)
+        // ---------------------------------------------------------------------------------------
         var firstType = SelectedEntities[0].GetType();
         var groups = new Dictionary<string, PropertyGroup>(StringComparer.OrdinalIgnoreCase);
         var flatRows = new List<PropertyRow>();
 
         // order by Group, Order, then Name — using the representative field’s metadata
+        // ---------------------------------------------------------------------------------------
         var orderedNames = commonNames
                           .OrderBy(name => _fieldsByTypeName[firstType][name].Meta.Group)
                           .ThenBy(name => _fieldsByTypeName[firstType][name].Meta.Order)
                           .ThenBy(name => name, StringComparer.Ordinal)
                           .ToList();
-
+        
         foreach (var name in orderedNames) {
             var repField = _fieldsByTypeName[firstType][name];
             var gname = string.IsNullOrWhiteSpace(repField.Meta.Group) ? "General" : repField.Meta.Group;
 
+            // Create a group but lookup the Group name to get the sort order.
+            // --------------------------------------------------------------
             if (!groups.TryGetValue(gname, out var group)) {
-                group = new PropertyGroup(gname, repField.Meta.Order);
+                var found = GroupOrders.TryGetValue(gname, out var order);
+                if (!found) {
+                    order = 0;
+                    Console.WriteLine($"Group {gname} not found, using {order}");
+                }
+                group = new PropertyGroup(gname, order);
                 groups[gname] = group;
             }
 
@@ -139,14 +164,14 @@ public sealed class DynamicTilePropertyForm {
                                   .ThenBy(g => g.Order)
                                   .ToList();
 
-        return (orderedGroups, flatRows);
+        return(orderedGroups, flatRows);
     }
 
     public object GetRendererView(PropertyRow row) {
         var kind = _kindResolver.Resolve(row.Field);
         var ctx = new PropertyContext(kind, row, Mode, SelectedEntities);
         var renderer = _renderers.Resolve(kind);
-        return !renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
+        return!renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
     }
 
     public async Task<ValidationSummary> ValidateAsync() {
@@ -198,7 +223,7 @@ public sealed class DynamicTilePropertyForm {
             foreach (var row in Rows) {
                 row.OriginalValue = row.CurrentValue;
                 row.IsTouched = false;
-                
+
                 var propName = row.Field.Prop.Name;
                 var values = SelectedEntities.Select(e => {
                                                   var ef = _fieldsByTypeName[e.GetType()][propName];
@@ -211,10 +236,12 @@ public sealed class DynamicTilePropertyForm {
             }
             return true;
         } catch (Exception ex) when (!requireAtomic) {
-            Console.WriteLine("Requires Atomic? rolling back: " + ex.Message);;
+            Console.WriteLine("Requires Atomic? rolling back: " + ex.Message);
+            ;
             return false;
-        } catch (Exception ex){
-            Console.WriteLine("Apply failed, rolling back: " + ex.Message);;
+        } catch (Exception ex) {
+            Console.WriteLine("Apply failed, rolling back: " + ex.Message);
+            ;
             await tx.RollbackAsync().ConfigureAwait(false);
             return false;
         }

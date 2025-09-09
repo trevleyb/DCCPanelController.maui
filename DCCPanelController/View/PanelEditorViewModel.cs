@@ -294,7 +294,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 DeclineButtonText = "Cancel",
                 Padding = new Thickness(20),
                 Margin = new Thickness(20),
-                HeaderHeight = 60,
+                HeaderHeight = 65,
                 AutoSizeMode = PopupAutoSizeMode.None,
                 AnimationMode = PopupAnimationMode.Zoom,
                 AnimationDuration = 300,

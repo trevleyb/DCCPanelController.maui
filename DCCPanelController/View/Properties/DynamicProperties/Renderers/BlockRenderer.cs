@@ -1,5 +1,8 @@
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.View.Components;
+using HorizontalAlignment = ExCSS.HorizontalAlignment;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -13,24 +16,23 @@ internal sealed class BlockRenderer : BaseRenderer,IPropertyRenderer {
 
         var blocks = entity.Parent?.Blocks.ToList() ?? [];
         if (blocks.Count == 0) return new InvalidRenderer("No Available Blocks").CreateView(ctx);
-        
+
         var row = ctx.Row;
         var picker = new Picker {
-            // BUG: If you have title, it doesn't work.
-            // Title = (row.HasMixedValues ? "— mixed —" : null) ?? row.Field.Meta.Label,
-            WidthRequest = GetFieldWidth(row.Field.Meta.Width),
             FontSize = FieldFontSize,
-            HorizontalOptions = LayoutOptions.Start,
+            Margin=new Thickness(4, 0, 0, 0),
+            HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Center,
         };
         foreach (var i in blocks) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s && picker.Items.Contains(s)) picker.SelectedItem = SelectedIndex(s, blocks);
+        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, blocks);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, blocks));
         picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return WrapWithLabel(ctx, AddBorder(picker));
+        
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        return WrapWithLabel(ctx, AddBorder(wrapped));
     }
 
     private int SelectedIndex(string value, List<Block> blocks) => blocks.FindIndex(i => i.Name == value);
     private string SelectedValue(object value, List<Block> blocks) => value is string selectedValue ? blocks.Find(i => i.DisplayFormat == selectedValue)?.Name ?? "" : "";
-
 }

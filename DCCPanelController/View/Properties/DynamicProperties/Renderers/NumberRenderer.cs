@@ -9,6 +9,7 @@ internal sealed class NumberRenderer : BaseRenderer,IPropertyRenderer {
         var entry = new Entry {
             Keyboard = Keyboard.Numeric, 
             Text = row.OriginalValue?.ToString() ?? "0", Placeholder = MixedPlaceholder(row),
+            Margin=new Thickness(5,0,5,0),
         };
         entry.Behaviors.Add(new CommunityToolkit.Maui.Behaviors.NumericValidationBehavior());
         entry.TextChanged += (s, e) => {

@@ -7,8 +7,8 @@ public abstract class BaseRenderer {
     protected virtual int FieldHeight => 35;
     protected virtual int FieldWidth => -1;
 
-    protected virtual int LabelFontSize => 15;
-    protected virtual int FieldFontSize => 15;
+    protected virtual int LabelFontSize => 12;
+    protected virtual int FieldFontSize => 12;
     protected virtual int ErrorFontSize => 12;
     protected virtual int DescFontSize => 10;
     protected virtual int ColumnSpacing => 12;
@@ -52,13 +52,59 @@ public abstract class BaseRenderer {
         };
     }
 
+    protected Microsoft.Maui.Controls.View WrapPicker(PropertyContext ctx, Picker picker, int width) {
+        var row = ctx.Row;
+        var grid = new Grid();
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(28) });
+        grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(28) });
+        grid.WidthRequest = width;
+        grid.Margin = new Thickness(5, 0, 0, 5);
+        
+        var clearButton = new ImageButton() {
+            BackgroundColor = Colors.White,
+            CornerRadius = 21,
+            Margin = new Thickness(0, 4, 8, 0),
+            Scale = 0.5,
+            Source = "x_circle.png",
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+        };
+        
+        var findButton = new ImageButton() {
+            BackgroundColor = Colors.White,
+            CornerRadius = 21,
+            Margin = new Thickness(0, 4, 0, 0),
+            Scale = 0.5,
+            Source = "search.png",
+            HorizontalOptions = LayoutOptions.Center,
+            VerticalOptions = LayoutOptions.Center,
+        };
+        
+        clearButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        findButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+
+        clearButton.Clicked += (s, e) => {
+            picker.SelectedIndex = -1;
+            SetValue(ctx.Row, null);
+        };
+        findButton.Clicked += (sender, args) => picker.Focus();
+
+        grid.Add(picker, 0, 0);
+        grid.Add(findButton, 1, 0);
+        grid.Add(clearButton, 2, 0);
+
+        return grid;
+
+    }
+    
     protected Microsoft.Maui.Controls.View AddBorder(Microsoft.Maui.Controls.View view) {
         var border = new Border {
-            Stroke = new SolidColorBrush(Colors.DarkGray),
+            Stroke = new SolidColorBrush(Colors.Gray),
             StrokeThickness = 1,
             Background = new SolidColorBrush(Colors.White),
             StrokeShape = new RoundRectangle {
-                CornerRadius = new CornerRadius(6) // uniform radius
+                CornerRadius = new CornerRadius(10) // uniform radius
             },
             Content = view,
         };
@@ -103,7 +149,8 @@ public abstract class BaseRenderer {
         var grid = new Grid {
             ColumnDefinitions = {
                 new ColumnDefinition(labelWidth),
-                new ColumnDefinition(fieldWidth >= 0 ? fieldWidth : GridLength.Star)
+                new ColumnDefinition(fieldWidth >= 0 ? fieldWidth : GridLength.Star),
+                new ColumnDefinition(GridLength.Star),
             },
             RowDefinitions = {
                 new RowDefinition(fieldHeight >= 0 ? fieldHeight : GridLength.Auto),    // label + control
@@ -124,6 +171,7 @@ public abstract class BaseRenderer {
         if (description != null) infoStack.Add(description);
         infoStack.Add(errorLabel);
         grid.Add(infoStack, 1, 1);
+        grid.SetColumnSpan(infoStack, 2);
 
         RowValueChanged += OnRowValueChanged;
         grid.Unloaded += (_, __) => RowValueChanged -= OnRowValueChanged;

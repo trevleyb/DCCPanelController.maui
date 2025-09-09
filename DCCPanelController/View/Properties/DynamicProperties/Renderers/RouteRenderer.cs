@@ -21,10 +21,13 @@ internal sealed class RouteRenderer : BaseRenderer,IPropertyRenderer {
             VerticalOptions = LayoutOptions.Center,
         };
         foreach (var i in routes) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s && picker.Items.Contains(s)) picker.SelectedItem = SelectedIndex(s, routes);
+        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, routes);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, routes));
         picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return WrapWithLabel(ctx, AddBorder(picker));
+
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        return WrapWithLabel(ctx, AddBorder(wrapped));
+
     }
 
     private int SelectedIndex(string value, List<Route> routes) {

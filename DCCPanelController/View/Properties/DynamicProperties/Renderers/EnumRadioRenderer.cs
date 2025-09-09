@@ -48,6 +48,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
             Orientation = ScrollOrientation.Horizontal,
             HorizontalOptions = LayoutOptions.Fill,
             Content = stack,
+            Margin=new Thickness(0, 0, 0, 0)
         };
 
         // Wrap with your standard label/description/error grid

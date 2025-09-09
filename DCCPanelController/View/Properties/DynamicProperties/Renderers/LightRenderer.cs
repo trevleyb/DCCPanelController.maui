@@ -22,10 +22,12 @@ internal sealed class LightRenderer : BaseRenderer,IPropertyRenderer {
             VerticalOptions = LayoutOptions.Center,
         };
         foreach (var i in lights) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s && picker.Items.Contains(s)) picker.SelectedItem = SelectedIndex(s, lights);
+        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, lights);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, lights));
         picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return WrapWithLabel(ctx, AddBorder(picker));    
+
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        return WrapWithLabel(ctx, AddBorder(wrapped));
     }
     
     private int SelectedIndex(string value, List<Light> lights) => lights.FindIndex(i => i.Name == value);

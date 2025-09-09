@@ -141,47 +141,4 @@ public partial class ColorPickerButton : ContentView {
         _vm?.SelectedColor = SelectedColor ?? Colors.White;
         _popup?.Show();
     }
-    
-    [RelayCommand]
-    private async Task ShowDropdownOldAsync() {
-        var colorPickerViewModel = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
-        var colorPickerGrid = new ColorPickerGrid(colorPickerViewModel);
-
-        var popup = new SfPopup {
-            ContentTemplate = new DataTemplate(() => colorPickerGrid),
-            ShowHeader = false,
-            ShowFooter = false,
-            BackgroundColor = Colors.Transparent,
-            PopupStyle = new PopupStyle {
-                CornerRadius = 10,
-                HasShadow = false,
-                BlurIntensity = PopupBlurIntensity.Light
-            },
-            AutoSizeMode = PopupAutoSizeMode.Both,
-            AnimationMode = PopupAnimationMode.Zoom,
-            AnimationDuration = 300,
-        };
-
-        var tcs = new TaskCompletionSource<Color?>();
-
-        // Subscribe to events
-        colorPickerViewModel.ColorSelectionCompleted += color => {
-            popup.Dismiss();
-            tcs.SetResult(color);
-        };
-
-        colorPickerViewModel.SelectionCancelled += () => {
-            popup.Dismiss();
-            tcs.SetResult(null);
-        };
-
-        // Handle popup closing
-        popup.Closed += (sender, args) => {
-            if (!tcs.Task.IsCompleted) tcs.SetResult(null);
-        };
-
-        popup.Show();
-        var result = await tcs.Task;
-        if (result is { }) SelectedColor = result;
-    }
 }

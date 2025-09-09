@@ -21,10 +21,12 @@ internal sealed class TurnoutRenderer : BaseRenderer,IPropertyRenderer {
             VerticalOptions = LayoutOptions.Center,
         };
         foreach (var i in turnouts) picker.Items.Add(i.DisplayFormat);
-        if (row.OriginalValue is string s && picker.Items.Contains(s)) picker.SelectedItem = SelectedIndex(s, turnouts);
+        if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, turnouts);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, turnouts));
         picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
-        return WrapWithLabel(ctx, AddBorder(picker));
+        
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        return WrapWithLabel(ctx, AddBorder(wrapped));
     }
 
     private int SelectedIndex(string value, List<Turnout> turnouts) {
