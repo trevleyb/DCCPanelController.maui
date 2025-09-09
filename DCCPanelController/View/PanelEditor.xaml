@@ -62,11 +62,11 @@
             <!-- Initially: 1 column, 3 rows (standard layout) -->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"   x:Name="MainColumn"/>
-                <ColumnDefinition Width="auto" x:Name="SidePalette"/>
+                <ColumnDefinition Width="Auto" x:Name="SidePalette"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"   x:Name="PanelRow"/>
-                <RowDefinition Height="auto" x:Name="BottomPalette"/>
+                <RowDefinition Height="Auto" x:Name="BottomPalette"/>
                 <RowDefinition Height="30"  x:Name="StatusRow"/>
             </Grid.RowDefinitions>
 
@@ -85,7 +85,7 @@
                     x:Name="PanelView"/>
             </Grid>
 
-            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0" Margin="0,0,0,0">
+            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0">
                 <tileSelectors:SideSelectorPanel
                     x:Name="SidePaletteSelector"
                     HorizontalOptions="Center"

@@ -95,8 +95,8 @@
                                     HorizontalScrollBarVisibility="Never"
                                     VerticalScrollBarVisibility="Never"
                                     Scrolled="TileCollection_OnScrolled"
-                                    MinimumHeightRequest="45"
-                                    MinimumWidthRequest="45"
+                                    MinimumHeightRequest="50"
+                                    WidthRequest="75"
                                     SelectionMode="None"
                                     SelectionChanged="TileCollectionByCategory_OnSelectionChanged"
                                     ItemSizingStrategy="MeasureAllItems">
