@@ -14,7 +14,7 @@ public class ActionSwitchTile : Tile, ITileInteractive {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
 
-        if (Entity is SwitchEntity switchEntity && switchEntity.Light is { } light) {
+        if (Entity is SwitchEntity { Light: { } light } switchEntity) {
             light.PropertyChanged += (sender, args) => { switchEntity.State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off; };
         }
     }
@@ -45,13 +45,21 @@ public class ActionSwitchTile : Tile, ITileInteractive {
     protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
         if (Entity is SwitchEntity switchEntity) {
             SvgImage = switchEntity.SwitchStyle switch {
-                SwitchStyleEnum.Light  => SvgImages.GetImage("light", Entity.Rotation),
-                SwitchStyleEnum.Button => SvgImages.GetImage("button", Entity.Rotation),
+                SwitchStyleEnum.Light  => 
+                    switchEntity.ButtonSize switch {
+                        ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
+                        _                    => SvgImages.GetImage("light", Entity.Rotation)
+                    },
+                SwitchStyleEnum.Button => 
+                    switchEntity.ButtonSize switch {
+                        ButtonSizeEnum.Large => SvgImages.GetImage("buttonLarge", Entity.Rotation),
+                        _                    => SvgImages.GetImage("button", Entity.Rotation)
+                    },
                 _ => switchEntity.State switch {
                     ButtonStateEnum.On  => SvgImages.GetImage("switchon", Entity.Rotation),
                     ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
                     _                   => SvgImages.GetImage("switch", Entity.Rotation)
-                }
+                },
             };
 
             var buttonColor = switchEntity.State switch {
@@ -88,17 +96,24 @@ public class ActionSwitchTile : Tile, ITileInteractive {
     protected Microsoft.Maui.Controls.View? CreateTileAsImage() {
         if (Entity is SwitchEntity switchEntity) {
             SvgImage svgImage;
-            if (switchEntity.SwitchStyle == SwitchStyleEnum.Light) {
-                svgImage = SvgImages.GetImage("light", Entity.Rotation);
-            } else if (switchEntity.SwitchStyle == SwitchStyleEnum.Button) {
-                svgImage = SvgImages.GetImage("button", Entity.Rotation);
-            } else {
-                svgImage = switchEntity.State switch {
+            svgImage = switchEntity.SwitchStyle switch {
+                SwitchStyleEnum.Light  => 
+                    switchEntity.ButtonSize switch {
+                        ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
+                        _                    => SvgImages.GetImage("light", Entity.Rotation)
+                    },
+                SwitchStyleEnum.Button => 
+                    switchEntity.ButtonSize switch {
+                        ButtonSizeEnum.Large => SvgImages.GetImage("buttonLarge", Entity.Rotation),
+                        _                    => SvgImages.GetImage("button", Entity.Rotation)
+                    },
+                _ => switchEntity.State switch {
                     ButtonStateEnum.On  => SvgImages.GetImage("switchon", Entity.Rotation),
                     ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
                     _                   => SvgImages.GetImage("switch", Entity.Rotation)
-                };
-            }
+                }
+            };
+            
             svgImage.SetAttributeFillColor(SvgElementType.Button, switchEntity.State switch {
                 ButtonStateEnum.On  => switchEntity.ColorOn ?? switchEntity.Parent?.LightOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => switchEntity.ColorOff ?? switchEntity.Parent?.LightOffColor ?? Colors.Red,
@@ -127,6 +142,6 @@ public class ActionSwitchTile : Tile, ITileInteractive {
                 _                      => SvgImages.GetImage("switch").AsImage()
             };
         }
-        return SvgImages.GetImage("switchon").AsImage();
+        return SvgImages.GetImage("light").AsImage();
     }
 }

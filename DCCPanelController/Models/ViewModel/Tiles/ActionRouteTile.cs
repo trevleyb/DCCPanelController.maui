@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -90,18 +91,22 @@ public class ActionRouteTile : Tile, ITileInteractive {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("route", Entity.Rotation)
             };
-            svgImage.SetAttributeFillColor(SvgElementType.Button, route.State switch {
+
+            var buttonColor = route.State switch {
                 RouteStateEnum.Active   => route.ColorOn ?? route.Parent?.ButtonOnColor ?? Colors.Green,
                 RouteStateEnum.Inactive => route.ColorOff ?? route.Parent?.ButtonOffColor ?? Colors.Red,
                 _                       => route.Parent?.ButtonColor ?? Colors.Gray
-            });
+            };
+            svgImage.SetAttributeFillColor(SvgElementType.Button, buttonColor);
             svgImage.SetAttributeFillColor(SvgElementType.ButtonOutline, route.State switch {
                 RouteStateEnum.Active   => route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black,
                 RouteStateEnum.Inactive => route.ColorOffBorder ?? route.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                       => route.Parent?.ButtonBorder ?? Colors.Black
             });
-            svgImage.SetAttributeLineColor(SvgElementType.Indicator, route.RouteIndicator ?? route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black);
-            svgImage.SetAttributeFillColor(SvgElementType.Indicator, route.RouteIndicator ?? route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black);
+            
+            var indicatorColor = AppleCrayonColors.GetContrastingTextColor(buttonColor);
+            svgImage.SetAttributeLineColor(SvgElementType.Indicator, route.RouteIndicator ?? indicatorColor ?? Colors.Black);
+            svgImage.SetAttributeFillColor(SvgElementType.Indicator, route.RouteIndicator ?? indicatorColor ?? Colors.Black);
 
             var image = new Image {
                 Source = svgImage.AsImageSource(0, DefaultScaleFactor)

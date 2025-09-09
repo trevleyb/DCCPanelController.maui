@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -8,10 +9,10 @@ using DCCPanelController.Services;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
-public class TurnoutActionButtonTile : Tile, ITileInteractive {
+public class ActionTurnoutTile : Tile, ITileInteractive {
     private TurnoutEntity? _turnout;
 
-    public TurnoutActionButtonTile(TurnoutButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    public ActionTurnoutTile(TurnoutButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         RegisterForTurnoutEvents();
@@ -80,8 +81,8 @@ public class TurnoutActionButtonTile : Tile, ITileInteractive {
     protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
         if (Entity is TurnoutButtonEntity button) {
             SvgImage = button.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("button", Entity.Rotation)
+                ButtonSizeEnum.Large => SvgImages.GetImage("TurnoutLarge", Entity.Rotation),
+                _                    => SvgImages.GetImage("Turnout", Entity.Rotation)
             };
 
             var buttonColor = button.State switch {
@@ -95,10 +96,12 @@ public class TurnoutActionButtonTile : Tile, ITileInteractive {
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black
             };
-
+            var indicatorColor = AppleCrayonColors.GetContrastingTextColor(buttonColor);
+            
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
+            style.Add(e => e.WithName(SvgElementType.Indicator).WithColor(indicatorColor));
             SvgImage.ApplyStyle(style.Build());
 
             var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);

@@ -7,8 +7,8 @@ namespace DCCPanelController.Models.ViewModel.ImageManager;
 public static class SvgImages {
     public static readonly Assembly ExecutingAssembly = Assembly.GetExecutingAssembly();
 
-    private static readonly Lock LockObject = new();
-    private static readonly List<string> AvailableSymbols;
+    private static readonly Lock                                                   LockObject = new();
+    private static readonly List<string>                                           AvailableSymbols;
     private static readonly Dictionary<string, (string straight, string diagonal)> Images = new();
 
     static SvgImages() {
@@ -19,25 +19,31 @@ public static class SvgImages {
     private static void BuildAvailableImages() {
         AddImage("Unknown", "Track_Unknown");
 
-        AddImage("Text", "Track_Text");
-        AddImage("Label", "Track_Label");
-        AddImage("Image", "Track_Image");
-        AddImage("Compass", "Track_Compass");
-        AddImage("Points", "Track_Points");
-        AddImage("Circle", "draw_circle");
-        AddImage("Rectangle", "draw_rectangle");
-        AddImage("Line", "draw_line");
+        AddImage("Text",        "draw_Text");
+        AddImage("Label",       "draw_Label");
+        AddImage("Image",       "draw_Image");
+        AddImage("Circle",      "draw_circle");
+        AddImage("Rectangle",   "draw_rectangle");
+        AddImage("Line",        "draw_line");
 
-        AddImage("ButtonLarge", "Track_Large_Button");
-        AddImage("Button", "Track_Button", "Track_Button_Corner");
+        AddImage("Button",      "button_push", "button_push_corner");
+        AddImage("ButtonLarge", "button_push_large");
 
-        AddImage("Switch", "switch_on");
-        AddImage("SwitchOn", "switch_on");
-        AddImage("SwitchOff", "switch_off");
-        AddImage("Light", "light");
+        AddImage("Route",       "button_route");
+        AddImage("RouteLarge",  "button_route_large");
 
-        AddImage("Route", "Track_Route");
-        AddImage("RouteLarge", "Track_Route_Large");
+        AddImage("Turnout",     "button_turnout");
+        AddImage("TurnoutLarge","button_turnout_large");
+
+        AddImage("Light",       "button_light");
+        AddImage("LightLarge",  "button_light_large");
+
+        AddImage("Switch",      "switch_on");
+        AddImage("SwitchOn",    "switch_on");
+        AddImage("SwitchOff",   "switch_off");
+
+        AddImage("Compass",     "Track_Compass");
+        AddImage("Points",      "Track_Points");
 
         AddImage("Straight", "Track_Straight", "Track_Angle");
         AddImage("Platform", "Track_Straight_Platform", "Track_Angle_Platform");

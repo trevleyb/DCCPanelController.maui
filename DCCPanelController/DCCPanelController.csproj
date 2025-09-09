@@ -98,6 +98,9 @@
     <ItemGroup>
         <!-- App Icon -->
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+        <EmbeddedResource Include="Models\TileImages\button_light_large.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_turnout_large.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_turnout.svg" />
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
 
         <MauiIcon Include="Resources\AppIcon\appiconfg.svg"/>
@@ -118,8 +121,8 @@
         <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_tunnel.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_button.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_button_corner.svg"/>
+        <EmbeddedResource Include="Models\TileImages\button_push.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_push_corner.svg" />
         <EmbeddedResource Include="Models\TileImages\track_compass.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_corner_left.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_arrow.svg"/>
@@ -127,14 +130,13 @@
         <EmbeddedResource Include="Models\TileImages\track_corner_right.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_arrow.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_lines.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_image.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_label.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_large_button.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_large_route.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_image.svg" />
+        <EmbeddedResource Include="Models\TileImages\draw_label.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_push_large.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_route_large.svg" />
         <EmbeddedResource Include="Models\TileImages\track_platform.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_points.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_route.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_route_large.svg"/>
+        <EmbeddedResource Include="Models\TileImages\button_route.svg" />
         <EmbeddedResource Include="Models\TileImages\track_straight.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_bridge.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg"/>
@@ -142,7 +144,7 @@
         <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_straight_tunnel.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_text.svg"/>
+        <EmbeddedResource Include="Models\TileImages\draw_text.svg" />
         <EmbeddedResource Include="Models\TileImages\track_threeway.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_threeway_right.svg"/>
@@ -154,7 +156,7 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_unknown.svg"/>
-        <EmbeddedResource Include="Models\TileImages\light.svg"/>
+        <EmbeddedResource Include="Models\TileImages\button_light.svg" />
         <EmbeddedResource Include="Models\TileImages\switch_off.svg"/>
         <EmbeddedResource Include="Models\TileImages\switch_on.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_diverging_alt.svg"/>

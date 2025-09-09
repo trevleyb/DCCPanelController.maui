@@ -132,8 +132,6 @@ public static class AppleCrayonColors {
 
     public static Color GetContrastingTextColor(Color backgroundColor) {
         var luminance = 0.299 * backgroundColor.Red + 0.587 * backgroundColor.Green + 0.114 * backgroundColor.Blue;
-
-        // Return white text for dark backgrounds, black text for light backgrounds
         return luminance > 0.5 ? EnumToColor(AppleCrayonColorsEnum.Licorice) : EnumToColor(AppleCrayonColorsEnum.Snow);
     }
 

@@ -5,12 +5,17 @@ using Syncfusion.Maui.Toolkit.Popup;
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerButton : ContentView {
+    private SfPopup?                  _popup;
+    private DataTemplate?             _popupTemplate;
+    private ColorPickerGridViewModel? _vm;
+    private ColorPickerGrid?          _view;
+
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty DefaultColorProperty = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty BorderWidthProperty = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty BorderColorProperty   = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty BorderWidthProperty   = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty CornerRadiusProperty  = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
 
     public ColorPickerButton() {
         InitializeComponent();
@@ -73,6 +78,43 @@ public partial class ColorPickerButton : ContentView {
         }
     }
 
+    protected override void OnHandlerChanged() {
+        base.OnHandlerChanged();
+        EnsurePopup();
+    }
+
+    private void EnsurePopup() {
+        if (_popup != null) return;
+
+        _vm = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
+        _view = new ColorPickerGrid(_vm);
+        _popupTemplate ??= new DataTemplate(() => _view);
+        _popup = new() {
+            ContentTemplate = _popupTemplate,
+            ShowHeader = false,
+            ShowFooter = false,
+            BackgroundColor = Colors.Transparent,
+            PopupStyle = new Syncfusion.Maui.Toolkit.Popup.PopupStyle {
+                CornerRadius = 10,
+                HasShadow = false,
+                BlurIntensity = PopupBlurIntensity.Light,
+            },
+
+            AutoSizeMode = PopupAutoSizeMode.Height,
+            WidthRequest = 320, // give it a sane, fixed width
+            AnimationMode =PopupAnimationMode.None,
+            AnimationDuration = 0,
+        };
+
+        // wire once
+        _vm.ColorSelectionCompleted += color => {
+            _popup?.Dismiss();
+            if (color is { }) SelectedColor = color;
+        };
+        _vm.SelectionCancelled += () => _popup?.Dismiss();
+        _view.Measure(double.PositiveInfinity, double.PositiveInfinity);
+    }
+
     private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
         var control = (ColorPickerButton)bindable;
         control.OnPropertyChanged(nameof(ActiveColor));
@@ -95,6 +137,13 @@ public partial class ColorPickerButton : ContentView {
 
     [RelayCommand]
     private async Task ShowDropdownAsync() {
+        EnsurePopup();
+        _vm?.SelectedColor = SelectedColor ?? Colors.White;
+        _popup?.Show();
+    }
+    
+    [RelayCommand]
+    private async Task ShowDropdownOldAsync() {
         var colorPickerViewModel = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
         var colorPickerGrid = new ColorPickerGrid(colorPickerViewModel);
 

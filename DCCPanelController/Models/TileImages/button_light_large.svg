@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <g transform="translate(3.007 3.958)">
+            <g>
+                <g>
+                    <g>
+                        <path id="Button" d="M0 0L14.959 0.0140114" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(0 20.08)" />
+                        <path id="Button" d="M0 0L15.0413 0.0453606" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(26.969 20.029)" />
+                        <path id="Button" d="M0 14.024L0.0457993 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(20.958 -1)" />
+                        <path id="Button" d="M0 14.0252L0 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(21.004 27.067)" />
+                    </g>
+                    <g transform="translate(9.008 8.076)">
+                        <path id="Button" d="M0 11.9387L11.9081 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(15.987 -3.956)" />
+                        <path id="Button" d="M0 12.0314L11.9463 0" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(-3.98 15.95)" />
+                        <path id="Button" d="M0 0L12.0281 12.025" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(-4 -4)" />
+                        <path id="Button" d="M0 0L11.9941 11.9234" fill="none" stroke-width="2" stroke="#90C418" stroke-linecap="square" transform="translate(15.969 15.993)" />
+                    </g>
+                </g>
+                <g transform="translate(5.52 4.59)">
+                    <path id="Button" d="M0 15.5C2.38419e-07 6.93959 6.93959 0 15.5 0C24.0604 0 31 6.93959 31 15.5C31 24.0604 24.0604 31 15.5 31C6.93959 31 2.38419e-07 24.0604 0 15.5Z" fill="#90C418" fill-rule="evenodd" transform="matrix(0.999 0.035 -0.035 0.999 2.473 1)" />
+                    <path id="ButtonOutline" d="M0 16C0 7.16343 7.16343 0 16 0C24.8365 0 32 7.16343 32 16C32 24.8365 24.8365 32 16 32C7.16343 32 0 24.8365 0 16Z" fill="none" stroke-width="2" stroke="#000000" transform="translate(1 1)" />
+                    <path d="M0 17C0 7.61115 7.61115 0 17 0C26.3888 0 34 7.61115 34 17C34 26.3888 26.3888 34 17 34C7.61115 34 0 26.3888 0 17Z" fill="none" stroke-width="0.5" stroke="#FFFFFF" />
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

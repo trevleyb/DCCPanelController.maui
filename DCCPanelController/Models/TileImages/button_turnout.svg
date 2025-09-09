@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g>
+        <g>
+            <g>
+                <circle id="ButtonOutline" stroke="#000000" stroke-width="2" cx="24" cy="24" r="10"/>
+                <circle id="Button" fill="#90C418" cx="24" cy="24" r="9"/>
+            </g>
+        </g>
+        <g transform="translate(21 18)">
+            <g>
+                <g>
+                    <rect id="Indicator" width="2.281" height="5.909" fill="#000000" fill-rule="evenodd" transform="translate(0.954 2.5)" />
+                    <path id="Indicator" d="M4.0323 0L5.64522 1.67134L1.61292 5.8497L0 4.17836L4.0323 0Z" fill="#000000" fill-rule="evenodd" transform="translate(1.564 1.636)" />
+                    <path id="Indicator" d="M0 2.54545C0 2.54545 2.10555 0 2.10555 0L4.2111 2.54545C4.2111 2.54545 0 2.54545 0 2.54545Z" fill="#000000" />
+                    <path id="Indicator" d="M0 0.482118C0 0.482118 2.94668 0 2.94668 0L2.48142 3.05342C2.48142 3.05342 0 0.482118 0 0.482118Z" fill="#000000" transform="translate(5.053 0.722)" />
+                    <rect id="Indicator" width="2.281" height="5.727" fill="#000000" fill-rule="evenodd" transform="translate(0.965 6.273)" />
+                </g>
+            </g>
+        </g>
+
+    </g>
+</svg>
+
+

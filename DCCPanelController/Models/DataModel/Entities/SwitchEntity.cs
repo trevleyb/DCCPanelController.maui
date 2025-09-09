@@ -6,6 +6,10 @@ using DCCPanelController.View.Properties.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
+    
+    [ObservableProperty] [property: Editable("Button Size")]
+    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
+
     [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, "Colors")]
     private Color? _colorOff;
 
