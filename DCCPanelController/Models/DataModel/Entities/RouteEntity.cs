@@ -7,11 +7,12 @@ using Microsoft.Maui.Graphics;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
-    [ObservableProperty] [property: Editable("Button Size")]
-    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 10, "General", EditorKind = EditorKinds.Route)]
+    [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 1, "General", EditorKind = EditorKinds.Route)]
     private string _id = string.Empty;
+
+    [ObservableProperty] [property: Editable("Button Size", Order = 2)]
+    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 5, "Colors")]
     private Color? _routeIndicator;

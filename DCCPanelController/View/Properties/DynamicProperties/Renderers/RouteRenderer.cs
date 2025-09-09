@@ -19,6 +19,7 @@ internal sealed class RouteRenderer : BaseRenderer,IPropertyRenderer {
             FontSize = FieldFontSize,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(5, 0, 0, 0)
         };
         foreach (var i in routes) picker.Items.Add(i.DisplayFormat);
         if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, routes);

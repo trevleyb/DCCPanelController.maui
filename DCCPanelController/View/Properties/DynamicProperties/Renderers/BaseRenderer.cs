@@ -83,7 +83,7 @@ public abstract class BaseRenderer {
             VerticalOptions = LayoutOptions.Center,
         };
         
-        clearButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        clearButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode) && row.CurrentValue != null && !string.IsNullOrEmpty((string)row.CurrentValue);
         findButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
 
         clearButton.Clicked += (s, e) => {
@@ -91,13 +91,16 @@ public abstract class BaseRenderer {
             SetValue(ctx.Row, null);
         };
         findButton.Clicked += (sender, args) => picker.Focus();
-
+        row.CurrentChanged += (sender, o) => {
+            clearButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode) && o is { };
+        };
+        
+        picker.VerticalOptions = LayoutOptions.Center;
         grid.Add(picker, 0, 0);
         grid.Add(findButton, 1, 0);
         grid.Add(clearButton, 2, 0);
 
         return grid;
-
     }
     
     protected Microsoft.Maui.Controls.View AddBorder(Microsoft.Maui.Controls.View view) {

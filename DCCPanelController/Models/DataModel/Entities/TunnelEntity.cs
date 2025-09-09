@@ -7,7 +7,7 @@ using Microsoft.Maui.Graphics;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TunnelEntity : StraightEntity, ITrackEntity {
-    [ObservableProperty] [property: Editable("Tunnel Color", "Color of the Tunnel Entrance", 6, "Track")]
+    [ObservableProperty] [property: Editable("Tunnel Color", "Color of the Tunnel Entrance", 6, "Color")]
     private Color? _tunnelColor;
 
     [JsonConstructor]

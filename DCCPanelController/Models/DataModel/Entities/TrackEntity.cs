@@ -14,10 +14,10 @@ public abstract partial class TrackEntity : Entity {
     [ObservableProperty] [property: Editable("Track Style", "Dashed normally used for hidden track.", 4, "Track")]
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Border Color", "", 5, "Track")]
+    [ObservableProperty] [property: Editable("Border Color", "", 5, "Color")]
     private Color? _trackBorderColor;
 
-    [ObservableProperty] [property: Editable("Track Color", "", 5, "Track")]
+    [ObservableProperty] [property: Editable("Track Color", "", 5, "Color")]
     private Color? _trackColor;
 
     [ObservableProperty]

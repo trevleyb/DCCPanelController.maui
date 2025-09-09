@@ -20,7 +20,7 @@ internal sealed class BlockRenderer : BaseRenderer,IPropertyRenderer {
         var row = ctx.Row;
         var picker = new Picker {
             FontSize = FieldFontSize,
-            Margin=new Thickness(4, 0, 0, 0),
+            Margin=new Thickness(5, 0, 0, 0),
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Center,
         };

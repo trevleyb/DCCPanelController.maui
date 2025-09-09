@@ -8,9 +8,18 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
     
-    [ObservableProperty] [property: Editable("Button Size")]
+    [ObservableProperty]
+    [property: Editable("Light", "Select the ID of the light controlled by this button", 1, "General", EditorKind = EditorKinds.Light)]
+    private string _id = string.Empty;
+
+    [ObservableProperty] [property: Editable("Button Size", Order=2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
+    [ObservableProperty]
+    [property: Editable("Switch Style", Order=3)]
+    private SwitchStyleEnum _switchStyle = SwitchStyleEnum.Light;
+
+    
     [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, "Colors")]
     private Color? _colorOff;
 
@@ -22,14 +31,6 @@ public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
 
     [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 5, "Colors")]
     private Color? _colorOnBorder;
-
-    [ObservableProperty]
-    [property: Editable("Light", "Select the ID of the light controlled by this button", 10, "General", EditorKind = EditorKinds.Light)]
-    private string _id = string.Empty;
-
-    [ObservableProperty]
-    [property: Editable("Switch Style")]
-    private SwitchStyleEnum _switchStyle = SwitchStyleEnum.Light;
 
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 

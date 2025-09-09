@@ -15,7 +15,10 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
-    [ObservableProperty] [property: Editable("Button Size")]
+    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order=1)]
+    private string _id = string.Empty;
+
+    [ObservableProperty] [property: Editable("Button Size", Order=2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
     [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, Group="Colors")]
@@ -29,9 +32,6 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
 
     [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 5, Group="Colors")]
     private Color? _colorOnBorder;
-
-    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.")]
-    private string _id = string.Empty;
 
     [ObservableProperty] [property: Editable("Button Actions", Order=10, Group="Actions", EditorKind = EditorKinds.ButtonActions)]
     private ButtonActions _buttonPanelActions = [];

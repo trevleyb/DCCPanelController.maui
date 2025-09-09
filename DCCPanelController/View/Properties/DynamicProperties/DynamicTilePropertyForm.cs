@@ -66,7 +66,7 @@ public sealed class DynamicTilePropertyForm {
     private static Dictionary<string, int> GroupOrders = new() {
         ["General"] = 1,
         ["Track"] = 2,
-        ["Turnouts"] = 2,
+        ["Turnout"] = 2,
         ["Layout"] = 3,
         ["Attributes"] = 4,
         ["Colors"] = 5,
