@@ -318,7 +318,6 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task TilePropertiesPopupAcceptAsync() {
-        Console.WriteLine("Tile Properties Popup Accept");
         LastAction = PopupAction.Accept;
         if (_dynamicTileContent is { } content) {
             var result = await content.ValidateAsync();
@@ -333,7 +332,6 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     [RelayCommand]
     private async Task TilePropertiesPopupDeclineAsync() {
-        Console.WriteLine("Tile Properties Popup Decline");
         LastAction = PopupAction.Cancel;
         if (_dynamicTileContent is { } content) {
             await content.CancelAsync();
@@ -342,7 +340,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     private void PopupOnClosing(object? sender, CancelEventArgs e) {
-        Console.WriteLine("Popup On Closing");
         e.Cancel = !AcceptIsValid;
     }
 
