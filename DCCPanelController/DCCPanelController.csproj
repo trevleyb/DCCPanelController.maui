@@ -109,7 +109,7 @@
         <MauiImage Include="Resources\Images\*"/>
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg"/>
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#7CC504" BaseSize="172,220"/>
         <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
