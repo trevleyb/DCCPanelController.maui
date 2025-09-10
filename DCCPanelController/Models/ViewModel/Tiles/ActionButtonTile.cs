@@ -36,10 +36,6 @@ public class ActionButtonTile : Tile, ITileInteractive {
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        return CreateTileAsCanvas();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
         if (Entity is ActionButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
@@ -57,7 +53,6 @@ public class ActionButtonTile : Tile, ITileInteractive {
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black
             };
-
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
@@ -74,35 +69,9 @@ public class ActionButtonTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateTileAsImage();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsImage() {
-        if (Entity is ActionButtonEntity button) {
-            var svgImage = button.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("button", Entity.Rotation)
-            };
-            svgImage.SetAttributeFillColor(SvgElementType.Button, button.State switch {
-                ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
-            });
-            svgImage.SetAttributeFillColor(SvgElementType.ButtonOutline, button.State switch {
-                ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
-                ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.Parent?.ButtonBorder ?? Colors.Black
-            });
-
-            var image = new Image {
-                Source = svgImage.AsImageSource(0, DefaultScaleFactor)
-            };
-            image.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
-            return image;
-        }
         return CreateSymbol();
     }
-
+    
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("button").AsImage();
     }

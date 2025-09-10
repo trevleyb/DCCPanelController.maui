@@ -39,10 +39,6 @@ public class ActionSwitchTile : Tile, ITileInteractive {
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        return CreateTileAsCanvas();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
         if (Entity is SwitchEntity switchEntity) {
             SvgImage = switchEntity.SwitchStyle switch {
                 SwitchStyleEnum.Light  => 
@@ -63,14 +59,14 @@ public class ActionSwitchTile : Tile, ITileInteractive {
             };
 
             var buttonColor = switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.ColorOn ?? switchEntity.Parent?.LightOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.ColorOff ?? switchEntity.Parent?.LightOffColor ?? Colors.Red,
+                ButtonStateEnum.On  => switchEntity.ColorOn ?? switchEntity.Parent?.ButtonOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => switchEntity.ColorOff ?? switchEntity.Parent?.ButtonOffColor ?? Colors.Red,
                 _                   => switchEntity.Parent?.ButtonColor ?? Colors.Gray
             };
 
             var buttonOutline = switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.ColorOnBorder ?? switchEntity.Parent?.LightOnBorderColor ?? Colors.Black,
-                ButtonStateEnum.Off => switchEntity.ColorOffBorder ?? switchEntity.Parent?.LightOffBorderColor ?? Colors.Black,
+                ButtonStateEnum.On  => switchEntity.ColorOnBorder ?? switchEntity.Parent?.ButtonOnBorder ?? Colors.Black,
+                ButtonStateEnum.Off => switchEntity.ColorOffBorder ?? switchEntity.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                   => switchEntity.Parent?.ButtonBorder ?? Colors.Black
             };
 
@@ -89,47 +85,6 @@ public class ActionSwitchTile : Tile, ITileInteractive {
             AbsoluteLayout.SetLayoutBounds(canvas, new Rect(-GridSize * 0.25, -GridSize * 0.25, GridSize * 1.5, GridSize * 1.5));
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
-        }
-        return CreateTileAsImage();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsImage() {
-        if (Entity is SwitchEntity switchEntity) {
-            SvgImage svgImage;
-            svgImage = switchEntity.SwitchStyle switch {
-                SwitchStyleEnum.Light  => 
-                    switchEntity.ButtonSize switch {
-                        ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
-                        _                    => SvgImages.GetImage("light", Entity.Rotation)
-                    },
-                SwitchStyleEnum.Button => 
-                    switchEntity.ButtonSize switch {
-                        ButtonSizeEnum.Large => SvgImages.GetImage("buttonLarge", Entity.Rotation),
-                        _                    => SvgImages.GetImage("button", Entity.Rotation)
-                    },
-                _ => switchEntity.State switch {
-                    ButtonStateEnum.On  => SvgImages.GetImage("switchon", Entity.Rotation),
-                    ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
-                    _                   => SvgImages.GetImage("switch", Entity.Rotation)
-                }
-            };
-            
-            svgImage.SetAttributeFillColor(SvgElementType.Button, switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.ColorOn ?? switchEntity.Parent?.LightOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.ColorOff ?? switchEntity.Parent?.LightOffColor ?? Colors.Red,
-                _                   => switchEntity.Parent?.LightOffColor ?? Colors.Gray
-            });
-            svgImage.SetAttributeFillColor(SvgElementType.ButtonOutline, switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.ColorOnBorder ?? switchEntity.Parent?.LightOnBorderColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.ColorOffBorder ?? switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray,
-                _                   => switchEntity.Parent?.LightOffBorderColor ?? Colors.Gray
-            });
-
-            var image = new Image {
-                Source = svgImage.AsImageSource(0, DefaultScaleFactor)
-            };
-            image.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
-            return image;
         }
         return CreateSymbol();
     }

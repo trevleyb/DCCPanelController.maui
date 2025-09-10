@@ -29,7 +29,13 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
     
     [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
     private Color? _colorOffBorder;
+    
+    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 8, "Colors")]
+    private Color? _colorIndicator;
 
+    [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 7, "Colors")]
+    private bool _showIndicator = true;
+    
     [ObservableProperty] [property: Editable("Turnout", "Turnout to Control with this button", 5, "Turnout", EditorKind = EditorKinds.Turnout)]
     private string? _turnout;
 
@@ -38,7 +44,7 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
 
     [ObservableProperty] [property: Editable("Diverging/Thrown", "When Turnout is Diverging/Thrown set Button to?", 8, "Turnout", EditorKind = EditorKinds.ButtonState)]
     private ButtonStateEnum _whenThrown;
-
+    
     [ObservableProperty] 
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 

@@ -46,19 +46,7 @@ public partial class Panel : ObservableObject {
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Hidden Track", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 6)]
     private Color _hiddenColor = null!;
-
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Light Switch Off Border", Category = "Light Switch", CategorySortOrder = 20, ItemSortOrder = 13)]
-    private Color _lightOffBorderColor = null!;
-
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Light Switch Off", Category = "Light Switch", CategorySortOrder = 20, ItemSortOrder = 12)]
-    private Color _lightOffColor = null!;
-
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Light Switch On Border", Category = "Light Switch", CategorySortOrder = 20, ItemSortOrder = 11)]
-    private Color _lightOnBorderColor = null!;
-
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Light Switch On", Category = "Light Switch", CategorySortOrder = 20, ItemSortOrder = 10)]
-    private Color _lightOnColor = null!;
-
+    
     [ObservableProperty] [Copyable("Colors", DisplayName = "Mainline Border", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 2)]
     private Color _mainlineBorderColor = null!;
 
@@ -119,16 +107,11 @@ public partial class Panel : ObservableObject {
         DivergingColor = AppleCrayonColors.Value("Silver");
 
         ButtonColor = AppleCrayonColors.Value("Aluminum");
-        ButtonBorder = AppleCrayonColors.Value("Ocean");
+        ButtonBorder = AppleCrayonColors.Value("Steel");
         ButtonOnColor = AppleCrayonColors.Value("Fern");
-        ButtonOnBorder = AppleCrayonColors.Value("Ocean");
+        ButtonOnBorder = AppleCrayonColors.Value("Steel");
         ButtonOffColor = AppleCrayonColors.Value("Maraschino");
-        ButtonOffBorder = AppleCrayonColors.Value("Ocean");
-
-        LightOnColor = AppleCrayonColors.Value("Fern");
-        LightOnBorderColor = AppleCrayonColors.Value("Ocean");
-        LightOffColor = AppleCrayonColors.Value("Mercury");
-        LightOffBorderColor = AppleCrayonColors.Value("Tin");
+        ButtonOffBorder = AppleCrayonColors.Value("Steel");
 
         BridgeColor = AppleCrayonColors.Value("Tin");
         PlatformColor = AppleCrayonColors.Value("Tin");

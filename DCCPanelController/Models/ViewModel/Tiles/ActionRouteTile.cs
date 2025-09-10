@@ -42,10 +42,6 @@ public class ActionRouteTile : Tile, ITileInteractive {
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        return CreateTileAsCanvas();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
         if (Entity is RouteEntity route) {
             SvgImage = route.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
@@ -63,13 +59,14 @@ public class ActionRouteTile : Tile, ITileInteractive {
                 RouteStateEnum.Inactive => route.ColorOffBorder ?? route.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                       => route.Parent?.ButtonBorder ?? Colors.Black
             };
+            
+            var indicatorColor = route.ShowIndicator ? buttonColor : route.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White;
 
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
+            style.Add(e => e.WithName(SvgElementType.Indicator).WithColor(indicatorColor));
             SvgImage.ApplyStyle(style.Build());
-            SvgImage.SetAttributeLineColor(SvgElementType.Indicator, route.RouteIndicator ?? route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black);
-            SvgImage.SetAttributeFillColor(SvgElementType.Indicator, route.RouteIndicator ?? route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black);
 
             var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);
             canvas.HorizontalOptions = LayoutOptions.Fill;
@@ -82,41 +79,9 @@ public class ActionRouteTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateTileAsImage();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsImage() {
-        if (Entity is RouteEntity route) {
-            var svgImage = route.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("route", Entity.Rotation)
-            };
-
-            var buttonColor = route.State switch {
-                RouteStateEnum.Active   => route.ColorOn ?? route.Parent?.ButtonOnColor ?? Colors.Green,
-                RouteStateEnum.Inactive => route.ColorOff ?? route.Parent?.ButtonOffColor ?? Colors.Red,
-                _                       => route.Parent?.ButtonColor ?? Colors.Gray
-            };
-            svgImage.SetAttributeFillColor(SvgElementType.Button, buttonColor);
-            svgImage.SetAttributeFillColor(SvgElementType.ButtonOutline, route.State switch {
-                RouteStateEnum.Active   => route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black,
-                RouteStateEnum.Inactive => route.ColorOffBorder ?? route.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                       => route.Parent?.ButtonBorder ?? Colors.Black
-            });
-            
-            var indicatorColor = AppleCrayonColors.GetContrastingTextColor(buttonColor);
-            svgImage.SetAttributeLineColor(SvgElementType.Indicator, route.RouteIndicator ?? indicatorColor ?? Colors.Black);
-            svgImage.SetAttributeFillColor(SvgElementType.Indicator, route.RouteIndicator ?? indicatorColor ?? Colors.Black);
-
-            var image = new Image {
-                Source = svgImage.AsImageSource(0, DefaultScaleFactor)
-            };
-            image.SetBinding(ZIndexProperty, new Binding(nameof(Entity.Layer), BindingMode.TwoWay, source: Entity));
-            return image;
-        }
         return CreateSymbol();
     }
-
+    
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("route").AsImage();
     }

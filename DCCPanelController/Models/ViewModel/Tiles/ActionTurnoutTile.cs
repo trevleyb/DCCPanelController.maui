@@ -71,14 +71,10 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
     }
 
     protected override void Cleanup() {
-        if (_turnout is not null) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
+        if (_turnout is { }) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        return CreateTileAsCanvas();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsCanvas() {
         if (Entity is TurnoutButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("TurnoutLarge", Entity.Rotation),
@@ -96,7 +92,8 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black
             };
-            var indicatorColor = AppleCrayonColors.GetContrastingTextColor(buttonColor);
+
+            var indicatorColor = button.ShowIndicator ? buttonColor : button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White;
             
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
@@ -115,35 +112,9 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateTileAsImage();
-    }
-
-    protected Microsoft.Maui.Controls.View? CreateTileAsImage() {
-        if (Entity is TurnoutButtonEntity button) {
-            var svgImage = button.ButtonSize switch {
-                ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("button", Entity.Rotation)
-            };
-            svgImage.SetAttributeFillColor(SvgElementType.Button, button.State switch {
-                ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
-            });
-            svgImage.SetAttributeFillColor(SvgElementType.ButtonOutline, button.State switch {
-                ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
-                ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.Parent?.ButtonBorder ?? Colors.Black
-            });
-
-            var image = new Image {
-                Source = svgImage.AsImageSource(0, DefaultScaleFactor)
-            };
-            image.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
-            return image;
-        }
         return CreateSymbol();
     }
-
+    
     protected override Microsoft.Maui.Controls.View? CreateSymbol() {
         return SvgImages.GetImage("button").AsImage();
     }

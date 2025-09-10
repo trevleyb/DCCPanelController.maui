@@ -102,7 +102,7 @@ public partial class ColorPickerButton : ContentView {
             },
 
             AutoSizeMode = PopupAutoSizeMode.Height,
-            WidthRequest = 320, // give it a sane, fixed width
+            WidthRequest = 388, 
             AnimationMode =PopupAnimationMode.None,
             AnimationDuration = 0,
         };
