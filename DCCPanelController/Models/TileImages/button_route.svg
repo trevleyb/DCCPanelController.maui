@@ -1,28 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <g>
-        <g>
-            <g>
-                <circle id="ButtonOutline" stroke="#000000" stroke-width="2" cx="24" cy="24" r="10"/>
-                <circle id="Button" fill="#90C418" cx="24" cy="24" r="9"/>
-            </g>
-            <g transform="translate(24 24) scale(1.5) translate(-5 -5)">
-                <line id="Indicator" x1="1" y1="0" x2="1" y2="7" fill="none" stroke-width="1" stroke="#000000"
-                      stroke-linecap="square" transform="translate(4 2)"/>
-                <line id="Indicator" x1="0" y1="0" x2="2.355" y2="2.196" fill="none" stroke-width="1" stroke="#000000"
-                      stroke-linecap="square" transform="translate(2.45 3.998)"/>
-                <line id="Indicator" x1="2.297" y1="0" x2="0" y2="2.055" fill="none" stroke-width="1" stroke="#000000"
-                      stroke-linecap="square" transform="translate(5.088 4.349)"/>
-                <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd"
-                      transform="translate(4 0)"/>
-                <path id="Indicator" d="M1 0L2 2L2.38419e-07 2L1 0Z" fill="#000000" fill-rule="evenodd"
-                      transform="matrix(0.707 -0.707 0.707 0.707 0 3)"/>
-                <path id="Indicator" d="M1 0L2 2L0 2L1 0Z" fill="#000000" fill-rule="evenodd"
-                      transform="matrix(0.707 0.707 -0.707 0.707 8.414 1.952)"/>
-                <path id="Indicator"
-                      d="M0 1C0 0.447715 0.447715 0 1 0C1.55228 0 2 0.447715 2 1C2 1.55228 1.55228 2 1 2C0.447715 2 0 1.55228 0 1Z"
-                      fill="#000000" fill-rule="evenodd" transform="translate(4 8)"/>
-            </g>
-        </g>
+    <g id="Route" fill="none" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1">
+    <circle id="ButtonOutline" cx="24" cy="24" r="10.000020979027" stroke="black" stroke-linecap="butt" stroke-linejoin="round" stroke-width="2"/>
+    <circle id="Button" cx="24" cy="24" r="9.00001888112425" fill="#90c418"/>
+    <line id="Indicator" x1="23.74264" y1="19.5" x2="23.74264" y2="30" stroke="white" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"/>
+    <line id="Indicator" x1="19.71014" y1="20.706" x2="23.24264" y2="24" stroke="white" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"/>
+    <line id="Indicator" x1="27.68814" y1="21" x2="24.24264" y2="24.0825" stroke="white" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"/>
+    <path id="Indicator" d="M 29.42462 19.06066 L 28.36396 22.24264 L 26.24264 20.12132 Z" fill="white"/>
+    <path id="Indicator" d="M 18.06066 19.06066 L 21.24264 20.12132 L 19.12132 22.24264 Z" fill="white"/>
+    <path id="Indicator" d="M 23.74264 17 L 25.24264 20 L 22.24264 20 Z" fill="white"/>
+    <path id="Indicator"
+          d="M 22.24264 29.5 C 22.24264 28.671572 22.914213 28 23.74264 28 C 24.57106 28 25.24264 28.671572 25.24264 29.5 C 25.24264 30.32842 24.57106 31 23.74264 31 C 22.914213 31 22.24264 30.32842 22.24264 29.5 Z"
+          fill="white"/>
     </g>
 </svg>
+
+

@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-        <image xmlns:p3="http://www.w3.org/1999/xlink" id="image_1" width="128"
-               height="128"
-               p3:href="data:image/png;base64,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"/>
-        <pattern id="pattern_2" patternTransform="scale(0.219 0.219)" width="5.571" height="5.571">
-            <use xmlns:p4="http://www.w3.org/1999/xlink" p4:href="#image_1"/>
-        </pattern>
-    </defs>
-    <g>
-        <g transform="translate(7.653 7.792)">
-            <g>
-                <path id="Border"
-                      d="M0 16C0 7.16344 7.16344 0 16 0C24.8366 -2.98023e-08 32 7.16344 32 16C32 24.8366 24.8366 32 16 32C7.16344 32 0 24.8366 0 16Z"
-                      fill="none" stroke-width="2" stroke="#000000" transform="matrix(1 0.017 -0.017 1 0.558 0)"/>
-                <path id="Button"
-                      d="M0 15C-1.19209e-07 6.71573 6.71573 0 15 -1.19209e-07C23.2843 0 30 6.71573 30 15C30 23.2843 23.2843 30 15 30C6.71573 30 0 23.2843 0 15Z"
-                      fill="#90C418" fill-rule="evenodd" transform="matrix(1 0.017 -0.017 1 1.611 0.948)"/>
-                <rect width="28" height="28" fill="url(#pattern_2)" fill-rule="evenodd"
-                      transform="translate(2.347 2.208)"/>
-            </g>
-        </g>
+    <g id="Route" fill="none" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1">
+        <circle id="ButtonOutline" cx="23.938982" cy="24.063982" r="16.0023290939332" stroke="black"
+                stroke-linecap="butt" stroke-linejoin="round" stroke-width="2.000289"/>
+        <circle id="Button" cx="24.008987" cy="23.994986" r="15.0021772325879" fill="#90c418"/>
+        <line id="Indicator" x1="23.939" y1="16.344534" x2="23.939" y2="34.20729" stroke="white" stroke-linecap="square"
+              stroke-linejoin="round" stroke-width="2"/>
+        <line id="Indicator" x1="17.078852" y1="18.396199" x2="23.088393" y2="24" stroke="white" stroke-linecap="square"
+              stroke-linejoin="round" stroke-width="2"/>
+        <line id="Indicator" x1="30.651143" y1="18.896356" x2="24.789607" y2="24.14035" stroke="white"
+              stroke-linecap="square" stroke-linejoin="round" stroke-width="2"/>
+        <path id="Indicator" d="M 33.60527 15.597122 L 31.80086 21.010354 L 28.192037 17.401533 Z" fill="white"/>
+        <path id="Indicator" d="M 14.272731 15.597122 L 19.685963 17.401533 L 16.077142 21.010354 Z" fill="white"/>
+        <path id="Indicator" d="M 23.939 12.091497 L 26.490822 17.19514 L 21.387178 17.19514 Z" fill="white"/>
+        <path id="Indicator"
+              d="M 21.387178 33.35668 C 21.387178 31.947348 22.529667 30.80486 23.939 30.80486 C 25.34832 30.80486 26.490822 31.947348 26.490822 33.35668 C 26.490822 34.766 25.34832 35.908503 23.939 35.908503 C 22.529667 35.908503 21.387178 34.766 21.387178 33.35668 Z"
+              fill="white"/>
     </g>
 </svg>

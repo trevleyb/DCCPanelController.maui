@@ -1,3 +1,4 @@
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -39,40 +40,42 @@ public class ActionSwitchTile : Tile, ITileInteractive {
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is SwitchEntity switchEntity) {
-            SvgImage = switchEntity.SwitchStyle switch {
+        if (Entity is SwitchEntity button) {
+            SvgImage = button.SwitchStyle switch {
                 SwitchStyleEnum.Light  => 
-                    switchEntity.ButtonSize switch {
+                    button.ButtonSize switch {
                         ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
                         _                    => SvgImages.GetImage("light", Entity.Rotation)
                     },
                 SwitchStyleEnum.Button => 
-                    switchEntity.ButtonSize switch {
+                    button.ButtonSize switch {
                         ButtonSizeEnum.Large => SvgImages.GetImage("buttonLarge", Entity.Rotation),
                         _                    => SvgImages.GetImage("button", Entity.Rotation)
                     },
-                _ => switchEntity.State switch {
+                _ => button.State switch {
                     ButtonStateEnum.On  => SvgImages.GetImage("switchon", Entity.Rotation),
                     ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
                     _                   => SvgImages.GetImage("switch", Entity.Rotation)
                 },
             };
 
-            var buttonColor = switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.ColorOn ?? switchEntity.Parent?.ButtonOnColor ?? Colors.Green,
-                ButtonStateEnum.Off => switchEntity.ColorOff ?? switchEntity.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => switchEntity.Parent?.ButtonColor ?? Colors.Gray
+            var buttonColor = button.State switch {
+                ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
+                ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
+                _                   => button.Parent?.ButtonColor ?? Colors.Gray
             };
 
-            var buttonOutline = switchEntity.State switch {
-                ButtonStateEnum.On  => switchEntity.ColorOnBorder ?? switchEntity.Parent?.ButtonOnBorder ?? Colors.Black,
-                ButtonStateEnum.Off => switchEntity.ColorOffBorder ?? switchEntity.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => switchEntity.Parent?.ButtonBorder ?? Colors.Black
+            var buttonOutline = button.State switch {
+                ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
+                ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
+                _                   => button.Parent?.ButtonBorder ?? Colors.Black
             };
+            var indicatorColor = button.ShowIndicator ?  button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
 
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
+            style.Add(e => e.WithName(SvgElementType.Indicator).WithColor(indicatorColor));
             SvgImage.ApplyStyle(style.Build());
 
             var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);

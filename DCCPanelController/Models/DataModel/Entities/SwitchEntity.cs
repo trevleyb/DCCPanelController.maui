@@ -31,6 +31,12 @@ public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
     [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, "Colors")]
     private Color? _colorOffBorder;
 
+    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 8, "Colors")]
+    private Color? _colorIndicator;
+
+    [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 7, "Colors")]
+    private bool _showIndicator = true;
+    
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [JsonConstructor]
