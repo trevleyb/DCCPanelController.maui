@@ -17,7 +17,7 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Panel : ObservableObject, IEntityGeneratingID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _id = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
-    [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _description = string.Empty;
+    // [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
     [ObservableProperty] private int _sortOrder;
@@ -74,12 +74,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     
     [JsonIgnore]
     public string Title {
-        get {
-            if (string.IsNullOrEmpty(Id) && string.IsNullOrEmpty(Description)) return "DCC Panel Controller";
-            if (!string.IsNullOrEmpty(Id) && string.IsNullOrEmpty(Description)) return Id;
-            if (string.IsNullOrEmpty(Id) && !string.IsNullOrEmpty(Description)) return Description;
-            return Id + $" - {Description}";
-        }
+        get =>string.IsNullOrEmpty(Id) ? "DCC Panel Controller" : Id;
     }
 
     [JsonIgnore] public ObservableCollection<Block> Blocks => Panels?.Profile?.Blocks ?? [];
@@ -173,7 +168,6 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         var clone = new Panel(Panels) {
             Base64Image = string.Empty,
             Id = id,
-            Description = Id,
             SortOrder = 999,
             Cols = Cols,
             Rows = Rows
@@ -186,7 +180,6 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         ArgumentNullException.ThrowIfNull(Panels);
         var clone = new Panel(Panels) {
             Base64Image = Base64Image,
-            Description = Description,
             SortOrder = SortOrder,
             Cols = Cols,
             Rows = Rows

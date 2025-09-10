@@ -233,7 +233,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (Panel is { } panel && _panelEditor is not null) {
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
-                ShowPropertyPopup("", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
+                ShowPropertyPopup("Panel Properties", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
@@ -342,16 +342,13 @@ public partial class PanelEditorViewModel : ObservableObject {
     private void PopupOnClosing(object? sender, CancelEventArgs e) {
         e.Cancel = !AcceptIsValid;
     }
-
+    
     private void ShowPropertyPopup(string title, PanelPropertyViewModel propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
+        
         _propertyPage = propertyPage;
         content.Margin = new Thickness(20,10,20,0);
-        var propertySize = MauiViewSizeCalculator.CalculateTotalSize(content, ScreenWidth, ScreenHeight);
-        Console.WriteLine($"Property Page Size: {propertySize.Width} x {propertySize.Height}");
+        var scrollContent = new ScrollView { Content = content };
 
-        var scrollContent = new ScrollView();
-        scrollContent.Content = content;
-        
         var popup = new SfPopup {
             ContentTemplate = new DataTemplate(() => scrollContent),
             HeaderTitle = title,
@@ -362,31 +359,27 @@ public partial class PanelEditorViewModel : ObservableObject {
                 CornerRadius = 10,
                 HasShadow = false,
                 BlurIntensity = PopupBlurIntensity.Light,
-                HeaderBackground = Colors.WhiteSmoke,
-                FooterBackground = Colors.DarkGrey,
+                HeaderBackground = Colors.LightGrey,
+                FooterBackground = Colors.LightGray,
                 MessageBackground = Colors.WhiteSmoke,
                 AcceptButtonBackground = Colors.White,
                 DeclineButtonBackground = Colors.White,
                 AcceptButtonTextColor = Colors.Black,
                 DeclineButtonTextColor = Colors.Black,
             },
-            AppearanceMode = PopupButtonAppearanceMode.TwoButton,
+            AppearanceMode = PopupButtonAppearanceMode.OneButton,
             ShowCloseButton = false,
             StaysOpen = true,
             IsFullScreen = true,
-            AcceptButtonText = "Save",
-            DeclineButtonText = "Cancel",
+            AcceptButtonText = "Close",
             Padding = new Thickness(20),
             Margin = new Thickness(20),
-            HeaderHeight = 60,
-            AutoSizeMode = PopupAutoSizeMode.None,
-            AnimationMode = PopupAnimationMode.Zoom,
-            AnimationDuration = 300,
+            HeaderHeight = 65,
+            FooterHeight = 55,
+            AutoSizeMode = PopupAutoSizeMode.Both,
+            AnimationMode = PopupAnimationMode.None,
             OverlayMode = PopupOverlayMode.Transparent, 
-            AcceptCommand = acceptPopupCommand,
-            DeclineCommand = DeclinePopupCommand
         };
-        if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
         popup.Show();
     } 
     
