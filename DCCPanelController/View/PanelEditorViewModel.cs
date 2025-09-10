@@ -260,19 +260,21 @@ public partial class PanelEditorViewModel : ObservableObject {
         return title;
     }
 
-    private MarkdownView GetInformation() {
-        var info = SelectedEntities.Count switch {
-            0 => string.Empty,
-            1 => SelectedEntities[0].EntityInformation,
-            _ => AreAllTilesTheSame() ? SelectedEntities[0].EntityInformation : string.Empty
-        };
-        return new MarkdownView() {
-            MarkdownText = info,
+    private MarkdownView? GetInformation() {
+        var infoBlock = new MarkdownView() {
             TextFontSize = 12,
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Fill,
             Margin = new Thickness(20,5,10,5)
         };
+        
+        var info = SelectedEntities.Count switch {
+            0 => null,
+            1 => SelectedEntities[0].EntityInformation,
+            _ => AreAllTilesTheSame() ? SelectedEntities[0].EntityInformation : null
+        };
+        if (info is { }) infoBlock.MarkdownText = info;
+        return info is null ? null : infoBlock;
     }
 
     private bool AreAllTilesTheSame() {
@@ -281,21 +283,22 @@ public partial class PanelEditorViewModel : ObservableObject {
         return SelectedEntities.All(entity => entity.EntityName == first?.EntityName);
     }
 
-    private async Task DynamicTilePropertyPopupAsync(string title, MarkdownView? information = null) {
+    private async Task DynamicTilePropertyPopupAsync(string title, MarkdownView? infoBlock = null) {
         IsProcessing = true;
         LastAction = PopupAction.None;
+        
         try {
             var scrollContent = new ScrollView();
             var scrollStack = new StackLayout();
-            if (information is {}) {
+            if (infoBlock is {}) {
                 var grid = new Grid {
                     Margin = new Thickness(0),
                     MinimumHeightRequest = 20,
                     HorizontalOptions = LayoutOptions.Fill,
                     VerticalOptions = LayoutOptions.Fill,
-                    BackgroundColor = Colors.DarkGray,
+                    BackgroundColor = Colors.LightGray,
                 };
-                grid.Children.Add(information);
+                grid.Children.Add(infoBlock);
                 scrollStack.Children.Add(grid);
             }
             _dynamicTileContent = new DynamicTilePropertyPopupContent {
@@ -315,8 +318,8 @@ public partial class PanelEditorViewModel : ObservableObject {
                     CornerRadius = 10,
                     HasShadow = false,
                     BlurIntensity = PopupBlurIntensity.Light,
-                    HeaderBackground = Colors.LightGrey,
-                    FooterBackground = Colors.LightGray,
+                    HeaderBackground = Colors.DarkGray,
+                    FooterBackground = Colors.DarkGray,
                     MessageBackground = Colors.WhiteSmoke,
                     AcceptButtonBackground = Colors.White,
                     DeclineButtonBackground = Colors.White,
@@ -331,7 +334,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 DeclineButtonText = "Cancel",
                 Padding = new Thickness(20),
                 Margin = new Thickness(20),
-                HeaderHeight = 60,
+                HeaderHeight = 65,
                 FooterHeight = 55,
                 AutoSizeMode = PopupAutoSizeMode.Both,
                 AnimationMode = PopupAnimationMode.None,
