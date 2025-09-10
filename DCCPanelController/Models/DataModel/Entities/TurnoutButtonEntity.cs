@@ -30,6 +30,12 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
     [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, "Colors")]
     private Color? _colorOffBorder;
     
+    [ObservableProperty] [property: Editable("Unknown Color", "Override default 'Unknown' color", 5, Group="Colors")]
+    private Color? _colorUnknown;
+
+    [ObservableProperty] [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
+    private Color? _colorUnknownBorder;
+    
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 8, "Colors")]
     private Color? _colorIndicator;
 

@@ -16,6 +16,7 @@ public class ActionSwitchTile : Tile, ITileInteractive {
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
 
         if (Entity is SwitchEntity { Light: { } light } switchEntity) {
+            switchEntity.State = ButtonStateEnum.Unknown;
             light.PropertyChanged += (sender, args) => { switchEntity.State = light.State ? ButtonStateEnum.On : ButtonStateEnum.Off; };
         }
     }
@@ -62,20 +63,19 @@ public class ActionSwitchTile : Tile, ITileInteractive {
             var buttonColor = button.State switch {
                 ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
+                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
             };
 
             var buttonOutline = button.State switch {
                 ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
             };
-            var indicatorColor = button.ShowIndicator ?  button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
 
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
-            style.Add(e => e.WithName(SvgElementType.Indicator).WithColor(indicatorColor));
+            style.Add(e => e.WithName(SvgElementType.Indicator).WithColor(buttonColor));
             SvgImage.ApplyStyle(style.Build());
 
             var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);

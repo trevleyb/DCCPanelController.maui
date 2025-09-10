@@ -33,6 +33,12 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
     [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, Group="Colors")]
     private Color? _colorOffBorder;
     
+    [ObservableProperty] [property: Editable("Unknown Color", "Override default 'Unknown' color", 5, Group="Colors")]
+    private Color? _colorUnknown;
+
+    [ObservableProperty] [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
+    private Color? _colorUnknownBorder;
+
     [ObservableProperty] [property: Editable("Button Actions", Order=10, Group="Actions", EditorKind = EditorKinds.ButtonActions)]
     private ButtonActions _buttonPanelActions = [];
 

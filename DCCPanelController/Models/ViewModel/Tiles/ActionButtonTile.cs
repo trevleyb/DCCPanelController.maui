@@ -14,6 +14,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
     public ActionButtonTile(ActionButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
+        if (Entity is ActionButtonEntity button) button.State = ButtonStateEnum.Unknown;
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
@@ -45,13 +46,13 @@ public class ActionButtonTile : Tile, ITileInteractive {
             var buttonColor = button.State switch {
                 ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
+                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
             };
 
             var buttonOutline = button.State switch {
                 ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
             };
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));

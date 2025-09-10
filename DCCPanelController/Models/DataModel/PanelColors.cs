@@ -17,11 +17,11 @@ public partial class Panel : ObservableObject {
     [ObservableProperty] [Copyable("Colors", DisplayName = "Bridge", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _bridgeColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 2)]
-    private Color _buttonBorder = null!;
-
     [ObservableProperty] [Copyable("Colors", DisplayName = "Button Color", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 1)]
     private Color _buttonColor = null!;
+
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 2)]
+    private Color _buttonBorder = null!;
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Button Off Border", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 4)]
     private Color _buttonOffBorder = null!;

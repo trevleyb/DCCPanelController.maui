@@ -16,6 +16,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         RegisterForTurnoutEvents();
+        if (Entity is TurnoutButtonEntity button) button.State = ButtonStateEnum.Unknown;
     }
 
     public SvgImage? SvgImage { get; protected set; }
@@ -84,13 +85,13 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
             var buttonColor = button.State switch {
                 ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.Parent?.ButtonColor ?? Colors.Gray
+                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
             };
 
             var buttonOutline = button.State switch {
                 ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
             };
 
             var indicatorColor = button.ShowIndicator ?  button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;

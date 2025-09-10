@@ -1,3 +1,4 @@
+using CoreText;
 using DCCPanelController.View.Components;
 using Microsoft.Maui.Graphics;
 
@@ -14,8 +15,9 @@ public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
         // Build your custom control
         var picker = new ColorPickerButton {
             SelectedColor = row.OriginalValue is Color c ? c : null,
-            AllowsNoColor = row.Field.Meta.GetParameters("allowsNoColor", true),
+            AllowsNoColor = true,
             IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode),
+            IsMultiValue = ctx.Row.HasMixedValues
         };
 
         // Default color (optional param)

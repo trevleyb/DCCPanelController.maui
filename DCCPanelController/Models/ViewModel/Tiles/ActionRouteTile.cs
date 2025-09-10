@@ -14,7 +14,8 @@ public class ActionRouteTile : Tile, ITileInteractive {
     public ActionRouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
-        if (Entity is RouteEntity routeEntity && routeEntity.Route is { } route) {
+        if (Entity is RouteEntity { Route: { } route } routeEntity) {
+            routeEntity.State = RouteStateEnum.Unknown;
             route.PropertyChanged += (sender, args) => { routeEntity.State = route.State; };
         }
     }
@@ -42,25 +43,25 @@ public class ActionRouteTile : Tile, ITileInteractive {
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is RouteEntity route) {
-            SvgImage = route.ButtonSize switch {
+        if (Entity is RouteEntity button) {
+            SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
                 _                    => SvgImages.GetImage("route", Entity.Rotation)
             };
 
-            var buttonColor = route.State switch {
-                RouteStateEnum.Active   => route.ColorOn ?? route.Parent?.ButtonOnColor ?? Colors.Green,
-                RouteStateEnum.Inactive => route.ColorOff ?? route.Parent?.ButtonOffColor ?? Colors.Red,
-                _                       => route.Parent?.ButtonColor ?? Colors.Gray
+            var buttonColor = button.State switch {
+                RouteStateEnum.Active   => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
+                RouteStateEnum.Inactive => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
+                _                       => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
             };
 
-            var buttonOutline = route.State switch {
-                RouteStateEnum.Active   => route.ColorOnBorder ?? route.Parent?.ButtonOnBorder ?? Colors.Black,
-                RouteStateEnum.Inactive => route.ColorOffBorder ?? route.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                       => route.Parent?.ButtonBorder ?? Colors.Black
+            var buttonOutline = button.State switch {
+                RouteStateEnum.Active   => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
+                RouteStateEnum.Inactive => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
+                _                       => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
             };
             
-            var indicatorColor = route.ShowIndicator ? route.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
+            var indicatorColor = button.ShowIndicator ? button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
 
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));

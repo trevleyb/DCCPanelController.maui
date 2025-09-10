@@ -13,6 +13,7 @@ public partial class ColorPickerButton : ContentView {
 
     public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty IsMultiValueProperty  = BindableProperty.Create(nameof(IsMultiValue), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty BorderColorProperty   = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
     public static readonly BindableProperty BorderWidthProperty   = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
@@ -25,8 +26,8 @@ public partial class ColorPickerButton : ContentView {
 
     public Color ActiveColor => SelectedColor ?? DefaultColor ?? Colors.White;
     public Color SelectedOffsetColor => AppleCrayonColors.GetContrastingTextColor(SelectedColor ?? Colors.White);
-    public string SelectedColorText => SelectedColor == null ? "Use Default" : AppleCrayonColors.Name(SelectedColor);
-    public bool ShowClearColorButton => SelectedColor != null && AllowsNoColor;
+    public string SelectedColorText => SelectedColor == null ? (IsMultiValue ? "-- Multiple --" : "Use Default") : AppleCrayonColors.Name(SelectedColor);
+    public bool ShowClearColorButton => (SelectedColor != null || IsMultiValue) && AllowsNoColor;
 
     public Color? DefaultColor {
         get => (Color)GetValue(DefaultColorProperty);
@@ -52,6 +53,14 @@ public partial class ColorPickerButton : ContentView {
         set {
             SetValue(AllowsNoColorProperty, value);
             OnPropertyChanged(nameof(AllowsNoColorProperty)); // Update DisplayText when the color changes
+        }
+    }
+
+    public bool IsMultiValue {
+        get => (bool)GetValue(IsMultiValueProperty);
+        set {
+            SetValue(IsMultiValueProperty, value);
+            OnPropertyChanged(nameof(IsMultiValueProperty)); // Update DisplayText when the color changes
         }
     }
 
@@ -129,6 +138,7 @@ public partial class ColorPickerButton : ContentView {
 
     [RelayCommand]
     private async Task ClearColorAsync() {
+        IsMultiValue = false;
         SelectedColor = null;
         OnPropertyChanged(nameof(SelectedColorProperty));
         OnPropertyChanged(nameof(SelectedOffsetColor));
