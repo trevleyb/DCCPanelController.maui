@@ -6,13 +6,13 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class LineEntity : Entity, IDrawingEntity {
+public partial class LineEntity : DrawingEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Line Color", "",0, "Line")]
     private Color _lineColor = Colors.Black;
     
     [ObservableProperty] [property: Editable("Line Width", "",0, "Line")]
     private int _lineWidth = 3;
-
+  
     [JsonConstructor]
     public LineEntity() { }
 

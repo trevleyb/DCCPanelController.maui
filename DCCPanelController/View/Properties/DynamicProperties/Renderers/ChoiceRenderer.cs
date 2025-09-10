@@ -12,6 +12,8 @@ internal sealed class ChoiceRenderer : BaseRenderer,IPropertyRenderer {
             FontSize = FieldFontSize,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(5, 0, 5, 0)
+
         };
         if (ctx.Row?.Field?.Meta?.Choices is { } choices) {
             foreach (var i in choices) picker.Items.Add(i);

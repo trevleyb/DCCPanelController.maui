@@ -27,6 +27,7 @@ public abstract partial class TrackEntity : Entity {
 
     protected TrackEntity() { }
     protected TrackEntity(Panel panel) : base(panel) { }
+    protected TrackEntity(TrackEntity entity, params string[] excludeProperties ) : base(entity, excludeProperties) { }
 
     [JsonIgnore] protected override int RotationFactor => 45;
     [JsonIgnore] public Block? Occupancy {
@@ -44,5 +45,4 @@ public abstract partial class TrackEntity : Entity {
     [JsonIgnore] public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);
     
     public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
-    protected TrackEntity(TrackEntity entity, params string[] excludeProperties ) : base(entity, excludeProperties) { }
 }

@@ -6,7 +6,7 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class CircleEntity : Entity, IDrawingEntity {
+public partial class CircleEntity : DrawingEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Background","", 0, "Circle")]
     private Color _backgroundColor = Colors.Gray;
 

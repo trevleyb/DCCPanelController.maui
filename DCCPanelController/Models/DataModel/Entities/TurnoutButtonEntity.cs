@@ -33,15 +33,18 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
     [ObservableProperty] [property: Editable("Unknown Color", "Override default 'Unknown' color", 5, Group="Colors")]
     private Color? _colorUnknown;
 
-    [ObservableProperty] [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
+    [ObservableProperty] 
+    [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
+    [property: EditableRules(IsEnabledWhen = nameof(ShowIndicator))]
     private Color? _colorUnknownBorder;
+    
+    [ObservableProperty] 
+    [property: Editable("Show Indicator", "Show the Button Indicator?", 7, "Colors")]
+    private bool _showIndicator = true;
     
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 8, "Colors")]
     private Color? _colorIndicator;
 
-    [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 7, "Colors")]
-    private bool _showIndicator = true;
-    
     [ObservableProperty] [property: Editable("Turnout", "Turnout to Control with this button", 5, "Turnout", EditorKind = EditorKinds.Turnout)]
     private string? _turnout;
 

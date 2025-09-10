@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.Globalization;
+using System.Reflection;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
@@ -44,7 +47,6 @@ public partial class DynamicTilePropertyPopupContent {
 
     private static async void OnTilesSourceChanged(BindableObject bindable, object oldValue, object newValue) {
         try {
-            Console.WriteLine("OnTilesSourceChanged");
             var view = (DynamicTilePropertyPopupContent)bindable;
             view.State = await view.RebuildAsync(view.PropertyHost);
         } catch (Exception ex) {
@@ -223,4 +225,5 @@ public partial class DynamicTilePropertyPopupContent {
         };
     }
     #endregion
+    
 }

@@ -6,7 +6,7 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
+public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Background Color", "", 5, "Circle")]
     private Color _backgroundColor = Colors.DarkGray;
 
@@ -31,11 +31,11 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
-    [ObservableProperty] [property: Editable("Scale", "", 5, "Circle", Step=.25, Min=2.0)]
-    private double _scale = 0.8;
-
     [ObservableProperty] [property: Editable("Text Color", "", 2, "Text")]
     private Color _textColor = Colors.White;
+
+    [ObservableProperty] 
+    private double _scale = 0.8;
 
     [JsonConstructor]
     public CircleLabelEntity() { }

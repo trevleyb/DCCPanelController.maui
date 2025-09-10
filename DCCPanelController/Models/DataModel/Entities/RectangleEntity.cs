@@ -6,7 +6,7 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class RectangleEntity : Entity, IDrawingEntity {
+public partial class RectangleEntity : DrawingEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Background Color", Group= "Rectangle")]
     private Color _backgroundColor = Colors.Transparent;
 

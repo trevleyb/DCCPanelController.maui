@@ -18,13 +18,16 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
 
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
 
-    [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Track")]
-    private Color? _trackNotSelectedColor;
-
     // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
     // private string _id = string.Empty;
 
-    [ObservableProperty] [property: Editable("DCC Turnout", "Turnout ID on the layout that will be controlled.", 0, "General", EditorKind = EditorKinds.Turnout)]
+    [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Color")]
+    private Color? _trackNotSelectedColor;
+
+    [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
+    private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
+
+    [ObservableProperty] [property: Editable("Turnout Address", "Turnout ID on the layout that will be controlled.", 10, "Track", EditorKind = EditorKinds.Turnout)]
     private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: Editable("Button Actions", "", 10, "Actions", ActionsContext = ActionsContext.Turnout)]
@@ -33,14 +36,9 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
     [ObservableProperty] [property: Editable("Turnout Actions", "", 10, "Actions", ActionsContext = ActionsContext.Turnout)]
     private TurnoutActions _turnoutPanelActions = [];
 
-    [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
-    private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
-
     [JsonConstructor]
     protected TurnoutEntity() { }
-
     protected TurnoutEntity(Panel panel) : base(panel) { }
-
     protected TurnoutEntity(TurnoutEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") {
         ButtonPanelActions = new ButtonActions(entity.ButtonPanelActions);
         TurnoutPanelActions = new TurnoutActions(entity.TurnoutPanelActions);

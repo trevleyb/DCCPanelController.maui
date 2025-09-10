@@ -6,7 +6,7 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ImageEntity : Entity, IDrawingEntity {
+public partial class ImageEntity : DrawingEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Aspect Ratio", "",0, "Image")]
     private Aspect _aspectRatio = Aspect.AspectFit;
 

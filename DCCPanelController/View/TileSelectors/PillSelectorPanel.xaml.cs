@@ -100,16 +100,21 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private void SetDragPreview(object? sender, DragStartingEventArgs e, string imageName) {
-#if IOS || MACCATALYST
-        Func<UIKit.UIDragPreview> action = () => {
-            var image = UIKit.UIImage.FromFile(imageName);
-            UIKit.UIImageView imageView = new UIKit.UIImageView(image);
-            imageView.ContentMode = UIKit.UIViewContentMode.Center;
-            imageView.Frame = new CoreGraphics.CGRect(0, 0, 32, 32);
-            return new UIKit.UIDragPreview(imageView);
-        };
-        e?.PlatformArgs?.SetPreviewProvider(action);
-#endif
+        if (string.IsNullOrEmpty(imageName)) return;
+        
+        // Temporarily disabled this as it was causing a CLIENT ERROR
+        // -----------------------------------------------------------
+        // #if IOS || MACCATALYST
+        // Func<UIKit.UIDragPreview> action = () => {
+        //     Console.WriteLine("Setting drag preview in Pill Selector");
+        //     var image = UIKit.UIImage.FromFile(imageName);
+        //     UIKit.UIImageView imageView = new UIKit.UIImageView(image);
+        //     imageView.ContentMode = UIKit.UIViewContentMode.Center;
+        //     imageView.Frame = new CoreGraphics.CGRect(0, 0, 32, 32);
+        //     return new UIKit.UIDragPreview(imageView);
+        // };
+        // e?.PlatformArgs?.SetPreviewProvider(action);
+        // #endif
     }
 
     private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {

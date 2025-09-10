@@ -10,7 +10,7 @@ public class ColorToSolidColorConverter : IValueConverter {
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        if (value is SolidColorBrush brush) return brush;
+        if (value is SolidColorBrush brush) return brush.Color;
         return value;
     }
 }

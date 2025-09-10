@@ -63,16 +63,10 @@ public sealed class DynamicTilePropertyForm {
 
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
 
-    private static Dictionary<string, int> GroupOrders = new() {
-        ["General"] = 1,
-        ["Track"] = 2,
-        ["Turnout"] = 2,
-        ["Layout"] = 3,
-        ["Attributes"] = 4,
-        ["Colors"] = 5,
-        ["Actions"] = 7,
-        ["Visibility"] = 8,
-    };
+    private static readonly List<string> GroupOrders = ["General", 
+        "Text", "Track", "Tracks", 
+        "Circle", "Rectangle",  
+        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Visibility"];
     
     private (IReadOnlyList<PropertyGroup>, IReadOnlyList<PropertyRow>) BuildGroups() {
         if (SelectedEntities.Count == 0) return([], []);
@@ -130,11 +124,7 @@ public sealed class DynamicTilePropertyForm {
             // Create a group but lookup the Group name to get the sort order.
             // --------------------------------------------------------------
             if (!groups.TryGetValue(gname, out var group)) {
-                var found = GroupOrders.TryGetValue(gname, out var order);
-                if (!found) {
-                    order = 0;
-                    Console.WriteLine($"Group {gname} not found, using {order}");
-                }
+                var order = GroupOrders.IndexOf(gname);
                 group = new PropertyGroup(gname, order);
                 groups[gname] = group;
             }

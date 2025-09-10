@@ -876,9 +876,9 @@ public partial class ControlPanelView {
     private void DragOverTileOnPanel(object? sender, DragEventArgs e) {
 
         if (!DesignMode) {
-#if IOS || MACCATALYST
+            #if IOS || MACCATALYST
             e.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Forbidden));
-#endif
+            #endif
             return;
         }
 
@@ -900,15 +900,15 @@ public partial class ControlPanelView {
             _lastDragRow = position.Row;
         }
 
-#if IOS || MACCATALYST
+        #if IOS || MACCATALYST
         e.PlatformArgs?.SetDropProposal(new UIDropProposal(UIDropOperation.Copy));
-#endif
+        #endif
 
-#if WINDOWS
+        #if WINDOWS
         var dragUI = e.PlatformArgs.DragEventArgs.DragUIOverride;
         dragUI.IsCaptionVisible = false;
         dragUI.IsGlyphVisible = false;
-#endif
+        #endif
     }
 
     /// <summary>

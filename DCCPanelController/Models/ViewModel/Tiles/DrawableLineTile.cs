@@ -16,20 +16,20 @@ public class DrawableLineTile : Tile, ITileDrawable {
         if (Entity is LineEntity entity) {
             var shape = new Line {
                 X1 = 0,
-                Y1 = 0,
+                Y1 = TileHeight /2,
                 X2 = TileWidth,
-                Y2 = TileHeight,
+                Y2 = TileHeight /2,
                 VerticalOptions = LayoutOptions.Start,
                 HorizontalOptions = LayoutOptions.Start,
                 InputTransparent = true
             };
-            shape.SetBinding(RotationProperty, new Binding(nameof(entity.Rotation), BindingMode.TwoWay, source: entity));
-            shape.SetBinding(Line.X2Property, new Binding(nameof(TileWidth), BindingMode.TwoWay, source: this));
-            shape.SetBinding(Line.Y2Property, new Binding(nameof(TileHeight), BindingMode.TwoWay, source: this));
-            shape.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
-            shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.LineColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: entity));
-            shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.LineWidth), BindingMode.TwoWay, source: entity));
-            shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
+            shape.SetBinding(RotationProperty, new Binding(nameof(entity.Rotation), BindingMode.OneWay, source: entity));
+            shape.SetBinding(Line.X2Property, new Binding(nameof(TileWidth), BindingMode.OneWay, source: this));
+            shape.SetBinding(Line.Y2Property, new Binding(nameof(TileHeight), BindingMode.OneWay, source: this));
+            shape.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.OneWay, source: entity));
+            shape.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.LineColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: entity));
+            shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.LineWidth), BindingMode.OneWay, source: entity));
+            shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: entity));
             return shape;
         }
         return CreateSymbol();

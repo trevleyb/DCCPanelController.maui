@@ -36,9 +36,12 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 ZIndex = entity.Layer,
                 InputTransparent = true
             };
-            outerCircle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: Entity));
-            outerCircle.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: Entity));
-            outerCircle.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: Entity));
+            
+            // FIX: Threw an exception here - needs to be IConvertable???
+            // SolidColorBrush cannot be converter to Color
+            outerCircle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: Entity));
+            outerCircle.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.OneWay, source: Entity));
+            outerCircle.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.OneWay, source: Entity));
 
             var circleGap = new Ellipse {
                 Stroke = Colors.White,
@@ -49,7 +52,7 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 VerticalOptions = LayoutOptions.Center,
                 ZIndex = entity.Layer
             };
-            circleGap.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderInnerGap), BindingMode.TwoWay, source: Entity));
+            circleGap.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderInnerGap), BindingMode.OneWay, source: Entity));
 
             var innerCircle = new Ellipse {
                 WidthRequest = TileWidth - (entity.BorderWidth + entity.BorderInnerGap),
@@ -59,10 +62,10 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 ZIndex = entity.Layer,
                 InputTransparent = true
             };
-            innerCircle.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: Entity));
-            innerCircle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderInnerColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: Entity));
-            innerCircle.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderInnerWidth), BindingMode.TwoWay, source: Entity));
-            innerCircle.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: Entity));
+            innerCircle.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: Entity));
+            innerCircle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderInnerColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: Entity));
+            innerCircle.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderInnerWidth), BindingMode.OneWay, source: Entity));
+            innerCircle.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.OneWay, source: Entity));
 
             var label = new Label {
                 BackgroundColor = Colors.Transparent,
@@ -70,16 +73,16 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center
             };
-            label.SetBinding(Label.FontSizeProperty, new Binding(nameof(entity.FontSize), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(Label.TextColorProperty, new Binding(nameof(entity.TextColor), BindingMode.TwoWay, source: Entity));
-            label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.TwoWay, source: Entity));
+            label.SetBinding(Label.FontSizeProperty, new Binding(nameof(entity.FontSize), BindingMode.OneWay, source: Entity));
+            label.SetBinding(Label.TextColorProperty, new Binding(nameof(entity.TextColor), BindingMode.OneWay, source: Entity));
+            label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.OneWay, source: Entity));
 
             grid.Children.Add(outerCircle);
             grid.Children.Add(innerCircle);
             grid.Children.Add(circleGap);
             grid.Children.Add(label);
-            grid.SetBinding(ScaleProperty, new Binding(nameof(entity.Scale), BindingMode.TwoWay, source: Entity));
-            grid.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: Entity));
+            grid.SetBinding(ScaleProperty, new Binding(nameof(entity.Scale), BindingMode.OneWay, source: Entity));
+            grid.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: Entity));
             return grid;
         }
 

@@ -8,7 +8,7 @@ namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class BridgeEntity : StraightEntity, ITrackEntity {
     [ObservableProperty]
-    [property: Editable("Bridge Color", "Color of the Bridge rails", 6, "Track")]
+    [property: Editable("Bridge Color", "Color of the Bridge rails", 6, "Color")]
     private Color? _bridgeColor;
 
     [JsonConstructor]

@@ -8,7 +8,7 @@ using Microsoft.Maui.Graphics;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class PlatformEntity : TrackEntity, ITrackEntity {
-    [ObservableProperty] [property: Editable("Platform Color", "Color of the Platform", 6, "Track")]
+    [ObservableProperty] [property: Editable("Platform Color", "Color of the Platform", 6, "Color")]
     private Color? _platformColor;
 
     [JsonConstructor]

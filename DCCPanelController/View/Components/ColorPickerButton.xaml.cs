@@ -88,12 +88,12 @@ public partial class ColorPickerButton : ContentView {
         }
     }
 
-    protected override void OnHandlerChanged() {
+    protected async override void OnHandlerChanged() {
         base.OnHandlerChanged();
-        EnsurePopup();
+        await EnsurePopup();
     }
 
-    private void EnsurePopup() {
+    private async Task EnsurePopup() {
         if (_popup != null) return;
 
         _vm = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
@@ -104,7 +104,7 @@ public partial class ColorPickerButton : ContentView {
             ShowHeader = false,
             ShowFooter = false,
             BackgroundColor = Colors.Transparent,
-            PopupStyle = new Syncfusion.Maui.Toolkit.Popup.PopupStyle {
+            PopupStyle = new PopupStyle {
                 CornerRadius = 10,
                 HasShadow = false,
                 BlurIntensity = PopupBlurIntensity.Light,
@@ -148,7 +148,7 @@ public partial class ColorPickerButton : ContentView {
 
     [RelayCommand]
     private async Task ShowDropdownAsync() {
-        EnsurePopup();
+        await EnsurePopup();
         _vm?.SelectedColor = SelectedColor ?? Colors.White;
         _popup?.Show();
     }

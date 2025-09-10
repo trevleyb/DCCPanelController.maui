@@ -27,6 +27,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
             WidthRequest = GetFieldWidth(row.Field.Meta.Width),
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
+            Margin = new Thickness(5, 0, 5, 0)
         };
         foreach (var it in items) picker.Items.Add(it.Text);
 
