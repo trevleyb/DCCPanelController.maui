@@ -23,7 +23,8 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
 
     public override string EntityName => "Straight...";
     public override string EntityDescription => "Straight Track with Indicator";
-    
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new StraightContinuationEntity(this);
     }

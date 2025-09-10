@@ -35,7 +35,8 @@ public partial class ImageEntity : Entity, IDrawingEntity {
 
     public override string EntityName => "Image";
     public override string EntityDescription => "Selectable Image";
-    
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new ImageEntity(this);
     }

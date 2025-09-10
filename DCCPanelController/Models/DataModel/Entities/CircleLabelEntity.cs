@@ -51,7 +51,8 @@ public partial class CircleLabelEntity : Entity, ITextEntity, IDrawingEntity {
 
     public override string EntityName => "Label";
     public override string EntityDescription => "Circle Label";
-    
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new CircleLabelEntity(this);
     }

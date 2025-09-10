@@ -11,8 +11,9 @@ namespace DCCPanelController.Models.DataModel.Entities;
 [DebuggerDisplay("{EntityName} is {Type} @ {Col},{Row}")]
 [method: JsonConstructor]
 public abstract partial class Entity() : ObservableObject, IEntity {
-    public abstract string EntityName { get; }
-    public abstract string EntityDescription { get; }
+    [JsonIgnore] public abstract string EntityName { get; }
+    [JsonIgnore] public abstract string EntityDescription { get; }
+    [JsonIgnore] public abstract string EntityInformation { get; }
     public virtual string Type => GetType().Name;
     
     [ObservableProperty] private int _col;               // What Grid Position (Horizontal) is this component?

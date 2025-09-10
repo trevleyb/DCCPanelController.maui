@@ -48,7 +48,12 @@ public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
     public RouteEntity(RouteEntity entity) : base(entity) { }
     public override string EntityName => "Route";
     public override string EntityDescription => "Route Trigger Button";
-    
+
+    public override string EntityInformation =>
+        "This button sends the specified __route__ command to the controller to set a route. " +
+        "If the route is set, this should trigger items such as __turnouts__ which should be reflected " +
+        "on the control panel. ";
+
     [JsonIgnore]
     public Route? Route => Parent?.Route(Id);
 

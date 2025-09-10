@@ -36,20 +36,12 @@ public partial class TextEntity : Entity, ITextEntity, IDrawingEntity {
     }
 
     public TextEntity(TextEntity entity) : base(entity) { }
-
-    //[ObservableProperty] [property: EditableColor("Border Color", "", 5, "Border")]
-    //private Color _borderColor = Colors.Transparent;
-
-    //[ObservableProperty] [property: EditableInt("Border Radius", "", 5, "Border")]
-    //private int _borderRadius;
-
-    //[ObservableProperty] [property: EditableInt("Border Width", "", 5, "Border")]
-    //private int _borderWidth;
-
     [JsonIgnore] protected override int RotationFactor => 90;
 
     public override string EntityName => "Text";
     public override string EntityDescription => "Text Label";
+    public override string EntityInformation => "";
+
     public override void RotateLeft() {
         base.RotateLeft();
         HandleRotation();

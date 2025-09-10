@@ -20,6 +20,8 @@ public partial class PointsEntity : Entity, IDrawingEntity {
     public PointsEntity(PointsEntity entity) : base(entity) { }
     public override string EntityName => "Points";
     public override string EntityDescription => "Connection Points";
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new PointsEntity(this);
     }

@@ -23,7 +23,8 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
 
     public override string EntityName => "Corner...";
     public override string EntityDescription => "Corner Track with Indicator";
-    
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new CornerContinuationEntity(this);
     }

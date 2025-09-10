@@ -26,7 +26,8 @@ public partial class LineEntity : Entity, IDrawingEntity {
 
     public override string EntityName => "Line";
     public override string EntityDescription => "Straight Line";
-    
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new LineEntity(this);
     }

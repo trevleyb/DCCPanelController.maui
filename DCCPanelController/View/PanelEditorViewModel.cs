@@ -15,6 +15,7 @@ using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.TileSelectors;
+using Indiko.Maui.Controls.Markdown;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -242,18 +243,36 @@ public partial class PanelEditorViewModel : ObservableObject {
     
     private async Task EditTilePropertiesPopupAsync() {
         try {
-            var title = SelectedEntities.Count switch {
-                0 => "Unknown Entity",
-                1 => $"{SelectedEntity?.EntityName} ({SelectedEntity?.EntityDescription}) properties.",
-                _ => AreAllTilesTheSame() ? $"Multiple {SelectedEntity?.EntityName} ({SelectedEntity?.EntityDescription}) properties." : "Multiple Selected Entities"
-            };
-            
             if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
-                await DynamicTilePropertyPopupAsync(title);
+                await DynamicTilePropertyPopupAsync(GetTitle(), GetInformation());
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         }
+    }
+
+    private string GetTitle() {
+        var title = SelectedEntities.Count switch {
+            0 => "Unknown Entity",
+            1 => $"{SelectedEntities[0].EntityName} ({SelectedEntities[0].EntityDescription}) properties.",
+            _ => AreAllTilesTheSame() ? $"Multiple {SelectedEntities[0]?.EntityName} ({SelectedEntities[0].EntityDescription}) properties." : "Multiple Selected Entities"
+        };
+        return title;
+    }
+
+    private MarkdownView GetInformation() {
+        var info = SelectedEntities.Count switch {
+            0 => string.Empty,
+            1 => SelectedEntities[0].EntityInformation,
+            _ => AreAllTilesTheSame() ? SelectedEntities[0].EntityInformation : string.Empty
+        };
+        return new MarkdownView() {
+            MarkdownText = info,
+            TextFontSize = 12,
+            HorizontalOptions = LayoutOptions.Fill,
+            VerticalOptions = LayoutOptions.Fill,
+            Margin = new Thickness(20,5,10,5)
+        };
     }
 
     private bool AreAllTilesTheSame() {
@@ -262,16 +281,29 @@ public partial class PanelEditorViewModel : ObservableObject {
         return SelectedEntities.All(entity => entity.EntityName == first?.EntityName);
     }
 
-    private async Task DynamicTilePropertyPopupAsync(string title) {
+    private async Task DynamicTilePropertyPopupAsync(string title, MarkdownView? information = null) {
         IsProcessing = true;
         LastAction = PopupAction.None;
         try {
             var scrollContent = new ScrollView();
+            var scrollStack = new StackLayout();
+            if (information is {}) {
+                var grid = new Grid {
+                    Margin = new Thickness(0),
+                    MinimumHeightRequest = 20,
+                    HorizontalOptions = LayoutOptions.Fill,
+                    VerticalOptions = LayoutOptions.Fill,
+                    BackgroundColor = Colors.DarkGray,
+                };
+                grid.Children.Add(information);
+                scrollStack.Children.Add(grid);
+            }
             _dynamicTileContent = new DynamicTilePropertyPopupContent {
                 Title = title,
                 TilesSource = SelectedTiles
             };
-            scrollContent.Content = _dynamicTileContent;
+            scrollStack.Children.Add(_dynamicTileContent);
+            scrollContent.Content = scrollStack;
 
             var popup = new SfPopup {
                 ContentTemplate = new DataTemplate(() => scrollContent),
@@ -299,11 +331,10 @@ public partial class PanelEditorViewModel : ObservableObject {
                 DeclineButtonText = "Cancel",
                 Padding = new Thickness(20),
                 Margin = new Thickness(20),
-                HeaderHeight = 65,
+                HeaderHeight = 60,
                 FooterHeight = 55,
-                AutoSizeMode = PopupAutoSizeMode.None,
-                AnimationMode = PopupAnimationMode.Zoom,
-                AnimationDuration = 300,
+                AutoSizeMode = PopupAutoSizeMode.Both,
+                AnimationMode = PopupAnimationMode.None,
                 OverlayMode = PopupOverlayMode.Transparent,
                 AcceptCommand = TilePropertiesPopupAcceptCommand,
                 DeclineCommand = TilePropertiesPopupDeclineCommand

@@ -19,7 +19,8 @@ public class StraightEntity : TrackEntity, ITrackEntity {
     public StraightEntity(StraightEntity entity) : base(entity) { }
     public override string EntityName => "Track";
     public override string EntityDescription => "Straight Track";
-    
+    public override string EntityInformation => "";
+
     [JsonIgnore] protected override int RotationFactor => 45;
 
     public override Entity Clone() {

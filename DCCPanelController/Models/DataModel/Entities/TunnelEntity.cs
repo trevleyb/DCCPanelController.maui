@@ -20,6 +20,8 @@ public partial class TunnelEntity : StraightEntity, ITrackEntity {
     public TunnelEntity(TunnelEntity entity) : base(entity) { }
     public override string EntityName => "Tunnel";
     public override string EntityDescription => "Tunnel Entrance/Exit Track";
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new TunnelEntity(this);
     }

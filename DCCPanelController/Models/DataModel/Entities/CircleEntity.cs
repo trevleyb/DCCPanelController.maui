@@ -30,7 +30,8 @@ public partial class CircleEntity : Entity, IDrawingEntity {
 
     public override string EntityName => "Circle";
     public override string EntityDescription => "Adjustable Circle";
-    
+    public override string EntityInformation => "";
+
     public override Entity Clone() {
         return new CircleEntity(this);
     }
