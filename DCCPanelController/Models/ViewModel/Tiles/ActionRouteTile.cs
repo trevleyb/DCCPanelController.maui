@@ -60,7 +60,7 @@ public class ActionRouteTile : Tile, ITileInteractive {
                 _                       => route.Parent?.ButtonBorder ?? Colors.Black
             };
             
-            var indicatorColor = route.ShowIndicator ? buttonColor : route.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White;
+            var indicatorColor = route.ShowIndicator ? route.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
 
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));

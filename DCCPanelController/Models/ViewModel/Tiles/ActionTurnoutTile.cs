@@ -93,7 +93,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
                 _                   => button.Parent?.ButtonBorder ?? Colors.Black
             };
 
-            var indicatorColor = button.ShowIndicator ? buttonColor : button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White;
+            var indicatorColor = button.ShowIndicator ?  button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
             
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));

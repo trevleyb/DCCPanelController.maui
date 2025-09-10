@@ -18,19 +18,18 @@ public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
     [ObservableProperty]
     [property: Editable("Switch Style", Order=3)]
     private SwitchStyleEnum _switchStyle = SwitchStyleEnum.Light;
-
     
-    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 5, "Colors")]
-    private Color? _colorOff;
-
-    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 5, "Colors")]
-    private Color? _colorOffBorder;
-
-    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 1, "Colors")]
     private Color? _colorOn;
 
-    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 5, "Colors")]
+    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 2, "Colors")]
     private Color? _colorOnBorder;
+
+    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 3, "Colors")]
+    private Color? _colorOff;
+
+    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, "Colors")]
+    private Color? _colorOffBorder;
 
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
