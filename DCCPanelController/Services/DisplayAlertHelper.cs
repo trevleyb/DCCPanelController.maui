@@ -1,11 +1,13 @@
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Resources.Styles;
+using Syncfusion.Maui.Toolkit.Popup;
 using Font = Microsoft.Maui.Font;
 
 namespace DCCPanelController.Services;
 
 public static class DisplayAlertHelper {
+    
     public static async Task<bool> DisplayOkAlertAsync(string title, string message) {
         var mainPage = App.Current.Windows[0].Page;
         if (mainPage == null) throw new InvalidOperationException("MainPage is not set.");

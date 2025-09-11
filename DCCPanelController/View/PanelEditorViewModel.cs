@@ -240,6 +240,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
         } finally {
+            await _panelView.ForceRefreshAsync();   // Need to do this as Colors may have changed
             IsProcessing = false;
         }
     }
@@ -250,7 +251,7 @@ public partial class PanelEditorViewModel : ObservableObject {
             if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
                 await DynamicTilePropertyPopupAsync(GetTitle(), GetInformation());
             }
-            _panelView.ClearAllSelectedTiles();
+            _panelView.ClearAllSelectedTiles();     // Reset all selected tiles for clarity
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         } finally {
@@ -433,7 +434,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 IsProcessing = true;
                 await LetUICatchUpAsync();
                 await _propertyPage.ApplyChangesAsync();
-                await _panelView.ForceRefresh();
+                await _panelView.ForceRefreshAsync();
             } finally {
                 IsProcessing = false;
             }

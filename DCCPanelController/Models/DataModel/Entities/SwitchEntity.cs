@@ -6,7 +6,7 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
+public partial class SwitchEntity : ButtonEntity, IEntityID, IInteractiveEntity {
     
     [ObservableProperty]
     [property: Editable("Light", "Select the ID of the light controlled by this button", 1, "General", EditorKind = EditorKinds.Light)]
@@ -19,24 +19,6 @@ public partial class SwitchEntity : Entity, IEntityID, IInteractiveEntity {
     [property: Editable("Switch Style", Order=3)]
     private SwitchStyleEnum _switchStyle = SwitchStyleEnum.Light;
     
-    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 1, "Colors")]
-    private Color? _colorOn;
-
-    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 2, "Colors")]
-    private Color? _colorOnBorder;
-
-    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 3, "Colors")]
-    private Color? _colorOff;
-
-    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, "Colors")]
-    private Color? _colorOffBorder;
-    
-    [ObservableProperty] [property: Editable("Unknown Color", "Override default 'Unknown' color", 5, Group="Colors")]
-    private Color? _colorUnknown;
-
-    [ObservableProperty] [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
-    private Color? _colorUnknownBorder;
-
     [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [JsonConstructor]

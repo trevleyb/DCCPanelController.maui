@@ -1,16 +1,17 @@
+using Indiko.Maui.Controls.Markdown;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 public abstract class BaseRenderer {
-    protected virtual int LabelWidth => 150; // Allow this to be overriden
+    protected virtual int LabelWidth => 125; // Allow this to be overriden
     protected virtual int FieldHeight => 35;
     protected virtual int FieldWidth => -1;
 
-    protected virtual int LabelFontSize => 12;
+    protected virtual int LabelFontSize => 15;
     protected virtual int FieldFontSize => 12;
-    protected virtual int ErrorFontSize => 12;
+    protected virtual int ErrorFontSize => 10;
     protected virtual int DescFontSize => 10;
     protected virtual int ColumnSpacing => 12;
     protected virtual int RowSpacing => 2;
@@ -18,8 +19,8 @@ public abstract class BaseRenderer {
     protected static readonly Color LabelColor = Colors.Black;
     protected static readonly Color FieldColor = Colors.Black;
     protected static readonly Color ErrorColor = Colors.Red;
-    protected static readonly Color DescColor = Colors.DarkGray;
-    protected static readonly Color ModifiedColor = Colors.DarkOrange;
+    protected static readonly Color DescColor = Colors.LightSteelBlue;
+    protected static readonly Color ModifiedColor = Colors.Green;
     protected static readonly Color MixedValueColor = Colors.Blue;
 
     protected bool IsModified(PropertyRow row) => row.IsTouched || !DefaultEquality.AreEqual(row.CurrentValue, row.OriginalValue);
@@ -131,11 +132,14 @@ public abstract class BaseRenderer {
         var descriptionKey = row?.Field?.Meta?.Description ?? string.Empty;
         var description = string.IsNullOrWhiteSpace(descriptionKey)
             ? null
-            : new Label {
-                Text = descriptionKey,
+            : new MarkdownView() {
+                MarkdownText = descriptionKey,
+                Opacity = 0.7,
+                TextFontSize = DescFontSize,
                 TextColor = DescColor,
-                FontSize = DescFontSize, Opacity = 0.7
-            };
+                HorizontalOptions = LayoutOptions.Fill,
+                VerticalOptions = LayoutOptions.Center,
+            };            
 
         var errorLabel = new Label {
             FontSize = ErrorFontSize,

@@ -26,7 +26,7 @@ namespace DCCPanelController.View.ControlPanel;
 
 [ObservableObject]
 public partial class ControlPanelView {
-    private const bool ShowCodeTimer = false;
+    private const bool ShowCodeTimer = true;
     [ObservableProperty] private bool _isPanelDrawing;
 
     #region Instance Variables and Properties
@@ -415,7 +415,7 @@ public partial class ControlPanelView {
     #endregion
 
     #region Grid Management
-    public Task ForceRefresh() => DrawPanel();
+    public async Task ForceRefreshAsync() => await DrawPanel();
 
     /// <summary>
     /// Calculates the optimal grid size based on the specified width and height dimensions.
@@ -432,8 +432,7 @@ public partial class ControlPanelView {
     /// </summary>
     private async Task DrawPanel([CallerMemberName] string memberName = "",
                                  [CallerLineNumber] int sourceLineNumber = 0) {
-        // Console.WriteLine($"DrawPanel: {memberName}@{sourceLineNumber} => Panel={(Panel == null ? "null" : "set")} IsDrawing={IsPanelDrawing} Size={MainGrid.Width}x{MainGrid.Height}");
-
+        
         // Only redraw the grid if we absolutely need to. Events may mean that this 
         // is called multiple times, but if we really have not changed, then do not 
         // waste time redrawing and rebuilding the grid. 
@@ -1026,7 +1025,7 @@ public partial class ControlPanelView {
                 newPanel.PropertyChanged += control.OnPanelPropertyChanged;
 
                 control.ClearAllSelectedTiles();
-                await control.ForceRefresh();
+                await control.ForceRefreshAsync();
             }
         } catch (Exception e) {
             Debug.WriteLine($"ERROR: OnPanelChanged: {e.Message}");
@@ -1066,7 +1065,7 @@ public partial class ControlPanelView {
         if (e.PropertyName is nameof(Panel.Cols) or nameof(Panel.Rows)) {
             Dispatcher.Dispatch(async void () => {
                 try {
-                    await ForceRefresh();
+                    await ForceRefreshAsync();
                 } catch (Exception ex) {
                     _logger.LogCritical("Error Forcing a Refresh on Col/Row Change: {Message}", ex.Message);
                 }

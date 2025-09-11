@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
+using AppleCrayonColors = DCCPanelController.Helpers.AppleCrayonColors;
+using AppleCrayonColorsEnum = DCCPanelController.Helpers.AppleCrayonColors.AppleCrayonColorsEnum;
 using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Models.DataModel.Helpers;
 
@@ -10,28 +11,28 @@ namespace DCCPanelController.Models.DataModel;
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
 public partial class Panel {
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Branchline Track", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 3)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "BranchLine Track", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 3)]
     private Color _branchLineColor = null!;
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Bridge", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _bridgeColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Color", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 1)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Color (Default)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 1)]
     private Color _buttonColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 2)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border (Default)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 2)]
     private Color _buttonBorder = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Off Border", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 4)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border (Off)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 4)]
     private Color _buttonOffBorder = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Off", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 3)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Color (Off)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 3)]
     private Color _buttonOffColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button On Border", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 5)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border (On)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 5)]
     private Color _buttonOnBorder = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Button On", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 6)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Button Color (On)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 6)]
     private Color _buttonOnColor = null!;
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Continuation Marker", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 4)]
@@ -52,7 +53,7 @@ public partial class Panel {
     [ObservableProperty] [Copyable("Colors", DisplayName = "Mainline Track", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 1)]
     private Color _mainLineColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Occupied", Category = "Paths", CategorySortOrder = 10, ItemSortOrder = 1)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Occupied Color", Category = "Paths", CategorySortOrder = 10, ItemSortOrder = 1)]
     private Color _occupiedColor = null!;
 
     [ObservableProperty] [Copyable("Settings")]
@@ -64,7 +65,7 @@ public partial class Panel {
     [ObservableProperty] [Copyable("Colors", DisplayName = "Platform", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _platformColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Show Path", Category = "Paths", CategorySortOrder = 10, ItemSortOrder = 2)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Show Path Color", Category = "Paths", CategorySortOrder = 10, ItemSortOrder = 2)]
     private Color _showPathColor = null!;
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Terminator", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 7)]
@@ -94,30 +95,30 @@ public partial class Panel {
     }
 
     public void ResetColorsToDefaults() {
-        DisplayBackgroundColor = AppleCrayonColors.Value("Snow");
-        PanelBackgroundColor = AppleCrayonColors.Value("Snow");
+        DisplayBackgroundColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Snow);
+        PanelBackgroundColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Snow);
 
-        MainLineColor = AppleCrayonColors.Value("Aqua");
-        MainlineBorderColor = AppleCrayonColors.Value("Lead");
-        BranchLineColor = AppleCrayonColors.Value("Licorice");
-        ContinuationColor = AppleCrayonColors.Value("Iron");
-        TerminatorColor = AppleCrayonColors.Value("Iron");
-        HiddenColor = AppleCrayonColors.Value("Snow");
-        DivergingColor = AppleCrayonColors.Value("Silver");
+        MainLineColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Aqua);
+        MainlineBorderColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Lead);
+        BranchLineColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Licorice);
+        ContinuationColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Iron);
+        TerminatorColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Iron);
+        HiddenColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Snow);
+        DivergingColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Silver);
 
-        ButtonColor = AppleCrayonColors.Value("Aluminum");
-        ButtonBorder = AppleCrayonColors.Value("Steel");
-        ButtonOnColor = AppleCrayonColors.Value("Fern");
-        ButtonOnBorder = AppleCrayonColors.Value("Steel");
-        ButtonOffColor = AppleCrayonColors.Value("Maraschino");
-        ButtonOffBorder = AppleCrayonColors.Value("Steel");
+        ButtonColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Aluminium);
+        ButtonBorder = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Steel);
+        ButtonOnColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Fern);
+        ButtonOnBorder = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Steel);
+        ButtonOffColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Maraschino);
+        ButtonOffBorder = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Steel);
 
-        BridgeColor = AppleCrayonColors.Value("Tin");
-        PlatformColor = AppleCrayonColors.Value("Tin");
-        TunnelColor = AppleCrayonColors.Value("Tin");
+        BridgeColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tin);
+        PlatformColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tin);
+        TunnelColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tin);
 
-        OccupiedColor = AppleCrayonColors.Value("Maraschino");
-        ShowPathColor = AppleCrayonColors.Value("Tangerine");
+        OccupiedColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Maraschino);
+        ShowPathColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tangerine);
 
         OpacityAttribute = 0.35;
     }

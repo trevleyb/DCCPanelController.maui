@@ -53,6 +53,15 @@
             IsEnabled="{Binding CanToggleGrid}"
             Command="{Binding Path=ToggleGridCommand}">
         </ToolbarItem>
+        
+        <ToolbarItem
+            IconImageSource="{Binding CanPressBackButton, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
+            Text="Save" x:Name="SaveToolbar"
+            IsEnabled="{Binding CanPressBackButton}"
+            Command="{Binding Path=BackButtonPressedCommand}">
+        </ToolbarItem>
+
+        
     </ContentPage.ToolbarItems>
 
     <Grid>

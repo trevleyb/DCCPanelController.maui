@@ -8,7 +8,7 @@ using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
+public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
 
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
@@ -18,24 +18,6 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
 
     [ObservableProperty] [property: Editable("Button Size", Order=2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-
-    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 1, "Colors")]
-    private Color? _colorOn;
-
-    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 2, Group="Colors")]
-    private Color? _colorOnBorder;
-
-    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 3, Group="Colors")]
-    private Color? _colorOff;
-
-    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, Group="Colors")]
-    private Color? _colorOffBorder;
-    
-    [ObservableProperty] [property: Editable("Unknown Color", "Override default 'Unknown' color", 5, Group="Colors")]
-    private Color? _colorUnknown;
-
-    [ObservableProperty] [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
-    private Color? _colorUnknownBorder;
 
     [ObservableProperty] [property: Editable("Button Actions", Order=10, Group="Actions", EditorKind = EditorKinds.ButtonActions)]
     private ButtonActions _buttonPanelActions = [];

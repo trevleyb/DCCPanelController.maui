@@ -6,36 +6,18 @@ using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public partial class RouteEntity : Entity, IEntityID, IInteractiveEntity {
+public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
 
     [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 1, "General", EditorKind = EditorKinds.Route)]
     private string _id = string.Empty;
 
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-
-    [ObservableProperty] [property: Editable("On Color", "Override default 'On' color", 1, "Colors")]
-    private Color? _colorOn;
-
-    [ObservableProperty] [property: Editable("On Border Color", "Override default 'On' border color", 2, "Colors")]
-    private Color? _colorOnBorder;
     
-    [ObservableProperty] [property: Editable("Off Color", "Override default 'Off' color", 3, "Colors")]
-    private Color? _colorOff;
-    
-    [ObservableProperty] [property: Editable("Off Border Color", "Override default 'Off' border color", 4, "Colors")]
-    private Color? _colorOffBorder;
-
-    [ObservableProperty] [property: Editable("Unknown Color", "Override default 'Unknown' color", 5, Group="Colors")]
-    private Color? _colorUnknown;
-
-    [ObservableProperty] [property: Editable("Unknown Border Color", "Override default 'Unknown' border color", 6, Group="Colors")]
-    private Color? _colorUnknownBorder;
-    
-    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 8, "Colors")]
+    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 11, "Colors")]
     private Color? _colorIndicator;
 
-    [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 7, "Colors")]
+    [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
     private bool _showIndicator = true;
 
     

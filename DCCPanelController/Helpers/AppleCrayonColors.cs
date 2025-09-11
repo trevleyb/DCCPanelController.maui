@@ -135,7 +135,7 @@ public static class AppleCrayonColors {
         return luminance > 0.5 ? EnumToColor(AppleCrayonColorsEnum.Licorice) : EnumToColor(AppleCrayonColorsEnum.Snow);
     }
 
-    private static Color EnumToColor(AppleCrayonColorsEnum color) {
+    public static Color EnumToColor(AppleCrayonColorsEnum color) {
         return Color.FromArgb($"{(uint)color:X8}");
     }
 }

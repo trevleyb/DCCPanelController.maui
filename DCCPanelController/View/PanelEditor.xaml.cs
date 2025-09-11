@@ -9,7 +9,6 @@ using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
 using DCCPanelController.View.TileSelectors;
 using Microsoft.Extensions.Logging;
-using Syncfusion.Maui.Toolkit.BottomSheet;
 
 namespace DCCPanelController.View;
 
@@ -120,7 +119,7 @@ public partial class PanelEditor : ContentPage {
 
     private async void ViewModelOnForcePanelRefresh() {
         try {
-            await PanelView.ForceRefresh();
+            await PanelView.ForceRefreshAsync();
         } catch (Exception e) {
             _logger.LogCritical("Error Forcing Refresh from ViewModelOnForcePanelRefresh: {Message}", e.Message);
         }
