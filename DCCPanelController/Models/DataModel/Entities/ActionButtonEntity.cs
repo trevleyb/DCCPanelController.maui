@@ -5,8 +5,6 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Properties.DynamicProperties;
-using DCCPanelController.View.TileSelectors;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -47,7 +45,7 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
 
     [JsonConstructor]
     public ActionButtonEntity() {
-        Id = NextID;
+        Id = NextID();
     }
 
     public ActionButtonEntity(Panel panel) : base(panel) { }
@@ -68,8 +66,22 @@ public partial class ActionButtonEntity : Entity, IEntityGeneratingID, IInteract
         entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
     }
 
-    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
-    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? [], "Button");
+    /// <summary>
+    /// Because when we are editing a panel the entities do not actually exist UNTIL we save,
+    /// we need to get all saved IDs from the parent AND we need to get any which are in the
+    /// local panel (unsaved) combine them and use that list to generate a unique ID.
+    /// </summary>
+    public List<IEntityID> AllIDs() {
+        var allIDs = new List<IEntityID>(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
+        var localIDs = new List<IEntityID>(Parent?.GetPanelEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
+        var availableIDs = localIDs.Union(allIDs).ToList();
+        return availableIDs;
+    }
+
+    public string NextID() {
+        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Button");
+        return nextID;
+    }
 
     public override Entity Clone() {
         return new ActionButtonEntity(this);

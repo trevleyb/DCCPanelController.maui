@@ -58,12 +58,28 @@ public partial class TurnoutButtonEntity : Entity, IEntityGeneratingID, IInterac
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
-    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? [],"Button");
+    
+
+    /// <summary>
+    /// Because when we are editing a panel the entities do not actually exist UNTIL we save,
+    /// we need to get all saved IDs from the parent AND we need to get any which are in the
+    /// local panel (unsaved) combine them and use that list to generate a unique ID.
+    /// </summary>
+    public List<IEntityID> AllIDs() {
+        var allIDs = new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutButtonEntity>() ?? []) ?? [];
+        var localIDs = new List<IEntityID>(Parent?.GetPanelEntitiesByType<TurnoutButtonEntity>() ?? []) ?? [];
+        var availableIDs = localIDs.Union(allIDs).ToList();
+        return availableIDs;
+    }
+
+    public string NextID() {
+        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Turnout");
+        return nextID;   
+    }
 
     [JsonConstructor]
     public TurnoutButtonEntity() {
-        Id = NextID;
+        Id = NextID();
     }
 
     public TurnoutButtonEntity(Panel panel) : base(panel) { }

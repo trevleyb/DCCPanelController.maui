@@ -25,7 +25,8 @@ internal sealed class UniqueIDRenderer : BaseRenderer,IPropertyRenderer {
     
     private bool IsIDValid(string value, IEntity entity) {
         var isValid = true;
-        if (entity is IEntityGeneratingID { AllIDs: { } ids }) {
+        if (entity is IEntityGeneratingID entityIDs) {
+            var ids = entityIDs.AllIDs();
             var conflictingEntities = ids?.Where(x => x.Id == value).ToArray() ?? [];
             isValid = conflictingEntities.Length is 0 or 1;
         }

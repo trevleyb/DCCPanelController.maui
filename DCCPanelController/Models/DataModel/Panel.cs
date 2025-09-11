@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -17,7 +18,6 @@ namespace DCCPanelController.Models.DataModel;
 public partial class Panel : ObservableObject, IEntityGeneratingID {
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _id = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _cols = 27;
-    // [ObservableProperty] [NotifyPropertyChangedFor(nameof(Title))]      private string _description = string.Empty;
     [ObservableProperty] [NotifyPropertyChangedFor(nameof(PanelRatio))] private int _rows = 18;
     [ObservableProperty] private ObservableCollection<Entity> _entities = [];
     [ObservableProperty] private int _sortOrder;
@@ -29,7 +29,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
 
     public Panel(Panels panels) : this() {
         Panels = panels;
-        Id = NextID;
+        Id = NextID();
     }
 
     [JsonIgnore] public Panels? Panels { get; set; }
@@ -84,9 +84,17 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     [JsonIgnore] public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     [JsonIgnore] public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
 
-    [JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
-    [JsonIgnore] public string NextID => EntityID.GenerateNextID(Panels ?? [], "Panel");
+    //[JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
+    public string NextID() {
+        var nextID = EntityHelper.GenerateID(Panels ?? [], "Panel");
+        return nextID;   
+    }
 
+    public List<IEntityID> AllIDs() {
+        var allIDs = new List<IEntityID>(Panels ?? []) ?? [];
+        return allIDs;
+    }
+    
     public Entity? GetEntityAtPosition(int x, int y) {
         return Entities.FirstOrDefault(trk => trk.Col == x && trk.Row == y);
     }
@@ -144,21 +152,34 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         Entities.Add(entity);
         return entity;
     }
-
+    
     public T CreateEntity<T>() where T : Entity {
         var entity = (T)Activator.CreateInstance(typeof(T), this)! ?? throw new InvalidOperationException();
-        if (entity is IEntityGeneratingID entityID) entityID.Id = entityID.NextID;
+        if (entity is IEntityGeneratingID entityID) entityID.Id = entityID.NextID();
         return entity ?? throw new InvalidOperationException();
     }
 
     public T CreateEntityFrom<T>(T entity, bool generateNextID = true) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
         if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
-            clonedID.Id = generateNextID ? clonedID.NextID : entityID.Id;
+            clonedID.Id = generateNextID ? clonedID.NextID() : entityID.Id;
         }
         return cloned ?? throw new InvalidOperationException();
     }
 
+    /// <summary>
+    /// Special method to add an entity from the palette. Because cloning does not have a reference
+    /// to the real Panel so we can't do things we need to do such as set the ID. 
+    /// </summary>
+    public T CreateEntityFrom<T>(T entity, Panel realParent, bool generateNextID = true) where T : Entity {
+        var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
+        cloned.Parent = realParent;     // Set the Panel that owns this entity
+        if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
+            clonedID.Id = generateNextID ? clonedID.NextID() : entityID.Id;
+        }
+        return cloned ?? throw new InvalidOperationException();
+    }
+    
     /// <summary>
     ///     This is a special Clone that does not clone the child elements
     ///     and it does not add this to the parent but references the parent

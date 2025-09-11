@@ -932,7 +932,7 @@ public partial class ControlPanelView {
                     // -----------------------------------------------------------------
                     if (!GridPositionHelper.WouldCollide(tile, position.Col, position.Row, _dynamicGrid, EditMode)) {
                         _logger.LogInformation("DropTileOnPanel: Mode=Symbol");
-                        var dropEntity = panel.CreateEntityFrom(tile.Entity);
+                        var dropEntity = panel.CreateEntityFrom(tile.Entity, Panel);
                         dropEntity.Col = position.Col;
                         dropEntity.Row = position.Row;
                         panel.AddEntity(dropEntity);

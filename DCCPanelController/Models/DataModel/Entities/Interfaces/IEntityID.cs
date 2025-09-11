@@ -5,6 +5,6 @@ public interface IEntityID {
 }
 
 public interface IEntityGeneratingID : IEntityID {
-    public string NextID { get; }
-    public List<IEntityID> AllIDs { get; }
+    public string NextID();
+    public List<IEntityID> AllIDs();
 }

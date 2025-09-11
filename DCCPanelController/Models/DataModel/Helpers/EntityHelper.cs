@@ -1,14 +1,16 @@
 using System.Text.RegularExpressions;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.Models.DataModel.Helpers;
 
-public class EntityID {
-    public static string GenerateNextID(IEnumerable<IEntityID> entities, string prefix) {
-        return GenerateGetNextID(entities, t => t.Id, prefix);
+public static class EntityHelper {
+    
+    public static string GenerateID(IEnumerable<IEntityID> entities, string prefix) {
+        return GenerateID(entities, t => t.Id, prefix);
     }
 
-    private static string GenerateGetNextID<T>(IEnumerable<T> entities, Func<T, string> idSelector, string defaultPrefix = "UKN") {
+    private static string GenerateID<T>(IEnumerable<T> entities, Func<T, string> idSelector, string defaultPrefix = "UKN") {
         var ids = entities.Select(idSelector).Where(id => !string.IsNullOrEmpty(id)).OrderBy(id => id).ToList();
         if (ids.Count == 0) return $"{defaultPrefix}1"; // Default name if the list is empty.
         var numericalPattern = ids.Select(id => {

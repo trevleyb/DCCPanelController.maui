@@ -1,5 +1,7 @@
+#if IOS || MACCATALYST
 using CoreGraphics;
 using UIKit;
+#endif
 
 namespace DCCPanelController.View.Helpers;
 

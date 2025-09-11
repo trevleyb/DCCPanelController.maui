@@ -3,14 +3,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Models.DataModel.Helpers;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel;
 
 /// <summary>
 ///     Represents a Panel or Schematic that we can display on the app to control
 /// </summary>
-public partial class Panel : ObservableObject {
+public partial class Panel {
     [ObservableProperty] [Copyable("Colors", DisplayName = "Branchline Track", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 3)]
     private Color _branchLineColor = null!;
 
