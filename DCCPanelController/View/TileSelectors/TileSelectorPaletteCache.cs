@@ -83,7 +83,7 @@ public class TileSelectorPaletteCache {
                 new TextEntity(panel),
                 new CircleLabelEntity(panel),
                 new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
-                new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 3 },
+                new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 4 },
                 new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new ImageEntity(panel),
             ]);

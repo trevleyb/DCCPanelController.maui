@@ -232,22 +232,29 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task EditPanelPropertiesPopupAsync() {
         try {
             if (Panel is { } panel && _panelEditor is not null) {
+                IsProcessing = true;
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
                 ShowPropertyPopup("Panel Properties", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
             }
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
+        } finally {
+            IsProcessing = false;
         }
     }
     
     private async Task EditTilePropertiesPopupAsync() {
         try {
+            IsProcessing = true;
             if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
                 await DynamicTilePropertyPopupAsync(GetTitle(), GetInformation());
             }
+            _panelView.ClearAllSelectedTiles();
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
+        } finally {
+            IsProcessing = false;
         }
     }
 

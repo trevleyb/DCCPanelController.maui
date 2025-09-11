@@ -6,6 +6,7 @@ using DCCPanelController.View.Helpers;
 using Microsoft.Maui.Controls;
 using SelectionChangedEventArgs = Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs;
 #if IOS || MACCATALYST
+using System.Reflection.PortableExecutable;
 using UIKit;
 using CoreGraphics;
 #endif
@@ -14,7 +15,7 @@ namespace DCCPanelController.View.TileSelectors;
 
 public partial class PillSelectorPanel : ContentView {
     public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
-    private double pillWidth = 600;
+    private double pillWidth    = 600;
     private double scrollOffset = 0;
 
     public static readonly BindableProperty PanelProperty =
@@ -74,47 +75,29 @@ public partial class PillSelectorPanel : ContentView {
     }
 
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
-        SetDragPreview(sender, e, "copy.png");
+        SetDragPreviewHelper.SetDragPreview(sender, e, "copy.png");
         var pointerRoot = e.GetPosition(TileCollection);
         if (!pointerRoot.HasValue) return;
 
         var index = CollectionHitIndex.IndexOf(TileCollection,
-                                               point: pointerRoot.Value,
-                                               scrollXOffset: scrollOffset,
-                                               scrollYOffset: scrollOffset,
-                                               edgeMargin: 4,
-                                               topMargin: 4,
-                                               itemWidth: 40,
-                                               itemHeight: 40,
-                                               spacingH: 4,
-                                               spacingV: 4);
+            point: pointerRoot.Value,
+            scrollXOffset: scrollOffset,
+            scrollYOffset: scrollOffset,
+            edgeMargin: 4,
+            topMargin: 4,
+            itemWidth: 40,
+            itemHeight: 40,
+            spacingH: 4,
+            spacingV: 4);
         if (index is not null) {
             var tile = Vm?.TilesForSelectedCategory[index.Value];
             if (e.Data.Properties is { } props) {
                 props["Tile"] = tile;
                 return;
-            } 
+            }
         }
         Console.WriteLine("Unable to find tile at pointer location: Should not happen.");
         e.Cancel = true;
-    }
-
-    private void SetDragPreview(object? sender, DragStartingEventArgs e, string imageName) {
-        if (string.IsNullOrEmpty(imageName)) return;
-        
-        // Temporarily disabled this as it was causing a CLIENT ERROR
-        // -----------------------------------------------------------
-        // #if IOS || MACCATALYST
-        // Func<UIKit.UIDragPreview> action = () => {
-        //     Console.WriteLine("Setting drag preview in Pill Selector");
-        //     var image = UIKit.UIImage.FromFile(imageName);
-        //     UIKit.UIImageView imageView = new UIKit.UIImageView(image);
-        //     imageView.ContentMode = UIKit.UIViewContentMode.Center;
-        //     imageView.Frame = new CoreGraphics.CGRect(0, 0, 32, 32);
-        //     return new UIKit.UIDragPreview(imageView);
-        // };
-        // e?.PlatformArgs?.SetPreviewProvider(action);
-        // #endif
     }
 
     private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {

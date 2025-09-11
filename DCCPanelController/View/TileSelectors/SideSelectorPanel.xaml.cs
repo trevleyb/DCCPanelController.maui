@@ -101,7 +101,7 @@ public partial class SideSelectorPanel {
     }
 
     private void OnTileCollectionDragStarting(object? sender, DragStartingEventArgs e) {
-        SetDragPreview(sender, e, "copy.png");
+        SetDragPreviewHelper.SetDragPreview(sender, e, "copy.png");
         SelectedTile = null;
 
         try {
@@ -140,25 +140,7 @@ public partial class SideSelectorPanel {
             Console.WriteLine("Error selecting tile: " + ex.Message);
         }
     }
-
-    private void SetDragPreview(object? sender, DragStartingEventArgs e, string imageName) {
-        if (string.IsNullOrEmpty(imageName)) return;
-
-        // Temporarily disabled this as it was causing a CLIENT ERROR
-        // -----------------------------------------------------------
-        // #if IOS || MACCATALYST
-        // Func<UIKit.UIDragPreview> action = () => {
-        //     Console.WriteLine("Setting drag preview in Side Selector");
-        //     var image = UIKit.UIImage.FromFile(imageName);
-        //     UIKit.UIImageView imageView = new UIKit.UIImageView(image);
-        //     imageView.ContentMode = UIKit.UIViewContentMode.Center;
-        //     imageView.Frame = new CoreGraphics.CGRect(0, 0, 32, 32);
-        //     return new UIKit.UIDragPreview(imageView);
-        // };
-        // e?.PlatformArgs?.SetPreviewProvider(action);
-        // #endif
-    }
-
+    
     private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {
         scrollOffset = e.HorizontalOffset;
     }
