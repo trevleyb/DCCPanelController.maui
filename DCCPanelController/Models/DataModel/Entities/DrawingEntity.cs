@@ -15,7 +15,7 @@ public abstract partial class DrawingEntity : Entity {
           set => Width = value;
      }
 
-     [Editable("Height in Cells", "", 1, "Dimensions")]
+     [Editable("Height in Cells", "", 2, "Dimensions")]
      [JsonIgnore] public int DrawingHeight {
           get => Height;
           set => Height = value;
