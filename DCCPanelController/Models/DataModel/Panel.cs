@@ -159,27 +159,15 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         return entity ?? throw new InvalidOperationException();
     }
 
-    public T CreateEntityFrom<T>(T entity, bool generateNextID = true) where T : Entity {
+    public T CreateEntityFrom<T>(T entity, Panel? realParent = null, bool generateNextID = true) where T : Entity {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
+        if (realParent != null) cloned.Parent = realParent;    // Set the Panel that owns this entity
         if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
             clonedID.Id = generateNextID ? clonedID.NextID() : entityID.Id;
         }
         return cloned ?? throw new InvalidOperationException();
     }
 
-    /// <summary>
-    /// Special method to add an entity from the palette. Because cloning does not have a reference
-    /// to the real Panel so we can't do things we need to do such as set the ID. 
-    /// </summary>
-    public T CreateEntityFrom<T>(T entity, Panel realParent, bool generateNextID = true) where T : Entity {
-        var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
-        cloned.Parent = realParent;     // Set the Panel that owns this entity
-        if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
-            clonedID.Id = generateNextID ? clonedID.NextID() : entityID.Id;
-        }
-        return cloned ?? throw new InvalidOperationException();
-    }
-    
     /// <summary>
     ///     This is a special Clone that does not clone the child elements
     ///     and it does not add this to the parent but references the parent
@@ -209,7 +197,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
 
         CopyColorsTo(clone);
         foreach (var entity in Entities) {
-            var entityClone = clone.CreateEntityFrom(entity, generateNewId);
+            var entityClone = clone.CreateEntityFrom(entity, clone, generateNewId);
             clone.AddEntity(entityClone);
         }
         return clone;
