@@ -86,14 +86,14 @@
                     x:Name="PanelView"/>
             </Grid>
 
-            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0">
+            <Grid x:Name="SidePaletteContainer" Grid.Column="1" Grid.Row="0" IsClippedToBounds="True">
                 <tileSelectors:SideSelectorPanel
                     x:Name="SidePaletteSelector"
                     HorizontalOptions="Center"
                     OnDockSideChanged="PaletteDockSideChanged"/>
             </Grid>
 
-            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="1" Margin="0,0,0,0">
+            <Grid x:Name="BottomPaletteContainer" Grid.Column="0" Grid.Row="1" IsClippedToBounds="True">
                 <tileSelectors:PillSelectorPanel
                     x:Name="PillPaletteSelector"
                     HorizontalOptions="Center"

@@ -88,13 +88,13 @@ public partial class PanelEditor : ContentPage {
     private TileSelectorDockSide SetDockedSide(TileSelectorDockSide side) {
         switch (side) {
         case TileSelectorDockSide.Side:
-            SidePaletteContainer.IsVisible = true;
-            BottomPaletteContainer.IsVisible = false;
+            BottomPaletteContainer.HeightRequest = 0;
+            SidePaletteContainer.WidthRequest = 100;
             break;
 
         case TileSelectorDockSide.Bottom:
-            SidePaletteContainer.IsVisible = false;
-            BottomPaletteContainer.IsVisible = true;
+            BottomPaletteContainer.HeightRequest = 120;
+            SidePaletteContainer.WidthRequest = 0;
             break;
 
         default:
