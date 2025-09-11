@@ -63,12 +63,6 @@
                         IsVisible="{Binding HideWelcomePage}"
                         Panel="{Binding ActivePanel}"
                         x:Name="PanelView">
-                        
-                        <!-- <controlPanel:ControlPanelView.GestureRecognizers> -->
-                        <!--     <SwipeGestureRecognizer Direction="Left" Command="{Binding SwipeLeftCommand}"/> -->
-                        <!--     <SwipeGestureRecognizer Direction="Right" Command="{Binding SwipeRightCommand}"/> -->
-                        <!-- </controlPanel:ControlPanelView.GestureRecognizers> -->
-                        
                     </controlPanel:ControlPanelView>
 
                     <!-- Empty View when no panels -->
@@ -76,9 +70,7 @@
                         <ScrollView>
                             <Grid ColumnDefinitions="*">
                                 <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-                                    <Image Source="appiconimage.png" WidthRequest="150" HeightRequest="150"/>
-                                    <Label Text="DCC Panel Controller" HorizontalOptions="Center"
-                                           Style="{StaticResource LargeLabel}" FontFamily="OpenSansBold"/>
+                                    <Image Source="splash.png" WidthRequest="200" HeightRequest="200"/>
                                     <Label Text="{Binding VersionNumber}" HorizontalOptions="Center"
                                            Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
                                     <Label

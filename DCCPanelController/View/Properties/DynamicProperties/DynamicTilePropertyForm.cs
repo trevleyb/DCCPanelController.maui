@@ -66,7 +66,7 @@ public sealed class DynamicTilePropertyForm {
     private static readonly List<string> GroupOrders = ["General", 
         "Text", "Track", "Tracks", 
         "Circle", "Rectangle",  
-        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Visibility"];
+        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Dimensions", "Visibility"];
     
     private (IReadOnlyList<PropertyGroup>, IReadOnlyList<PropertyRow>) BuildGroups() {
         if (SelectedEntities.Count == 0) return([], []);
