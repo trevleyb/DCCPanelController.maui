@@ -61,17 +61,18 @@
 
             <!-- Initially: 1 column, 3 rows (standard layout) -->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"   x:Name="MainColumn"/>
+                <ColumnDefinition Width="*" x:Name="MainColumn"/>
                 <ColumnDefinition Width="Auto" x:Name="SidePalette"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"   x:Name="PanelRow"/>
+                <RowDefinition Height="*" x:Name="PanelRow"/>
                 <RowDefinition Height="Auto" x:Name="BottomPalette"/>
-                <RowDefinition Height="30"  x:Name="StatusRow"/>
+                <RowDefinition Height="30" x:Name="StatusRow"/>
             </Grid.RowDefinitions>
 
             <!-- Row 0: Panel Editor -->
-            <Grid x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" HorizontalOptions="Fill" VerticalOptions="Fill">
+            <Grid x:Name="PanelEditorContainer" Grid.Row="0" Grid.Column="0" HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
                 <controlPanel:ControlPanelView
                     Margin="5"
                     BackgroundColor="Transparent"

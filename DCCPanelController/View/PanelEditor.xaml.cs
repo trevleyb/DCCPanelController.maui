@@ -50,6 +50,7 @@ public partial class PanelEditor : ContentPage {
     
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
+        if (width <= 0 || height <= 0) return; 
         UpdateScreenDimensions(width, height);
     }
 
