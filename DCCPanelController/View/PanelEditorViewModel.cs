@@ -280,8 +280,10 @@ public partial class PanelEditorViewModel : ObservableObject {
             1 => SelectedEntities[0].EntityInformation,
             _ => AreAllTilesTheSame() ? SelectedEntities[0].EntityInformation : null
         };
-        if (info is { }) infoBlock.MarkdownText = info;
-        return info is null ? null : infoBlock;
+
+        if (string.IsNullOrEmpty(info)) return null;
+        infoBlock.MarkdownText = info;
+        return infoBlock;
     }
 
     private bool AreAllTilesTheSame() {
@@ -295,8 +297,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         LastAction = PopupAction.None;
         
         try {
-            var scrollContent = new ScrollView();
-            var scrollStack = new StackLayout();
+            var stackLayout = new StackLayout();
             if (infoBlock is {}) {
                 var grid = new Grid {
                     Margin = new Thickness(0),
@@ -306,17 +307,18 @@ public partial class PanelEditorViewModel : ObservableObject {
                     BackgroundColor = Colors.LightGray,
                 };
                 grid.Children.Add(infoBlock);
-                scrollStack.Children.Add(grid);
+                stackLayout.Children.Add(grid);
             }
-            _dynamicTileContent = new DynamicTilePropertyPopupContent {
+            
+            _dynamicTileContent = new DynamicTilePropertyPopupContent(_panelView.Width,_panelView.Height) {
                 Title = title,
-                TilesSource = SelectedTiles
+                TilesSource = SelectedTiles,
             };
-            scrollStack.Children.Add(_dynamicTileContent);
-            scrollContent.Content = scrollStack;
+            stackLayout.Children.Add(_dynamicTileContent);
+            var scrollView = new ScrollView { Content = stackLayout };
 
             var popup = new SfPopup {
-                ContentTemplate = new DataTemplate(() => scrollContent),
+                ContentTemplate = new DataTemplate(() => scrollView),
                 HeaderTitle = title,
                 ShowHeader = true,
                 ShowFooter = true,

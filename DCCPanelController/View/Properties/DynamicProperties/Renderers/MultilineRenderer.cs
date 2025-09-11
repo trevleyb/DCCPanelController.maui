@@ -9,7 +9,7 @@ internal sealed class MultilineTextRenderer : BaseRenderer,IPropertyRenderer {
         var editor = new Editor { Text = row.OriginalValue as string, AutoSize = EditorAutoSizeOption.TextChanges, Placeholder = MixedPlaceholder(row), HeightRequest = 120,                 Margin=new Thickness(5,0,5,0)
         };
         editor.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
-        editor.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        editor.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, editor);
     }
 }

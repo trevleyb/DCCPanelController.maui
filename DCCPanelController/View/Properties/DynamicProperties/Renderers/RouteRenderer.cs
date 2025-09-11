@@ -15,7 +15,7 @@ internal sealed class RouteRenderer : BaseRenderer,IPropertyRenderer {
         
         var row = ctx.Row;
         var picker = new Picker {
-            WidthRequest = GetFieldWidth(row.Field.Meta.Width),
+            WidthRequest = GetFieldWidth(ctx),
             FontSize = FieldFontSize,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
@@ -24,9 +24,9 @@ internal sealed class RouteRenderer : BaseRenderer,IPropertyRenderer {
         foreach (var i in routes) picker.Items.Add(i.DisplayFormat);
         if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, routes);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, routes));
-        picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
 
-        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));
 
     }

@@ -6,11 +6,11 @@ using Microsoft.Maui.Graphics;
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 public interface IEditorKindResolver {
-    string Resolve(EditableField field);
+    string Resolve(EditableField field, bool isSmallScreen = false);
 }
 
 public sealed class EditableExtractorResolver : IEditorKindResolver {
-    public string Resolve(EditableField field) {
+    public string Resolve(EditableField field, bool isSmallScreen = false) {
         var meta = field.Meta;
         var t = EditorKinds.UnwrapNullable(field.Accessor.PropertyType);
 
@@ -50,7 +50,7 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         if (t == typeof(TurnoutActions)) return EditorKinds.TurnoutActions;
 
         if (t.IsEnum) {
-            return Enum.GetNames(t).Length > 4 ? EditorKinds.EnumChoice : EditorKinds.EnumRadio;
+            return Enum.GetNames(t).Length > 3 || isSmallScreen ? EditorKinds.EnumChoice : EditorKinds.EnumRadio;
         }
         
         if (t == typeof(int) || t == typeof(long)) return EditorKinds.Int;

@@ -6,7 +6,7 @@ internal sealed class UrlRenderer : BaseRenderer,IPropertyRenderer {
         var row = ctx.Row;
         var entry = new Entry { Keyboard = Keyboard.Url, Text = row.OriginalValue?.ToString(), Placeholder = row.HasMixedValues ? "— mixed —" : "https://" };
         entry.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
-        entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, entry);
     }
 }

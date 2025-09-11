@@ -18,26 +18,30 @@ namespace DCCPanelController.View.Properties.DynamicProperties;
 
 [ObservableObject]
 public partial class DynamicTilePropertyPopupContent {
-    public DynamicTilePropertyPopupContent() {
+    public DynamicTilePropertyPopupContent(double width, double height) {
         InitializeComponent();
         BindingContext = this;
+        Width = width;
+        Height = height;
     }
 
     public enum FormState { Normal, Invalid, NoSelectedTiles, NoCommonProperties }
 
-    [ObservableProperty] private FormState _state = FormState.Normal;
-    [ObservableProperty] private string _title = "Properties";
-    [ObservableProperty] private bool _noCommonProperties = false;
-    [ObservableProperty] private bool _noSelectedProperties = false;
-    [ObservableProperty] private bool _hasCommonProperties = true;
-
+    [ObservableProperty] private FormState _state                = FormState.Normal;
+    [ObservableProperty] private string    _title                = "Properties";
+    [ObservableProperty] private bool      _noCommonProperties   = false;
+    [ObservableProperty] private bool      _noSelectedProperties = false;
+    [ObservableProperty] private bool      _hasCommonProperties  = true;
+    [ObservableProperty] private double    _width;
+    [ObservableProperty] private double    _height;
+    
     public DynamicTilePropertyForm? Form { get; private set; }
     public event EventHandler? Applied;
     public event EventHandler? Cancelled;
 
     private IUndoService _undo = new DefaultUndoService(); // from MauiAdapters
 
-    #region Binadable Collection of Tiles
+    #region Bindable Collection of Tiles
     public static readonly BindableProperty TilesSourceProperty = BindableProperty.Create(nameof(TilesSource), typeof(IEnumerable<ITile>), typeof(DynamicTilePropertyPopupContent), defaultValue: null, propertyChanged: OnTilesSourceChanged);
 
     public IEnumerable<ITile>? TilesSource {
@@ -97,7 +101,7 @@ public partial class DynamicTilePropertyPopupContent {
         // Valid the for and ensure we have some common properties
         // ---------------------------------------------------------------
         var selection = tiles.Select(object (t) => t.Entity);
-        Form = DynamicTilePropertyForm.CreateForm(selection);
+        Form = DynamicTilePropertyForm.CreateForm(selection, Width, Height);
         await Form.ValidateAsync();
 
         if (!Form.HasCommonProperties) return FormState.NoCommonProperties;

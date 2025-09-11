@@ -34,7 +34,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
                 FontSize = FieldFontSize,
                 GroupName = groupName,
                 Margin = new Thickness(0, 0, 10, 0),
-                IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode),
+                IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode),
                 IsChecked = row is { HasMixedValues: false, OriginalValue: { } } && Equals(it.Value, row.OriginalValue), // nothing selected when mixed until the user chooses
             };
 

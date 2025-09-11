@@ -3,8 +3,6 @@ using DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-public enum AppMode { Edit, Run }
-
 public sealed class DynamicTilePropertyForm {
     private readonly IEditableExtractor        _extractor;
     private readonly IPropertyRendererRegistry _renderers;
@@ -12,17 +10,20 @@ public sealed class DynamicTilePropertyForm {
     private readonly IEqualityPolicy           _equality;
     private readonly IUndoService              _undo;
     private readonly IEditorKindResolver       _kindResolver;
+    private readonly double                    _width;
+    private readonly double                    _height;
 
-    public AppMode Mode { get; }
     public IReadOnlyList<object> SelectedEntities { get; }
     public IReadOnlyList<PropertyRow> Rows { get; }
     public IReadOnlyList<PropertyGroup> Groups { get; }
     private Dictionary<Type, Dictionary<string, EditableField>> _fieldsByTypeName = new();
 
+    private const double SmallScreenWidth = 500;
+
     public bool CanApply { get; private set; }
     public bool HasCommonProperties { get; private set; }
 
-    public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection) {
+    public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection, double width, double height) {
         var extractor = new EditableExtractorCache();
         var renderers = new PropertyRendererRegistry();
         EditorKinds.RegisterDefaults(renderers);
@@ -37,7 +38,7 @@ public sealed class DynamicTilePropertyForm {
         var undo = new DefaultUndoService();
         var kindResolver = new EditableExtractorResolver();
 
-        return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, AppMode.Edit);
+        return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, width, height);
     }
 
     private DynamicTilePropertyForm(IEnumerable<object> selectedEntities,
@@ -47,15 +48,17 @@ public sealed class DynamicTilePropertyForm {
         IEqualityPolicy equality,
         IUndoService undo,
         IEditorKindResolver kindResolver,
-        AppMode mode = AppMode.Edit) {
+        double width, double height) 
+    {
         SelectedEntities = selectedEntities.ToList();
         _extractor = extractor;
         _renderers = renderers;
         _validator = validator;
         _equality = equality;
         _undo = undo;
+        _width = width;
+        _height = height;
         _kindResolver = kindResolver;
-        Mode = mode;
         (Groups, Rows) = BuildGroups();
         HasCommonProperties = Rows.Count > 0;
         CanApply = false;
@@ -63,6 +66,8 @@ public sealed class DynamicTilePropertyForm {
 
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
 
+    private bool IsSmallScreen => _width < 500;
+    
     private static readonly List<string> GroupOrders = ["General", 
         "Text", "Track", "Tracks", 
         "Circle", "Rectangle",  
@@ -158,12 +163,12 @@ public sealed class DynamicTilePropertyForm {
     }
 
     public object GetRendererView(PropertyRow row) {
-        var kind = _kindResolver.Resolve(row.Field);
-        var ctx = new PropertyContext(kind, row, Mode, SelectedEntities);
+        var kind = _kindResolver.Resolve(row.Field, (_width < SmallScreenWidth));
+        var ctx = new PropertyContext(kind, row, _width,_height, SelectedEntities);
         var renderer = _renderers.Resolve(kind);
         return!renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
     }
-
+    
     public async Task<ValidationSummary> ValidateAsync() {
         if (!HasCommonProperties) {
             CanApply = false;

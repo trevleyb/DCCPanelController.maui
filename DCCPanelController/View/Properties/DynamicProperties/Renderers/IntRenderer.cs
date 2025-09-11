@@ -40,7 +40,7 @@ namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
             };
             grid.Add(AddBorder(entry), 0, 0);
             grid.Add(stepper, 1, 0);
-            grid.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+            grid.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
             return WrapWithLabel(ctx, grid);
         }
     }

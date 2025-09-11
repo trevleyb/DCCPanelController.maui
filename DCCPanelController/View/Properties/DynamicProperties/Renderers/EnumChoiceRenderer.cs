@@ -24,7 +24,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
         var picker = new Picker {
             Title = (row.HasMixedValues ? "— mixed —" : null) ?? string.Empty,
             FontSize = FieldFontSize,
-            WidthRequest = GetFieldWidth(row.Field.Meta.Width),
+            WidthRequest = GetFieldWidth(ctx),
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
             Margin = new Thickness(5, 0, 5, 0)
@@ -43,7 +43,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
             SetValue(row, selected);
         };
 
-        picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
 
         // wrap with your standard label/description/error grid
         return WrapWithLabel(ctx, AddBorder(picker));

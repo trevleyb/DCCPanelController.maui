@@ -74,7 +74,7 @@
                                 <StackLayout Margin="10,10,10,10" HorizontalOptions="Start">
                                     <!-- Profile Name -->
                                     <HorizontalStackLayout VerticalOptions="Center">
-                                        <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                        <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
                                             <Label Grid.Column="0" Text="Profile Name"
                                                    Style="{StaticResource MediumLabel}" VerticalOptions="Center"/>
                                             <Border Grid.Column="1" Padding="0,0,0,0" HeightRequest="35"
@@ -86,7 +86,7 @@
                                     </HorizontalStackLayout>
 
                                     <!-- Background Color -->
-                                    <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
                                         <Label Text="Background Color?"
                                                Style="{StaticResource MediumLabel}"
                                                VerticalOptions="Center"/>
@@ -103,7 +103,7 @@
                                     </Grid>
 
                                     <!-- Show Welcome Page -->
-                                    <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
                                         <Label Text="Show Welcome Page?"
                                                Style="{StaticResource MediumLabel}"
                                                VerticalOptions="Center"/>
@@ -114,7 +114,7 @@
                                     </Grid>
 
                                     <!-- Automatically Connect -->
-                                    <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
                                         <Label Text="Automatically Connect?"
                                                Style="{StaticResource MediumLabel}"
                                                VerticalOptions="Center"/>
@@ -125,7 +125,7 @@
                                     </Grid>
 
                                     <!-- Set Turnouts on Connect -->
-                                    <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
                                         <Label Text="Set Turnouts on Connect?"
                                                Style="{StaticResource MediumLabel}"
                                                VerticalOptions="Center"/>
@@ -136,7 +136,7 @@
                                     </Grid>
 
                                     <!-- Enable Click Sounds -->
-                                    <Grid ColumnDefinitions="250,*" Margin="0,10,0,0">
+                                    <Grid ColumnDefinitions="200,*" Margin="0,10,0,0">
                                         <Label Text="Enable Click Sounds?"
                                                Style="{StaticResource MediumLabel}"
                                                VerticalOptions="Center"/>

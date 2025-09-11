@@ -15,7 +15,7 @@ internal sealed class TurnoutStateRenderer : BaseRenderer,IPropertyRenderer {
             State = state,
         };
         cell.StateChanged += (sender, newState) => SetValue(row, newState); 
-        cell.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);        
+        cell.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);        
         return WrapWithLabel(ctx, cell);
     }
 }

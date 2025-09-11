@@ -70,16 +70,16 @@
                         <ScrollView>
                             <Grid ColumnDefinitions="*">
                                 <StackLayout Grid.Column="0" HorizontalOptions="Center" VerticalOptions="Center">
-                                    <Image Source="splash.png" WidthRequest="200" HeightRequest="200"/>
+                                    <Image Source="splash.png" WidthRequest="200" HeightRequest="200" Margin="0,10,0,0"/>
                                     <Label Text="{Binding VersionNumber}" HorizontalOptions="Center"
                                            Style="{StaticResource SmallLabel}" FontFamily="OpenSansLightItalic"/>
                                     <Label
-                                        Style="{StaticResource LargeLabel}"
-                                        FontFamily="OpenSansBold"
+                                        FontSize="18"
+                                        FontFamily="OpenSansLightBold"
                                         HorizontalOptions="Center"
                                         LineBreakMode="WordWrap"
                                         HorizontalTextAlignment="Center"
-                                        Margin="0,30,0,10"
+                                        Margin="0,20,0,10"
                                         Text="Welcome to the DCC Model Layout Panel Controller"
                                         VerticalOptions="Center"/>
                                     <Label
@@ -136,14 +136,14 @@
                                         <Button
                                             WidthRequest="150"
                                             Clicked="ButtonInstructions_OnClicked"
-                                            Margin="0,10,10,10"
+                                            Margin="10,10,10,10"
                                             Style="{StaticResource ButtonOutline}"
                                             Text="Instructions"/>
 
                                         <Button
                                             WidthRequest="150"
                                             Clicked="ButtonAbout_OnClicked"
-                                            Margin="0,10,10,10"
+                                            Margin="10,10,10,10"
                                             Style="{StaticResource ButtonOutline}"
                                             Text="About"/>
 
@@ -151,7 +151,7 @@
                                             IsVisible="{Binding HasPanels}"
                                             WidthRequest="150"
                                             Clicked="ButtonCloseInstructions"
-                                            Margin="10,10,0,10"
+                                            Margin="10,10,10,10"
                                             Style="{StaticResource ButtonOutline}"
                                             Text="Close"/>
 

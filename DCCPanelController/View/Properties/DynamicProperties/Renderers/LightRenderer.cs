@@ -16,7 +16,7 @@ internal sealed class LightRenderer : BaseRenderer,IPropertyRenderer {
         
         var row = ctx.Row;
         var picker = new Picker {
-            WidthRequest = GetFieldWidth(row.Field.Meta.Width),
+            WidthRequest = GetFieldWidth(ctx),
             FontSize = FieldFontSize,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
@@ -25,9 +25,9 @@ internal sealed class LightRenderer : BaseRenderer,IPropertyRenderer {
         foreach (var i in lights) picker.Items.Add(i.DisplayFormat);
         if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, lights);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, lights));
-        picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
 
-        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));
     }
     

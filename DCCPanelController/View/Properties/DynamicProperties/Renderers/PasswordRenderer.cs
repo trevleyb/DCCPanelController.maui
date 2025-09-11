@@ -12,7 +12,7 @@ internal sealed class PasswordRenderer : BaseRenderer,IPropertyRenderer {
 
         };
         entry.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
-        entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, AddBorder(entry));
     }
 }

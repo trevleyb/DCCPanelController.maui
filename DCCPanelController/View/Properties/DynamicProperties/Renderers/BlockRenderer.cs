@@ -27,9 +27,9 @@ internal sealed class BlockRenderer : BaseRenderer,IPropertyRenderer {
         foreach (var i in blocks) picker.Items.Add(i.DisplayFormat);
         if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, blocks);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, blocks));
-        picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         
-        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(row.Field.Meta.Width));
+        var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));
     }
 

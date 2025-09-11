@@ -13,7 +13,7 @@ internal sealed class TextRenderer : BaseRenderer, IPropertyRenderer {
             Margin = new Thickness(5, 0, 5, 0)
         };
         entry.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
-        entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, AddBorder(entry));
     }
 }

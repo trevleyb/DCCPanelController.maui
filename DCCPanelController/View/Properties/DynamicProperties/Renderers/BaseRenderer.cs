@@ -34,22 +34,17 @@ public abstract class BaseRenderer {
         RowValueChanged?.Invoke(row); // <— notify UI wrappers to refresh visuals
     }
 
-    protected int GetFieldWidth(int? fieldWidth) {
+    protected int GetFieldWidth(PropertyContext ctx) {
         // Need to account for iPhone style displays so set a maximum width that we can 
         // adjust the field to. If we had the field as 300 + 150 label then 450 is > iPhone width
         // ---------------------------------------------------------------------------------------
-        var maxWidth = FieldWidth >= 0 ? FieldWidth : 300;
-        var page = App.Current.Windows[0].Page;
-        if (page is not null) {
-            maxWidth = (int)page.Width;
-            maxWidth -= (LabelWidth + ColumnSpacing) + 20;
-        }
-
+        var maxWidth = (int)(ctx.Width - (LabelWidth + ColumnSpacing + 50));
+        var fieldWidth = ctx?.Row?.Field?.Meta?.Width ?? -1;
         return fieldWidth switch {
             -1                       => maxWidth,
             0 when FieldWidth is -1  => maxWidth,
             0 when FieldWidth is > 0 => Math.Min(FieldWidth, maxWidth),
-            > 0                      => Math.Min(fieldWidth.Value, maxWidth),
+            > 0                      => Math.Min(fieldWidth, maxWidth),
             _                        => Math.Min(FieldWidth, maxWidth)
         };
     }
@@ -83,8 +78,8 @@ public abstract class BaseRenderer {
             VerticalOptions = LayoutOptions.Center,
         };
         
-        clearButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode) && row.CurrentValue != null && !string.IsNullOrEmpty((string)row.CurrentValue);
-        findButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        clearButton.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode) && row.CurrentValue != null && !string.IsNullOrEmpty((string)row.CurrentValue);
+        findButton.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
 
         clearButton.Clicked += (s, e) => {
             picker.SelectedIndex = -1;
@@ -92,7 +87,7 @@ public abstract class BaseRenderer {
         };
         findButton.Clicked += (sender, args) => picker.Focus();
         row.CurrentChanged += (sender, o) => {
-            clearButton.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode) && o is { };
+            clearButton.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode) && o is { };
         };
         
         picker.VerticalOptions = LayoutOptions.Center;
@@ -121,7 +116,7 @@ public abstract class BaseRenderer {
         var row = ctx.Row;
         var labelWidth = LabelWidth;
         var fieldHeight = FieldHeight;
-        var fieldWidth = GetFieldWidth(row?.Field?.Meta?.Width);
+        var fieldWidth = GetFieldWidth(ctx);
 
         var label = new Label {
             Text = row?.Field?.Meta?.Label ?? "Unknown",
@@ -153,7 +148,7 @@ public abstract class BaseRenderer {
         var grid = new Grid {
             ColumnDefinitions = {
                 new ColumnDefinition(labelWidth),
-                new ColumnDefinition(fieldWidth >= 0 ? fieldWidth : GridLength.Star),
+                new ColumnDefinition(fieldWidth >= 0 ? GetFieldWidth(ctx) : GridLength.Star),
                 new ColumnDefinition(GridLength.Star),
             },
             RowDefinitions = {

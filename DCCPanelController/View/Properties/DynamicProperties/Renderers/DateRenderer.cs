@@ -14,7 +14,7 @@ internal sealed class DateRenderer : BaseRenderer,IPropertyRenderer {
         };
         if (row.OriginalValue is DateTime dt) dp.Date = dt;
         dp.DateSelected += (s, e) => SetValue(row, e.NewDate);
-        dp.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        dp.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, AddBorder(dp));
     }
 }

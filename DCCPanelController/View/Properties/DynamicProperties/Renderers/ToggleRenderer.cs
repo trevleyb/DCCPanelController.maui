@@ -14,11 +14,11 @@ internal sealed class ToggleRenderer : BaseRenderer,IPropertyRenderer {
                 label.IsVisible = false;
                 SetValue(row, e.Value);
             };
-            stack.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+            stack.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
             return WrapWithLabel(ctx, stack);
         }
         sw.Toggled += (s, e) => SetValue(row, e.Value);
-        sw.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        sw.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, sw);
     }
 }

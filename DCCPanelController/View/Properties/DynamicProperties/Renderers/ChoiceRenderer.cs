@@ -8,7 +8,7 @@ internal sealed class ChoiceRenderer : BaseRenderer,IPropertyRenderer {
         var picker = new Picker {
             // BUG: If you have title, it doesn't work.
             //Title = (row.HasMixedValues ? "— mixed —" : null) ?? row.Field.Meta.Label,
-            WidthRequest = GetFieldWidth(row.Field.Meta.Width),
+            WidthRequest = GetFieldWidth(ctx),
             FontSize = FieldFontSize,
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
@@ -20,7 +20,7 @@ internal sealed class ChoiceRenderer : BaseRenderer,IPropertyRenderer {
         }
         if (row.OriginalValue is string s && picker.Items.Contains(s)) picker.SelectedItem = s;
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, picker.SelectedItem);
-        picker.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, AddBorder(picker));
     }
 }

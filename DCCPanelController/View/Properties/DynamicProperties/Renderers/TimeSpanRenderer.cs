@@ -9,7 +9,7 @@ internal sealed class TimeSpanRenderer : BaseRenderer,IPropertyRenderer {
         entry.TextChanged += (s, e) => {
             if (TimeSpan.TryParse(e.NewTextValue, out var v)) SetValue(row, v);
         };
-        entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, entry);
     }
 }

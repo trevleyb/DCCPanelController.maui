@@ -19,7 +19,7 @@ internal sealed class UniqueIDRenderer : BaseRenderer,IPropertyRenderer {
                 entry.TextColor = ErrorColor;
             }
         };
-        entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, AddBorder(entry));
     }
     

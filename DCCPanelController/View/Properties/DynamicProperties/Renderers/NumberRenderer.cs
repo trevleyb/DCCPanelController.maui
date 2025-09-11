@@ -15,7 +15,7 @@ internal sealed class NumberRenderer : BaseRenderer,IPropertyRenderer {
         entry.TextChanged += (s, e) => {
             if (double.TryParse(e.NewTextValue, out var v)) SetValue(row, v);
         };
-        entry.IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
         return WrapWithLabel(ctx, AddBorder(entry));
     }
 }

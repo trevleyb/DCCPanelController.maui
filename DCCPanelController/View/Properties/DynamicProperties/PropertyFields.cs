@@ -5,17 +5,19 @@ using System.Reflection.Metadata;
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 public sealed class PropertyContext {
-    public AppMode Mode { get; }
     public PropertyRow Row { get; }
     public CultureInfo Culture { get; }
     public string EditorKind { get; internal set; } = "text"; // resolved kind, set by FormContext
     public IReadOnlyDictionary<string, object> Params => Row.Field.Meta.Parameters;
     public IReadOnlyList<object> Owners { get; }
+    public double Width { get; set; }
+    public double Height { get; set; }
     
-    public PropertyContext(string kind, PropertyRow row, AppMode mode, IReadOnlyList<object>? owners = null, CultureInfo? culture = null) {
+    public PropertyContext(string kind, PropertyRow row, double width, double height, IReadOnlyList<object>? owners = null, CultureInfo? culture = null) {
         Row = row;
-        Mode = mode;
         EditorKind = kind;
+        Width = width;
+        Height = height;
         Owners = owners ?? [];
         Culture = culture ?? CultureInfo.InvariantCulture;
     }

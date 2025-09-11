@@ -14,7 +14,7 @@ public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
         var picker = new ColorPickerButton {
             SelectedColor = row.OriginalValue is Color c ? c : null,
             AllowsNoColor = true,
-            IsEnabled = !(ctx.Mode == AppMode.Run && row.Field.Meta.IsReadOnlyInRunMode),
+            IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode),
             IsMultiValue = ctx.Row.HasMixedValues
         };
 
