@@ -2,8 +2,6 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices.ComTypes;
-using System.Runtime.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
@@ -16,7 +14,6 @@ using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Graphics;
 using Microsoft.Maui.Layouts;
 #if IOS || MACCATALYST
 using UIKit;
@@ -53,7 +50,7 @@ public partial class ControlPanelView {
 
     public int Rows => Panel?.Rows ?? 27;
     public int Cols => Panel?.Cols ?? 18;
-    public bool HasDrawnSelector { get; set; }
+    public bool HasDrawnSelector { get; init; }
 
     public ControlPanelView() {
         _logger = MauiProgram.ServiceHelper.GetService<ILogger<ControlPanelView>>();
@@ -331,7 +328,7 @@ public partial class ControlPanelView {
                 HighlightCell(sizeTile, CellHighlightAction.Resize);
                 break;
 
-            case EditModeEnum.Move or EditModeEnum.Copy when e.Tile is { } moveTile: {
+            case EditModeEnum.Move or EditModeEnum.Copy when e.Tile is { }: {
                 await HandleTileDragMoveOrCopy(e);
                 break;
             }
@@ -415,7 +412,7 @@ public partial class ControlPanelView {
     #endregion
 
     #region Grid Management
-    public async Task ForceRefreshAsync() => await DrawPanel();
+    public Task ForceRefreshAsync() => DrawPanel();
 
     /// <summary>
     /// Calculates the optimal grid size based on the specified width and height dimensions.
@@ -816,21 +813,6 @@ public partial class ControlPanelView {
         return (minCol, minRow);
     }
 
-    // Axis-aligned rectangle overlap test
-    private static bool RectsOverlap(int aCol, int aRow, int aW, int aH,
-                                     int bCol, int bRow, int bW, int bH) {
-        return aCol < bCol + bW && aCol + aW > bCol &&
-               aRow < bRow + bH && aRow + aH > bRow;
-    }
-
-    // Is the destination area (col,row,width,height) fully inside the panel?
-    private bool InBounds(int col, int row, int w, int h) {
-        return col >= 0 && row >= 0 &&
-               w >= 1 && h >= 1 &&
-               col + w <= Cols &&
-               row + h <= Rows;
-    }
-
     private (bool isInBounds, List<DestinationBounds> bounds)
         CanPlaceSelectionAt(int anchorCol, int anchorRow, EditModeEnum mode) {
         if (_selectedTiles.Count == 0) return (true, new List<DestinationBounds>(0));
@@ -847,7 +829,7 @@ public partial class ControlPanelView {
         // Map helper’s PlacementRect -> existing DestinationBounds record
         var mapped = new List<DestinationBounds>(result.Cells.Count);
         foreach (var c in result.Cells) {
-            mapped.Add(new DestinationBounds((c.Col, c.Row, c.Width, c.Height), c.InBounds && !c.Collides));
+            mapped.Add(new DestinationBounds((c.Col, c.Row, c.Width, c.Height), c is { InBounds: true, Collides: false }));
         }
 
         return (result.CanPlace, mapped);
@@ -881,7 +863,7 @@ public partial class ControlPanelView {
             return;
         }
 
-        var tile = e.Data?.Properties["Tile"] as ITile ?? null;
+        var tile = e.Data.Properties["Tile"] as ITile ?? null;
         if (tile is null) return;
         
         var gridPosition = GridPositionHelper.GetGridPosition(e.GetPosition(_dynamicGrid), _dynamicGrid);
@@ -919,7 +901,7 @@ public partial class ControlPanelView {
             ClearAllSelectedTiles();
             var tile = e.Data.Properties["Tile"] as ITile ?? null;
             if (tile is null) {
-                Console.WriteLine("Got a Drop bt Tile is not set?");
+                Debug.WriteLine("Got a Drop but Tile is not set?");
                 return;
             }
             if (Panel is { } panel) {
@@ -976,7 +958,7 @@ public partial class ControlPanelView {
 
     public Color GridColor {
         get => (Color)GetValue(GridColorProperty);
-        set => SetValue(GridColorProperty, value);
+        init => SetValue(GridColorProperty, value);
     }
 
     public bool Interactive {
@@ -991,7 +973,7 @@ public partial class ControlPanelView {
 
     public bool ShowTrackErrors {
         get => (bool)GetValue(ShowTrackErrorsProperty);
-        set => SetValue(ShowTrackErrorsProperty, value);
+        init => SetValue(ShowTrackErrorsProperty, value);
     }
 
     private static async void OnDesignModeChanged(BindableObject bindable, object oldValue, object newValue) {
