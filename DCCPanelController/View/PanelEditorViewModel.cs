@@ -63,7 +63,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     public double ScreenWidth = 100;
     public bool ExitViaBackButton { get; set; }
 
-    private DynamicTilePropertyPopupContent? _dynamicTileContent;
+    //private DynamicTilePropertyPopupContent? _dynamicTileContent;
     public enum PopupAction { None, Accept, Cancel }
     public PopupAction LastAction { get; set; } = PopupAction.None;
     public bool AcceptIsValid { get; set; } = true; // assume true by default
@@ -233,6 +233,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         try {
             if (Panel is { } panel && _panelEditor is not null) {
                 IsProcessing = true;
+                await LetUICatchUpAsync();
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
                 var propertiesPage = new PanelPropertyPage(propertiesViewModel);
                 ShowPropertyPopup("Panel Properties", propertiesViewModel, propertiesPage, AcceptPanelPropertiesPopupCommand);
@@ -240,7 +241,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Panel Properties Page: " + ex.Message);
         } finally {
-            await _panelView.ForceRefreshAsync();   // Need to do this as Colors may have changed
             IsProcessing = false;
         }
     }
@@ -248,145 +248,19 @@ public partial class PanelEditorViewModel : ObservableObject {
     private async Task EditTilePropertiesPopupAsync() {
         try {
             IsProcessing = true;
+            await LetUICatchUpAsync();
             if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
-                await DynamicTilePropertyPopupAsync(GetTitle(), GetInformation());
+                await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
             }
             _panelView.ClearAllSelectedTiles();     // Reset all selected tiles for clarity
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         } finally {
             IsProcessing = false;
+            await LetUICatchUpAsync();
         }
     }
 
-    private string GetTitle() {
-        var title = SelectedEntities.Count switch {
-            0 => "Unknown Entity",
-            1 => $"{SelectedEntities[0].EntityName} ({SelectedEntities[0].EntityDescription}) properties.",
-            _ => AreAllTilesTheSame() ? $"Multiple {SelectedEntities[0]?.EntityName} ({SelectedEntities[0].EntityDescription}) properties." : "Multiple Selected Entities"
-        };
-        return title;
-    }
-
-    private MarkdownView? GetInformation() {
-        var infoBlock = new MarkdownView() {
-            TextFontSize = 12,
-            HorizontalOptions = LayoutOptions.Fill,
-            VerticalOptions = LayoutOptions.Fill,
-            Margin = new Thickness(20,5,10,5)
-        };
-        
-        var info = SelectedEntities.Count switch {
-            0 => null,
-            1 => SelectedEntities[0].EntityInformation,
-            _ => AreAllTilesTheSame() ? SelectedEntities[0].EntityInformation : null
-        };
-
-        if (string.IsNullOrEmpty(info)) return null;
-        infoBlock.MarkdownText = info;
-        return infoBlock;
-    }
-
-    private bool AreAllTilesTheSame() {
-        if (SelectedEntities.Count <= 1) return true;
-        var first = SelectedEntities.FirstOrDefault();
-        return SelectedEntities.All(entity => entity.EntityName == first?.EntityName);
-    }
-
-    private async Task DynamicTilePropertyPopupAsync(string title, MarkdownView? infoBlock = null) {
-        IsProcessing = true;
-        LastAction = PopupAction.None;
-        
-        try {
-            var stackLayout = new StackLayout();
-            if (infoBlock is {}) {
-                var grid = new Grid {
-                    Margin = new Thickness(0),
-                    MinimumHeightRequest = 20,
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill,
-                    BackgroundColor = Colors.LightGray,
-                };
-                grid.Children.Add(infoBlock);
-                stackLayout.Children.Add(grid);
-            }
-            
-            _dynamicTileContent = new DynamicTilePropertyPopupContent(_panelView.Width,_panelView.Height) {
-                Title = title,
-                TilesSource = SelectedTiles,
-            };
-            stackLayout.Children.Add(_dynamicTileContent);
-            var scrollView = new ScrollView { Content = stackLayout };
-
-            var popup = new SfPopup {
-                ContentTemplate = new DataTemplate(() => scrollView),
-                HeaderTitle = title,
-                ShowHeader = true,
-                ShowFooter = true,
-                BackgroundColor = Colors.WhiteSmoke,
-                PopupStyle = new PopupStyle {
-                    CornerRadius = 10,
-                    HasShadow = false,
-                    BlurIntensity = PopupBlurIntensity.Light,
-                    HeaderBackground = Colors.DarkGray,
-                    FooterBackground = Colors.DarkGray,
-                    MessageBackground = Colors.WhiteSmoke,
-                    AcceptButtonBackground = Colors.White,
-                    DeclineButtonBackground = Colors.White,
-                    AcceptButtonTextColor = Colors.Black,
-                    DeclineButtonTextColor = Colors.Black,
-                },
-                AppearanceMode = PopupButtonAppearanceMode.TwoButton,
-                ShowCloseButton = false,
-                StaysOpen = true,
-                IsFullScreen = true,
-                AcceptButtonText = "Save",
-                DeclineButtonText = "Cancel",
-                Padding = new Thickness(20),
-                Margin = new Thickness(20),
-                HeaderHeight = 65,
-                FooterHeight = 55,
-                AutoSizeMode = PopupAutoSizeMode.Both,
-                AnimationMode = PopupAnimationMode.None,
-                OverlayMode = PopupOverlayMode.Transparent,
-                AcceptCommand = TilePropertiesPopupAcceptCommand,
-                DeclineCommand = TilePropertiesPopupDeclineCommand
-            };
-            popup.Closing += PopupOnClosing;
-            if (string.IsNullOrEmpty(title)) popup.ShowHeader = false;
-            popup.Show();
-        } finally {
-            IsProcessing = false;
-        }
-    }
-
-    [RelayCommand]
-    private async Task TilePropertiesPopupAcceptAsync() {
-        LastAction = PopupAction.Accept;
-        if (_dynamicTileContent is { } content) {
-            var result = await content.ValidateAsync();
-            if (result.IsOk) {
-                var applied = await content.ApplyAsync();
-                AcceptIsValid = applied.IsOk;
-            } else {
-                AcceptIsValid = false;
-            }
-        }
-    }
-
-    [RelayCommand]
-    private async Task TilePropertiesPopupDeclineAsync() {
-        LastAction = PopupAction.Cancel;
-        if (_dynamicTileContent is { } content) {
-            await content.CancelAsync();
-            AcceptIsValid = true;
-        }
-    }
-
-    private void PopupOnClosing(object? sender, CancelEventArgs e) {
-        e.Cancel = !AcceptIsValid;
-    }
-    
     private void ShowPropertyPopup(string title, PanelPropertyViewModel propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
         
         _propertyPage = propertyPage;
@@ -422,7 +296,8 @@ public partial class PanelEditorViewModel : ObservableObject {
             FooterHeight = 55,
             AutoSizeMode = PopupAutoSizeMode.Both,
             AnimationMode = PopupAnimationMode.None,
-            OverlayMode = PopupOverlayMode.Transparent, 
+            OverlayMode = PopupOverlayMode.Transparent,
+            AcceptCommand = acceptPopupCommand,
         };
         popup.Show();
     } 
@@ -441,24 +316,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    [RelayCommand]
-    private async Task AcceptTilePropertiesPopupAsync() {
-        if (_propertyPage is not null) {
-            try {
-                IsProcessing = true;
-                await LetUICatchUpAsync();
-                await _propertyPage.ApplyChangesAsync();
-            } finally {
-                IsProcessing = false;
-            }
-        }
-    }
-
-    [RelayCommand]
-    private async Task DeclinePopupAsync() {
-        _propertyPage = null;
-    }
-    
     public string GetEditModeIconFilename =>
         EditMode switch {
             EditModeEnum.Copy => "copy.png",

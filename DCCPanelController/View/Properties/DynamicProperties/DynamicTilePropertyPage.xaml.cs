@@ -1,24 +1,21 @@
-using System.ComponentModel;
-using System.Globalization;
-using System.Reflection;
+using System.Runtime.InteropServices.JavaScript;
 using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCCommon;
-using DCCPanelController.Helpers;
-using DCCPanelController.Models.ViewModel.Interfaces;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.View.Converters;
 using Microsoft.Maui.Controls.Shapes;
-using Microsoft.Maui.Graphics;
+using Syncfusion.Maui.Toolkit.Popup;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 [ObservableObject]
-public partial class DynamicTilePropertyPopupContent {
-    public DynamicTilePropertyPopupContent(double width, double height) {
+public partial class DynamicTilePropertyPage {
+    private DynamicTilePropertyPage(double width, double height) {
         InitializeComponent();
         BindingContext = this;
         Width = width;
@@ -27,31 +24,38 @@ public partial class DynamicTilePropertyPopupContent {
 
     public enum FormState { Normal, Invalid, NoSelectedTiles, NoCommonProperties }
 
-    [ObservableProperty] private FormState _state                = FormState.Normal;
-    [ObservableProperty] private string    _title                = "Properties";
+    public event EventHandler? Applied;
+    public event EventHandler? Cancelled;
+
+    [ObservableProperty] private FormState _state = FormState.Normal;
+    [ObservableProperty] private string    _title = "Properties";
+    [ObservableProperty] private string    _errorMessages        = "";
     [ObservableProperty] private bool      _noCommonProperties   = false;
     [ObservableProperty] private bool      _noSelectedProperties = false;
     [ObservableProperty] private bool      _hasCommonProperties  = true;
     [ObservableProperty] private double    _width;
     [ObservableProperty] private double    _height;
+
+    [NotifyPropertyChangedFor(nameof(ShowInformation))]
+    [ObservableProperty] private string?       _information;
+    
+    public bool ShowInformation => !string.IsNullOrWhiteSpace(Information);
     
     public DynamicTilePropertyForm? Form { get; private set; }
-    public event EventHandler? Applied;
-    public event EventHandler? Cancelled;
-
-    private IUndoService _undo = new DefaultUndoService(); // from MauiAdapters
-
+    public SfPopup? Popup;
+    private IUndoService _undo = new DefaultUndoService(); 
+    
     #region Bindable Collection of Tiles
-    public static readonly BindableProperty TilesSourceProperty = BindableProperty.Create(nameof(TilesSource), typeof(IEnumerable<ITile>), typeof(DynamicTilePropertyPopupContent), defaultValue: null, propertyChanged: OnTilesSourceChanged);
+    public static readonly BindableProperty EntitySourceProperty = BindableProperty.Create(nameof(EntitySource), typeof(IEnumerable<Entity>), typeof(DynamicTilePropertyPage), defaultValue: null, propertyChanged: OnTilesSourceChanged);
 
-    public IEnumerable<ITile>? TilesSource {
-        get => (IEnumerable<ITile>?)GetValue(TilesSourceProperty);
-        set => SetValue(TilesSourceProperty, value);
+    public IEnumerable<Entity>? EntitySource {
+        get => (IEnumerable<Entity>?)GetValue(EntitySourceProperty);
+        set => SetValue(EntitySourceProperty, value);
     }
 
     private static async void OnTilesSourceChanged(BindableObject bindable, object oldValue, object newValue) {
         try {
-            var view = (DynamicTilePropertyPopupContent)bindable;
+            var view = (DynamicTilePropertyPage)bindable;
             view.State = await view.RebuildAsync(view.PropertyHost);
         } catch (Exception ex) {
             Console.WriteLine($"Error rebuilding DynamicTilePropertyPopupContent: {ex.Message}");
@@ -59,30 +63,134 @@ public partial class DynamicTilePropertyPopupContent {
     }
     #endregion
 
+    #region Helpers for Launching the PropertyPage
+    public static async Task CreatePropertyPage(List<Entity> selectedEntities, double width, double height) {
+        try {
+            var content = new DynamicTilePropertyPage(width, height) {
+                Title = GetTitle(selectedEntities),
+                Information = GetInformation(selectedEntities),
+                EntitySource = selectedEntities,
+            };
+
+            content.Popup = new SfPopup {
+                ContentTemplate = new DataTemplate(() => content),
+                ShowHeader = false,
+                ShowFooter = false,
+                BackgroundColor = Colors.WhiteSmoke,
+                PopupStyle = new PopupStyle {
+                    CornerRadius = 10,
+                    HasShadow = false,
+                    BlurIntensity = PopupBlurIntensity.Light,
+                    MessageBackground = Colors.WhiteSmoke,
+                },
+                ShowCloseButton = false,
+                StaysOpen = true,
+                IsFullScreen = true,
+                AutoSizeMode = PopupAutoSizeMode.Both,
+                AnimationMode = PopupAnimationMode.None,
+                OverlayMode = PopupOverlayMode.Transparent,
+            };
+            content.Popup.Show();
+        } catch (Exception ex) {
+            Console.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
+        } finally {
+            /* do nothing */
+        }
+    }
+
+    public void ClosePropertyPage() {
+        if (Popup is { } popup) {
+            popup.IsOpen = false;
+            popup.Dismiss();
+        }
+    }
+    
+    // Get the title to display in the Header of the Property Page
+    // ----------------------------------------------------------------------------
+    private static string GetTitle(List<Entity> selectedEntities) {
+        var title = selectedEntities.Count switch {
+            0 => "Unknown Entity",
+            1 => $"{selectedEntities[0].EntityName} ({selectedEntities[0].EntityDescription}) properties.",
+            _ => AllEntitiesAreSame(selectedEntities) ? $"Multiple {selectedEntities[0].EntityName} ({selectedEntities[0].EntityDescription}) properties." : "Multiple Selected Entities"
+        };
+        return title;
+    }
+    
+    /// <summary>
+    /// Returns a markdown label of information about the select Entity(s)
+    /// </summary>
+    private static string? GetInformation(List<Entity> selectedEntities) {
+        if (selectedEntities.Count <= 0) return null;
+        if (selectedEntities.Count == 1 || AllEntitiesAreSame(selectedEntities)) return selectedEntities[0].EntityInformation;;
+        return null;
+    }
+
+    /// <summary>
+    /// Returns true if the Entity Type (by its name) is the same for all selected Entities
+    /// </summary>
+    private static bool AllEntitiesAreSame(List<Entity> selectedEntities) {
+        if (selectedEntities.Count <= 1) return true;
+        var first = selectedEntities[0].EntityName;
+        return selectedEntities.All(entity => entity.EntityName.Equals(first,StringComparison.CurrentCultureIgnoreCase));
+    }
+    #endregion
+    
+    
     #region Commands for Applying and Cancelling
-    [RelayCommand]
-    public async Task<IResult<ValidationSummary>> ValidateAsync() {
-        if (Form == null) return Result<ValidationSummary>.Fail("Form is null");
-        var summary = await Form.ValidateAsync();
-        return summary.HasErrors
-            ? Result<ValidationSummary>.Fail("Validation Failed").WithValue(summary)
-            : Result<ValidationSummary>.Ok();
+    private async void ApplyButtonClicked(object? sender, EventArgs e) {
+        try {
+            if (sender is Button { BindingContext: DynamicTilePropertyPage { } page }) {
+                if (Form != null) {
+                    var summary = await Form.ValidateAsync();
+                    if (summary.HasErrors) {
+                        ErrorMessages = "Errors were found in the form. Please correct them before applying changes.";
+                        return;
+                    }
+                    var ok = await Form.ApplyAsync(requireAtomic: false);
+                    if (ok) Applied?.Invoke(this, EventArgs.Empty);
+                }
+                page.ClosePropertyPage();
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error Applying DynamicTilePropertyPopupContent: {ex.Message}");
+        }
     }
 
-    [RelayCommand]
-    public async Task<IResult> ApplyAsync() {
-        if (Form == null) return Result.Fail("Form should not be null");
-        var ok = await Form.ApplyAsync(requireAtomic: false);
-        if (!ok) return Result.Fail("No Changes to apply");
-        Applied?.Invoke(this, EventArgs.Empty);
-        return Result.Ok();
+    private async void CancelButtonClicked(object? sender, EventArgs e) {
+        try {
+            if (sender is Button { BindingContext: DynamicTilePropertyPage { } page }) {
+                await _undo.UndoAsync();
+                Cancelled?.Invoke(this, EventArgs.Empty);
+                page.ClosePropertyPage();
+            }
+        } catch (Exception ex) {
+            Console.WriteLine($"Error Cancelling DynamicTilePropertyPopupContent: {ex.Message}");
+        }
     }
+    
+    // [RelayCommand]
+    // public async Task<IResult<ValidationSummary>> ValidateAsync() {
+    //     if (Form == null) return Result<ValidationSummary>.Fail("Form is null");
+    //     var summary = await Form.ValidateAsync();
+    //     return summary.HasErrors
+    //         ? Result<ValidationSummary>.Fail("Validation Failed").WithValue(summary)
+    //         : Result<ValidationSummary>.Ok();
+    // }
 
-    [RelayCommand]
-    public async Task CancelAsync() {
-        await _undo.UndoAsync();
-        Cancelled?.Invoke(this, EventArgs.Empty);
-    }
+    // [RelayCommand]
+    // public async Task<IResult> ApplyAsync() {
+    //     if (Form == null) return Result.Fail("Form should not be null");
+    //     var ok = await Form.ApplyAsync(requireAtomic: false);
+    //     if (!ok) return Result.Fail("No Changes to apply");
+    //     Applied?.Invoke(this, EventArgs.Empty);
+    //     return Result.Ok();
+    // }
+
+    // [RelayCommand]
+    // public async Task CancelAsync() {
+    //     await _undo.UndoAsync();
+    //     Cancelled?.Invoke(this, EventArgs.Empty);
+    // }
     #endregion
     
     #region Build the Properties form
@@ -95,13 +203,12 @@ public partial class DynamicTilePropertyPopupContent {
 
         // Lets make sure we have some valid Tiles to work with
         // ---------------------------------------------------------------
-        var tiles = TilesSource?.ToList();
-        if (tiles == null || tiles.Count == 0) return FormState.NoSelectedTiles;
+        var entities = EntitySource?.ToList();
+        if (entities == null || entities.Count == 0) return FormState.NoSelectedTiles;
 
         // Valid the for and ensure we have some common properties
         // ---------------------------------------------------------------
-        var selection = tiles.Select(object (t) => t.Entity);
-        Form = DynamicTilePropertyForm.CreateForm(selection, Width, Height);
+        Form = DynamicTilePropertyForm.CreateForm(entities, Width, Height);
         await Form.ValidateAsync();
 
         if (!Form.HasCommonProperties) return FormState.NoCommonProperties;
@@ -229,5 +336,5 @@ public partial class DynamicTilePropertyPopupContent {
         };
     }
     #endregion
-    
+
 }

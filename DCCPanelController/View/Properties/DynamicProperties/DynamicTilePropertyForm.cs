@@ -1,4 +1,5 @@
 using System.Globalization;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
@@ -13,7 +14,7 @@ public sealed class DynamicTilePropertyForm {
     private readonly double                    _width;
     private readonly double                    _height;
 
-    public IReadOnlyList<object> SelectedEntities { get; }
+    public IReadOnlyList<Entity> SelectedEntities { get; }
     public IReadOnlyList<PropertyRow> Rows { get; }
     public IReadOnlyList<PropertyGroup> Groups { get; }
     private Dictionary<Type, Dictionary<string, EditableField>> _fieldsByTypeName = new();
@@ -24,7 +25,7 @@ public sealed class DynamicTilePropertyForm {
     public bool HasCommonProperties { get; private set; }
 
     public static DynamicTilePropertyForm CreateForm(
-        IEnumerable<object> selection, 
+        IEnumerable<Entity> selection, 
         double width, double height) {
         
         var extractor = new EditableExtractorCache();
@@ -46,7 +47,7 @@ public sealed class DynamicTilePropertyForm {
     /// This is the main form that we create to show in a Popup Page 
     /// </summary>
     private DynamicTilePropertyForm(
-        IEnumerable<object> selectedEntities,
+        IEnumerable<Entity> selectedEntities,
         IEditableExtractor extractor,
         IPropertyRendererRegistry renderers,
         IValidator validator,
@@ -70,8 +71,6 @@ public sealed class DynamicTilePropertyForm {
     }
 
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
-
-    private bool IsSmallScreen => _width < 500;
     
     private static readonly List<string> GroupOrders = ["General", 
         "Text", "Track", "Tracks", 
@@ -185,7 +184,7 @@ public sealed class DynamicTilePropertyForm {
         return summary;
     }
 
-    public IReadOnlyList<PropertyChange> PreviewDiff() {
+    private IReadOnlyList<PropertyChange> PreviewDiff() {
         var changes = new List<PropertyChange>();
         foreach (var row in Rows) {
             var shouldApply = row.IsTouched || !_equality.AreEqual(row.CurrentValue, row.OriginalValue, row.Field.Accessor.PropertyType);
