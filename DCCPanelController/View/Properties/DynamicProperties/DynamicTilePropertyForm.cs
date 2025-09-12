@@ -23,11 +23,13 @@ public sealed class DynamicTilePropertyForm {
     public bool CanApply { get; private set; }
     public bool HasCommonProperties { get; private set; }
 
-    public static DynamicTilePropertyForm CreateForm(IEnumerable<object> selection, double width, double height) {
+    public static DynamicTilePropertyForm CreateForm(
+        IEnumerable<object> selection, 
+        double width, double height) {
+        
         var extractor = new EditableExtractorCache();
         var renderers = new PropertyRendererRegistry();
         EditorKinds.RegisterDefaults(renderers);
-
         var validator = new CompositeValidator([
             new PropertyRendererRules.RequiredRule(),
             new PropertyRendererRules.RangeRule(),
@@ -37,11 +39,14 @@ public sealed class DynamicTilePropertyForm {
         var equality = new DefaultEqualityPolicy();
         var undo = new DefaultUndoService();
         var kindResolver = new EditableExtractorResolver();
-
         return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, width, height);
     }
 
-    private DynamicTilePropertyForm(IEnumerable<object> selectedEntities,
+    /// <summary>
+    /// This is the main form that we create to show in a Popup Page 
+    /// </summary>
+    private DynamicTilePropertyForm(
+        IEnumerable<object> selectedEntities,
         IEditableExtractor extractor,
         IPropertyRendererRegistry renderers,
         IValidator validator,

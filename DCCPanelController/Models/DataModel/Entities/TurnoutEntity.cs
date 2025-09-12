@@ -11,25 +11,25 @@ using Microsoft.Maui.Graphics;
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
-public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, ITrackEntity, IActionEntity {
+public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, IInteractiveEntity, ITrackEntity, IActionEntity {
    
     [ObservableProperty]
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
 
-    // [ObservableProperty] [property: EditableID("Turnout Name", "Unique name for this Turnout", 0, "Turnout")]
-    // private string _id = string.Empty;
+    [ObservableProperty] [property: Editable("Turnout Name", "Unique name for this Turnout", 0, "General")]
+    private string _id = string.Empty;
+
+    [ObservableProperty] [property: Editable("Turnout Address", "Turnout ID on the layout that will be controlled.", 5, "General", EditorKind = EditorKinds.Turnout)]
+    private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Color")]
     private Color? _trackNotSelectedColor;
 
     [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
-
-    [ObservableProperty] [property: Editable("Turnout Address", "Turnout ID on the layout that will be controlled.", 10, "Track", EditorKind = EditorKinds.Turnout)]
-    private string _turnoutID = string.Empty;
-
+    
     [ObservableProperty] [property: Editable("Button Actions", "", 10, "Actions", ActionsContext = ActionsContext.Turnout)]
     private ButtonActions _buttonPanelActions = [];
 
@@ -49,6 +49,18 @@ public abstract partial class TurnoutEntity : TrackEntity, IInteractiveEntity, I
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
+    public List<IEntityID> AllIDs() {
+        var allIDs = new List<IEntityID>(Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? []) ?? [];
+        var localIDs = new List<IEntityID>(Parent?.GetPanelEntitiesByType<TurnoutEntity>() ?? []) ?? [];
+        var availableIDs = localIDs.Union(allIDs).ToList();
+        return availableIDs;
+    }
+
+    public string NextID() {
+        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Turnout");
+        return nextID;
+    }
+    
     public void CloneActionsInto(IActionEntity entity) {
         entity.ButtonPanelActions = (ButtonActions)ButtonPanelActions.Clone();
         entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
