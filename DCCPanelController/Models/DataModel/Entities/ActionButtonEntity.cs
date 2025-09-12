@@ -4,25 +4,27 @@ using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
+using DCCPanelController.View.Actions;
 using DCCPanelController.View.Properties.DynamicProperties;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
+    public ActionsContext Context => ActionsContext.Button;
 
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
-    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order=1)]
+    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order = 1)]
     private string _id = string.Empty;
 
-    [ObservableProperty] [property: Editable("Button Size", Order=2)]
+    [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Button Actions", Order=10, Group="Actions", EditorKind = EditorKinds.ButtonActions)]
+    [ObservableProperty] [property: Editable("Button Actions", Order = 10, Group = "Actions", EditorKind = EditorKinds.ButtonActions)]
     private ButtonActions _buttonPanelActions = [];
 
-    [ObservableProperty] [property: Editable("Turnout Actions", Order=10, Group="Actions", EditorKind = EditorKinds.TurnoutActions)]
+    [ObservableProperty] [property: Editable("Turnout Actions", Order = 10, Group = "Actions", EditorKind = EditorKinds.TurnoutActions)]
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]
@@ -37,27 +39,21 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     public override string EntityName => "A-Button";
     public override string EntityDescription => "Trigger Actions Button";
 
-    public override string EntityInformation => 
+    public override string EntityInformation =>
         "This button allows you to trigger actions on the click of the **button**. " +
         "These actions can include setting other __buttons__, turning on and off __lights__ or switches, " +
         "triggering a __route__, or throwing a __turnout__. When other __buttons__ or __turnouts__ are triggered " +
-        "by this button, the actions will cascade down to the __buttons__ and __turnouts__ that are connected to it."; 
-    
+        "by this button, the actions will cascade down to the __buttons__ and __turnouts__ that are connected to it.";
+
     public void CloneActionsInto(IActionEntity entity) {
         entity.ButtonPanelActions = (ButtonActions)ButtonPanelActions.Clone();
         entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
     }
-
-    /// <summary>
-    /// Because when we are editing a panel the entities do not actually exist UNTIL we save,
-    /// we need to get all saved IDs from the parent AND we need to get any which are in the
-    /// local panel (unsaved) combine them and use that list to generate a unique ID.
-    /// </summary>
+    
     public List<IEntityID> AllIDs() {
-        var allIDs = new List<IEntityID>(Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
-        var localIDs = new List<IEntityID>(Parent?.GetPanelEntitiesByType<ActionButtonEntity>() ?? []) ?? [];
-        var availableIDs = localIDs.Union(allIDs).ToList();
-        return availableIDs;
+        var all = Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? Enumerable.Empty<IEntityID>();
+        var local = Parent?.GetPanelEntitiesByType<ActionButtonEntity>() ?? Enumerable.Empty<IEntityID>();
+        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
     }
 
     public string NextID() {

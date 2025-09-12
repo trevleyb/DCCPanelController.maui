@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
+using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
@@ -8,16 +10,16 @@ namespace DCCPanelController.View.Actions;
 public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject
     where TAction : class, new()
     where TCollection : ICollection<TAction> {
-    protected readonly IActionEntity _entity;
-
     protected ActionsContext _actionContext;
-    protected List<string> _availableItems;
-    [ObservableProperty] private ObservableCollection<string> _selectableItems = [];
+    protected List<string>   _availableItems;
+
+    [ObservableProperty] private List<string> _selectableItems = [];
+    [ObservableProperty] protected IActionEntity _entity;
 
     protected ActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableItems) {
-        _entity = entity;
         _actionContext = context;
         _availableItems = availableItems;
+        Entity = entity;
         CleanupInvalidActions();
         UpdateSelectableItems();
     }
@@ -34,10 +36,10 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
 
     public string NoDataText {
         get {
-            if (_availableItems.Count == 0) return $"No available {ItemTypeName}s defined.";
-            if (PanelActions.Count == 0 && IsAddButtonEnabled) return $"Use the + key to add a {ItemTypeName.ToLower()} action.";
-            if (SelectableItems.Count == 0) return $"All available {ItemTypeName.ToLower()}s have been assigned.";
-            return $"Use the + key to add more {ItemTypeName.ToLower()} actions.";
+            if (_availableItems.Count == 0) return$"No available {ItemTypeName}s defined.";
+            if (PanelActions.Count == 0 && IsAddButtonEnabled) return$"Use the + key to add a {ItemTypeName.ToLower()} action.";
+            if (SelectableItems.Count == 0) return$"All available {ItemTypeName.ToLower()}s have been assigned.";
+            return$"Use the + key to add more {ItemTypeName.ToLower()} actions.";
         }
     }
 
@@ -87,17 +89,19 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
             PanelActions.Add(newAction);
         }
         UpdateSelectableItems();
+        RaisePropertiesChanged();
     }
 
     [RelayCommand]
     private void RemoveRow(TAction? action) {
-        if (action is not null) {
+        if (action is { }) {
             var itemToRemove = PanelActions.FirstOrDefault(x => GetActionId(x) == GetActionId(action));
             if (itemToRemove != null) {
                 PanelActions.Remove(itemToRemove);
             }
         }
         UpdateSelectableItems();
+        RaisePropertiesChanged();
     }
 
     [RelayCommand]
@@ -105,6 +109,11 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
         RaisePropertiesChanged();
     }
 
+    public List<string> GetSelectableItems(string? activeItem = null) {
+        UpdateSelectableItems(activeItem);
+        return SelectableItems;
+    }
+    
     public void UpdateSelectableItems(string? activeItem = null) {
         foreach (var item in _availableItems) {
             var used = PanelActions.Any(x => GetActionId(x) == item);
@@ -113,6 +122,5 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
             if (used && !current && SelectableItems.Contains(item)) SelectableItems.Remove(item);
             if ((used && current || !used) && !SelectableItems.Contains(item)) SelectableItems.Add(item);
         }
-        RaisePropertiesChanged();
     }
 }

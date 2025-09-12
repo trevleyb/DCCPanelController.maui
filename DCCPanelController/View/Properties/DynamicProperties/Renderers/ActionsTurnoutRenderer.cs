@@ -11,14 +11,16 @@ internal sealed class ActionsTurnoutRenderer : BaseRenderer, IPropertyRenderer {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Object: TurnoutActions").CreateView(ctx);
         try {
-            var entityID = (entity as IEntityID)?.Id ?? "";
-            var availableTurnouts = entity?.Parent?.GetAllEntitiesByType<TurnoutButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
-            if (entity is IActionEntity actionsEntity) {
-                var grid = new TurnoutActionsGrid(actionsEntity, ctx.Row.Field.Meta.ActionsContext, availableTurnouts) {
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill
-                };
-                return WrapWithLabel(ctx, grid);
+            if (entity is IEntityID actionEntity) {
+                var entityID = actionEntity.Id ?? "";
+                var availableTurnouts = actionEntity.AllIDs().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+                if (entity is IActionEntity actionsEntity) {
+                    var grid = new TurnoutActionsGrid(actionsEntity, actionsEntity.Context, availableTurnouts) {
+                        HorizontalOptions = LayoutOptions.Fill,
+                        VerticalOptions = LayoutOptions.Fill
+                    };
+                    return WrapWithLabel(ctx, grid);
+                }
             }
         } catch (Exception ex) {
             return new InvalidRenderer($"Unable to create a Action {ex.Message}");

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Windows.Input;
 using Microsoft.Maui.Controls.Shapes;
 using Microsoft.Maui.Graphics;
 using Picker = Microsoft.Maui.Controls.Picker;
@@ -8,11 +9,11 @@ using Picker = Microsoft.Maui.Controls.Picker;
 namespace DCCPanelController.View.Components;
 
 public class PickerSelector : ContentView {
-    private Image _clearImage = new();
-    private bool _isInitialized; // Track if we've been initialized
-    private Grid? _mainButtonLayout;
+    private Image   _clearImage = new();
+    private bool    _isInitialized; // Track if we've been initialized
+    private Grid?   _mainButtonLayout;
     private Border? _mainLayoutBox;
-    private Label? _selectedItemLabel;
+    private Label?  _selectedItemLabel;
 
     protected override void OnHandlerChanged() {
         base.OnHandlerChanged();
@@ -29,8 +30,8 @@ public class PickerSelector : ContentView {
     public void DrawPopup() {
         if (!_isInitialized) return; // Already drawn
 
-        if (SelectedItem is null && SelectedValue is not null) UpdateSelectedItem();
-        if (SelectedItem is not null && SelectedValue is null) UpdateSelectedValue();
+        if (SelectedItem is null && SelectedValue is { }) UpdateSelectedItem();
+        if (SelectedItem is { } && SelectedValue is null) UpdateSelectedValue();
 
         _mainLayoutBox = new Border {
             Margin = Margin,
@@ -111,7 +112,7 @@ public class PickerSelector : ContentView {
     }
 
     private bool HasItems(IEnumerable itemsSource) {
-        return (itemsSource?.Cast<object?>()?.Count() ?? 0) > 0;
+        return(itemsSource?.Cast<object?>()?.Count() ?? 0) > 0;
     }
 
     private void UpdateSelectedItem() {
@@ -212,10 +213,10 @@ public class PickerSelector : ContentView {
             WidthRequest = WidthRequest,
             Margin = new Thickness(10, 0, 0, 0),
             ItemsSource = pickerItems, // Use formatted display items
-#if !MACCATALYST
+            #if !MACCATALYST
             // Title is not supported on macOS
             Title = Placeholder ?? "Select an option",
-#endif
+            #endif
             IsVisible = false
         };
         var index = FindIndexOfSelectedValue(SelectedValue, displayItems);
@@ -268,27 +269,44 @@ public class PickerSelector : ContentView {
     }
 
     #region Bindable Properties
-    public static readonly BindableProperty ItemsSourceProperty = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(PickerSelector), propertyChanged: RefreshControl);
-    public static readonly BindableProperty SelectedItemProperty = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay);
+    public static readonly BindableProperty ItemsSourceProperty       = BindableProperty.Create(nameof(ItemsSource), typeof(IEnumerable), typeof(PickerSelector), propertyChanged: ItemSourceChanged);
+    public static readonly BindableProperty SelectedItemProperty      = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay);
     public static readonly BindableProperty SelectedValuePathProperty = BindableProperty.Create(nameof(SelectedValuePath), typeof(string), typeof(PickerSelector));
-    public static readonly BindableProperty SelectedValueProperty = BindableProperty.Create(nameof(SelectedValue), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay);
-
+    public static readonly BindableProperty SelectedValueProperty     = BindableProperty.Create(nameof(SelectedValue), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay, propertyChanged: SelectedValueChanged);
+    
     public static readonly BindableProperty DisplayMemberPathProperty = BindableProperty.Create(nameof(DisplayMemberPath), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
-    public static readonly BindableProperty DisplayFormatProperty = BindableProperty.Create(nameof(DisplayFormat), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
+    public static readonly BindableProperty DisplayFormatProperty     = BindableProperty.Create(nameof(DisplayFormat), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
 
     public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(PickerSelector), string.Empty, propertyChanged: RefreshControl);
-    public static readonly BindableProperty TextColorProperty = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(PickerSelector), Colors.Black, propertyChanged: RefreshControl);
-    public static readonly BindableProperty TextSizeProperty = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(PickerSelector), 12.0, propertyChanged: RefreshControl);
+    public static readonly BindableProperty TextColorProperty   = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(PickerSelector), Colors.Black, propertyChanged: RefreshControl);
+    public static readonly BindableProperty TextSizeProperty    = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(PickerSelector), 12.0, propertyChanged: RefreshControl);
 
-    public static readonly BindableProperty ShowClearFieldImageProperty = BindableProperty.Create(nameof(ShowClearFieldImage), typeof(bool), typeof(PickerSelector), false, propertyChanged: RefreshControl);
+    public static readonly BindableProperty ShowClearFieldImageProperty   = BindableProperty.Create(nameof(ShowClearFieldImage), typeof(bool), typeof(PickerSelector), false, propertyChanged: RefreshControl);
     public static readonly BindableProperty ClearFieldImageSourceProperty = BindableProperty.Create(nameof(ClearFieldImageSource), typeof(string), typeof(PickerSelector), "x_circle.png", propertyChanged: RefreshControl);
 
     public static readonly BindableProperty CornerRadiusProperty = BindableProperty.Create(nameof(CornerRadius), typeof(CornerRadius), typeof(PickerSelector), new CornerRadius(10), propertyChanged: RefreshControl);
-    public static readonly BindableProperty BorderColorProperty = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(PickerSelector), Colors.DarkGrey, propertyChanged: RefreshControl);
-    public static readonly BindableProperty BorderWidthProperty = BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(PickerSelector), 1.0, propertyChanged: RefreshControl);
+    public static readonly BindableProperty BorderColorProperty  = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(PickerSelector), Colors.DarkGrey, propertyChanged: RefreshControl);
+    public static readonly BindableProperty BorderWidthProperty  = BindableProperty.Create(nameof(BorderWidth), typeof(double), typeof(PickerSelector), 1.0, propertyChanged: RefreshControl);
 
-    private static void RefreshControl(BindableObject bindable, object oldValue, object newValue) {
-        if (bindable is PickerSelector selector) selector.DrawPopup();
+    private static void ItemSourceChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is PickerSelector selector) {
+            Console.WriteLine($"ItemsSource changed from {oldValue} to {newValue}");
+            selector.DrawPopup();
+        }
+    }
+
+    private static void SelectedValueChanged(BindableObject bindable, object oldValue, object newValue) {
+        if (bindable is PickerSelector selector) {
+            if (selector.ItemsSource.Cast<string?>().ToList() is { } items) {
+                if (!items.Contains(newValue?.ToString())) items.Add(newValue?.ToString());
+            }
+        }
+    }
+    
+    private static void RefreshControl(BindableObject bindable, object? oldValue, object? newValue) {
+        if (bindable is PickerSelector selector) {
+            selector.DrawPopup();
+        }
     }
 
     /// <summary>
@@ -405,6 +423,22 @@ public class PickerSelector : ContentView {
     public string DisplayFormat {
         get => (string)GetValue(DisplayFormatProperty);
         set => SetValue(DisplayFormatProperty, value);
+    }
+
+    public static readonly BindableProperty BeforeOpenCommandProperty =
+        BindableProperty.Create(nameof(BeforeOpenCommand), typeof(ICommand), typeof(PickerSelector));
+
+    public static readonly BindableProperty BeforeOpenCommandParameterProperty =
+        BindableProperty.Create(nameof(BeforeOpenCommandParameter), typeof(object), typeof(PickerSelector));
+
+    public ICommand? BeforeOpenCommand {
+        get => (ICommand?)GetValue(BeforeOpenCommandProperty);
+        set => SetValue(BeforeOpenCommandProperty, value);
+    }
+
+    public object? BeforeOpenCommandParameter {
+        get => GetValue(BeforeOpenCommandParameterProperty);
+        set => SetValue(BeforeOpenCommandParameterProperty, value);
     }
     #endregion
 }

@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 using Microsoft.Maui.Graphics;
 
@@ -19,7 +20,6 @@ public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
 
     [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
     private bool _showIndicator = true;
-
     
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
@@ -48,4 +48,16 @@ public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
     public override string ToString() {
         return Id;
     }
+    
+    public List<IEntityID> AllIDs() {
+        var all = Parent?.GetAllEntitiesByType<RouteEntity>() ?? Enumerable.Empty<IEntityID>();
+        var local = Parent?.GetPanelEntitiesByType<RouteEntity>() ?? Enumerable.Empty<IEntityID>();
+        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
+    }
+
+    public string NextID() {
+        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Switch");
+        return nextID;
+    }
+
 }

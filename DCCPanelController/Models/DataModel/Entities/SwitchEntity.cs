@@ -1,6 +1,7 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
 using Microsoft.Maui.Graphics;
 
@@ -43,4 +44,16 @@ public partial class SwitchEntity : ButtonEntity, IEntityID, IInteractiveEntity 
     public override string ToString() {
         return Id;
     }
+    
+    public List<IEntityID> AllIDs() {
+        var all = Parent?.GetAllEntitiesByType<SwitchEntity>() ?? Enumerable.Empty<IEntityID>();
+        var local = Parent?.GetPanelEntitiesByType<SwitchEntity>() ?? Enumerable.Empty<IEntityID>();
+        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
+    }
+
+    public string NextID() {
+        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Switch");
+        return nextID;
+    }
+
 }

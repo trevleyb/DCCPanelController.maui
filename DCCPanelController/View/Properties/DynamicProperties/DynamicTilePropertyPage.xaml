@@ -18,7 +18,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" x:Name="HeaderRow"/>
             <RowDefinition Height="*" x:Name="ContentRow"/>
-            <RowDefinition Height="60" x:Name="FooterRow"/>
+            <RowDefinition Height="65" x:Name="FooterRow"/>
         </Grid.RowDefinitions>
 
         <!-- The Header of the Properties Page -->
@@ -41,9 +41,9 @@
                 <Grid Grid.Column="0" HorizontalOptions="Fill" VerticalOptions="Center" Margin="20,5,20,5">
                     <Label TextColor="Firebrick" Text="{Binding ErrorMessages}"/>
                 </Grid>
-                <Button Grid.Column="1" HorizontalOptions="End" x:Name="CancelButton" Text="Cancel" Margin="5,0,5,0" Style="{StaticResource ButtonOutline}"
+                <Button Grid.Column="1" HeightRequest="35" HorizontalOptions="End" x:Name="CancelButton" Text="Cancel" Margin="5,0,5,0" Style="{StaticResource ButtonOutline}"
                         Clicked="CancelButtonClicked"/>
-                <Button Grid.Column="2" HorizontalOptions="End" x:Name="ApplyButton" Text="Apply Changes" Margin="5,0,10,0" Style="{StaticResource ButtonOutline}"
+                <Button Grid.Column="2" HeightRequest="35" HorizontalOptions="End" x:Name="ApplyButton" Text="Apply Changes" Margin="5,0,10,0" Style="{StaticResource ButtonOutline}"
                         Clicked="ApplyButtonClicked"/>
                 </Grid>
         </Grid>

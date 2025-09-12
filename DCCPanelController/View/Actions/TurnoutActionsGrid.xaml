@@ -3,19 +3,20 @@
 <ContentView
     x:Class="DCCPanelController.View.Actions.TurnoutActionsGrid"
     x:DataType="local:TurnoutActionsGridViewModel"
-    x:Name="TurnoutActionsGridView"
+    x:Name="Root"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions">
+    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions"
+    xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers">
 
     <ContentView.Resources>
-        <ResourceDictionary/>
+        <helpers:BindingProxy x:Key="VmProxy" Data="{Binding .}" />
     </ContentView.Resources>
-
+    
     <ContentView.Content>
         <VerticalStackLayout>
             <Grid Margin="5,5,0,0" ColumnDefinitions="120,auto,auto">
@@ -125,7 +126,7 @@
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
 
-                                    <components:PickerSelector
+                                    <local:ActionPickerSelector
                                         Grid.Column="0"
                                         WidthRequest="150"
                                         Margin="0,0,0,0"
@@ -135,8 +136,9 @@
                                         TextColor="Black"
                                         TextSize="15"
                                         SelectedValue="{Binding Id, Mode=TwoWay}"
-                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:TurnoutActionsGridViewModel}},x:DataType=local:TurnoutActionsGridViewModel,Path=SelectableItems,Mode=OneWay}"
-                                        Placeholder="Select a Turnout"/>
+                                        ViewModel="{DynamicResource Vm}"
+                                        Placeholder="Select a Turnout">
+                                    </local:ActionPickerSelector>
                                     
                                     <components:TurnoutStateControl
                                         CanSetStateUnknown="True"

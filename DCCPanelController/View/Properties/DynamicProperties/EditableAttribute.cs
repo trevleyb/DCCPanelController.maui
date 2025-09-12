@@ -41,9 +41,6 @@ public sealed class EditableAttribute : Attribute {
     public double Max { get; init; } = 99;
     public double Step { get; init; } = 1;
 
-    // TODO: Add an Action so we can control IsEnabled for this attribute
-    public ActionsContext ActionsContext { get; set; } = ActionsContext.Unknown;
-    
     public Dictionary<string, object> Parameters { get; } = new();
 
     public T? GetParameters<T>(string key, T? fallback = default) {

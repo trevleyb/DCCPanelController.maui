@@ -6,6 +6,12 @@ namespace DCCPanelController.Models.DataModel.Helpers;
 
 public static class EntityHelper {
     
+    public sealed class EntityIdComparer : IEqualityComparer<IEntityID> {
+        public static readonly EntityIdComparer Instance = new();
+        public bool Equals(IEntityID? x, IEntityID? y) => ReferenceEquals(x, y) || (x is not null && y is not null && x.Id.Equals(y.Id));
+        public int GetHashCode(IEntityID obj) => obj.Id.GetHashCode();
+    }
+    
     public static string GenerateID(IEnumerable<IEntityID> entities, string prefix) {
         return GenerateID(entities, t => t.Id, prefix);
     }

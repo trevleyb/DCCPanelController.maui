@@ -11,15 +11,16 @@ internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Object: ButtonActions").CreateView(ctx);
         try {
-            // TODO: This was changed previously to use the ID of the entity, but that doesn't work.
-            var entityID = (entity as IEntityID)?.Id ?? "";
-            var availableButtons = entity?.Parent?.GetAllEntitiesByType<ActionButtonEntity>().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
-            if (entity is IActionEntity actionsEntity) {
-                var grid = new ButtonActionsGrid(actionsEntity, ctx.Row.Field.Meta.ActionsContext, availableButtons) {
-                    HorizontalOptions = LayoutOptions.Fill,
-                    VerticalOptions = LayoutOptions.Fill
-                };
-                return WrapWithLabel(ctx, grid);
+            if (entity is IEntityID actionEntity) {
+                var entityID = actionEntity.Id ?? "";
+                var availableButtons = actionEntity.AllIDs().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+                if (actionEntity is IActionEntity actionsEntity) {
+                    var grid = new ButtonActionsGrid(actionsEntity, actionsEntity.Context, availableButtons) {
+                        HorizontalOptions = LayoutOptions.Fill,
+                        VerticalOptions = LayoutOptions.Fill
+                    };
+                    return WrapWithLabel(ctx, grid);
+                }
             }
         } catch (Exception ex) {
             return new InvalidRenderer($"Unable to create a Action {ex.Message}");

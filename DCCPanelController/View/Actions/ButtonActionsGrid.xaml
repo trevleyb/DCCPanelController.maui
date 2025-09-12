@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <ContentView
+    x:Name="Root"
     x:Class="DCCPanelController.View.Actions.ButtonActionsGrid"
     x:DataType="local:ButtonActionsGridViewModel"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
@@ -8,12 +9,14 @@
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions">
+    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions"
+    xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers">
 
     <ContentView.Resources>
-        <ResourceDictionary/>
+        <helpers:BindingProxy x:Key="VmProxy" Data="{Binding .}" />
+        <x:Object x:Key="Vm" />
     </ContentView.Resources>
-
+    
     <ContentView.Content>
         <VerticalStackLayout>
             <Grid Margin="5,5,0,0" ColumnDefinitions="120,auto,auto">
@@ -122,7 +125,8 @@
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
-                                    <components:PickerSelector
+
+                                    <local:ActionPickerSelector
                                         WidthRequest="150"
                                         Grid.Column="0"
                                         Margin="0,0,0,0"
@@ -132,8 +136,9 @@
                                         TextColor="Black"
                                         TextSize="15"
                                         SelectedValue="{Binding Id, Mode=TwoWay}"
-                                        ItemsSource="{Binding Source={RelativeSource AncestorType={x:Type local:ButtonActionsGridViewModel}},x:DataType=local:ButtonActionsGridViewModel, Path=SelectableItems, Mode=OneWay}"
-                                        Placeholder="Select a Button"/>
+                                        ViewModel="{DynamicResource Vm}"
+                                        Placeholder="Select a Button">
+                                    </local:ActionPickerSelector>
 
                                     <components:ButtonStateControl
                                         CanSetStateUnknown="True"
