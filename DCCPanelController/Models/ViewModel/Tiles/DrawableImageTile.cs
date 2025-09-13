@@ -31,7 +31,8 @@ public class DrawableImageTile : Tile, ITileDrawable {
             };
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
             image.SetBinding(Image.AspectProperty, new Binding(nameof(entity.AspectRatio), BindingMode.OneWay, source: Entity));
-
+            if (entity.BorderWidth <= 0) return image; // No border (no need to create a border)
+            
             var border = new Border {
                 Content = image,
                 BackgroundColor = Colors.Transparent,
