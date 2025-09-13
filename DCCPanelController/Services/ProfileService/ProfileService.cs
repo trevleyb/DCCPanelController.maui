@@ -34,7 +34,7 @@ public class ProfileService {
     public event EventHandler<ProfileChangedEventArgs>? ActiveProfileChanged;
     public event EventHandler<ProfileDataChangedEventArgs>? ActiveProfileDataChanged;
     private void RaiseActiveProfileChanged(Profile? oldP, Profile? newP) => ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(oldP, newP));
-    private void RaiseDataChanged(ProfileDataChangeType t, object? obj = null) => ActiveProfileDataChanged?.Invoke(this, new ProfileDataChangedEventArgs(t, obj));
+    private void RaiseDataChanged(ProfileDataChangeType t, Profile profile, object? obj = null) => ActiveProfileDataChanged?.Invoke(this, new ProfileDataChangedEventArgs(t, profile, obj));
     #endregion
 
     #region Queries
@@ -80,7 +80,6 @@ public class ProfileService {
         ActiveProfile = profile;
     }
     #endregion
-
     
     #region Upload / Download (JSON & ZIP)
     public string DownloadProfile(Profile? profile = null) {
@@ -234,7 +233,7 @@ public class ProfileService {
         ArgumentNullException.ThrowIfNull(_catalog);
         await JsonRepository.SaveAsync(profile);
         _catalog.Upsert(profile);
-        RaiseDataChanged(ProfileDataChangeType.ProfileSaved, ActiveProfile);
+        RaiseDataChanged(ProfileDataChangeType.ProfileSaved, profile, null);
     }
 
     public async Task SaveAsync() {

@@ -1,25 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- Color Settings 
+
+    BackgroundColor             : Top Menu and Title Bar           
+    ForegroundColor             : The Icons on the Top Menu Bar
+    TabBarBackgroundColor       : The Tab Bar at the bottom of the Page
+    TitleColor                  : The title in the middle of the Top Menu Bar
+    UnselectedColor             : When multiple tabs (Turnouts etc) the not selected options
+    ForegroundColor             : When multiple tabs (Turnouts etc) the selected option
+
+    TabBarForegroundColor       : The selected Tab Bar Icon
+    TabBarTitleColor            : The Selected tab bar text
+    TabBarUnselectedColor       : The unselected Tab Bar Icon
+    TabBarDisabledColor         : If the tab bar icon is disabled
+
+-->
+
 <Shell
-    ForegroundColor="WhiteSmoke"
-    BackgroundColor="{StaticResource Primary}"
+    Title="DCC Panel Controller"
     x:DataType="services:AppStateService"
-    TabBarBackgroundColor="{StaticResource Primary}"
-    TabBarTitleColor="White"
-    TabBarForegroundColor="White"
-    TabBarUnselectedColor="Black"
+    x:Class="DCCPanelController.AppShell"
+
+    BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"           
+    ForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
+    TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"
+    TitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
+    UnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellUnselectedColor}"
+    
+    TabBarForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
+    TabBarTitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
+    TabBarUnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarUnselectedColor}"
+    TabBarDisabledColor="{Binding Source={x:Static services:AppStateService.Instance},   Path=TabBarDisabledColor}"
+    
+    DisabledColor="Goldenrod"
+    FlyoutBackgroundColor="Blue"
+    
     PresentationMode="Animated"
     FlyoutBehavior="Disabled"
-    Title="DCC Panel Controller"
     iOsSpecific:Page.UseSafeArea="True"
-    x:Class="DCCPanelController.AppShell"
-    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:iOsSpecific="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
     xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:services="clr-namespace:DCCPanelController.Services"
-    xmlns:dccPanelController="clr-namespace:DCCPanelController">
+    xmlns:services="clr-namespace:DCCPanelController.Services">
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
         <!-- <Tab Icon="control.png" -->

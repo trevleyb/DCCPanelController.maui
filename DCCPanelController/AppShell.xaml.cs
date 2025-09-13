@@ -1,10 +1,12 @@
-﻿namespace DCCPanelController;
+﻿using DCCPanelController.Services;
+
+namespace DCCPanelController;
 
 public partial class AppShell : Shell {
+    
+    public AppStateService AppState => AppStateService.Instance;
+    
     public AppShell() {
         InitializeComponent();
-
-        //var currentTheme = Application.Current!.RequestedTheme;
-        //ThemeSegmentedControl.SelectedIndex = currentTheme == AppTheme.Light ? 0 : 1;
     }
 }

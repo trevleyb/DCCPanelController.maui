@@ -31,7 +31,8 @@ public partial class LoadingPage : ContentPage {
                 try {
                     // 1) Initialize domain state
                     await profileService.InitializeAsync();
-
+                    
+                    
                     // Optional: any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);
 #if DEBUG
@@ -45,7 +46,7 @@ public partial class LoadingPage : ContentPage {
                     var window = Application.Current?.Windows[0];
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)
                 } catch (Exception ex) {
-                    await DisplayAlert("Startup error", ex.Message, "OK");
+                    await DisplayAlert("Startup error", ex.Message,"Quit");
                     App.Current.Quit();
                 }
             }

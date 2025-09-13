@@ -130,6 +130,11 @@ public static class AppleCrayonColors {
         return NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
     }
 
+    public static bool IsColorLight(Color color) {
+        var luminance = 0.299 * color.Red + 0.587 * color.Green + 0.114 * color.Blue;
+        return luminance > 0.5;
+    }
+    
     public static Color GetContrastingTextColor(Color backgroundColor) {
         var luminance = 0.299 * backgroundColor.Red + 0.587 * backgroundColor.Green + 0.114 * backgroundColor.Blue;
         return luminance > 0.5 ? EnumToColor(AppleCrayonColorsEnum.Licorice) : EnumToColor(AppleCrayonColorsEnum.Snow);

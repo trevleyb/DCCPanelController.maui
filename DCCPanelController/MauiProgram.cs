@@ -63,10 +63,11 @@ public static class MauiProgram {
         // Add dependant Services
         // --------------------------------------------------------------------------
         services.AddSingleton<ProfileService>();
+        services.AddSingleton<AppStateService>();
         services.AddSingleton<ConnectionService>();
         services.AddSingleton<HelpPage>();
         services.AddSingleton<AboutPage>();
-
+        
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
