@@ -7,7 +7,12 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
-public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject
+
+public interface IActionsGridViewModel {
+    List<string> GetSelectableItems(string? activeItem = null);
+}
+
+public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject, IActionsGridViewModel
     where TAction : class, new()
     where TCollection : ICollection<TAction> {
     protected ActionsContext _actionContext;
@@ -28,7 +33,7 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
     public bool IsButtonContext => _actionContext == ActionsContext.Button;
     public bool IsGridVisible => PanelActions.Count > 0;
     public bool IsAddButtonEnabled => SelectableItems.Count > 0;
-    public double ControlHeight => 40 + PanelActions.Count * 40;
+    public double ControlHeight => PanelActions.Count * 40;
 
     // Abstract properties and methods that subclasses must implement
     protected abstract TCollection PanelActions { get; }
@@ -37,8 +42,8 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
     public string NoDataText {
         get {
             if (_availableItems.Count == 0) return$"No available {ItemTypeName}s defined.";
-            if (PanelActions.Count == 0 && IsAddButtonEnabled) return$"Use the + key to add a {ItemTypeName.ToLower()} action.";
-            if (SelectableItems.Count == 0) return$"All available {ItemTypeName.ToLower()}s have been assigned.";
+            if (PanelActions.Count == 0 && IsAddButtonEnabled) return$"Add {ItemTypeName.ToLower()} actions.";
+            if (SelectableItems.Count == 0) return$"All available {ItemTypeName.ToLower()}s are assigned.";
             return$"Use the + key to add more {ItemTypeName.ToLower()} actions.";
         }
     }

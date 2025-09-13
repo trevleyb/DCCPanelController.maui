@@ -73,9 +73,8 @@ public sealed class DynamicTilePropertyForm {
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
     
     private static readonly List<string> GroupOrders = ["General", 
-        "Text", "Track", "Tracks", 
-        "Circle", "Rectangle",  
-        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Dimensions", "Visibility"];
+        "Text", "Track", "Circle", "Rectangle",  
+        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Button Actions", "Turnout Actions", "Dimensions", "Visibility"];
     
     private (IReadOnlyList<PropertyGroup>, IReadOnlyList<PropertyRow>) BuildGroups() {
         if (SelectedEntities.Count == 0) return([], []);
@@ -133,7 +132,7 @@ public sealed class DynamicTilePropertyForm {
             // Create a group but lookup the Group name to get the sort order.
             // --------------------------------------------------------------
             if (!groups.TryGetValue(gname, out var group)) {
-                var order = GroupOrders.IndexOf(gname);
+                var order = FindGroupIndex(gname);
                 group = new PropertyGroup(gname, order);
                 groups[gname] = group;
             }
@@ -164,6 +163,13 @@ public sealed class DynamicTilePropertyForm {
                                   .ToList();
 
         return(orderedGroups, flatRows);
+    }
+
+    public static int FindGroupIndex(string groupName) {
+        for (var i = 0; i < GroupOrders.Count; i++) {
+            if (groupName.Equals(GroupOrders[i], StringComparison.InvariantCultureIgnoreCase)) return i;
+        }
+        return 0;
     }
 
     public object GetRendererView(PropertyRow row) {

@@ -44,15 +44,10 @@ public partial class SwitchEntity : ButtonEntity, IEntityID, IInteractiveEntity 
     public override string ToString() {
         return Id;
     }
-    
-    public List<IEntityID> AllIDs() {
-        var all = Parent?.GetAllEntitiesByType<SwitchEntity>() ?? Enumerable.Empty<IEntityID>();
-        var local = Parent?.GetPanelEntitiesByType<SwitchEntity>() ?? Enumerable.Empty<IEntityID>();
-        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
-    }
 
-    public string NextID() {
-        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Switch");
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= Parent;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<SwitchEntity>(targetPanel), "Switch");        
         return nextID;
     }
 

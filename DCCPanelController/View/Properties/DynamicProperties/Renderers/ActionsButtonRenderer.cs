@@ -1,10 +1,12 @@
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Actions;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
+    protected override int LabelWidth => -1;
     protected override int FieldHeight => -1;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.ButtonActions;
     public object CreateView(PropertyContext ctx) {
@@ -13,7 +15,7 @@ internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
         try {
             if (entity is IEntityID actionEntity) {
                 var entityID = actionEntity.Id ?? "";
-                var availableButtons = actionEntity.AllIDs().Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
+                var availableButtons = EntityHelper.GetAllEntitiesByType<ActionButtonEntity>(entity.Parent).Where(b => !string.IsNullOrWhiteSpace(b.Id) && b.Id != entityID).Select(b => b.Id).ToList<string>() ?? [];
                 if (actionEntity is IActionEntity actionsEntity) {
                     var grid = new ButtonActionsGrid(actionsEntity, actionsEntity.Context, availableButtons) {
                         HorizontalOptions = LayoutOptions.Fill,

@@ -48,15 +48,10 @@ public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
     public override string ToString() {
         return Id;
     }
-    
-    public List<IEntityID> AllIDs() {
-        var all = Parent?.GetAllEntitiesByType<RouteEntity>() ?? Enumerable.Empty<IEntityID>();
-        var local = Parent?.GetPanelEntitiesByType<RouteEntity>() ?? Enumerable.Empty<IEntityID>();
-        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
-    }
 
-    public string NextID() {
-        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Switch");
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= Parent;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<RouteEntity>(targetPanel), "Route");
         return nextID;
     }
 

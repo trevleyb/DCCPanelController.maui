@@ -77,7 +77,7 @@ public class ActionPickerSelector : ContentView {
             VerticalOptions = LayoutOptions.Fill,
             WidthRequest = WidthRequest,
             Margin = new Thickness(10, 0, 0, 0),
-            ItemsSource = pickerItems, // Use formatted display items
+            ItemsSource = pickerItems, 
             #if !MACCATALYST
             // Title is not supported on macOS
             Title = Placeholder ?? "Select an option",
@@ -86,11 +86,11 @@ public class ActionPickerSelector : ContentView {
         };
         var index = FindIndexOfSelectedValue(SelectedValue, pickerItems);
         picker.SelectedIndex = index;
-
+        picker.SelectedItem = SelectedValue;
         picker.SelectedIndexChanged += (sender, e) => {
-            //if (picker.SelectedIndex >= 0 && picker.SelectedIndex < pickerItems.Count) {
-            //    var selectedItem = pickerItems[picker.SelectedIndex];
-            //}
+            if (picker.SelectedIndex >= 0 && picker.SelectedIndex < pickerItems.Count) {
+                SelectedValue = pickerItems[picker.SelectedIndex];
+            }
         };
 
         // Add picker to the layout temporarily to show it
@@ -107,7 +107,7 @@ public class ActionPickerSelector : ContentView {
         }
     }
     
-    private int FindIndexOfSelectedValue(string? selectedValue, List<string> displayItems) {
+    private static int FindIndexOfSelectedValue(string? selectedValue, List<string> displayItems) {
         if (selectedValue is null) return 0;
         for (var index = 0; index < displayItems.Count; index++) {
             if (displayItems[index] == selectedValue) return index;

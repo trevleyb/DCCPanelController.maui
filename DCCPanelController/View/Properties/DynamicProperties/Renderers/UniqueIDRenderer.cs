@@ -1,4 +1,7 @@
+using AVFoundation;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
+using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
@@ -26,7 +29,7 @@ internal sealed class UniqueIDRenderer : BaseRenderer,IPropertyRenderer {
     private bool IsIDValid(string value, IEntity entity) {
         var isValid = true;
         if (entity is IEntityGeneratingID entityIDs) {
-            var ids = entityIDs.AllIDs();
+            var ids = EntityHelper.GetAllEntitiesByType<IEntityID>(entity.Parent);
             var conflictingEntities = ids?.Where(x => x.Id == value).ToArray() ?? [];
             isValid = conflictingEntities.Length is 0 or 1;
         }

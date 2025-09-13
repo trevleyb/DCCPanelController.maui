@@ -151,13 +151,13 @@ public abstract class BaseRenderer {
         // -----------------------------------------------------------------
         var grid = new Grid {
             ColumnDefinitions = {
-                new ColumnDefinition(labelWidth),
+                new ColumnDefinition(labelWidth >= 0 ? labelWidth : 0),
                 new ColumnDefinition(fieldWidth >= 0 ? GetFieldWidth(ctx) : GridLength.Star),
                 new ColumnDefinition(GridLength.Star),
             },
             RowDefinitions = {
                 new RowDefinition(fieldHeight >= 0 ? fieldHeight : GridLength.Auto),    // label + control
-                new RowDefinition(GridLength.Auto) // description + error under control
+                new RowDefinition(GridLength.Auto)
             },
             ColumnSpacing = ColumnSpacing,
             RowSpacing = RowSpacing
@@ -165,8 +165,13 @@ public abstract class BaseRenderer {
 
         // Row 0: label + control
         // -----------------------------------------------------------------
-        grid.Add(label, 0, 0);
-        grid.Add(control, 1, 0);
+        if (LabelWidth > 0) {
+            grid.Add(label, 0, 0);
+            grid.Add(control, 1, 0);
+        } else {
+            grid.Add(control, 0, 0);
+            grid.SetColumnSpan(control, 2);
+        }
 
         // Row 1: description/error, indented under the control (col 1)
         // -----------------------------------------------------------------

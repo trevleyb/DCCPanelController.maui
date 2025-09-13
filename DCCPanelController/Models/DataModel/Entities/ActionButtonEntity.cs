@@ -21,10 +21,10 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Button Actions", Order = 10, Group = "Actions", EditorKind = EditorKinds.ButtonActions)]
+    [ObservableProperty] [property: Editable("Button Actions", Order = 10, Group = "Button Actions", EditorKind = EditorKinds.ButtonActions)]
     private ButtonActions _buttonPanelActions = [];
 
-    [ObservableProperty] [property: Editable("Turnout Actions", Order = 10, Group = "Actions", EditorKind = EditorKinds.TurnoutActions)]
+    [ObservableProperty] [property: Editable("Turnout Actions", Order = 10, Group = "Turnout Actions", EditorKind = EditorKinds.TurnoutActions)]
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]
@@ -50,14 +50,9 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
         entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
     }
     
-    public List<IEntityID> AllIDs() {
-        var all = Parent?.GetAllEntitiesByType<ActionButtonEntity>() ?? Enumerable.Empty<IEntityID>();
-        var local = Parent?.GetPanelEntitiesByType<ActionButtonEntity>() ?? Enumerable.Empty<IEntityID>();
-        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
-    }
-
-    public string NextID() {
-        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Button");
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= Parent;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<ActionButtonEntity>(targetPanel), "Button");
         return nextID;
     }
 

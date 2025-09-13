@@ -83,12 +83,13 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
     [JsonIgnore] public ObservableCollection<Signal> Signals => Panels?.Profile?.Signals ?? [];
     [JsonIgnore] public ObservableCollection<Sensor> Sensors => Panels?.Profile?.Sensors ?? [];
     [JsonIgnore] public ObservableCollection<Light> Lights => Panels?.Profile?.Lights ?? [];
-
-    //[JsonIgnore] public List<IEntityID> AllIDs => new List<IEntityID>(Panels ?? []) ?? [];
-    public string NextID() {
-        var nextID = EntityHelper.GenerateID(Panels ?? [], "Panel");
-        return nextID;   
+    
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= this;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<Panel>(targetPanel), "Panel");
+        return nextID;
     }
+
 
     public List<IEntityID> AllIDs() {
         var allIDs = new List<IEntityID>(Panels ?? []) ?? [];
@@ -163,7 +164,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
         var cloned = entity.Clone() as T ?? throw new InvalidOperationException();
         if (realParent != null) cloned.Parent = realParent;    // Set the Panel that owns this entity
         if (cloned is IEntityGeneratingID clonedID && entity is IEntityGeneratingID entityID) {
-            clonedID.Id = generateNextID ? clonedID.NextID() : entityID.Id;
+            clonedID.Id = generateNextID ? clonedID.NextID(realParent) : entityID.Id;
         }
         return cloned ?? throw new InvalidOperationException();
     }

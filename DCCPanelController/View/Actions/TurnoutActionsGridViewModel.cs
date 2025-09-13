@@ -5,7 +5,7 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
-public class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutAction, TurnoutActions> {
+public class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutAction, TurnoutActions>, IActionsGridViewModel {
     public TurnoutActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableTurnouts) : base(entity, context, availableTurnouts) {
         PropertyChanged += (sender, args) => {
             if (args.PropertyName == nameof(PanelActions)) {

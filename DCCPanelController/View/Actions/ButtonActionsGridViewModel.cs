@@ -5,11 +5,6 @@ using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
-
-public interface IActionsGridViewModel {
-    List<string> GetSelectableItems(string? activeItem = null);
-}
-
 public class ButtonActionsGridViewModel : ActionsGridViewModel<ButtonAction, ButtonActions>, IActionsGridViewModel {
     public ButtonActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableButtons) : base(entity, context, availableButtons) {
         PropertyChanged += (sender, args) => {

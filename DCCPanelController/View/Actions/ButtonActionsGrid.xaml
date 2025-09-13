@@ -13,26 +13,19 @@
     xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers">
 
     <ContentView.Resources>
-        <helpers:BindingProxy x:Key="VmProxy" Data="{Binding .}" />
         <x:Object x:Key="Vm" />
     </ContentView.Resources>
     
     <ContentView.Content>
-        <VerticalStackLayout>
-            <Grid Margin="5,5,0,0" ColumnDefinitions="120,auto,auto">
-                <Label
-                    FontAttributes="Bold"
-                    Grid.Column="0"
-                    HeightRequest="25"
-                    Text="Button Actions"
-                    TextColor="{StaticResource Primary}"/>
+        <Grid RowDefinitions="40,*">
+            <Grid Grid.Row="0" ColumnDefinitions="auto,auto">
                 <ImageButton
                     Aspect="Center"
                     Command="{Binding AddRowCommand}"
-                    Grid.Column="1"
+                    Grid.Column="0"
                     HeightRequest="25"
                     IsEnabled="{Binding IsAddButtonEnabled}"
-                    Margin="0,-5,0,0"
+                    Margin="-10,-10,0,0"
                     Source="plus_circle.png"
                     WidthRequest="25">
                     <ImageButton.Behaviors>
@@ -40,14 +33,16 @@
                     </ImageButton.Behaviors>
                 </ImageButton>
                 <Label
-                    Grid.Column="2"
+                    Grid.Column="1"
                     HeightRequest="25"
                     Style="{StaticResource SmallLabel}"
                     Text="{Binding NoDataText}"
                     VerticalOptions="Center"/>
             </Grid>
 
-            <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}">
+            <!-- <Grid HeightRequest="{Binding ControlHeight, Mode=OneWay}" IsVisible="{Binding IsGridVisible}"> -->
+
+            <Grid Grid.Row="1" IsVisible="{Binding IsGridVisible}">
                 <ListView
                     HorizontalOptions="Fill"
                     ItemsSource="{Binding ButtonPanelActions}"
@@ -56,7 +51,7 @@
 
                     <ListView.Header>
                         <Grid
-                            ColumnDefinitions="3*,4*,4*,1*"
+                            ColumnDefinitions="{OnIdiom Phone='120,100,100,40', Default='200,150,150,50'}"
                             ColumnSpacing="2"
                             RowDefinitions="25">
                             <BoxView Background="{StaticResource Primary}" Grid.Column="0"/>
@@ -121,7 +116,7 @@
                         <DataTemplate>
                             <ViewCell x:DataType="actions:ButtonAction">
                                 <Grid
-                                    ColumnDefinitions="3*,4*,4*,1*"
+                                    ColumnDefinitions="{OnIdiom Phone='120,100,100,40', Default='200,150,150,50'}"
                                     ColumnSpacing="2"
                                     RowDefinitions="25"
                                     VerticalOptions="Center">
@@ -175,6 +170,6 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </Grid>
-        </VerticalStackLayout>
+        </Grid>
     </ContentView.Content>
 </ContentView>

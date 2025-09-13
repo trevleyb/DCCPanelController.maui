@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
@@ -147,12 +148,23 @@ public partial class PanelEditor : ContentPage {
         if (AppStateService.Instance.SelectedTile is { } selectedTile) {
             SelectionText.Text = $"Place Tile: {selectedTile.Entity.EntityName}"; 
         } else {
-            SelectionText.Text = _viewModel.SelectedTiles.Count switch {
-                0   => "No tiles selected",
-                1   => $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}",
-                > 1 => $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})",
-                _   => SelectionText.Text
-            };
+            switch (_viewModel.SelectedTiles.Count) {
+                case 0:
+                    SelectionText.Text = "No tiles selected";
+                    break;
+                case 1:
+                    SelectionText.Text = $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}";
+                    if (_viewModel.SelectedTiles[0].Entity is IEntityID entityID) {
+                        SelectionText.Text += $" ({entityID.Id})";
+                    }
+                    break;
+                case > 1:
+                    SelectionText.Text = $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})";
+                    break;
+                default:
+                    SelectionText.Text = SelectionText.Text;
+                    break;
+            }
         }
 
         ChangesText.Text = _viewModel.HavePropertiesChanged ? "Changes" : "No Changes";

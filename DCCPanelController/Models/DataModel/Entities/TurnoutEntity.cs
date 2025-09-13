@@ -32,10 +32,10 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
     
-    [ObservableProperty] [property: Editable("Button Actions", "", 10, "Actions")]
+    [ObservableProperty] [property: Editable("Button Actions", "", 10, "Button Actions")]
     private ButtonActions _buttonPanelActions = [];
 
-    [ObservableProperty] [property: Editable("Turnout Actions", "", 10, "Actions")]
+    [ObservableProperty] [property: Editable("Turnout Actions", "", 10, "Turnout Actions")]
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]
@@ -51,14 +51,9 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public List<IEntityID> AllIDs() {
-        var all = Parent?.GetAllEntitiesByType<TurnoutEntity>() ?? Enumerable.Empty<IEntityID>();
-        var local = Parent?.GetPanelEntitiesByType<TurnoutEntity>() ?? Enumerable.Empty<IEntityID>();
-        return all .Union(local, EntityHelper.EntityIdComparer.Instance).ToList();
-    }
-
-    public string NextID() {
-        var nextID = EntityHelper.GenerateID(AllIDs() ?? [], "Turnout");
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= Parent;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<TurnoutEntity>(targetPanel), "Turnout");        
         return nextID;
     }
     

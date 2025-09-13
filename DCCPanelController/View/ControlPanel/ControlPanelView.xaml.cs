@@ -199,7 +199,7 @@ public partial class ControlPanelView {
                 var tilesAtPosition = GridPositionHelper.GetTilesCovering(e.Col, e.Row, _dynamicGrid);
                 if (tilesAtPosition.Count == 0) {
                     if (AppStateService.Instance.SelectedTile is {} tile && Panel is {} panel) {
-                        var dropEntity = panel.CreateEntityFrom(tile.Entity);
+                        var dropEntity = panel.CreateEntityFrom(tile.Entity, panel);
                         dropEntity.Col = e.Col;
                         dropEntity.Row = e.Row;
                         panel.AddEntity(dropEntity);

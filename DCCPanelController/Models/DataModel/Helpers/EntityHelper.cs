@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Text.RegularExpressions;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
@@ -6,10 +7,15 @@ namespace DCCPanelController.Models.DataModel.Helpers;
 
 public static class EntityHelper {
     
-    public sealed class EntityIdComparer : IEqualityComparer<IEntityID> {
-        public static readonly EntityIdComparer Instance = new();
-        public bool Equals(IEntityID? x, IEntityID? y) => ReferenceEquals(x, y) || (x is not null && y is not null && x.Id.Equals(y.Id));
-        public int GetHashCode(IEntityID obj) => obj.Id.GetHashCode();
+    public static List<T> GetAllEntitiesByType<T>(Panel? parent) where T : IEntityID {
+        if (parent is null) return[];
+        
+        var all = parent.Panels?.SelectMany(panel => panel.Entities.OfType<T>()).ToList() ?? [];
+        var local = parent.Entities.OfType<T>().ToList() ?? [];
+        return all
+              .Concat(local)
+              .DistinctBy(e => e.Id)              // if Id is string and you need case-insensitive: .DistinctBy(e => e.Id, StringComparer.OrdinalIgnoreCase)
+              .ToList();
     }
     
     public static string GenerateID(IEnumerable<IEntityID> entities, string prefix) {
