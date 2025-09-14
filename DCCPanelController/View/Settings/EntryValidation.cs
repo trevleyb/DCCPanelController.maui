@@ -15,7 +15,7 @@ public class EntryValidationBehavior : Behavior<Entry> {
         if (sender is Entry entry) {
             if (!string.IsNullOrEmpty(args.NewTextValue)) {
                 if (int.TryParse(args.NewTextValue, out var result)) {
-                    entry.TextColor = result is >= 0 and <= 255 ? Colors.Black : Colors.Red;
+                    entry.TextColor = result is>= 0 and<= 255 ? Colors.Black : Colors.Red;
                 }
             }
         }

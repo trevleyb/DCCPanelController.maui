@@ -14,16 +14,14 @@ public partial class PanelPropertyPage : ContentView {
         ColsStepper.Minimum = GetMaxCols(ViewModel.Panel);
     }
 
-    private void PanelPropertyPage_SizeChanged(object sender, EventArgs e) {
-        UpdateSpanBasedOnSize(Width);
-    }
+    private void PanelPropertyPage_SizeChanged(object sender, EventArgs e) => UpdateSpanBasedOnSize(Width);
 
     private void UpdateSpanBasedOnSize(double currentWidth) {
         if (currentWidth > 0) {
             var newSpan = currentWidth switch {
                 < 600 => 1, // iPhone - single column
                 < 900 => 2, // iPad portrait or smaller tablets - 2 columns  
-                _     => 3  // iPad landscape or desktop - 3 columns
+                _     => 3, // iPad landscape or desktop - 3 columns
             };
             if (ViewModel.ColorGridSpan != newSpan) {
                 ViewModel.ColorGridSpan = newSpan;
@@ -37,7 +35,7 @@ public partial class PanelPropertyPage : ContentView {
                 field.Text = order switch {
                     >= 99 => "99",
                     <= 0  => "0",
-                    _     => field.Text
+                    _     => field.Text,
                 };
             } else {
                 field.Text = e.NewTextValue;
@@ -67,11 +65,7 @@ public partial class PanelPropertyPage : ContentView {
         }
     }
 
-    private static int GetMaxRows(Panel panel) {
-        return int.Max(panel.Entities.Select(track => track.Row).Prepend(0).Max(), 4);
-    }
+    private static int GetMaxRows(Panel panel) => int.Max(panel.Entities.Select(track => track.Row).Prepend(0).Max(), 4);
 
-    private static int GetMaxCols(Panel panel) {
-        return int.Max(panel.Entities.Select(track => track.Col).Prepend(0).Max(), 4);
-    }
+    private static int GetMaxCols(Panel panel) => int.Max(panel.Entities.Select(track => track.Col).Prepend(0).Max(), 4);
 }

@@ -14,14 +14,14 @@ public static class MauiViewSizeCalculator {
         // Prevent infinite recursion in case of circular references
         if (visited.Contains(mauiView)) return Size.Zero;
         visited.Add(mauiView);
-        
+
         try {
             // Get the explicit size requests for this MauiView
             var currentSize = GetMauiViewRequestedSize(mauiView);
 
             // Get children and calculate their total size
             var childrenSize = CalculateChildrenSize(mauiView, visited);
-            
+
             // Combine current MauiView size with children size based on layout type
             return CombineSizes(mauiView, currentSize, childrenSize);
         } finally {
@@ -45,7 +45,7 @@ public static class MauiViewSizeCalculator {
         var children = GetChildren(mauiView);
         var childrenList = children.ToList();
         if (!childrenList.Any()) return Size.Zero;
-        
+
         var result = mauiView switch {
             // Stack layouts: children are stacked
             StackLayout stackLayout => CalculateStackLayoutSize(childrenList, stackLayout.Orientation, visited),
@@ -66,20 +66,18 @@ public static class MauiViewSizeCalculator {
             AbsoluteLayout => CalculateAbsoluteLayoutSize(childrenList, visited),
 
             // Default: treat as overlapping (take maximum)
-            _ => CalculateOverlappingSize(childrenList, visited)
+            _ => CalculateOverlappingSize(childrenList, visited),
         };
         return result;
     }
 
-    private static IEnumerable<MauiView> GetChildren(MauiView mauiView) {
-        return mauiView switch {
-            Layout layout                        => layout.Children.OfType<MauiView>(),
-            ContentView { Content: { } content } => [content],
-            Border { Content     : { } content } => [content],
-            ScrollView { Content : { } content } => [content],
-            _                                    => Enumerable.Empty<MauiView>()
-        };
-    }
+    private static IEnumerable<MauiView> GetChildren(MauiView mauiView) => mauiView switch {
+        Layout layout                        => layout.Children.OfType<MauiView>(),
+        ContentView { Content: { } content } => [content],
+        Border { Content     : { } content } => [content],
+        ScrollView { Content : { } content } => [content],
+        _                                    => Enumerable.Empty<MauiView>(),
+    };
 
     private static Size CalculateStackLayoutSize(IEnumerable<MauiView> children, StackOrientation orientation, HashSet<MauiView> visited) {
         double totalWidth = 0, totalHeight = 0;
@@ -122,11 +120,11 @@ public static class MauiViewSizeCalculator {
             var widthPerColumn = childSize.Width / columnSpan;
             var heightPerRow = childSize.Height / rowSpan;
 
-            for (int c = column; c < column + columnSpan; c++) {
+            for (var c = column; c < column + columnSpan; c++) {
                 columnWidths[c] = Math.Max(columnWidths.GetValueOrDefault(c), widthPerColumn);
             }
 
-            for (int r = row; r < row + rowSpan; r++) {
+            for (var r = row; r < row + rowSpan; r++) {
                 rowHeights[r] = Math.Max(rowHeights.GetValueOrDefault(r), heightPerRow);
             }
         }
@@ -144,9 +142,8 @@ public static class MauiViewSizeCalculator {
 
         if (direction == FlexDirection.Row || direction == FlexDirection.RowReverse) {
             return CalculateStackLayoutSize(children, StackOrientation.Horizontal, visited);
-        } else {
-            return CalculateStackLayoutSize(children, StackOrientation.Vertical, visited);
         }
+        return CalculateStackLayoutSize(children, StackOrientation.Vertical, visited);
     }
 
     private static Size CalculateSingleChildSize(IEnumerable<MauiView> children, HashSet<MauiView> visited) {

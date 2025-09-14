@@ -9,13 +9,13 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionButtonTile : Tile, ITileInteractive {
-    public SvgImage? SvgImage { get; protected set; }
-
     public ActionButtonTile(ActionButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         if (Entity is ActionButtonEntity button) button.State = ButtonStateEnum.Unknown;
     }
+
+    public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
         if (Entity is ActionButtonEntity button) {
@@ -24,7 +24,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
                 ButtonStateEnum.On      => ButtonStateEnum.Off,
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
-                _                       => ButtonStateEnum.Unknown
+                _                       => ButtonStateEnum.Unknown,
             };
             button.SetState(newState, StateChangeSource.External);
             return true;
@@ -32,27 +32,25 @@ public class ActionButtonTile : Tile, ITileInteractive {
         return false;
     }
 
-    public async Task<bool> Secondary(ConnectionService? connectionService) {
-        return false;
-    }
+    public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is ActionButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("button", Entity.Rotation)
+                _                    => SvgImages.GetImage("button", Entity.Rotation),
             };
 
             var buttonColor = button.State switch {
                 ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
+                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray,
             };
 
             var buttonOutline = button.State switch {
                 ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black,
             };
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
@@ -72,8 +70,6 @@ public class ActionButtonTile : Tile, ITileInteractive {
         }
         return CreateSymbol();
     }
-    
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("button").AsImage();
-    }
+
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("button").AsImage();
 }

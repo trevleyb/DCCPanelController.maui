@@ -1,17 +1,15 @@
-using AVFoundation;
-using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
-internal sealed class UniqueIDRenderer : BaseRenderer,IPropertyRenderer {
+internal sealed class UniqueIDRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Text;
+
     public object CreateView(PropertyContext ctx) {
-        
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Object: UniqueID Renderer").CreateView(ctx);
-        
+
         var row = ctx.Row;
         var entry = new Entry { Text = row.OriginalValue as string ?? string.Empty, Placeholder = MixedPlaceholder(row) };
         entry.TextChanged += (s, e) => {
@@ -22,10 +20,10 @@ internal sealed class UniqueIDRenderer : BaseRenderer,IPropertyRenderer {
                 entry.TextColor = ErrorColor;
             }
         };
-        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, AddBorder(entry));
     }
-    
+
     private bool IsIDValid(string value, IEntity entity) {
         var isValid = true;
         if (entity is IEntityGeneratingID entityIDs) {

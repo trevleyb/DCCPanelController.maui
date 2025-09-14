@@ -27,7 +27,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                     var newState = turnout.State switch {
                         TurnoutStateEnum.Closed => action.WhenOn,
                         TurnoutStateEnum.Thrown => action.WhenOff,
-                        _                       => ButtonStateEnum.Unknown
+                        _                       => ButtonStateEnum.Unknown,
                     };
                     actionButton.SetState(newState, StateChangeSource.Internal, context);
                 }
@@ -38,7 +38,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
                     var newState = turnout.State switch {
                         TurnoutStateEnum.Closed => action.WhenClosed,
                         TurnoutStateEnum.Thrown => action.WhenThrown,
-                        _                       => TurnoutStateEnum.Unknown
+                        _                       => TurnoutStateEnum.Unknown,
                     };
                     actionTurnout.SetState(newState, StateChangeSource.Internal, context);
                     if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
@@ -53,7 +53,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
 }
 
 public partial class TurnoutAction : ObservableObject {
-    [ObservableProperty] private string _id = string.Empty;
+    [ObservableProperty] private string           _id         = string.Empty;
     [ObservableProperty] private TurnoutStateEnum _whenClosed = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _whenThrown = TurnoutStateEnum.Unknown;
 

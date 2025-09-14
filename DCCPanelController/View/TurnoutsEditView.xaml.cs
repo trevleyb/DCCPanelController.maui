@@ -5,7 +5,7 @@ namespace DCCPanelController.View;
 
 public partial class TurnoutsEditView : ContentView {
     private readonly ILogger<TurnoutsEditView> _logger;
-    private readonly TurnoutsEditViewModel _viewModel;
+    private readonly TurnoutsEditViewModel     _viewModel;
 
     public TurnoutsEditView(ILogger<TurnoutsEditView> logger, TurnoutsEditViewModel viewModel) {
         InitializeComponent();

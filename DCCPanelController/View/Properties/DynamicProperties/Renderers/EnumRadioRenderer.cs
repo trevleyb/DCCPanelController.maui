@@ -4,7 +4,7 @@ using Microsoft.Maui.Layouts;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
-internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
+internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
     public bool CanRender(PropertyContext ctx) {
         var t = ctx.Row.Field.Accessor.PropertyType;
         var u = Nullable.GetUnderlyingType(t) ?? t;
@@ -19,6 +19,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
 
         var items = BuildEnumItems(enumType, allowNull);
         var groupName = $"{row.Field.DeclaringType.Name}.{row.Field.Prop.Name}.{Guid.NewGuid():N}";
+
         //var stack = new HorizontalStackLayout() { Spacing = 4 };
         var stack = new FlexLayout {
             AlignContent = FlexAlignContent.Start,
@@ -34,12 +35,12 @@ internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
                 FontSize = FieldFontSize,
                 GroupName = groupName,
                 Margin = new Thickness(0, 0, 10, 0),
-                IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode),
+                IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode,
                 IsChecked = row is { HasMixedValues: false, OriginalValue: { } } && Equals(it.Value, row.OriginalValue), // nothing selected when mixed until the user chooses
             };
 
             rb.CheckedChanged += (_, e) => {
-                if (e.Value == true) SetValue(row, it.Value);
+                if (e.Value) SetValue(row, it.Value);
             };
             stack.Add(rb);
         }
@@ -49,7 +50,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer,IPropertyRenderer {
             Orientation = ScrollOrientation.Horizontal,
             HorizontalOptions = LayoutOptions.Fill,
             Content = stack,
-            Margin=new Thickness(0, 0, 0, 0)
+            Margin = new Thickness(0, 0, 0, 0),
         };
 
         // Wrap with your standard label/description/error grid

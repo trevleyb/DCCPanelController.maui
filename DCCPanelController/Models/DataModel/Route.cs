@@ -5,14 +5,11 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Route : ObservableObject {
-    [ObservableProperty] private string? _id;
-    [ObservableProperty] private string? _name;
-    [ObservableProperty] private bool _isEditable;
-    [ObservableProperty] private bool _isModified;
+    [ObservableProperty] private string?        _id;
+    [ObservableProperty] private bool           _isEditable;
+    [ObservableProperty] private bool           _isModified;
+    [ObservableProperty] private string?        _name;
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
-
-    [JsonIgnore]
-    public string DisplayFormat => $"{Name} ({Id})";
 
     /// <summary>
     ///     Represents a Turnout with its current state.
@@ -20,4 +17,6 @@ public partial class Route : ObservableObject {
     /// </summary>
     public Route() { }
 
+    [JsonIgnore]
+    public string DisplayFormat => $"{Name} ({Id})";
 }

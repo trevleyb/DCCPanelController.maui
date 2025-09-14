@@ -15,10 +15,10 @@ namespace DCCPanelController.View;
 
 public partial class PanelEditor : ContentPage {
     private readonly TaskCompletionSource<bool> _closeTcs = new();
-    private readonly ILogger<PanelEditor> _logger;
-    private readonly PanelEditorViewModel _viewModel;
+    private readonly ILogger<PanelEditor>       _logger;
+    private readonly PanelEditorViewModel       _viewModel;
 
-    private TileSelectorDockSide? _currentState = null;
+    private TileSelectorDockSide? _currentState;
 
     public PanelEditor(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService) {
         _logger = logger;
@@ -29,7 +29,7 @@ public partial class PanelEditor : ContentPage {
 
         _viewModel = new PanelEditorViewModel(_logger, panel, profileService, this, PanelView, PanelEditorContainer) {
             GridVisible = true,
-            EditMode = EditModeEnum.Move
+            EditMode = EditModeEnum.Move,
         };
 
         PanelView.TileSelected += PanelViewOnTileSelected;
@@ -47,10 +47,10 @@ public partial class PanelEditor : ContentPage {
     }
 
     public Task<bool> PageClosed => _closeTcs.Task;
-    
+
     protected override void OnSizeAllocated(double width, double height) {
         base.OnSizeAllocated(width, height);
-        if (width <= 0 || height <= 0) return; 
+        if (width <= 0 || height <= 0) return;
         UpdateScreenDimensions(width, height);
     }
 
@@ -68,7 +68,7 @@ public partial class PanelEditor : ContentPage {
         base.OnNavigatedFrom(args);
         AppStateService.Instance.IsEditingPanel = false;
 
-        if (_viewModel.ExitViaBackButton == false) {
+        if (!_viewModel.ExitViaBackButton) {
             Console.WriteLine("WARNING! Exiting Editor NOT via Back Button. No SAVE");
         }
 
@@ -79,26 +79,23 @@ public partial class PanelEditor : ContentPage {
         _closeTcs.TrySetResult(true); // or return data as needed
     }
 
-
     #region Manage the showing and hiding of the Palettes
-    private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) {
-        SetDockedSide(e);
-    }
+    private void PaletteDockSideChanged(object? sender, TileSelectorDockSide e) => SetDockedSide(e);
 
     private TileSelectorDockSide SetDockedSide(TileSelectorDockSide side) {
         switch (side) {
-        case TileSelectorDockSide.Side:
-            BottomPaletteContainer.HeightRequest = 0;
-            SidePaletteContainer.WidthRequest = 100;
+            case TileSelectorDockSide.Side:
+                BottomPaletteContainer.HeightRequest = 0;
+                SidePaletteContainer.WidthRequest = 100;
             break;
 
-        case TileSelectorDockSide.Bottom:
-            BottomPaletteContainer.HeightRequest = 120;
-            SidePaletteContainer.WidthRequest = 0;
+            case TileSelectorDockSide.Bottom:
+                BottomPaletteContainer.HeightRequest = 120;
+                SidePaletteContainer.WidthRequest = 0;
             break;
 
-        default:
-            throw new ArgumentOutOfRangeException(nameof(side), side, null);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(side), side, null);
         }
         return side;
     }
@@ -136,9 +133,7 @@ public partial class PanelEditor : ContentPage {
         PanelViewOnTileSelected([]);
     }
 
-    private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) {
-        PanelViewOnTileSelected(e.Tiles);
-    }
+    private void PanelViewOnTileSelected(object? sender, TileSelectedEventArgs e) => PanelViewOnTileSelected(e.Tiles);
 
     private void PanelViewOnTileSelected(HashSet<ITile> tiles) {
         _viewModel.SelectedTiles = tiles.ToObservableCollection();
@@ -146,24 +141,27 @@ public partial class PanelEditor : ContentPage {
         var editIcon = _viewModel.SelectedTiles.Count == 0 ? "settings" : "edit";
         ToolbarIconHelper.BindIcon(EditToolbar, nameof(_viewModel.CanEditProperties), editIcon);
         if (AppStateService.Instance.SelectedTile is { } selectedTile) {
-            SelectionText.Text = $"Place Tile: {selectedTile.Entity.EntityName}"; 
+            SelectionText.Text = $"Place Tile: {selectedTile.Entity.EntityName}";
         } else {
             switch (_viewModel.SelectedTiles.Count) {
                 case 0:
                     SelectionText.Text = "No tiles selected";
-                    break;
+                break;
+
                 case 1:
                     SelectionText.Text = $"Selected Tile: {_viewModel.SelectedTiles[0].Entity.EntityName}";
                     if (_viewModel.SelectedTiles[0].Entity is IEntityID entityID) {
                         SelectionText.Text += $" ({entityID.Id})";
                     }
-                    break;
-                case > 1:
+                break;
+
+                case> 1:
                     SelectionText.Text = $"Multiple Selected Tiles ({_viewModel.SelectedTiles.Count})";
-                    break;
+                break;
+
                 default:
                     SelectionText.Text = SelectionText.Text;
-                    break;
+                break;
             }
         }
 
@@ -172,33 +170,30 @@ public partial class PanelEditor : ContentPage {
         _viewModel.CheckIfPanelChanged();
     }
 
-    private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) {
-        _viewModel.CheckIfPanelChanged();
-    }
+    private void PanelViewOnTileChanged(object? sender, TileSelectedEventArgs e) => _viewModel.CheckIfPanelChanged();
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
-        case nameof(PanelEditorViewModel.HavePropertiesChanged):
+            case nameof(PanelEditorViewModel.HavePropertiesChanged):
             break;
 
-        case nameof(PanelEditorViewModel.GridVisible):
-            PanelView.ShowGrid = _viewModel.GridVisible;
-            var gridIcon = _viewModel.GridVisible ? "grid_on" : "grid_off";
-            ToolbarIconHelper.BindIcon(GridToolbar, nameof(_viewModel.CanToggleGrid), gridIcon);
+            case nameof(PanelEditorViewModel.GridVisible):
+                PanelView.ShowGrid = _viewModel.GridVisible;
+                var gridIcon = _viewModel.GridVisible ? "grid_on" : "grid_off";
+                ToolbarIconHelper.BindIcon(GridToolbar, nameof(_viewModel.CanToggleGrid), gridIcon);
             break;
 
-        case nameof(PanelEditorViewModel.EditMode):
-            PanelView.EditMode = _viewModel.EditMode;
-            var editIcon = _viewModel.EditMode switch {
-                EditModeEnum.Move => "move",
-                EditModeEnum.Copy => "copy",
-                EditModeEnum.Size => "crop",
-                _                 => "move"
-            };
-            ToolbarIconHelper.BindIcon(ModeToolbar, nameof(_viewModel.CanSetModes), editIcon);
+            case nameof(PanelEditorViewModel.EditMode):
+                PanelView.EditMode = _viewModel.EditMode;
+                var editIcon = _viewModel.EditMode switch {
+                    EditModeEnum.Move => "move",
+                    EditModeEnum.Copy => "copy",
+                    EditModeEnum.Size => "crop",
+                    _                 => "move",
+                };
+                ToolbarIconHelper.BindIcon(ModeToolbar, nameof(_viewModel.CanSetModes), editIcon);
             break;
         }
     }
-
     #endregion
 }

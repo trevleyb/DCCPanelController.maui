@@ -11,18 +11,14 @@ public class EntityConnections {
     /// <summary>
     ///     Creates entity connections with 8-way rotation capability
     /// </summary>
-    public EntityConnections(string connectionPattern, int rotations = 8) {
-        _baseConnections = ParseConnectionPattern(connectionPattern);
-    }
+    public EntityConnections(string connectionPattern, int rotations = 8) => _baseConnections = ParseConnectionPattern(connectionPattern);
 
     /// <summary>
     ///     Gets the step size for rotation (45° for 8-way rotation)
     /// </summary>
     public int RotationStepSize => 45;
 
-    public string GetRotatedConnectionsStr(int rotation) {
-        return ConvertDirectionsToString(GetConnections(rotation));
-    }
+    public string GetRotatedConnectionsStr(int rotation) => ConvertDirectionsToString(GetConnections(rotation));
 
     /// <summary>
     ///     Gets the connections for the entity at its current rotation
@@ -33,7 +29,7 @@ public class EntityConnections {
         var normalizedRotation = NormalizeRotation(rotation);
         var rotationIndex = CalculateRotationIndex(normalizedRotation);
 
-        if (rotationIndex == 0) return (ConnectionType[])_baseConnections.Clone();
+        if (rotationIndex == 0) return(ConnectionType[])_baseConnections.Clone();
         return RotateConnections(_baseConnections, rotationIndex);
     }
 
@@ -45,7 +41,7 @@ public class EntityConnections {
     /// <returns>Connection type for that direction</returns>
     public ConnectionType GetConnection(int direction, int rotation) {
         var connections = GetConnections(rotation);
-        return direction is >= 0 and < MaxDirections ? connections[direction] : ConnectionType.None;
+        return direction is>= 0 and< MaxDirections ? connections[direction] : ConnectionType.None;
     }
 
     /// <summary>
@@ -96,7 +92,7 @@ public class EntityConnections {
                 'd' => ConnectionType.Diverging,
                 'c' => ConnectionType.Connector,
                 'x' => ConnectionType.Closed,
-                _   => ConnectionType.None
+                _   => ConnectionType.None,
             };
         }
 
@@ -123,23 +119,19 @@ public class EntityConnections {
         return rotated;
     }
 
-    public override string ToString() {
-        return ConvertDirectionsToString(_baseConnections);
-    }
+    public override string ToString() => ConvertDirectionsToString(_baseConnections);
 
-    public static (int dx, int dy) GetDirectionOffset(int direction) {
-        return direction switch {
-            0 => (0, -1),  // N
-            1 => (1, -1),  // NE
-            2 => (1, 0),   // E
-            3 => (1, 1),   // SE
-            4 => (0, 1),   // S
-            5 => (-1, 1),  // SW
-            6 => (-1, 0),  // W
-            7 => (-1, -1), // NW
-            _ => (0, 0)
-        };
-    }
+    public static (int dx, int dy) GetDirectionOffset(int direction) => direction switch {
+        0 => (0, -1),  // N
+        1 => (1, -1),  // NE
+        2 => (1, 0),   // E
+        3 => (1, 1),   // SE
+        4 => (0, 1),   // S
+        5 => (-1, 1),  // SW
+        6 => (-1, 0),  // W
+        7 => (-1, -1), // NW
+        _ => (0, 0),
+    };
 
     public string ConvertDirectionsToString(ConnectionType[] connections) {
         var result = string.Empty;
@@ -150,7 +142,7 @@ public class EntityConnections {
                 ConnectionType.Diverging  => "D",
                 ConnectionType.Connector  => "C",
                 ConnectionType.Closed     => "X",
-                _                         => "*"
+                _                         => "*",
             };
         }
         return result;
@@ -178,5 +170,5 @@ public enum ConnectionType {
     Straight,
     Closed,
     Diverging,
-    Connector
+    Connector,
 }

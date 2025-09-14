@@ -1,7 +1,6 @@
 using System.Collections;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
@@ -40,7 +39,7 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         if (name.EndsWith("Route", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Route;
         if (name.EndsWith("Light", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Light;
         if (name.EndsWith("Turnout", StringComparison.Ordinal) || t == typeof(Uri)) return EditorKinds.Turnout;
-        
+
         // 4) type mapping
         // -----------------------------------------------------------------------------
         if (t == typeof(bool)) return EditorKinds.Toggle;
@@ -52,11 +51,11 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         if (t.IsEnum) {
             return Enum.GetNames(t).Length > 3 || isSmallScreen ? EditorKinds.EnumChoice : EditorKinds.EnumRadio;
         }
-        
+
         if (t == typeof(int) || t == typeof(long)) return EditorKinds.Int;
         if (t == typeof(float) || t == typeof(double) || t == typeof(decimal)) return EditorKinds.Number;
         if (t == typeof(string)) {
-            var format = meta.GetParameters<string>("format", null);
+            var format = meta.GetParameters<string>("format");
             if (string.Equals(format, "multiline", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Multiline;
             if (string.Equals(format, "password", StringComparison.OrdinalIgnoreCase)) return EditorKinds.Password;
             if (meta.Parameters.ContainsKey("choices")) return EditorKinds.Choice;
@@ -76,24 +75,24 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
     }
 
     private static bool TryFromParams(EditableAttribute meta, out string kind) {
-        var fmt = meta.GetParameters<string>("format", null);
+        var fmt = meta.GetParameters<string>("format");
         if (!string.IsNullOrWhiteSpace(fmt)) {
             switch (fmt!.ToLowerInvariant()) {
-            case "multiline":
-                kind = EditorKinds.Multiline;
-                return true;
+                case"multiline":
+                    kind = EditorKinds.Multiline;
+                    return true;
 
-            case "password":
-                kind = EditorKinds.Password;
-                return true;
+                case"password":
+                    kind = EditorKinds.Password;
+                    return true;
 
-            case "color":
-                kind = EditorKinds.Color;
-                return true;
+                case"color":
+                    kind = EditorKinds.Color;
+                    return true;
             }
         }
 
-        var paramKind = meta.GetParameters<string>("editorKind", null);
+        var paramKind = meta.GetParameters<string>("editorKind");
         if (!string.IsNullOrWhiteSpace(paramKind)) {
             kind = paramKind!;
             return true;

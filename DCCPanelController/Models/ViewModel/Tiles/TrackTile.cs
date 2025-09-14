@@ -28,22 +28,16 @@ public abstract class TrackTile : Tile, ITileTrack {
 
     public SvgImage? SvgImage { get; protected set; }
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
-        return CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor);
-    }
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) => CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor);
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale) {
-        return CreateTrackTileAsCanvas(trackName, trackRotation, scale);
-    }
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, float scale) => CreateTrackTileAsCanvas(trackName, trackRotation, scale);
 
-    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) {
-        return CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor, addStyle);
-    }
+    protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation, SvgStyle addStyle) => CreateTrackTileAsCanvas(trackName, trackRotation, DefaultScaleFactor, addStyle);
 
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
-        if (addStyle is not null) style.AddExisting(addStyle); //SvgImage.ApplyStyle(addStyle);
+        if (addStyle is { }) style.AddExisting(addStyle); //SvgImage.ApplyStyle(addStyle);
         SvgImage.ApplyStyle(style.Build());
 
         var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);
@@ -78,28 +72,28 @@ public abstract class TrackTile : Tile, ITileTrack {
         var style = new SvgStyleBuilder();
         if (Entity is TrackEntity trackEntity) {
             switch (trackEntity.TrackType) {
-            case TrackTypeEnum.BranchLine:
-                style.Add(e => e.WithName(SvgElementType.Border).Hidden())
-                     .Add(e => e.WithName(SvgElementType.BorderDiverging).Hidden())
-                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.BranchLineColor ?? Colors.Gray).Visible());
+                case TrackTypeEnum.BranchLine:
+                    style.Add(e => e.WithName(SvgElementType.Border).Hidden())
+                         .Add(e => e.WithName(SvgElementType.BorderDiverging).Hidden())
+                         .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.BranchLineColor ?? Colors.Gray).Visible());
                 break;
 
-            case TrackTypeEnum.MainLine:
-            default:
-                style.Add(e => e.WithName(SvgElementType.Border).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.MainlineBorderColor ?? Colors.Black).Visible())
-                     .Add(e => e.WithName(SvgElementType.BorderDiverging).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.MainlineBorderColor ?? Colors.Black).Visible())
-                     .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible());
+                case TrackTypeEnum.MainLine:
+                default:
+                    style.Add(e => e.WithName(SvgElementType.Border).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.MainlineBorderColor ?? Colors.Black).Visible())
+                         .Add(e => e.WithName(SvgElementType.BorderDiverging).WithColor(trackEntity.TrackBorderColor ?? Entity.Parent?.MainlineBorderColor ?? Colors.Black).Visible())
+                         .Add(e => e.WithName(SvgElementType.Track).WithColor(trackEntity.TrackColor ?? Entity.Parent?.MainLineColor ?? Colors.Black).Visible());
                 break;
             }
 
             switch (trackEntity.TrackAttribute) {
-            case TrackAttributeEnum.Dashed:
-                style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
+                case TrackAttributeEnum.Dashed:
+                    style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
                 break;
 
-            case TrackAttributeEnum.Normal:
-            default:
-                style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
+                case TrackAttributeEnum.Normal:
+                default:
+                    style.Add(e => e.WithName(SvgElementType.Dashline).Hidden());
                 break;
             }
 

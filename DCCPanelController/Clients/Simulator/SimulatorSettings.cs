@@ -10,5 +10,5 @@ public class SimulatorSettings : ObservableObject, IDccClientSettings {
     [JsonIgnore] public bool SetAutomatically => true;
     [JsonIgnore] public bool SupportsManualEntries => true;
     [JsonIgnore] public List<DccClientCapability> Capabilities => SimulatorProxy.Capabilities;
-    [JsonIgnore]public bool HasValidSettings => true;
+    [JsonIgnore] public bool HasValidSettings => true;
 }

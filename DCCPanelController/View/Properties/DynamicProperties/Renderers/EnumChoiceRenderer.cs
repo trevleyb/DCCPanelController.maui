@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
-internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
-    
+internal sealed class EnumChoiceRenderer : BaseRenderer, IPropertyRenderer {
     protected override int FieldWidth => 250;
+
     public bool CanRender(PropertyContext ctx) {
         var t = ctx.Row.Field.Accessor.PropertyType;
         var u = Nullable.GetUnderlyingType(t) ?? t;
@@ -27,12 +27,12 @@ internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
             WidthRequest = GetFieldWidth(ctx),
             HorizontalOptions = LayoutOptions.Start,
             VerticalOptions = LayoutOptions.Center,
-            Margin = new Thickness(5, 0, 5, 0)
+            Margin = new Thickness(5, 0, 5, 0),
         };
         foreach (var it in items) picker.Items.Add(it.Text);
 
         // Initial selection (only if not mixed and value present)
-        if (!row.HasMixedValues && row.OriginalValue is not null) {
+        if (!row.HasMixedValues && row.OriginalValue is { }) {
             var idx = items.FindIndex(it => Equals(it.Value, row.OriginalValue));
             if (idx >= 0) picker.SelectedIndex = idx;
         }
@@ -43,7 +43,7 @@ internal sealed class EnumChoiceRenderer : BaseRenderer,IPropertyRenderer {
             SetValue(row, selected);
         };
 
-        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
+        picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
 
         // wrap with your standard label/description/error grid
         return WrapWithLabel(ctx, AddBorder(picker));

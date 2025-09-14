@@ -12,19 +12,19 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class BlocksViewModel : ConnectionViewModel {
-    private const string _labelID = "ID";
-    private const string _labelName = "Block";
+    private const string _labelID    = "ID";
+    private const string _labelName  = "Block";
     private const string _labelState = "Occupied?";
 
     private readonly ProfileService _profileService;
 
     [ObservableProperty] private ObservableCollection<Block> _blocks;
-    [ObservableProperty] private string _columnLabelID = _labelID;
-    [ObservableProperty] private string _columnLabelName = _labelName;
-    [ObservableProperty] private string _columnLabelState = _labelState;
-    private bool _isAscending;
-    private ILogger<BlocksViewModel> _logger;
-    private string _sortColumn = "";
+    [ObservableProperty] private string                      _columnLabelID    = _labelID;
+    [ObservableProperty] private string                      _columnLabelName  = _labelName;
+    [ObservableProperty] private string                      _columnLabelState = _labelState;
+    private                      bool                        _isAscending;
+    private                      ILogger<BlocksViewModel>    _logger;
+    private                      string                      _sortColumn = "";
 
     public BlocksViewModel(ILogger<BlocksViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -54,14 +54,14 @@ public partial class BlocksViewModel : ConnectionViewModel {
                 _labelName  => Blocks.OrderBy<Block, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Blocks.OrderBy<Block, string>(x => x.Id ?? "").ToList(),
                 _labelState => Blocks.OrderBy<Block, bool>(x => x.IsOccupied).ToList(),
-                _           => Blocks.ToList<Block>()
+                _           => Blocks.ToList<Block>(),
             };
         } else {
             sortedBlocks = columnName switch {
                 _labelName  => Blocks.OrderByDescending<Block, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Blocks.OrderByDescending<Block, string>(x => x.Id ?? "").ToList(),
                 _labelState => Blocks.OrderByDescending<Block, bool>(x => x.IsOccupied).ToList(),
-                _           => Blocks.ToList<Block>()
+                _           => Blocks.ToList<Block>(),
             };
         }
 

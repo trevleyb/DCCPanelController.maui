@@ -11,14 +11,14 @@ namespace DCCPanelController.Models.DataModel;
 /// </summary>
 [DebuggerDisplay("UniqueId: {Id}, SystemName: {Name}, State: {State}")]
 public partial class Turnout : ObservableObject {
-    [ObservableProperty] private string? _id;
-    [ObservableProperty] private string? _name;
-    [ObservableProperty] private int _dccAddress;
-    [ObservableProperty] private bool _isEditable;
-    [ObservableProperty] private bool _isModified;
+    [ObservableProperty] private int              _dccAddress;
     [ObservableProperty] private TurnoutStateEnum _default = TurnoutStateEnum.Unknown;
+    [ObservableProperty] private string?          _id;
+    [ObservableProperty] private bool             _isEditable;
+    [ObservableProperty] private bool             _isModified;
+    [ObservableProperty] private string?          _name;
     [ObservableProperty] private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
-    
+
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
 }

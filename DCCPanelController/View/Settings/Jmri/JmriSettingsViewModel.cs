@@ -70,12 +70,8 @@ public partial class JmriSettingsViewModel : SettingsViewModel {
         }
     }
 
-    private async Task InitializeAsync() {
-        await OnRefreshServersClickedAsync();
-    }
+    private async Task InitializeAsync() => await OnRefreshServersClickedAsync();
 
     [RelayCommand]
-    private async Task OnDefaultDeviceNameClickedAsync() {
-        JmriSettings.Name = DeviceInfo.Name;
-    }
+    private async Task OnDefaultDeviceNameClickedAsync() => JmriSettings.Name = DeviceInfo.Name;
 }

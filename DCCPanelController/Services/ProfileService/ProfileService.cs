@@ -6,8 +6,8 @@ using DCCPanelController.Models.DataModel.Repository;
 namespace DCCPanelController.Services.ProfileService;
 
 public class ProfileService {
-    private readonly SemaphoreSlim _gate = new(1, 1);
-    private ProfileCatalog? _catalog;
+    private readonly SemaphoreSlim   _gate = new(1, 1);
+    private          ProfileCatalog? _catalog;
 
     public Profile? ActiveProfile { get; private set; }
 
@@ -17,13 +17,13 @@ public class ProfileService {
 
         _catalog = ProfileCatalog.Load();
         if (_catalog is null) throw new ApplicationException("Failed to load profile catalog.");
-        
+
         var activeFile = _catalog.ActiveFileName;
         ActiveProfile = string.IsNullOrWhiteSpace(activeFile)
-            ? await CreateAsync("Default", setActive: true)
+            ? await CreateAsync("Default")
             : await LoadAsync(activeFile);
-        
-        ActiveProfile ??= await CreateAsync("Default", setActive: true);
+
+        ActiveProfile ??= await CreateAsync("Default");
 
         Console.WriteLine("Profiles Loaded");
         ActiveProfileChanged?.Invoke(this, new ProfileChangedEventArgs(null, ActiveProfile));
@@ -40,15 +40,17 @@ public class ProfileService {
     #region Queries
     public IReadOnlyList<string> GetProfileNames() => _catalog?.Profiles.Select(p => p.ProfileName).ToList() ?? [];
     public IReadOnlyList<string> GetProfileFileNames() => _catalog?.Profiles.Select(p => p.FileName).ToList() ?? [];
+
     public IReadOnlyList<string> GetProfileNamesWithDefault() {
         ArgumentNullException.ThrowIfNull(_catalog);
         var active = ActiveProfile?.Filename;
         return _catalog.Profiles.Select(p => {
-            var name = p.ProfileName;
-            if (p.IsDefault) name += " (default)";
-            if (!string.IsNullOrWhiteSpace(active) && p.FileName == active) name += " (active)";
-            return name;
-        }).ToList();
+                            var name = p.ProfileName;
+                            if (p.IsDefault) name += " (default)";
+                            if (!string.IsNullOrWhiteSpace(active) && p.FileName == active) name += " (active)";
+                            return name;
+                        })
+                       .ToList();
     }
 
     public int NumberOfProfiles => _catalog?.Profiles.Count ?? 0;
@@ -80,7 +82,7 @@ public class ProfileService {
         ActiveProfile = profile;
     }
     #endregion
-    
+
     #region Upload / Download (JSON & ZIP)
     public string DownloadProfile(Profile? profile = null) {
         var p = profile ?? ActiveProfile ?? throw new ApplicationException("No active profile to download.");
@@ -136,26 +138,28 @@ public class ProfileService {
             var uploaded = await JsonRepository.UploadProfile(json);
             if (uploaded is null) return null;
 
-            if (!string.IsNullOrWhiteSpace(displayName))
+            if (!string.IsNullOrWhiteSpace(displayName)) {
                 uploaded.ProfileName = displayName;
+            }
 
-            if (string.IsNullOrWhiteSpace(uploaded.ProfileName))
+            if (string.IsNullOrWhiteSpace(uploaded.ProfileName)) {
                 uploaded.ProfileName = _catalog.GetUniqueProfileName("Profile");
+            }
 
-            if (string.IsNullOrWhiteSpace(uploaded.Filename))
+            if (string.IsNullOrWhiteSpace(uploaded.Filename)) {
                 uploaded.Filename = $"DCCPanelController.{Guid.NewGuid()}.json";
+            }
 
             await JsonRepository.SaveAsync(uploaded);
             _catalog.Upsert(uploaded);
 
             if (setActive) {
-                SetActive(uploaded, markAsDefault: true);
+                SetActive(uploaded, true);
             } else {
                 RaiseDataChanged(ProfileDataChangeType.ProfileSaved, uploaded);
             }
             return uploaded;
-        }
-        finally {
+        } finally {
             _gate.Release();
         }
     }
@@ -165,8 +169,7 @@ public class ProfileService {
         return await UploadProfileAsync(bytes, setActive, displayName);
     }
 
-    private static bool IsZip(byte[] data)
-        => data.Length > 3 && data[0] == 0x50 && data[1] == 0x4B && (data[2] == 0x03 || data[2] == 0x05 || data[2] == 0x07);
+    private static bool IsZip(byte[] data) => data.Length > 3 && data[0] == 0x50 && data[1] == 0x4B && (data[2] == 0x03 || data[2] == 0x05 || data[2] == 0x07);
 
     private static string ExtractJsonFromZipBytes(byte[] zipBytes) {
         using var mem = new MemoryStream(zipBytes);
@@ -187,7 +190,7 @@ public class ProfileService {
         if (markAsDefault) _catalog.SetDefault(profile.Filename);
         RaiseActiveProfileChanged(old, profile);
     }
-    
+
     public async Task<Profile> CreateAsync(string? profileName = null, bool setActive = true) {
         ArgumentNullException.ThrowIfNull(_catalog);
         await _gate.WaitAsync();
@@ -198,10 +201,9 @@ public class ProfileService {
             await JsonRepository.SaveAsync(profile);
             _catalog.Upsert(profile);
 
-            if (setActive) SetActive(profile, markAsDefault: true);
+            if (setActive) SetActive(profile, true);
             return profile;
-        }
-        finally {
+        } finally {
             _gate.Release();
         }
     }
@@ -219,12 +221,11 @@ public class ProfileService {
                     var loaded = await JsonRepository.LoadAsync(next.FileName);
                     if (loaded != null) SetActive(loaded, true);
                 } else {
-                    var created = await CreateAsync("Default", setActive: true);
+                    var created = await CreateAsync("Default");
                     SetActive(created, true);
                 }
             }
-        }
-        finally {
+        } finally {
             _gate.Release();
         }
     }
@@ -233,7 +234,7 @@ public class ProfileService {
         ArgumentNullException.ThrowIfNull(_catalog);
         await JsonRepository.SaveAsync(profile);
         _catalog.Upsert(profile);
-        RaiseDataChanged(ProfileDataChangeType.ProfileSaved, profile, null);
+        RaiseDataChanged(ProfileDataChangeType.ProfileSaved, profile);
     }
 
     public async Task SaveAsync() {
@@ -241,19 +242,19 @@ public class ProfileService {
         if (ActiveProfile is null) return;
         await SaveAsync(ActiveProfile);
     }
-    
+
     public async Task<Profile> LoadAsync(string fileName, bool markAsDefault = false) {
         if (string.IsNullOrWhiteSpace(fileName)) throw new ArgumentException("Filename is required.", nameof(fileName));
         var profile = await JsonRepository.LoadAsync(fileName);
         if (profile is null) {
             _catalog?.Delete(fileName);
-            profile = await CreateAsync(fileName, setActive: false);
+            profile = await CreateAsync(fileName, false);
             if (profile is null) throw new ApplicationException($"Failed to load profile: {fileName}");
         }
         SetActive(profile, markAsDefault);
         return profile;
     }
-    
+
     public Task<Profile> LoadAsync(ProfileRef item, bool markAsDefault = false) => LoadAsync(item.FileName, markAsDefault);
     #endregion
 }

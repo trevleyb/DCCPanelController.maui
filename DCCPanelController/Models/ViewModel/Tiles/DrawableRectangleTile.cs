@@ -37,7 +37,5 @@ public class DrawableRectangleTile : Tile, ITileDrawable {
         return CreateSymbol();
     }
 
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("rectangle").AsImage();
-    }
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("rectangle").AsImage();
 }

@@ -1,5 +1,4 @@
 using System.Reflection;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.ViewModel.StyleManager;
 
 namespace DCCPanelController.Models.ViewModel.ImageManager;
@@ -19,31 +18,31 @@ public static class SvgImages {
     private static void BuildAvailableImages() {
         AddImage("Unknown", "Track_Unknown");
 
-        AddImage("Text",        "draw_Text");
-        AddImage("Label",       "draw_Label");
-        AddImage("Image",       "draw_Image");
-        AddImage("Circle",      "draw_circle");
-        AddImage("Rectangle",   "draw_rectangle");
-        AddImage("Line",        "draw_line");
+        AddImage("Text", "draw_Text");
+        AddImage("Label", "draw_Label");
+        AddImage("Image", "draw_Image");
+        AddImage("Circle", "draw_circle");
+        AddImage("Rectangle", "draw_rectangle");
+        AddImage("Line", "draw_line");
 
-        AddImage("Button",      "button_push", "button_push_corner");
+        AddImage("Button", "button_push", "button_push_corner");
         AddImage("ButtonLarge", "button_push_large");
 
-        AddImage("Route",       "button_route");
-        AddImage("RouteLarge",  "button_route_large");
+        AddImage("Route", "button_route");
+        AddImage("RouteLarge", "button_route_large");
 
-        AddImage("Turnout",     "button_turnout");
-        AddImage("TurnoutLarge","button_turnout_large");
+        AddImage("Turnout", "button_turnout");
+        AddImage("TurnoutLarge", "button_turnout_large");
 
-        AddImage("Light",       "button_light");
-        AddImage("LightLarge",  "button_light_large");
+        AddImage("Light", "button_light");
+        AddImage("LightLarge", "button_light_large");
 
-        AddImage("Switch",      "switch_on");
-        AddImage("SwitchOn",    "switch_on");
-        AddImage("SwitchOff",   "switch_off");
+        AddImage("Switch", "switch_on");
+        AddImage("SwitchOn", "switch_on");
+        AddImage("SwitchOff", "switch_off");
 
-        AddImage("Compass",     "Track_Compass");
-        AddImage("Points",      "Track_Points");
+        AddImage("Compass", "Track_Compass");
+        AddImage("Points", "Track_Points");
 
         AddImage("Straight", "Track_Straight", "Track_Angle");
         AddImage("Platform", "Track_Straight_Platform", "Track_Angle_Platform");
@@ -93,9 +92,7 @@ public static class SvgImages {
         throw new SvgImageException($"***** Image '{name}' not found");
     }
 
-    private static void AddImage(string name, string filename) {
-        AddImage(name, filename, filename);
-    }
+    private static void AddImage(string name, string filename) => AddImage(name, filename, filename);
 
     private static void AddImage(string name, string filenameStraight, string filenameDiagonal) {
         if (Images.ContainsKey(name.ToLowerInvariant())) return;

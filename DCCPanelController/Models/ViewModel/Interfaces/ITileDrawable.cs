@@ -1,5 +1,3 @@
 namespace DCCPanelController.Models.ViewModel.Interfaces;
 
-public interface ITileDrawable {
-    
-}
+public interface ITileDrawable { }

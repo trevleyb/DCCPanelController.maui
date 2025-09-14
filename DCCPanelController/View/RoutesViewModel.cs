@@ -13,17 +13,17 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class RoutesViewModel : ConnectionViewModel {
-    private const string _labelID = "ID";
-    private const string _labelName = "User Name";
-    private const string _labelState = "State";
-    private const string _labelAddress = "DCC Address";
+    private const    string         _labelID      = "ID";
+    private const    string         _labelName    = "User Name";
+    private const    string         _labelState   = "State";
+    private const    string         _labelAddress = "DCC Address";
     private readonly ProfileService _profileService;
 
-    [ObservableProperty] private string _columnLabelID = _labelID;
-    [ObservableProperty] private string _columnLabelName = _labelName;
-    [ObservableProperty] private string _columnLabelState = _labelState;
-    private bool _isAscending;
-    private ILogger<RoutesViewModel> _logger;
+    [ObservableProperty] private string                      _columnLabelID    = _labelID;
+    [ObservableProperty] private string                      _columnLabelName  = _labelName;
+    [ObservableProperty] private string                      _columnLabelState = _labelState;
+    private                      bool                        _isAscending;
+    private                      ILogger<RoutesViewModel>    _logger;
     [ObservableProperty] private ObservableCollection<Route> _routes;
 
     private string _sortColumn = "";
@@ -58,14 +58,14 @@ public partial class RoutesViewModel : ConnectionViewModel {
                 _labelName  => Routes.OrderBy<Route, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Routes.OrderBy<Route, string>(x => x.Id ?? "").ToList(),
                 _labelState => Routes.OrderBy<Route, RouteStateEnum>(x => x.State).ToList(),
-                _           => Routes.ToList<Route>()
+                _           => Routes.ToList<Route>(),
             };
         } else {
             sortedRoutes = columnName.ToLower() switch {
                 _labelName  => Routes.OrderByDescending<Route, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Routes.OrderByDescending<Route, string>(x => x.Id ?? "").ToList(),
                 _labelState => Routes.OrderByDescending<Route, RouteStateEnum>(x => x.State).ToList(),
-                _           => Routes.ToList<Route>()
+                _           => Routes.ToList<Route>(),
             };
         }
 
@@ -101,7 +101,7 @@ public partial class RoutesViewModel : ConnectionViewModel {
         route.State = route.State switch {
             RouteStateEnum.Active   => RouteStateEnum.Inactive,
             RouteStateEnum.Inactive => RouteStateEnum.Active,
-            _                       => RouteStateEnum.Active
+            _                       => RouteStateEnum.Active,
         };
         if (!string.IsNullOrEmpty(route.Id) && IsConnected) {
             if (ConnectionService.Client is { } client) await client.SendRouteCmdAsync(route, true)!;

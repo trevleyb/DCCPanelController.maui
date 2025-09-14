@@ -29,7 +29,5 @@ public class JsonTrackTypeConverter : JsonConverter<Entity> {
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, Entity value, JsonSerializerOptions options) {
-        JsonSerializer.Serialize<object>(writer, value, options);
-    }
+    public override void Write(Utf8JsonWriter writer, Entity value, JsonSerializerOptions options) => JsonSerializer.Serialize<object>(writer, value, options);
 }

@@ -27,7 +27,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             Turnout? entity = null;
             entity ??= Profile?.Turnouts?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Turnouts?.FirstOrDefault(x => x.Name == name) ?? null;
-            if (entity is not null) {
+            if (entity is { }) {
                 entity.State = state;
             } else {
                 entity = new Turnout {
@@ -35,7 +35,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     IsEditable = false,
-                    State = state
+                    State = state,
                 };
                 collection.Add(entity);
             }
@@ -47,13 +47,13 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             Route? entity = null;
             entity ??= Profile?.Routes?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Routes?.FirstOrDefault(x => x.Name == name) ?? null;
-            if (entity is not null) {
+            if (entity is { }) {
                 entity.State = state;
             } else {
                 entity = new Route {
                     Id = id,
                     Name = name,
-                    State = state
+                    State = state,
                 };
                 collection.Add(entity);
             }
@@ -65,14 +65,14 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             Sensor? entity = null;
             entity ??= Profile?.Sensors?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Sensors?.FirstOrDefault(x => x.Name == name) ?? null;
-            if (entity is not null) {
+            if (entity is { }) {
                 entity.State = isOccupied;
             } else {
                 entity = new Sensor {
                     Id = id,
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
-                    State = isOccupied
+                    State = isOccupied,
                 };
                 collection?.Add(entity);
             }
@@ -84,7 +84,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             Block? entity = null;
             entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Blocks?.FirstOrDefault(x => x.Name == name) ?? null;
-            if (entity is not null) {
+            if (entity is { }) {
                 entity.IsOccupied = isOccupied;
                 entity.Sensor = sensor;
             } else {
@@ -92,7 +92,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     Id = id,
                     Name = name,
                     IsOccupied = isOccupied,
-                    Sensor = sensor
+                    Sensor = sensor,
                 };
                 collection.Add(entity);
             }
@@ -104,7 +104,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             Light? entity = null;
             entity ??= Profile?.Lights?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Lights?.FirstOrDefault(x => x.Name == name) ?? null;
-            if (entity is not null) {
+            if (entity is { }) {
                 entity.State = isOccupied;
             } else {
                 entity = new Light {
@@ -112,7 +112,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     IsEditable = false,
-                    State = isOccupied
+                    State = isOccupied,
                 };
                 collection.Add(entity);
             }
@@ -124,7 +124,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
             Signal? entity = null;
             entity ??= Profile?.Signals?.FirstOrDefault(x => x.Id == id) ?? null;
             entity ??= Profile?.Signals?.FirstOrDefault(x => x.Name == name) ?? null;
-            if (entity is not null) {
+            if (entity is { }) {
                 entity.Aspect = aspect.ToString();
             } else {
                 entity = new Signal {
@@ -132,7 +132,7 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
                     Name = name,
                     DccAddress = dccAddress ?? id.FromDccAddressString(),
                     IsEditable = false,
-                    Aspect = aspect.ToString()
+                    Aspect = aspect.ToString(),
                 };
                 collection.Add(entity);
             }
@@ -143,19 +143,11 @@ public abstract partial class DccClientBase(Profile profile) : ObservableObject 
     // status of the connection and a message if that needs to be added to a queue 
     // or to be logged. 
     // ---------------------------------------------------------------------------
-    protected virtual void OnClientMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) {
-        OnClientMessage(new DccClientMessage(message, operation, msgType));
-    }
+    protected virtual void OnClientMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) => OnClientMessage(new DccClientMessage(message, operation, msgType));
 
-    protected virtual void OnClientMessage(DccClientMessage message) {
-        OnClientMessage(new DccClientEvent(Status, message));
-    }
+    protected virtual void OnClientMessage(DccClientMessage message) => OnClientMessage(new DccClientEvent(Status, message));
 
-    protected virtual void OnClientMessage() {
-        ClientMessage?.Invoke(this, new DccClientEvent(Status, null));
-    }
+    protected virtual void OnClientMessage() => ClientMessage?.Invoke(this, new DccClientEvent(Status, null));
 
-    protected virtual void OnClientMessage(DccClientEvent e) {
-        ClientMessage?.Invoke(this, e);
-    }
+    protected virtual void OnClientMessage(DccClientEvent e) => ClientMessage?.Invoke(this, e);
 }

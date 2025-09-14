@@ -9,10 +9,10 @@ using DCCPanelController.Services.ProfileService;
 namespace DCCPanelController.View.Base;
 
 public partial class ConnectionViewModel : BaseViewModel {
-    private ProfileService _profileService;
+    private readonly             ProfileService                         _profileService;
+    [ObservableProperty] private bool                                   _isConnected;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
-    [ObservableProperty] private bool _isConnected = false;
-    
+
     protected ConnectionViewModel(ProfileService profileService, ConnectionService connectionService) {
         _profileService = profileService;
         ConnectionService = connectionService;
@@ -25,19 +25,19 @@ public partial class ConnectionViewModel : BaseViewModel {
         ServerMessages = ConnectionService.ServerMessages;
     }
 
-    private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile),"ConnectionViewModel: Active profile is not defined.");
+    private Profile Profile => _profileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "ConnectionViewModel: Active profile is not defined.");
     public ConnectionService ConnectionService { get; }
     public bool IsConnectionAvailable => Profile?.Settings?.ClientSettings?.HasValidSettings ?? false;
-    
+
     public string IconWifiOn => "wifi_on";
     public string IconWifiOff => "wifi_off";
     public string ConnectionIcon => IsConnected ? IconWifiOn : IconWifiOff;
-    
+
     [RelayCommand]
     protected async Task ToggleConnectionAsync() {
         var result = await ConnectionService.ToggleConnectionAsync();
         if (result.IsFailure) {
-            var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";            
+            var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result.Message) ? "." : $" due to {result.Message}")}";
             await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
         }
     }

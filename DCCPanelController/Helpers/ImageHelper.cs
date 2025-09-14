@@ -10,9 +10,7 @@ public static class ImageHelper {
         return base64Image;
     }
 
-    public static string ImageToBase64(FileResult result) {
-        return ImageToBase64Async(result).Result;
-    }
+    public static string ImageToBase64(FileResult result) => ImageToBase64Async(result).Result;
 
     public static ImageSource? ImageFromBase64(string base64String) {
         try {

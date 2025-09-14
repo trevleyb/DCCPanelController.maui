@@ -9,9 +9,9 @@ public sealed record ValidationIssue(string Code, string Message, Severity Sever
 }
 
 public sealed class ValidationSummary {
+    public ValidationSummary(IEnumerable<ValidationIssue> issues) => Issues = issues.ToList();
     public IReadOnlyList<ValidationIssue> Issues { get; }
     public bool HasErrors => Issues.Any(i => i.Severity == Severity.Error);
-    public ValidationSummary(IEnumerable<ValidationIssue> issues) => Issues = issues.ToList();
 }
 
 public interface IValidationRule {

@@ -1,22 +1,21 @@
 using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCCommon.Discovery;
 using DCCPanelController.Clients;
 using DCCPanelController.Services;
-using Microsoft.Maui.Controls;
+using DCCPanelController.View.Base;
 
 namespace DCCPanelController.View.Settings;
 
-public partial class SettingsViewModel : Base.BaseViewModel {
+public partial class SettingsViewModel : BaseViewModel {
+    protected readonly ConnectionService  ConnectionService;
     protected readonly IDccClientSettings Settings;
-    protected readonly ConnectionService ConnectionService;
 
-    [ObservableProperty] private string _connectLabel = "Test Connection";
-    [ObservableProperty] private ObservableCollection<DiscoveredService> _servers = [];
+    [ObservableProperty] private string                                  _connectLabel = "Test Connection";
+    [ObservableProperty] private ObservableCollection<DiscoveredService> _servers      = [];
 
     protected SettingsViewModel(IDccClientSettings settings, ConnectionService connectionService) {
         Settings = settings;
@@ -28,15 +27,15 @@ public partial class SettingsViewModel : Base.BaseViewModel {
         ConnectionService.AddServerMessage($"Testing server connection: ({Settings.Type})");
         try {
             IsBusy = true;
-            
+
             var reconnect = ConnectionService.IsConnected;
             if (reconnect) await ConnectionService.DisconnectAsync();
-            
+
             var result = await ConnectionService.ConnectAsync();
             if (result.IsFailure) {
                 ConnectionService.AddServerMessage($"Unable to connect: {result.Message}", DccClientOperation.System, DccClientMessageType.Error);
-                if (result?.Message is {} errMessage) ConnectionService.AddServerMessage(errMessage, DccClientOperation.System, DccClientMessageType.Error);
-                if (result?.Exception is {} excMessage) ConnectionService.AddServerMessage(excMessage.Message, DccClientOperation.System, DccClientMessageType.Error);
+                if (result?.Message is { } errMessage) ConnectionService.AddServerMessage(errMessage, DccClientOperation.System, DccClientMessageType.Error);
+                if (result?.Exception is { } excMessage) ConnectionService.AddServerMessage(excMessage.Message, DccClientOperation.System, DccClientMessageType.Error);
                 var message = $"Unable to connect to the server{(string.IsNullOrEmpty(result?.Message) ? "." : $" due to {result?.Exception?.Message ?? "?"}")}";
                 await DisplayAlertHelper.DisplayOkAlertAsync("Error Connecting", message);
             } else {
@@ -71,8 +70,8 @@ public partial class SettingsViewModel : Base.BaseViewModel {
                 ConnectionService.AddServerMessage($"{result.Message}", DccClientOperation.System, DccClientMessageType.Error);
             }
         } catch (Exception ex) {
-            ConnectionService.AddServerMessage("Unable to Refresh Servers",DccClientOperation.System, DccClientMessageType.Error);
-            ConnectionService.AddServerMessage(ex.Message,DccClientOperation.System, DccClientMessageType.Error);
+            ConnectionService.AddServerMessage("Unable to Refresh Servers", DccClientOperation.System, DccClientMessageType.Error);
+            ConnectionService.AddServerMessage(ex.Message, DccClientOperation.System, DccClientMessageType.Error);
             var message = $"Unable to refresh servers due to {ex.Message}";
             await DisplayAlertHelper.DisplayOkAlertAsync("Error Refreshing Servers", message);
         } finally {
@@ -82,7 +81,7 @@ public partial class SettingsViewModel : Base.BaseViewModel {
     }
 
     protected string GetIpAddressParts(int part, string address) {
-        if (string.IsNullOrEmpty(address)) return "0";
+        if (string.IsNullOrEmpty(address)) return"0";
         var parts = address.Split('.');
         if (part == 0) part = 1;
         var partStr = parts?.Length >= part ? parts[part - 1] : "0";
@@ -95,7 +94,7 @@ public partial class SettingsViewModel : Base.BaseViewModel {
         if (parts?.Length > 0) {
             if (part == 0) part = 1;
             if (parts?.Length >= part) parts[part - 1] = value;
-            if (parts is not null && parts.Length == 4) address = string.Join(".", parts);
+            if (parts is { } && parts.Length == 4) address = string.Join(".", parts);
         }
         return address ?? "0.0.0.0";
     }

@@ -16,5 +16,5 @@ public enum SvgElementType {
     Bridge,
     Platform,
     Tunnel,
-    Unknown
+    Unknown,
 }

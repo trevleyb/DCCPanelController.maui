@@ -8,9 +8,7 @@ public class CrossingEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public CrossingEntity() { }
 
-    public CrossingEntity(Panel panel) : this() {
-        Parent = panel;
-    }
+    public CrossingEntity(Panel panel) : this() => Parent = panel;
 
     public CrossingEntity(CrossingEntity entity) : base(entity) { }
 
@@ -19,7 +17,5 @@ public class CrossingEntity : TrackEntity, ITrackEntity {
     public override string EntityDescription => "90-degree Crossing Track";
     public override string EntityInformation => "";
 
-    public override Entity Clone() {
-        return new CrossingEntity(this);
-    }
+    public override Entity Clone() => new CrossingEntity(this);
 }

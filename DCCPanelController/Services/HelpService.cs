@@ -9,11 +9,11 @@ namespace DCCPanelController.Services;
 
 public sealed class HelpService {
     // You can tweak these:
-    public const string DefaultTopicId = "getting-started";
-    public const string UndefinedTopicTitle = "Help Topic Not Found";
-    private static readonly Lazy<HelpService> _current = new(() => new HelpService());
+    public const            string            DefaultTopicId      = "getting-started";
+    public const            string            UndefinedTopicTitle = "Help Topic Not Found";
+    private static readonly Lazy<HelpService> _current            = new(() => new HelpService());
 
-    public static readonly string PackedRoot = "help/en"; // localize later
+    public static readonly string PackedRoot    = "help/en"; // localize later
     public static readonly string InstalledRoot = Path.Combine(FileSystem.AppDataDirectory, PackedRoot);
 
     private readonly MarkdownPipeline _md = new MarkdownPipelineBuilder()
@@ -25,9 +25,9 @@ public sealed class HelpService {
     public static HelpService Current => _current.Value;
 
     public async Task InitializeAsync(bool force = false) {
-#if DEBUG
+        #if DEBUG
         force = true;
-#endif
+        #endif
 
         await EnsureInstalledAsync(force);
         var indexPath = Path.Combine(InstalledRoot, "index.json");
@@ -36,9 +36,7 @@ public sealed class HelpService {
               ?? new Dictionary<string, HelpTopicMeta>();
     }
 
-    public IEnumerable<HelpTopicMeta> GetAllTopics() {
-        return _index.Values.OrderBy(t => t.Title);
-    }
+    public IEnumerable<HelpTopicMeta> GetAllTopics() => _index.Values.OrderBy(t => t.Title);
 
     public async Task<HelpDocument> LoadTopicAsync(string? id, string? referrerId = null, string? anchor = null) {
         id = string.IsNullOrWhiteSpace(id) ? DefaultTopicId : id;
@@ -52,8 +50,9 @@ public sealed class HelpService {
 
                 var baseUrl = new Uri(InstalledRoot + Path.DirectorySeparatorChar).AbsoluteUri;
                 htmlBody = RewriteRelativeImageSrcToAbsolute(htmlBody, InstalledRoot);
-                if (!string.IsNullOrEmpty(anchor))
+                if (!string.IsNullOrEmpty(anchor)) {
                     htmlBody += $"<script>location.hash='#{Uri.EscapeDataString(anchor)}';</script>";
+                }
 
                 var imgPath = Path.Combine(InstalledRoot, "images", "turnouts.png");
                 var baseDir = InstalledRoot.EndsWith(Path.DirectorySeparatorChar) ? InstalledRoot : InstalledRoot + Path.DirectorySeparatorChar;
@@ -61,7 +60,7 @@ public sealed class HelpService {
                 var fullHtml = WrapHtml(meta.Title, htmlBody, baseFileUri);
 
                 string? filePath = null;
-#if MACCATALYST
+                #if MACCATALYST
                 var renderedDir = Path.Combine(InstalledRoot, "_rendered");
                 Directory.CreateDirectory(renderedDir);
                 filePath = Path.Combine(renderedDir, $"{id}.html");
@@ -69,7 +68,7 @@ public sealed class HelpService {
 
                 Console.WriteLine($"[Help] Catalyst loading file: {filePath}");
                 Console.WriteLine($"[Help] Image dir exists? {Directory.Exists(Path.Combine(InstalledRoot, "images"))}");
-#endif
+                #endif
                 return new HelpDocument(meta.Title, fullHtml, baseFileUri, filePath);
             }
         }
@@ -82,12 +81,9 @@ public sealed class HelpService {
         return BuildUndefinedDocument(id!, referrerId, baseFileUriFallback);
     }
 
-    public Task NavigateAsync(string id) {
-        return Shell.Current.GoToAsync($"help?topicId={Uri.EscapeDataString(id)}");
-    }
+    public Task NavigateAsync(string id) => Shell.Current.GoToAsync($"help?topicId={Uri.EscapeDataString(id)}");
 
-    private string WrapHtml(string title, string body, string baseHrefFileUri) {
-        return $@"
+    private string WrapHtml(string title, string body, string baseHrefFileUri) => $@"
 <!DOCTYPE html>
 <html>
 <head>
@@ -113,7 +109,6 @@ public sealed class HelpService {
 </head>
 <body>{body}</body>
 </html>";
-    }
 
     private HelpDocument BuildUndefinedDocument(string badId, string? referrerId, string baseFileUri) {
         // Suggest closest matches (simple ranking)
@@ -125,7 +120,7 @@ public sealed class HelpService {
         var list = suggestions.Count == 0
             ? "<p>No similar topics found.</p>"
             : string.Join("", suggestions.Select(t =>
-                                                     $@"<li><a href=""help://topic/{Uri.EscapeDataString(t.Id)}"">
+                $@"<li><a href=""help://topic/{Uri.EscapeDataString(t.Id)}"">
                  {WebUtility.HtmlEncode(t.Title)}
                </a></li>"));
 
@@ -160,12 +155,12 @@ public sealed class HelpService {
 
         // NEW: on Mac Catalyst, write a real file and return its path
         string? filePath = null;
-#if MACCATALYST
+        #if MACCATALYST
         var renderedDir = Path.Combine(InstalledRoot, "_rendered");
         Directory.CreateDirectory(renderedDir);
         filePath = Path.Combine(renderedDir, $"__undefined_{SanitizeFileName(badId)}.html");
         File.WriteAllText(filePath, fullHtml);
-#endif
+        #endif
 
         return new HelpDocument(UndefinedTopicTitle, fullHtml, baseFileUri, filePath);
 
@@ -184,14 +179,14 @@ public sealed class HelpService {
             if (!string.IsNullOrEmpty(k) && k.Contains(needle, StringComparison.OrdinalIgnoreCase)) s += 10;
             return s;
         }
-#if MACCATALYST
+        #if MACCATALYST
         static string SanitizeFileName(string value) {
             foreach (var c in Path.GetInvalidFileNameChars()) {
                 value = value.Replace(c, '_');
             }
             return value.Length == 0 ? "topic" : value;
         }
-#endif
+        #endif
     }
 
     // ------- existing install/update helpers (from your latest version) -------
@@ -234,8 +229,9 @@ public sealed class HelpService {
     }
 
     private async Task ReinstallFromPackageAsync(Manifest manifest) {
-        if (Directory.Exists(InstalledRoot))
+        if (Directory.Exists(InstalledRoot)) {
             Directory.Delete(InstalledRoot, true);
+        }
         Directory.CreateDirectory(InstalledRoot);
 
         // Copy all listed files
@@ -259,8 +255,8 @@ public sealed class HelpService {
     private static string RewriteRelativeImageSrcToAbsolute(string html, string installedRoot) {
         // Ensure trailing slash and file:// URL
         var baseUri = new Uri(installedRoot.EndsWith(Path.DirectorySeparatorChar)
-                                  ? installedRoot
-                                  : installedRoot + Path.DirectorySeparatorChar);
+            ? installedRoot
+            : installedRoot + Path.DirectorySeparatorChar);
         var baseUrl = baseUri.AbsoluteUri; // e.g., file:///var/mobile/Containers/.../help/en/
 
         // Replace src="images/foo.png" or src="./images/foo.png" (but leave http/https/help/file alone)
@@ -268,13 +264,14 @@ public sealed class HelpService {
             var path = m.Groups["path"].Value;
             if (path.StartsWith("http", StringComparison.OrdinalIgnoreCase) ||
                 path.StartsWith("file:", StringComparison.OrdinalIgnoreCase) ||
-                path.StartsWith("help:", StringComparison.OrdinalIgnoreCase))
+                path.StartsWith("help:", StringComparison.OrdinalIgnoreCase)) {
                 return m.Value;
+            }
 
             // Normalize ./ and join to base
             var rel = path.StartsWith("./") ? path[2..] : path;
             var abs = new Uri(new Uri(baseUrl), rel).AbsoluteUri;
-            return $"src=\"{abs}\"";
+            return$"src=\"{abs}\"";
         }
 
         var rx = new Regex(

@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 
@@ -31,14 +26,14 @@ public partial class LoadingPage : ContentPage {
                 try {
                     // 1) Initialize domain state
                     await profileService.InitializeAsync();
-                    
-                    
+
                     // Optional: any other one-time startup work here (help assets, migrations, etc.)
                     await HelpService.Current.InitializeAsync(true);
-#if DEBUG
+                    #if DEBUG
                     await ValidateBundleAsync();
                     await ValidateExtractedAsync();
-#endif
+                    #endif
+
                     // 2) Only now create Shell and replace the root
                     var shell = services.GetRequiredService<AppShell>();
 
@@ -46,7 +41,7 @@ public partial class LoadingPage : ContentPage {
                     var window = Application.Current?.Windows[0];
                     window?.Page = shell; // Avoid Application.Current.MainPage (obsolete)
                 } catch (Exception ex) {
-                    await DisplayAlert("Startup error", ex.Message,"Quit");
+                    await DisplayAlert("Startup error", ex.Message, "Quit");
                     App.Current.Quit();
                 }
             }
@@ -76,8 +71,9 @@ public partial class LoadingPage : ContentPage {
 
         foreach (var file in manifest.Files) {
             var p = Path.Combine(HelpService.InstalledRoot, file);
-            if (!File.Exists(p))
+            if (!File.Exists(p)) {
                 Debug.WriteLine($"❌ Extracted '{file}' missing at {p}");
+            }
         }
     }
 }

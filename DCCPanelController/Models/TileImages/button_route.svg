@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g id="Route" fill="none" fill-opacity="1" stroke-dasharray="none" stroke="none" stroke-opacity="1">
-    <circle id="ButtonOutline" cx="24" cy="24" r="10.000020979027" stroke="black" stroke-linecap="butt" stroke-linejoin="round" stroke-width="2"/>
-    <circle id="Button" cx="24" cy="24" r="9.00001888112425" fill="#90c418"/>
-    <line id="Indicator" x1="23.74264" y1="19.5" x2="23.74264" y2="30" stroke="white" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"/>
-    <line id="Indicator" x1="19.71014" y1="20.706" x2="23.24264" y2="24" stroke="white" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"/>
-    <line id="Indicator" x1="27.68814" y1="21" x2="24.24264" y2="24.0825" stroke="white" stroke-linecap="square" stroke-linejoin="round" stroke-width="1.5"/>
-    <path id="Indicator" d="M 29.42462 19.06066 L 28.36396 22.24264 L 26.24264 20.12132 Z" fill="white"/>
-    <path id="Indicator" d="M 18.06066 19.06066 L 21.24264 20.12132 L 19.12132 22.24264 Z" fill="white"/>
-    <path id="Indicator" d="M 23.74264 17 L 25.24264 20 L 22.24264 20 Z" fill="white"/>
-    <path id="Indicator"
-          d="M 22.24264 29.5 C 22.24264 28.671572 22.914213 28 23.74264 28 C 24.57106 28 25.24264 28.671572 25.24264 29.5 C 25.24264 30.32842 24.57106 31 23.74264 31 C 22.914213 31 22.24264 30.32842 22.24264 29.5 Z"
-          fill="white"/>
+        <circle id="ButtonOutline" cx="24" cy="24" r="10.000020979027" stroke="black" stroke-linecap="butt"
+                stroke-linejoin="round" stroke-width="2"/>
+        <circle id="Button" cx="24" cy="24" r="9.00001888112425" fill="#90c418"/>
+        <line id="Indicator" x1="23.74264" y1="19.5" x2="23.74264" y2="30" stroke="white" stroke-linecap="square"
+              stroke-linejoin="round" stroke-width="1.5"/>
+        <line id="Indicator" x1="19.71014" y1="20.706" x2="23.24264" y2="24" stroke="white" stroke-linecap="square"
+              stroke-linejoin="round" stroke-width="1.5"/>
+        <line id="Indicator" x1="27.68814" y1="21" x2="24.24264" y2="24.0825" stroke="white" stroke-linecap="square"
+              stroke-linejoin="round" stroke-width="1.5"/>
+        <path id="Indicator" d="M 29.42462 19.06066 L 28.36396 22.24264 L 26.24264 20.12132 Z" fill="white"/>
+        <path id="Indicator" d="M 18.06066 19.06066 L 21.24264 20.12132 L 19.12132 22.24264 Z" fill="white"/>
+        <path id="Indicator" d="M 23.74264 17 L 25.24264 20 L 22.24264 20 Z" fill="white"/>
+        <path id="Indicator"
+              d="M 22.24264 29.5 C 22.24264 28.671572 22.914213 28 23.74264 28 C 24.57106 28 25.24264 28.671572 25.24264 29.5 C 25.24264 30.32842 24.57106 31 23.74264 31 C 22.914213 31 22.24264 30.32842 22.24264 29.5 Z"
+              fill="white"/>
     </g>
 </svg>
 

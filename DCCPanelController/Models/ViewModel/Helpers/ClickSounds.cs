@@ -15,7 +15,7 @@ public static class ClickSounds {
         var clickSound = await ClickSoundPlayerAsync("beep2.m4a");
         clickSound?.Play();
     }
-    
+
     public static async Task PlayRouteClickSoundAsync() {
         var clickSound = await ClickSoundPlayerAsync("Button_Click_Quick.m4a");
         clickSound?.Play();
@@ -25,7 +25,7 @@ public static class ClickSounds {
         var clickSound = await ClickSoundPlayerAsync("Button_Light_Switch.m4a");
         clickSound?.Play();
     }
-    
+
     public static async Task PlayButtonClickSoundAsync() {
         var clickSound = await ClickSoundPlayerAsync("Button_Click_Mouse.m4a");
         clickSound?.Play();
@@ -53,5 +53,4 @@ public static class ClickSounds {
             return null;
         }
     }
-    
 }

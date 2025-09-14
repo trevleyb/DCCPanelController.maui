@@ -27,7 +27,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                     var newState = button.State switch {
                         ButtonStateEnum.On  => action.WhenOn,
                         ButtonStateEnum.Off => action.WhenOff,
-                        _                   => ButtonStateEnum.Unknown
+                        _                   => ButtonStateEnum.Unknown,
                     };
                     actionButton.SetState(newState, StateChangeSource.Internal, context);
                 }
@@ -38,7 +38,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
                     var newState = button.State switch {
                         ButtonStateEnum.On  => action.WhenClosed,
                         ButtonStateEnum.Off => action.WhenThrown,
-                        _                   => TurnoutStateEnum.Unknown
+                        _                   => TurnoutStateEnum.Unknown,
                     };
                     actionTurnout.SetState(newState, StateChangeSource.Internal, context);
                     if (connectionService.Client is { } client && actionTurnout.Turnout != null) {
@@ -53,9 +53,9 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
 }
 
 public partial class ButtonAction : ObservableObject {
-    [ObservableProperty] private string _id = string.Empty;
+    [ObservableProperty] private string          _id      = string.Empty;
     [ObservableProperty] private ButtonStateEnum _whenOff = ButtonStateEnum.Unknown;
-    [ObservableProperty] private ButtonStateEnum _whenOn = ButtonStateEnum.Unknown;
+    [ObservableProperty] private ButtonStateEnum _whenOn  = ButtonStateEnum.Unknown;
 
     public ButtonAction() { }
 

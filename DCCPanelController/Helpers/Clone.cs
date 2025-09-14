@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 using DCCPanelController.Helpers.Attributes;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Helpers;
 
 public static class ObjectCloner {
     // Cache for reflection data to improve performance
-    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> PropertyCache = new();
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]>                    PropertyCache               = new();
     private static readonly ConcurrentDictionary<(Type, HashSet<string>), PropertyInfo[]> PropertyCacheWithExclusions = new();
-    private static readonly ConcurrentDictionary<Type, bool> SimpleTypeCache = new();
+    private static readonly ConcurrentDictionary<Type, bool>                              SimpleTypeCache             = new();
 
     /// <summary>
     ///     Creates a deep clone of the specified object
@@ -22,7 +21,7 @@ public static class ObjectCloner {
     public static T? Clone<T>(T source, params string[] excludeProperties) {
         ArgumentNullException.ThrowIfNull(source);
         var exclusions = new HashSet<string>(excludeProperties);
-        return (T?)CloneObject(source, new Dictionary<object, object>(), exclusions);
+        return(T?)CloneObject(source, new Dictionary<object, object>(), exclusions);
     }
 
     /// <summary>
@@ -33,7 +32,7 @@ public static class ObjectCloner {
     /// <returns>A deep clone of the source object</returns>
     public static T? Clone<T>(T source) {
         ArgumentNullException.ThrowIfNull(source);
-        return (T?)CloneObject(source, new Dictionary<object, object>(), new HashSet<string>());
+        return(T?)CloneObject(source, new Dictionary<object, object>(), new HashSet<string>());
     }
 
     /// <summary>
@@ -72,9 +71,7 @@ public static class ObjectCloner {
     /// </summary>
     /// <param name="source">Source object to copy from</param>
     /// <param name="target">Target object to copy to</param>
-    public static void CloneProperties(object source, object target) {
-        CloneProperties(source, target, Array.Empty<string>());
-    }
+    public static void CloneProperties(object source, object target) => CloneProperties(source, target, Array.Empty<string>());
 
     private static object? CloneObject(object? source, Dictionary<object, object> referenceMap, HashSet<string> exclusions) {
         if (source == null) return null;
@@ -126,27 +123,23 @@ public static class ObjectCloner {
         return CloneReferenceType(source, type, referenceMap, exclusions);
     }
 
-    private static bool IsSimpleType(Type type) {
-        return SimpleTypeCache.GetOrAdd(type, t =>
-                                            t.IsPrimitive ||
-                                            t.IsEnum ||
-                                            t == typeof(string) ||
-                                            t == typeof(Color) ||
-                                            t == typeof(decimal) ||
-                                            t == typeof(DateTime) ||
-                                            t == typeof(DateTimeOffset) ||
-                                            t == typeof(TimeSpan) ||
-                                            t == typeof(Guid)
-        );
-    }
+    private static bool IsSimpleType(Type type) => SimpleTypeCache.GetOrAdd(type, t =>
+        t.IsPrimitive ||
+        t.IsEnum ||
+        t == typeof(string) ||
+        t == typeof(Color) ||
+        t == typeof(decimal) ||
+        t == typeof(DateTime) ||
+        t == typeof(DateTimeOffset) ||
+        t == typeof(TimeSpan) ||
+        t == typeof(Guid)
+    );
 
-    private static bool IsGenericCollection(Type type) {
-        return type.IsGenericType && (
-            typeof(IList<>).IsAssignableFromGenericDefinition(type) ||
-            typeof(ICollection<>).IsAssignableFromGenericDefinition(type) ||
-            typeof(IDictionary<,>).IsAssignableFromGenericDefinition(type)
-        );
-    }
+    private static bool IsGenericCollection(Type type) => type.IsGenericType && (
+        typeof(IList<>).IsAssignableFromGenericDefinition(type) ||
+        typeof(ICollection<>).IsAssignableFromGenericDefinition(type) ||
+        typeof(IDictionary<,>).IsAssignableFromGenericDefinition(type)
+    );
 
     private static bool IsAssignableFromGenericDefinition(this Type genericType, Type type) {
         if (type.IsGenericType && type.GetGenericTypeDefinition() == genericType) {
@@ -155,7 +148,7 @@ public static class ObjectCloner {
 
         return type.GetInterfaces()
                    .Any(i =>
-                            i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
+                        i.IsGenericType && i.GetGenericTypeDefinition() == genericType);
     }
 
     private static object? CloneArray(Array sourceArray, Dictionary<object, object> referenceMap, HashSet<string> exclusions) {
@@ -275,11 +268,11 @@ public static class ObjectCloner {
     private static PropertyInfo[] GetCloneableProperties(Type type, HashSet<string>? exclusions = null) {
         if (exclusions == null || exclusions.Count == 0) {
             return PropertyCache.GetOrAdd(type, t =>
-                                              t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                               .Where(p => p.CanRead &&
-                                                           p.CanWrite &&
-                                                           !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)))
-                                               .ToArray()
+                t.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+                 .Where(p => p.CanRead &&
+                             p.CanWrite &&
+                             !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)))
+                 .ToArray()
             );
         }
 
@@ -287,12 +280,12 @@ public static class ObjectCloner {
         var cacheKey = (type, exclusions);
 
         return PropertyCacheWithExclusions.GetOrAdd(cacheKey, key =>
-                                                        key.Item1.GetProperties(BindingFlags.Public | BindingFlags.Instance)
-                                                           .Where(p => p.CanRead &&
-                                                                       p.CanWrite &&
-                                                                       !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)) &&
-                                                                       !key.Item2.Contains(p.Name))
-                                                           .ToArray()
+            key.Item1.GetProperties(BindingFlags.Public | BindingFlags.Instance)
+               .Where(p => p.CanRead &&
+                           p.CanWrite &&
+                           !Attribute.IsDefined(p, typeof(DoNotCloneAttribute)) &&
+                           !key.Item2.Contains(p.Name))
+               .ToArray()
         );
     }
 
@@ -322,9 +315,7 @@ public static class ObjectCloner {
     /// </summary>
     /// <param name="original">The object to update</param>
     /// <param name="modified">The object containing new values</param>
-    public static void UpdateOriginal(object original, object modified) {
-        UpdateOriginal(original, modified, Array.Empty<string>());
-    }
+    public static void UpdateOriginal(object original, object modified) => UpdateOriginal(original, modified, Array.Empty<string>());
 
     private static void UpdateObject(object original, object modified, HashSet<object> visited, HashSet<string> exclusions) {
         if (visited.Contains(original)) return; // Prevent infinite recursion
@@ -413,7 +404,7 @@ public static class ObjectCloner {
 
     private static void UpdateDictionary(IDictionary originalDict, IDictionary modifiedDict, HashSet<string> exclusions) {
         // Remove keys that are no longer present
-        var keysToRemove = originalDict.Keys.Cast<object?>().Where(key => key is not null && !modifiedDict.Contains(key)).ToList();
+        var keysToRemove = originalDict.Keys.Cast<object?>().Where(key => key is { } && !modifiedDict.Contains(key)).ToList();
         foreach (var key in keysToRemove.OfType<object>()) {
             originalDict.Remove(key);
         }

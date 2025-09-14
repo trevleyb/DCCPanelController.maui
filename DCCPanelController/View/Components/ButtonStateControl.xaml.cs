@@ -2,27 +2,23 @@ using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel.Entities;
-using ShimSkiaSharp;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
-   
-    public EventHandler<ButtonStateEnum>? StateChanged { get; set; }
-   
-    public static readonly BindableProperty ButtonProperty = BindableProperty.Create(nameof(Button), typeof(Button), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
-    public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(ButtonStateEnum), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
-    public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(ButtonStateControl), true);
-    public static readonly BindableProperty CanSetStateUnknownProperty = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(ButtonStateControl), false);
+    public static readonly BindableProperty ButtonProperty              = BindableProperty.Create(nameof(Button), typeof(Button), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
+    public static readonly BindableProperty StateProperty               = BindableProperty.Create(nameof(State), typeof(ButtonStateEnum), typeof(ButtonStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
+    public static readonly BindableProperty CanToggleStateProperty      = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(ButtonStateControl), true);
+    public static readonly BindableProperty CanSetStateUnknownProperty  = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(ButtonStateControl), false);
     public static readonly BindableProperty StateChangedCommandProperty = BindableProperty.Create(nameof(StateChangedCommand), typeof(ICommand), typeof(ButtonStateControl));
 
-    public static readonly BindableProperty ActiveTextProperty = BindableProperty.Create(nameof(ActiveText), typeof(string), typeof(ButtonStateControl), "On");
+    public static readonly BindableProperty ActiveTextProperty   = BindableProperty.Create(nameof(ActiveText), typeof(string), typeof(ButtonStateControl), "On");
     public static readonly BindableProperty InactiveTextProperty = BindableProperty.Create(nameof(InactiveText), typeof(string), typeof(ButtonStateControl), "Off");
-    public static readonly BindableProperty UnknownTextProperty = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(ButtonStateControl), "Unknown");
+    public static readonly BindableProperty UnknownTextProperty  = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(ButtonStateControl), "Unknown");
 
-    public ButtonStateControl() {
-        InitializeComponent();
-    }
+    public ButtonStateControl() => InitializeComponent();
+
+    public EventHandler<ButtonStateEnum>? StateChanged { get; set; }
 
     public Button Button {
         get => (Button)GetValue(ButtonProperty);
@@ -81,13 +77,13 @@ public partial class ButtonStateControl : ContentView, INotifyPropertyChanged {
                     ButtonStateEnum.On      => ButtonStateEnum.Off,
                     ButtonStateEnum.Off     => ButtonStateEnum.Unknown,
                     ButtonStateEnum.Unknown => ButtonStateEnum.On,
-                    _                       => ButtonStateEnum.Unknown
+                    _                       => ButtonStateEnum.Unknown,
                 };
             } else {
                 State = State switch {
                     ButtonStateEnum.On  => ButtonStateEnum.Off,
                     ButtonStateEnum.Off => ButtonStateEnum.On,
-                    _                   => ButtonStateEnum.On
+                    _                   => ButtonStateEnum.On,
                 };
             }
             if (State != prevState) {

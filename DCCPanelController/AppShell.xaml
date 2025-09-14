@@ -21,20 +21,20 @@
     x:DataType="services:AppStateService"
     x:Class="DCCPanelController.AppShell"
 
-    BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"           
+    BackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"
     ForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
     TabBarBackgroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellBackgroundColor}"
     TitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellForegroundColor}"
     UnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=ShellUnselectedColor}"
-    
+
     TabBarForegroundColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
     TabBarTitleColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarForegroundColor}"
     TabBarUnselectedColor="{Binding Source={x:Static services:AppStateService.Instance}, Path=TabBarUnselectedColor}"
     TabBarDisabledColor="{Binding Source={x:Static services:AppStateService.Instance},   Path=TabBarDisabledColor}"
-    
+
     DisabledColor="Goldenrod"
     FlyoutBackgroundColor="Blue"
-    
+
     PresentationMode="Animated"
     FlyoutBehavior="Disabled"
     iOsSpecific:Page.UseSafeArea="True"
@@ -55,14 +55,14 @@
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance}, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:OperatePage}"/>
         </Tab>
-        
+
         <Tab
             Icon="panels.png"
             Title="Panel Editor"
             IsEnabled="{Binding Source={x:Static services:AppStateService.Instance}, Path=IsNavigationAllowed}">
             <ShellContent ContentTemplate="{DataTemplate view:PanelViewer}"/>
         </Tab>
-        
+
         <Tab Title="Tables" Icon="tables.png"
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}">
             <ShellContent
@@ -81,7 +81,7 @@
                 ContentTemplate="{DataTemplate view:LightsPage}"
                 Title="Lights"/>
         </Tab>
-        
+
         <Tab Title="Settings" Icon="settings.png"
              IsEnabled="{Binding Source={x:Static services:AppStateService.Instance},Path=IsNavigationAllowed}">
             <ShellContent

@@ -12,20 +12,20 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class SensorsViewModel : ConnectionViewModel {
-    private const string _labelID = "ID";
-    private const string _labelName = "Sensor";
-    private const string _labelState = "Occupied?";
-    private readonly ProfileService _profileService;
-    [ObservableProperty] private string _columnLabelID = _labelID;
-    [ObservableProperty] private string _columnLabelName = _labelName;
-    [ObservableProperty] private string _columnLabelState = _labelState;
+    private const                string         _labelID    = "ID";
+    private const                string         _labelName  = "Sensor";
+    private const                string         _labelState = "Occupied?";
+    private readonly             ProfileService _profileService;
+    [ObservableProperty] private string         _columnLabelID    = _labelID;
+    [ObservableProperty] private string         _columnLabelName  = _labelName;
+    [ObservableProperty] private string         _columnLabelState = _labelState;
 
     private bool _isAscending;
 
     private ILogger<SensorsViewModel> _logger;
 
     [ObservableProperty] private ObservableCollection<Sensor> _sensors;
-    private string _sortColumn = "";
+    private                      string                       _sortColumn = "";
 
     public SensorsViewModel(ILogger<SensorsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -56,14 +56,14 @@ public partial class SensorsViewModel : ConnectionViewModel {
                 _labelName  => Sensors.OrderBy<Sensor, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Sensors.OrderBy<Sensor, string>(x => x.Id ?? "").ToList(),
                 _labelState => Sensors.OrderBy<Sensor, bool>(x => x.State).ToList(),
-                _           => Sensors.ToList<Sensor>()
+                _           => Sensors.ToList<Sensor>(),
             };
         } else {
             sorted = columnName switch {
                 _labelName  => Sensors.OrderByDescending<Sensor, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Sensors.OrderByDescending<Sensor, string>(x => x.Id ?? "").ToList(),
                 _labelState => Sensors.OrderByDescending<Sensor, bool>(x => x.State).ToList(),
-                _           => Sensors.ToList<Sensor>()
+                _           => Sensors.ToList<Sensor>(),
             };
         }
 

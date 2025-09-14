@@ -1,5 +1,4 @@
 using System.Globalization;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Converters;
 
@@ -11,7 +10,7 @@ public class IndicatorColorConverter : IMultiValueConverter {
             if (values[1] is string) currentIndex = int.Parse((string)values[1]);
             if (values[1] is OperatePage { BindingContext: OperateViewModel vm }) currentIndex = vm.CurrentPanelIndex;
             if (values[1] is OperateViewModel vm2) currentIndex = vm2.CurrentPanelIndex;
-            if (currentIndex is not null) {
+            if (currentIndex is { }) {
                 var active = indicatorIndex == currentIndex;
                 return active
                     ? Application.Current?.Resources["Primary"] as Color ?? Colors.Blue
@@ -21,7 +20,5 @@ public class IndicatorColorConverter : IMultiValueConverter {
         return Colors.DarkGray;
     }
 
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-        throw new NotImplementedException();
-    }
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

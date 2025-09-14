@@ -10,9 +10,9 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.Clients.WiThrottle;
 
 public class WiThrottleProxy : DccClientBase, IDccClient {
-    private readonly Profile _profile;
+    private readonly Profile            _profile;
     private readonly WiThrottleSettings _settings;
-    private WiThrottleClient? _client;
+    private          WiThrottleClient?  _client;
 
     public WiThrottleProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
         _profile = profile;
@@ -24,7 +24,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
 
     #region Connect and Disconnect Methods
     public async Task<IResult> ConnectAsync() {
-        if (_client is not null) await DisconnectAsync();
+        if (_client is { }) await DisconnectAsync();
         Status = DccClientStatus.Initialising;
 
         if (_settings.SetAutomatically) {
@@ -58,7 +58,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
 
     public async Task<IResult> DisconnectAsync() {
         Status = DccClientStatus.Disconnected;
-        if (_client is not null) {
+        if (_client is { }) {
             _client.ConnectionEvent -= ClientOnConnectionEvent;
             _client.DataEvent -= ClientOnDataEvent;
         }
@@ -89,7 +89,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
     ///     wait 1/2 seconds and reconnect.
     /// </summary>
     public async Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
-        if (_client is not null) _client.Disconnect();
+        if (_client is { }) _client.Disconnect();
         var connected = await ConnectAsync();
         await Task.Delay(500);
         if (connected.IsSuccess && Status == DccClientStatus.Connected) return Result.Ok();
@@ -101,7 +101,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
     ///     It returns either OK or FAILED based on attempting to connect.
     /// </summary>
     public async Task<IResult> ValidateConnectionAsync() {
-        if (_client is not null) await DisconnectAsync();
+        if (_client is { }) await DisconnectAsync();
         var connected = await ConnectAsync();
         await Task.Delay(500);
         if (connected.IsSuccess && Status == DccClientStatus.Connected) await DisconnectAsync();
@@ -120,7 +120,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
             return Result.Ok();
         } catch (Exception ex) {
             await Task.CompletedTask;
-            return Result.Fail(ex,"Failed to send turnout command to WiThrottle server");
+            return Result.Fail(ex, "Failed to send turnout command to WiThrottle server");
         }
     }
 
@@ -162,20 +162,20 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
     #region Manage Events from the Client
     private void ClientOnDataEvent(IClientEvent clientEvent) {
         switch (clientEvent) {
-        case MessageEvent message:
-            OnClientMessage(message.Value, DccClientOperation.System, DccClientMessageType.Inbound);
+            case MessageEvent message:
+                OnClientMessage(message.Value, DccClientOperation.System, DccClientMessageType.Inbound);
             break;
 
-        case TurnoutEvent turnout:
-            UpdateTurnout(turnout.SystemName, turnout.UserName, turnout.StateEnum == TurnoutStateEnum.Thrown ? Models.DataModel.Entities.TurnoutStateEnum.Thrown : Models.DataModel.Entities.TurnoutStateEnum.Closed);
+            case TurnoutEvent turnout:
+                UpdateTurnout(turnout.SystemName, turnout.UserName, turnout.StateEnum == TurnoutStateEnum.Thrown ? Models.DataModel.Entities.TurnoutStateEnum.Thrown : Models.DataModel.Entities.TurnoutStateEnum.Closed);
             break;
 
-        case RouteEvent route:
-            UpdateRoute(route.SystemName, route.UserName, route.StateEnum == RouteStateEnum.Active ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
+            case RouteEvent route:
+                UpdateRoute(route.SystemName, route.UserName, route.StateEnum == RouteStateEnum.Active ? Models.DataModel.Entities.RouteStateEnum.Active : Models.DataModel.Entities.RouteStateEnum.Inactive);
             break;
 
-        default:
-            OnClientMessage($"Recieved an invalid Message from WiThrottle '{clientEvent.GetType().Name}' {clientEvent.ToString()}");
+            default:
+                OnClientMessage($"Recieved an invalid Message from WiThrottle '{clientEvent.GetType().Name}' {clientEvent.ToString()}");
             break;
         }
     }
@@ -186,7 +186,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
                 ConnectionState.Open       => DccClientStatus.Connected,
                 ConnectionState.Closed     => DccClientStatus.Disconnected,
                 ConnectionState.Connecting => DccClientStatus.Initialising,
-                _                          => DccClientStatus.Disconnected
+                _                          => DccClientStatus.Disconnected,
             };
             OnClientMessage("Connection to WiThrottle server");
         }
@@ -213,7 +213,7 @@ public class WiThrottleProxy : DccClientBase, IDccClient {
             var result = await DiscoverServices.SearchForJmriServicesAsync();
             if (result is { IsSuccess: true, Value.Count: > 0 }) return result;
         } catch (Exception ex) {
-            return Result<List<DiscoveredService>>.Fail(ex,"Unable to find a WiThrottle server.");
+            return Result<List<DiscoveredService>>.Fail(ex, "Unable to find a WiThrottle server.");
         }
         return Result<List<DiscoveredService>>.Fail("Unable to find a WiThrottle server.");
     }

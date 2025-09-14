@@ -13,9 +13,7 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public StraightContinuationEntity() { }
 
-    public StraightContinuationEntity(Panel panel) : this() {
-        Parent = panel;
-    }
+    public StraightContinuationEntity(Panel panel) : this() => Parent = panel;
 
     public StraightContinuationEntity(StraightContinuationEntity entity) : base(entity) { }
 
@@ -25,7 +23,5 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
     public override string EntityDescription => "Straight Track with Indicator";
     public override string EntityInformation => "";
 
-    public override Entity Clone() {
-        return new StraightContinuationEntity(this);
-    }
+    public override Entity Clone() => new StraightContinuationEntity(this);
 }

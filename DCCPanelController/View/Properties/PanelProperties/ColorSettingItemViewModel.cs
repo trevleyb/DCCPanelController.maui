@@ -1,24 +1,23 @@
 using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel;
-using Microsoft.Maui.Graphics;
 
 // Assuming Panel is here
 
 namespace DCCPanelController.View.Properties.PanelProperties; // Or your preferred ViewModel namespace
 
 public class ColorSettingItemViewModel : ObservableObject {
-    private readonly Func<Panel, Color> _getColorFunc;
-    private readonly Panel _panel;
-    private readonly string _panelPropertyName; // e.g., nameof(Panel.BackgroundColor)
+    private readonly Func<Panel, Color>   _getColorFunc;
+    private readonly Panel                _panel;
+    private readonly string               _panelPropertyName; // e.g., nameof(Panel.BackgroundColor)
     private readonly Action<Panel, Color> _setColorAction;
 
     public ColorSettingItemViewModel(Panel panel,
-                                     string labelText,
-                                     string panelPropertyName,
-                                     Func<Panel, Color> getColorFunc,
-                                     Action<Panel, Color> setColorAction,
-                                     bool allowsNoColor = true) {
+        string labelText,
+        string panelPropertyName,
+        Func<Panel, Color> getColorFunc,
+        Action<Panel, Color> setColorAction,
+        bool allowsNoColor = true) {
         _panel = panel ?? throw new ArgumentNullException(nameof(panel));
         LabelText = labelText;
         _panelPropertyName = panelPropertyName;

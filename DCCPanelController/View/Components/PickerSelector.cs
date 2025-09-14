@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
 using Microsoft.Maui.Controls.Shapes;
-using Microsoft.Maui.Graphics;
 using Picker = Microsoft.Maui.Controls.Picker;
 
 namespace DCCPanelController.View.Components;
@@ -44,8 +43,8 @@ public class PickerSelector : ContentView {
             StrokeThickness = BorderWidth,
             Stroke = BorderColor,
             StrokeShape = new RoundRectangle {
-                CornerRadius = CornerRadius
-            }
+                CornerRadius = CornerRadius,
+            },
         };
 
         // The label that will be displayed containing the selected item
@@ -61,7 +60,7 @@ public class PickerSelector : ContentView {
             HorizontalOptions = LayoutOptions.Fill,
             Margin = new Thickness(10, 5, 5, 5),
             Padding = new Thickness(5, 0, 0, 0),
-            BindingContext = this
+            BindingContext = this,
         };
         _selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
         _selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
@@ -70,9 +69,9 @@ public class PickerSelector : ContentView {
                 new Binding(nameof(SelectedItem), source: this),
                 new Binding(nameof(Placeholder), source: this),
                 new Binding(nameof(DisplayMemberPath), source: this),
-                new Binding(nameof(DisplayFormat), source: this)
+                new Binding(nameof(DisplayFormat), source: this),
             },
-            Converter = new PickerSelectedItemToDisplayTextConverter()
+            Converter = new PickerSelectedItemToDisplayTextConverter(),
         });
 
         // Add a tap gesture to the label to show the picker
@@ -85,7 +84,7 @@ public class PickerSelector : ContentView {
         // ----------------------------------------------------------------------------
         _mainButtonLayout = new Grid {
             VerticalOptions = LayoutOptions.Fill,
-            HorizontalOptions = LayoutOptions.Fill
+            HorizontalOptions = LayoutOptions.Fill,
         };
         _mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Star });
         _mainButtonLayout.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -102,7 +101,7 @@ public class PickerSelector : ContentView {
                 Source = ClearFieldImageSource,
                 HorizontalOptions = LayoutOptions.End,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(1, 1, 2, 1)
+                Margin = new Thickness(1, 1, 2, 1),
             };
             _clearImage.GestureRecognizers.Add(clearGesture);
             _mainButtonLayout.Children.Add(_clearImage);
@@ -111,9 +110,7 @@ public class PickerSelector : ContentView {
         Content = _mainButtonLayout;
     }
 
-    private bool HasItems(IEnumerable itemsSource) {
-        return(itemsSource?.Cast<object?>()?.Count() ?? 0) > 0;
-    }
+    private bool HasItems(IEnumerable itemsSource) => (itemsSource?.Cast<object?>()?.Count() ?? 0) > 0;
 
     private void UpdateSelectedItem() {
         if (SelectedValue == null) SelectedItem = null;
@@ -195,9 +192,7 @@ public class PickerSelector : ContentView {
         return 0;
     }
 
-    private void ShowPicker() {
-        ShowStandardPicker();
-    }
+    private void ShowPicker() => ShowStandardPicker();
 
     /// <summary>
     ///     Main Show the picker function
@@ -214,10 +209,11 @@ public class PickerSelector : ContentView {
             Margin = new Thickness(10, 0, 0, 0),
             ItemsSource = pickerItems, // Use formatted display items
             #if !MACCATALYST
+
             // Title is not supported on macOS
             Title = Placeholder ?? "Select an option",
             #endif
-            IsVisible = false
+            IsVisible = false,
         };
         var index = FindIndexOfSelectedValue(SelectedValue, displayItems);
         picker.SelectedIndex = index;
@@ -273,7 +269,7 @@ public class PickerSelector : ContentView {
     public static readonly BindableProperty SelectedItemProperty      = BindableProperty.Create(nameof(SelectedItem), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay);
     public static readonly BindableProperty SelectedValuePathProperty = BindableProperty.Create(nameof(SelectedValuePath), typeof(string), typeof(PickerSelector));
     public static readonly BindableProperty SelectedValueProperty     = BindableProperty.Create(nameof(SelectedValue), typeof(object), typeof(PickerSelector), null, BindingMode.TwoWay, propertyChanged: SelectedValueChanged);
-    
+
     public static readonly BindableProperty DisplayMemberPathProperty = BindableProperty.Create(nameof(DisplayMemberPath), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
     public static readonly BindableProperty DisplayFormatProperty     = BindableProperty.Create(nameof(DisplayFormat), typeof(string), typeof(PickerSelector), propertyChanged: RefreshControl);
 
@@ -302,7 +298,7 @@ public class PickerSelector : ContentView {
             }
         }
     }
-    
+
     private static void RefreshControl(BindableObject bindable, object? oldValue, object? newValue) {
         if (bindable is PickerSelector selector) {
             selector.DrawPopup();
@@ -469,7 +465,5 @@ public class PickerSelectedItemToDisplayTextConverter : IMultiValueConverter {
         return selectedItem.ToString() ?? placeholder;
     }
 
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-        throw new NotImplementedException();
-    }
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => throw new NotImplementedException();
 }

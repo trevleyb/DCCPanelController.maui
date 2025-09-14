@@ -11,19 +11,17 @@ public class TrackPathTracer {
     public void UnregisterTile(TrackEntity track) => _trackToTileLookup.Remove(track);
     public void ClearTileRegistry() => _trackToTileLookup.Clear();
 
-    public List<TrackTile> RegisteredTiles() {
-        return _trackToTileLookup.Values.ToList();
-    }
+    public List<TrackTile> RegisteredTiles() => _trackToTileLookup.Values.ToList();
 
     public async Task<List<TracedPath>> TracePathsFromTrackAsync(TrackEntity startTrack,
-                                                                 CancellationToken cancellationToken = default) {
+        CancellationToken cancellationToken = default) {
         var paths = new List<TracedPath>();
 
         // Get the connections directly from the entity
         // --------------------------------------------------------------
         var startConnections = GetTrackConnections(startTrack);
         if (startConnections == null) return paths;
-       
+
         // Find all valid starting directions (non-None connections)
         // --------------------------------------------------------------
         var startDirections = GetValidDirections(startConnections, startTrack.Rotation);
@@ -39,8 +37,8 @@ public class TrackPathTracer {
     }
 
     private async Task<TracedPath> TracePathInDirectionAsync(TrackEntity startTrack,
-                                                             int startDirection,
-                                                             CancellationToken cancellationToken) {
+        int startDirection,
+        CancellationToken cancellationToken) {
         var path = new TracedPath();
         var visited = new HashSet<TrackEntity>();
         var currentDirection = startDirection;
@@ -66,7 +64,6 @@ public class TrackPathTracer {
             // ------------------------------------------------------
             var exitInfo = FindExitDirection(currentTrack, connections, currentDirection);
             if (!exitInfo.HasValue) {
-
                 // Add terminal segment
                 var tile = _trackToTileLookup.GetValueOrDefault(currentTrack);
                 path.Segments.Add(new PathSegment(currentTrack, tile, currentDirection, -1, true));
@@ -100,7 +97,6 @@ public class TrackPathTracer {
             var (nextTrack, entryDirection, connectionResult) = nextTrackInfo.Value;
 
             if (!connectionResult.IsValid) {
-
                 // If the reason is "Path terminated at terminator", this is a valid end
                 // ---------------------------------------------------------------------
                 if (connectionResult.Reason.Contains("terminated")) {
@@ -141,8 +137,8 @@ public class TrackPathTracer {
     }
 
     private (int exitDirection, string stopReason)? FindExitDirection(TrackEntity track,
-                                                                      EntityConnections connections,
-                                                                      int entryDirection) {
+        EntityConnections connections,
+        int entryDirection) {
         // Get the current connections for this track's rotation
         var currentConnections = connections.GetConnections(track.Rotation);
 
@@ -150,32 +146,30 @@ public class TrackPathTracer {
         var entryConnectionType = currentConnections[entryDirection];
 
         // Verify we can actually enter from this direction
-        if (entryConnectionType == ConnectionType.None) return null; 
+        if (entryConnectionType == ConnectionType.None) return null;
 
         // Special case: If we are STARTING from a Terminator or Connector connection point,
         // this means we're beginning our trace from the endpoint of the track.
         // We need to find the paired connection to continue.
         if (entryConnectionType == ConnectionType.Terminator) {
-
             // Find the Straight connection that pairs with this Terminator
-            for (int i = 0; i < EntityConnections.MaxDirections; i++) {
+            for (var i = 0; i < EntityConnections.MaxDirections; i++) {
                 if (i == entryDirection) continue;
                 var connectionType = currentConnections[i];
                 if (connectionType == ConnectionType.Straight) {
-                    return (i, string.Empty); // Continue the path through the S connection
+                    return(i, string.Empty); // Continue the path through the S connection
                 }
             }
             return null;
         }
 
         if (entryConnectionType == ConnectionType.Connector) {
-
             // Find the Straight connection that pairs with this Connector
-            for (int i = 0; i < EntityConnections.MaxDirections; i++) {
+            for (var i = 0; i < EntityConnections.MaxDirections; i++) {
                 if (i == entryDirection) continue;
                 var connectionType = currentConnections[i];
                 if (connectionType == ConnectionType.Straight) {
-                    return (i, string.Empty); // Continue the path through the S connection
+                    return(i, string.Empty); // Continue the path through the S connection
                 }
             }
             return null;
@@ -196,26 +190,26 @@ public class TrackPathTracer {
 
             // Special handling for Terminators and Connectors - they are endpoints
             if (connectionType == ConnectionType.Terminator) {
-                return (i, "Path terminated at terminator end");
+                return(i, "Path terminated at terminator end");
             }
 
             if (connectionType == ConnectionType.Connector) {
-                return (i, "Path terminated at connector end");
+                return(i, "Path terminated at connector end");
             }
 
             // Check if this connection type can pair with our entry (normal flow)
             if (CanConnectionsPair(entryConnectionType, connectionType)) {
-                return (i, string.Empty); // Continue the path
+                return(i, string.Empty); // Continue the path
             }
         }
         return null; // No valid exit found
     }
 
-    private bool CanConnectionsPair(ConnectionType entryType, ConnectionType exitType) {
+    private bool CanConnectionsPair(ConnectionType entryType, ConnectionType exitType) =>
+
         // Based on your rules - these are internal connections within a single track piece
         // This determines if entry and exit points on the SAME track can connect
-
-        return (entryType, exitType) switch {
+        (entryType, exitType) switch {
             // Straight connections - can pair with anything except Terminators and Connectors
             (ConnectionType.Straight, ConnectionType.Straight)  => true,
             (ConnectionType.Straight, ConnectionType.Closed)    => true,
@@ -241,68 +235,62 @@ public class TrackPathTracer {
             (_, ConnectionType.Terminator) => false, // Cannot enter through Terminator  
             (_, ConnectionType.Connector)  => false, // Cannot enter through Connector
 
-            _ => false
+            _ => false,
         };
-    }
 
     private (int exitDirection, string stopReason)? HandleTurnoutExit(TurnoutEntity turnout,
-                                                                      ConnectionType[] connections,
-                                                                      int entryDirection) {
+        ConnectionType[] connections,
+        int entryDirection) {
         var entryConnectionType = connections[entryDirection];
 
         switch (turnout.State) {
-        case TurnoutStateEnum.Unknown:
-            return (entryDirection, "Turnout state unknown");
+            case TurnoutStateEnum.Unknown:
+                return(entryDirection, "Turnout state unknown");
 
-        case TurnoutStateEnum.Closed:
-            // Handle both directions: S->X and X->S
-            if (entryConnectionType == ConnectionType.Straight) {
-                // Entering from S, exit via X
-                for (int i = 0; i < EntityConnections.MaxDirections; i++) {
-                    if (i == entryDirection) continue;
-                    if (connections[i] == ConnectionType.Closed) {
-                        return (i, string.Empty);
+            case TurnoutStateEnum.Closed:
+                // Handle both directions: S->X and X->S
+                if (entryConnectionType == ConnectionType.Straight) {
+                    // Entering from S, exit via X
+                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
+                        if (i == entryDirection) continue;
+                        if (connections[i] == ConnectionType.Closed) {
+                            return(i, string.Empty);
+                        }
+                    }
+                } else if (entryConnectionType == ConnectionType.Closed) {
+                    // Entering from X, exit via S
+                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
+                        if (i == entryDirection) continue;
+                        if (connections[i] == ConnectionType.Straight) {
+                            return(i, string.Empty);
+                        }
                     }
                 }
-            } else if (entryConnectionType == ConnectionType.Closed) {
-                // Entering from X, exit via S
-                for (int i = 0; i < EntityConnections.MaxDirections; i++) {
-                    if (i == entryDirection) continue;
-                    if (connections[i] == ConnectionType.Straight) {
-                        return (i, string.Empty);
-                    }
-                }
-            }
             break;
 
-        case TurnoutStateEnum.Thrown:
-            // Handle both directions: S->D and D->S
-            if (entryConnectionType == ConnectionType.Straight) {
-                // Entering from S, exit via D
-                for (int i = 0; i < EntityConnections.MaxDirections; i++) {
-                    if (i == entryDirection) continue;
-                    if (connections[i] == ConnectionType.Diverging) {
-                        return (i, string.Empty);
+            case TurnoutStateEnum.Thrown:
+                // Handle both directions: S->D and D->S
+                if (entryConnectionType == ConnectionType.Straight) {
+                    // Entering from S, exit via D
+                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
+                        if (i == entryDirection) continue;
+                        if (connections[i] == ConnectionType.Diverging) {
+                            return(i, string.Empty);
+                        }
+                    }
+                } else if (entryConnectionType == ConnectionType.Diverging) {
+                    // Entering from D, exit via S
+                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
+                        if (i == entryDirection) continue;
+                        if (connections[i] == ConnectionType.Straight) {
+                            return(i, string.Empty);
+                        }
                     }
                 }
-            } else if (entryConnectionType == ConnectionType.Diverging) {
-                // Entering from D, exit via S
-                for (int i = 0; i < EntityConnections.MaxDirections; i++) {
-                    if (i == entryDirection) continue;
-                    if (connections[i] == ConnectionType.Straight) {
-                        return (i, string.Empty);
-                    }
-                }
-            }
             break;
         }
 
         return null;
-    }
-
-    public struct ConnectionValidationResult(bool isValid, string reason = "") {
-        public bool IsValid { get; set; } = isValid;
-        public string Reason { get; set; } = reason;
     }
 
     private (TrackEntity track, int entryDirection, ConnectionValidationResult result)? FindNextTrackAndValidateConnection(TrackEntity currentTrack, int exitDirection) {
@@ -324,7 +312,7 @@ public class TrackPathTracer {
         var nextConnections = GetTrackConnections(nextTrack);
 
         if (currentConnections == null || nextConnections == null) {
-            return (nextTrack, entryDirection, new ConnectionValidationResult(false, "Missing connection information"));
+            return(nextTrack, entryDirection, new ConnectionValidationResult(false, "Missing connection information"));
         }
 
         // Get the ACTUAL connection types considering rotation
@@ -333,22 +321,22 @@ public class TrackPathTracer {
 
         // Validate the connection based on rules
         var validationResult = ValidateConnection(currentTrack, nextTrack, currentExitType, nextEntryType);
-        return (nextTrack, entryDirection, validationResult);
+        return(nextTrack, entryDirection, validationResult);
     }
 
     private ConnectionValidationResult ValidateConnection(TrackEntity currentTrack,
-                                                          TrackEntity nextTrack,
-                                                          ConnectionType currentExitType,
-                                                          ConnectionType nextEntryType) {
+        TrackEntity nextTrack,
+        ConnectionType currentExitType,
+        ConnectionType nextEntryType) {
         switch (nextEntryType) {
-        case ConnectionType.None:
-            return new ConnectionValidationResult(false, "No connection available");
+            case ConnectionType.None:
+                return new ConnectionValidationResult(false, "No connection available");
 
-        case ConnectionType.Terminator:
-            return new ConnectionValidationResult(false, "Path terminated at terminator");
+            case ConnectionType.Terminator:
+                return new ConnectionValidationResult(false, "Path terminated at terminator");
 
-        case ConnectionType.Connector:
-            return new ConnectionValidationResult(false, "Path terminated at connector");
+            case ConnectionType.Connector:
+                return new ConnectionValidationResult(false, "Path terminated at connector");
         }
 
         // Check basic pairing rules
@@ -382,7 +370,7 @@ public class TrackPathTracer {
             (ConnectionType.Connector, ConnectionType.Closed)    => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
             (ConnectionType.Connector, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
 
-            _ => new ConnectionValidationResult(false, $"Invalid connection: {currentExitType} to {nextEntryType}")
+            _ => new ConnectionValidationResult(false, $"Invalid connection: {currentExitType} to {nextEntryType}"),
         };
         return result;
     }
@@ -395,12 +383,14 @@ public class TrackPathTracer {
         return turnout.State switch {
             TurnoutStateEnum.Unknown              => new ConnectionValidationResult(false, "Turnout state unknown"),
             var state when state == requiredState => new ConnectionValidationResult(true),
-            _                                     => new ConnectionValidationResult(false, $"Turnout in wrong state (required: {requiredState}, actual: {turnout.State})")
+            _                                     => new ConnectionValidationResult(false, $"Turnout in wrong state (required: {requiredState}, actual: {turnout.State})"),
         };
     }
 
-    private static int GetOppositeDirection(int direction) {
-        return (direction + 4) % EntityConnections.MaxDirections;
-    }
+    private static int GetOppositeDirection(int direction) => (direction + 4) % EntityConnections.MaxDirections;
 
+    public struct ConnectionValidationResult(bool isValid, string reason = "") {
+        public bool IsValid { get; set; } = isValid;
+        public string Reason { get; set; } = reason;
+    }
 }

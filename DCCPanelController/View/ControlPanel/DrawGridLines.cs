@@ -1,26 +1,9 @@
-using Microsoft.Maui.Graphics;
-
 namespace DCCPanelController.View.ControlPanel;
 
 /// <summary>
 ///     This is a helper class that draws the Grid Lines on the Page.
 /// </summary>
 public class DrawGridLines : GraphicsView, IDrawable {
-    private int Cols { get; set; }
-    private int Rows { get; set; }
-
-    private float GridWidth { get; set; }
-    private float LineWidth { get; set; }
-    private Color GridColor { get; set; }
-
-    public bool IsActive {
-        get;
-        set {
-            field = value;
-            Invalidate();
-        }
-    }
-
     /// <summary>
     ///     This is a helper class that draws the Grid Lines on the Page.
     /// </summary>
@@ -40,13 +23,19 @@ public class DrawGridLines : GraphicsView, IDrawable {
         Drawable = this;
     }
 
-    public void Update(int columns, int rows, Color? gridColor = null, float? lineWidth = null, float? gridWidth = null) {
-        Rows = rows;
-        Cols = columns;
-        GridColor = gridColor ?? Colors.DarkGrey;
-        LineWidth = lineWidth ?? 0.5f;
-        GridWidth = gridWidth ?? 5.0f;
-        Invalidate();
+    private int Cols { get; set; }
+    private int Rows { get; set; }
+
+    private float GridWidth { get; set; }
+    private float LineWidth { get; set; }
+    private Color GridColor { get; set; }
+
+    public bool IsActive {
+        get;
+        set {
+            field = value;
+            Invalidate();
+        }
     }
 
     public void Draw(ICanvas canvas, RectF dirtyRect) {
@@ -69,5 +58,14 @@ public class DrawGridLines : GraphicsView, IDrawable {
         } else {
             IsVisible = false;
         }
+    }
+
+    public void Update(int columns, int rows, Color? gridColor = null, float? lineWidth = null, float? gridWidth = null) {
+        Rows = rows;
+        Cols = columns;
+        GridColor = gridColor ?? Colors.DarkGrey;
+        LineWidth = lineWidth ?? 0.5f;
+        GridWidth = gridWidth ?? 5.0f;
+        Invalidate();
     }
 }

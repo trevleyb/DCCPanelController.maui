@@ -18,7 +18,7 @@ public class DrawableCircleTile : Tile, ITileDrawable {
             var circle = new Ellipse {
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
-                InputTransparent = true
+                InputTransparent = true,
             };
             circle.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.OneWay, source: entity));
             circle.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: entity));
@@ -30,7 +30,5 @@ public class DrawableCircleTile : Tile, ITileDrawable {
         return CreateSymbol();
     }
 
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("circle").AsImage();
-    }
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("circle").AsImage();
 }

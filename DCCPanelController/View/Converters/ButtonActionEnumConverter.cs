@@ -4,9 +4,7 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.View.Converters;
 
 public class ButtonActionEnumConverter : IValueConverter {
-    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        return value?.ToString() ?? "Unknown Value";
-    }
+    public object Convert(object? value, Type targetType, object? parameter, CultureInfo culture) => value?.ToString() ?? "Unknown Value";
 
     // Maps the string back to the corresponding enum
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {

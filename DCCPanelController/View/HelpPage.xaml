@@ -12,15 +12,16 @@
     xmlns:view="clr-namespace:DCCPanelController.View">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Home"    Clicked="OnHome"    Priority="0" Order="Primary"                                            IconImageSource="home_active" />
-        <ToolbarItem Text="Back"    Clicked="OnBack"    Priority="0" Order="Primary" IsEnabled="{Binding BackButtonEnabled}"    IconImageSource="{Binding BackButtonEnabled, Converter={StaticResource BoolToIcon}, ConverterParameter=arrow_left}"/>
-        <ToolbarItem Text="Forward" Clicked="OnForward" Priority="1" Order="Primary" IsEnabled="{Binding ForwardButtonEnabled}" IconImageSource="{Binding ForwardButtonEnabled, Converter={StaticResource BoolToIcon}, ConverterParameter=arrow_right}"/>
+        <ToolbarItem Text="Home" Clicked="OnHome" Priority="0" Order="Primary" IconImageSource="home_active"/>
+        <ToolbarItem Text="Back" Clicked="OnBack" Priority="0" Order="Primary" IsEnabled="{Binding BackButtonEnabled}"
+                     IconImageSource="{Binding BackButtonEnabled, Converter={StaticResource BoolToIcon}, ConverterParameter=arrow_left}"/>
+        <ToolbarItem Text="Forward" Clicked="OnForward" Priority="1" Order="Primary"
+                     IsEnabled="{Binding ForwardButtonEnabled}"
+                     IconImageSource="{Binding ForwardButtonEnabled, Converter={StaticResource BoolToIcon}, ConverterParameter=arrow_right}"/>
     </ContentPage.ToolbarItems>
-    
+
     <Grid RowDefinitions="*" Padding="10">
         <view:HelpViewer x:Name="Viewer" Grid.Row="1" HorizontalOptions="Fill" VerticalOptions="Fill"/>
     </Grid>
 
 </ContentPage>
-
-

@@ -7,16 +7,14 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:behaviors="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:components="clr-namespace:DCCPanelController.View.Components"
-    xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
     xmlns:local="clr-namespace:DCCPanelController.View.Actions"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions"
-    xmlns:helpers="clr-namespace:DCCPanelController.View.Helpers">
+    xmlns:actions="clr-namespace:DCCPanelController.Models.DataModel.Entities.Actions">
 
     <ContentView.Resources>
-        <x:Object x:Key="Vm" />
+        <x:Object x:Key="Vm"/>
     </ContentView.Resources>
-    
+
     <ContentView.Content>
         <Grid RowDefinitions="auto,*">
             <Grid Grid.Row="0" ColumnDefinitions="auto,auto">
@@ -57,7 +55,7 @@
                             <BoxView Background="{StaticResource Primary}" Grid.Column="1"/>
                             <BoxView Background="{StaticResource Primary}" Grid.Column="2"/>
                             <BoxView Background="{StaticResource Primary}" Grid.Column="3"/>
-                            
+
                             <Label
                                 HorizontalOptions="Start"
                                 VerticalOptions="Center"
@@ -131,8 +129,7 @@
                                         TextSize="15"
                                         SelectedValue="{Binding Id, Mode=TwoWay}"
                                         ViewModel="{DynamicResource Vm}"
-                                        Placeholder="Select a Turnout">
-                                    </local:ActionPickerSelector>
+                                        Placeholder="Select a Turnout"/>
 
                                     <components:TurnoutStateControl
                                         CanSetStateUnknown="True"

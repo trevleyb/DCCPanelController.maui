@@ -1,14 +1,15 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using DCCPanelController.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.Models.DataModel.Repository;
 
 public static class JsonRepository {
+    private static readonly ILogger Logger = LogHelper.CreateLogger("PanelRepository");
 
     public static string Version { get; set; } = "1.0.1";
-    private static readonly ILogger Logger = LogHelper.CreateLogger("PanelRepository");
 
     public static async Task SaveAsync(Profile profile, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         using (new CodeTimer($"Save JSON File: {caller}@{lineNumber}", false)) {
@@ -52,7 +53,7 @@ public static class JsonRepository {
                     try {
                         var jsonString = await File.ReadAllTextAsync(filePath);
                         if (string.IsNullOrWhiteSpace(jsonString)) return null;
-                        
+
                         // FUTURE: Add Support for difference Schema Versions and conversion between them
                         var version = GetSchemaVersion(jsonString);
                         Console.WriteLine($"Profile Version: {version} | Repository Version: {Version}");
@@ -76,28 +77,28 @@ public static class JsonRepository {
     }
 
     private static string GetSchemaVersion(string jsonString) {
-        if (string.IsNullOrWhiteSpace(jsonString)) return "Undefined";
+        if (string.IsNullOrWhiteSpace(jsonString)) return"Undefined";
         try {
             // Match "schemaVersion" or "version" JSON keys and capture either a quoted string or a number (e.g., 1, 1.2.3)
             // Ensures we only match a proper JSON key by requiring surrounding quotes.
-            var match = System.Text.RegularExpressions.Regex.Match(
+            var match = Regex.Match(
                 jsonString,
                 "\"(?i:(schemaVersion|version|Version))\"\\s*:\\s*(?:\"(?<val>(?:[^\"\\\\]|\\\\.)*)\"|(?<val>-?\\d+(?:\\.\\d+)*))",
-                System.Text.RegularExpressions.RegexOptions.CultureInvariant
+                RegexOptions.CultureInvariant
             );
-            if (!match.Success) return "Unknown";
+            if (!match.Success) return"Unknown";
 
             var raw = match.Groups["val"].Value;
             try {
-                return System.Text.RegularExpressions.Regex.Unescape(raw);
+                return Regex.Unescape(raw);
             } catch {
                 return raw;
             }
         } catch (Exception) {
-            return "Error";
+            return"Error";
         }
     }
-    
+
     public static Profile? Load(string profileName, [CallerMemberName] string caller = "", [CallerLineNumber] int lineNumber = 0) {
         var filePath = GetStorageFilePath(profileName);
         using (new CodeTimer($"Load JSON File: {caller}@{lineNumber}", false)) {

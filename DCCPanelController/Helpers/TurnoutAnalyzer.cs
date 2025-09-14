@@ -4,9 +4,7 @@ using DCCPanelController.Models.DataModel;
 namespace DCCPanelController.Helpers;
 
 public static class TurnoutAnalyzer {
-    public static string GetUniqueID(List<Turnout> turnouts) {
-        return AnalyzeTurnouts(turnouts).NewUniqueId;
-    }
+    public static string GetUniqueID(List<Turnout> turnouts) => AnalyzeTurnouts(turnouts).NewUniqueId;
 
     public static (string MostCommonPrefix, string NewUniqueId) AnalyzeTurnouts(List<Turnout> turnouts) {
         var patternCount = new Dictionary<string, int>();
@@ -53,7 +51,7 @@ public static class TurnoutAnalyzer {
         var numberPart = FormatNumber(nextNumber, formatToUse);
         var newUniqueId = $"{patternPrefix}{numberPart}{patternSuffix}";
 
-        return (patternPrefix, newUniqueId);
+        return(patternPrefix, newUniqueId);
     }
 
     private static (string prefix, int number, string suffix, string originalFormat) ExtractPrefixNumberSuffix(string id) {
@@ -69,11 +67,11 @@ public static class TurnoutAnalyzer {
             // Preserve original number formatting (leading zeros, etc.)
             var originalFormat = numberStr;
 
-            return (prefix, number, suffix, originalFormat);
+            return(prefix, number, suffix, originalFormat);
         }
 
         // If no number found, treat as prefix with number 0
-        return (id, 0, "", "");
+        return(id, 0, "", "");
     }
 
     private static (string prefix, string suffix) SplitPattern(string pattern) {
@@ -85,12 +83,12 @@ public static class TurnoutAnalyzer {
 
         foreach (var suffix in knownSuffixes) {
             if (pattern.EndsWith(suffix) && pattern.Length > suffix.Length) {
-                return (pattern[..^suffix.Length], suffix);
+                return(pattern[..^suffix.Length], suffix);
             }
         }
 
         // If no known suffix found, treat entire pattern as prefix
-        return (pattern, "");
+        return(pattern, "");
     }
 
     private static string FormatNumber(int number, string originalFormat) {

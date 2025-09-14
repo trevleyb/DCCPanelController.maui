@@ -1,13 +1,12 @@
-using Microsoft.Maui.Controls.Shapes;
 using Picker = Microsoft.Maui.Controls.Picker;
 
 namespace DCCPanelController.View.Actions;
 
 public class ActionPickerSelector : ContentView {
-    private Image   _clearImage = new();
-    private bool    _isInitialized; // Track if we've been initialized
-    private Grid?   _mainButtonLayout;
-    private Label?  _selectedItemLabel;
+    private Image  _clearImage = new();
+    private bool   _isInitialized; // Track if we've been initialized
+    private Grid?  _mainButtonLayout;
+    private Label? _selectedItemLabel;
 
     protected override void OnHandlerChanged() {
         base.OnHandlerChanged();
@@ -23,7 +22,7 @@ public class ActionPickerSelector : ContentView {
     /// </summary>
     public void DrawPopup() {
         if (!_isInitialized) return; // Already drawn
-        
+
         // The label that will be displayed containing the selected item
         // ----------------------------------------------------------------------------
         _selectedItemLabel = new Label {
@@ -37,7 +36,7 @@ public class ActionPickerSelector : ContentView {
             HorizontalOptions = LayoutOptions.Fill,
             Margin = new Thickness(10, 5, 5, 5),
             Padding = new Thickness(5, 0, 0, 0),
-            BindingContext = this
+            BindingContext = this,
         };
         _selectedItemLabel.SetBinding(Label.TextColorProperty, new Binding(nameof(TextColor), BindingMode.OneWay, source: this));
         _selectedItemLabel.SetBinding(Label.FontSizeProperty, new Binding(nameof(TextSize), BindingMode.OneWay, source: this));
@@ -53,19 +52,15 @@ public class ActionPickerSelector : ContentView {
         // ----------------------------------------------------------------------------
         _mainButtonLayout = new Grid {
             VerticalOptions = LayoutOptions.Fill,
-            HorizontalOptions = LayoutOptions.Fill
+            HorizontalOptions = LayoutOptions.Fill,
         };
         _mainButtonLayout.Children.Add(_selectedItemLabel);
         Content = _mainButtonLayout;
     }
 
-    private bool HasItems(List<string>? itemsSource) {
-        return(itemsSource?.Count ?? 0) > 0;
-    }
+    private bool HasItems(List<string>? itemsSource) => (itemsSource?.Count ?? 0) > 0;
 
-    private void ShowPicker() {
-        ShowStandardPicker();
-    }
+    private void ShowPicker() => ShowStandardPicker();
 
     /// <summary>
     ///     Main Show the picker function
@@ -77,12 +72,13 @@ public class ActionPickerSelector : ContentView {
             VerticalOptions = LayoutOptions.Fill,
             WidthRequest = WidthRequest,
             Margin = new Thickness(10, 0, 0, 0),
-            ItemsSource = pickerItems, 
+            ItemsSource = pickerItems,
             #if !MACCATALYST
+
             // Title is not supported on macOS
             Title = Placeholder ?? "Select an option",
             #endif
-            IsVisible = false
+            IsVisible = false,
         };
         var index = FindIndexOfSelectedValue(SelectedValue, pickerItems);
         picker.SelectedIndex = index;
@@ -106,7 +102,7 @@ public class ActionPickerSelector : ContentView {
             };
         }
     }
-    
+
     private static int FindIndexOfSelectedValue(string? selectedValue, List<string> displayItems) {
         if (selectedValue is null) return 0;
         for (var index = 0; index < displayItems.Count; index++) {
@@ -117,12 +113,12 @@ public class ActionPickerSelector : ContentView {
 
     #region Bindable Properties
     public static readonly BindableProperty ViewModelProperty     = BindableProperty.Create(nameof(ViewModel), typeof(IActionsGridViewModel), typeof(ActionPickerSelector), null, BindingMode.OneWayToSource, propertyChanged: ViewModelUpdated);
-    public static readonly BindableProperty SelectedValueProperty = BindableProperty.Create(nameof(SelectedValue), typeof(string), typeof(ActionPickerSelector),"", BindingMode.TwoWay, propertyChanged: RefreshControl);
+    public static readonly BindableProperty SelectedValueProperty = BindableProperty.Create(nameof(SelectedValue), typeof(string), typeof(ActionPickerSelector), "", BindingMode.TwoWay, propertyChanged: RefreshControl);
 
-    public static readonly BindableProperty PlaceholderProperty     = BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(ActionPickerSelector), string.Empty, propertyChanged: RefreshControl);
-    public static readonly BindableProperty TextColorProperty       = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(ActionPickerSelector), Colors.Black, propertyChanged: RefreshControl);
-    public static readonly BindableProperty TextSizeProperty        = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(ActionPickerSelector), 12.0, propertyChanged: RefreshControl);
-    
+    public static readonly BindableProperty PlaceholderProperty = BindableProperty.Create(nameof(Placeholder), typeof(string), typeof(ActionPickerSelector), string.Empty, propertyChanged: RefreshControl);
+    public static readonly BindableProperty TextColorProperty   = BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(ActionPickerSelector), Colors.Black, propertyChanged: RefreshControl);
+    public static readonly BindableProperty TextSizeProperty    = BindableProperty.Create(nameof(TextSize), typeof(double), typeof(ActionPickerSelector), 12.0, propertyChanged: RefreshControl);
+
     private static void RefreshControl(BindableObject bindable, object? oldValue, object? newValue) {
         if (bindable is ActionPickerSelector selector) {
             selector.DrawPopup();
@@ -130,12 +126,12 @@ public class ActionPickerSelector : ContentView {
     }
 
     private static void ViewModelUpdated(BindableObject bindable, object oldValue, object newValue) { }
-    
+
     public IActionsGridViewModel? ViewModel {
         get => (IActionsGridViewModel)GetValue(ViewModelProperty);
         set => SetValue(ViewModelProperty, value);
     }
-    
+
     /// <summary>
     ///     Gets or sets the value that is extracted from the selected item using the SelectedValuePath.
     ///     This is what gets bound to your model property (e.g., the ID).
@@ -144,7 +140,7 @@ public class ActionPickerSelector : ContentView {
         get => (string)GetValue(SelectedValueProperty);
         set => SetValue(SelectedValueProperty, value);
     }
-    
+
     /// <summary>
     ///     If the current object is blank, this is the text that should be
     ///     displayed as a placeholder.
@@ -169,6 +165,5 @@ public class ActionPickerSelector : ContentView {
         get => (double)GetValue(TextSizeProperty);
         set => SetValue(TextSizeProperty, value);
     }
-
     #endregion
 }

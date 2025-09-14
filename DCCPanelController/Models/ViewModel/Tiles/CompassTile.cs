@@ -12,7 +12,5 @@ public class CompassTile : Tile {
         return image;
     }
 
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("compass").AsImage();
-    }
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("compass").AsImage();
 }

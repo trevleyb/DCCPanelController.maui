@@ -26,26 +26,30 @@
             <Grid BackgroundColor="{StaticResource Primary}">
                 <Label Margin="20,5,20,5" Text="{Binding Title}" FontSize="24" TextColor="White"/>
             </Grid>
-            <Grid BackgroundColor="LightGray" ColumnDefinitions="auto,*" x:Name="InformationGrid" IsVisible="{Binding ShowInformation}">
+            <Grid BackgroundColor="LightGray" ColumnDefinitions="auto,*" x:Name="InformationGrid"
+                  IsVisible="{Binding ShowInformation}">
                 <Image Margin="20,0,10,0" Source="info.png">
                     <Image.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Image.Behaviors>
                 </Image>
-                <markdown:MarkdownView Grid.Column="1" Margin="10,10,20,10" MarkdownText="{Binding Information}" TextFontSize="{OnIdiom Phone=12, Tablet=14, Desktop=15 }" TextColor="Black"/>
+                <markdown:MarkdownView Grid.Column="1" Margin="10,10,20,10" MarkdownText="{Binding Information}"
+                                       TextFontSize="{OnIdiom Phone=12, Tablet=14, Desktop=15 }" TextColor="Black"/>
             </Grid>
         </StackLayout>
-        
+
         <Grid Grid.Row="2" x:Name="Footer" BackgroundColor="LightGray">
             <Grid ColumnDefinitions="*,auto,auto">
                 <Grid Grid.Column="0" HorizontalOptions="Fill" VerticalOptions="Center" Margin="20,5,20,5">
                     <Label TextColor="Firebrick" Text="{Binding ErrorMessages}"/>
                 </Grid>
-                <Button Grid.Column="1" HeightRequest="35" HorizontalOptions="End" x:Name="CancelButton" Text="Cancel" Margin="5,0,5,0" Style="{StaticResource ButtonOutline}"
+                <Button Grid.Column="1" HeightRequest="35" HorizontalOptions="End" x:Name="CancelButton" Text="Cancel"
+                        Margin="5,0,5,0" Style="{StaticResource ButtonOutline}"
                         Clicked="CancelButtonClicked"/>
-                <Button Grid.Column="2" HeightRequest="35" HorizontalOptions="End" x:Name="ApplyButton" Text="Apply Changes" Margin="5,0,10,0" Style="{StaticResource ButtonOutline}"
+                <Button Grid.Column="2" HeightRequest="35" HorizontalOptions="End" x:Name="ApplyButton"
+                        Text="Apply Changes" Margin="5,0,10,0" Style="{StaticResource ButtonOutline}"
                         Clicked="ApplyButtonClicked"/>
-                </Grid>
+            </Grid>
         </Grid>
 
         <Grid Grid.Row="1" x:Name="PropertyContent" BackgroundColor="WhiteSmoke">

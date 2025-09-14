@@ -22,16 +22,12 @@ public partial class ProfileSelector : ContentView {
     public event Action<int>? SelectionCompleted;
     public event Action? SelectionCancelled;
 
-    private async void OnSelectButtonClicked(object? sender, EventArgs e) {
-        SelectionCompleted?.Invoke(SelectedItem?.Index ?? -1);
-    }
+    private async void OnSelectButtonClicked(object? sender, EventArgs e) => SelectionCompleted?.Invoke(SelectedItem?.Index ?? -1);
 
-    private async void OnCancelButtonClicked(object? sender, EventArgs e) {
-        SelectionCancelled?.Invoke();
-    }
+    private async void OnCancelButtonClicked(object? sender, EventArgs e) => SelectionCancelled?.Invoke();
 
     private void ProfileSelectionChanged(object? sender, SelectionChangedEventArgs e) {
-        IsOkEnabled = SelectedItem is not null;
+        IsOkEnabled = SelectedItem is { };
         OnPropertyChanged(nameof(IsOkEnabled));
     }
 
@@ -46,11 +42,11 @@ public partial class ProfileSelector : ContentView {
             PopupStyle = new PopupStyle {
                 CornerRadius = 10,
                 HasShadow = false,
-                BlurIntensity = PopupBlurIntensity.Light
+                BlurIntensity = PopupBlurIntensity.Light,
             },
             AutoSizeMode = PopupAutoSizeMode.Both,
             AnimationMode = PopupAnimationMode.Zoom,
-            AnimationDuration = 300
+            AnimationDuration = 300,
         };
 
         selector.SelectionCompleted += index => {

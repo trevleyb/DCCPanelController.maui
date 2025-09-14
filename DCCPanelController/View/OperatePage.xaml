@@ -19,9 +19,11 @@
     </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}" IsEnabled="{Binding HasPanels}" IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
-        <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IsEnabled="{Binding HasPanels}" IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_right}"/>
-        
+        <ToolbarItem Text="Left" Command="{Binding SwipeLeftCommand}" IsEnabled="{Binding HasPanels}"
+                     IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_left}"/>
+        <ToolbarItem Text="Right" Command="{Binding SwipeRightCommand}" IsEnabled="{Binding HasPanels}"
+                     IconImageSource="{Binding HasPanels, Converter={StaticResource BoolToIcon}, ConverterParameter=chevron_right}"/>
+
         <ToolbarItem
             Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
@@ -62,8 +64,7 @@
                         ShowGrid="false"
                         IsVisible="{Binding HideWelcomePage}"
                         Panel="{Binding ActivePanel}"
-                        x:Name="PanelView">
-                    </controlPanel:ControlPanelView>
+                        x:Name="PanelView"/>
 
                     <!-- Empty View when no panels -->
                     <ContentView HorizontalOptions="Fill" VerticalOptions="Fill" IsVisible="{Binding ShowWelcomePage}">
@@ -164,7 +165,7 @@
             </Grid>
 
             <Grid Grid.Row="1" HeightRequest="32">
-                
+
                 <IndicatorView
                     x:Name="Indicators"
                     ItemsSource="{Binding Panels}"
@@ -173,11 +174,11 @@
                     IndicatorsShape="Circle"
                     HideSingle="True"
                     IndicatorSize="12"
-                    Position="{Binding CurrentPanelIndex}" />
-                
-                <Label Margin="0,0,10,5" 
+                    Position="{Binding CurrentPanelIndex}"/>
+
+                <Label Margin="0,0,10,5"
                        FontSize="8"
-                       Text="{Binding ProfileName}" 
+                       Text="{Binding ProfileName}"
                        HorizontalOptions="End"
                        VerticalOptions="End" IsVisible="{Binding IsMaximized}"
                        BackgroundColor="Transparent" TextColor="Gainsboro">

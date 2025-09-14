@@ -1,4 +1,3 @@
-using Common.Logging;
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Controls.PlatformConfiguration;
 using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
@@ -6,8 +5,8 @@ using Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;
 namespace DCCPanelController.View;
 
 public partial class SensorsPage : ContentPage {
-    
     private readonly ILogger<SensorsPage> _logger;
+
     public SensorsPage(ILogger<SensorsPage> logger, SensorsViewModel viewModel) {
         _logger = logger;
         InitializeComponent();

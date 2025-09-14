@@ -1,16 +1,13 @@
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
-using DCCPanelController.View.Components;
-using HorizontalAlignment = ExCSS.HorizontalAlignment;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
-internal sealed class BlockRenderer : BaseRenderer,IPropertyRenderer {
+internal sealed class BlockRenderer : BaseRenderer, IPropertyRenderer {
     protected override int FieldWidth => 200;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Block;
-    public object CreateView(PropertyContext ctx) {
 
+    public object CreateView(PropertyContext ctx) {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Object: Block Renderer").CreateView(ctx);
 
@@ -20,15 +17,15 @@ internal sealed class BlockRenderer : BaseRenderer,IPropertyRenderer {
         var row = ctx.Row;
         var picker = new Picker {
             FontSize = FieldFontSize,
-            Margin=new Thickness(5, 0, 0, 0),
+            Margin = new Thickness(5, 0, 0, 0),
             HorizontalOptions = LayoutOptions.Fill,
             VerticalOptions = LayoutOptions.Center,
         };
         foreach (var i in blocks) picker.Items.Add(i.DisplayFormat);
         if (row.OriginalValue is string s) picker.SelectedIndex = SelectedIndex(s, blocks);
         picker.SelectedIndexChanged += (s2, e2) => SetValue(row, SelectedValue(picker.SelectedItem, blocks));
-        picker.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
-        
+        picker.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
+
         var wrapped = WrapPicker(ctx, picker, GetFieldWidth(ctx));
         return WrapWithLabel(ctx, AddBorder(wrapped));
     }

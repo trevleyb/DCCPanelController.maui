@@ -3,7 +3,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:view="clr-namespace:DCCPanelController.View"
-             xmlns:dataModel="clr-namespace:DCCPanelController.Models.DataModel"
              xmlns:tileSelectors="clr-namespace:DCCPanelController.View.TileSelectors"
              xmlns:ios="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.iOSSpecific;assembly=Microsoft.Maui.Controls"
              xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
@@ -23,45 +22,39 @@
             IconImageSource="{Binding CanSetModes, Converter={StaticResource BoolToIcon}, ConverterParameter=move}"
             Text="Mode" x:Name="ModeToolbar"
             IsEnabled="{Binding CanSetModes}"
-            Command="{Binding Path=SwitchModeCommand}">
-        </ToolbarItem>
+            Command="{Binding Path=SwitchModeCommand}"/>
 
         <ToolbarItem
             Text="Rotate" x:Name="RotateToolbar"
             IsEnabled="{Binding CanRotateTiles}"
             Command="{Binding Path=RotateTileCommand}"
-            IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}">
-        </ToolbarItem>
+            IconImageSource="{Binding CanRotateTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=rotate_cw}"/>
 
         <ToolbarItem
             IconImageSource="{Binding CanDeleteTiles, Converter={StaticResource BoolToIcon}, ConverterParameter=trash_2}"
             Text="Delete" x:Name="DeleteToolbar"
             IsEnabled="{Binding CanDeleteTiles}"
-            Command="{Binding Path=DeleteTileCommand}">
-        </ToolbarItem>
+            Command="{Binding Path=DeleteTileCommand}"/>
 
         <ToolbarItem
             IconImageSource="{Binding CanEditProperties, Converter={StaticResource BoolToIcon}, ConverterParameter=settings}"
             Text="Edit" x:Name="EditToolbar"
             Command="{Binding Path=EditPropertiesCommand}"
-            IsEnabled="{Binding CanEditProperties}">
-        </ToolbarItem>
+            IsEnabled="{Binding CanEditProperties}"/>
 
         <ToolbarItem
             IconImageSource="{Binding CanToggleGrid, Converter={StaticResource BoolToIcon}, ConverterParameter=grid_off}"
             Text="Grid" x:Name="GridToolbar"
             IsEnabled="{Binding CanToggleGrid}"
-            Command="{Binding Path=ToggleGridCommand}">
-        </ToolbarItem>
-        
+            Command="{Binding Path=ToggleGridCommand}"/>
+
         <ToolbarItem
             IconImageSource="{Binding CanPressBackButton, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
             Text="Save" x:Name="SaveToolbar"
             IsEnabled="{Binding CanPressBackButton}"
-            Command="{Binding Path=BackButtonPressedCommand}">
-        </ToolbarItem>
+            Command="{Binding Path=BackButtonPressedCommand}"/>
 
-        
+
     </ContentPage.ToolbarItems>
 
     <Grid>

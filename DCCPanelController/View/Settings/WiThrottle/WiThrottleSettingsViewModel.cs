@@ -71,7 +71,5 @@ public partial class WiThrottleSettingsViewModel : SettingsViewModel {
     }
 
     [RelayCommand]
-    private async Task OnDefaultDeviceNameClickedAsync() {
-        WiThrottleSettings.Name = DeviceInfo.Name;
-    }
+    private async Task OnDefaultDeviceNameClickedAsync() => WiThrottleSettings.Name = DeviceInfo.Name;
 }

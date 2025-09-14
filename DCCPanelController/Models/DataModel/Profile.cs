@@ -1,23 +1,20 @@
 using System.Collections.ObjectModel;
-using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace DCCPanelController.Models.DataModel;
 
 public partial class Profile : ObservableObject {
-
-    public string Version { get; set; } = "1.0.1";  // Ensure we increment this version number when making changes to the schema
-    
-    [ObservableProperty] private string _filename;
-    [ObservableProperty] private string _profileName;
-    [ObservableProperty] private Panels _panels;
-    [ObservableProperty] private Settings _settings;
-
-    [ObservableProperty] private ObservableCollection<Light> _lights;
     [ObservableProperty] private ObservableCollection<Block> _blocks;
-    [ObservableProperty] private ObservableCollection<Route> _routes;
-    [ObservableProperty] private ObservableCollection<Sensor> _sensors;
-    [ObservableProperty] private ObservableCollection<Signal> _signals;
+
+    [ObservableProperty] private string _filename;
+
+    [ObservableProperty] private ObservableCollection<Light>   _lights;
+    [ObservableProperty] private Panels                        _panels;
+    [ObservableProperty] private string                        _profileName;
+    [ObservableProperty] private ObservableCollection<Route>   _routes;
+    [ObservableProperty] private ObservableCollection<Sensor>  _sensors;
+    [ObservableProperty] private Settings                      _settings;
+    [ObservableProperty] private ObservableCollection<Signal>  _signals;
     [ObservableProperty] private ObservableCollection<Turnout> _turnouts;
 
     public Profile(string profileName, string? fileName = null) {
@@ -32,6 +29,8 @@ public partial class Profile : ObservableObject {
         Sensors = [];
         Lights = [];
     }
+
+    public string Version { get; set; } = "1.0.1"; // Ensure we increment this version number when making changes to the schema
 
     public Turnout? Turnout(string id) => Turnouts.FirstOrDefault(t => t.Id == id);
     public Route? Route(string id) => Routes.FirstOrDefault(r => r.Id == id);
@@ -71,9 +70,9 @@ public partial class Profile : ObservableObject {
     }
 
     public void RefreshTurnouts() => RefreshCollection(Turnouts, t => t is { IsEditable: false, IsModified: false });
-    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { IsEditable : false, IsModified: false });
-    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { IsEditable : false, IsModified: false });
-    public void RefreshSignals() => RefreshCollection(Signals, t => t is { IsEditable : false, IsModified: false });
-    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { IsEditable : false, IsModified: false });
-    public void RefreshLights() => RefreshCollection(Lights, t => t is { IsEditable : false, IsModified: false });
+    public void RefreshRoutes() => RefreshCollection(Routes, t => t is { IsEditable    : false, IsModified: false });
+    public void RefreshBlocks() => RefreshCollection(Blocks, t => t is { IsEditable    : false, IsModified: false });
+    public void RefreshSignals() => RefreshCollection(Signals, t => t is { IsEditable  : false, IsModified: false });
+    public void RefreshSensors() => RefreshCollection(Sensors, t => t is { IsEditable  : false, IsModified: false });
+    public void RefreshLights() => RefreshCollection(Lights, t => t is { IsEditable    : false, IsModified: false });
 }

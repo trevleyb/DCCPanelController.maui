@@ -1,23 +1,21 @@
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
-using Microsoft.Maui.Graphics;
 using Syncfusion.Maui.Toolkit.Popup;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerButton : ContentView {
-    private SfPopup?                  _popup;
-    private DataTemplate?             _popupTemplate;
-    private ColorPickerGridViewModel? _vm;
-    private ColorPickerGrid?          _view;
-
-    public static readonly BindableProperty SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty IsMultiValueProperty  = BindableProperty.Create(nameof(IsMultiValue), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty BorderColorProperty   = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty BorderWidthProperty   = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty CornerRadiusProperty  = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          IsMultiValueProperty  = BindableProperty.Create(nameof(IsMultiValue), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          BorderColorProperty   = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          BorderWidthProperty   = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          CornerRadiusProperty  = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
+    private                SfPopup?                  _popup;
+    private                DataTemplate?             _popupTemplate;
+    private                ColorPickerGrid?          _view;
+    private                ColorPickerGridViewModel? _vm;
 
     public ColorPickerButton() {
         InitializeComponent();
@@ -26,7 +24,7 @@ public partial class ColorPickerButton : ContentView {
 
     public Color ActiveColor => SelectedColor ?? DefaultColor ?? Colors.White;
     public Color SelectedOffsetColor => AppleCrayonColors.GetContrastingTextColor(SelectedColor ?? Colors.White);
-    public string SelectedColorText => SelectedColor == null ? (IsMultiValue ? "-- Multiple --" : "Use Default") : AppleCrayonColors.Name(SelectedColor);
+    public string SelectedColorText => SelectedColor == null ? IsMultiValue ? "-- Multiple --" : "Use Default" : AppleCrayonColors.Name(SelectedColor);
     public bool ShowClearColorButton => (SelectedColor != null || IsMultiValue) && AllowsNoColor;
 
     public Color? DefaultColor {
@@ -88,7 +86,7 @@ public partial class ColorPickerButton : ContentView {
         }
     }
 
-    protected async override void OnHandlerChanged() {
+    protected override async void OnHandlerChanged() {
         base.OnHandlerChanged();
         await EnsurePopup();
     }
@@ -99,7 +97,7 @@ public partial class ColorPickerButton : ContentView {
         _vm = new ColorPickerGridViewModel(SelectedColor ?? Colors.White);
         _view = new ColorPickerGrid(_vm);
         _popupTemplate ??= new DataTemplate(() => _view);
-        _popup = new() {
+        _popup = new SfPopup {
             ContentTemplate = _popupTemplate,
             ShowHeader = false,
             ShowFooter = false,
@@ -111,8 +109,8 @@ public partial class ColorPickerButton : ContentView {
             },
 
             AutoSizeMode = PopupAutoSizeMode.Height,
-            WidthRequest = 388, 
-            AnimationMode =PopupAnimationMode.None,
+            WidthRequest = 388,
+            AnimationMode = PopupAnimationMode.None,
             AnimationDuration = 0,
         };
 

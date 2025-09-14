@@ -7,7 +7,7 @@ namespace DCCPanelController.View;
 [QueryProperty(nameof(TopicId), "topicId")]
 public partial class HelpPage : ContentPage {
     // History
-    private readonly Stack<HelpHistoryEntry> _back = new();
+    private readonly Stack<HelpHistoryEntry> _back    = new();
     private readonly Stack<HelpHistoryEntry> _forward = new();
 
     public HelpPage() {
@@ -34,9 +34,7 @@ public partial class HelpPage : ContentPage {
     }
 
 // Link clicks inside the viewer
-    private async void OnHelpLinkRequested(object? sender, HelpLinkRequestedEventArgs e) {
-        await NavigateToAsync(new HelpHistoryEntry(e.TopicId, e.Anchor), true);
-    }
+    private async void OnHelpLinkRequested(object? sender, HelpLinkRequestedEventArgs e) => await NavigateToAsync(new HelpHistoryEntry(e.TopicId, e.Anchor), true);
 
     private async Task LoadTopicAsync(string id, string? anchor = null, string? referrerId = null) {
         var doc = await HelpService.Current.LoadTopicAsync(id, referrerId, anchor);
@@ -46,7 +44,7 @@ public partial class HelpPage : ContentPage {
 
 // Core navigator: loads topic, updates current, manages buttons
     private async Task NavigateToAsync(HelpHistoryEntry entry, bool pushHistory) {
-        if (pushHistory && CurrentId is not null) {
+        if (pushHistory && CurrentId is { }) {
             if (CurrentId == entry.Id && CurrentAnchor == entry.Anchor) return;
             _back.Push(new HelpHistoryEntry(CurrentId, CurrentAnchor));
             _forward.Clear(); // drop forward history on new branch
@@ -61,9 +59,7 @@ public partial class HelpPage : ContentPage {
     }
 
     // Toolbar handlers
-    private async void OnHome(object? sender, EventArgs e) {
-        await GoHomeAsync(true);
-    }
+    private async void OnHome(object? sender, EventArgs e) => await GoHomeAsync(true);
 
     private async void OnBack(object? sender, EventArgs e) {
         if (_back.Count == 0) return;
@@ -94,9 +90,7 @@ public partial class HelpPage : ContentPage {
     }
 
     // (Optional) public helper so HelpService.NavigateAsync can reuse this page without Shell push
-    public Task LoadTopicPublicAsync(string id) {
-        return NavigateToAsync(new HelpHistoryEntry(id), true);
-    }
+    public Task LoadTopicPublicAsync(string id) => NavigateToAsync(new HelpHistoryEntry(id), true);
 
     // Optional public helper if other pages want to send you "Home"
     public Task GoHomeAsync(bool hardReset = false) {

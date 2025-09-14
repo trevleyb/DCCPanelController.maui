@@ -1,5 +1,4 @@
 using System.Globalization;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Converters;
 
@@ -14,8 +13,8 @@ public class BoolToColorConverter : IValueConverter {
         return FalseColor;
     }
 
-    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
+    public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>
+
         // Do nothing. This converter is only for one-way binding.
-        return Binding.DoNothing;
-    }
+        Binding.DoNothing;
 }

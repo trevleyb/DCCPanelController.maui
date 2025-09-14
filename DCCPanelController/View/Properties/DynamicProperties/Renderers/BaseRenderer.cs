@@ -1,10 +1,15 @@
 using Indiko.Maui.Controls.Markdown;
 using Microsoft.Maui.Controls.Shapes;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 public abstract class BaseRenderer {
+    protected static readonly Color LabelColor      = Colors.Black;
+    protected static readonly Color FieldColor      = Colors.Black;
+    protected static readonly Color ErrorColor      = Colors.Red;
+    protected static readonly Color DescColor       = Colors.LightSteelBlue;
+    protected static readonly Color ModifiedColor   = Colors.Green;
+    protected static readonly Color MixedValueColor = Colors.Blue;
     protected virtual int LabelWidth => 125; // Allow this to be overriden
     protected virtual int FieldHeight => 35;
     protected virtual int FieldWidth => -1;
@@ -15,13 +20,6 @@ public abstract class BaseRenderer {
     protected virtual int DescFontSize => 10;
     protected virtual int ColumnSpacing => 12;
     protected virtual int RowSpacing => 2;
-
-    protected static readonly Color LabelColor = Colors.Black;
-    protected static readonly Color FieldColor = Colors.Black;
-    protected static readonly Color ErrorColor = Colors.Red;
-    protected static readonly Color DescColor = Colors.LightSteelBlue;
-    protected static readonly Color ModifiedColor = Colors.Green;
-    protected static readonly Color MixedValueColor = Colors.Blue;
 
     protected bool IsModified(PropertyRow row) => row.IsTouched || !DefaultEquality.AreEqual(row.CurrentValue, row.OriginalValue);
     protected string MixedPlaceholder(PropertyRow row) => row.HasMixedValues ? "— mixed —" : string.Empty;
@@ -42,11 +40,11 @@ public abstract class BaseRenderer {
         var maxWidth = (int)(ctx.Width - (LabelWidth + ColumnSpacing + 50));
         var fieldWidth = ctx?.Row?.Field?.Meta?.Width ?? -1;
         return fieldWidth switch {
-            -1                       => maxWidth,
-            0 when FieldWidth is -1  => maxWidth,
-            0 when FieldWidth is > 0 => Math.Min(FieldWidth, maxWidth),
-            > 0                      => Math.Min(fieldWidth, maxWidth),
-            _                        => Math.Min(FieldWidth, maxWidth)
+            -1                      => maxWidth,
+            0 when FieldWidth is-1  => maxWidth,
+            0 when FieldWidth is> 0 => Math.Min(FieldWidth, maxWidth),
+            > 0                     => Math.Min(fieldWidth, maxWidth),
+            _                       => Math.Min(FieldWidth, maxWidth),
         };
     }
 
@@ -58,8 +56,8 @@ public abstract class BaseRenderer {
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(28) });
         grid.WidthRequest = width;
         grid.Margin = new Thickness(5, 0, 0, 5);
-        
-        var clearButton = new ImageButton() {
+
+        var clearButton = new ImageButton {
             BackgroundColor = Colors.White,
             CornerRadius = 21,
             Margin = new Thickness(0, 4, 8, 0),
@@ -68,8 +66,8 @@ public abstract class BaseRenderer {
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center,
         };
-        
-        var findButton = new ImageButton() {
+
+        var findButton = new ImageButton {
             BackgroundColor = Colors.White,
             CornerRadius = 21,
             Margin = new Thickness(0, 4, 0, 0),
@@ -78,34 +76,32 @@ public abstract class BaseRenderer {
             HorizontalOptions = LayoutOptions.Center,
             VerticalOptions = LayoutOptions.Center,
         };
-        
-        clearButton.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode) && row.CurrentValue != null && !string.IsNullOrEmpty((string)row.CurrentValue);
-        findButton.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
+
+        clearButton.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode && row.CurrentValue != null && !string.IsNullOrEmpty((string)row.CurrentValue);
+        findButton.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
 
         clearButton.Clicked += (s, e) => {
             picker.SelectedIndex = -1;
             SetValue(ctx.Row, null);
         };
         findButton.Clicked += (sender, args) => picker.Focus();
-        row.CurrentChanged += (sender, o) => {
-            clearButton.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode) && o is { };
-        };
-        
+        row.CurrentChanged += (sender, o) => { clearButton.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode && o is { }; };
+
         picker.VerticalOptions = LayoutOptions.Center;
-        grid.Add(picker, 0, 0);
-        grid.Add(findButton, 1, 0);
-        grid.Add(clearButton, 2, 0);
+        grid.Add(picker, 0);
+        grid.Add(findButton, 1);
+        grid.Add(clearButton, 2);
 
         return grid;
     }
-    
+
     protected Microsoft.Maui.Controls.View AddBorder(Microsoft.Maui.Controls.View view) {
         var border = new Border {
             Stroke = new SolidColorBrush(Colors.Gray),
             StrokeThickness = 1,
             Background = new SolidColorBrush(Colors.White),
             StrokeShape = new RoundRectangle {
-                CornerRadius = new CornerRadius(10) // uniform radius
+                CornerRadius = new CornerRadius(10), // uniform radius
             },
             Content = view,
         };
@@ -113,7 +109,7 @@ public abstract class BaseRenderer {
     }
 
     protected Microsoft.Maui.Controls.View WrapWithLabel(PropertyContext ctx,
-                                                         Microsoft.Maui.Controls.View control) {
+        Microsoft.Maui.Controls.View control) {
         var row = ctx.Row;
         var labelWidth = LabelWidth;
         var fieldHeight = FieldHeight;
@@ -132,19 +128,19 @@ public abstract class BaseRenderer {
         var descriptionKey = row?.Field?.Meta?.Description ?? string.Empty;
         var description = string.IsNullOrWhiteSpace(descriptionKey)
             ? null
-            : new MarkdownView() {
+            : new MarkdownView {
                 MarkdownText = descriptionKey,
                 Opacity = 0.7,
                 TextFontSize = DescFontSize,
                 TextColor = DescColor,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Center,
-            };            
+            };
 
         var errorLabel = new Label {
             FontSize = ErrorFontSize,
             TextColor = ErrorColor,
-            IsVisible = false
+            IsVisible = false,
         };
 
         // Create a 2 Column grid, first fixed to 150 and second Auto
@@ -156,20 +152,20 @@ public abstract class BaseRenderer {
                 new ColumnDefinition(GridLength.Star),
             },
             RowDefinitions = {
-                new RowDefinition(fieldHeight >= 0 ? fieldHeight : GridLength.Auto),    // label + control
-                new RowDefinition(GridLength.Auto)
+                new RowDefinition(fieldHeight >= 0 ? fieldHeight : GridLength.Auto), // label + control
+                new RowDefinition(GridLength.Auto),
             },
             ColumnSpacing = ColumnSpacing,
-            RowSpacing = RowSpacing
+            RowSpacing = RowSpacing,
         };
 
         // Row 0: label + control
         // -----------------------------------------------------------------
         if (LabelWidth > 0) {
-            grid.Add(label, 0, 0);
-            grid.Add(control, 1, 0);
+            grid.Add(label, 0);
+            grid.Add(control, 1);
         } else {
-            grid.Add(control, 0, 0);
+            grid.Add(control, 0);
             grid.SetColumnSpan(control, 2);
         }
 
@@ -196,7 +192,7 @@ public abstract class BaseRenderer {
             if (row is null) return;
             var modified = IsModified(row);
             label.TextColor = modified ? ModifiedColor
-                : (row.HasMixedValues) ? MixedValueColor : LabelColor;
+                : row.HasMixedValues   ? MixedValueColor : LabelColor;
             ;
 
             var err = row.Issues.FirstOrDefault(i => i.Severity == Severity.Error);

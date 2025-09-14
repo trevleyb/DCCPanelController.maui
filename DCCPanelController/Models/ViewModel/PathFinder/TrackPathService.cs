@@ -4,8 +4,8 @@ using DCCPanelController.Models.ViewModel.Tiles;
 namespace DCCPanelController.Models.ViewModel.PathFinder;
 
 public class PathTracingService {
-    private readonly TrackPathTracer _tracer = new();
-    private CancellationTokenSource? _currentTracingCts;
+    private readonly TrackPathTracer          _tracer = new();
+    private          CancellationTokenSource? _currentTracingCts;
 
     public void RegisterTile(TrackTile tile) {
         if (tile.Entity is TrackEntity entity) _tracer.RegisterTile(entity, tile);
@@ -15,9 +15,7 @@ public class PathTracingService {
         if (tile.Entity is TrackEntity entity) _tracer.UnregisterTile(entity);
     }
 
-    public void ClearTileRegistry() {
-        _tracer.ClearTileRegistry();
-    }
+    public void ClearTileRegistry() => _tracer.ClearTileRegistry();
 
     public async Task StartPathTracing(TrackTile tile) {
         if (tile.Entity is TrackEntity entity) await StartPathTracing(entity);
@@ -37,13 +35,13 @@ public class PathTracingService {
                 _currentTracingCts?.Dispose();
                 _currentTracingCts = null;
             }
-        } catch (Exception ) {
+        } catch (Exception) {
             // Do Nothing
         }
     }
 
     private async Task StopPathTracing() {
-        if (_currentTracingCts is not null) {
+        if (_currentTracingCts is { }) {
             _currentTracingCts?.CancelAsync();
             _currentTracingCts?.Dispose();
             _currentTracingCts = null;

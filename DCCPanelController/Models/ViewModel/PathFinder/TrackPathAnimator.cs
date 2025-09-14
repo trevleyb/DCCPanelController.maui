@@ -7,8 +7,8 @@ public class TrackPathAnimator {
     public int PathDisplayDurationMs { get; set; } = 3000;
 
     public async Task AnimatePathsAsync(List<TracedPath> paths,
-                                        List<TrackTile> registeredTiles,
-                                        CancellationToken cancellationToken = default) {
+        List<TrackTile> registeredTiles,
+        CancellationToken cancellationToken = default) {
         try {
             await ClearAllPathHighlights(registeredTiles);
             foreach (var path in paths.TakeWhile(path => !cancellationToken.IsCancellationRequested)) {
@@ -30,12 +30,10 @@ public class TrackPathAnimator {
         }
     }
 
-    private async Task ClearAllPathHighlights(List<TrackTile> registeredTiles) {
-        await MainThread.InvokeOnMainThreadAsync(() => {
-            // Clear all IsPath properties from registered tiles
-            foreach (var tile in registeredTiles) {
-                tile.IsPath = false;
-            }
-        });
-    }
+    private async Task ClearAllPathHighlights(List<TrackTile> registeredTiles) => await MainThread.InvokeOnMainThreadAsync(() => {
+        // Clear all IsPath properties from registered tiles
+        foreach (var tile in registeredTiles) {
+            tile.IsPath = false;
+        }
+    });
 }

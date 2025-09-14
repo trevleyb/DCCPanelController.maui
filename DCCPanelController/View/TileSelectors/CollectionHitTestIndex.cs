@@ -4,33 +4,33 @@ namespace DCCPanelController.View.TileSelectors;
 
 public static class CollectionHitIndex {
     public static int? IndexOf(CollectionView collectionView,
-                               Point point,          // point in the CollectionView's coordinate space
-                               double scrollXOffset, // horizontal scroll offset (if horizontally scrolling)
-                               double scrollYOffset, // vertical   scroll offset (if vertically   scrolling)
-                               double edgeMargin,    // left margin before the first column
-                               double topMargin,     // top margin before the first row
-                               double itemWidth,
-                               double itemHeight,
-                               double spacingH = 0,
-                               double spacingV = 0) {
+        Point point,          // point in the CollectionView's coordinate space
+        double scrollXOffset, // horizontal scroll offset (if horizontally scrolling)
+        double scrollYOffset, // vertical   scroll offset (if vertically   scrolling)
+        double edgeMargin,    // left margin before the first column
+        double topMargin,     // top margin before the first row
+        double itemWidth,
+        double itemHeight,
+        double spacingH = 0,
+        double spacingV = 0) {
         // Determine layout & span
         ItemsLayoutOrientation orientation;
         int span;
 
         switch (collectionView.ItemsLayout) {
-        case GridItemsLayout grid:
-            orientation = grid.Orientation;
-            span = Math.Max(1, grid.Span);
+            case GridItemsLayout grid:
+                orientation = grid.Orientation;
+                span = Math.Max(1, grid.Span);
             break;
 
-        case LinearItemsLayout linear:
-            orientation = linear.Orientation;
-            span = 1; // linear list = single row (Horizontal) or single column (Vertical)
+            case LinearItemsLayout linear:
+                orientation = linear.Orientation;
+                span = 1; // linear list = single row (Horizontal) or single column (Vertical)
             break;
 
-        default:
-            Console.WriteLine($"Unknown ItemsLayout: {collectionView.ItemsLayout}");
-            return null; // unknown layout
+            default:
+                Console.WriteLine($"Unknown ItemsLayout: {collectionView.ItemsLayout}");
+                return null; // unknown layout
         }
 
         var isVertical = orientation == ItemsLayoutOrientation.Vertical;

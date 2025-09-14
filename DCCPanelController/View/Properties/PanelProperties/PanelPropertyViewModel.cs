@@ -2,17 +2,16 @@ using System.Collections.ObjectModel;
 using System.Reflection;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Helpers;
 using DCCPanelController.Helpers.Attributes;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Helpers;
-using Microsoft.Maui.Graphics;
+using DCCPanelController.View.Base;
 
 namespace DCCPanelController.View.Properties.PanelProperties;
 
-public partial class PanelPropertyViewModel : Base.BaseViewModel {
-    [ObservableProperty] private int _colorGridSpan = 2; // Default to 2 columns
-    [ObservableProperty] private Panel _panel;
+public partial class PanelPropertyViewModel : BaseViewModel {
+    [ObservableProperty] private int    _colorGridSpan = 2; // Default to 2 columns
+    [ObservableProperty] private Panel  _panel;
     [ObservableProperty] private string _title;
 
     public PanelPropertyViewModel(Panel panel) {
@@ -26,15 +25,13 @@ public partial class PanelPropertyViewModel : Base.BaseViewModel {
     public ObservableCollection<ColorItemGroup> GroupedColorSettings { get; set; }
     public ObservableCollection<PanelColorItem> ColorSettings { get; }
 
-    public Task ApplyChangesAsync() {
-        return Task.CompletedTask;
-    }
+    public Task ApplyChangesAsync() => Task.CompletedTask;
 
     public ContentView CreatePropertiesView() {
         var propPage = new PanelPropertyPage(this);
         return propPage;
     }
-    
+
     [RelayCommand]
     private async Task ResetDefaultsClickedAsync() {
         var result = await AskUserToConfirm("Reset Default Colors?", "Are you sure you want to reset all Panels colors to Defaults?");

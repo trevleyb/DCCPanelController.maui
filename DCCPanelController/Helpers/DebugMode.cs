@@ -3,11 +3,11 @@ namespace DCCPanelController.Helpers;
 public class DebugMode {
     public static bool IsDebug {
         get {
-#if DEBUG
+            #if DEBUG
             return true;
-#else
+            #else
         return false;
-#endif
+            #endif
         }
     }
 }

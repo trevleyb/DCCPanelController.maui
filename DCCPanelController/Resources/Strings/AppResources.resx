@@ -1,110 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!--
-    Sample AppResources.resx (English / neutral culture)
-    Place in: Resources/Strings/AppResources.resx
-    Set Access Modifier to: Public
-  -->
+    <!--
+      Sample AppResources.resx (English / neutral culture)
+      Place in: Resources/Strings/AppResources.resx
+      Set Access Modifier to: Public
+    -->
 
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
+    <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root"
+                xmlns="">
+        <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+        <xsd:element name="root" msdata:IsDataSet="true">
             <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
+                <xsd:choice maxOccurs="unbounded">
+                    <xsd:element name="metadata">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" use="required" type="xsd:string"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="assembly">
+                        <xsd:complexType>
+                            <xsd:attribute name="alias" type="xsd:string"/>
+                            <xsd:attribute name="name" type="xsd:string"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="data">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                            <xsd:attribute name="type" type="xsd:string"/>
+                            <xsd:attribute name="mimetype" type="xsd:string"/>
+                            <xsd:attribute ref="xml:space"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                    <xsd:element name="resheader">
+                        <xsd:complexType>
+                            <xsd:sequence>
+                                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                            </xsd:sequence>
+                            <xsd:attribute name="name" type="xsd:string" use="required"/>
+                        </xsd:complexType>
+                    </xsd:element>
+                </xsd:choice>
             </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+        </xsd:element>
+    </xsd:schema>
 
-  <resheader name="resmimetype">
-    <value>text/microsoft-resx</value>
-  </resheader>
-  <resheader name="version">
-    <value>2.0</value>
-  </resheader>
-  <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
-  <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </resheader>
+    <resheader name="resmimetype">
+        <value>text/microsoft-resx</value>
+    </resheader>
+    <resheader name="version">
+        <value>2.0</value>
+    </resheader>
+    <resheader name="reader">
+        <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
+    <resheader name="writer">
+        <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral,
+            PublicKeyToken=b77a5c561934e089
+        </value>
+    </resheader>
 
-  <!-- Short UI strings -->
-  <data name="App_Title" xml:space="preserve">
+    <!-- Short UI strings -->
+    <data name="App_Title" xml:space="preserve">
     <value>My Sample App</value>
-    <comment>Shown in the app title bar or header.</comment>
+        <comment>Shown in the app title bar or header.</comment>
   </data>
-  <data name="Menu_Settings" xml:space="preserve">
+    <data name="Menu_Settings" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="Button_Ok" xml:space="preserve">
+    <data name="Button_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="Button_Cancel" xml:space="preserve">
+    <data name="Button_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="Button_Help" xml:space="preserve">
+    <data name="Button_Help" xml:space="preserve">
     <value>Help</value>
   </data>
 
-  <!-- Message strings -->
-  <data name="Prompt_EnterName" xml:space="preserve">
+    <!-- Message strings -->
+    <data name="Prompt_EnterName" xml:space="preserve">
     <value>Please enter your name</value>
   </data>
-  <data name="Label_WelcomeName" xml:space="preserve">
+    <data name="Label_WelcomeName" xml:space="preserve">
     <value>Welcome, {0}!</value>
-    <comment>Use string.Format with a user name.</comment>
+        <comment>Use string.Format with a user name.</comment>
   </data>
-  <data name="Error_Network" xml:space="preserve">
+    <data name="Error_Network" xml:space="preserve">
     <value>We couldn't connect to the server. Check your connection and try again.</value>
   </data>
 
-  <!-- Multiline examples -->
-  <data name="Button_HelpText" xml:space="preserve">
+    <!-- Multiline examples -->
+    <data name="Button_HelpText" xml:space="preserve">
     <value>Tap the button to perform the action.
 This may trigger related operations depending on your configuration.
 You can customize behavior in Settings &gt; Actions.</value>
-    <comment>Multiline help text. Newlines are preserved.</comment>
+        <comment>Multiline help text. Newlines are preserved.</comment>
   </data>
 
-  <data name="Long_Intro_Text" xml:space="preserve">
+    <data name="Long_Intro_Text" xml:space="preserve">
     <value>Welcome to the app!
 
 Here are a few tips to get started:
@@ -113,18 +118,18 @@ Here are a few tips to get started:
 - Long-press an item for more options.
 
 Need help? Open Settings &gt; Support.</value>
-    <comment>Multiline intro; shows bullets and paragraphs.</comment>
+        <comment>Multiline intro; shows bullets and paragraphs.</comment>
   </data>
 
-  <!-- Accessibility -->
-  <data name="A11y_ActionButton" xml:space="preserve">
+    <!-- Accessibility -->
+    <data name="A11y_ActionButton" xml:space="preserve">
     <value>Action button</value>
-    <comment>Screen reader label for a generic action button.</comment>
+        <comment>Screen reader label for a generic action button.</comment>
   </data>
 
-  <!-- Dates/formatting -->
-  <data name="Status_LastUpdated" xml:space="preserve">
+    <!-- Dates/formatting -->
+    <data name="Status_LastUpdated" xml:space="preserve">
     <value>Last updated: {0:d}</value>
-    <comment>Uses a date placeholder formatted per current culture.</comment>
+        <comment>Uses a date placeholder formatted per current culture.</comment>
   </data>
 </root>

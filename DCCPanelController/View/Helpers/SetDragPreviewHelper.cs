@@ -26,7 +26,7 @@ public static class SetDragPreviewHelper {
 
                 var iv = new UIImageView(image) {
                     ContentMode = UIViewContentMode.ScaleAspectFit,
-                    Frame = new CoreGraphics.CGRect(0, 0, 32, 32)
+                    Frame = new CGRect(0, 0, 32, 32),
                 };
 
                 var target = new UIDragPreview(iv);

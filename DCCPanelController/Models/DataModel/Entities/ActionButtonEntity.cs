@@ -10,27 +10,23 @@ using DCCPanelController.View.Properties.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
-    public ActionsContext Context => ActionsContext.Button;
-
-    [ObservableProperty]
-    private ButtonStateEnum _state = ButtonStateEnum.Unknown;
-
-    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order = 1)]
-    private string _id = string.Empty;
+    [ObservableProperty] [property: Editable("Button Actions", Order = 10, Group = "Button Actions", EditorKind = EditorKinds.ButtonActions)]
+    private ButtonActions _buttonPanelActions = [];
 
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Button Actions", Order = 10, Group = "Button Actions", EditorKind = EditorKinds.ButtonActions)]
-    private ButtonActions _buttonPanelActions = [];
+    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", Order = 1)]
+    private string _id = string.Empty;
+
+    [ObservableProperty]
+    private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [ObservableProperty] [property: Editable("Turnout Actions", Order = 10, Group = "Turnout Actions", EditorKind = EditorKinds.TurnoutActions)]
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]
-    public ActionButtonEntity() {
-        Id = NextID();
-    }
+    public ActionButtonEntity() => Id = NextID();
 
     public ActionButtonEntity(Panel panel) : base(panel) { }
     public ActionButtonEntity(ActionButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
@@ -45,20 +41,20 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
         "triggering a __route__, or throwing a __turnout__. When other __buttons__ or __turnouts__ are triggered " +
         "by this button, the actions will cascade down to the __buttons__ and __turnouts__ that are connected to it.";
 
+    public ActionsContext Context => ActionsContext.Button;
+
     public void CloneActionsInto(IActionEntity entity) {
         entity.ButtonPanelActions = (ButtonActions)ButtonPanelActions.Clone();
         entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
     }
-    
+
     public string NextID(Panel? targetPanel = null) {
         targetPanel ??= Parent;
         var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<ActionButtonEntity>(targetPanel), "Button");
         return nextID;
     }
 
-    public override Entity Clone() {
-        return new ActionButtonEntity(this);
-    }
+    public override Entity Clone() => new ActionButtonEntity(this);
 
     public void SetState(ButtonStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
         if (State == newState) return;

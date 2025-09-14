@@ -4,15 +4,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.TileSelectors;
 
 public class SideSelectorPanelViewModel : TileSelectorViewModel {
-    protected override void AfterBuildAllTiles() { }
-
-    public SideSelectorPanelViewModel() {
-        AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
-    }
-
-    private void InstanceOnSelectedTileCleared() {
-        SelectedTile = null;   
-    }
+    public SideSelectorPanelViewModel() => AppStateService.Instance.SelectedTileCleared += InstanceOnSelectedTileCleared;
 
     public ITile? SelectedTile {
         get;
@@ -25,4 +17,7 @@ public class SideSelectorPanelViewModel : TileSelectorViewModel {
         }
     }
 
+    protected override void AfterBuildAllTiles() { }
+
+    private void InstanceOnSelectedTileCleared() => SelectedTile = null;
 }

@@ -12,10 +12,10 @@ namespace DCCPanelController.Services;
 public partial class ConnectionService : ObservableObject {
     private const int MaxServerMessages = 500;
 
-    private readonly ILogger<ConnectionService> _logger = LogHelper.CreateLogger<ConnectionService>();
+    private readonly ILogger<ConnectionService>    _logger = LogHelper.CreateLogger<ConnectionService>();
     private readonly ProfileService.ProfileService _profileService;
 
-    [ObservableProperty] private bool _isConnected;
+    [ObservableProperty] private bool                                   _isConnected;
     [ObservableProperty] private ObservableCollection<DccClientMessage> _serverMessages = [];
 
     public ConnectionService(ProfileService.ProfileService profileService) {
@@ -80,7 +80,7 @@ public partial class ConnectionService : ObservableObject {
     }
 
     public async Task DisconnectAsync() {
-        if (Client is not null) {
+        if (Client is { }) {
             await ResetOccupancyStates();
             if (Client.IsConnected) await Client.DisconnectAsync();
             Client.ClientMessage -= ClientOnClientMessage;
@@ -93,14 +93,14 @@ public partial class ConnectionService : ObservableObject {
         if (e.Message is null) return;
         IsConnected = e.Status switch {
             DccClientStatus.Connected => true,
-            _                         => false
+            _                         => false,
         };
         ConnectStateChanged?.Invoke(null, IsConnected);
         ServerMessages.Add(e.Message);
     }
 
     private void OnConnectionChanged(bool? isConnected = null) {
-        if (isConnected is not null) IsConnected = isConnected.Value;
+        if (isConnected is { }) IsConnected = isConnected.Value;
         OnPropertyChanged(nameof(IsConnected));
         OnPropertyChanged(nameof(Client));
         ConnectStateChanged?.Invoke(this, IsConnected);
@@ -108,7 +108,7 @@ public partial class ConnectionService : ObservableObject {
 
     public async Task ResetOccupancyStates() {
         var profile = _profileService.ActiveProfile;
-        if (profile is not null) {
+        if (profile is { }) {
             foreach (var sensor in profile.Sensors) sensor.State = false;
         }
     }
@@ -126,13 +126,9 @@ public partial class ConnectionService : ObservableObject {
         }
     }
 
-    public virtual void AddServerMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) {
-        AddServerMessage(new DccClientMessage(message, operation, msgType));
-    }
+    public virtual void AddServerMessage(string message, DccClientOperation operation = DccClientOperation.System, DccClientMessageType msgType = DccClientMessageType.System) => AddServerMessage(new DccClientMessage(message, operation, msgType));
 
-    public virtual void AddServerMessage(DccClientMessage message) {
-        ServerMessages.Add(message);
-    }
+    public virtual void AddServerMessage(DccClientMessage message) => ServerMessages.Add(message);
 
     [RelayCommand]
     public void ClearMessages() {

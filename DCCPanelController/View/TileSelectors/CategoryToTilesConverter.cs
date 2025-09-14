@@ -15,7 +15,5 @@ public class CategoryToTilesConverter : IMultiValueConverter {
         return new ObservableCollection<ITile>();
     }
 
-    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) {
-        return [];
-    }
+    public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) => [];
 }

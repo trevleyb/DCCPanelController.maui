@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using DccClients.Jmri;
 using DccClients.Jmri.Events;
 using DccClients.Jmri.Helpers;
@@ -9,25 +8,25 @@ using DCCPanelController.Models.DataModel.Entities;
 
 namespace DCCPanelController.Clients.Jmri;
 
-public partial class JmriProxy : DccClientBase, IDccClient {
-    public DccClientType Type => DccClientType.Jmri;
-    public JmriSettings _settings;
-    private JmriClient? _client;
-    private Profile _profile;
-    
-    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors];
+public class JmriProxy : DccClientBase, IDccClient {
+    private readonly Profile      _profile;
+    private          JmriClient?  _client;
+    public           JmriSettings _settings;
 
     public JmriProxy(Profile profile, IDccClientSettings clientSettings) : base(profile) {
         _profile = profile;
         _settings = clientSettings as JmriSettings ?? throw new InvalidCastException("Incorrect Settings Type provided for Jmri");
     }
 
+    public static List<DccClientCapability> Capabilities => [DccClientCapability.Turnouts, DccClientCapability.Routes, DccClientCapability.Lights, DccClientCapability.Blocks, DccClientCapability.Sensors];
+    public DccClientType Type => DccClientType.Jmri;
+
     #region Connect and Disconnect Methods
     /// <summary>
-    /// Connects to the JMRI Server.
+    ///     Connects to the JMRI Server.
     /// </summary>
     public async Task<IResult> ConnectAsync() {
-        if (_client is not null) await DisconnectAsync();
+        if (_client is { }) await DisconnectAsync();
         Status = DccClientStatus.Initialising;
 
         if (_settings.SetAutomatically) {
@@ -45,7 +44,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
 
         _profile?.RefreshAll();
         try {
-            _client = new JmriClient(_settings.Address, _settings.Port, _settings.PollingInterval, ReconnectDelayMs);
+            _client = new JmriClient(_settings.Address, _settings.Port, _settings.PollingInterval);
             await _client.ConnectAsync();
             if (_client is null || _client.ConnectionState == ConnectionStateEnum.Disconnected) throw new ApplicationException("Unable to connect to JMRI server.");
 
@@ -68,12 +67,12 @@ public partial class JmriProxy : DccClientBase, IDccClient {
     }
 
     /// <summary>
-    /// Disconnects from the JMRI Server
+    ///     Disconnects from the JMRI Server
     /// </summary>
     public async Task<IResult> DisconnectAsync() {
         Status = DccClientStatus.Disconnected;
         OnClientMessage("Disconnected from Jmri");
-        if (_client is not null) {
+        if (_client is { }) {
             _client.ConnectionStateChanged -= ClientOnConnectionStateChanged;
             _client.TurnoutChanged -= ClientOnTurnoutChanged;
             _client.BlockChanged -= ClientOnBlockChanged;
@@ -88,8 +87,8 @@ public partial class JmriProxy : DccClientBase, IDccClient {
     }
 
     /// <summary>
-    /// Find any servers on the network and attaches to the first one it finds
-    /// or returns a Result.Failed if it could not find any server. 
+    ///     Find any servers on the network and attaches to the first one it finds
+    ///     or returns a Result.Failed if it could not find any server.
     /// </summary>
     public async Task<IResult> SetAutomaticSettingsAsync() {
         var settings = await GetAutomaticConnectionDetailsAsync();
@@ -105,19 +104,19 @@ public partial class JmriProxy : DccClientBase, IDccClient {
     }
 
     /// <summary>
-    /// Forces a refresh of the data from the Jmri server.
+    ///     Forces a refresh of the data from the Jmri server.
     /// </summary>
     public async Task<IResult> ForceRefreshAsync(DccClientCapability? capability = null) {
-        if (_client is not null) await _client.ResetUpdates();
+        if (_client is { }) await _client.ResetUpdates();
         return Result.Ok();
     }
 
     /// <summary>
-    /// This method attempts to connect to the Jmri server and then disconnects.
-    /// It returns either OK or FAILED based on attempting to connect. 
+    ///     This method attempts to connect to the Jmri server and then disconnects.
+    ///     It returns either OK or FAILED based on attempting to connect.
     /// </summary>
     public async Task<IResult> ValidateConnectionAsync() {
-        if (_client is not null) await DisconnectAsync();
+        if (_client is { }) await DisconnectAsync();
         var connected = await ConnectAsync();
         await Task.Delay(500);
         if (connected.IsSuccess && Status == DccClientStatus.Connected) await DisconnectAsync();
@@ -134,7 +133,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             OnClientMessage($"Setting turnout {turnout.Name}({turnout.Id}) to {(thrown ? "THROWN" : "CLOSED")}", DccClientOperation.Turnout, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(ex,"Failed to send turnout command to JMRI server");
+            return Result.Fail(ex, "Failed to send turnout command to JMRI server");
         }
     }
 
@@ -170,7 +169,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             OnClientMessage($"Setting light {light.Name}({light.Id}) to {(isActive ? "ON" : "OFF")}", DccClientOperation.Light, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(ex,"Failed to send light command to JMRI server");
+            return Result.Fail(ex, "Failed to send light command to JMRI server");
         }
     }
 
@@ -182,7 +181,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             OnClientMessage($"Setting block {block.Name}({block.Id}) to {(isOccupied ? "OCCUPIED" : "FREE")}", DccClientOperation.Block, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(ex,"Failed to send block command to JMRI server");
+            return Result.Fail(ex, "Failed to send block command to JMRI server");
         }
     }
 
@@ -194,35 +193,23 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             OnClientMessage($"Setting sensor {sensor.Name}({sensor.Id}) to {(isOccupied ? "OCCUPIED" : "FREE")}", DccClientOperation.Sensor, DccClientMessageType.Outbound);
             return Result.Ok();
         } catch (Exception ex) {
-            return Result.Fail(ex,"Failed to send sensor command to JMRI server");
+            return Result.Fail(ex, "Failed to send sensor command to JMRI server");
         }
     }
     #endregion
 
     #region Respond to Data Events
-    private void ClientOnSignalChanged(object? sender, JmriSignalEventArgs e) {
-        UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off);
-    }
+    private void ClientOnSignalChanged(object? sender, JmriSignalEventArgs e) => UpdateSignal(e.Name, e.UserName, SignalAspectEnum.Off);
 
-    private void ClientOnRouteChanged(object? sender, JmriRouteEventArgs e) {
-        UpdateRoute(e.Name, e.UserName, e.State == 2 ? RouteStateEnum.Active : RouteStateEnum.Inactive);
-    }
+    private void ClientOnRouteChanged(object? sender, JmriRouteEventArgs e) => UpdateRoute(e.Name, e.UserName, e.State == 2 ? RouteStateEnum.Active : RouteStateEnum.Inactive);
 
-    private void ClientOnSensorChanged(object? sender, JmriSensorEventArgs e) {
-        UpdateSensor(e.Name, e.UserName, e.State == 2);
-    }
+    private void ClientOnSensorChanged(object? sender, JmriSensorEventArgs e) => UpdateSensor(e.Name, e.UserName, e.State == 2);
 
-    private void ClientOnLightChanged(object? sender, JmriLightEventArgs e) {
-        UpdateLight(e.Name, e.UserName, e.State == 2);
-    }
+    private void ClientOnLightChanged(object? sender, JmriLightEventArgs e) => UpdateLight(e.Name, e.UserName, e.State == 2);
 
-    private void ClientOnBlockChanged(object? sender, JmriBlockEventArgs e) {
-        UpdateBlock(e.Name, e.UserName, e.State == 2, e.SensorName);
-    }
+    private void ClientOnBlockChanged(object? sender, JmriBlockEventArgs e) => UpdateBlock(e.Name, e.UserName, e.State == 2, e.SensorName);
 
-    private void ClientOnTurnoutChanged(object? sender, JmriTurnoutEventArgs e) {
-        UpdateTurnout(e.Name, e.UserName, e.State == 2 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
-    }
+    private void ClientOnTurnoutChanged(object? sender, JmriTurnoutEventArgs e) => UpdateTurnout(e.Name, e.UserName, e.State == 2 ? TurnoutStateEnum.Closed : TurnoutStateEnum.Thrown);
 
     private void ClientOnConnectionStateChanged(object? sender, JmriConnectionChangedEventArgs e) {
         Status = e.IsConnected ? DccClientStatus.Connected : DccClientStatus.Disconnected;
@@ -250,7 +237,7 @@ public partial class JmriProxy : DccClientBase, IDccClient {
             var result = await DiscoverServices.SearchForJmriServicesAsync();
             if (result is { IsSuccess: true, Value.Count: > 0 }) return result;
         } catch (Exception ex) {
-            return Result<List<DiscoveredService>>.Fail(ex,"Unable to find a Jmri server.");
+            return Result<List<DiscoveredService>>.Fail(ex, "Unable to find a Jmri server.");
         }
         return Result<List<DiscoveredService>>.Fail("Unable to find a Jmri server.");
     }

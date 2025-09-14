@@ -1,13 +1,9 @@
-using Microsoft.Maui.Graphics;
-
 namespace DCCPanelController.Models.ViewModel.StyleManager;
 
 public class SvgStyleBuilder {
     private readonly SvgStyle _style = new();
 
-    public SvgStyle Build() {
-        return _style;
-    }
+    public SvgStyle Build() => _style;
 
     public SvgStyleBuilder Add(Action<SvgElementBuilder> buildElement) {
         var builder = new SvgElementBuilder(string.Empty);
@@ -46,27 +42,21 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
-    public SvgElementBuilder WithOpacity(int opacity) {
-        return WithOpacity(opacity.ToString());
-    }
+    public SvgElementBuilder WithOpacity(int opacity) => WithOpacity(opacity.ToString());
 
     public SvgElementBuilder WithOpacity(string opacity) {
         _element.AddOrUpdateAttribute("Opacity", opacity);
         return this;
     }
 
-    public SvgElementBuilder WithColor(Color color) {
-        return WithColor(color?.ToArgbHex() ?? Colors.Black.ToArgbHex());
-    }
+    public SvgElementBuilder WithColor(Color color) => WithColor(color?.ToArgbHex() ?? Colors.Black.ToArgbHex());
 
     public SvgElementBuilder WithColor(string color) {
         _element.AddOrUpdateAttribute("Color", color);
         return this;
     }
 
-    public SvgElementBuilder Color(Color color) {
-        return WithColor(color.ToArgbHex());
-    }
+    public SvgElementBuilder Color(Color color) => WithColor(color.ToArgbHex());
 
     public SvgElementBuilder Color(string color) {
         _element.AddOrUpdateAttribute("Color", color);
@@ -133,16 +123,12 @@ public class SvgElementBuilder(string name) {
         return this;
     }
 
-    public SvgElementBuilder Hidden() {
-        return Visible(false);
-    }
+    public SvgElementBuilder Hidden() => Visible(false);
 
     public SvgElementBuilder Visible(bool isVisible = true) {
         _element.AddOrUpdateAttribute("Visible", isVisible.ToString());
         return this;
     }
 
-    public SvgStyleElement Build() {
-        return _element;
-    }
+    public SvgStyleElement Build() => _element;
 }

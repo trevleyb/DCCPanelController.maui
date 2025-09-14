@@ -4,5 +4,5 @@ public enum ProfileDataChangeType {
     PropertyChanged,
     CollectionChanged,
     ProfileReloaded,
-    ProfileSaved
+    ProfileSaved,
 }

@@ -25,18 +25,18 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<TrackTerminatorEnum>(),
             new JsonEnumToStringConverter<TrackAttributeEnum>(),
             new JsonEnumToStringConverter<TurnoutStyleEnum>(),
-            
+
             new JsonEnumToStringConverter<TextAlignment>(),
             new JsonEnumToStringConverter<TextAlignmentHorizontalEnum>(),
             new JsonEnumToStringConverter<TextAlignmentVerticalEnum>(),
             new JsonEnumToStringConverter<TextAttributeEnum>(),
-            
+
             new ExpressionFilterConverter<Turnout>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Route>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Sensor>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Signal>(t => t.IsEditable || t.IsModified),
             new ExpressionFilterConverter<Block>(t => t.IsEditable || t.IsModified),
-            new ExpressionFilterConverter<Light>(t => t.IsEditable || t.IsModified)
-        }
+            new ExpressionFilterConverter<Light>(t => t.IsEditable || t.IsModified),
+        },
     };
 }

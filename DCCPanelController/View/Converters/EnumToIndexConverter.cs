@@ -9,11 +9,11 @@ public class EnumToIndexConverter<T> : IValueConverter where T : struct, Enum {
             return index;
         }
 
-        return -1;
+        return-1;
     }
 
     public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        if (value is int index and >= 0) {
+        if (value is int index and>= 0) {
             var values = Enum.GetValues<T>();
 
             if (index < values.Length) {

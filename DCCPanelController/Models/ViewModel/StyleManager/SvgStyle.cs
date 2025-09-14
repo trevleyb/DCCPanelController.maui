@@ -3,9 +3,7 @@ namespace DCCPanelController.Models.ViewModel.StyleManager;
 public class SvgStyle {
     public Dictionary<string, SvgStyleElement> Elements { get; } = [];
 
-    public static SvgStyleBuilder Builder() {
-        return new SvgStyleBuilder();
-    }
+    public static SvgStyleBuilder Builder() => new();
 
     public void AddElement(SvgStyleElement element) {
         Elements.TryAdd(element.Name, element);

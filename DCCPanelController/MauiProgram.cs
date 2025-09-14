@@ -27,9 +27,9 @@ public static class MauiProgram {
                .UseMauiCommunityToolkitMarkup()
                .UseMauiCommunityToolkitMediaElement()
                .ConfigureMauiHandlers(handlers => {
-#if IOS || MACCATALYST
+                    #if IOS || MACCATALYST
                     handlers.AddHandler<CollectionView, CollectionViewHandler2>();
-#endif
+                    #endif
                 })
                .ConfigureFonts(fonts => {
                     fonts.AddFont("OpenSans.ttf", "OpenSans");
@@ -50,9 +50,9 @@ public static class MauiProgram {
         FormHelper.RemoveBorders();
         builder.Services.AddLogging(loggingBuilder => loggingBuilder.ClearProviders().AddSerilog(dispose: true));
 
-#if DEBUG
+        #if DEBUG
         builder.Logging.AddDebug();
-#endif
+        #endif
 
         var services = builder.Services;
 
@@ -67,7 +67,7 @@ public static class MauiProgram {
         services.AddSingleton<ConnectionService>();
         services.AddSingleton<HelpPage>();
         services.AddSingleton<AboutPage>();
-        
+
         // Add dependent views with associated view models
         // --------------------------------------------------------------------------
         services.AddSingletonViewAndModel<OperatePage, OperateViewModel>();
@@ -141,25 +141,21 @@ public static class MauiProgram {
                          rollOnFileSizeLimit: true,
                          shared: true,
                          outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-#if DEBUG
+                     #if DEBUG
                     .WriteTo.Debug()
                     .WriteTo.Console()
-#endif
+                     #endif
                     .CreateLogger();
 
         Log.Information("Logger Initialised.");
     }
 
-    private static string GetLogFilePath() {
-        return Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");
-    }
+    private static string GetLogFilePath() => Path.Combine(LogHelper.GetLogDirectory(), "dccpanelcontroller.log");
 
     public static class ServiceHelper {
         private static IServiceProvider? ServiceProvider { get; set; }
 
-        public static void Initialize(IServiceProvider serviceProvider) {
-            ServiceProvider = serviceProvider;
-        }
+        public static void Initialize(IServiceProvider serviceProvider) => ServiceProvider = serviceProvider;
 
         public static T GetService<T>() where T : notnull {
             ArgumentNullException.ThrowIfNull(ServiceProvider);

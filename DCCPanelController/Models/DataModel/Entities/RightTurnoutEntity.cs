@@ -16,7 +16,5 @@ public class RightTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntit
     public override string EntityDescription => "Right Turnout/Switch";
     public override string EntityInformation => "";
 
-    public override Entity Clone() {
-        return new RightTurnoutEntity(this);
-    }
+    public override Entity Clone() => new RightTurnoutEntity(this);
 }

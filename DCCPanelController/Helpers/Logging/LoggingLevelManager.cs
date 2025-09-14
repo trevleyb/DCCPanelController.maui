@@ -28,8 +28,9 @@ public static class LoggingLevelHelper {
     /// </summary>
     /// <param name="level">The new logging level</param>
     public static void SetLogLevel(LogEventLevel level) {
-        if (_levelSwitch == null)
+        if (_levelSwitch == null) {
             throw new InvalidOperationException("LoggingLevelHelper has not been initialized. Call Initialize() during Serilog setup.");
+        }
 
         _levelSwitch.MinimumLevel = level;
         Log.Information("Logging level changed to {Level}", level);
@@ -48,17 +49,16 @@ public static class LoggingLevelHelper {
     ///     Change the logging level using a string value
     /// </summary>
     /// <param name="levelString">The logging level as a string (Debug, Information, Warning, Error, Fatal)</param>
-    public static void SetLogLevel(string levelString) {
-        SetLogLevel(Enum.TryParse<LogEventLevel>(levelString, true, out var level) ? level : LogEventLevel.Debug);
-    }
+    public static void SetLogLevel(string levelString) => SetLogLevel(Enum.TryParse<LogEventLevel>(levelString, true, out var level) ? level : LogEventLevel.Debug);
 
     /// <summary>
     ///     Get the current logging level
     /// </summary>
     /// <returns>The current LogEventLevel</returns>
     public static LogEventLevel GetCurrentLogLevel() {
-        if (_levelSwitch == null)
+        if (_levelSwitch == null) {
             throw new InvalidOperationException("LoggingLevelHelper has not been initialized.");
+        }
 
         return _levelSwitch.MinimumLevel;
     }
@@ -66,16 +66,14 @@ public static class LoggingLevelHelper {
     /// <summary>
     ///     Convert Microsoft.Extensions.Logging.LogLevel to Serilog LogEventLevel
     /// </summary>
-    private static LogEventLevel ConvertToSerilogLevel(LogLevel logLevel) {
-        return logLevel switch {
-            LogLevel.Trace       => LogEventLevel.Verbose,
-            LogLevel.Debug       => LogEventLevel.Debug,
-            LogLevel.Information => LogEventLevel.Information,
-            LogLevel.Warning     => LogEventLevel.Warning,
-            LogLevel.Error       => LogEventLevel.Error,
-            LogLevel.Critical    => LogEventLevel.Fatal,
-            LogLevel.None        => LogEventLevel.Fatal,
-            _                    => LogEventLevel.Information
-        };
-    }
+    private static LogEventLevel ConvertToSerilogLevel(LogLevel logLevel) => logLevel switch {
+        LogLevel.Trace       => LogEventLevel.Verbose,
+        LogLevel.Debug       => LogEventLevel.Debug,
+        LogLevel.Information => LogEventLevel.Information,
+        LogLevel.Warning     => LogEventLevel.Warning,
+        LogLevel.Error       => LogEventLevel.Error,
+        LogLevel.Critical    => LogEventLevel.Fatal,
+        LogLevel.None        => LogEventLevel.Fatal,
+        _                    => LogEventLevel.Information,
+    };
 }

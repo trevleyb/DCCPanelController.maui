@@ -1,7 +1,6 @@
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using Microsoft.Maui.Controls.Shapes;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
@@ -40,8 +39,6 @@ public class DrawableTextTile : Tile, ITileDrawable {
         }
         return CreateSymbol(); // Fallback on error
     }
-    
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("text").AsImage();
-    }
+
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("text").AsImage();
 }

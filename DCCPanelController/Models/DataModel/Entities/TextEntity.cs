@@ -2,13 +2,12 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.DynamicProperties;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
-    [ObservableProperty] [property: Editable("Label", "", 0, "Text")]
-    private string _label = string.Empty;
+    [ObservableProperty] [property: Editable("Background Color", "", 2, "Color")]
+    private Color _backgroundColor = Colors.Transparent;
 
     [ObservableProperty] [property: Editable("Font Size", "", 1, "Text")]
     private int _fontSize = 12;
@@ -19,22 +18,19 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     [ObservableProperty] [property: Editable("Horizontal", "", 3, "Text")]
     private TextAlignmentHorizontalEnum _horizontalJustification = TextAlignmentHorizontalEnum.Center;
 
-    [ObservableProperty] [property: Editable("Vertical", "", 3, "Text")]
-    private TextAlignmentVerticalEnum _verticalJustification = TextAlignmentVerticalEnum.Center;
+    [ObservableProperty] [property: Editable("Label", "", 0, "Text")]
+    private string _label = string.Empty;
 
     [ObservableProperty] [property: Editable("Text Color", "", 1, "Color")]
     private Color _textColor = Colors.Black;
 
-    [ObservableProperty] [property: Editable("Background Color", "", 2, "Color")]
-    private Color _backgroundColor = Colors.Transparent;
-
+    [ObservableProperty] [property: Editable("Vertical", "", 3, "Text")]
+    private TextAlignmentVerticalEnum _verticalJustification = TextAlignmentVerticalEnum.Center;
 
     [JsonConstructor]
     public TextEntity() { }
 
-    public TextEntity(Panel panel) : this() {
-        Parent = panel;
-    }
+    public TextEntity(Panel panel) : this() => Parent = panel;
 
     public TextEntity(TextEntity entity) : base(entity) { }
     [JsonIgnore] protected override int RotationFactor => 90;
@@ -53,7 +49,5 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
         HandleRotation();
     }
 
-    public override Entity Clone() {
-        return new TextEntity(this);
-    }
+    public override Entity Clone() => new TextEntity(this);
 }

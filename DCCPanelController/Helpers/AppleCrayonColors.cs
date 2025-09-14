@@ -54,7 +54,7 @@ public static class AppleCrayonColors {
         Orchid     = 0xFF7a81ff,
         Lavender   = 0xFFd783ff,
         Bubblegum  = 0xFFff85ff,
-        Carnation  = 0xFFff8ad8
+        Carnation  = 0xFFff8ad8,
     }
 
     // Cache the colors list to avoid recreation
@@ -115,32 +115,26 @@ public static class AppleCrayonColors {
             new(nameof(AppleCrayonColorsEnum.Orchid), EnumToColor(AppleCrayonColorsEnum.Orchid)),
             new(nameof(AppleCrayonColorsEnum.Lavender), EnumToColor(AppleCrayonColorsEnum.Lavender)),
             new(nameof(AppleCrayonColorsEnum.Bubblegum), EnumToColor(AppleCrayonColorsEnum.Bubblegum)),
-            new(nameof(AppleCrayonColorsEnum.Carnation), EnumToColor(AppleCrayonColorsEnum.Carnation))
+            new(nameof(AppleCrayonColorsEnum.Carnation), EnumToColor(AppleCrayonColorsEnum.Carnation)),
         });
 
     public static IReadOnlyList<Color> Colors => _colors.Value;
     public static IReadOnlyList<AppleCrayonColor> Crayons => _crayons.Value;
     public static IReadOnlyList<AppleCrayonColor> Lazy => _crayons.Value;
 
-    public static string Name(Color color) {
-        return ColorToName.Value.GetValueOrDefault(color, "Unknown");
-    }
+    public static string Name(Color color) => ColorToName.Value.GetValueOrDefault(color, "Unknown");
 
-    public static Color Value(string name) {
-        return NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
-    }
+    public static Color Value(string name) => NameToColor.Value.TryGetValue(name, out var color) ? color : Microsoft.Maui.Graphics.Colors.White;
 
     public static bool IsColorLight(Color color) {
         var luminance = 0.299 * color.Red + 0.587 * color.Green + 0.114 * color.Blue;
         return luminance > 0.5;
     }
-    
+
     public static Color GetContrastingTextColor(Color backgroundColor) {
         var luminance = 0.299 * backgroundColor.Red + 0.587 * backgroundColor.Green + 0.114 * backgroundColor.Blue;
         return luminance > 0.5 ? EnumToColor(AppleCrayonColorsEnum.Licorice) : EnumToColor(AppleCrayonColorsEnum.Snow);
     }
 
-    public static Color EnumToColor(AppleCrayonColorsEnum color) {
-        return Color.FromArgb($"{(uint)color:X8}");
-    }
+    public static Color EnumToColor(AppleCrayonColorsEnum color) => Color.FromArgb($"{(uint)color:X8}");
 }

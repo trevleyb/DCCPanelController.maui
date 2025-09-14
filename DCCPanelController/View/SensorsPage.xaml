@@ -14,16 +14,15 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Command="{Binding RefreshSensorsCommand}" IsEnabled="{Binding IsConnected}"
-                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}">
-        </ToolbarItem>
+                     IconImageSource="{Binding IsConnected, Converter={StaticResource BoolToIcon}, ConverterParameter=refresh_cw}"/>
 
-        <ToolbarItem 
-            Command="{Binding ToggleConnectionCommand}" 
+        <ToolbarItem
+            Command="{Binding ToggleConnectionCommand}"
             IsEnabled="{Binding IsConnectionAvailable}">
             <ToolbarItem.IconImageSource>
                 <MultiBinding Converter="{StaticResource MultiBoolToIcon}">
-                    <Binding Path="IsConnectionAvailable" />    <!-- Parameter 1: bool for _active/_inactive -->
-                    <Binding Path="IsConnected" />              <!-- Parameter 2: bool for name selection -->
+                    <Binding Path="IsConnectionAvailable"/>    <!-- Parameter 1: bool for _active/_inactive -->
+                    <Binding Path="IsConnected"/>              <!-- Parameter 2: bool for name selection -->
                     <Binding Path="IconWifiOn"/>
                     <Binding Path="IconWifiOff"/>
                 </MultiBinding>
@@ -63,13 +62,15 @@
             HorizontalOptions="FillAndExpand"/>
         <RefreshView IsRefreshing="{Binding IsBusy}" Command="{Binding RefreshSensorsCommand}">
 
-            <Grid Padding="5" VerticalOptions="FillAndExpand" IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
+            <Grid Padding="5" VerticalOptions="FillAndExpand"
+                  IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                 <CollectionView ItemsSource="{Binding Sensors}" SelectionMode="None">
                     <CollectionView.EmptyView>
                         <Grid HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
                             <StackLayout HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand">
                                 <Label IsVisible="{Binding IsSupported}" Text="No Sensors available."/>
-                                <Label IsVisible="{Binding IsNotSupported}" Text="The current server type does not support Sensors."/>
+                                <Label IsVisible="{Binding IsNotSupported}"
+                                       Text="The current server type does not support Sensors."/>
                             </StackLayout>
                         </Grid>
                     </CollectionView.EmptyView>
@@ -77,7 +78,7 @@
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dataModel:Sensor">
                             <StackLayout Padding="0">
-                                <Grid ColumnDefinitions="150,*,120" Padding="5" 
+                                <Grid ColumnDefinitions="150,*,120" Padding="5"
                                       IsEnabled="{Binding Source={RelativeSource AncestorType={x:Type view:SensorsViewModel}}, x:DataType=view:SensorsViewModel, Path=IsConnected}">
                                     <Grid.GestureRecognizers>
                                         <TapGestureRecognizer

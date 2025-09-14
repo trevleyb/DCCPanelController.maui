@@ -4,9 +4,9 @@ using CommunityToolkit.Maui.Storage;
 namespace DCCPanelController.Helpers;
 
 public static class FileHelper {
-
     public static async Task<string?> ShareFileAsync(string? text, string content, string fileName, Microsoft.Maui.Controls.View? parent = null) => await ShareFileAsync(text, Encoding.UTF8.GetBytes(content ?? ""), fileName, parent);
     public static async Task<string?> ShareFileAsync(string? text, byte[] content, string fileName, Microsoft.Maui.Controls.View? parent = null) => await ShareFileAsync(text, content, fileName, parent?.Bounds ?? Rect.Zero);
+
     public static async Task<string?> ShareFileAsync(string? text, byte[] content, string fileName, Rect bounds) {
         try {
             var tempPath = Path.Combine(FileSystem.CacheDirectory, fileName);
@@ -16,9 +16,9 @@ public static class FileHelper {
                 await stream.CopyToAsync(fs);
             }
 
-            var shareTitle = text ?? "Export File"; 
+            var shareTitle = text ?? "Export File";
             var shareFile = new ShareFile(tempPath);
-            var shareRequest = new ShareFileRequest(title: shareTitle, file: shareFile);
+            var shareRequest = new ShareFileRequest(shareTitle, shareFile);
             if (bounds != Rect.Zero) shareRequest.PresentationSourceBounds = bounds;
             await Share.RequestAsync(shareRequest);
             return tempPath;
@@ -34,7 +34,7 @@ public static class FileHelper {
     public static async Task<string?> SaveFileAsync(string? text, string? content, string fileName) {
         try {
             // Convert the content into a MemoryStream
-            if (content is not null) {
+            if (content is { }) {
                 using var stream = new MemoryStream(Encoding.UTF8.GetBytes(content));
                 stream.Position = 0;
                 var fileResult = await FileSaver.SaveAsync(fileName, stream, CancellationToken.None);
@@ -50,14 +50,13 @@ public static class FileHelper {
     public static async Task<string?> LoadFileAsync(string? text) {
         try {
             var fileResult = await FilePicker.PickAsync(new PickOptions {
-                PickerTitle = text ?? "Select a File to Upload", 
+                PickerTitle = text ?? "Select a File to Upload",
                 FileTypes = new FilePickerFileType(new Dictionary<DevicePlatform, IEnumerable<string>> {
                     { DevicePlatform.iOS, new[] { "public.json" } },
                     { DevicePlatform.MacCatalyst, new[] { "public.json" } },
                     { DevicePlatform.Android, new[] { "application/json" } },
                     { DevicePlatform.WinUI, new[] { ".json" } },
-                })
-
+                }),
             });
             if (fileResult == null) return null;
 

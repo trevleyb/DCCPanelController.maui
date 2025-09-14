@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
-using Microsoft.Maui.Graphics;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
@@ -27,22 +26,23 @@ public abstract partial class TrackEntity : Entity {
 
     protected TrackEntity() { }
     protected TrackEntity(Panel panel) : base(panel) { }
-    protected TrackEntity(TrackEntity entity, params string[] excludeProperties ) : base(entity, excludeProperties) { }
+    protected TrackEntity(TrackEntity entity, params string[] excludeProperties) : base(entity, excludeProperties) { }
 
     [JsonIgnore] protected override int RotationFactor => 45;
+
     [JsonIgnore] public Block? Occupancy {
         get {
             if (string.IsNullOrEmpty(OccupancyBlock)) return null;
             return Parent?.Block(OccupancyBlock) ?? null;
         }
-    } 
-    
+    }
+
     [JsonIgnore] public abstract EntityConnections Connections { get; }
     [JsonIgnore] public bool IsMainLine => TrackType == TrackTypeEnum.MainLine;
     [JsonIgnore] public bool IsBranchLine => TrackType == TrackTypeEnum.BranchLine;
     [JsonIgnore] public string RotatedConnections => Connections.GetRotatedConnectionsStr(Rotation);
     [JsonIgnore] public ConnectionType[] GetCurrentConnections => Connections.GetConnections(Rotation);
     [JsonIgnore] public List<int> GetValidDirections => Connections.GetValidDirections(Rotation);
-    
+
     public ConnectionType GetConnection(int direction) => Connections.GetConnection(direction, Rotation);
 }

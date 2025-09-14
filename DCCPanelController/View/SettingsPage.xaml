@@ -310,7 +310,8 @@
                         Style="{StaticResource ButtonOutline}"
                         Text="{OnIdiom Phone='Save', Tablet='Save Profile', Desktop='Save Profile'}"
                         FontSize="{OnIdiom Phone=14, Tablet=18, Desktop=20}"
-                        WidthRequest="{OnIdiom Phone=120, Tablet=180, Desktop=180}">                    <Button.Behaviors>
+                        WidthRequest="{OnIdiom Phone=120, Tablet=180, Desktop=180}">
+                    <Button.Behaviors>
                         <toolkit:IconTintColorBehavior TintColor="{StaticResource Primary}"/>
                     </Button.Behaviors>
                 </Button>

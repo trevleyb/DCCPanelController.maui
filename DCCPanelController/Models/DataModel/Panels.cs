@@ -8,9 +8,7 @@ namespace DCCPanelController.Models.DataModel;
 public sealed class Panels : ObservableCollection<Panel> {
     [JsonIgnore] public Profile? Profile { get; set; }
 
-    public Panel CreatePanel() {
-        return new Panel(this);
-    }
+    public Panel CreatePanel() => new(this);
 
     public Panel CreatePanel(string name) {
         var panel = new Panel(this);
@@ -18,9 +16,7 @@ public sealed class Panels : ObservableCollection<Panel> {
         return panel;
     }
 
-    public Panel CreatePanelFrom(Panel panel) {
-        return panel.Clone();
-    }
+    public Panel CreatePanelFrom(Panel panel) => panel.Clone();
 
     new private Panel Add(Panel panel) {
         base.Add(panel);

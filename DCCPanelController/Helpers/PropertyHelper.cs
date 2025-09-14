@@ -8,12 +8,14 @@ public static class PropertyHelper {
         // Fetch the property info based on the property name
         var property = objType.GetProperty(fieldName);
 
-        if (property == null)
+        if (property == null) {
             throw new ArgumentException($"Property '{fieldName}' not found on object of type {objType.Name}.");
+        }
 
         // Check if the property is an enum
-        if (!property.PropertyType.IsEnum)
+        if (!property.PropertyType.IsEnum) {
             throw new InvalidOperationException($"Property '{fieldName}' is not an enum.");
+        }
 
         // Get the current value of the enum
         var enumValue = property.GetValue(obj);
@@ -34,12 +36,14 @@ public static class PropertyHelper {
         // Fetch the property info based on the property name
         var property = objType.GetProperty(fieldName);
 
-        if (property == null)
+        if (property == null) {
             throw new ArgumentException($"Property '{fieldName}' not found on object of type {objType.Name}.");
+        }
 
         // Check if the property is an enum
-        if (!property.PropertyType.IsEnum)
+        if (!property.PropertyType.IsEnum) {
             throw new InvalidOperationException($"Property '{fieldName}' is not an enum.");
+        }
 
         // Get the current value of the enum
         return property.GetValue(obj) as T?;
@@ -52,16 +56,19 @@ public static class PropertyHelper {
         // Fetch the property by name
         var property = objType.GetProperty(propertyName);
 
-        if (property == null)
+        if (property == null) {
             throw new ArgumentException($"Property '{propertyName}' not found on object of type {objType.Name}.");
+        }
 
         // Check if the property is an Enum
-        if (!property.PropertyType.IsEnum)
+        if (!property.PropertyType.IsEnum) {
             throw new InvalidOperationException($"Property '{propertyName}' is not an enum.");
+        }
 
         // Validate the enum value type and convert if necessary
-        if (!Enum.IsDefined(property.PropertyType, enumValue))
+        if (!Enum.IsDefined(property.PropertyType, enumValue)) {
             throw new ArgumentException($"Value '{enumValue}' is not valid for enum type {property.PropertyType.Name}.");
+        }
 
         // Set the value
         try {
@@ -78,8 +85,9 @@ public static class PropertyHelper {
         // Fetch the property by name
         var property = objType.GetProperty(propertyName);
 
-        if (property == null)
+        if (property == null) {
             throw new ArgumentException($"Property '{propertyName}' not found on object of type {objType.Name}.");
+        }
 
         // Set the value
         property.SetValue(obj, value);
@@ -92,10 +100,11 @@ public static class PropertyHelper {
         // Fetch the property info based on the property name
         var property = objType.GetProperty(fieldName);
 
-        if (property == null)
+        if (property == null) {
             throw new ArgumentException($"Property '{fieldName}' not found on object of type {objType.Name}.");
+        }
 
         // Get the current value of the enum
-        return (property.GetValue(obj) is T? ? (T?)property.GetValue(obj) : default) ?? default(T);
+        return(property.GetValue(obj) is T? ? (T?)property.GetValue(obj) : default) ?? default(T);
     }
 }

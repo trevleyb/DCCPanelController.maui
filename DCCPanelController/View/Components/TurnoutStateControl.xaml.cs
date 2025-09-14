@@ -7,21 +7,18 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.View.Components;
 
 public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
-    public EventHandler<TurnoutStateEnum>? StateChanged { get; set; }
-    
-    public static readonly BindableProperty TurnoutProperty = BindableProperty.Create(nameof(Turnout), typeof(Turnout), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
-    public static readonly BindableProperty StateProperty = BindableProperty.Create(nameof(State), typeof(TurnoutStateEnum), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
-    public static readonly BindableProperty CanToggleStateProperty = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(TurnoutStateControl), true);
-    public static readonly BindableProperty CanSetStateUnknownProperty = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(TurnoutStateControl), false);
+    public static readonly BindableProperty TurnoutProperty             = BindableProperty.Create(nameof(Turnout), typeof(Turnout), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnTurnoutChanged);
+    public static readonly BindableProperty StateProperty               = BindableProperty.Create(nameof(State), typeof(TurnoutStateEnum), typeof(TurnoutStateControl), null, BindingMode.TwoWay, propertyChanged: OnStateChanged);
+    public static readonly BindableProperty CanToggleStateProperty      = BindableProperty.Create(nameof(CanToggleState), typeof(bool), typeof(TurnoutStateControl), true);
+    public static readonly BindableProperty CanSetStateUnknownProperty  = BindableProperty.Create(nameof(CanSetStateUnknown), typeof(bool), typeof(TurnoutStateControl), false);
     public static readonly BindableProperty StateChangedCommandProperty = BindableProperty.Create(nameof(StateChangedCommand), typeof(ICommand), typeof(TurnoutStateControl));
 
-    public static readonly BindableProperty ClosedTextProperty = BindableProperty.Create(nameof(ClosedText), typeof(string), typeof(TurnoutStateControl), "Closed");
-    public static readonly BindableProperty ThrownTextProperty = BindableProperty.Create(nameof(ThrownText), typeof(string), typeof(TurnoutStateControl), "Thrown");
+    public static readonly BindableProperty ClosedTextProperty  = BindableProperty.Create(nameof(ClosedText), typeof(string), typeof(TurnoutStateControl), "Closed");
+    public static readonly BindableProperty ThrownTextProperty  = BindableProperty.Create(nameof(ThrownText), typeof(string), typeof(TurnoutStateControl), "Thrown");
     public static readonly BindableProperty UnknownTextProperty = BindableProperty.Create(nameof(UnknownText), typeof(string), typeof(TurnoutStateControl), "Unknown");
 
-    public TurnoutStateControl() {
-        InitializeComponent();
-    }
+    public TurnoutStateControl() => InitializeComponent();
+    public EventHandler<TurnoutStateEnum>? StateChanged { get; set; }
 
     public Turnout Turnout {
         get => (Turnout)GetValue(TurnoutProperty);
@@ -80,17 +77,18 @@ public partial class TurnoutStateControl : ContentView, INotifyPropertyChanged {
                     TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
                     TurnoutStateEnum.Thrown  => TurnoutStateEnum.Unknown,
                     TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
-                    _                        => TurnoutStateEnum.Closed
+                    _                        => TurnoutStateEnum.Closed,
                 };
             } else {
                 State = State switch {
                     TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
                     TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-                    _                       => TurnoutStateEnum.Closed
+                    _                       => TurnoutStateEnum.Closed,
                 };
             }
             if (prevState != State) {
-                StateChanged?.Invoke(this, State);;
+                StateChanged?.Invoke(this, State);
+                ;
                 if (StateChangedCommand is { } command) {
                     if (command.CanExecute(Turnout)) command.Execute(Turnout);
                 }

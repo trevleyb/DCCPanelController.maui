@@ -27,12 +27,12 @@ public class DrawableImageTile : Tile, ITileDrawable {
                 ZIndex = entity.Layer,
                 InputTransparent = true,
                 WidthRequest = TileWidth,
-                HeightRequest = TileHeight
+                HeightRequest = TileHeight,
             };
             image.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
             image.SetBinding(Image.AspectProperty, new Binding(nameof(entity.AspectRatio), BindingMode.OneWay, source: Entity));
             if (entity.BorderWidth <= 0) return image; // No border (no need to create a border)
-            
+
             var border = new Border {
                 Content = image,
                 BackgroundColor = Colors.Transparent,
@@ -43,8 +43,8 @@ public class DrawableImageTile : Tile, ITileDrawable {
                 HeightRequest = TileHeight,
                 ZIndex = entity.Layer,
                 StrokeShape = new RoundRectangle {
-                    CornerRadius = new CornerRadius(entity.BorderRadius)
-                }
+                    CornerRadius = new CornerRadius(entity.BorderRadius),
+                },
             };
             border.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
             border.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
@@ -57,7 +57,5 @@ public class DrawableImageTile : Tile, ITileDrawable {
         return CreateSymbol();
     }
 
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("image").AsImage();
-    }
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("image").AsImage();
 }

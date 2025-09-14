@@ -2,21 +2,17 @@ namespace DCCPanelController.Models.DataModel.Entities.Actions;
 
 public enum StateChangeSource {
     External, // From physical layout/user interaction
-    Internal  // From cascading actions
+    Internal, // From cascading actions
 }
 
 public class ActionExecutionContext {
     private readonly HashSet<string> _currentCascade = new();
-    private readonly int _maxDepth;
-    private int _currentDepth;
+    private readonly int             _maxDepth;
+    private          int             _currentDepth;
 
-    public ActionExecutionContext(int maxDepth = 10) {
-        _maxDepth = maxDepth;
-    }
+    public ActionExecutionContext(int maxDepth = 10) => _maxDepth = maxDepth;
 
-    public bool CanCascade(string entityId) {
-        return !_currentCascade.Contains(entityId) && _currentDepth < _maxDepth;
-    }
+    public bool CanCascade(string entityId) => !_currentCascade.Contains(entityId) && _currentDepth < _maxDepth;
 
     public IDisposable BeginCascade(string entityId) {
         if (!CanCascade(entityId)) {
@@ -31,7 +27,7 @@ public class ActionExecutionContext {
 
     private class CascadeScope : IDisposable {
         private readonly ActionExecutionContext _context;
-        private readonly string _entityId;
+        private readonly string                 _entityId;
 
         public CascadeScope(ActionExecutionContext context, string entityId) {
             _context = context;

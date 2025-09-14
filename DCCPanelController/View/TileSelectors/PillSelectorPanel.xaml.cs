@@ -1,47 +1,41 @@
-using System.Collections;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
-using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.Helpers;
-using Microsoft.Maui.Controls;
 using SelectionChangedEventArgs = Syncfusion.Maui.Toolkit.SegmentedControl.SelectionChangedEventArgs;
 #if IOS || MACCATALYST
-using System.Reflection.PortableExecutable;
-using UIKit;
-using CoreGraphics;
 #endif
 
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class PillSelectorPanel : ContentView {
-    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
-    private double pillWidth    = 600;
-    private double scrollOffset = 0;
-
     public static readonly BindableProperty PanelProperty =
         BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(PillSelectorPanel), propertyChanged: OnPanelChanged);
 
-    public Panel? Panel {
-        get => (Panel?)GetValue(PanelProperty);
-        set => SetValue(PanelProperty, value);
-    }
-
-    public void ForceReDraw() => (BindingContext as PillSelectorPanelViewModel)?.ForceReDraw();
-
-    private PillSelectorPanelViewModel? Vm => BindingContext as PillSelectorPanelViewModel;
-
-    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
-        if (BindingContext is PillSelectorPanelViewModel vm) {
-            vm.SelectedCategory = e?.NewValue?.Text ?? string.Empty;
-            OnPropertyChanged(nameof(vm.TilesForSelectedCategory));
-        }
-    }
+    private double pillWidth = 600;
+    private double scrollOffset;
 
     public PillSelectorPanel() {
         InitializeComponent();
         var viewModel = new PillSelectorPanelViewModel();
         BindingContext = viewModel;
         SegmentedControl.SelectedIndex = 1;
+    }
+
+    public Panel? Panel {
+        get => (Panel?)GetValue(PanelProperty);
+        set => SetValue(PanelProperty, value);
+    }
+
+    private PillSelectorPanelViewModel? Vm => BindingContext as PillSelectorPanelViewModel;
+    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
+
+    public void ForceReDraw() => (BindingContext as PillSelectorPanelViewModel)?.ForceReDraw();
+
+    private void OnSelectionChanged(object? sender, SelectionChangedEventArgs e) {
+        if (BindingContext is PillSelectorPanelViewModel vm) {
+            vm.SelectedCategory = e?.NewValue?.Text ?? string.Empty;
+            OnPropertyChanged(nameof(vm.TilesForSelectedCategory));
+        }
     }
 
     private void SizePill() {
@@ -55,7 +49,7 @@ public partial class PillSelectorPanel : ContentView {
         pillWidth = widthConstraint switch {
             < 400 => 320,
             < 600 => 400,
-            _     => 500
+            _     => 500,
         };
         SizePill();
         return base.MeasureOverride(widthConstraint, heightConstraint);
@@ -80,16 +74,16 @@ public partial class PillSelectorPanel : ContentView {
         if (!pointerRoot.HasValue) return;
 
         var index = CollectionHitIndex.IndexOf(TileCollection,
-            point: pointerRoot.Value,
-            scrollXOffset: scrollOffset,
-            scrollYOffset: scrollOffset,
-            edgeMargin: 4,
-            topMargin: 4,
-            itemWidth: 40,
-            itemHeight: 40,
-            spacingH: 4,
-            spacingV: 4);
-        if (index is not null) {
+            pointerRoot.Value,
+            scrollOffset,
+            scrollOffset,
+            4,
+            4,
+            40,
+            40,
+            4,
+            4);
+        if (index is { }) {
             var tile = Vm?.TilesForSelectedCategory[index.Value];
             if (e.Data.Properties is { } props) {
                 props["Tile"] = tile;
@@ -100,7 +94,5 @@ public partial class PillSelectorPanel : ContentView {
         e.Cancel = true;
     }
 
-    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {
-        scrollOffset = e.HorizontalOffset;
-    }
+    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) => scrollOffset = e.HorizontalOffset;
 }

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Diagnostics;
-using System.Text.Json;
-using DCCPanelController.Helpers;
-using DCCPanelController.Services;
+﻿using DCCPanelController.Helpers;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View;
 using Microsoft.Extensions.Logging;
-using Microsoft.Maui;
-using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Xaml.Diagnostics;
 
 namespace DCCPanelController;
@@ -26,14 +20,12 @@ public partial class App : Application {
     private static void BindingDiagnosticsOnBindingFailed(object? sender, BindingBaseErrorEventArgs e) {
         var logger = LogHelper.CreateLogger("BindingDiagnostics");
         logger.LogWarning("Binding Failed: {BindingSource} | {BindingLine} | {BindingName} | {BindingMessage} | {BindingType}",
-                          e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI",
-                          e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum",
-                          e?.Binding?.ToString() ?? "?Binding",
-                          e?.Message ?? "?Message",
-                          e?.Binding?.GetType().Name ?? "?BindingType");
+            e?.XamlSourceInfo?.SourceUri.ToString() ?? "?SourceURI",
+            e?.XamlSourceInfo?.LineNumber.ToString() ?? "?LineNum",
+            e?.Binding?.ToString() ?? "?Binding",
+            e?.Message ?? "?Message",
+            e?.Binding?.GetType().Name ?? "?BindingType");
     }
 
-    protected override Window CreateWindow(IActivationState? activationState) {
-        return new Window(new LoadingPage());
-    }
+    protected override Window CreateWindow(IActivationState? activationState) => new(new LoadingPage());
 }

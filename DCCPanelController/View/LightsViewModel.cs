@@ -12,18 +12,18 @@ using Microsoft.Extensions.Logging;
 namespace DCCPanelController.View;
 
 public partial class LightsViewModel : ConnectionViewModel {
-    private const string _labelID = "ID";
-    private const string _labelName = "Light";
-    private const string _labelState = "Lit?";
-    private readonly ProfileService _profileService;
-    [ObservableProperty] private string _columnLabelID = _labelID;
-    [ObservableProperty] private string _columnLabelName = _labelName;
-    [ObservableProperty] private string _columnLabelState = _labelState;
-    private bool _isAscending;
+    private const                string         _labelID    = "ID";
+    private const                string         _labelName  = "Light";
+    private const                string         _labelState = "Lit?";
+    private readonly             ProfileService _profileService;
+    [ObservableProperty] private string         _columnLabelID    = _labelID;
+    [ObservableProperty] private string         _columnLabelName  = _labelName;
+    [ObservableProperty] private string         _columnLabelState = _labelState;
+    private                      bool           _isAscending;
 
     [ObservableProperty] private ObservableCollection<Light> _lights;
-    private ILogger<LightsViewModel> _logger;
-    private string _sortColumn = "";
+    private                      ILogger<LightsViewModel>    _logger;
+    private                      string                      _sortColumn = "";
 
     public LightsViewModel(ILogger<LightsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -53,14 +53,14 @@ public partial class LightsViewModel : ConnectionViewModel {
                 _labelName  => Lights.OrderBy<Light, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Lights.OrderBy<Light, string>(x => x.Id ?? "").ToList(),
                 _labelState => Lights.OrderBy<Light, bool>(x => x.State).ToList(),
-                _           => Lights.ToList<Light>()
+                _           => Lights.ToList<Light>(),
             };
         } else {
             sorted = columnName switch {
                 _labelName  => Lights.OrderByDescending<Light, string>(x => x.Name ?? "").ToList(),
                 _labelID    => Lights.OrderByDescending<Light, string>(x => x.Id ?? "").ToList(),
                 _labelState => Lights.OrderByDescending<Light, bool>(x => x.State).ToList(),
-                _           => Lights.ToList<Light>()
+                _           => Lights.ToList<Light>(),
             };
         }
 

@@ -11,9 +11,7 @@ namespace DCCPanelController.Helpers.Attributes;
 /// </summary>
 [AttributeUsage(AttributeTargets.Field)]
 public class CopyableAttribute : Attribute {
-    public CopyableAttribute(string group) {
-        Group = group;
-    }
+    public CopyableAttribute(string group) => Group = group;
 
     public string Group { get; }
     public string DisplayName { get; set; } = string.Empty;
@@ -31,8 +29,8 @@ public class ColorItemGroup : List<PanelColorItem> {
         CategorySortOrder = categorySortOrder;
     }
 
-    public string CategoryName { get; set; } 
-    public int CategorySortOrder { get; set; } 
+    public string CategoryName { get; set; }
+    public int CategorySortOrder { get; set; }
 }
 
 /// <summary>
@@ -42,9 +40,7 @@ public static class AttributeMapper {
     /// <summary>
     ///     Copies all copyable properties from source to target
     /// </summary>
-    public static void CopyTo<T>(T source, T target) where T : class {
-        CopyTo(source, target, null);
-    }
+    public static void CopyTo<T>(T source, T target) where T : class => CopyTo(source, target, null);
 
     /// <summary>
     ///     Copies properties from source to target, optionally filtered by group
@@ -65,9 +61,7 @@ public static class AttributeMapper {
     /// <summary>
     ///     Generates grouped PanelColorItem collection for all copyable Color properties
     /// </summary>
-    public static ObservableCollection<ColorItemGroup> GenerateGroupedColorItems(Panel instance) {
-        return GenerateGroupedColorItems(instance, null);
-    }
+    public static ObservableCollection<ColorItemGroup> GenerateGroupedColorItems(Panel instance) => GenerateGroupedColorItems(instance, null);
 
     /// <summary>
     ///     Generates grouped PanelColorItem collection for copyable Color properties, optionally filtered by group
@@ -102,9 +96,9 @@ public static class AttributeMapper {
                           .OrderBy(g => g.Key.CategorySortOrder)
                           .ThenBy(g => g.Key.Category)
                           .Select(g => new ColorItemGroup(
-                                      g.Key.Category,
-                                      g.Key.CategorySortOrder,
-                                      g.OrderBy(x => x.ItemSortOrder).ThenBy(x => x.Item.LabelText).Select(x => x.Item)))
+                               g.Key.Category,
+                               g.Key.CategorySortOrder,
+                               g.OrderBy(x => x.ItemSortOrder).ThenBy(x => x.Item.LabelText).Select(x => x.Item)))
                           .ToList();
 
         return new ObservableCollection<ColorItemGroup>(groupedItems);
@@ -113,9 +107,7 @@ public static class AttributeMapper {
     /// <summary>
     ///     Generates flat PanelColorItem collection for backward compatibility
     /// </summary>
-    public static ObservableCollection<PanelColorItem> GenerateColorItems(Panel instance) {
-        return GenerateColorItems(instance, null);
-    }
+    public static ObservableCollection<PanelColorItem> GenerateColorItems(Panel instance) => GenerateColorItems(instance, null);
 
     /// <summary>
     ///     Generates flat PanelColorItem collection for copyable Color properties, optionally filtered by group
@@ -174,18 +166,14 @@ public static class AttributeMapper {
             // Only include Color properties
             if (property != null && property.CanRead && property.CanWrite &&
                 property.PropertyType == typeof(Color) && attr != null) {
-                yield return (property, attr);
+                yield return(property, attr);
             }
         }
     }
 
-    private static Func<Panel, Color> CreatePanelGetter(PropertyInfo property) {
-        return panel => (Color)property.GetValue(panel)!;
-    }
+    private static Func<Panel, Color> CreatePanelGetter(PropertyInfo property) => panel => (Color)property.GetValue(panel)!;
 
-    private static Action<Panel, Color> CreatePanelSetter(PropertyInfo property) {
-        return (panel, color) => property.SetValue(panel, color);
-    }
+    private static Action<Panel, Color> CreatePanelSetter(PropertyInfo property) => (panel, color) => property.SetValue(panel, color);
 
     private static string GetPropertyNameFromField(string fieldName) {
         if (fieldName.StartsWith("_") && fieldName.Length > 1) {
@@ -194,7 +182,5 @@ public static class AttributeMapper {
         return fieldName;
     }
 
-    private static string SplitCamelCase(string input) {
-        return Regex.Replace(input, "([A-Z])", " $1").Trim();
-    }
+    private static string SplitCamelCase(string input) => Regex.Replace(input, "([A-Z])", " $1").Trim();
 }

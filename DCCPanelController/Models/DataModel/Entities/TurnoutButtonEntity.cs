@@ -1,29 +1,27 @@
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using DCCPanelController.Helpers;
-using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
-using DCCPanelController.Services;
 using DCCPanelController.View.Properties.DynamicProperties;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity {
-
-    [ObservableProperty] [property: Editable("Button Name","Unique Name for this Button so it can be referenced by actions.",0)]
-    private string _id = string.Empty;
-
-    [ObservableProperty] [property: Editable("Button Size","",1)]
+    [ObservableProperty] [property: Editable("Button Size", "", 1)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-    
-    [ObservableProperty] 
-    [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
-    private bool _showIndicator = true;
-    
+
     [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator.", 11, "Colors")]
     private Color? _colorIndicator;
+
+    [ObservableProperty] [property: Editable("Button Name", "Unique Name for this Button so it can be referenced by actions.", 0)]
+    private string _id = string.Empty;
+
+    [ObservableProperty]
+    [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
+    private bool _showIndicator = true;
+
+    [ObservableProperty]
+    private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [ObservableProperty] [property: Editable("Turnout", "Turnout to Control with this button", 5, "Turnout", EditorKind = EditorKinds.Turnout)]
     private string? _turnout;
@@ -33,30 +31,14 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
 
     [ObservableProperty] [property: Editable("Diverging/Thrown", "When Turnout is Diverging/Thrown set Button to?", 8, "Turnout", EditorKind = EditorKinds.ButtonState)]
     private ButtonStateEnum _whenThrown;
-    
-    [ObservableProperty] 
-    private ButtonStateEnum _state = ButtonStateEnum.Unknown;
-
-    [JsonIgnore] protected override int RotationFactor => 90;
-
-    /// <summary>
-    /// Because when we are editing a panel the entities do not actually exist UNTIL we save,
-    /// we need to get all saved IDs from the parent AND we need to get any which are in the
-    /// local panel (unsaved) combine them and use that list to generate a unique ID.
-    /// </summary>
-    public string NextID(Panel? targetPanel = null) {
-        targetPanel ??= Parent;
-        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<TurnoutButtonEntity>(targetPanel), "Button");        
-        return nextID;
-    }
 
     [JsonConstructor]
-    public TurnoutButtonEntity() {
-        Id = NextID();
-    }
+    public TurnoutButtonEntity() => Id = NextID();
 
     public TurnoutButtonEntity(Panel panel) : base(panel) { }
     public TurnoutButtonEntity(TurnoutButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
+
+    [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "T-Button";
     public override string EntityDescription => "Turnout Toggle Switch";
 
@@ -67,7 +49,16 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
         "This is because while a message to change the turnout has been sent to the controller,  " +
         "no response has yet been processed so the state will not change. ";
 
-    public override Entity Clone() {
-        return new TurnoutButtonEntity(this);
+    /// <summary>
+    ///     Because when we are editing a panel the entities do not actually exist UNTIL we save,
+    ///     we need to get all saved IDs from the parent AND we need to get any which are in the
+    ///     local panel (unsaved) combine them and use that list to generate a unique ID.
+    /// </summary>
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= Parent;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<TurnoutButtonEntity>(targetPanel), "Button");
+        return nextID;
     }
+
+    public override Entity Clone() => new TurnoutButtonEntity(this);
 }

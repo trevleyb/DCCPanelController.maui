@@ -1,12 +1,8 @@
-using System.Collections.ObjectModel;
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
-
 
 public interface IActionsGridViewModel {
     List<string> GetSelectableItems(string? activeItem = null);
@@ -15,11 +11,11 @@ public interface IActionsGridViewModel {
 public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject, IActionsGridViewModel
     where TAction : class, new()
     where TCollection : ICollection<TAction> {
-    protected ActionsContext _actionContext;
-    protected List<string>   _availableItems;
+    protected                      ActionsContext _actionContext;
+    protected                      List<string>   _availableItems;
+    [ObservableProperty] protected IActionEntity  _entity;
 
     [ObservableProperty] private List<string> _selectableItems = [];
-    [ObservableProperty] protected IActionEntity _entity;
 
     protected ActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableItems) {
         _actionContext = context;
@@ -46,6 +42,11 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
             if (SelectableItems.Count == 0) return$"All available {ItemTypeName.ToLower()}s are assigned.";
             return$"Use the + key to add more {ItemTypeName.ToLower()} actions.";
         }
+    }
+
+    public List<string> GetSelectableItems(string? activeItem = null) {
+        UpdateSelectableItems(activeItem);
+        return SelectableItems;
     }
 
     protected abstract TAction CreateNewAction(string id);
@@ -110,15 +111,8 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
     }
 
     [RelayCommand]
-    private void IdValueChanged(string id) {
-        RaisePropertiesChanged();
-    }
+    private void IdValueChanged(string id) => RaisePropertiesChanged();
 
-    public List<string> GetSelectableItems(string? activeItem = null) {
-        UpdateSelectableItems(activeItem);
-        return SelectableItems;
-    }
-    
     public void UpdateSelectableItems(string? activeItem = null) {
         foreach (var item in _availableItems) {
             var used = PanelActions.Any(x => GetActionId(x) == item);

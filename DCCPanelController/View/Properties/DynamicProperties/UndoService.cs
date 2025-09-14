@@ -9,8 +9,8 @@ public interface IUndoService {
 }
 
 public sealed class ApplyTransaction {
-    public IReadOnlyList<PropertyChange> Changes { get; }
     public ApplyTransaction(IEnumerable<PropertyChange> changes) => Changes = changes.ToList();
+    public IReadOnlyList<PropertyChange> Changes { get; }
 
     public Task CommitAsync() {
         foreach (var c in Changes) c.Field.Accessor.Set(c.Entity, c.NewValue);
@@ -24,8 +24,8 @@ public sealed class ApplyTransaction {
 }
 
 public sealed class DefaultUndoService : IUndoService {
-    private readonly System.Collections.Generic.Stack<ApplyTransaction> _undo = new();
-    private readonly System.Collections.Generic.Stack<ApplyTransaction> _redo = new();
+    private readonly Stack<ApplyTransaction> _redo = new();
+    private readonly Stack<ApplyTransaction> _undo = new();
 
     public void Push(ApplyTransaction tx) {
         _undo.Push(tx);

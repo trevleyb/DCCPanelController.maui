@@ -23,7 +23,7 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         var grid = new Grid {
             WidthRequest = TileWidth,
-            HeightRequest = TileHeight
+            HeightRequest = TileHeight,
         };
 
         if (Entity is CircleLabelEntity entity) {
@@ -34,9 +34,9 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 ZIndex = entity.Layer,
-                InputTransparent = true
+                InputTransparent = true,
             };
-            
+
             // FIX: Threw an exception here - needs to be IConvertable???
             // SolidColorBrush cannot be converter to Color
             outerCircle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: Entity));
@@ -50,7 +50,7 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 HeightRequest = TileWidth - entity.BorderWidth,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                ZIndex = entity.Layer
+                ZIndex = entity.Layer,
             };
             circleGap.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderInnerGap), BindingMode.OneWay, source: Entity));
 
@@ -60,7 +60,7 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
                 ZIndex = entity.Layer,
-                InputTransparent = true
+                InputTransparent = true,
             };
             innerCircle.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: Entity));
             innerCircle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderInnerColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: Entity));
@@ -71,7 +71,7 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
                 BackgroundColor = Colors.Transparent,
                 ZIndex = entity.Layer,
                 HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
             };
             label.SetBinding(Label.FontSizeProperty, new Binding(nameof(entity.FontSize), BindingMode.OneWay, source: Entity));
             label.SetBinding(Label.TextColorProperty, new Binding(nameof(entity.TextColor), BindingMode.OneWay, source: Entity));
@@ -89,7 +89,5 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
         return CreateSymbol();
     }
 
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("label").AsImage();
-    }
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("label").AsImage();
 }

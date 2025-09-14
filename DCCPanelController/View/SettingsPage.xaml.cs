@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using DCCPanelController.Clients;
-using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.BottomSheet;
@@ -10,7 +9,7 @@ namespace DCCPanelController.View;
 public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<SettingsPage>  _logger;
     private readonly SettingsPageViewModel? _pageViewModel;
-    
+
     public SettingsPage(ILogger<SettingsPage> logger, SettingsPageViewModel pageViewModel) {
         _logger = logger;
         _pageViewModel = pageViewModel;
@@ -23,14 +22,14 @@ public partial class SettingsPage : ContentPage, INotifyPropertyChanged {
             DccClientType.Simulator  => 0,
             DccClientType.Jmri       => 1,
             DccClientType.WiThrottle => 2,
-            _                        => 0
+            _                        => 0,
         };
         _pageViewModel.IsDirty = false;
     }
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
         base.OnNavigatedFrom(args);
-        if (_pageViewModel is {IsDirty: true } vm) await vm.SaveSettingsAsync();
+        if (_pageViewModel is { IsDirty: true } vm) await vm.SaveSettingsAsync();
     }
 
     private void EditConnectionButtonClicked(object? sender, EventArgs e) {

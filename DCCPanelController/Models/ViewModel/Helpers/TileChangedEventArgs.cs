@@ -26,5 +26,5 @@ public class TileChangedEventArgs : EventArgs {
 public enum TileChangeType {
     Modified,
     PropertyChanged,
-    Dimensions
+    Dimensions,
 }

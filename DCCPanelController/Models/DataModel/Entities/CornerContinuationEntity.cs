@@ -13,9 +13,7 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public CornerContinuationEntity() { }
 
-    public CornerContinuationEntity(Panel panel) : this() {
-        Parent = panel;
-    }
+    public CornerContinuationEntity(Panel panel) : this() => Parent = panel;
 
     public CornerContinuationEntity(CornerContinuationEntity entity) : base(entity) { }
 
@@ -25,7 +23,5 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
     public override string EntityDescription => "Corner Track with Indicator";
     public override string EntityInformation => "";
 
-    public override Entity Clone() {
-        return new CornerContinuationEntity(this);
-    }
+    public override Entity Clone() => new CornerContinuationEntity(this);
 }

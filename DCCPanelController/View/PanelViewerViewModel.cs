@@ -12,23 +12,23 @@ namespace DCCPanelController.View;
 
 public partial class PanelViewerViewModel : ConnectionViewModel {
     private readonly ILogger<PanelViewerViewModel> _logger;
-    private readonly ProfileService _profileService;
-    private Panel? _draggedPanel;
+    private readonly ProfileService                _profileService;
 
-    [ObservableProperty] private bool _canZoomIn;
-    [ObservableProperty] private bool _canZoomOut;
+    [ObservableProperty] private bool   _canZoomIn;
+    [ObservableProperty] private bool   _canZoomOut;
+    private                      Panel? _draggedPanel;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsNotLoading))]
     private bool _isLoading;
 
-    [ObservableProperty] private bool _isPanelSelected;
+    [ObservableProperty] private bool    _isPanelSelected;
     [ObservableProperty] private Panels? _panels;
-    [ObservableProperty] private Panel? _selectedPanel;
+    [ObservableProperty] private Panel?  _selectedPanel;
 
     public INavigation? NavigationService;
-    public double ScreenHeight = 100;
-    public double ScreenWidth = 100;
+    public double       ScreenHeight = 100;
+    public double       ScreenWidth  = 100;
 
     public PanelViewerViewModel(ILogger<PanelViewerViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
@@ -52,9 +52,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     public bool ShowLivePanel => !ShowThumbnail;
     public bool IsNotLoading => !IsLoading;
 
-    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        IsPanelSelected = SelectedPanel is not null;
-    }
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) => IsPanelSelected = SelectedPanel is { };
 
     [RelayCommand]
     private async Task AddPanelAsync() {
@@ -67,7 +65,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
     [RelayCommand]
     private async Task DeletePanelAsync() {
         ArgumentNullException.ThrowIfNull(Panels);
-        if (SelectedPanel is not null) {
+        if (SelectedPanel is { }) {
             var result = await DisplayAlertHelper.DisplayAlertYesNoAsync("Delete Panel?", $"Are you sure you want to delete the panel '{SelectedPanel.Id}'");
             if (!result) return; // Exit if the user cancels the delete operation
             Panels.Remove(SelectedPanel);
@@ -97,6 +95,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                     var panelAsJson = panel.DownloadPanel();
                     var fileName = string.IsNullOrEmpty(panel.Id) ? "Panel.panel.json" : $"{panel.Id}.panel.json";
                     var location = await FileHelper.ShareFileAsync("Save Panel", panelAsJson, fileName);
+
                     //var location = await FileHelper.SaveFileAsync("Save Panel", panelAsJson, fileName);
                     if (!string.IsNullOrEmpty(location)) {
                         await DisplayAlertHelper.DisplayToastAlert("Panel Downloaded");
@@ -118,7 +117,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
                 var jsonString = await FileHelper.LoadFileAsync("Select a Panel File to upload");
                 if (!string.IsNullOrEmpty(jsonString)) {
                     var panel = Panels.UploadPanel(jsonString);
-                    if (panel is not null) {
+                    if (panel is { }) {
                         await DisplayAlertHelper.DisplayToastAlert($"Uploaded Panel: {panel.Id ?? ""}");
                         await _profileService.SaveAsync();
                     } else {
@@ -153,9 +152,7 @@ public partial class PanelViewerViewModel : ConnectionViewModel {
 
     #region Drag and Drop Support for Panels
     [RelayCommand]
-    private async Task DragPanelAsync(Panel? panel) {
-        _draggedPanel = panel;
-    }
+    private async Task DragPanelAsync(Panel? panel) => _draggedPanel = panel;
 
     [RelayCommand]
     private async Task DropPanelAsync(Panel? panel) {

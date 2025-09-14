@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.View.Properties.DynamicProperties;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
@@ -31,11 +30,11 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
     [ObservableProperty] [property: Editable("Label", "", 0, "Text")]
     private string _label = string.Empty;
 
+    [ObservableProperty]
+    private double _scale = 0.8;
+
     [ObservableProperty] [property: Editable("Text Color", "", 2, "Text")]
     private Color _textColor = Colors.White;
-
-    [ObservableProperty] 
-    private double _scale = 0.8;
 
     [JsonConstructor]
     public CircleLabelEntity() { }
@@ -53,7 +52,5 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
     public override string EntityDescription => "Circle Label";
     public override string EntityInformation => "";
 
-    public override Entity Clone() {
-        return new CircleLabelEntity(this);
-    }
+    public override Entity Clone() => new CircleLabelEntity(this);
 }

@@ -6,7 +6,8 @@
              x:Class="DCCPanelController.View.LoadingPage">
     <ContentPage.Content>
         <Grid>
-            <ActivityIndicator Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" IsRunning="True"/>
+            <ActivityIndicator Color="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center"
+                               IsRunning="True"/>
         </Grid>
     </ContentPage.Content>
 </ContentPage>

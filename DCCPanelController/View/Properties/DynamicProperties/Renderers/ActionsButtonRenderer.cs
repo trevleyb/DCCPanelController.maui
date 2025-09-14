@@ -9,6 +9,7 @@ internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
     protected override int LabelWidth => -1;
     protected override int FieldHeight => -1;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.ButtonActions;
+
     public object CreateView(PropertyContext ctx) {
         var entity = ctx.FirstOwnerAs<IEntity>();
         if (entity == null) return new InvalidRenderer("Cant find owning Object: ButtonActions").CreateView(ctx);
@@ -19,7 +20,7 @@ internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
                 if (actionEntity is IActionEntity actionsEntity) {
                     var grid = new ButtonActionsGrid(actionsEntity, actionsEntity.Context, availableButtons) {
                         HorizontalOptions = LayoutOptions.Fill,
-                        VerticalOptions = LayoutOptions.Fill
+                        VerticalOptions = LayoutOptions.Fill,
                     };
                     return WrapWithLabel(ctx, grid);
                 }
@@ -27,6 +28,6 @@ internal sealed class ActionsButtonRenderer : BaseRenderer, IPropertyRenderer {
         } catch (Exception ex) {
             return new InvalidRenderer($"Unable to create a Action {ex.Message}");
         }
-        return new InvalidRenderer($"Entity is not an Action.");
+        return new InvalidRenderer("Entity is not an Action.");
     }
 }

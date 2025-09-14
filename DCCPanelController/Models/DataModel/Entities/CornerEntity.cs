@@ -8,9 +8,7 @@ public class CornerEntity : TrackEntity, ITrackEntity {
     [JsonConstructor]
     public CornerEntity() { }
 
-    public CornerEntity(Panel panel) : this() {
-        Parent = panel;
-    }
+    public CornerEntity(Panel panel) : this() => Parent = panel;
 
     public CornerEntity(CornerEntity entity) : base(entity) { }
 
@@ -19,7 +17,5 @@ public class CornerEntity : TrackEntity, ITrackEntity {
     public override string EntityDescription => "Corner Track";
     public override string EntityInformation => "";
 
-    public override Entity Clone() {
-        return new CornerEntity(this);
-    }
+    public override Entity Clone() => new CornerEntity(this);
 }

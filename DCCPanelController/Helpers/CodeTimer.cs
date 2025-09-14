@@ -3,14 +3,14 @@ using System.Diagnostics;
 namespace DCCPanelController.Helpers;
 
 public sealed class CodeTimer : IDisposable {
-    private readonly Stopwatch _sw = Stopwatch.StartNew();
-    private readonly string _name;
-    private readonly TimeSpan _minLogThreshold;
     private readonly Action<string> _logger;
-    private readonly bool _output = true;
-    
+    private readonly TimeSpan       _minLogThreshold;
+    private readonly string         _name;
+    private readonly bool           _output = true;
+    private readonly Stopwatch      _sw     = Stopwatch.StartNew();
+
     // New parameter: minLogThreshold (default 0 -> always prints)
-    public CodeTimer(string name, bool output = true,  TimeSpan? minLogThreshold = null, Action<string>? logger = null) {
+    public CodeTimer(string name, bool output = true, TimeSpan? minLogThreshold = null, Action<string>? logger = null) {
         _name = name;
         _minLogThreshold = minLogThreshold ?? TimeSpan.Zero;
         _logger = logger ?? Console.WriteLine;
@@ -18,8 +18,8 @@ public sealed class CodeTimer : IDisposable {
     }
 
     // Convenience overloads
-    public CodeTimer(string name) : this(name, true, TimeSpan.FromMilliseconds(0), null) { }
-    public CodeTimer(string name, bool output) : this(name, output, TimeSpan.FromMilliseconds(0), null) { }
+    public CodeTimer(string name) : this(name, true, TimeSpan.FromMilliseconds(0)) { }
+    public CodeTimer(string name, bool output) : this(name, output, TimeSpan.FromMilliseconds(0)) { }
     public CodeTimer(string name, Action<string>? logger = null) : this(name, true, TimeSpan.FromMilliseconds(0), logger) { }
     public CodeTimer(string name, bool output, Action<string>? logger = null) : this(name, output, TimeSpan.FromMilliseconds(0), logger) { }
     public CodeTimer(string name, double minLogMilliseconds, Action<string>? logger = null) : this(name, true, TimeSpan.FromMilliseconds(minLogMilliseconds), logger) { }

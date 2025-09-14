@@ -6,6 +6,7 @@ namespace DCCPanelController.View;
 
 public partial class LightsPage : ContentPage {
     private readonly ILogger<LightsPage> _logger;
+
     public LightsPage(ILogger<LightsPage> logger, LightsViewModel viewModel) {
         _logger = logger;
         InitializeComponent();

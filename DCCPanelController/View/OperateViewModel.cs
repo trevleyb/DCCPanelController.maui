@@ -5,40 +5,32 @@ using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Base;
 using DCCPanelController.View.Components;
 using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
- 
-public partial class OperateViewModel : Base.ConnectionViewModel {
-    [ObservableProperty] private int    _currentPanelIndex;
-    [ObservableProperty] private bool   _showGrid;
-    [ObservableProperty] private bool   _showPath;
+
+public partial class OperateViewModel : ConnectionViewModel {
+    private readonly ProfileService _profileService;
 
     [ObservableProperty] private Panel? _activePanel;
-    [ObservableProperty] private ObservableCollection<Panel>? _panels;
+    [ObservableProperty] private int    _currentPanelIndex;
 
     [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
     [ObservableProperty] private bool _isMaximized;
-    public bool IsNotMaximized => !IsMaximized;
-    
+
+    private                      ILogger<OperateViewModel>    _logger;
+    [ObservableProperty] private ObservableCollection<Panel>? _panels;
+    [ObservableProperty] private bool                         _showGrid;
+    [ObservableProperty] private bool                         _showPath;
+
     [NotifyPropertyChangedFor(nameof(HideWelcomePage))]
     [ObservableProperty] private bool _showWelcomePage;
-    public bool HideWelcomePage => !ShowWelcomePage;
-    
-    public Color PanelBackgroundColor => ActivePanel?.PanelBackgroundColor ?? Colors.White;
-    public Color DisplayBackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
-    public string ProfileName => _profileService.ActiveProfile?.ProfileName ?? "No Profile";
-    public string VersionNumber => VersionInfo.Version;
-    
-    public bool HasPanels => Panels?.Any() == true;
-    public bool HasNoPanels => !HasPanels;
-    public bool HaveClosedWelcome = false;
-    
-    private ILogger<OperateViewModel> _logger;
-    private readonly ProfileService _profileService;
-    
+
+    public bool HaveClosedWelcome;
+
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profileService = profileService;
@@ -46,6 +38,17 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
     }
+
+    public bool IsNotMaximized => !IsMaximized;
+    public bool HideWelcomePage => !ShowWelcomePage;
+
+    public Color PanelBackgroundColor => ActivePanel?.PanelBackgroundColor ?? Colors.White;
+    public Color DisplayBackgroundColor => ActivePanel?.DisplayBackgroundColor ?? Colors.White;
+    public string ProfileName => _profileService.ActiveProfile?.ProfileName ?? "No Profile";
+    public string VersionNumber => VersionInfo.Version;
+
+    public bool HasPanels => Panels?.Any() == true;
+    public bool HasNoPanels => !HasPanels;
 
     private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         try {
@@ -62,7 +65,7 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
             Console.WriteLine("Profile has changed to: " + _profileService.ActiveProfile?.ProfileName);
             Panels = null;
             var profile = _profileService.ActiveProfile;
-            Panels = profile?.Panels ?? throw new ApplicationException($"OperateViewModel: Panels Collection should not be empty.");
+            Panels = profile?.Panels ?? throw new ApplicationException("OperateViewModel: Panels Collection should not be empty.");
             ShowWelcomePage = Panels.Count <= 0 || (profile?.Settings?.ShowWelcomePage ?? true);
             HaveClosedWelcome = !ShowWelcomePage;
             await SelectPanelAsync(0);
@@ -75,10 +78,10 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
     private async Task SwitchActiveProfileAsync() {
         var choices = _profileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
-        if (index is {} selectedProfile and >= 0) await _profileService.SwitchProfileByIndexAsync(selectedProfile);
+        if (index is{ } selectedProfile and>= 0) await _profileService.SwitchProfileByIndexAsync(selectedProfile);
         HaveClosedWelcome = false;
     }
-    
+
     [RelayCommand]
     public async Task ReselectActivePanelAsync() {
         try {
@@ -88,7 +91,6 @@ public partial class OperateViewModel : Base.ConnectionViewModel {
         }
     }
 
-    
     [RelayCommand]
     private async Task SwipeLeftAsync() {
         HaveClosedWelcome = true;

@@ -1,8 +1,17 @@
-using Microsoft.Maui.Graphics;
-
 namespace DCCPanelController.View.ControlPanel;
 
 public class DrawGridSelection : GraphicsView, IDrawable {
+    public DrawGridSelection(Color? outlineColor = null) {
+        InputTransparent = true;
+        HorizontalOptions = LayoutOptions.Fill;
+        VerticalOptions = LayoutOptions.Fill;
+        OutlineColor = outlineColor ?? Colors.LightBlue;
+        ClassId = "GridSelection";
+        ZIndex = 2;
+        Drawable = this;
+        IsActive = false;
+    }
+
     private int StartCol { get; set; }
     private int StartRow { get; set; }
     private int EndCol { get; set; }
@@ -18,15 +27,12 @@ public class DrawGridSelection : GraphicsView, IDrawable {
         }
     }
 
-    public DrawGridSelection(Color? outlineColor = null) {
-        InputTransparent = true;
-        HorizontalOptions = LayoutOptions.Fill;
-        VerticalOptions = LayoutOptions.Fill;
-        OutlineColor = outlineColor ?? Colors.LightBlue;
-        ClassId = "GridSelection";
-        ZIndex = 2;
-        Drawable = this;
-        IsActive = false;
+    public Color OutlineColor {
+        get;
+        set {
+            field = value;
+            Invalidate();
+        }
     }
 
     public void Draw(ICanvas canvas, RectF dirtyRect) {
@@ -49,14 +55,6 @@ public class DrawGridSelection : GraphicsView, IDrawable {
             canvas.DrawRectangle(left, top, width, height);
         } else {
             IsVisible = false;
-        }
-    }
-
-    public Color OutlineColor {
-        get;
-        set {
-            field = value;
-            Invalidate();
         }
     }
 

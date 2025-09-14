@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Repository;
 
@@ -39,7 +40,7 @@ public sealed partial class ProfileCatalog {
         }
 
         // insert
-        var item = new ProfileRef(profile.ProfileName, profile.Filename, IsDefault: false);
+        var item = new ProfileRef(profile.ProfileName, profile.Filename, false);
         Profiles.Add(item);
         Save();
         return item;
@@ -79,7 +80,7 @@ public sealed partial class ProfileCatalog {
         if (m.Success) {
             root = m.Groups[1].Value;
             sep = m.Groups[2].Value;
-            start = (int.TryParse(m.Groups[3].Value, out var n) ? n + 1 : 2);
+            start = int.TryParse(m.Groups[3].Value, out var n) ? n + 1 : 2;
         }
 
         for (var i = start; i < int.MaxValue; i++) {
@@ -87,7 +88,7 @@ public sealed partial class ProfileCatalog {
             if (!existing.Contains(candidate)) return candidate;
         }
 
-        return "Profile";
+        return"Profile";
     }
 
     public static ProfileCatalog Load() {
@@ -126,6 +127,6 @@ public sealed partial class ProfileCatalog {
         Console.WriteLine($"Saved ProfileCatalog {member}@{line}: {path}");
     }
 
-    [System.Text.RegularExpressions.GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]
-    private static partial System.Text.RegularExpressions.Regex NameRegex();
+    [GeneratedRegex(@"^(.*?)(\s*)(\d+)$")]
+    private static partial Regex NameRegex();
 }

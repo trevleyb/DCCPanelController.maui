@@ -1,20 +1,21 @@
+using System.Reflection;
 using DCCPanelController.View.Components;
-using Microsoft.Maui.Graphics;
 
 // <-- your ColorPickerButton namespace
 
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
-public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
+public sealed class ColorPickerRenderer : BaseRenderer, IPropertyRenderer {
     protected override int FieldWidth => 150;
     public bool CanRender(PropertyContext ctx) => ctx.EditorKind == EditorKinds.Color;
+
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
         var picker = new ColorPickerButton {
             SelectedColor = row.OriginalValue is Color c ? c : null,
             AllowsNoColor = true,
-            IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode),
-            IsMultiValue = ctx.Row.HasMixedValues
+            IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode,
+            IsMultiValue = ctx.Row.HasMixedValues,
         };
 
         // Seed SelectedColor from value (Color or string)
@@ -24,7 +25,7 @@ public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
 
         // Push changes back into the form row
         picker.PropertyChanged += (_, e) => {
-            if (e.PropertyName is nameof(ColorPickerButton.SelectedColor) or "SelectedColorProperty") {
+            if (e.PropertyName is nameof(ColorPickerButton.SelectedColor) or"SelectedColorProperty") {
                 SetValue(row, picker.SelectedColor);
             }
         };
@@ -89,7 +90,7 @@ public sealed class ColorPickerRenderer : BaseRenderer,IPropertyRenderer {
             }
 
             // Named fallback: try Colors.<Name> via reflection
-            var prop = typeof(Colors).GetProperty(s, System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.IgnoreCase);
+            var prop = typeof(Colors).GetProperty(s, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
             if (prop?.GetValue(null) is Color named) {
                 result = named;
                 return true;

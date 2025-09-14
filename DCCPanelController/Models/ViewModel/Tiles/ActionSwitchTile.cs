@@ -1,4 +1,3 @@
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
@@ -9,8 +8,6 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionSwitchTile : Tile, ITileInteractive {
-    public SvgImage? SvgImage { get; protected set; }
-
     public ActionSwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
@@ -21,6 +18,8 @@ public class ActionSwitchTile : Tile, ITileInteractive {
         }
     }
 
+    public SvgImage? SvgImage { get; protected set; }
+
     public async Task<bool> Interact(ConnectionService? connectionService) {
         if (Entity is SwitchEntity switchEntity) {
             if (UseClickSounds) await ClickSounds.PlaySwitchClickSoundAsync();
@@ -28,48 +27,46 @@ public class ActionSwitchTile : Tile, ITileInteractive {
                 ButtonStateEnum.Unknown => ButtonStateEnum.On,
                 ButtonStateEnum.On      => ButtonStateEnum.Off,
                 ButtonStateEnum.Off     => ButtonStateEnum.On,
-                _                       => ButtonStateEnum.Unknown
+                _                       => ButtonStateEnum.Unknown,
             };
-            if (connectionService?.Client is { } client && switchEntity is { Light: not null }) await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
+            if (connectionService?.Client is { } client && switchEntity is { Light: { } }) await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
             return true;
         }
         return false;
     }
 
-    public async Task<bool> Secondary(ConnectionService? connectionService) {
-        return false;
-    }
+    public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is SwitchEntity button) {
             SvgImage = button.SwitchStyle switch {
-                SwitchStyleEnum.Light  => 
+                SwitchStyleEnum.Light =>
                     button.ButtonSize switch {
                         ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
-                        _                    => SvgImages.GetImage("light", Entity.Rotation)
+                        _                    => SvgImages.GetImage("light", Entity.Rotation),
                     },
-                SwitchStyleEnum.Button => 
+                SwitchStyleEnum.Button =>
                     button.ButtonSize switch {
                         ButtonSizeEnum.Large => SvgImages.GetImage("buttonLarge", Entity.Rotation),
-                        _                    => SvgImages.GetImage("button", Entity.Rotation)
+                        _                    => SvgImages.GetImage("button", Entity.Rotation),
                     },
                 _ => button.State switch {
                     ButtonStateEnum.On  => SvgImages.GetImage("switchon", Entity.Rotation),
                     ButtonStateEnum.Off => SvgImages.GetImage("switchoff", Entity.Rotation),
-                    _                   => SvgImages.GetImage("switch", Entity.Rotation)
+                    _                   => SvgImages.GetImage("switch", Entity.Rotation),
                 },
             };
 
             var buttonColor = button.State switch {
                 ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
+                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray,
             };
 
             var buttonOutline = button.State switch {
                 ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black,
             };
 
             var style = new SvgStyleBuilder();
@@ -97,7 +94,7 @@ public class ActionSwitchTile : Tile, ITileInteractive {
             return button.SwitchStyle switch {
                 SwitchStyleEnum.Light  => SvgImages.GetImage("light").AsImage(),
                 SwitchStyleEnum.Button => SvgImages.GetImage("button").AsImage(),
-                _                      => SvgImages.GetImage("switch").AsImage()
+                _                      => SvgImages.GetImage("switch").AsImage(),
             };
         }
         return SvgImages.GetImage("light").AsImage();

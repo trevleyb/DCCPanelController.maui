@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -11,11 +10,9 @@ using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.ControlPanel;
 using DCCPanelController.View.Helpers;
-using DCCPanelController.View.Properties;
 using DCCPanelController.View.Properties.DynamicProperties;
 using DCCPanelController.View.Properties.PanelProperties;
 using DCCPanelController.View.TileSelectors;
-using Indiko.Maui.Controls.Markdown;
 using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
 using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelProperties.PanelPropertyViewModel;
@@ -23,16 +20,18 @@ using PanelPropertyViewModel = DCCPanelController.View.Properties.PanelPropertie
 namespace DCCPanelController.View;
 
 public partial class PanelEditorViewModel : ObservableObject {
-    private readonly ILogger<PanelEditor> _logger;
-    private readonly PanelEditor? _panelEditor;
-    private readonly ControlPanelView _panelView;
+    //private DynamicTilePropertyPopupContent? _dynamicTileContent;
+    public enum PopupAction { None, Accept, Cancel }
+
+    private readonly ILogger<PanelEditor>         _logger;
+    private readonly PanelEditor?                 _panelEditor;
     private readonly Microsoft.Maui.Controls.View _panelEditorContainer;
-    private readonly ProfileService _profileService;
-    
+    private readonly ControlPanelView             _panelView;
+    private readonly ProfileService               _profileService;
+
     [ObservableProperty] private EditModeEnum _editMode = EditModeEnum.Move;
-    [ObservableProperty] private bool _gridVisible;
-    [ObservableProperty] private bool _isProcessing;
-    [ObservableProperty] private bool _havePropertiesChanged;
+    [ObservableProperty] private bool         _gridVisible;
+    [ObservableProperty] private bool         _havePropertiesChanged;
 
     [NotifyPropertyChangedFor(nameof(CanEditProperties))]
     [NotifyPropertyChangedFor(nameof(CanSetModes))]
@@ -40,12 +39,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     [NotifyPropertyChangedFor(nameof(CanDeleteTiles))]
     [NotifyPropertyChangedFor(nameof(CanToggleGrid))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
-    
+
+    [ObservableProperty] private bool  _isProcessing;
+    private                      Panel _original;
+
     [NotifyPropertyChangedFor(nameof(Title))]
     [ObservableProperty] private Panel _panel;
-    private Panel _original;
+
     private PanelPropertyViewModel? _propertyPage;
-    
+
     [NotifyPropertyChangedFor(nameof(SelectedEntities))]
     [NotifyPropertyChangedFor(nameof(HasSelectedEntities))]
     [NotifyPropertyChangedFor(nameof(MultipleEntitiesSelected))]
@@ -60,14 +62,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     [ObservableProperty] private ObservableCollection<ITile> _selectedTiles = [];
 
     public double ScreenHeight = 100;
-    public double ScreenWidth = 100;
-    public bool ExitViaBackButton { get; set; }
+    public double ScreenWidth  = 100;
 
-    //private DynamicTilePropertyPopupContent? _dynamicTileContent;
-    public enum PopupAction { None, Accept, Cancel }
-    public PopupAction LastAction { get; set; } = PopupAction.None;
-    public bool AcceptIsValid { get; set; } = true; // assume true by default
-    
     public PanelEditorViewModel(ILogger<PanelEditor> logger, Panel panel, ProfileService profileService, PanelEditor panelEditor, ControlPanelView panelView, Microsoft.Maui.Controls.View panelEditorContainer) {
         _profileService = profileService;
         _logger = logger;
@@ -76,7 +72,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         _panelView = panelView;
         _panelEditor = panelEditor;
         _panelEditorContainer = panelEditorContainer;
-        
+
         // Pre-build the palette cache
         TileSelectorPaletteCache.Prebuild(_panel);
 
@@ -86,6 +82,10 @@ public partial class PanelEditorViewModel : ObservableObject {
             _logger.LogDebug("Property comparison should NOT return true at this point.");
         }
     }
+
+    public bool ExitViaBackButton { get; set; }
+    public PopupAction LastAction { get; set; } = PopupAction.None;
+    public bool AcceptIsValid { get; set; } = true; // assume true by default
 
     public string Title => Panel.Title ?? "Panel";
     public Entity? SelectedEntity => SelectedEntities.FirstOrDefault();
@@ -103,6 +103,15 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool HasSelectedEntities => SelectedEntitiesCount > 0;
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
+
+    public string GetEditModeIconFilename =>
+        EditMode switch {
+            EditModeEnum.Copy => "copy.png",
+            EditModeEnum.Move => "move.png",
+            EditModeEnum.Size => "crop.png",
+            _                 => "move.png",
+        };
+
     public bool SetCanEditProperties() => true;
 
     public void UpdateOriginalFromCopy() {
@@ -165,18 +174,20 @@ public partial class PanelEditorViewModel : ObservableObject {
 
                 //var base64 = Convert.ToBase64String(ms.GetBuffer(), 0, length);
                 var base64 = await Task.Run(async () => {
-                    using var ms = new MemoryStream(capacity: 64 * 1024); // small initial capacity; grows as needed
-                    await result.CopyToAsync(ms, ScreenshotFormat.Jpeg, quality: 75);
-                    var length = (int)ms.Length;
-                    return Convert.ToBase64String(ms.GetBuffer(), 0, length);
-                }).ConfigureAwait(false);
-                return base64;            }
+                                            using var ms = new MemoryStream(64 * 1024); // small initial capacity; grows as needed
+                                            await result.CopyToAsync(ms, ScreenshotFormat.Jpeg, 75);
+                                            var length = (int)ms.Length;
+                                            return Convert.ToBase64String(ms.GetBuffer(), 0, length);
+                                        })
+                                       .ConfigureAwait(false);
+                return base64;
+            }
         } catch (Exception ex) {
             _logger.LogDebug("Error Capturing Thumbnail Image: {Message}", ex.Message);
             return string.Empty;
         }
     }
-    
+
     [RelayCommand]
     private async Task RotateTileAsync() {
         if (HasSelectedEntities) {
@@ -195,7 +206,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 EditModeEnum.Move => EditModeEnum.Copy,
                 EditModeEnum.Copy => EditModeEnum.Size,
                 EditModeEnum.Size => EditModeEnum.Move,
-                _                 => EditModeEnum.Move
+                _                 => EditModeEnum.Move,
             };
         } else {
             // If multiple items selected, then only MOVE or COPY allowed
@@ -216,9 +227,7 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     [RelayCommand]
-    private async Task ToggleGridAsync() {
-        GridVisible = !GridVisible;
-    }
+    private async Task ToggleGridAsync() => GridVisible = !GridVisible;
 
     [RelayCommand]
     public async Task EditPropertiesAsync() {
@@ -231,7 +240,7 @@ public partial class PanelEditorViewModel : ObservableObject {
 
     private async Task EditPanelPropertiesPopupAsync() {
         try {
-            if (Panel is { } panel && _panelEditor is not null) {
+            if (Panel is { } panel && _panelEditor is { }) {
                 IsProcessing = true;
                 await LetUICatchUpAsync();
                 var propertiesViewModel = new PanelPropertyViewModel(panel);
@@ -244,15 +253,15 @@ public partial class PanelEditorViewModel : ObservableObject {
             IsProcessing = false;
         }
     }
-    
+
     private async Task EditTilePropertiesPopupAsync() {
         try {
             IsProcessing = true;
             await LetUICatchUpAsync();
-            if (SelectedEntities?.Count > 0 && _panelEditor is not null) {
+            if (SelectedEntities?.Count > 0 && _panelEditor is { }) {
                 await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
             }
-            _panelView.ClearAllSelectedTiles();     // Reset all selected tiles for clarity
+            _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         } finally {
@@ -262,9 +271,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     }
 
     private void ShowPropertyPopup(string title, PanelPropertyViewModel propertyPage, Microsoft.Maui.Controls.View content, ICommand acceptPopupCommand) {
-        
         _propertyPage = propertyPage;
-        content.Margin = new Thickness(20,10,20,0);
+        content.Margin = new Thickness(20, 10, 20, 0);
         var scrollContent = new ScrollView { Content = content };
 
         var popup = new SfPopup {
@@ -300,11 +308,11 @@ public partial class PanelEditorViewModel : ObservableObject {
             AcceptCommand = acceptPopupCommand,
         };
         popup.Show();
-    } 
-    
+    }
+
     [RelayCommand]
     private async Task AcceptPanelPropertiesPopupAsync() {
-        if (_propertyPage is not null) {
+        if (_propertyPage is { }) {
             try {
                 IsProcessing = true;
                 await LetUICatchUpAsync();
@@ -316,14 +324,6 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    public string GetEditModeIconFilename =>
-        EditMode switch {
-            EditModeEnum.Copy => "copy.png",
-            EditModeEnum.Move => "move.png",
-            EditModeEnum.Size => "crop.png",
-            _                 => "move.png"
-        };
-    
     private async Task LetUICatchUpAsync() {
         await Task.Yield();
         await Task.Delay(10);

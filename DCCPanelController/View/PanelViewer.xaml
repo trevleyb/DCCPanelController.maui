@@ -7,7 +7,6 @@
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:converters1="clr-namespace:DCCPanelController.View.Converters"
              xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel"
-             xmlns:selectors="clr-namespace:DCCPanelController.View.Selectors"
              Title="Panels"
              x:Name="PanelViewerPage"
              x:DataType="view:PanelViewerViewModel"
@@ -87,7 +86,8 @@
                                 <DataTrigger TargetType="ContentView"
                                              Binding="{Binding HasThumbnail}"
                                              Value="True">
-                                    <Setter Property="ControlTemplate" Value="{StaticResource ThumbnailPreviewTemplate}"/>
+                                    <Setter Property="ControlTemplate"
+                                            Value="{StaticResource ThumbnailPreviewTemplate}"/>
                                 </DataTrigger>
                             </ContentView.Triggers>
                         </ContentView>
@@ -139,12 +139,14 @@
                                         <DataTrigger TargetType="ContentView"
                                                      Binding="{Binding HasThumbnail}"
                                                      Value="False">
-                                            <Setter Property="ControlTemplate" Value="{StaticResource PanelPreviewTemplate}"/>
+                                            <Setter Property="ControlTemplate"
+                                                    Value="{StaticResource PanelPreviewTemplate}"/>
                                         </DataTrigger>
                                         <DataTrigger TargetType="ContentView"
                                                      Binding="{Binding HasThumbnail}"
                                                      Value="True">
-                                            <Setter Property="ControlTemplate" Value="{StaticResource ThumbnailPreviewTemplate}"/>
+                                            <Setter Property="ControlTemplate"
+                                                    Value="{StaticResource ThumbnailPreviewTemplate}"/>
                                         </DataTrigger>
                                     </ContentView.Triggers>
                                 </ContentView>

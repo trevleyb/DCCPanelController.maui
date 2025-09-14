@@ -1,61 +1,38 @@
-using System.Globalization;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 public sealed class DynamicTilePropertyForm {
-    private readonly IEditableExtractor        _extractor;
-    private readonly IPropertyRendererRegistry _renderers;
-    private readonly IValidator                _validator;
-    private readonly IEqualityPolicy           _equality;
-    private readonly IUndoService              _undo;
-    private readonly IEditorKindResolver       _kindResolver;
-    private readonly double                    _width;
-    private readonly double                    _height;
-
-    public IReadOnlyList<Entity> SelectedEntities { get; }
-    public IReadOnlyList<PropertyRow> Rows { get; }
-    public IReadOnlyList<PropertyGroup> Groups { get; }
-    private Dictionary<Type, Dictionary<string, EditableField>> _fieldsByTypeName = new();
-
     private const double SmallScreenWidth = 500;
 
-    public bool CanApply { get; private set; }
-    public bool HasCommonProperties { get; private set; }
+    private static readonly List<string> GroupOrders = [
+        "General",
+        "Text", "Track", "Circle", "Rectangle",
+        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Button Actions", "Turnout Actions", "Dimensions", "Visibility",
+    ];
 
-    public static DynamicTilePropertyForm CreateForm(
-        IEnumerable<Entity> selection, 
-        double width, double height) {
-        
-        var extractor = new EditableExtractorCache();
-        var renderers = new PropertyRendererRegistry();
-        EditorKinds.RegisterDefaults(renderers);
-        var validator = new CompositeValidator([
-            new PropertyRendererRules.RequiredRule(),
-            new PropertyRendererRules.RangeRule(),
-            new PropertyRendererRules.RegexRule()
-        ]);
-
-        var equality = new DefaultEqualityPolicy();
-        var undo = new DefaultUndoService();
-        var kindResolver = new EditableExtractorResolver();
-        return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, width, height);
-    }
+    private readonly IEqualityPolicy                                     _equality;
+    private readonly IEditableExtractor                                  _extractor;
+    private readonly double                                              _height;
+    private readonly IEditorKindResolver                                 _kindResolver;
+    private readonly IPropertyRendererRegistry                           _renderers;
+    private readonly IUndoService                                        _undo;
+    private readonly IValidator                                          _validator;
+    private readonly double                                              _width;
+    private          Dictionary<Type, Dictionary<string, EditableField>> _fieldsByTypeName = new();
 
     /// <summary>
-    /// This is the main form that we create to show in a Popup Page 
+    ///     This is the main form that we create to show in a Popup Page
     /// </summary>
-    private DynamicTilePropertyForm(
-        IEnumerable<Entity> selectedEntities,
+    private DynamicTilePropertyForm(IEnumerable<Entity> selectedEntities,
         IEditableExtractor extractor,
         IPropertyRendererRegistry renderers,
         IValidator validator,
         IEqualityPolicy equality,
         IUndoService undo,
         IEditorKindResolver kindResolver,
-        double width, double height) 
-    {
+        double width, double height) {
         SelectedEntities = selectedEntities.ToList();
         _extractor = extractor;
         _renderers = renderers;
@@ -70,18 +47,38 @@ public sealed class DynamicTilePropertyForm {
         CanApply = false;
     }
 
+    public IReadOnlyList<Entity> SelectedEntities { get; }
+    public IReadOnlyList<PropertyRow> Rows { get; }
+    public IReadOnlyList<PropertyGroup> Groups { get; }
+
+    public bool CanApply { get; private set; }
+    public bool HasCommonProperties { get; }
+
+    public static DynamicTilePropertyForm CreateForm(IEnumerable<Entity> selection,
+        double width, double height) {
+        var extractor = new EditableExtractorCache();
+        var renderers = new PropertyRendererRegistry();
+        EditorKinds.RegisterDefaults(renderers);
+        var validator = new CompositeValidator([
+            new PropertyRendererRules.RequiredRule(),
+            new PropertyRendererRules.RangeRule(),
+            new PropertyRendererRules.RegexRule(),
+        ]);
+
+        var equality = new DefaultEqualityPolicy();
+        var undo = new DefaultUndoService();
+        var kindResolver = new EditableExtractorResolver();
+        return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, width, height);
+    }
+
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
-    
-    private static readonly List<string> GroupOrders = ["General", 
-        "Text", "Track", "Circle", "Rectangle",  
-        "Turnout", "Layout", "Attributes", "Colors", "Color", "Actions", "Action", "Button Actions", "Turnout Actions", "Dimensions", "Visibility"];
-    
+
     private (IReadOnlyList<PropertyGroup>, IReadOnlyList<PropertyRow>) BuildGroups() {
         if (SelectedEntities.Count == 0) return([], []);
 
         // 1) Index fields for every entity type
         // ---------------------------------------------------------------------------------------
-        _fieldsByTypeName = new();
+        _fieldsByTypeName = new Dictionary<Type, Dictionary<string, EditableField>>();
         foreach (var t in SelectedEntities.Select(e => e.GetType()).Distinct()) {
             var nameMap = _extractor.Extract(t).ToDictionary(f => f.Prop.Name, f => f, StringComparer.Ordinal);
             _fieldsByTypeName[t] = nameMap;
@@ -100,11 +97,13 @@ public sealed class DynamicTilePropertyForm {
         commonNames = commonNames
                      .Where(name => {
                           var distinctTypes = _fieldsByTypeName.Values
-                              .Select(d => UnwrapNullable(d[name].Accessor.PropertyType))
-                              .Distinct().ToList();
+                                                               .Select(d => UnwrapNullable(d[name].Accessor.PropertyType))
+                                                               .Distinct()
+                                                               .ToList();
                           var distinctEditorKinds = _fieldsByTypeName.Values
-                              .Select(d => _kindResolver.Resolve(d[name]))
-                              .Distinct().ToList();
+                                                                     .Select(d => _kindResolver.Resolve(d[name]))
+                                                                     .Distinct()
+                                                                     .ToList();
                           return distinctTypes.Count == 1 && distinctEditorKinds.Count == 1;
                       })
                      .ToList();
@@ -124,7 +123,7 @@ public sealed class DynamicTilePropertyForm {
                           .ThenBy(name => _fieldsByTypeName[firstType][name].Meta.Order)
                           .ThenBy(name => name, StringComparer.Ordinal)
                           .ToList();
-        
+
         foreach (var name in orderedNames) {
             var repField = _fieldsByTypeName[firstType][name];
             var gname = string.IsNullOrWhiteSpace(repField.Meta.Group) ? "General" : repField.Meta.Group;
@@ -173,12 +172,12 @@ public sealed class DynamicTilePropertyForm {
     }
 
     public object GetRendererView(PropertyRow row) {
-        var kind = _kindResolver.Resolve(row.Field, (_width < SmallScreenWidth));
-        var ctx = new PropertyContext(kind, row, _width,_height, SelectedEntities);
+        var kind = _kindResolver.Resolve(row.Field, _width < SmallScreenWidth);
+        var ctx = new PropertyContext(kind, row, _width, _height, SelectedEntities);
         var renderer = _renderers.Resolve(kind);
         return!renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
     }
-    
+
     public async Task<ValidationSummary> ValidateAsync() {
         if (!HasCommonProperties) {
             CanApply = false;

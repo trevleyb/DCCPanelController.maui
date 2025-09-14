@@ -3,24 +3,22 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.View.Properties.DynamicProperties;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
+    [ObservableProperty] [property: Editable("Button Size", Order = 2)]
+    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
+
+    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 11, "Colors")]
+    private Color? _colorIndicator;
 
     [ObservableProperty] [property: Editable("Route", "Select the route triggered by this button", 1, "General", EditorKind = EditorKinds.Route)]
     private string _id = string.Empty;
 
-    [ObservableProperty] [property: Editable("Button Size", Order = 2)]
-    private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
-    
-    [ObservableProperty] [property: Editable("Indicator Color", "Default color of the Indicator", 11, "Colors")]
-    private Color? _colorIndicator;
-
     [ObservableProperty] [property: Editable("Show Indicator", "Show the Button Indicator?", 10, "Colors")]
     private bool _showIndicator = true;
-    
+
     [ObservableProperty] private RouteStateEnum _state = RouteStateEnum.Unknown;
 
     [JsonConstructor]
@@ -40,19 +38,14 @@ public partial class RouteEntity : ButtonEntity, IEntityID, IInteractiveEntity {
     public Route? Route => Parent?.Route(Id);
 
     [JsonIgnore] protected override int RotationFactor => 90;
-    
-    public override Entity Clone() {
-        return new RouteEntity(this);
-    }
 
-    public override string ToString() {
-        return Id;
-    }
+    public override Entity Clone() => new RouteEntity(this);
+
+    public override string ToString() => Id;
 
     public string NextID(Panel? targetPanel = null) {
         targetPanel ??= Parent;
         var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<RouteEntity>(targetPanel), "Route");
         return nextID;
     }
-
 }

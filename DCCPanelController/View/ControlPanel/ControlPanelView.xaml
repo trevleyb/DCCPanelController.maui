@@ -3,7 +3,6 @@
     x:Class="DCCPanelController.View.ControlPanel.ControlPanelView"
     x:DataType="controlPanel:ControlPanelView"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:view="clr-namespace:DCCPanelController.View"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:controlPanel="clr-namespace:DCCPanelController.View.ControlPanel">
 
@@ -19,8 +18,7 @@
             IsVisible="False"
             HorizontalOptions="Fill"
             VerticalOptions="Fill"
-            x:Name="ControlPanelLayout">
-        </AbsoluteLayout>
+            x:Name="ControlPanelLayout"/>
 
         <ActivityIndicator
             HorizontalOptions="Center"

@@ -13,11 +13,9 @@ public interface IPropertyRendererRegistry {
 
 public sealed class PropertyRendererRegistry : IPropertyRendererRegistry {
     private readonly Dictionary<string, IPropertyRenderer> _byKind = new(StringComparer.OrdinalIgnoreCase);
-    private readonly IPropertyRenderer _fallback;
+    private readonly IPropertyRenderer                     _fallback;
 
-    public PropertyRendererRegistry(IPropertyRenderer? fallback = null) {
-        _fallback = fallback ?? new NotSupportedRenderer();
-    }
+    public PropertyRendererRegistry(IPropertyRenderer? fallback = null) => _fallback = fallback ?? new NotSupportedRenderer();
 
     public void Register(string editorKind, IPropertyRenderer renderer) => _byKind[editorKind] = renderer;
     public IPropertyRenderer Resolve(string editorKind) => _byKind.TryGetValue(editorKind, out var r) ? r : _fallback;

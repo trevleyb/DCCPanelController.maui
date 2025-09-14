@@ -3,16 +3,15 @@ using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
 using DCCPanelController.View.ControlPanel;
-using DCCPanelController.View.Helpers;
 using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private readonly ILogger<OperatePage> _logger;
-    private readonly OperateViewModel _viewModel;
-    private ConnectionService? _connectionService;
-    private ProfileService? _profileService;
+    private readonly ProfileService?      _profileService;
+    private readonly OperateViewModel     _viewModel;
+    private          ConnectionService?   _connectionService;
 
     public OperatePage(ILogger<OperatePage> logger, OperateViewModel viewModel, ProfileService profileService, ConnectionService connectionService) {
         _logger = logger;
@@ -27,14 +26,14 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
         SetTabBarState(true);
     }
 
-    protected async override void OnAppearing() {
+    protected override async void OnAppearing() {
         base.OnAppearing();
         await _viewModel.ReselectActivePanelAsync();
     }
 
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName == nameof(OperateViewModel.ActivePanel)) {
-            if (_viewModel is { ActivePanel: not null } viewModel) {
+            if (_viewModel is { ActivePanel: { } } viewModel) {
                 Title = $"{viewModel.ActivePanel.Title}";
                 PanelView.BackgroundColor = viewModel.PanelBackgroundColor;
                 BackgroundColor = viewModel.DisplayBackgroundColor;
@@ -69,7 +68,8 @@ public partial class OperatePage : ContentPage, INotifyPropertyChanged {
     private async void ButtonAbout_OnClicked(object? sender, EventArgs e) {
         try {
             await AboutPage.ShowAbout();
-        } catch { /* Ignore */ }
+        } catch { /* Ignore */
+        }
     }
 
     private async void ButtonCloseInstructions(object? sender, EventArgs e) {

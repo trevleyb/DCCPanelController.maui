@@ -4,7 +4,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
-    private bool _isBusy = false;
+    private bool _isBusy;
     protected override int FieldWidth => 250;
     protected override int FieldHeight => -1;
 
@@ -16,13 +16,13 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
             var spinner = new ActivityIndicator {
                 IsRunning = false,
                 IsVisible = false,
-                HorizontalOptions = LayoutOptions.Center
+                HorizontalOptions = LayoutOptions.Center,
             };
             var stack = new StackLayout {
                 Orientation = StackOrientation.Vertical,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0, 0, 0, 0)
+                Margin = new Thickness(0, 0, 0, 0),
             };
             var source = row.OriginalValue as string;
             var image = new Image {
@@ -30,13 +30,13 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
                 Aspect = Aspect.AspectFit,
                 Margin = new Thickness(10, 10, 10, 10),
                 HorizontalOptions = LayoutOptions.Center,
-                VerticalOptions = LayoutOptions.Center
+                VerticalOptions = LayoutOptions.Center,
             };
             var horizontal = new StackLayout {
                 Orientation = StackOrientation.Horizontal,
                 HorizontalOptions = LayoutOptions.Center,
                 VerticalOptions = LayoutOptions.Center,
-                Margin = new Thickness(0, 0, 0, 0)
+                Margin = new Thickness(0, 0, 0, 0),
             };
 
             // Add the File Button and process if it is clicked
@@ -115,20 +115,20 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
         }
     }
 
-    static ImageSource? FromBase64(string? b64) => string.IsNullOrEmpty(b64) ? null : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(b64)));
+    private static ImageSource? FromBase64(string? b64) => string.IsNullOrEmpty(b64) ? null : ImageSource.FromStream(() => new MemoryStream(Convert.FromBase64String(b64)));
 
     private async Task<string> SelectImageAsyncOffUiThread() {
         try {
             var result = await MainThread.InvokeOnMainThreadAsync(() =>
-                                                                      FilePicker.Default.PickAsync(new PickOptions {
-                                                                          PickerTitle = "Please select an image",
-                                                                          FileTypes = FilePickerFileType.Images
-                                                                      })
+                FilePicker.Default.PickAsync(new PickOptions {
+                    PickerTitle = "Please select an image",
+                    FileTypes = FilePickerFileType.Images,
+                })
             );
 
             if (result == null) {
                 await DisplayAlertHelper.DisplayOkAlertAsync("Cancelled", "No file was selected.");
-                return "";
+                return"";
             }
 
             return await Task.Run(async () => {
@@ -139,19 +139,19 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
             });
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"Unable to load Image: {ex.Message}");
-            return "";
+            return"";
         }
     }
 
     private async Task<string> SelectPhotoAsyncOffUiThread() {
         try {
             var result = await MainThread.InvokeOnMainThreadAsync(() =>
-                                                                      MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions { Title = "Please select a photo" })
+                MediaPicker.Default.PickPhotoAsync(new MediaPickerOptions { Title = "Please select a photo" })
             );
 
             if (result == null) {
                 await DisplayAlertHelper.DisplayOkAlertAsync("Cancelled", "No photo was selected.");
-                return "";
+                return"";
             }
 
             return await Task.Run(async () => {
@@ -162,7 +162,7 @@ internal sealed class ImageRenderer : BaseRenderer, IPropertyRenderer {
             });
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"Unable to load Photo: {ex.Message}");
-            return "";
+            return"";
         }
     }
 }

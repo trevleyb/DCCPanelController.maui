@@ -1,22 +1,20 @@
 using DCCPanelController.View.Helpers;
-using Microsoft.Extensions.Logging;
 using Syncfusion.Maui.Toolkit.Popup;
-using Microsoft.Maui.ApplicationModel;
 
 namespace DCCPanelController.View;
 
 public partial class AboutPage : ContentView {
-
-    // Add events for the popup
-    public event Action? AboutPageCompleted;
-    public string VersionString { get; set; }
-    
     public AboutPage() {
         BindingContext = this;
         VersionString = VersionInfo.Version;
         InitializeComponent();
     }
-    
+
+    public string VersionString { get; set; }
+
+    // Add events for the popup
+    public event Action? AboutPageCompleted;
+
     public static async Task ShowAbout() {
         var tcs = new TaskCompletionSource();
         var aboutPage = new AboutPage();
@@ -27,7 +25,7 @@ public partial class AboutPage : ContentView {
             ShowCloseButton = false,
             BackgroundColor = Colors.White,
             OverlayMode = PopupOverlayMode.Blur,
-            
+
             PopupStyle = new PopupStyle {
                 CornerRadius = 15,
                 BlurIntensity = PopupBlurIntensity.Dark,
@@ -35,7 +33,7 @@ public partial class AboutPage : ContentView {
             },
             AutoSizeMode = PopupAutoSizeMode.Both,
             AnimationMode = PopupAnimationMode.Fade,
-            AnimationDuration = 500
+            AnimationDuration = 500,
         };
 
         aboutPage.AboutPageCompleted += () => {
@@ -52,7 +50,5 @@ public partial class AboutPage : ContentView {
         popup.Show();
     }
 
-    private void CloseAbout(object? sender, EventArgs e) {
-        AboutPageCompleted?.Invoke();
-    }
+    private void CloseAbout(object? sender, EventArgs e) => AboutPageCompleted?.Invoke();
 }

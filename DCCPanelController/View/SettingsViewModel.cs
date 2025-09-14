@@ -1,7 +1,4 @@
-using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
-using CommunityToolkit.Maui.Core.Extensions;
 using CommunityToolkit.Maui.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -13,6 +10,7 @@ using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Services;
 using DCCPanelController.Services.ProfileService;
+using DCCPanelController.View.Base;
 using DCCPanelController.View.Components;
 using DCCPanelController.View.Settings;
 using DCCPanelController.View.Settings.Jmri;
@@ -23,37 +21,31 @@ using Capabilities = DCCPanelController.View.Helpers.Capabilities;
 
 namespace DCCPanelController.View;
 
-public partial class SettingsPageViewModel : Base.ConnectionViewModel {
-    [ObservableProperty] private bool _supportsTurnouts;
-    [ObservableProperty] private bool _supportsRoutes;
-    [ObservableProperty] private bool _supportsBlocks;
-    [ObservableProperty] private bool _supportsSensors;
-    [ObservableProperty] private bool _supportsSignals;
-    [ObservableProperty] private bool _supportsLights;
-    [ObservableProperty] private Capabilities _capabilities = new Capabilities();
+public partial class SettingsPageViewModel : ConnectionViewModel {
+    private readonly             ILogger<SettingsViewModel>                    _logger;
+    private readonly             Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
+    public readonly              ProfileService                                ProfileService;
+    [ObservableProperty] private Capabilities                                  _capabilities = new();
+    [ObservableProperty] private Microsoft.Maui.Controls.View?                 _currentSettingsView;
 
     [ObservableProperty] private bool _isJmriServer;
-    [ObservableProperty] private bool _isWiThrottle;
-    [ObservableProperty] private bool _isSimulator;
-    
+
     [NotifyPropertyChangedFor(nameof(IsNavigationDrawerClosed))]
     [ObservableProperty] private bool _isNavigationDrawerOpen;
-    public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
 
-    public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
-    public bool IsProfileDefault => Profile != null && ProfileService.IsDefault(Profile);
-    public bool IsProfileNotDefault => !IsProfileDefault;
-
-    [ObservableProperty] private int _selectedSegmentIndex;
-    [ObservableProperty] private Microsoft.Maui.Controls.View? _currentSettingsView;
+    [ObservableProperty] private bool    _isSimulator;
+    [ObservableProperty] private bool    _isWiThrottle;
     [ObservableProperty] private Profile _profile;
 
-    public Models.DataModel.Settings? Settings => Profile?.Settings;
-    private readonly Dictionary<DccClientType, IDccClientSettings> _settingsCache = [];
-    public readonly ProfileService ProfileService;
-    private readonly ILogger<SettingsViewModel> _logger;
-    public bool IsDirty = false;
-    
+    [ObservableProperty] private int  _selectedSegmentIndex;
+    [ObservableProperty] private bool _supportsBlocks;
+    [ObservableProperty] private bool _supportsLights;
+    [ObservableProperty] private bool _supportsRoutes;
+    [ObservableProperty] private bool _supportsSensors;
+    [ObservableProperty] private bool _supportsSignals;
+    [ObservableProperty] private bool _supportsTurnouts;
+    public                       bool IsDirty;
+
     public SettingsPageViewModel(ILogger<SettingsViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
         _profile = new Profile("Temporary");
@@ -61,19 +53,25 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         OnProfileChanged();
     }
 
-    private void ProfileOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        IsDirty = true;
-    }
+    public bool IsNavigationDrawerClosed => !IsNavigationDrawerOpen;
+
+    public bool CanDeleteProfile => ProfileService.NumberOfProfiles > 1;
+    public bool IsProfileDefault => Profile != null && ProfileService.IsDefault(Profile);
+    public bool IsProfileNotDefault => !IsProfileDefault;
+
+    public Models.DataModel.Settings? Settings => Profile?.Settings;
+
+    private void ProfileOnPropertyChanged(object? sender, PropertyChangedEventArgs e) => IsDirty = true;
 
     public void OnProfileChanged() {
         if (Profile is { } profile) {
             Profile.PropertyChanged -= ProfileOnPropertyChanged;
-            Profile.Settings.PropertyChanged -= ProfileOnPropertyChanged;            
+            Profile.Settings.PropertyChanged -= ProfileOnPropertyChanged;
         }
         Profile = ProfileService?.ActiveProfile ?? throw new ArgumentNullException(nameof(Profile), "SettingsViewModel: Active profile is not defined.");
         Profile.PropertyChanged += ProfileOnPropertyChanged;
         Profile.Settings.PropertyChanged += ProfileOnPropertyChanged;
-        
+
         OnPropertyChanged(nameof(Profile));
         OnPropertyChanged(nameof(Settings));
         OnPropertyChanged(nameof(CurrentSettingsView));
@@ -90,7 +88,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         OnPropertyChanged(nameof(Profile.Settings.UseClickSounds));
         OnPropertyChanged(nameof(Profile.Settings.ConnectOnStartup));
         OnPropertyChanged(nameof(Profile.Settings.SetTurnoutStatesOnStartup));
-        
+
         IsDirty = false;
     }
 
@@ -99,9 +97,9 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         var reconnect = ConnectionService.IsConnected;
         if (reconnect) await ConnectionService.DisconnectAsync();
         await ProfileService.SaveAsync();
-        if (Settings is { ClientSettings: not null } && reconnect) await ConnectionService.ConnectAsync();
+        if (Settings is { ClientSettings: { } } && reconnect) await ConnectionService.ConnectAsync();
         await DisplayAlertHelper.DisplayToastAlert("Success: Settings and Profile Saved");
-        IsDirty =  false;
+        IsDirty = false;
     }
 
     [RelayCommand]
@@ -109,9 +107,9 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         await SaveSettingsAsync();
         var choices = ProfileService.GetProfileNamesWithDefault();
         var index = await ProfileSelector.ShowProfileSelector(choices);
-        if (index is {} selectedProfile and >= 0) await ProfileService.SwitchProfileByIndexAsync(selectedProfile);
+        if (index is{ } selectedProfile and>= 0) await ProfileService.SwitchProfileByIndexAsync(selectedProfile);
         OnProfileChanged();
-        await DisplayAlertHelper.DisplayToastAlert($"Switched Active Profile");
+        await DisplayAlertHelper.DisplayToastAlert("Switched Active Profile");
     }
 
     [RelayCommand]
@@ -125,7 +123,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             _ = await ProfileService.CreateAsync();
             await SaveSettingsAsync();
             OnProfileChanged();
-            await DisplayAlertHelper.DisplayToastAlert($"New Profile Created");
+            await DisplayAlertHelper.DisplayToastAlert("New Profile Created");
         }
     }
 
@@ -134,7 +132,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         if (ProfileService.NumberOfProfiles <= 1 || Profile is null) return;
         var profileName = Profile?.ProfileName;
         var result = await DisplayAlertHelper.DisplayAlertAsync("Delete Profile?", "This will delete the current profile. Are you sure you want to do this?", "Continue", "Cancel");
-        if (result && Profile is {} profile) {
+        if (result && Profile is { } profile) {
             await ProfileService.DeleteAsync(profile);
             await DisplayAlertHelper.DisplayToastAlert($"Profile '{profileName}' Deleted");
             OnProfileChanged();
@@ -142,17 +140,15 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     }
 
     /// <summary>
-    /// If this profile is already the default, then there is no changed.
-    /// If this one is not the default, then we will mark it as the default 
+    ///     If this profile is already the default, then there is no changed.
+    ///     If this one is not the default, then we will mark it as the default
     /// </summary>
     public async Task MarkActiveProfileDefault() {
-        if (Profile is not null && !ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
+        if (Profile is { } && !ProfileService.IsDefault(Profile)) ProfileService.MarkAsDefault(Profile);
         await SaveSettingsAsync();
     }
 
-    public void SetCapabilities() {
-        Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
-    }
+    public void SetCapabilities() => Capabilities = new Capabilities(Settings?.ClientSettings?.Capabilities ?? []);
 
     public Microsoft.Maui.Controls.View? LoadSettingsPage() {
         if (Settings is null) return null;
@@ -175,31 +171,31 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     public void SetActiveSettings(DccClientType type) {
         switch (type) {
-        case DccClientType.Simulator:
-            CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator, ProfileService.ActiveProfile?.Settings?.ClientSettings);
-            IsSimulator = true;
-            IsJmriServer = false;
-            IsWiThrottle = false;
+            case DccClientType.Simulator:
+                CheckSettingsCache<SimulatorSettings>(DccClientType.Simulator, ProfileService.ActiveProfile?.Settings?.ClientSettings);
+                IsSimulator = true;
+                IsJmriServer = false;
+                IsWiThrottle = false;
             break;
 
-        case DccClientType.Jmri:
-            CheckSettingsCache<JmriSettings>(DccClientType.Jmri, ProfileService.ActiveProfile?.Settings?.ClientSettings);
-            IsSimulator = false;
-            IsJmriServer = true;
-            IsWiThrottle = false;
+            case DccClientType.Jmri:
+                CheckSettingsCache<JmriSettings>(DccClientType.Jmri, ProfileService.ActiveProfile?.Settings?.ClientSettings);
+                IsSimulator = false;
+                IsJmriServer = true;
+                IsWiThrottle = false;
             break;
 
-        case DccClientType.WiThrottle:
-            CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle, ProfileService.ActiveProfile?.Settings?.ClientSettings);
-            IsJmriServer = false;
-            IsSimulator = false;
-            IsWiThrottle = true;
+            case DccClientType.WiThrottle:
+                CheckSettingsCache<WiThrottleSettings>(DccClientType.WiThrottle, ProfileService.ActiveProfile?.Settings?.ClientSettings);
+                IsJmriServer = false;
+                IsSimulator = false;
+                IsWiThrottle = true;
             break;
 
-        default:
-            IsSimulator = true;
-            IsJmriServer = false;
-            IsWiThrottle = false;
+            default:
+                IsSimulator = true;
+                IsJmriServer = false;
+                IsWiThrottle = false;
             break;
         }
         SetCapabilities();
@@ -208,7 +204,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
     private IDccClientSettings CheckSettingsCache<T>(DccClientType type, IDccClientSettings? settings = null) where T : IDccClientSettings, new() {
         try {
             if (_settingsCache.TryGetValue(type, out var cache)) return cache;
-            if (settings is not null && settings.Type == type) {
+            if (settings is { } && settings.Type == type) {
                 _settingsCache[settings.Type] = settings;
                 return settings;
             }
@@ -246,13 +242,13 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         if (Profile is null) return;
         try {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Download Profile?", "This will replace the active profile with a previously stored profile.", "Continue", "Cancel");
-            if (result) { 
+            if (result) {
                 await SaveSettingsAsync();
-               var saveFile = $"{Profile?.ProfileName}.profile.json";
-               var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
-               var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
-               await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
-               Console.WriteLine($"Profile Saved to: {saveFile}");
+                var saveFile = $"{Profile?.ProfileName}.profile.json";
+                var jsonBytes = await ProfileService.DownloadProfileZipAsync(Profile);
+                var location = await FileHelper.ShareFileAsync("Save Profile", jsonBytes, saveFile);
+                await DisplayAlertHelper.DisplayToastAlert("Success: Profile Downloaded");
+                Console.WriteLine($"Profile Saved to: {saveFile}");
             }
         } catch (Exception ex) {
             await DisplayAlertHelper.DisplayOkAlertAsync("Error", $"An error occurred: {ex.Message}");
@@ -261,7 +257,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
 
     private static async Task<string> PromptUserForConfigFile() {
         var result = await FilePicker.PickAsync(new PickOptions { PickerTitle = "Select the Config file to upload" });
-        return result is not null ? result.FullPath : string.Empty;
+        return result is { } ? result.FullPath : string.Empty;
     }
 
     private static async Task<string> PromptUserForSaveLocation() {
@@ -282,7 +278,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
         var directory = Path.GetDirectoryName(filePath);
         if (!string.IsNullOrEmpty(directory)) Directory.CreateDirectory(directory);
 
-        await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, bufferSize: 81920, useAsync: true);
+        await using var fileStream = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, true);
         await fileStream.WriteAsync(jsonData, cancellationToken).ConfigureAwait(false);
         await fileStream.FlushAsync(cancellationToken).ConfigureAwait(false);
     }
@@ -299,7 +295,7 @@ public partial class SettingsPageViewModel : Base.ConnectionViewModel {
             0 => DccClientType.Simulator,
             1 => DccClientType.Jmri,
             2 => DccClientType.WiThrottle,
-            _ => DccClientType.Simulator
+            _ => DccClientType.Simulator,
         };
 
         // Update flags and active settings

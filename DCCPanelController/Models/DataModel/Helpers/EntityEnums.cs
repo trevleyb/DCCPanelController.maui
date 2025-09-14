@@ -27,110 +27,88 @@ public enum TextAlignmentVerticalEnum { Top, Bottom, Center }
 public enum TextAttributeEnum { Regular, Bold, Italic, BoldItalic, Light, LightItalic, Medium, MediumItalic, SemiBold, SemiBoldItalic, ExtraBold, ExtraBoldItalic }
 
 public static class EnumHelpers {
-    public static string ConvertFontStyle(TextAttributeEnum style) {
-        return style switch {
-            TextAttributeEnum.Regular         => "OpenSansRegular",
-            TextAttributeEnum.Bold            => "OpenSansBold",
-            TextAttributeEnum.Italic          => "OpenSansItalic",
-            TextAttributeEnum.BoldItalic      => "OpenSansBoldItalic",
-            TextAttributeEnum.Light           => "OpenSansLight",
-            TextAttributeEnum.LightItalic     => "OpenSansLightItalic",
-            TextAttributeEnum.Medium          => "OpenSansMedium",
-            TextAttributeEnum.MediumItalic    => "OpenSansMediumItalic",
-            TextAttributeEnum.SemiBold        => "OpenSansSemiBold",
-            TextAttributeEnum.SemiBoldItalic  => "OpenSansSemiBoldItalic",
-            TextAttributeEnum.ExtraBold       => "OpenSansExtraBold",
-            TextAttributeEnum.ExtraBoldItalic => "OpenSansExtraBoldItalic",
-            _                                 => "OpenSansRegular"
-        };
-    }
-    
-    public static HorizontalAlignment ConvertHorizontalAlignment(TextAlignmentHorizontalEnum alignment) {
-        return alignment switch {
-            TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,
-            TextAlignmentHorizontalEnum.Right   => HorizontalAlignment.Right,
-            TextAlignmentHorizontalEnum.Center  => HorizontalAlignment.Center,
-            TextAlignmentHorizontalEnum.Justify => HorizontalAlignment.Justified,
-            _                                   => HorizontalAlignment.Left
-        };
-    }
+    public static string ConvertFontStyle(TextAttributeEnum style) => style switch {
+        TextAttributeEnum.Regular         => "OpenSansRegular",
+        TextAttributeEnum.Bold            => "OpenSansBold",
+        TextAttributeEnum.Italic          => "OpenSansItalic",
+        TextAttributeEnum.BoldItalic      => "OpenSansBoldItalic",
+        TextAttributeEnum.Light           => "OpenSansLight",
+        TextAttributeEnum.LightItalic     => "OpenSansLightItalic",
+        TextAttributeEnum.Medium          => "OpenSansMedium",
+        TextAttributeEnum.MediumItalic    => "OpenSansMediumItalic",
+        TextAttributeEnum.SemiBold        => "OpenSansSemiBold",
+        TextAttributeEnum.SemiBoldItalic  => "OpenSansSemiBoldItalic",
+        TextAttributeEnum.ExtraBold       => "OpenSansExtraBold",
+        TextAttributeEnum.ExtraBoldItalic => "OpenSansExtraBoldItalic",
+        _                                 => "OpenSansRegular",
+    };
 
-    public static VerticalAlignment ConvertVerticalAlignment(TextAlignmentVerticalEnum alignment) {
-        return alignment switch {
-            TextAlignmentVerticalEnum.Top    => VerticalAlignment.Top,
-            TextAlignmentVerticalEnum.Bottom => VerticalAlignment.Bottom,
-            TextAlignmentVerticalEnum.Center => VerticalAlignment.Center,
-            _                                => VerticalAlignment.Center
-        };
-    }
+    public static HorizontalAlignment ConvertHorizontalAlignment(TextAlignmentHorizontalEnum alignment) => alignment switch {
+        TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,
+        TextAlignmentHorizontalEnum.Right   => HorizontalAlignment.Right,
+        TextAlignmentHorizontalEnum.Center  => HorizontalAlignment.Center,
+        TextAlignmentHorizontalEnum.Justify => HorizontalAlignment.Justified,
+        _                                   => HorizontalAlignment.Left,
+    };
 
-    public static TextAlignmentHorizontalEnum ConvertHorizontalAlignment(string alignment) {
-        return alignment switch {
-            "Left"    => TextAlignmentHorizontalEnum.Left,
-            "Right"   => TextAlignmentHorizontalEnum.Right,
-            "Center"  => TextAlignmentHorizontalEnum.Center,
-            "Justify" => TextAlignmentHorizontalEnum.Justify,
-            _         => TextAlignmentHorizontalEnum.Center
-        };
-    }
+    public static VerticalAlignment ConvertVerticalAlignment(TextAlignmentVerticalEnum alignment) => alignment switch {
+        TextAlignmentVerticalEnum.Top    => VerticalAlignment.Top,
+        TextAlignmentVerticalEnum.Bottom => VerticalAlignment.Bottom,
+        TextAlignmentVerticalEnum.Center => VerticalAlignment.Center,
+        _                                => VerticalAlignment.Center,
+    };
 
-    public static TextAlignmentVerticalEnum ConvertVerticalAlignment(string alignment) {
-        return alignment switch {
-            "Top"    => TextAlignmentVerticalEnum.Top,
-            "Bottom" => TextAlignmentVerticalEnum.Bottom,
-            "Center" => TextAlignmentVerticalEnum.Center,
-            _        => TextAlignmentVerticalEnum.Center
-        };
-    }
+    public static TextAlignmentHorizontalEnum ConvertHorizontalAlignment(string alignment) => alignment switch {
+        "Left"    => TextAlignmentHorizontalEnum.Left,
+        "Right"   => TextAlignmentHorizontalEnum.Right,
+        "Center"  => TextAlignmentHorizontalEnum.Center,
+        "Justify" => TextAlignmentHorizontalEnum.Justify,
+        _         => TextAlignmentHorizontalEnum.Center,
+    };
 
-    public static TextAlignment ConvertHorizontalAlignmentToText(TextAlignmentHorizontalEnum alignment) {
-        return alignment switch {
-            TextAlignmentHorizontalEnum.Left    => TextAlignment.Start,
-            TextAlignmentHorizontalEnum.Right   => TextAlignment.End,
-            TextAlignmentHorizontalEnum.Center  => TextAlignment.Center,
-            TextAlignmentHorizontalEnum.Justify => TextAlignment.Justify,
-            _                                   => TextAlignment.Start
-        };
-    }
+    public static TextAlignmentVerticalEnum ConvertVerticalAlignment(string alignment) => alignment switch {
+        "Top"    => TextAlignmentVerticalEnum.Top,
+        "Bottom" => TextAlignmentVerticalEnum.Bottom,
+        "Center" => TextAlignmentVerticalEnum.Center,
+        _        => TextAlignmentVerticalEnum.Center,
+    };
 
-    public static TextAlignment ConvertVerticalAlignmentToText(TextAlignmentVerticalEnum alignment) {
-        return alignment switch {
-            TextAlignmentVerticalEnum.Top    => TextAlignment.Start,
-            TextAlignmentVerticalEnum.Bottom => TextAlignment.End,
-            TextAlignmentVerticalEnum.Center => TextAlignment.Center,
-            _                                => TextAlignment.Center
-        };
-    }
+    public static TextAlignment ConvertHorizontalAlignmentToText(TextAlignmentHorizontalEnum alignment) => alignment switch {
+        TextAlignmentHorizontalEnum.Left    => TextAlignment.Start,
+        TextAlignmentHorizontalEnum.Right   => TextAlignment.End,
+        TextAlignmentHorizontalEnum.Center  => TextAlignment.Center,
+        TextAlignmentHorizontalEnum.Justify => TextAlignment.Justify,
+        _                                   => TextAlignment.Start,
+    };
 
-    public static TurnoutStateEnum ConvertTurnout(string state) {
-        return state switch {
-            "Closed" => TurnoutStateEnum.Closed,
-            "Thrown" => TurnoutStateEnum.Thrown,
-            _        => TurnoutStateEnum.Unknown
-        };
-    }
+    public static TextAlignment ConvertVerticalAlignmentToText(TextAlignmentVerticalEnum alignment) => alignment switch {
+        TextAlignmentVerticalEnum.Top    => TextAlignment.Start,
+        TextAlignmentVerticalEnum.Bottom => TextAlignment.End,
+        TextAlignmentVerticalEnum.Center => TextAlignment.Center,
+        _                                => TextAlignment.Center,
+    };
 
-    public static string ConvertTurnout(TurnoutStateEnum state) {
-        return state switch {
-            TurnoutStateEnum.Closed => "Closed",
-            TurnoutStateEnum.Thrown => "Thrown",
-            _                       => "Unknown"
-        };
-    }
+    public static TurnoutStateEnum ConvertTurnout(string state) => state switch {
+        "Closed" => TurnoutStateEnum.Closed,
+        "Thrown" => TurnoutStateEnum.Thrown,
+        _        => TurnoutStateEnum.Unknown,
+    };
 
-    public static RouteStateEnum ConvertRoute(string state) {
-        return state switch {
-            "Active"   => RouteStateEnum.Active,
-            "Inactive" => RouteStateEnum.Inactive,
-            _          => RouteStateEnum.Unknown
-        };
-    }
+    public static string ConvertTurnout(TurnoutStateEnum state) => state switch {
+        TurnoutStateEnum.Closed => "Closed",
+        TurnoutStateEnum.Thrown => "Thrown",
+        _                       => "Unknown",
+    };
 
-    public static string ConvertRoute(RouteStateEnum state) {
-        return state switch {
-            RouteStateEnum.Active   => "Active",
-            RouteStateEnum.Inactive => "Inactive",
-            _                       => "Unknown"
-        };
-    }
+    public static RouteStateEnum ConvertRoute(string state) => state switch {
+        "Active"   => RouteStateEnum.Active,
+        "Inactive" => RouteStateEnum.Inactive,
+        _          => RouteStateEnum.Unknown,
+    };
+
+    public static string ConvertRoute(RouteStateEnum state) => state switch {
+        RouteStateEnum.Active   => "Active",
+        RouteStateEnum.Inactive => "Inactive",
+        _                       => "Unknown",
+    };
 }

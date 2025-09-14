@@ -9,8 +9,6 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionRouteTile : Tile, ITileInteractive {
-    public SvgImage? SvgImage { get; protected set; }
-
     public ActionRouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
@@ -20,6 +18,8 @@ public class ActionRouteTile : Tile, ITileInteractive {
         }
     }
 
+    public SvgImage? SvgImage { get; protected set; }
+
     public async Task<bool> Interact(ConnectionService? connectionService) {
         if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
         if (Entity is RouteEntity route) {
@@ -27,10 +27,10 @@ public class ActionRouteTile : Tile, ITileInteractive {
                 RouteStateEnum.Unknown  => RouteStateEnum.Active,
                 RouteStateEnum.Active   => RouteStateEnum.Inactive,
                 RouteStateEnum.Inactive => RouteStateEnum.Active,
-                _                       => RouteStateEnum.Unknown
+                _                       => RouteStateEnum.Unknown,
             };
 
-            if (connectionService is not null && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
+            if (connectionService is { } && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
                 if (connectionService.Client is { } client) await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
             }
             return true;
@@ -38,29 +38,27 @@ public class ActionRouteTile : Tile, ITileInteractive {
         return false;
     }
 
-    public async Task<bool> Secondary(ConnectionService? connectionService) {
-        return false;
-    }
+    public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is RouteEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("route", Entity.Rotation)
+                _                    => SvgImages.GetImage("route", Entity.Rotation),
             };
 
             var buttonColor = button.State switch {
                 RouteStateEnum.Active   => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 RouteStateEnum.Inactive => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                       => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
+                _                       => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray,
             };
 
             var buttonOutline = button.State switch {
                 RouteStateEnum.Active   => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 RouteStateEnum.Inactive => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                       => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
+                _                       => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black,
             };
-            
+
             var indicatorColor = button.ShowIndicator ? button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
 
             var style = new SvgStyleBuilder();
@@ -82,8 +80,6 @@ public class ActionRouteTile : Tile, ITileInteractive {
         }
         return CreateSymbol();
     }
-    
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("route").AsImage();
-    }
+
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("route").AsImage();
 }

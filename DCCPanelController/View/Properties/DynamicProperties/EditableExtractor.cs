@@ -2,16 +2,17 @@ using System.Reflection;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
-public sealed record EditableField(Type DeclaringType, 
-                                   PropertyInfo Prop, 
-                                   EditableAttribute Meta, 
-                                   IPropertyAccessor Accessor);
+public sealed record EditableField(
+    Type DeclaringType,
+    PropertyInfo Prop,
+    EditableAttribute Meta,
+    IPropertyAccessor Accessor);
 
 public interface IPropertyAccessor {
-    object? Get(object target);
-    void Set(object target, object? value);
     Type PropertyType { get; }
     string Name { get; }
+    object? Get(object target);
+    void Set(object target, object? value);
 }
 
 public interface IEditableExtractor {
@@ -19,10 +20,8 @@ public interface IEditableExtractor {
 }
 
 public sealed class CompiledPropertyAccessor : IPropertyAccessor {
-    private readonly Func<object, object?> _getter;
+    private readonly Func<object, object?>   _getter;
     private readonly Action<object, object?> _setter;
-    public Type PropertyType { get; }
-    public string Name { get; }
 
     public CompiledPropertyAccessor(string name, Type propertyType, Func<object, object?> getter, Action<object, object?> setter) {
         Name = name;
@@ -30,6 +29,9 @@ public sealed class CompiledPropertyAccessor : IPropertyAccessor {
         _getter = getter;
         _setter = setter;
     }
+
+    public Type PropertyType { get; }
+    public string Name { get; }
 
     public object? Get(object target) => _getter(target);
     public void Set(object target, object? value) => _setter(target, value);
@@ -43,7 +45,7 @@ public sealed class EditableExtractorCache : IEditableExtractor {
         var list = new List<EditableField>();
 
         foreach (var pi in type.GetProperties(BindingFlags.Instance | BindingFlags.Public)) {
-            var meta = pi.GetCustomAttribute<EditableAttribute>(inherit: true);
+            var meta = pi.GetCustomAttribute<EditableAttribute>(true);
             if (meta == null || !pi.CanRead || !pi.CanWrite) continue;
             var accessor = CompileAccessor(pi);
             list.Add(new EditableField(type, pi, meta, accessor));

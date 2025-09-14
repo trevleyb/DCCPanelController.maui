@@ -1,23 +1,17 @@
 namespace DCCPanelController.Models.ViewModel.StyleManager;
 
 public class SvgStyleElement {
-    internal SvgStyleElement(string name) {
-        Name = name;
-    }
+    internal SvgStyleElement(string name) => Name = name;
 
     public string Name { get; internal set; }
     public Dictionary<string, string> Attributes { get; } = new();
 
-    public static SvgElementBuilder Builder(string name) {
-        return new SvgElementBuilder(name);
-    }
+    public static SvgElementBuilder Builder(string name) => new(name);
 
     public void AddOrUpdateAttribute(string key, string value) {
         Attributes.TryAdd(key, value);
         Attributes[key] = value;
     }
 
-    public override string ToString() {
-        return $"Element: {Name}, EditableAttribute: [{string.Join(", ", Attributes.Select(kv => $"{kv.Key}={kv.Value}"))}]";
-    }
+    public override string ToString() => $"Element: {Name}, EditableAttribute: [{string.Join(", ", Attributes.Select(kv => $"{kv.Key}={kv.Value}"))}]";
 }

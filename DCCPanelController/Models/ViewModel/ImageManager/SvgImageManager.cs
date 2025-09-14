@@ -8,8 +8,8 @@ using Svg.Skia;
 namespace DCCPanelController.Models.ViewModel.ImageManager;
 
 public partial class SvgImageManager {
-    private const int DefaultWidth = 48;
-    private const int DefaultHeight = 48;
+    private const    int       DefaultWidth  = 48;
+    private const    int       DefaultHeight = 48;
     private readonly XDocument _svgDocument;
 
     /// <summary>
@@ -116,9 +116,7 @@ public partial class SvgImageManager {
     /// <summary>
     ///     Forces a set of any attributes defined in the element to the value. Does not add the attribute if it does not exist
     /// </summary>
-    public void SetAllAttributeValues(SvgElementType svgElement, string attributeName, string attributeValue) {
-        SetAllAttributeValues(SvgElementTypes.GetElement(svgElement), attributeName, attributeValue);
-    }
+    public void SetAllAttributeValues(SvgElementType svgElement, string attributeName, string attributeValue) => SetAllAttributeValues(SvgElementTypes.GetElement(svgElement), attributeName, attributeValue);
 
     public void SetAllAttributeValues(string svgElement, string attributeName, string attributeValue) {
         foreach (var element in FindElements(svgElement)) {
@@ -132,17 +130,11 @@ public partial class SvgImageManager {
     ///     <circle id="Border" stroke="#000000" stroke-width="2" fill="#FFFFFF" cx="24" cy="24" r="7"></circle>
     ///     Then a search for 'Border' will match on this ID, and the 'circle' element will be returned.
     /// </summary>
-    public List<XElement> FindElements(string elementName) {
-        return (from element in _svgDocument.Descendants() from attr in element.Attributes() where attr.Name.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(elementName, StringComparison.OrdinalIgnoreCase) select element).ToList();
-    }
+    public List<XElement> FindElements(string elementName) => (from element in _svgDocument.Descendants() from attr in element.Attributes() where attr.Name.LocalName.Equals("id", StringComparison.OrdinalIgnoreCase) && attr.Value.Equals(elementName, StringComparison.OrdinalIgnoreCase) select element).ToList();
 
-    public string ElementType(XElement element) {
-        return element.Name.LocalName.ToLowerInvariant();
-    }
+    public string ElementType(XElement element) => element.Name.LocalName.ToLowerInvariant();
 
-    public bool IsElementOfType(XElement element, string type) {
-        return element.Name.LocalName.Equals(type, StringComparison.OrdinalIgnoreCase);
-    }
+    public bool IsElementOfType(XElement element, string type) => element.Name.LocalName.Equals(type, StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     ///     Given an element, set the attribute property to the value provided
@@ -154,7 +146,7 @@ public partial class SvgImageManager {
         if (attributeValue == "#00000000") {
             Console.WriteLine("Setting to black");
         }
-        if (attribute is not null) {
+        if (attribute is { }) {
             attribute.Value = attributeValue;
         } else {
             if (addIfNotExist) {
@@ -173,6 +165,6 @@ public partial class SvgImageManager {
     /// </summary>
     private static string? GetAttributeValue(XElement element, string attributeName) {
         ArgumentNullException.ThrowIfNull(element);
-        return (from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr.Value).FirstOrDefault();
+        return(from attr in element.Attributes() where attr.Name.LocalName.Equals(attributeName, StringComparison.OrdinalIgnoreCase) select attr.Value).FirstOrDefault();
     }
 }

@@ -10,10 +10,10 @@ internal sealed class TextRenderer : BaseRenderer, IPropertyRenderer {
         var entry = new Entry {
             Text = row.OriginalValue as string ?? string.Empty,
             Placeholder = MixedPlaceholder(row),
-            Margin = new Thickness(5, 0, 5, 0)
+            Margin = new Thickness(5, 0, 5, 0),
         };
         entry.TextChanged += (s, e) => SetValue(row, e.NewTextValue);
-        entry.IsEnabled = !(row.Field.Meta.IsReadOnlyInRunMode);
+        entry.IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode;
         return WrapWithLabel(ctx, AddBorder(entry));
     }
 }

@@ -4,7 +4,7 @@ public class DccClientMessage(string message, DccClientOperation operation = Dcc
     public string Message { get; init; } = message;
     public DccClientOperation Operation { get; init; } = operation;
     public DccClientMessageType MessageType { get; init; } = msgType;
-    public DateTime TimeStamp { get; init; }= DateTime.Now;
+    public DateTime TimeStamp { get; init; } = DateTime.Now;
 
     public string IconSource =>
         MessageType switch {
@@ -12,7 +12,7 @@ public class DccClientMessage(string message, DccClientOperation operation = Dcc
             DccClientMessageType.Outbound => "message_out.png",
             DccClientMessageType.System   => "message_system.png",
             DccClientMessageType.Error    => "message_error.png",
-            _                             => "message_system.png"
+            _                             => "message_system.png",
         };
 
     public override string ToString() => $"{TimeStamp:HH:mm:ss.fff} {MessageType} {Operation}: {Message}";

@@ -1,16 +1,12 @@
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
-using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.ControlPanel;
-using DCCPanelController.View.Helpers;
-using DCCPanelController.View.TileSelectors;
-using Microsoft.Extensions.Logging;
 
 namespace DCCPanelController.View;
 
 public partial class TestPage : ContentPage {
-    private GridGestureHelper _gridGestures;
+    private readonly GridGestureHelper _gridGestures;
 
     public TestPage(TestPageViewModel viewModel) {
         InitializeComponent();
@@ -31,7 +27,7 @@ public partial class TestPage : ContentPage {
         // Create a dummy Panel and Add it to the system
         // ---------------------------------------------
         var panels = new Panels();
-        var panel  = panels.CreatePanel();
+        var panel = panels.CreatePanel();
         var entity = panel.CreateEntity<StraightEntity>();
         entity.Col = 2;
         entity.Row = 2;
@@ -71,36 +67,19 @@ public partial class TestPage : ContentPage {
         }
     }
 
-    private void GridGesturesOnTileDragStarted(object? sender, TileDragEventArgs e) {
-        Console.WriteLine($"Tile START Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
-    }
-    
-    private void GridGesturesOnGridSelectionCancelled(object? sender, GridSelectionEventArgs e) {
-        Console.WriteLine($"CANCELLED Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
-    }
+    private void GridGesturesOnTileDragStarted(object? sender, TileDragEventArgs e) => Console.WriteLine($"Tile START Selection @{e.CurrentCol},{e.CurrentRow} Start @{e.StartCol},{e.StartRow}");
 
+    private void GridGesturesOnGridSelectionCancelled(object? sender, GridSelectionEventArgs e) => Console.WriteLine($"CANCELLED Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
 
-    private void GridGesturesOnGridSelectionCompleted(object? sender, GridSelectionEventArgs e) {
-        Console.WriteLine($"STOP Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
-    }
+    private void GridGesturesOnGridSelectionCompleted(object? sender, GridSelectionEventArgs e) => Console.WriteLine($"STOP Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
 
-    private void GridGesturesOnGridSelectionChanged(object? sender, GridSelectionEventArgs e) {
-        Console.WriteLine($"MOVE Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
-    }
+    private void GridGesturesOnGridSelectionChanged(object? sender, GridSelectionEventArgs e) => Console.WriteLine($"MOVE Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
 
-    private void GridGesturesOnGridSelectionStarted(object? sender, GridSelectionEventArgs e) {
-        Console.WriteLine($"START Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
-    }
+    private void GridGesturesOnGridSelectionStarted(object? sender, GridSelectionEventArgs e) => Console.WriteLine($"START Selecting from @{e.StartCol},{e.StartRow} to @{e.EndCol},{e.EndRow} and {e.AbsStartCol},{e.AbsStartRow} to {e.AbsEndCol},{e.AbsEndRow}");
 
-    private void GridGesturesOnLongPress(object? sender, GridGestureEventArgs e) {
-        Console.WriteLine($"Long Press @{e.Col},{e.Row}");
-    }
+    private void GridGesturesOnLongPress(object? sender, GridGestureEventArgs e) => Console.WriteLine($"Long Press @{e.Col},{e.Row}");
 
-    private void GridGesturesOnDoubleTap(object? sender, GridGestureEventArgs e) {
-        Console.WriteLine($"Double Tap @{e.Col},{e.Row}");
-    }
+    private void GridGesturesOnDoubleTap(object? sender, GridGestureEventArgs e) => Console.WriteLine($"Double Tap @{e.Col},{e.Row}");
 
-    private void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) {
-        Console.WriteLine($"Single Tap @{e.Col},{e.Row}");
-    }
+    private void GridGesturesOnSingleTap(object? sender, GridGestureEventArgs e) => Console.WriteLine($"Single Tap @{e.Col},{e.Row}");
 }

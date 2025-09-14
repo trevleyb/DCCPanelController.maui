@@ -25,14 +25,12 @@ public class JsonSettingsTypeConverter : JsonConverter<IDccClientSettings> {
                 "withrottle" => JsonSerializer.Deserialize<WiThrottleSettings>(rawText, options),
                 "jmri"       => JsonSerializer.Deserialize<JmriSettings>(rawText, options),
                 "simulator"  => JsonSerializer.Deserialize<SimulatorSettings>(rawText, options),
-                _            => throw new ArgumentOutOfRangeException($"Invalid Settings Type detected: {typeName}")
+                _            => throw new ArgumentOutOfRangeException($"Invalid Settings Type detected: {typeName}"),
             };
             if (obj == null) throw new ApplicationException("Unknown type JSON type: " + "\"" + typeName + "\"" + ". Skipped.");
             return obj;
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, IDccClientSettings value, JsonSerializerOptions options) {
-        JsonSerializer.Serialize<object>(writer, value, options);
-    }
+    public override void Write(Utf8JsonWriter writer, IDccClientSettings value, JsonSerializerOptions options) => JsonSerializer.Serialize<object>(writer, value, options);
 }

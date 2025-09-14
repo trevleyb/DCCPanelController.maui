@@ -24,20 +24,18 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
                 TurnoutStateEnum.Thrown  => TurnoutStateEnum.Closed,
                 TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
-                _                        => TurnoutStateEnum.Unknown
+                _                        => TurnoutStateEnum.Unknown,
             };
             turnout.SetState(newState, StateChangeSource.Internal);
-            if (connectionService?.Client is { } client && turnout.Turnout is not null) {
+            if (connectionService?.Client is { } client && turnout.Turnout is { }) {
                 await client.SendTurnoutCmdAsync(turnout.Turnout, newState != TurnoutStateEnum.Closed);
-            } 
+            }
             return true;
         }
         return false;
     }
 
-    public async Task<bool> Secondary(ConnectionService? connectionService) {
-        return false;
-    }
+    public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
     new protected Microsoft.Maui.Controls.View? CreateTrackTile(string trackName, int trackRotation) {
         if (Entity is TurnoutEntity turnout) {
@@ -45,10 +43,10 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                 TurnoutStateEnum.Unknown => trackName + "Unknown",
                 TurnoutStateEnum.Closed  => trackName + "Straight",
                 TurnoutStateEnum.Thrown  => trackName + "Diverging",
-                _                        => trackName + "Unknown"
+                _                        => trackName + "Unknown",
             };
             if (turnout.TurnoutStyle == TurnoutStyleEnum.NoBranch) imageName += "alt";
-            
+
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(turnout.TrackNotSelectedColor ?? turnout?.Parent?.DivergingColor ?? Colors.Gray));
 
@@ -61,7 +59,7 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
                     style.Add(e => e.WithName(SvgElementType.TrackDiverging).WithColor(neighbor.TrackColor ?? neighbor.Parent?.BranchLineColor ?? Colors.Gray));
                 }
             }
-            
+
             var trackTurnout = base.CreateTrackTile(imageName, Entity.Rotation, style.Build());
             return trackTurnout;
         }

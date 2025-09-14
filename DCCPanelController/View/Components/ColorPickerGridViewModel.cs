@@ -1,24 +1,15 @@
-using CommunityToolkit.Maui;
-using CommunityToolkit.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
-using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerGridViewModel : ObservableObject {
-    public IReadOnlyCollection<Color> SelectableColors { get; init; }
     private static readonly IReadOnlyCollection<Color> CachedColors = AppleCrayonColors.Colors;
-    public string SelectedColorName => (SelectedColor == null ? "Default" : AppleCrayonColors.Name(SelectedColor ?? Colors.White)).ToUpper();
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(SelectedColorName))]
-    private Color? _selectedColor; 
-
-    // Add events for the popup
-    public event Action<Color?>? ColorSelectionCompleted;
-    public event Action? SelectionCancelled;
+    private Color? _selectedColor;
 
     public ColorPickerGridViewModel() {
         SelectableColors = CachedColors;
@@ -29,23 +20,23 @@ public partial class ColorPickerGridViewModel : ObservableObject {
         };
     }
 
-    public ColorPickerGridViewModel(Color selectedColor) : this() {
-        SelectedColor = selectedColor;
-    }
+    public ColorPickerGridViewModel(Color selectedColor) : this() => SelectedColor = selectedColor;
+    public IReadOnlyCollection<Color> SelectableColors { get; init; }
+    public string SelectedColorName => (SelectedColor == null ? "Default" : AppleCrayonColors.Name(SelectedColor ?? Colors.White)).ToUpper();
+
+    // Add events for the popup
+    public event Action<Color?>? ColorSelectionCompleted;
+    public event Action? SelectionCancelled;
 
     [RelayCommand]
-    async Task OnColorSelected(Color color) {
+    private async Task OnColorSelected(Color color) {
         SelectedColor = color;
         Console.WriteLine($"Color selected: {color}");
     }
-    
+
     [RelayCommand]
-    async Task OnCancel() {
-        SelectionCancelled?.Invoke();
-    }
-    
-    [RelayCommand()]
-    async Task OnSave() {
-        ColorSelectionCompleted?.Invoke(SelectedColor);
-    }
+    private async Task OnCancel() => SelectionCancelled?.Invoke();
+
+    [RelayCommand]
+    private async Task OnSave() => ColorSelectionCompleted?.Invoke(SelectedColor);
 }

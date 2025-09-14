@@ -1,7 +1,6 @@
 // TileSelectorPaletteCache.cs
 
 using System.Collections.Concurrent;
-using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -11,8 +10,6 @@ using DCCPanelController.Models.ViewModel.Tiles;
 namespace DCCPanelController.View.TileSelectors;
 
 public class TileSelectorPaletteCache {
-    public record PaletteResult(Dictionary<string, List<ITile>> ByCategory, List<string> Categories);
-
     // Use a unique key for each unique Panel/Palette
     private static readonly ConcurrentDictionary<string, PaletteResult> Cache = new();
 
@@ -39,7 +36,7 @@ public class TileSelectorPaletteCache {
                 byCategory[category] = new List<ITile>();
                 foreach (var e in entities) {
                     var tile = TileFactory.CreateTile(e, 32, TileDisplayMode.Symbol);
-                    if (tile is not null) byCategory[category].Add(tile);
+                    if (tile is { }) byCategory[category].Add(tile);
                 }
             }
 
@@ -62,7 +59,7 @@ public class TileSelectorPaletteCache {
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new TunnelEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new BridgeEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new PlatformEntity(panel) { TrackType = TrackTypeEnum.MainLine }
+                new PlatformEntity(panel) { TrackType = TrackTypeEnum.MainLine },
             ]);
 
             Add("Branch", [
@@ -93,4 +90,6 @@ public class TileSelectorPaletteCache {
             return null;
         }
     }
+
+    public record PaletteResult(Dictionary<string, List<ITile>> ByCategory, List<string> Categories);
 }

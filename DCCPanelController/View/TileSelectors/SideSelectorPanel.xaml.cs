@@ -1,26 +1,28 @@
-using System.Collections;
 using System.ComponentModel;
 using CommunityToolkit.Maui.Core;
 using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.ViewModel.Interfaces;
-using DCCPanelController.Models.ViewModel.Tiles;
-using DCCPanelController.Resources.Styles;
 using DCCPanelController.Services;
 using DCCPanelController.View.Helpers;
 #if IOS || MACCATALYST
-using UIKit;
-using CoreGraphics;
 #endif
 
 namespace DCCPanelController.View.TileSelectors;
 
 public partial class SideSelectorPanel {
-    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
-    public static readonly BindableProperty PanelProperty = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(SideSelectorPanel), propertyChanged: OnPanelChanged);
+    public static readonly BindableProperty PanelProperty    = BindableProperty.Create(nameof(Panel), typeof(Panel), typeof(SideSelectorPanel), propertyChanged: OnPanelChanged);
     public static readonly BindableProperty DockSideProperty = BindableProperty.Create(nameof(DockSide), typeof(TileSelectorDockSide), typeof(SideSelectorPanel), TileSelectorDockSide.Side, BindingMode.TwoWay);
-    public SideSelectorPanelViewModel ViewModel { get; set; }
 
-    private double scrollOffset = 0;
+    public static readonly BindableProperty SelectedTileProperty =
+        BindableProperty.Create(
+            nameof(SelectedTile),
+            typeof(ITile),
+            typeof(SideSelectorPanel),
+            null,
+            BindingMode.TwoWay,
+            propertyChanged: OnSelectedTileChanged);
+
+    private double scrollOffset;
 
     public SideSelectorPanel() {
         InitializeComponent();
@@ -28,17 +30,26 @@ public partial class SideSelectorPanel {
         BindingContext = ViewModel;
     }
 
+    public SideSelectorPanelViewModel ViewModel { get; set; }
+
     public Panel? Panel {
         get => (Panel)GetValue(PanelProperty);
         set => SetValue(PanelProperty, value);
     }
 
-    public void ForceReDraw() => (BindingContext as SideSelectorPanelViewModel)?.ForceReDraw();
-
     public TileSelectorDockSide DockSide {
         get => (TileSelectorDockSide)GetValue(DockSideProperty);
         set => SetValue(DockSideProperty, value);
     }
+
+    public ITile? SelectedTile {
+        get => (ITile?)GetValue(SelectedTileProperty);
+        set => SetValue(SelectedTileProperty, value);
+    }
+
+    public event EventHandler<TileSelectorDockSide>? OnDockSideChanged;
+
+    public void ForceReDraw() => (BindingContext as SideSelectorPanelViewModel)?.ForceReDraw();
 
     private static void OnPanelChanged(BindableObject bindable, object oldValue, object newValue) {
         if (bindable is SideSelectorPanel { BindingContext: SideSelectorPanelViewModel vm }) {
@@ -52,27 +63,14 @@ public partial class SideSelectorPanel {
         if (e.Status == TouchStatus.Completed) OnDockSideChanged?.Invoke(this, TileSelectorDockSide.Bottom);
     }
 
-    public static readonly BindableProperty SelectedTileProperty =
-        BindableProperty.Create(
-            nameof(SelectedTile),
-            typeof(ITile),
-            typeof(SideSelectorPanel),
-            defaultValue: null,
-            defaultBindingMode: BindingMode.TwoWay,
-            propertyChanged: OnSelectedTileChanged);
-
-    public ITile? SelectedTile {
-        get => (ITile?)GetValue(SelectedTileProperty);
-        set => SetValue(SelectedTileProperty, value);
-    }
-
     private static void OnSelectedTileChanged(BindableObject bindable, object oldValue, object newValue) {
         var view = (SideSelectorPanel)bindable;
 
         // keep VM in sync if you’re using one
         if (view.BindingContext is SideSelectorPanelViewModel vm) {
-            if (!ReferenceEquals(vm.SelectedTile, newValue))
+            if (!ReferenceEquals(vm.SelectedTile, newValue)) {
                 vm.SelectedTile = (ITile?)newValue;
+            }
         }
 
         // (optional) if your VM can also change SelectedTile, you might already
@@ -83,8 +81,9 @@ public partial class SideSelectorPanel {
         base.OnBindingContextChanged();
         if (BindingContext is SideSelectorPanelViewModel vm) {
             // keep control property synced from VM, too
-            if (!ReferenceEquals(SelectedTile, vm.SelectedTile))
+            if (!ReferenceEquals(SelectedTile, vm.SelectedTile)) {
                 SelectedTile = vm.SelectedTile;
+            }
 
             // if you have an event in VM when SelectedTile changes, subscribe and mirror here
             vm.PropertyChanged -= VmOnPropertyChanged;
@@ -113,17 +112,17 @@ public partial class SideSelectorPanel {
             if (!pointerRoot.HasValue || !pointerChild.HasValue) return;
 
             var index = CollectionHitIndex.IndexOf(childView,
-                                                   point: pointerChild.Value,
-                                                   scrollXOffset: scrollOffset,
-                                                   scrollYOffset: scrollOffset,
-                                                   edgeMargin: 4,
-                                                   topMargin: 4,
-                                                   itemWidth: 40,
-                                                   itemHeight: 40,
-                                                   spacingH: 4,
-                                                   spacingV: 4);
+                pointerChild.Value,
+                scrollOffset,
+                scrollOffset,
+                4,
+                4,
+                40,
+                40,
+                4,
+                4);
 
-            if (index is not null && childView.BindingContext is string category) {
+            if (index is { } && childView.BindingContext is string category) {
                 if (ViewModel?.ByCategory.TryGetValue(category, out var tiles) == true) {
                     if (tiles.Count > index.Value) {
                         var tile = tiles[index.Value];
@@ -140,10 +139,8 @@ public partial class SideSelectorPanel {
             Console.WriteLine("Error selecting tile: " + ex.Message);
         }
     }
-    
-    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) {
-        scrollOffset = e.HorizontalOffset;
-    }
+
+    private void TileCollection_OnScrolled(object? sender, ItemsViewScrolledEventArgs e) => scrollOffset = e.HorizontalOffset;
 
     private void OnTileTapped(object? sender, EventArgs e) {
         if (e is not TappedEventArgs te) return;

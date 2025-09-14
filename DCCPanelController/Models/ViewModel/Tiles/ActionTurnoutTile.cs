@@ -30,14 +30,12 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         return false;
     }
 
-    public async Task<bool> Secondary(ConnectionService? connectionService) {
-        return false;
-    }
+    public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
     new protected void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         base.OnPropertyChanged(sender, e);
         if (e.PropertyName == nameof(TurnoutButtonEntity.Turnout)) {
-            if (_turnout is not null) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
+            if (_turnout is { }) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
             RegisterForTurnoutEvents();
         }
     }
@@ -48,7 +46,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         // -----------------------------------------------------------------
         if (Entity is TurnoutButtonEntity { Turnout: { } turnoutRef } entity) {
             _turnout = entity?.Parent?.GetTurnoutEntityByRef(turnoutRef);
-            if (_turnout is not null) {
+            if (_turnout is { }) {
                 _turnout.PropertyChanged += TurnoutOnPropertyChanged;
                 UpdateEntityStateBasedOnTurnout();
             }
@@ -56,7 +54,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
     }
 
     private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (Entity is TurnoutButtonEntity entity && _turnout is not null) {
+        if (Entity is TurnoutButtonEntity entity && _turnout is { }) {
             UpdateEntityStateBasedOnTurnout();
         }
     }
@@ -66,7 +64,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
             entity!.State = _turnout?.State switch {
                 TurnoutStateEnum.Closed => entity.WhenNormal,
                 TurnoutStateEnum.Thrown => entity.WhenThrown,
-                _                       => ButtonStateEnum.Unknown
+                _                       => ButtonStateEnum.Unknown,
             };
         }
     }
@@ -79,23 +77,23 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         if (Entity is TurnoutButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("TurnoutLarge", Entity.Rotation),
-                _                    => SvgImages.GetImage("Turnout", Entity.Rotation)
+                _                    => SvgImages.GetImage("Turnout", Entity.Rotation),
             };
 
             var buttonColor = button.State switch {
                 ButtonStateEnum.On  => button.ColorOn ?? button.Parent?.ButtonOnColor ?? Colors.Green,
                 ButtonStateEnum.Off => button.ColorOff ?? button.Parent?.ButtonOffColor ?? Colors.Red,
-                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray
+                _                   => button.ColorUnknown ?? button.Parent?.ButtonColor ?? Colors.Gray,
             };
 
             var buttonOutline = button.State switch {
                 ButtonStateEnum.On  => button.ColorOnBorder ?? button.Parent?.ButtonOnBorder ?? Colors.Black,
                 ButtonStateEnum.Off => button.ColorOffBorder ?? button.Parent?.ButtonOffBorder ?? Colors.Black,
-                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black
+                _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black,
             };
 
-            var indicatorColor = button.ShowIndicator ?  button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
-            
+            var indicatorColor = button.ShowIndicator ? button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
+
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
@@ -115,8 +113,6 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         }
         return CreateSymbol();
     }
-    
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        return SvgImages.GetImage("button").AsImage();
-    }
+
+    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("button").AsImage();
 }

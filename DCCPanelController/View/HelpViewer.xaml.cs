@@ -23,15 +23,14 @@ public partial class HelpViewer : ContentView {
     private static void OnDocumentChanged(BindableObject bindable, object oldValue, object newValue) {
         var hv = (HelpViewer)bindable;
         if (newValue is HelpDocument doc) {
-#if MACCATALYST
-
+            #if MACCATALYST
             // Load from file URL to grant WKWebView read access to sibling files (images/)
             if (!string.IsNullOrEmpty(doc.FilePath)) {
                 var fileUrl = new Uri(doc.FilePath).AbsoluteUri;
                 hv.Web.Source = new UrlWebViewSource { Url = fileUrl };
                 return;
             }
-#endif
+            #endif
 
             // Other platforms: inline HTML is fine
             hv.Web.Source = new HtmlWebViewSource { Html = doc.Html, BaseUrl = doc.BaseUrl };

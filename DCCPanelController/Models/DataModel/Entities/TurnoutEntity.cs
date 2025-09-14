@@ -6,41 +6,39 @@ using DCCPanelController.Models.DataModel.Helpers;
 using DCCPanelController.Services;
 using DCCPanelController.View.Actions;
 using DCCPanelController.View.Properties.DynamicProperties;
-using Microsoft.Maui.Graphics;
 
 // ReSharper disable once CheckNamespace
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, IInteractiveEntity, ITrackEntity, IActionEntity {
-   
-    public ActionsContext Context => ActionsContext.Turnout;
+    [ObservableProperty] [property: Editable("Button Actions", "", 10, "Button Actions")]
+    private ButtonActions _buttonPanelActions = [];
+
+    [ObservableProperty] [property: Editable("Turnout Name", "Unique name for this Turnout", 0, "General")]
+    private string _id = string.Empty;
 
     [ObservableProperty]
     private TurnoutStateEnum _state = TurnoutStateEnum.Unknown;
 
     private StateChangeSource _stateChangeSource = StateChangeSource.External;
 
-    [ObservableProperty] [property: Editable("Turnout Name", "Unique name for this Turnout", 0, "General")]
-    private string _id = string.Empty;
+    [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Color")]
+    private Color? _trackNotSelectedColor;
 
     [ObservableProperty] [property: Editable("Turnout Address", "Turnout ID on the layout that will be controlled.", 5, "General", EditorKind = EditorKinds.Turnout)]
     private string _turnoutID = string.Empty;
 
-    [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Color")]
-    private Color? _trackNotSelectedColor;
-
-    [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
-    private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
-    
-    [ObservableProperty] [property: Editable("Button Actions", "", 10, "Button Actions")]
-    private ButtonActions _buttonPanelActions = [];
-
     [ObservableProperty] [property: Editable("Turnout Actions", "", 10, "Turnout Actions")]
     private TurnoutActions _turnoutPanelActions = [];
 
+    [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
+    private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;
+
     [JsonConstructor]
     protected TurnoutEntity() { }
+
     protected TurnoutEntity(Panel panel) : base(panel) { }
+
     protected TurnoutEntity(TurnoutEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") {
         ButtonPanelActions = new ButtonActions(entity.ButtonPanelActions);
         TurnoutPanelActions = new TurnoutActions(entity.TurnoutPanelActions);
@@ -51,26 +49,26 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
 
     [JsonIgnore] protected override int RotationFactor => 90;
 
-    public string NextID(Panel? targetPanel = null) {
-        targetPanel ??= Parent;
-        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<TurnoutEntity>(targetPanel), "Turnout");        
-        return nextID;
-    }
-    
+    public ActionsContext Context => ActionsContext.Turnout;
+
     public void CloneActionsInto(IActionEntity entity) {
         entity.ButtonPanelActions = (ButtonActions)ButtonPanelActions.Clone();
         entity.TurnoutPanelActions = (TurnoutActions)TurnoutPanelActions.Clone();
     }
 
-    public override string ToString() {
-        return TurnoutID;
+    public string NextID(Panel? targetPanel = null) {
+        targetPanel ??= Parent;
+        var nextID = EntityHelper.GenerateID(EntityHelper.GetAllEntitiesByType<TurnoutEntity>(targetPanel), "Turnout");
+        return nextID;
     }
+
+    public override string ToString() => TurnoutID;
 
     public void ToggleState() {
         var newState = State switch {
             TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
             TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed
+            _                       => TurnoutStateEnum.Closed,
         };
         SetState(newState, _stateChangeSource);
     }

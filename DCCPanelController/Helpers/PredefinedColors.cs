@@ -1,6 +1,5 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Maui.Core.Extensions;
-using Microsoft.Maui.Graphics;
 
 namespace DCCPanelController.Helpers;
 
@@ -38,23 +37,17 @@ public class ColorOption {
 }
 
 public static class PredefinedColors {
-    private static readonly ReadOnlyCollection<ColorOption> _allColors = new(BuildAllColors());
+    private static readonly ReadOnlyCollection<ColorOption> _allColors        = new(BuildAllColors());
     private static readonly ReadOnlyCollection<ColorOption> _selectableColors = new(BuildSelectableColors());
 
     public static ColorOption None => new() { Name = "None", Color = Colors.White, ContrastColor = Colors.Black };
     public static ColorOption Default => new() { Name = "Black", Color = Colors.Black, ContrastColor = Colors.White };
 
-    public static ColorOption FindColor(Color value) {
-        return _allColors.FirstOrDefault(color => color.Hex == value.ToHex()) ?? Default;
-    }
+    public static ColorOption FindColor(Color value) => _allColors.FirstOrDefault(color => color.Hex == value.ToHex()) ?? Default;
 
-    public static ReadOnlyCollection<ColorOption> AllColors() {
-        return _allColors;
-    }
+    public static ReadOnlyCollection<ColorOption> AllColors() => _allColors;
 
-    public static ReadOnlyCollection<ColorOption> SelectableColors() {
-        return _selectableColors;
-    }
+    public static ReadOnlyCollection<ColorOption> SelectableColors() => _selectableColors;
 
     public static ReadOnlyCollection<ColorOption> BuildSelectableColors() {
         List<ColorOption> colors = new();
@@ -223,7 +216,7 @@ public static class PredefinedColors {
             new() { Name = "White", Color = Colors.White, ContrastColor = Colors.Black },
             new() { Name = "WhiteSmoke", Color = Colors.WhiteSmoke, ContrastColor = Colors.Black },
             new() { Name = "Yellow", Color = Colors.Yellow, ContrastColor = Colors.Black },
-            new() { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black }
+            new() { Name = "YellowGreen", Color = Colors.YellowGreen, ContrastColor = Colors.Black },
         };
 
         return new ReadOnlyCollection<ColorOption>(colors);
