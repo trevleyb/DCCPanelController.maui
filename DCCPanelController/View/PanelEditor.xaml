@@ -59,7 +59,8 @@
 
     <Grid>
         <!-- <ContentPage.Content> -->
-        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" HorizontalOptions="Fill" VerticalOptions="Fill">
+        <Grid x:Name="MainGrid" BackgroundColor="WhiteSmoke" 
+              HorizontalOptions="Fill" VerticalOptions="Fill">
 
             <!-- Initially: 1 column, 3 rows (standard layout) -->
             <Grid.ColumnDefinitions>
@@ -124,18 +125,14 @@
                 </Grid>
             </Grid>
 
-        </Grid>
+            <!-- Loading Overlay -->
+            <Grid IsVisible="{Binding IsProcessing}"
+                  HorizontalOptions="Fill"
+                  VerticalOptions="Fill">
 
-        <!-- Loading Overlay -->
-        <Grid IsVisible="{Binding IsProcessing}"
-              Opacity="0.75"
-              HorizontalOptions="Fill"
-              VerticalOptions="Fill">
+                <ActivityIndicator WidthRequest="100" HeightRequest="100" IsRunning="{Binding IsProcessing}" Color="{StaticResource Primary}"/>
+            </Grid>
 
-            <StackLayout
-                HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
-                <ActivityIndicator IsRunning="{Binding IsProcessing}" Color="{StaticResource Primary}"/>
-            </StackLayout>
         </Grid>
     </Grid>
 </ContentPage>
