@@ -1,3 +1,4 @@
+using DCCPanelController.View.Components;
 using Indiko.Maui.Controls.Markdown;
 using Microsoft.Maui.Controls.Shapes;
 
@@ -128,14 +129,15 @@ public abstract class BaseRenderer {
         var descriptionKey = row?.Field?.Meta?.Description ?? string.Empty;
         var description = string.IsNullOrWhiteSpace(descriptionKey)
             ? null
-            : new MarkdownView {
-                MarkdownText = descriptionKey,
+            : new MarkdownLabel {
+                Text = descriptionKey,
                 Opacity = 0.7,
-                TextFontSize = DescFontSize,
-                TextColor = DescColor,
+                FontSize = DescFontSize,
+                FontColor = DescColor,
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Center,
             };
+
 
         var errorLabel = new Label {
             FontSize = ErrorFontSize,

@@ -3,76 +3,85 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:view="clr-namespace:DCCPanelController.View"
+             xmlns:components="clr-namespace:DCCPanelController.View.Components"
              x:DataType="view:TestPageViewModel"
              BindingContext="TestPageViewModel"
              Title="Test Page"
              x:Class="DCCPanelController.View.TestPage">
 
     <ContentPage.Content>
-        <Grid>
-            <Label Text="Testing"/>
-            <Border WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center"
-                    Margin="5" Padding="5" StrokeThickness="2" Stroke="Black" BackgroundColor="Transparent">
-                <Grid x:Name="TestGrid"
-                      ColumnDefinitions="*,*,*,*,*"
-                      RowDefinitions="*,*,*,*,*">
-                    <Border Grid.Column="0" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="1" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="2" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="3" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="4" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
+        <StackLayout x:Name="TestStack">
 
-                    <Border Grid.Column="0" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="1" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="2" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="3" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="4" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-
-                    <Border Grid.Column="0" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="1" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="2" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="3" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="4" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-
-                    <Border Grid.Column="0" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="1" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="2" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="3" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="4" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-
-                    <Border Grid.Column="0" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="1" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="2" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="3" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-                    <Border Grid.Column="4" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
-                            BackgroundColor="Azure"/>
-
+                <Grid RowDefinitions="auto,*,auto" BackgroundColor="Aqua">
+                        <Label Grid.Row="0" Text="Block here - start"/>
+                        <components:MarkdownLabel Grid.Row="1" Text="This is a line of text that has **BOLD** and *ITALIC* and ~STRIKE~ and `CODE` and # then the [http://sample.org] jumped > over the __dog__"/>
+                        <Label Grid.Row="2" Text="Block here - end"/>
                 </Grid>
-            </Border>
-        </Grid>
+            <Grid>
+                <Label Text="Testing"/>
+                <Border WidthRequest="200" HeightRequest="200" HorizontalOptions="Center" VerticalOptions="Center"
+                        Margin="5" Padding="5" StrokeThickness="2" Stroke="Black" BackgroundColor="Transparent">
+                    <Grid x:Name="TestGrid"
+                          ColumnDefinitions="*,*,*,*,*"
+                          RowDefinitions="*,*,*,*,*">
+                        <Border Grid.Column="0" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="1" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="2" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="3" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="4" Grid.Row="0" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+
+                        <Border Grid.Column="0" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="1" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="2" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="3" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="4" Grid.Row="1" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+
+                        <Border Grid.Column="0" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="1" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="2" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="3" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="4" Grid.Row="2" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+
+                        <Border Grid.Column="0" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="1" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="2" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="3" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="4" Grid.Row="3" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+
+                        <Border Grid.Column="0" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="1" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="2" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="3" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+                        <Border Grid.Column="4" Grid.Row="4" Margin="5" Padding="5" StrokeThickness="2" Stroke="Black"
+                                BackgroundColor="Azure"/>
+
+                    </Grid>
+                </Border>
+            </Grid>
+        </StackLayout>
     </ContentPage.Content>
 </ContentPage>

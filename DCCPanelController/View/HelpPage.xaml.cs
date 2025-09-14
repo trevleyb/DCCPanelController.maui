@@ -28,9 +28,7 @@ public partial class HelpPage : ContentPage {
         await HelpService.Current.InitializeAsync();
         _back.Clear();
         _forward.Clear();
-        await NavigateToAsync(
-            new HelpHistoryEntry(string.IsNullOrWhiteSpace(TopicId) ? HelpService.DefaultTopicId : TopicId!),
-            false);
+        await NavigateToAsync(new HelpHistoryEntry(string.IsNullOrWhiteSpace(TopicId) ? HelpService.DefaultTopicId : TopicId!), false);
     }
 
 // Link clicks inside the viewer

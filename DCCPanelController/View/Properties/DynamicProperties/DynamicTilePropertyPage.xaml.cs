@@ -14,10 +14,11 @@ namespace DCCPanelController.View.Properties.DynamicProperties;
 public partial class DynamicTilePropertyPage {
     public enum FormState { Normal, Invalid, NoSelectedTiles, NoCommonProperties }
 
-    private readonly             IUndoService _undo                = new DefaultUndoService();
-    [ObservableProperty] private string       _errorMessages       = "";
-    [ObservableProperty] private bool         _hasCommonProperties = true;
-    [ObservableProperty] private double       _height;
+    private readonly IUndoService _undo = new DefaultUndoService();
+
+    [ObservableProperty] private string _errorMessages       = "";
+    [ObservableProperty] private bool   _hasCommonProperties = true;
+    [ObservableProperty] private double _height;
 
     [NotifyPropertyChangedFor(nameof(ShowInformation))]
     [ObservableProperty] private string? _information;

@@ -2,6 +2,9 @@ using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.Tiles;
 using DCCPanelController.View.ControlPanel;
+using Markdig;
+using Microsoft.Maui.Layouts;
+using Svg.Model.Drawables.Elements;
 
 namespace DCCPanelController.View;
 
@@ -35,6 +38,7 @@ public partial class TestPage : ContentPage {
         TestGrid.Children.Add(tile);
         TestGrid.SetColumn(tile, tile.Entity.Col);
         TestGrid.SetRow(tile, tile.Entity.Row);
+
     }
 
     private void GridGesturesOnTileDragCancelled(object? sender, TileDragEventArgs e) {

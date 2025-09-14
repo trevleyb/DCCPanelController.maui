@@ -9,10 +9,10 @@ namespace DCCPanelController.Services;
 
 public sealed class HelpService {
     // You can tweak these:
-    public const            string            DefaultTopicId      = "getting-started";
-    public const            string            UndefinedTopicTitle = "Help Topic Not Found";
+    public const string DefaultTopicId      = "getting-started";
+    public const string UndefinedTopicTitle = "Help Topic Not Found";
+    
     private static readonly Lazy<HelpService> _current            = new(() => new HelpService());
-
     public static readonly string PackedRoot    = "help/en"; // localize later
     public static readonly string InstalledRoot = Path.Combine(FileSystem.AppDataDirectory, PackedRoot);
 
