@@ -14,7 +14,8 @@ public class RightTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntit
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.RightTurnoutTrack;
     public override string EntityName => "RTurnout";
     public override string EntityDescription => "Right Turnout/Switch";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "The *Right turnout* is a switch or turnout that shows the track as **straight** *(normal)* or **diverging** *(reversed)*. This is an interactive track that allows you to control other buttons or tracks based on the state of the turnout." ;
 
     public override Entity Clone() => new RightTurnoutEntity(this);
 }

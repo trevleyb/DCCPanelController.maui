@@ -21,7 +21,8 @@ public partial class CornerContinuationEntity : TrackEntity, ITrackEntity {
 
     public override string EntityName => "Corner...";
     public override string EntityDescription => "Corner Track with Indicator";
-    public override string EntityInformation => "";
-
+    public override string EntityInformation =>
+        "The **corner indicator** is a track that turns 45 degrees (2 to turn 90) but includes an end-indicator used to represent a continuation of the track to another page. *(future support to allow clicking to switch panels)*. You can use either an arrow indicator or a double-line indicator.";
+    
     public override Entity Clone() => new CornerContinuationEntity(this);
 }

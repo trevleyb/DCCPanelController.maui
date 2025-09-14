@@ -15,7 +15,8 @@ public class StraightEntity : TrackEntity, ITrackEntity {
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.StraightTrack;
     public override string EntityName => "Track";
     public override string EntityDescription => "Straight Track";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "The **straight** is a straight piece of track .";
 
     [JsonIgnore] protected override int RotationFactor => 45;
 

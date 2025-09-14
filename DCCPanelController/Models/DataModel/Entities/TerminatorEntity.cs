@@ -15,7 +15,8 @@ public class TerminatorEntity : TrackEntity, ITrackEntity {
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.TerminatorTrack;
     public override string EntityName => "Terminator";
     public override string EntityDescription => "Terminator or Buffer-Stop Track";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "This is a normal **track** that shows a terminator or buffer-stop block at the end of the track.";
 
     public override Entity Clone() => new TerminatorEntity(this);
 }

@@ -14,7 +14,8 @@ public class LeftTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity
     [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.LeftTurnoutTrack;
     public override string EntityName => "LTurnout";
     public override string EntityDescription => "Left Turnout/Switch";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "The *Left turnout* is a switch or turnout that shows the track as **straight** *(normal)* or **diverging** *(reversed)*. This is an interactive track that allows you to control other buttons or tracks based on the state of the turnout." ;
 
     public override Entity Clone() => new LeftTurnoutEntity(this);
 }

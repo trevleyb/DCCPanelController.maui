@@ -21,7 +21,8 @@ public partial class PlatformEntity : TrackEntity, ITrackEntity {
     [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "Platform";
     public override string EntityDescription => "Platform Track";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "This is a normal **track** that shows on one side a larger block to indicate a station platform.";
 
     public override Entity Clone() => new PlatformEntity(this);
 }

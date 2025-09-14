@@ -27,7 +27,8 @@ public partial class CircleEntity : DrawingEntity, IDrawingEntity {
 
     public override string EntityName => "Circle";
     public override string EntityDescription => "Adjustable Circle";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "This is a **drawable** circle which allows you to draw ovals and circles with a border and internal color. You can set the *opacity* and show it underneath other tracks and objects.";
 
     public override Entity Clone() => new CircleEntity(this);
 }

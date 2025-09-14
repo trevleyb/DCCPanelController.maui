@@ -11,9 +11,6 @@ using DCCPanelController.View.Properties.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, IInteractiveEntity, ITrackEntity, IActionEntity {
-    [ObservableProperty] [property: Editable("Button Actions", "", 10, "Button Actions")]
-    private ButtonActions _buttonPanelActions = [];
-
     [ObservableProperty] [property: Editable("Turnout Name", "Unique name for this Turnout", 0, "General")]
     private string _id = string.Empty;
 
@@ -28,8 +25,11 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     [ObservableProperty] [property: Editable("Turnout Address", "Turnout ID on the layout that will be controlled.", 5, "General", EditorKind = EditorKinds.Turnout)]
     private string _turnoutID = string.Empty;
 
-    [ObservableProperty] [property: Editable("Turnout Actions", "", 10, "Turnout Actions")]
+    [ObservableProperty] [property: Editable("Turnout Actions", "Sets Turnouts based on the state of this turnout", 10, "Turnout Actions")]
     private TurnoutActions _turnoutPanelActions = [];
+
+    [ObservableProperty] [property: Editable("Button Actions", "Sets Buttons based on the state of this Turnout", 10, "Button Actions")]
+    private ButtonActions _buttonPanelActions = [];
 
     [ObservableProperty] [property: Editable("Turnout Style", "Standard shows the branching route. ", 4, "Track")]
     private TurnoutStyleEnum _turnoutStyle = TurnoutStyleEnum.Standard;

@@ -37,7 +37,8 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
 
     public override string EntityName => "Text";
     public override string EntityDescription => "Text Label";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "The **text** is a label that can be used to display text on the layout." ;
 
     public override void RotateLeft() {
         base.RotateLeft();

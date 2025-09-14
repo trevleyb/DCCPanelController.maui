@@ -14,7 +14,7 @@ public class PointsEntity : Entity, IDrawingEntity {
     [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "Points";
     public override string EntityDescription => "Connection Points";
-    public override string EntityInformation => "";
+    public override string EntityInformation => "A points indicator. Not currently used.";
 
     public override Entity Clone() => new PointsEntity(this);
 }

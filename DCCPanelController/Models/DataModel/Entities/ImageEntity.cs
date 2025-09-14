@@ -32,7 +32,8 @@ public partial class ImageEntity : DrawingEntity, IDrawingEntity {
 
     public override string EntityName => "Image";
     public override string EntityDescription => "Selectable Image";
-    public override string EntityInformation => "";
+    public override string EntityInformation => 
+        "This is an **image** which can be selected from either a jpg file on the local device or from your photos. The system makes a copy of the image and stores it in the Panel definition.";
 
     public override Entity Clone() => new ImageEntity(this);
 }

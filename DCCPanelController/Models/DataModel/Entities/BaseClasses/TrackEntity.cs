@@ -10,13 +10,13 @@ public abstract partial class TrackEntity : Entity {
     [ObservableProperty] [property: Editable("Occupancy Block", "Indicates what block this track is in for showing Occupancy.", 8, "Track")]
     private string? _occupancyBlock;
 
-    [ObservableProperty] [property: Editable("Track Style", "Dashed normally used for hidden track.", 4, "Track")]
+    [ObservableProperty] [property: Editable("Track Style", "Use **Dashed** to indicate hidden track.", 4, "Track")]
     private TrackAttributeEnum _trackAttribute = TrackAttributeEnum.Normal;
 
-    [ObservableProperty] [property: Editable("Border Color", "", 5, "Color")]
+    [ObservableProperty] [property: Editable("Border Color", "Mainline track as a border. Branchline does not.", 5, "Color")]
     private Color? _trackBorderColor;
 
-    [ObservableProperty] [property: Editable("Track Color", "", 5, "Color")]
+    [ObservableProperty] [property: Editable("Track Color", "Sets the color for this block of track.", 5, "Color")]
     private Color? _trackColor;
 
     [ObservableProperty]

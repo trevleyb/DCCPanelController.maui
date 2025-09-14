@@ -50,7 +50,8 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
 
     public override string EntityName => "Label";
     public override string EntityDescription => "Circle Label";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "A **circle label** is a special circle object that supports an internal text block. This is often used to indicate turnout numbers or references.";
 
     public override Entity Clone() => new CircleLabelEntity(this);
 }

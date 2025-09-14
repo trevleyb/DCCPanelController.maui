@@ -21,7 +21,8 @@ public partial class StraightContinuationEntity : TrackEntity, ITrackEntity {
 
     public override string EntityName => "Straight...";
     public override string EntityDescription => "Straight Track with Indicator";
-    public override string EntityInformation => "";
+    public override string EntityInformation =>
+        "The **straight indicator** is a straight piece of track but includes an end-indicator used to represent a continuation of the track to another page. *(future support to allow clicking to switch panels)*. You can use either an arrow indicator or a double-line indicator.";
 
     public override Entity Clone() => new StraightContinuationEntity(this);
 }

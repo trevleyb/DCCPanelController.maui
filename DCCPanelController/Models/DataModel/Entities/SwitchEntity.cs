@@ -32,8 +32,7 @@ public partial class SwitchEntity : ButtonEntity, IEntityID, IInteractiveEntity 
     [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "Switch";
     public override string EntityDescription => "On/Off Switch";
-
-    public override string EntityInformation => "This button turns on or off a __switch__. ";
+    public override string EntityInformation => "This button turns on or off a __switch__ normally controlling a light on the layout. ";
 
     public override Entity Clone() => new SwitchEntity(this);
 

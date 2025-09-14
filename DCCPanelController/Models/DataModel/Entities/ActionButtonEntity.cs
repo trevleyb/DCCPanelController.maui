@@ -10,8 +10,6 @@ using DCCPanelController.View.Properties.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IInteractiveEntity, IActionEntity {
-    [ObservableProperty] [property: Editable("Button Actions", Order = 10, Group = "Button Actions", EditorKind = EditorKinds.ButtonActions)]
-    private ButtonActions _buttonPanelActions = [];
 
     [ObservableProperty] [property: Editable("Button Size", Order = 2)]
     private ButtonSizeEnum _buttonSize = ButtonSizeEnum.Normal;
@@ -22,7 +20,10 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
-    [ObservableProperty] [property: Editable("Turnout Actions", Order = 10, Group = "Turnout Actions", EditorKind = EditorKinds.TurnoutActions)]
+    [ObservableProperty] [property: Editable("Button Actions", "Sets Buttons based on the state of this Button" , Order = 10, Group = "Button Actions", EditorKind = EditorKinds.ButtonActions)]
+    private ButtonActions _buttonPanelActions = [];
+
+    [ObservableProperty] [property: Editable("Turnout Actions", "Sets Turnouts based on the state of this Button", Order = 10, Group = "Turnout Actions", EditorKind = EditorKinds.TurnoutActions)]
     private TurnoutActions _turnoutPanelActions = [];
 
     [JsonConstructor]
