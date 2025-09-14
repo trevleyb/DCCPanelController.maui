@@ -151,8 +151,8 @@ public partial class DynamicTilePropertyPage {
     private static string GetTitle(List<Entity> selectedEntities) {
         var title = selectedEntities.Count switch {
             0 => "Unknown Entity",
-            1 => $"{selectedEntities[0].EntityDescription} properties.",
-            _ => AllEntitiesAreSame(selectedEntities) ? $"Multiple {selectedEntities[0].EntityName} ({selectedEntities[0].EntityDescription}) properties." : "Multiple Selected Entities",
+            1 => $"{selectedEntities[0].EntityDescription}.",
+            _ => AllEntitiesAreSame(selectedEntities) ? $"Multiple {selectedEntities[0].EntityDescription} properties." : "Multiple Selected Entities",
         };
         return title;
     }

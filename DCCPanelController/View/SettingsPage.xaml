@@ -92,7 +92,7 @@
                                                VerticalOptions="Center"/>
                                         <components:ColorPickerButton
                                             Grid.Column="1"
-                                            AllowsNoColor="false"
+                                            AllowsNoColor="true"
                                             HeightRequest="35"
                                             BorderColor="{StaticResource Primary}"
                                             BorderWidth="1"
@@ -109,7 +109,7 @@
                                                VerticalOptions="Center"/>
                                         <components:ColorPickerButton
                                             Grid.Column="1"
-                                            AllowsNoColor="false"
+                                            AllowsNoColor="true"
                                             HeightRequest="35"
                                             BorderColor="{StaticResource Primary}"
                                             BorderWidth="1"
