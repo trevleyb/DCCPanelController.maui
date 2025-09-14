@@ -44,19 +44,23 @@ public static class SvgImages {
         AddImage("Compass", "Track_Compass");
         AddImage("Points", "Track_Points");
 
-        AddImage("Straight", "Track_Straight", "Track_Angle");
-        AddImage("Platform", "Track_Straight_Platform", "Track_Angle_Platform");
-        AddImage("Tunnel", "Track_Straight_Tunnel", "Track_Angle_Tunnel");
-        AddImage("Bridge", "Track_Straight_Bridge", "Track_Angle_Bridge");
         AddImage("Cross", "Track_Straight_Cross", "Track_Angle_Cross");
         AddImage("Corner", "Track_Corner_Left", "Track_Corner_Right");
+
+        AddImage("Straight", "Track_Straight", "Track_Angle");
+        AddImage("Platform", "Track_Straight_Platform", "Track_Angle_Platform");
+        AddImage("Bridge", "Track_Straight_Bridge", "Track_Angle_Bridge");
+        AddImage("Tunnel", "Track_Straight_Tunnel", "Track_Angle_Tunnel");
+        AddImage("Lines", "Track_Straight_Lines", "Track_Angle_Lines");
+        AddImage("Arrow", "Track_Straight_Arrow", "Track_Angle_Arrow");
+        AddImage("Rounded", "Track_Straight_Rounded", "Track_Angle_Rounded");
         AddImage("Terminator", "Track_Straight_Terminator", "Track_Angle_Terminator");
 
-        AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "Track_Angle_Continuation_Arrow");
-        AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "Track_Angle_Continuation_Lines");
-
-        AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "Track_Corner_Right_Continuation_Arrow");
-        AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "Track_Corner_Right_Continuation_Lines");
+        // AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "Track_Angle_Continuation_Arrow");
+        // AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "Track_Angle_Continuation_Lines");
+        //
+        // AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "Track_Corner_Right_Continuation_Arrow");
+        // AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "Track_Corner_Right_Continuation_Lines");
 
         AddImage("LeftTurnoutUnknown", "Track_Turnout_Left");
         AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight");
