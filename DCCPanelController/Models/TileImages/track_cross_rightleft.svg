@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip_path_1">
+            <rect width="48" height="48" />
+        </clipPath>
+        <clipPath id="clip_path_2">
+            <rect width="48" height="48" />
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip_path_1)">
+        <g transform="matrix(1 0 0 -1 -1 46)">
+            <g clip-path="url(#clip_path_2)">
+                <g transform="translate(-0 0)">
+                    <g>
+                        <g>
+                            <g>
+                                <g transform="matrix(0 1 -1 0 48 0)">
+                                    <g>
+                                        <path id="Border" d="M0 40.0001C0 40.0001 40 0 40 0L41.0525 0C41.0525 0 43 0 43 0C43 0 3.8147e-06 43.0001 3.8147e-06 43.0001C3.8147e-06 43.0001 0 40.0001 0 40.0001Z" fill="#000000" fill-rule="evenodd" />
+                                        <path id="Border" d="M0 43C0 43 3 43 3 43C3 43 43 3 43 3C43 3 43 0 43 0C43 0 0 43 0 43Z" fill="#000000" fill-rule="evenodd" transform="translate(5 5)" />
+                                        <path id="Track" d="M2.5 45.5C2.5 45.5 0 43 0 43C0 43 43 0 43 0C43 0 45.5 2.5 45.5 2.5C45.5 2.5 48 5.00001 48 5.00001C48 5.00001 5 48 5 48C5 48 2.5 45.5 2.5 45.5Z" fill="#BDBDBD" fill-rule="evenodd" />
+                                        <line id="Dashline" x1="0" y1="40" x2="40" y2="0" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 4)" />
+                                    </g>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+        <g transform="matrix(1 0 0 -1 7 27.001)">
+            <g>
+                <path id="Border" d="M0 0L15 0L15 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd" transform="translate(19 0)" />
+                <path id="Border" d="M0 0L15 0L15 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd" transform="translate(0 10)" />
+                <path id="Border" d="M0 0L6 0L6 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd" transform="translate(28 10)" />
+                <path id="Border" d="M0 0L6 0L6 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd" />
+                <path id="Track" d="M0 0L34 0L34 8L0 8L0 0Z" fill="#BDBDBD" fill-rule="evenodd" transform="translate(0 2)" />
+                <line id="Dashline" x1="0" y1="1" x2="26" y2="1" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 5)" />
+            </g>
+        </g>
+    </g>
+</svg>

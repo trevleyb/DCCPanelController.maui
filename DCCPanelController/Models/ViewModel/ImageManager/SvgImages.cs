@@ -44,7 +44,8 @@ public static class SvgImages {
         AddImage("Compass", "Track_Compass");
         AddImage("Points", "Track_Points");
 
-        AddImage("Cross", "Track_Straight_Cross", "Track_Angle_Cross");
+        AddImage("Cross", "Track_Cross_Straight", "Track_Cross_Angle");
+        AddImage("Angle", "Track_Cross_LeftRight", "Track_Cross_RightLeft");
         AddImage("Corner", "Track_Corner_Left", "Track_Corner_Right");
 
         AddImage("Straight", "Track_Straight", "Track_Angle");
