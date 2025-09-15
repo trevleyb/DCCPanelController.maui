@@ -136,73 +136,59 @@ public class TrackPathTracer {
         return validDirections;
     }
 
+// TrackPathTracer.cs — replace this method
     private (int exitDirection, string stopReason)? FindExitDirection(TrackEntity track,
         EntityConnections connections,
         int entryDirection) {
-        // Get the current connections for this track's rotation
-        var currentConnections = connections.GetConnections(track.Rotation);
+        var current = connections.GetConnections(track.Rotation);
+        var entryType = current[entryDirection];
 
-        // Get the entry connection type
-        var entryConnectionType = currentConnections[entryDirection];
+        if (entryType == ConnectionType.None) return null;
 
-        // Verify we can actually enter from this direction
-        if (entryConnectionType == ConnectionType.None) return null;
+        // Turnouts handled separately
+        if (track is TurnoutEntity turnout)
+            return HandleTurnoutExit(turnout, current, entryDirection);
 
-        // Special case: If we are STARTING from a Terminator or Connector connection point,
-        // this means we're beginning our trace from the endpoint of the track.
-        // We need to find the paired connection to continue.
-        if (entryConnectionType == ConnectionType.Terminator) {
-            // Find the Straight connection that pairs with this Terminator
-            for (var i = 0; i < EntityConnections.MaxDirections; i++) {
-                if (i == entryDirection) continue;
-                var connectionType = currentConnections[i];
-                if (connectionType == ConnectionType.Straight) {
-                    return(i, string.Empty); // Continue the path through the S connection
-                }
-            }
+        // Starting at a Terminator or Connector: allow leaving via S (start-of-path convenience)
+        if (entryType == ConnectionType.Terminator || entryType == ConnectionType.Connector) {
+            for (int i = 0; i < EntityConnections.MaxDirections; i++)
+                if (i != entryDirection && current[i] == ConnectionType.Straight)
+                    return(i, string.Empty);
             return null;
         }
 
-        if (entryConnectionType == ConnectionType.Connector) {
-            // Find the Straight connection that pairs with this Connector
-            for (var i = 0; i < EntityConnections.MaxDirections; i++) {
+        // For normal tiles: S and P are mutually exclusive channels.
+        if (entryType == ConnectionType.Straight || entryType == ConnectionType.Crossing) {
+            int? endDir = null;
+            string? endReason = null;
+            int? sameTypeDir = null;
+
+            for (int i = 0; i < EntityConnections.MaxDirections; i++) {
                 if (i == entryDirection) continue;
-                var connectionType = currentConnections[i];
-                if (connectionType == ConnectionType.Straight) {
-                    return(i, string.Empty); // Continue the path through the S connection
+                var t = current[i];
+
+                if (t == ConnectionType.Terminator) {
+                    endDir = i;
+                    endReason = "Path terminated at terminator end";
+                    break;
+                }
+                if (t == ConnectionType.Connector) {
+                    endDir = i;
+                    endReason = "Path terminated at connector end";
+                    break;
+                }
+                if (t == entryType && sameTypeDir is null) {
+                    sameTypeDir = i;
                 }
             }
+
+            if (endDir is int eidx) return(eidx, endReason!);
+            if (sameTypeDir is int sidx) return(sidx, string.Empty);
             return null;
         }
 
-        // Handle turnouts specially
-        // --------------------------------------------------------------
-        if (track is TurnoutEntity turnout) {
-            return HandleTurnoutExit(turnout, currentConnections, entryDirection);
-        }
-
-        // Look for exit connections - check if we're connecting to a Terminator or Connector endpoint
-        // --------------------------------------------------------------
-        for (var i = 0; i < EntityConnections.MaxDirections; i++) {
-            if (i == entryDirection) continue; // Don't go back the same way
-
-            var connectionType = currentConnections[i];
-
-            // Special handling for Terminators and Connectors - they are endpoints
-            if (connectionType == ConnectionType.Terminator) {
-                return(i, "Path terminated at terminator end");
-            }
-
-            if (connectionType == ConnectionType.Connector) {
-                return(i, "Path terminated at connector end");
-            }
-
-            // Check if this connection type can pair with our entry (normal flow)
-            if (CanConnectionsPair(entryConnectionType, connectionType)) {
-                return(i, string.Empty); // Continue the path
-            }
-        }
-        return null; // No valid exit found
+        // Non-turnout tiles should not expose D/X internally; bail if encountered
+        return null;
     }
 
     private bool CanConnectionsPair(ConnectionType entryType, ConnectionType exitType) =>
@@ -211,8 +197,8 @@ public class TrackPathTracer {
         // This determines if entry and exit points on the SAME track can connect
         (entryType, exitType) switch {
             // Straight connections - can pair with anything except Terminators and Connectors
-            (ConnectionType.Straight, ConnectionType.Straight) => true,
-            (ConnectionType.Crossing, ConnectionType.Crossing) => true,
+            (ConnectionType.Straight, ConnectionType.Straight)  => true,
+            (ConnectionType.Crossing, ConnectionType.Crossing)  => true,
             (ConnectionType.Straight, ConnectionType.Closed)    => true,
             (ConnectionType.Straight, ConnectionType.Diverging) => true,
 
@@ -241,58 +227,44 @@ public class TrackPathTracer {
             _ => false,
         };
 
+// TrackPathTracer.cs — replace this method
     private (int exitDirection, string stopReason)? HandleTurnoutExit(TurnoutEntity turnout,
         ConnectionType[] connections,
         int entryDirection) {
-        var entryConnectionType = connections[entryDirection];
+        var entryType = connections[entryDirection];
 
         switch (turnout.State) {
             case TurnoutStateEnum.Unknown:
                 return(entryDirection, "Turnout state unknown");
 
             case TurnoutStateEnum.Closed:
-                // Handle both directions: S->X and X->S
-                if (entryConnectionType == ConnectionType.Straight || entryConnectionType == ConnectionType.Crossing) {
-                    // Entering from S, exit via X
-                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
-                        if (i == entryDirection) continue;
-                        if (connections[i] == ConnectionType.Closed) {
+                // S -> X, X -> S
+                if (entryType == ConnectionType.Straight) {
+                    for (int i = 0; i < EntityConnections.MaxDirections; i++)
+                        if (i != entryDirection && connections[i] == ConnectionType.Closed)
                             return(i, string.Empty);
-                        }
-                    }
-                } else if (entryConnectionType == ConnectionType.Closed) {
-                    // Entering from X, exit via S
-                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
-                        if (i == entryDirection) continue;
-                        if (connections[i] == ConnectionType.Straight) {
+                } else if (entryType == ConnectionType.Closed) {
+                    for (int i = 0; i < EntityConnections.MaxDirections; i++)
+                        if (i != entryDirection && connections[i] == ConnectionType.Straight)
                             return(i, string.Empty);
-                        }
-                    }
                 }
             break;
 
             case TurnoutStateEnum.Thrown:
-                // Handle both directions: S->D and D->S
-                if (entryConnectionType == ConnectionType.Straight || entryConnectionType == ConnectionType.Crossing) {
-                    // Entering from S, exit via D
-                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
-                        if (i == entryDirection) continue;
-                        if (connections[i] == ConnectionType.Diverging) {
+                // S -> D, D -> S
+                if (entryType == ConnectionType.Straight) {
+                    for (int i = 0; i < EntityConnections.MaxDirections; i++)
+                        if (i != entryDirection && connections[i] == ConnectionType.Diverging)
                             return(i, string.Empty);
-                        }
-                    }
-                } else if (entryConnectionType == ConnectionType.Diverging) {
-                    // Entering from D, exit via S
-                    for (var i = 0; i < EntityConnections.MaxDirections; i++) {
-                        if (i == entryDirection) continue;
-                        if (connections[i] == ConnectionType.Straight) {
+                } else if (entryType == ConnectionType.Diverging) {
+                    for (int i = 0; i < EntityConnections.MaxDirections; i++)
+                        if (i != entryDirection && connections[i] == ConnectionType.Straight)
                             return(i, string.Empty);
-                        }
-                    }
                 }
             break;
         }
 
+        // Crossing (P) doesn't participate in a turnout; no valid exit in that case
         return null;
     }
 
@@ -331,56 +303,53 @@ public class TrackPathTracer {
         TrackEntity nextTrack,
         ConnectionType currentExitType,
         ConnectionType nextEntryType) {
+        // Hard stops on the *next* tile's entry
         switch (nextEntryType) {
-            case ConnectionType.None:
-                return new ConnectionValidationResult(false, "No connection available");
-
-            case ConnectionType.Terminator:
-                return new ConnectionValidationResult(false, "Path terminated at terminator");
-
-            case ConnectionType.Connector:
-                return new ConnectionValidationResult(false, "Path terminated at connector");
+            case ConnectionType.None:       return new(false, "No connection available");
+            case ConnectionType.Terminator: return new(false, "Path terminated at terminator");
+            case ConnectionType.Connector:  return new(false, "Path terminated at connector");
         }
 
-        // Check basic pairing rules
-        var result = (currentExitType, nextEntryType) switch {
-            // Straight to Straight - always valid and continues
-            (ConnectionType.Straight, ConnectionType.Straight) => new ConnectionValidationResult(true),
-            (ConnectionType.Crossing, ConnectionType.Crossing) => new ConnectionValidationResult(true),
+        // --- Inter-tile standard joins ---
+        // S <-> S
+        if (currentExitType == ConnectionType.Straight && nextEntryType == ConnectionType.Straight)
+            return new(true);
 
-            // Straight to Diverging - only valid if next track is turnout in thrown state
-            (ConnectionType.Straight, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
-            (ConnectionType.Crossing, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
-            
-            // Straight to Closed - only valid if next track is turnout in closed state  
-            (ConnectionType.Straight, ConnectionType.Closed) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
-            (ConnectionType.Crossing, ConnectionType.Closed) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
+        // P <-> P
+        if (currentExitType == ConnectionType.Crossing && nextEntryType == ConnectionType.Crossing)
+            return new(true);
 
-            // Closed connections
-            (ConnectionType.Closed, ConnectionType.Straight)  => new ConnectionValidationResult(true),
-            (ConnectionType.Closed, ConnectionType.Crossing)  => new ConnectionValidationResult(true),
-            (ConnectionType.Closed, ConnectionType.Closed)    => new ConnectionValidationResult(true),
-            (ConnectionType.Closed, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
+        // NEW: permit lane change ACROSS tiles
+        if (currentExitType == ConnectionType.Straight && nextEntryType == ConnectionType.Crossing)
+            return new(true);
+        if (currentExitType == ConnectionType.Crossing && nextEntryType == ConnectionType.Straight)
+            return new(true);
 
-            // Diverging connections  
-            (ConnectionType.Diverging, ConnectionType.Straight)  => new ConnectionValidationResult(true),
-            (ConnectionType.Diverging, ConnectionType.Crossing)  => new ConnectionValidationResult(true),
-            (ConnectionType.Diverging, ConnectionType.Diverging) => new ConnectionValidationResult(true),
-            (ConnectionType.Diverging, ConnectionType.Closed)    => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
+        // --- Entering a turnout from S or P ---
+        if ((currentExitType == ConnectionType.Straight || currentExitType == ConnectionType.Crossing)
+         && nextEntryType == ConnectionType.Diverging)
+            return ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown);
 
-            // From Terminator or Connector - these should not happen since they are endpoints
-            // But if somehow we get here, allow connections outward
-            (ConnectionType.Terminator, ConnectionType.Straight)  => new ConnectionValidationResult(true),
-            (ConnectionType.Terminator, ConnectionType.Closed)    => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
-            (ConnectionType.Terminator, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
+        if ((currentExitType == ConnectionType.Straight || currentExitType == ConnectionType.Crossing)
+         && nextEntryType == ConnectionType.Closed)
+            return ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed);
 
-            (ConnectionType.Connector, ConnectionType.Straight)  => new ConnectionValidationResult(true),
-            (ConnectionType.Connector, ConnectionType.Closed)    => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
-            (ConnectionType.Connector, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
+        // --- Leaving a turnout toward non-turnout: D|X -> S or P ---
+        if ((currentExitType == ConnectionType.Diverging || currentExitType == ConnectionType.Closed)
+         && (nextEntryType == ConnectionType.Straight || nextEntryType == ConnectionType.Crossing))
+            return new(true);
 
-            _ => new ConnectionValidationResult(false, $"Invalid connection: {currentExitType} to {nextEntryType}"),
-        };
-        return result;
+        // --- Turnout-to-turnout joins on branches (state must match) ---
+        if (currentExitType == ConnectionType.Diverging && nextEntryType == ConnectionType.Diverging)
+            return ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown);
+        if (currentExitType == ConnectionType.Closed && nextEntryType == ConnectionType.Closed)
+            return ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed);
+        if (currentExitType == ConnectionType.Diverging && nextEntryType == ConnectionType.Closed)
+            return ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed);
+        if (currentExitType == ConnectionType.Closed && nextEntryType == ConnectionType.Diverging)
+            return ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown);
+
+        return new(false, $"Invalid connection: {currentExitType} to {nextEntryType}");
     }
 
     private ConnectionValidationResult ValidateTurnoutConnection(TrackEntity track, TurnoutStateEnum requiredState) {

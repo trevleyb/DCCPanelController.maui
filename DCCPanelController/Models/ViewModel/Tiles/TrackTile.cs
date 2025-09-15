@@ -43,6 +43,8 @@ public abstract class TrackTile : Tile, ITileTrack {
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(
         string trackName, int trackRotation, float scale, SvgStyle? addStyle = null)
     {
+        Console.WriteLine($"Creating track tile {trackName} {trackRotation} {EntityConnections.ConvertDirectionsToString(((TrackEntity)Entity).GetCurrentConnections)}");
+        
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
         if (addStyle is { }) style.AddExisting(addStyle);

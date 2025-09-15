@@ -136,7 +136,7 @@ public class EntityConnections {
         _ => (0, 0),
     };
 
-    public string ConvertDirectionsToString(ConnectionType[] connections) {
+    public static string ConvertDirectionsToString(ConnectionType[] connections) {
         var result = string.Empty;
         for (var i = 0; i < MaxDirections; i++) {
             result += connections[i] switch {
@@ -161,7 +161,7 @@ public class EntityConnections {
         public static EntityConnections LeftTurnoutTrack => new("*DX***S*");
         public static EntityConnections RightTurnoutTrack => new("**XD**S*");
         public static EntityConnections LeftAngleTurnoutTrack => new("*DX***S*");
-        public static EntityConnections RightAngleTurnoutTrack => new("SD**X***");
+        public static EntityConnections RightAngleTurnoutTrack => new("XD**S***");
         public static EntityConnections CrossingTrack => new("S*P*S*P*");
         public static EntityConnections AngleCrossingTrack1 => new("**SP**SP");
         public static EntityConnections AngleCrossingTrack2 => new("SP**SP**");
