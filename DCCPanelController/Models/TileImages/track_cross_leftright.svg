@@ -4,13 +4,10 @@
         <clipPath id="clip_path_1">
             <rect width="48" height="48" />
         </clipPath>
-        <clipPath id="clip_path_2">
-            <rect width="48" height="48" />
-        </clipPath>
     </defs>
-    <g clip-path="url(#clip_path_1)">
-        <g transform="translate(-1 -1)">
-            <g clip-path="url(#clip_path_2)">
+    <g>
+        <g>
+            <g clip-path="url(#clip_path_1)">
                 <g transform="translate(-0 0)">
                     <g>
                         <g>
