@@ -57,10 +57,11 @@ public class TileSelectorPaletteCache {
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Platform},
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Rounded},
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Tunnel},
-                new CornerEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new LeftTurnoutEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new RightTurnoutEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.MainLine },
+                new AngleCrossingEntity(panel) { TrackType = TrackTypeEnum.MainLine },
+                new CornerEntity(panel) { TrackType = TrackTypeEnum.MainLine },
             ]);
 
             Add("Branch", [
@@ -73,10 +74,11 @@ public class TileSelectorPaletteCache {
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Rounded},
                 new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Tunnel},
 
-                new CornerEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new LeftTurnoutEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new RightTurnoutEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
+                new AngleCrossingEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
+                new CornerEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
             ]);
 
             Add("Shapes", [

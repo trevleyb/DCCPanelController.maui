@@ -12,7 +12,7 @@ public class LeftTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntity
     public LeftTurnoutEntity(LeftTurnoutEntity entity) : base(entity) { }
     
     [JsonIgnore] public override EntityConnections Connections =>
-        Rotation % 90 == 0 ? EntityConnections.TrackPatterns.LeftTurnoutTrack : EntityConnections.TrackPatterns.AngleTurnoutTrack;
+        Rotation % 90 == 0 ? EntityConnections.TrackPatterns.LeftTurnoutTrack : EntityConnections.TrackPatterns.LeftAngleTurnoutTrack;
 
     public override string EntityName => "LTurnout";
     public override string EntityDescription => "Left Turnout/Switch";
