@@ -47,7 +47,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     [JsonIgnore]
     public Turnout? Turnout => Parent?.Turnout(TurnoutID);
 
-    [JsonIgnore] protected override int RotationFactor => 90;
+    [JsonIgnore] protected override int RotationFactor => 45;
 
     public ActionsContext Context => ActionsContext.Turnout;
 

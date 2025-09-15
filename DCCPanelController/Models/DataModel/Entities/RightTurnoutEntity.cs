@@ -11,7 +11,9 @@ public class RightTurnoutEntity : TurnoutEntity, ITrackEntity, IInteractiveEntit
     public RightTurnoutEntity(Panel panel) : base(panel) { }
     public RightTurnoutEntity(RightTurnoutEntity entity) : base(entity) { }
 
-    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.RightTurnoutTrack;
+    [JsonIgnore] public override EntityConnections Connections => 
+        Rotation % 90 == 0 ? EntityConnections.TrackPatterns.RightTurnoutTrack : EntityConnections.TrackPatterns.AngleTurnoutTrack;
+
     public override string EntityName => "RTurnout";
     public override string EntityDescription => "Right Turnout/Switch";
     public override string EntityInformation =>

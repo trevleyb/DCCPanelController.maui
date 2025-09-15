@@ -3,7 +3,7 @@
     <g>
         <g transform="translate(7 18)">
             <g>
-                <path id="Platform" d="M0 0L34 0L34 9L0 9L0 0Z" fill="#000000" fill-rule="evenodd"
+                <path id="Terminator" d="M0 0L34 0L34 9L0 9L0 0Z" fill="#000000" fill-rule="evenodd"
                       transform="translate(0 14)"/>
                 <path id="Border" d="M0 0L34 0L34 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd"/>
                 <path id="Border" d="M0 0L34 0L34 2L0 2L0 0Z" fill="#000000" fill-rule="evenodd"

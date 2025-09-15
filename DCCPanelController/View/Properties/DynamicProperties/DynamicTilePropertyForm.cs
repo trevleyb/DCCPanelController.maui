@@ -101,7 +101,7 @@ public sealed class DynamicTilePropertyForm {
                                                                .Distinct()
                                                                .ToList();
                           var distinctEditorKinds = _fieldsByTypeName.Values
-                                                                     .Select(d => _kindResolver.Resolve(d[name]))
+                                                                     .Select(d => _kindResolver.Resolve(d[name], _width))
                                                                      .Distinct()
                                                                      .ToList();
                           return distinctTypes.Count == 1 && distinctEditorKinds.Count == 1;
@@ -172,7 +172,7 @@ public sealed class DynamicTilePropertyForm {
     }
 
     public object GetRendererView(PropertyRow row) {
-        var kind = _kindResolver.Resolve(row.Field, _width < SmallScreenWidth);
+        var kind = _kindResolver.Resolve(row.Field, _width);
         var ctx = new PropertyContext(kind, row, _width, _height, SelectedEntities);
         var renderer = _renderers.Resolve(kind);
         return!renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);

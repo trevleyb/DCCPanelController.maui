@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip_path_1">
+            <rect width="48" height="48" />
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip_path_1)">
+        <g transform="translate(-19 -19)">
+            <g>
+                <g>
+                    <g transform="matrix(0 1 -1 0 56.943 0)">
+                        <g>
+                            <path id="Border" d="M3.8147e-06 32.9428C3.8147e-06 32.9428 0 29.9428 0 29.9428L29.9427 0L29.9427 2.94265C29.9427 2.94265 3.8147e-06 32.9428 3.8147e-06 32.9428Z" fill="#000000" fill-rule="evenodd" transform="translate(19 0)" />
+                            <path id="Border" d="M24.8857 0C24.8857 0 0 26 0 26L3 26L24.8857 4C24.8857 4 24.8857 0 24.8857 0Z" fill="#000000" fill-rule="evenodd" transform="translate(24 11.943)" />
+                            <path id="Track" d="M5 48C5 48 2.5 45.5 2.5 45.5L0 43L43 0C43 0 45.5 2.5 45.5 2.5C45.5 2.5 48 5.00001 48 5.00001C48 5.00001 5 48 5 48Z" fill="#BDBDBD" fill-rule="evenodd" transform="translate(0 8.943)" />
+                            <line id="Dashline" x1="0" y1="0" x2="19.487" y2="19.41" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="matrix(0 -1 1 0 23 33.943)" />
+                        </g>
+                    </g>
+                    <g transform="translate(41 37)">
+                        <path id="Border" d="M0 0C0 0 16 0 16 0L16 2L0 2C0 2 0 0 0 0Z" fill="#000000" fill-rule="evenodd" transform="translate(3 0)" />
+                        <path id="Border" d="M0 0C0 0 19 0 19 0L19 2L0 2C0 2 0 0 0 0Z" fill="#000000" fill-rule="evenodd" transform="translate(0 10)" />
+                        <path id="Track" d="M0 0C0 0 18 0 18 0L18 8L0 8C0 8 0 0 0 0Z" fill="#BDBDBD" fill-rule="evenodd" transform="translate(1 2)" />
+                        <line id="Dashline" x1="0" y1="1" x2="10" y2="1" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="translate(6 5)" />
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

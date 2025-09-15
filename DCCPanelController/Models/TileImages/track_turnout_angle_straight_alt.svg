@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <clipPath id="clip_path_1">
+            <rect width="48" height="48" />
+        </clipPath>
+    </defs>
+    <g clip-path="url(#clip_path_1)">
+        <g transform="translate(-0 0)">
+            <g>
+                <g>
+                    <g transform="matrix(0 1 -1 0 48 0)">
+                        <g>
+                            <path id="Border" d="M3.8147e-06 43.0001C3.8147e-06 43.0001 0 40.0001 0 40.0001L40 0L41.0525 0L43 0C43 0 3.8147e-06 43.0001 3.8147e-06 43.0001Z" fill="#000000" fill-rule="evenodd" />
+                            <path id="Border" d="M43 0C43 0 0 43 0 43L3 43L43 3C43 3 43 0 43 0Z" fill="#000000" fill-rule="evenodd" transform="translate(5 5)" />
+                            <path id="Track" d="M5 48C5 48 2.5 45.5 2.5 45.5L0 43L43 0C43 0 45.5 2.5 45.5 2.5C45.5 2.5 48 5.00001 48 5.00001C48 5.00001 5 48 5 48Z" fill="#BDBDBD" fill-rule="evenodd" />
+                            <line id="Dashline" x1="0" y1="40" x2="40" y2="0" fill="none" stroke-width="4" stroke="#686868" stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 4)" />
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

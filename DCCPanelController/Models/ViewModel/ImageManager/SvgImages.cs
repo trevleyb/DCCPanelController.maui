@@ -56,27 +56,21 @@ public static class SvgImages {
         AddImage("Rounded", "Track_Straight_Rounded", "Track_Angle_Rounded");
         AddImage("Terminator", "Track_Straight_Terminator", "Track_Angle_Terminator");
 
-        // AddImage("StraightContinuationArrow", "Track_Straight_Continuation_Arrow", "Track_Angle_Continuation_Arrow");
-        // AddImage("StraightContinuationLines", "Track_Straight_Continuation_Lines", "Track_Angle_Continuation_Lines");
-        //
-        // AddImage("CornerContinuationArrow", "Track_Corner_Left_Continuation_Arrow", "Track_Corner_Right_Continuation_Arrow");
-        // AddImage("CornerContinuationLines", "Track_Corner_Left_Continuation_Lines", "Track_Corner_Right_Continuation_Lines");
+        AddImage("LeftTurnoutUnknown", "Track_Turnout_Left", "Track_Turnout_Angle");
+        AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight","Track_Turnout_Angle_Straight");
+        AddImage("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging", "Track_Turnout_Angle_Diverging");
 
-        AddImage("LeftTurnoutUnknown", "Track_Turnout_Left");
-        AddImage("LeftTurnoutStraight", "Track_Turnout_Left_Straight");
-        AddImage("LeftTurnoutDiverging", "Track_Turnout_Left_Diverging");
+        AddImage("LeftTurnoutUnknownAlt", "Track_Turnout_Left","Track_Turnout_Angle");
+        AddImage("LeftTurnoutStraightAlt", "Track_Turnout_Left_Straight_alt","Track_Turnout_Angle_Straight_Alt");
+        AddImage("LeftTurnoutDivergingAlt", "Track_Turnout_Left_Diverging_alt","Track_Turnout_Angle_Diverging_Alt");
 
-        AddImage("LeftTurnoutUnknownAlt", "Track_Turnout_Left");
-        AddImage("LeftTurnoutStraightAlt", "Track_Turnout_Left_Straight_alt");
-        AddImage("LeftTurnoutDivergingAlt", "Track_Turnout_Left_Diverging_alt");
+        AddImage("RightTurnoutUnknown", "Track_Turnout_Right","Track_Turnout_Angle");
+        AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight","Track_Turnout_Angle_Straight");
+        AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging","Track_Turnout_Angle_Diverging");
 
-        AddImage("RightTurnoutUnknown", "Track_Turnout_Right");
-        AddImage("RightTurnoutStraight", "Track_Turnout_Right_Straight");
-        AddImage("RightTurnoutDiverging", "Track_Turnout_Right_Diverging");
-
-        AddImage("RightTurnoutUnknownAlt", "Track_Turnout_Right");
-        AddImage("RightTurnoutStraightAlt", "Track_Turnout_Right_Straight_alt");
-        AddImage("RightTurnoutDivergingAlt", "Track_Turnout_Right_Diverging_alt");
+        AddImage("RightTurnoutUnknownAlt", "Track_Turnout_Right","Track_Turnout_Angle");
+        AddImage("RightTurnoutStraightAlt", "Track_Turnout_Right_Straight_alt","Track_Turnout_Angle_Straight_Alt");
+        AddImage("RightTurnoutDivergingAlt", "Track_Turnout_Right_Diverging_alt","Track_Turnout_Angle_Diverging_Alt");
     }
 
     public static SvgImage GetImage(string name, int direction = 0) {

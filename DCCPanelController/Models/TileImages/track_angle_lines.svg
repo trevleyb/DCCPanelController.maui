@@ -9,10 +9,10 @@
             <polygon id="Border" fill="#000000"
                      transform="translate(16.75, 37) scale(-1, 1) rotate(90) translate(-16.75, -37)"
                      points="5.7499847 47.2500109 27.7500167 25.250015 27.7500167 28.2500318 7.24998472 48.750015"></polygon>
-            <polygon id="Continuation" fill="#000000"
+            <polygon id="Terminator" fill="#000000"
                      transform="translate(23.7929, 23.1317) rotate(-45) translate(-23.7929, -23.1317)"
                      points="23.292936 11.131729 24.292936 11.131729 24.292936 35.131729 23.292936 35.131729"></polygon>
-            <polygon id="Continuation" fill="#000000"
+            <polygon id="Terminator" fill="#000000"
                      transform="translate(25.2071, 22.1317) rotate(-45) translate(-25.2071, -22.1317)"
                      points="24.70712 10.131729 25.70712 10.131729 25.70712 34.131729 24.70712 34.131729"></polygon>
             <line x1="3.99999998" y1="44.0000001" x2="21.9999995" y2="26" id="Dashline" stroke="#686868"

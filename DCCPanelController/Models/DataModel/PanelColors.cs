@@ -14,9 +14,6 @@ public partial class Panel {
     [ObservableProperty] [Copyable("Colors", DisplayName = "BranchLine Track", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 3)]
     private Color _branchLineColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Bridge", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
-    private Color _bridgeColor = null!;
-
     [ObservableProperty] [Copyable("Colors", DisplayName = "Button Border (Default)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 2)]
     private Color _buttonBorder = null!;
 
@@ -34,9 +31,6 @@ public partial class Panel {
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Button Color (On)", Category = "Action Buttons", CategorySortOrder = 20, ItemSortOrder = 6)]
     private Color _buttonOnColor = null!;
-
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Continuation Marker", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 4)]
-    private Color _continuationColor = null!;
 
     [ObservableProperty] [Copyable("Colors", DisplayName = "Display Background", Category = "Panel", CategorySortOrder = 1, ItemSortOrder = 1)]
     private Color _displayBackgroundColor = null!;
@@ -62,17 +56,11 @@ public partial class Panel {
     [ObservableProperty] [Copyable("Colors", DisplayName = "Panel Background", Category = "Panel", CategorySortOrder = 1, ItemSortOrder = 1)]
     private Color _panelBackgroundColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Platform", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
-    private Color _platformColor = null!;
-
     [ObservableProperty] [Copyable("Colors", DisplayName = "Show Path Color", Category = "Paths", CategorySortOrder = 10, ItemSortOrder = 2)]
     private Color _showPathColor = null!;
 
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Terminator", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 7)]
+    [ObservableProperty] [Copyable("Colors", DisplayName = "Decorators", Category = "Track", CategorySortOrder = 5, ItemSortOrder = 7)]
     private Color _terminatorColor = null!;
-
-    [ObservableProperty] [Copyable("Colors", DisplayName = "Tunnel", Category = "Construction", CategorySortOrder = 5, ItemSortOrder = 7)]
-    private Color _tunnelColor = null!;
 
     public void CopyColorsTo(Panel target) => AttributeMapper.CopyTo(this, target, "Colors");
 
@@ -91,7 +79,6 @@ public partial class Panel {
         MainLineColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Aqua);
         MainlineBorderColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Lead);
         BranchLineColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Licorice);
-        ContinuationColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Iron);
         TerminatorColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Iron);
         HiddenColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Snow);
         DivergingColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Silver);
@@ -102,10 +89,6 @@ public partial class Panel {
         ButtonOnBorder = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Steel);
         ButtonOffColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Maraschino);
         ButtonOffBorder = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Steel);
-
-        BridgeColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tin);
-        PlatformColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tin);
-        TunnelColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tin);
 
         OccupiedColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Maraschino);
         ShowPathColor = AppleCrayonColors.EnumToColor(AppleCrayonColorsEnum.Tangerine);

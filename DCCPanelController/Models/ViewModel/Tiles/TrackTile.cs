@@ -86,9 +86,9 @@ public abstract class TrackTile : Tile, ITileTrack {
                 break;
             }
 
-            switch (trackEntity.TrackAttribute) {
+            switch (trackEntity.TrackAttribute) { 
                 case TrackAttributeEnum.Dashed:
-                    style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(Entity.Parent?.HiddenColor ?? Colors.White).Visible());
+                    style.Add(e => e.WithName(SvgElementType.Dashline).WithColor(trackEntity.HiddenColor ?? Entity.Parent?.HiddenColor ?? Colors.White).Visible());
                 break;
 
                 case TrackAttributeEnum.Normal:
@@ -97,6 +97,10 @@ public abstract class TrackTile : Tile, ITileTrack {
                 break;
             }
 
+            if (Entity is StraightEntity straightEntity) {
+                style.Add(e => e.WithName(SvgElementType.Terminator).WithColor(straightEntity.TrackColor ?? Entity.Parent?.TerminatorColor ?? Colors.Gray).Visible());
+            }
+            
             if (IsPath && DisplayMode == TileDisplayMode.Normal) {
                 var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
                 style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());

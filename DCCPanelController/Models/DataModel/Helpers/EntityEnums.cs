@@ -14,7 +14,7 @@ public enum ButtonSizeEnum { Normal, Large }
 
 public enum TrackTypeEnum { MainLine, BranchLine }
 
-public enum TrackTerminatorEnum { Arrow, Lines }
+public enum TrackStyleEnum { Normal, Rounded, Arrow, Lines, Terminator, Bridge, Platform, Tunnel }
 
 public enum TrackAttributeEnum { Normal, Dashed }
 

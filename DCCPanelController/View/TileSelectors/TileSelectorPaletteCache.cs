@@ -49,31 +49,34 @@ public class TileSelectorPaletteCache {
             ]);
 
             Add("Mainline", [
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new StraightContinuationEntity(panel) { TrackType = TrackTypeEnum.MainLine },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Normal},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Terminator},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Arrow},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Lines},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Bridge},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Platform},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Rounded},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.MainLine, TrackStyle = TrackStyleEnum.Tunnel},
                 new CornerEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new CornerContinuationEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new LeftTurnoutEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new RightTurnoutEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new TerminatorEntity(panel) { TrackType = TrackTypeEnum.MainLine },
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new TunnelEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new BridgeEntity(panel) { TrackType = TrackTypeEnum.MainLine },
-                new PlatformEntity(panel) { TrackType = TrackTypeEnum.MainLine },
             ]);
 
             Add("Branch", [
-                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
-                new StraightContinuationEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Normal},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Terminator},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Arrow},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Lines},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Bridge},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Platform},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Rounded},
+                new StraightEntity(panel) { TrackType = TrackTypeEnum.BranchLine, TrackStyle = TrackStyleEnum.Tunnel},
+
                 new CornerEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
-                new CornerContinuationEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new LeftTurnoutEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new RightTurnoutEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
-                new TerminatorEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
                 new CrossingEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
-                new TunnelEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
-                new BridgeEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
-                new PlatformEntity(panel) { TrackType = TrackTypeEnum.BranchLine },
             ]);
 
             Add("Shapes", [

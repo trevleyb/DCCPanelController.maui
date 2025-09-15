@@ -26,9 +26,9 @@
             <g transform="matrix(0.707 0.707 -0.707 0.707 12.686 -2.87)">
                 <g>
                     <g>
-                        <path id="Bridge" d="M0 0C0 0 52 0 52 0L52 3L0 3C0 3 0 0 0 0Z" fill="#000000"
+                        <path id="Terminator" d="M0 0C0 0 52 0 52 0L52 3L0 3C0 3 0 0 0 0Z" fill="#000000"
                               fill-rule="evenodd" transform="matrix(1 0 0 1 1 0)"/>
-                        <path id="Bridge" d="M0 0C0 0 53 0 53 0L53 3L0 3C0 3 0 0 0 0Z" fill="#000000"
+                        <path id="Terminator" d="M0 0C0 0 53 0 53 0L53 3L0 3C0 3 0 0 0 0Z" fill="#000000"
                               fill-rule="evenodd" transform="matrix(1 0 0 1 0 19)"/>
                     </g>
                 </g>

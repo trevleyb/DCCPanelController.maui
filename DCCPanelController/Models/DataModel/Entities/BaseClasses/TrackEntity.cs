@@ -19,6 +19,10 @@ public abstract partial class TrackEntity : Entity {
     [ObservableProperty] [property: Editable("Track Color", "Sets the color for this block of track.", 5, "Color")]
     private Color? _trackColor;
 
+    [ObservableProperty] [property: Editable("Hidden Track Color", "Sets the color for this track if marked as Hidden/Dashed.", 5, "Color")]
+    private Color? _hiddenColor;
+
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(IsMainLine))]
     [property: Editable("Track Type", "Mainline track has a border. Branch line does not.", 3, "Track")]

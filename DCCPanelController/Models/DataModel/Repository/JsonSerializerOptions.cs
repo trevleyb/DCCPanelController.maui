@@ -22,7 +22,7 @@ public static class JsonOptions {
             new JsonEnumToStringConverter<ButtonSizeEnum>(),
 
             new JsonEnumToStringConverter<TrackTypeEnum>(),
-            new JsonEnumToStringConverter<TrackTerminatorEnum>(),
+            new JsonEnumToStringConverter<TrackStyleEnum>(),
             new JsonEnumToStringConverter<TrackAttributeEnum>(),
             new JsonEnumToStringConverter<TurnoutStyleEnum>(),
 

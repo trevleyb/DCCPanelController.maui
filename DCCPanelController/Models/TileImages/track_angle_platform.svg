@@ -19,7 +19,7 @@
                           stroke-linecap="square" stroke-dasharray="2 6" transform="translate(4 4)"/>
                 </g>
             </g>
-            <path id="Platform" d="M0 0C0 0 52 0 52 0L52 9L-9.53674e-07 9C-9.53674e-07 9 0 0 0 0Z" fill="#000000"
+            <path id="Terminator" d="M0 0C0 0 52 0 52 0L52 9L-9.53674e-07 9C-9.53674e-07 9 0 0 0 0Z" fill="#000000"
                   fill-rule="evenodd" transform="matrix(0.707 0.707 -0.707 0.707 0.04 10.879)"/>
         </g>
     </g>

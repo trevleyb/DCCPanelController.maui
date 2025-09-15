@@ -5,11 +5,11 @@ using DCCPanelController.Models.DataModel.Entities.Actions;
 namespace DCCPanelController.View.Properties.DynamicProperties;
 
 public interface IEditorKindResolver {
-    string Resolve(EditableField field, bool isSmallScreen = false);
+    string Resolve(EditableField field, double width);
 }
 
 public sealed class EditableExtractorResolver : IEditorKindResolver {
-    public string Resolve(EditableField field, bool isSmallScreen = false) {
+    public string Resolve(EditableField field, double width) {
         var meta = field.Meta;
         var t = EditorKinds.UnwrapNullable(field.Accessor.PropertyType);
 
@@ -49,7 +49,8 @@ public sealed class EditableExtractorResolver : IEditorKindResolver {
         if (t == typeof(TurnoutActions)) return EditorKinds.TurnoutActions;
 
         if (t.IsEnum) {
-            return Enum.GetNames(t).Length > 3 || isSmallScreen ? EditorKinds.EnumChoice : EditorKinds.EnumRadio;
+            var estimatedSize = Enum.GetNames(t).Length * 75;
+            return estimatedSize > width ? EditorKinds.EnumChoice : EditorKinds.EnumRadio;
         }
 
         if (t == typeof(int) || t == typeof(long)) return EditorKinds.Int;

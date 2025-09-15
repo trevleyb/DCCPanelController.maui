@@ -117,36 +117,38 @@
         <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>
         <EmbeddedResource Include="Models\TileImages\sample.svg"/>
+        
         <EmbeddedResource Include="Models\TileImages\track_angle.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_bridge.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_arrow.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_angle_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_cross.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_terminator.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_angle_tunnel.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_arrow.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_lines.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_rounded.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_angle_platform.svg"/>
+
+        <EmbeddedResource Include="Models\TileImages\track_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_bridge.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_tunnel.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_arrow.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_lines.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_rounded.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_straight_platform.svg"/>
+
         <EmbeddedResource Include="Models\TileImages\button_push.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_push_corner.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_compass.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_corner_left.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_arrow.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_corner_left_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_corner_right.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_arrow.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_corner_right_continuation_lines.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_image.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_label.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_push_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_route_large.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_platform.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_points.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_route.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_bridge.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_arrow.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_continuation_lines.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_cross.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_terminator.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_tunnel.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_text.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_threeway.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_threeway_left.svg"/>
@@ -166,8 +168,13 @@
         <EmbeddedResource Include="Models\TileImages\track_turnout_left_straight_alt.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_diverging_alt.svg"/>
         <EmbeddedResource Include="Models\TileImages\track_turnout_right_straight_alt.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_angle_platform.svg"/>
-        <EmbeddedResource Include="Models\TileImages\track_straight_platform.svg"/>
+
+        <EmbeddedResource Include="Models\TileImages\track_turnout_angle.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_angle_straight.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_angle_diverging.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_angle_straight_alt.svg"/>
+        <EmbeddedResource Include="Models\TileImages\track_turnout_angle_diverging_alt.svg"/>
+
         <EmbeddedResource Update="Resources\Strings\AppResources.resx">
             <Generator>ResXFileCodeGenerator</Generator>
             <LastGenOutput>AppResources.Designer.cs</LastGenOutput>

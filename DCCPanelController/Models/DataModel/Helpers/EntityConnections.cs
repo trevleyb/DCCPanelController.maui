@@ -152,15 +152,16 @@ public class EntityConnections {
     public static class TrackPatterns {
         // Straight tracks - base orientation E-W
         public static EntityConnections StraightTrack => new("**S***S*");
+        public static EntityConnections PlatformTrack => new("**S***S*");
+        public static EntityConnections TerminatorTrack => new("**T***S*");
         public static EntityConnections StraightContinuationTrack => new("**C***S*");
         public static EntityConnections CornerTrack => new("*S****S*");
         public static EntityConnections CornerContinuationTrack => new("*C****S*");
         public static EntityConnections CrossingTrack => new("S*S*S*S*");
-        public static EntityConnections TerminatorTrack => new("**T***S*");
         public static EntityConnections TunnelTrack => new("**S***S*");
-        public static EntityConnections PlatformTrack => new("**S***S*");
         public static EntityConnections LeftTurnoutTrack => new("*DX***S*");
         public static EntityConnections RightTurnoutTrack => new("**XD**S*");
+        public static EntityConnections AngleTurnoutTrack => new("**DX***S");
     }
 }
 

@@ -3,9 +3,9 @@
     <g>
         <g transform="translate(7 12)">
             <g>
-                <path id="Tunnel" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd"
+                <path id="Terminator" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd"
                       transform="translate(32 1)"/>
-                <path id="Tunnel" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd"
+                <path id="Terminator" d="M0 0L2 0L2 4L0 4L0 0Z" fill="#000000" fill-rule="evenodd"
                       transform="translate(32 19)"/>
 
                 <path id="Tunnel" d="M0 0L6 0L6 3L0 3L0 0Z" fill="#000000" fill-rule="evenodd"
