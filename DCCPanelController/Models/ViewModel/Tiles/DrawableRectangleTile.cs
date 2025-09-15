@@ -8,10 +8,10 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableRectangleTile : Tile, ITileDrawable {
     public DrawableRectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(RectangleEntity.BackgroundColor));
-        VisualProperties.Add(nameof(RectangleEntity.BorderColor));
-        VisualProperties.Add(nameof(RectangleEntity.BorderRadius));
-        VisualProperties.Add(nameof(RectangleEntity.BorderWidth));
+        //VisualProperties.Add(nameof(RectangleEntity.BackgroundColor));
+        //VisualProperties.Add(nameof(RectangleEntity.BorderColor));
+        //VisualProperties.Add(nameof(RectangleEntity.BorderRadius));
+        //VisualProperties.Add(nameof(RectangleEntity.BorderWidth));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {

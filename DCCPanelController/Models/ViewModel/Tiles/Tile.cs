@@ -28,8 +28,8 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         GridSize = gridSize;
         DisplayMode = displayMode;
 
-        PropertyChanged += OnPropertyChanged;
-        entity.PropertyChanged += OnPropertyChanged;
+        PropertyChanged += OnTilePropertyChanged;
+        entity.PropertyChanged += OnTilePropertyChanged;
 
         VisualProperties.Add(nameof(GridSize));
         VisualProperties.Add(nameof(Entity.Col));
@@ -68,8 +68,8 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     }
 
     protected virtual void Cleanup() {
-        Entity.PropertyChanged -= OnPropertyChanged;
-        PropertyChanged -= OnPropertyChanged;
+        Entity.PropertyChanged -= OnTilePropertyChanged;
+        PropertyChanged -= OnTilePropertyChanged;
         _debounceRebuildCts?.Cancel();
         _debounceRebuildCts = null;
     }
@@ -89,20 +89,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
-    private string GetChangedProperties() {
-        var sb = new StringBuilder();
-        if (ChangedProperties.Count == 0) return"None";
-
-        foreach (var property in ChangedProperties) {
-            if (sb.Length > 0) sb.Append(",");
-            sb.Append(property);
-        }
-        ChangedProperties.Clear();
-        return sb.ToString();
-    }
-
     private void SetSymbolContent() {
-        BindingContext = this;
         BindingContext = this;
         Content = CreateSymbol();
         if (Content != null) {
@@ -131,13 +118,12 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
-    protected void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+    protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
             HaveDimensionsChanged = e.PropertyName is nameof(Entity.Col) or nameof(Entity.Row) or nameof(Entity.Width) or nameof(Entity.Height) or nameof(Entity.Rotation);
             HaveVisualPropertiesChanged = true;
             ChangedProperties.Add(property);
         }
-        HaveVisualPropertiesChanged = true;
         RebuildIfNecessary();
     }
 

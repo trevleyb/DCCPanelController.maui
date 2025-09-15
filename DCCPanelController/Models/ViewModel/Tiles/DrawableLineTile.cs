@@ -8,8 +8,8 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableLineTile : Tile, ITileDrawable {
     public DrawableLineTile(LineEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(LineEntity.LineColor));
-        VisualProperties.Add(nameof(LineEntity.LineWidth));
+        //VisualProperties.Add(nameof(LineEntity.LineColor));
+        //VisualProperties.Add(nameof(LineEntity.LineWidth));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
@@ -44,9 +44,6 @@ public class DrawableLineTile : Tile, ITileDrawable {
             shape.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.LineWidth), BindingMode.OneWay, source: entity));
             shape.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.OneWay, source: entity));
             shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: entity));
-
-            // shape.SetBinding(Line.X2Property, new Binding(nameof(TileWidth), BindingMode.OneWay, source: this));
-            // shape.SetBinding(Line.Y2Property, new Binding(nameof(TileHeight), BindingMode.OneWay, source: this));
             return shape;
         }
         return CreateSymbol();

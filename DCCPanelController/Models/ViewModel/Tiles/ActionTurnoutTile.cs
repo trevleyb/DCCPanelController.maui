@@ -32,8 +32,8 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
 
     public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
-    new protected void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        base.OnPropertyChanged(sender, e);
+    new protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        base.OnTilePropertyChanged(sender, e);
         if (e.PropertyName == nameof(TurnoutButtonEntity.Turnout)) {
             if (_turnout is { }) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
             RegisterForTurnoutEvents();

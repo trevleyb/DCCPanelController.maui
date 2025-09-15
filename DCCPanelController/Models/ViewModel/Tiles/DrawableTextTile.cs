@@ -1,19 +1,16 @@
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
+using ExCSS;
+using Colors = Microsoft.Maui.Graphics.Colors;
 
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableTextTile : Tile, ITileDrawable {
     public DrawableTextTile(TextEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
         VisualProperties.Add(nameof(TextEntity.Label));
-        VisualProperties.Add(nameof(entity.Label));
-        VisualProperties.Add(nameof(entity.FontSize));
-        VisualProperties.Add(nameof(entity.FontStyle));
-        VisualProperties.Add(nameof(entity.TextColor));
         VisualProperties.Add(nameof(entity.HorizontalJustification));
         VisualProperties.Add(nameof(entity.VerticalJustification));
-        VisualProperties.Add(nameof(entity.BackgroundColor));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
@@ -23,18 +20,18 @@ public class DrawableTextTile : Tile, ITileDrawable {
                 VerticalTextAlignment = EnumHelpers.ConvertVerticalAlignmentToText(entity.VerticalJustification),
                 HorizontalOptions = LayoutOptions.Fill,
                 VerticalOptions = LayoutOptions.Fill,
-                BackgroundColor = Colors.Transparent,
-                ZIndex = entity.Layer,
                 LineBreakMode = LineBreakMode.TailTruncation,
-                Rotation = entity.Rotation,
-                FontSize = entity.FontSize,
-                TextColor = entity.TextColor,
                 InputTransparent = true,
                 WidthRequest = TileWidth,
                 HeightRequest = TileHeight,
-                Text = entity.Label,
                 FontFamily = EnumHelpers.ConvertFontStyle(entity.FontStyle),
             };
+            label.SetBinding(Label.BackgroundColorProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.OneWay, source: entity));
+            label.SetBinding(Label.FontSizeProperty, new Binding(nameof(entity.FontSize), BindingMode.OneWay, source: entity));
+            label.SetBinding(Label.TextColorProperty, new Binding(nameof(entity.TextColor), BindingMode.OneWay, source: entity));
+            label.SetBinding(Label.RotationProperty, new Binding(nameof(entity.Rotation), BindingMode.OneWay, source: entity));
+            label.SetBinding(Label.TextProperty, new Binding(nameof(entity.Label), BindingMode.OneWay, source: entity));
+            label.SetBinding(Label.ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: entity));
             return label;
         }
         return CreateSymbol(); // Fallback on error

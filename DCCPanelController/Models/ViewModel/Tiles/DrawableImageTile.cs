@@ -11,10 +11,10 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableImageTile : Tile, ITileDrawable {
     public DrawableImageTile(ImageEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(ImageEntity.BorderColor));
-        VisualProperties.Add(nameof(ImageEntity.BorderWidth));
-        VisualProperties.Add(nameof(ImageEntity.AspectRatio));
-        VisualProperties.Add(nameof(ImageEntity.BorderRadius));
+        //VisualProperties.Add(nameof(ImageEntity.BorderColor));
+        //VisualProperties.Add(nameof(ImageEntity.BorderWidth));
+        //VisualProperties.Add(nameof(ImageEntity.AspectRatio));
+        //VisualProperties.Add(nameof(ImageEntity.BorderRadius));
         VisualProperties.Add(nameof(ImageEntity.Image));
     }
 
