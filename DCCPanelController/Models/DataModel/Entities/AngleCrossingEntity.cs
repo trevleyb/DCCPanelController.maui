@@ -12,7 +12,9 @@ public class AngleCrossingEntity : TrackEntity, ITrackEntity {
 
     public AngleCrossingEntity(AngleCrossingEntity entity) : base(entity) { }
 
-    [JsonIgnore] public override EntityConnections Connections => EntityConnections.TrackPatterns.AngleCrossingTrack;
+    [JsonIgnore] public override EntityConnections Connections => 
+        Rotation % 90 == 0 ? EntityConnections.TrackPatterns.AngleCrossingTrack1 : EntityConnections.TrackPatterns.AngleCrossingTrack2;
+    
     public override string EntityName => "Angle";
     public override string EntityDescription => "45-degree Crossing Track";
     public override string EntityInformation => 

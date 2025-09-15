@@ -181,6 +181,9 @@ public partial class ControlPanelView {
         _gridGestures.TileDragCompleted += GridGesturesOnTileDragCompleted;
         _gridGestures.TileDragCancelled += GridGesturesOnTileDragCancelled;
 
+        // Turn off Double tap as it causes a noticable delay in the UI 
+        _gridGestures.EnableDoubleTap = false;
+        
         // And wire up the Drop Recognisers for the Dropping of a tile from 
         // the tile palette. 
         // ----------------------------------------------------------------
@@ -277,8 +280,12 @@ public partial class ControlPanelView {
 
     private async void GridGesturesOnLongPress(object? sender, GridGestureEventArgs e) {
         try {
-            if (DesignMode) {
-                /* update here - if we support long press in design mode */
+            if (DesignMode && DebugMode.IsDebug) {
+                var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
+                if (tile is TrackTile trackTile) {
+                    trackTile.ShowPointsOverlay = !trackTile.ShowPointsOverlay;
+                    trackTile.ForceRedraw();
+                }
             } else {
                 var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
                 if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
@@ -529,6 +536,28 @@ public partial class ControlPanelView {
             }
             _logger.LogError("Unable to create the tile for '{Entity}'", entity.EntityName);
             return null;
+        }
+    }
+
+    public void AddPointsValidatorsToGrid() {
+        foreach (var entity in Panel?.Entities!) {
+            if (entity is TrackEntity trackEntity) {
+                var tile = new PointsTile(trackEntity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
+                if (tile is ContentView view) {
+                    view.ClassId = "PointsValidator";
+                    view.ZIndex = entity.Layer;
+                    SetTileGridPosition(tile);
+                    _dynamicGrid.Children.Add(view);
+                }
+            }
+        }
+    }
+
+    public void DelPointsValidatorsToGrid() {
+        foreach (var child in _dynamicGrid.Children.OfType<ITile>().ToList()) {
+            if (child is ContentView { ClassId: "PointsValidator" } view) {
+                _dynamicGrid.Children.Remove(view);
+            }
         }
     }
 

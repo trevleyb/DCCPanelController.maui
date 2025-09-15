@@ -91,6 +91,45 @@ public partial class SvgImageManager {
     }
 
     /// <summary>
+    /// Draw with optional opacity, pixel offset, and blend mode.
+    /// </summary>
+    public void Draw(SKCanvas canvas, SKRect destWorld,
+        float rotationDegrees = 0f,
+        float opacity = 1f,
+        SKPoint? offsetPx = null,
+        SKBlendMode blend = SKBlendMode.SrcOver) {
+        using var picture = ToPicture();
+        if (picture == null) return;
+
+        var svgRect = picture.CullRect;
+        var sx = destWorld.Width / svgRect.Width;
+        var sy = destWorld.Height / svgRect.Height;
+
+        // Build transform for scale + placement
+        var scale = SKMatrix.CreateScale(sx, sy);
+        var translate = SKMatrix.CreateTranslation(
+            destWorld.Left - svgRect.Left * sx + (offsetPx?.X ?? 0f),
+            destWorld.Top - svgRect.Top * sy + (offsetPx?.Y ?? 0f)
+        );
+        var m = SKMatrix.Concat(translate, scale);
+
+        canvas.Save();
+
+        if (rotationDegrees != 0f) {
+            canvas.Translate(destWorld.MidX, destWorld.MidY);
+            canvas.RotateDegrees(rotationDegrees);
+            canvas.Translate(-destWorld.MidX, -destWorld.MidY);
+        }
+
+        // Apply opacity/blend using a layer
+        using var paint = new SKPaint { BlendMode = blend, Color = SKColors.White.WithAlpha((byte)(opacity * 255)) };
+        canvas.SaveLayer(paint);
+        canvas.DrawPicture(picture, in m);
+        canvas.Restore(); // layer
+        canvas.Restore(); // canvas
+    }
+
+    /// <summary>
     ///     Converts the XDocument SVG DisplayImage into a stream which can be consumed by
     ///     the ImageSource.FromStream method
     /// </summary>

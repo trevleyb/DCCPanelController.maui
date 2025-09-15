@@ -12,6 +12,7 @@ namespace DCCPanelController.View.ControlPanel;
 public class GridGestureHelper : IDisposable {
     // Gesture state management
     public enum GestureOwner { None, Tap, LongPress, DragSelect }
+    public bool EnableDoubleTap { get; set; } = true;
 
     private const int    DoubleTapThreshold = 225;
     private const double DragSlopPx         = 3.5;
@@ -156,21 +157,23 @@ public class GridGestureHelper : IDisposable {
         // Dispatch back to UI thread
         MainThread.BeginInvokeOnMainThread(() => {
             gestureArgs.TapCount = count;
+            if (!EnableDoubleTap) {
+                SingleTap?.Invoke(this, gestureArgs);
+            } else {
+                switch (count) {
+                    case 1:
+                        SingleTap?.Invoke(this, gestureArgs);
+                    break;
 
-            switch (count) {
-                case 1:
-                    SingleTap?.Invoke(this, gestureArgs);
-                break;
+                    case 2:
+                        DoubleTap?.Invoke(this, gestureArgs);
+                    break;
 
-                case 2:
-                    DoubleTap?.Invoke(this, gestureArgs);
-                break;
-
-                case>= 3:
-                    // Could add TripleTap event if needed
-                break;
+                    case>= 3:
+                        // Could add TripleTap event if needed
+                    break;
+                }
             }
-
             _gestureOwner = GestureOwner.None;
         });
     }

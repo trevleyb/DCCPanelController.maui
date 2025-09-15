@@ -93,7 +93,7 @@ public static class GridPositionHelper {
     public static List<ITile> GetTrackTilesAt(int col, int row, Grid grid) => grid.Children
                                                                                   .OfType<ITile>()
                                                                                   .Where(x => x.Entity is ITrackEntity &&
-                                                                                              x.Entity is not IInteractiveEntity &&
+                                                                                              /* x.Entity is not IInteractiveEntity && */
                                                                                               x.Entity.Col == col &&
                                                                                               x.Entity.Row == row)
                                                                                   .OrderByDescending(x => x.Entity.Layer)

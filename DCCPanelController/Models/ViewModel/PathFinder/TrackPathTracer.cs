@@ -211,18 +211,21 @@ public class TrackPathTracer {
         // This determines if entry and exit points on the SAME track can connect
         (entryType, exitType) switch {
             // Straight connections - can pair with anything except Terminators and Connectors
-            (ConnectionType.Straight, ConnectionType.Straight)  => true,
+            (ConnectionType.Straight, ConnectionType.Straight) => true,
+            (ConnectionType.Crossing, ConnectionType.Crossing) => true,
             (ConnectionType.Straight, ConnectionType.Closed)    => true,
             (ConnectionType.Straight, ConnectionType.Diverging) => true,
 
             // Closed (X) connections - can pair with Straight and other closed
             (ConnectionType.Closed, ConnectionType.Closed)    => true,
             (ConnectionType.Closed, ConnectionType.Straight)  => true,
+            (ConnectionType.Closed, ConnectionType.Crossing)  => true,
             (ConnectionType.Closed, ConnectionType.Diverging) => true,
 
             // Diverging (D) connections - can pair with Straight and other diverging  
             (ConnectionType.Diverging, ConnectionType.Diverging) => true,
             (ConnectionType.Diverging, ConnectionType.Straight)  => true,
+            (ConnectionType.Diverging, ConnectionType.Crossing)  => true,
             (ConnectionType.Diverging, ConnectionType.Closed)    => true,
 
             // IMPORTANT: Terminators and Connectors are ENDPOINTS
@@ -249,7 +252,7 @@ public class TrackPathTracer {
 
             case TurnoutStateEnum.Closed:
                 // Handle both directions: S->X and X->S
-                if (entryConnectionType == ConnectionType.Straight) {
+                if (entryConnectionType == ConnectionType.Straight || entryConnectionType == ConnectionType.Crossing) {
                     // Entering from S, exit via X
                     for (var i = 0; i < EntityConnections.MaxDirections; i++) {
                         if (i == entryDirection) continue;
@@ -270,7 +273,7 @@ public class TrackPathTracer {
 
             case TurnoutStateEnum.Thrown:
                 // Handle both directions: S->D and D->S
-                if (entryConnectionType == ConnectionType.Straight) {
+                if (entryConnectionType == ConnectionType.Straight || entryConnectionType == ConnectionType.Crossing) {
                     // Entering from S, exit via D
                     for (var i = 0; i < EntityConnections.MaxDirections; i++) {
                         if (i == entryDirection) continue;
@@ -343,20 +346,25 @@ public class TrackPathTracer {
         var result = (currentExitType, nextEntryType) switch {
             // Straight to Straight - always valid and continues
             (ConnectionType.Straight, ConnectionType.Straight) => new ConnectionValidationResult(true),
+            (ConnectionType.Crossing, ConnectionType.Crossing) => new ConnectionValidationResult(true),
 
             // Straight to Diverging - only valid if next track is turnout in thrown state
             (ConnectionType.Straight, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
-
+            (ConnectionType.Crossing, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
+            
             // Straight to Closed - only valid if next track is turnout in closed state  
             (ConnectionType.Straight, ConnectionType.Closed) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
+            (ConnectionType.Crossing, ConnectionType.Closed) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
 
             // Closed connections
             (ConnectionType.Closed, ConnectionType.Straight)  => new ConnectionValidationResult(true),
+            (ConnectionType.Closed, ConnectionType.Crossing)  => new ConnectionValidationResult(true),
             (ConnectionType.Closed, ConnectionType.Closed)    => new ConnectionValidationResult(true),
             (ConnectionType.Closed, ConnectionType.Diverging) => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Thrown),
 
             // Diverging connections  
             (ConnectionType.Diverging, ConnectionType.Straight)  => new ConnectionValidationResult(true),
+            (ConnectionType.Diverging, ConnectionType.Crossing)  => new ConnectionValidationResult(true),
             (ConnectionType.Diverging, ConnectionType.Diverging) => new ConnectionValidationResult(true),
             (ConnectionType.Diverging, ConnectionType.Closed)    => ValidateTurnoutConnection(nextTrack, TurnoutStateEnum.Closed),
 

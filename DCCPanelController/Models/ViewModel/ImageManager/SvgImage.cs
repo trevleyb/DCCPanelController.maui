@@ -18,14 +18,14 @@ public partial class SvgImage : ObservableObject {
     }
 
     [field: AllowNull] [field: MaybeNull]
-    private SvgImageManager ImageManager => field ??= new SvgImageManager(Filename);
+    public SvgImageManager ImageManager => field ??= new SvgImageManager(Filename);
 
     public ImageSource AsImageSource(int rotation = 0, float scale = 1.0f) => ImageManager.AsImageSource(rotation, scale);
 
     public Image AsImage(int rotation = 0, float scale = 1.0f) => new() { Source = ImageManager.AsImageSource(rotation, scale), HorizontalOptions = LayoutOptions.Fill, VerticalOptions = LayoutOptions.Fill };
 
     public SKCanvasView AsCanvas(int rotation = 0, float scale = 1.5f) => ImageManager.AsCanvasView(rotation, scale);
-
+    
     public void SetAttributeFillColor(SvgElementType elementType, Color color) => ImageManager.SetAllAttributeValues(elementType, "fill", color.ToHex());
 
     public void SetAttributeLineColor(SvgElementType elementType, Color color) => ImageManager.SetAllAttributeValues(elementType, "stroke", color.ToHex());

@@ -29,8 +29,10 @@ public class EntityConnections {
         var normalizedRotation = NormalizeRotation(rotation);
         var rotationIndex = CalculateRotationIndex(normalizedRotation);
 
-        if (rotationIndex == 0) return(ConnectionType[])_baseConnections.Clone();
-        return RotateConnections(_baseConnections, rotationIndex);
+        //if (rotationIndex == 0) return(ConnectionType[])_baseConnections.Clone();
+        var rotated = RotateConnections(_baseConnections, rotationIndex);
+        //Console.WriteLine($"Rotated: {normalizedRotation}:{rotationIndex} -> {ConvertDirectionsToString(rotated)}");
+        return rotated;
     }
 
     /// <summary>
@@ -89,6 +91,7 @@ public class EntityConnections {
             connections[i] = char.ToLower(pattern[i]) switch {
                 't' => ConnectionType.Terminator,
                 's' => ConnectionType.Straight,
+                'p' => ConnectionType.Crossing,
                 'd' => ConnectionType.Diverging,
                 'c' => ConnectionType.Connector,
                 'x' => ConnectionType.Closed,
@@ -139,6 +142,7 @@ public class EntityConnections {
             result += connections[i] switch {
                 ConnectionType.Terminator => "T",
                 ConnectionType.Straight   => "S",
+                ConnectionType.Crossing   => "P",
                 ConnectionType.Diverging  => "D",
                 ConnectionType.Connector  => "C",
                 ConnectionType.Closed     => "X",
@@ -152,18 +156,15 @@ public class EntityConnections {
     public static class TrackPatterns {
         // Straight tracks - base orientation E-W
         public static EntityConnections StraightTrack => new("**S***S*");
-        public static EntityConnections PlatformTrack => new("**S***S*");
         public static EntityConnections TerminatorTrack => new("**T***S*");
-        public static EntityConnections StraightContinuationTrack => new("**C***S*");
         public static EntityConnections CornerTrack => new("*S****S*");
-        public static EntityConnections CornerContinuationTrack => new("*C****S*");
-        public static EntityConnections TunnelTrack => new("**S***S*");
         public static EntityConnections LeftTurnoutTrack => new("*DX***S*");
         public static EntityConnections RightTurnoutTrack => new("**XD**S*");
-        public static EntityConnections LeftAngleTurnoutTrack => new("**DX***S");
-        public static EntityConnections RightAngleTurnoutTrack => new("*SD**X**");
-        public static EntityConnections CrossingTrack => new("S*S*S*S*");
-        public static EntityConnections AngleCrossingTrack => new("**SS**SS");
+        public static EntityConnections LeftAngleTurnoutTrack => new("*DX***S*");
+        public static EntityConnections RightAngleTurnoutTrack => new("SD**X***");
+        public static EntityConnections CrossingTrack => new("S*P*S*P*");
+        public static EntityConnections AngleCrossingTrack1 => new("**SP**SP");
+        public static EntityConnections AngleCrossingTrack2 => new("SP**SP**");
     }
 }
 
@@ -171,6 +172,7 @@ public enum ConnectionType {
     None,
     Terminator,
     Straight,
+    Crossing,
     Closed,
     Diverging,
     Connector,
