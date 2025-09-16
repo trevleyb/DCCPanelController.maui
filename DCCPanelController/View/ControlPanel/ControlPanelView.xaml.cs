@@ -445,8 +445,8 @@ public partial class ControlPanelView {
 
         // Draw the Grid. Make sure we clean up if it has already been drawn first
         // -------------------------------------------------------------------------
-        using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", ShowCodeTimer)) {
-            MainThread.BeginInvokeOnMainThread(async void () => {
+        MainThread.BeginInvokeOnMainThread(async void () => {
+            using (new CodeTimer($"Draw Panel: {Panel?.Id} called from {memberName}@{sourceLineNumber}", ShowCodeTimer)) {
                 try {
                     ControlPanelLayout.IsVisible = false;
                     IsPanelDrawing = true;
@@ -490,14 +490,15 @@ public partial class ControlPanelView {
                     // Add all Entities to the Grid and Draw the Grid Lines
                     // ------------------------------------------------------------------------------
                     await AddEntitiesToGrid(Panel);
+
                 } catch (Exception ex) {
                     _logger.LogError($"Error in DrawPanel: {ex.Message}");
                 } finally {
                     IsPanelDrawing = false;
                     ControlPanelLayout.IsVisible = true;
                 }
-            });
-        }
+            }
+        });
     }
 
     /// <summary>
