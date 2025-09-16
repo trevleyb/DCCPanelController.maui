@@ -522,7 +522,7 @@ public partial class ControlPanelView {
     /// </summary>
     private ITile? AddEntityToGrid(Entity entity) {
         using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", ShowCodeTimer, 10)) {
-            var tile = TileFactory.CreateTile(entity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
+            var tile = TileFactory.CreateTile(entity, _gridSize);
             if (tile is { }) {
                 tile.TileChanged += TileOnPropertiesChanged;
                 if (tile is ContentView view) {
@@ -536,28 +536,6 @@ public partial class ControlPanelView {
             }
             _logger.LogError("Unable to create the tile for '{Entity}'", entity.EntityName);
             return null;
-        }
-    }
-
-    public void AddPointsValidatorsToGrid() {
-        foreach (var entity in Panel?.Entities!) {
-            if (entity is TrackEntity trackEntity) {
-                var tile = new PointsTile(trackEntity, _gridSize, DesignMode ? TileDisplayMode.Design : TileDisplayMode.Normal);
-                if (tile is ContentView view) {
-                    view.ClassId = "PointsValidator";
-                    view.ZIndex = entity.Layer;
-                    SetTileGridPosition(tile);
-                    _dynamicGrid.Children.Add(view);
-                }
-            }
-        }
-    }
-
-    public void DelPointsValidatorsToGrid() {
-        foreach (var child in _dynamicGrid.Children.OfType<ITile>().ToList()) {
-            if (child is ContentView { ClassId: "PointsValidator" } view) {
-                _dynamicGrid.Children.Remove(view);
-            }
         }
     }
 

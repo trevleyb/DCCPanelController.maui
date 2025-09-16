@@ -10,23 +10,36 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 
 [DebuggerDisplay("{Entity.EntityName} @ {Entity.Col},{Entity.Row}")]
 public abstract class Tile : ContentView, ITile, IDisposable {
+    
+    // @formatter:off
+    public Entity   Entity      { get; init; }
+    public bool     IsSelected  { get; set => SetField(ref field, value); }
+    public double   GridSize    { get; set => SetField(ref field, value); }
+    public double   TileWidth => GridSize * Entity.Width;
+    public double   TileHeight => GridSize * Entity.Height;
+    // @formatter:on
+
     protected const float DefaultScaleFactor = 1.5f;
     protected const float SymbolScaleFactor  = 0.75f;
     private const   int   DebounceDelay      = 75;
 
-    protected readonly TileDisplayMode          DisplayMode;
-    private            CancellationTokenSource? _debounceRebuildCts;
+    private CancellationTokenSource? _debounceRebuildCts;
 
-    private   DateTime                    _lastChangeTime = DateTime.Now;
-    private   Dictionary<string, object?> _propertyCache  = [];
-    protected bool                        disposed;
-    protected bool                        HaveDimensionsChanged;
-    protected bool                        HaveVisualPropertiesChanged;
+    protected HashSet<string> VisualProperties { get; } = [];
+    protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
 
-    protected Tile(Entity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) {
+    protected bool Disposed;
+    protected bool HaveDimensionsChanged;
+    protected bool HaveVisualPropertiesChanged;
+
+    public event EventHandler<TileChangedEventArgs>? TileChanged;
+
+    protected virtual void OnTileChanged(TileChangeType changeType = TileChangeType.Modified) => TileChanged?.Invoke(this, new TileChangedEventArgs(this, changeType));
+    protected virtual void OnTileChanged(string propertyName, object? oldValue, object? newValue) => TileChanged?.Invoke(this, new TileChangedEventArgs(this, propertyName, oldValue, newValue));
+
+    protected Tile(Entity entity, double gridSize) {
         Entity = entity;
         GridSize = gridSize;
-        DisplayMode = displayMode;
 
         PropertyChanged += OnTilePropertyChanged;
         entity.PropertyChanged += OnTilePropertyChanged;
@@ -42,28 +55,15 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         SetContent();
     }
 
-    protected HashSet<string> VisualProperties { get; } = [];
-    protected HashSet<string> ChangedProperties { get; } = [];
-    protected bool UseClickSounds => Entity?.Parent?.Panels?.Profile?.Settings?.UseClickSounds ?? true;
-
     public void Dispose() {
         Dispose(true);
         GC.SuppressFinalize(this); // Only if you had a finalizer
     }
 
-    public event EventHandler<TileChangedEventArgs>? TileChanged;
-
-    public void ForceRedraw() {
-        HaveDimensionsChanged = false;
-        HaveVisualPropertiesChanged = true;
-        ChangedProperties.Add("FORCE-REDRAW");
-        RebuildIfNecessary();
-    }
-
     protected void Dispose(bool disposing) {
-        if (!disposed && disposing) {
+        if (!Disposed && disposing) {
             Cleanup();
-            disposed = true;
+            Disposed = true;
         }
     }
 
@@ -75,9 +75,14 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     }
 
     protected abstract Microsoft.Maui.Controls.View? CreateTile();
-    protected abstract Microsoft.Maui.Controls.View? CreateSymbol();
 
-    private void SetNormalContent() {
+    public void ForceRedraw() {
+        HaveDimensionsChanged = false;
+        HaveVisualPropertiesChanged = true;
+        RebuildIfNecessary();
+    }
+
+    private void SetContent() {
         BindingContext = this;
         Content = CreateTile();
         if (Content != null) {
@@ -89,40 +94,10 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         }
     }
 
-    private void SetSymbolContent() {
-        BindingContext = this;
-        Content = CreateSymbol();
-        if (Content != null) {
-            Content.WidthRequest = TileWidth;
-            Content.HeightRequest = TileHeight;
-            Content.ZIndex = Entity.Layer;
-        }
-    }
-
-    private void SetContent() {
-        switch (DisplayMode) {
-            case TileDisplayMode.Normal:
-                SetNormalContent();
-            break;
-
-            case TileDisplayMode.Symbol:
-                SetSymbolContent();
-            break;
-
-            case TileDisplayMode.Design:
-                SetNormalContent();
-            break;
-
-            default:
-                throw new ArgumentOutOfRangeException();
-        }
-    }
-
     protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
         if (e.PropertyName is { } property && VisualProperties.Contains(property)) {
             HaveDimensionsChanged = e.PropertyName is nameof(Entity.Col) or nameof(Entity.Row) or nameof(Entity.Width) or nameof(Entity.Height) or nameof(Entity.Rotation);
             HaveVisualPropertiesChanged = true;
-            ChangedProperties.Add(property);
         }
         RebuildIfNecessary();
     }
@@ -152,7 +127,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                          if (HaveVisualPropertiesChanged) {
                              SetContent();
                              HaveVisualPropertiesChanged = false; // Reset flag
-                             _lastChangeTime = DateTime.Now;
                          }
                      });
                      if (HaveDimensionsChanged) OnTileChanged(TileChangeType.Dimensions);
@@ -165,16 +139,6 @@ public abstract class Tile : ContentView, ITile, IDisposable {
     /// <summary>
     ///     Sets the value of a field and raises property-changing and changed notifications.
     /// </summary>
-    /// <typeparam name="T">The type of the field.</typeparam>
-    /// <param name="field">The field to be updated.</param>
-    /// <param name="value">The new value to set.</param>
-    /// <param name="propertyName">
-    ///     The name of the property that changed. This parameter is optional and automatically supplied
-    ///     by the compiler.
-    /// </param>
-    /// <returns>
-    ///     True if the value of the field was changed, otherwise false.
-    /// </returns>
     protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = "") {
         if (EqualityComparer<T>.Default.Equals(field, value)) return false;
         OnPropertyChanging(propertyName);
@@ -182,22 +146,4 @@ public abstract class Tile : ContentView, ITile, IDisposable {
         OnPropertyChanged(propertyName);
         return true;
     }
-
-    // Protected method to raise the event
-    protected virtual void OnTileChanged(TileChangeType changeType = TileChangeType.Modified) => TileChanged?.Invoke(this, new TileChangedEventArgs(this, changeType));
-
-    protected virtual void OnTileChanged(string propertyName, object? oldValue, object? newValue) => TileChanged?.Invoke(this, new TileChangedEventArgs(this, propertyName, oldValue, newValue));
-
-    // @formatter:off
-    public Guid Guid { get; init; } = Guid.NewGuid();
-    public Entity Entity { get; init; }
-    public double TileWidth => GridSize * Entity.Width;
-    public double TileHeight => GridSize * Entity.Height;
-    public bool IsSelected {get; set => SetField(ref field, value); }
-    public double GridSize {get; set => SetField(ref field, value); }
-    // @formatter:on
-}
-
-public enum TileDisplayMode {
-    Normal, Symbol, Design,
 }

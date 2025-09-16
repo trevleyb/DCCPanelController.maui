@@ -8,7 +8,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionSwitchTile : Tile, ITileInteractive {
-    public ActionSwitchTile(SwitchEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    public ActionSwitchTile(SwitchEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(SwitchEntity.State));
         VisualProperties.Add(nameof(SwitchEntity.SwitchStyle));
 
@@ -86,17 +86,6 @@ public class ActionSwitchTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateSymbol();
-    }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() {
-        if (Entity is SwitchEntity button) {
-            return button.SwitchStyle switch {
-                SwitchStyleEnum.Light  => SvgImages.GetImage("light").AsImage(),
-                SwitchStyleEnum.Button => SvgImages.GetImage("button").AsImage(),
-                _                      => SvgImages.GetImage("switch").AsImage(),
-            };
-        }
-        return SvgImages.GetImage("light").AsImage();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
 }

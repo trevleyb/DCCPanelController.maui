@@ -9,7 +9,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionButtonTile : Tile, ITileInteractive {
-    public ActionButtonTile(ActionButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    public ActionButtonTile(ActionButtonEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         if (Entity is ActionButtonEntity button) button.State = ButtonStateEnum.Unknown;
@@ -68,8 +68,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
 
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("button").AsImage();
 }

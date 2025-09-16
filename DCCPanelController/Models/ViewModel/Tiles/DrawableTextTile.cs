@@ -1,4 +1,6 @@
+using AVFoundation;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using ExCSS;
@@ -7,14 +9,14 @@ using Colors = Microsoft.Maui.Graphics.Colors;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableTextTile : Tile, ITileDrawable {
-    public DrawableTextTile(TextEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        VisualProperties.Add(nameof(TextEntity.Label));
+    public DrawableTextTile(TextEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(entity.HorizontalJustification));
         VisualProperties.Add(nameof(entity.VerticalJustification));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is TextEntity entity && !string.IsNullOrEmpty(entity.Label)) {
+        if (Entity is TextEntity entity) {
+            if (string.IsNullOrEmpty(entity.Label)) entity.Label = "T";
             var label = new Label {
                 HorizontalTextAlignment = EnumHelpers.ConvertHorizontalAlignmentToText(entity.HorizontalJustification),
                 VerticalTextAlignment = EnumHelpers.ConvertVerticalAlignmentToText(entity.VerticalJustification),
@@ -34,8 +36,6 @@ public class DrawableTextTile : Tile, ITileDrawable {
             label.SetBinding(Label.ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: entity));
             return label;
         }
-        return CreateSymbol(); // Fallback on error
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("text").AsImage();
 }

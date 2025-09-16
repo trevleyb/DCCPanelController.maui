@@ -11,7 +11,7 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public abstract class TrackTile : Tile, ITileTrack {
     private const float HighlightColorAlpha = 0.25f;
 
-    protected TrackTile(TrackEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    protected TrackTile(TrackEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(TrackEntity.Rotation));
         VisualProperties.Add(nameof(TrackEntity.TrackType));
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
@@ -41,9 +41,7 @@ public abstract class TrackTile : Tile, ITileTrack {
 
     // TrackTile.cs
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(
-        string trackName, int trackRotation, float scale, SvgStyle? addStyle = null)
-    {
-        Console.WriteLine($"Creating track tile {trackName} {trackRotation} {EntityConnections.ConvertDirectionsToString(((TrackEntity)Entity).GetCurrentConnections)}");
+        string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
         
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
@@ -125,28 +123,6 @@ public abstract class TrackTile : Tile, ITileTrack {
         _ => "PointN",
     };
     
-    // protected Microsoft.Maui.Controls.View? CreateTrackTileAsCanvas(string trackName, int trackRotation, float scale, SvgStyle? addStyle = null) {
-    //     SvgImage = SvgImages.GetImage(trackName, trackRotation);
-    //     var style = GetDefaultStyle();
-    //     if (addStyle is { }) style.AddExisting(addStyle); //SvgImage.ApplyStyle(addStyle);
-    //     SvgImage.ApplyStyle(style.Build());
-    //
-    //     var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);
-    //     canvas.HorizontalOptions = LayoutOptions.Fill;
-    //     canvas.VerticalOptions = LayoutOptions.Fill;
-    //     canvas.SetBinding(OpacityProperty, new Binding(nameof(Opacity), BindingMode.OneWay, source: Entity));
-    //     canvas.SetBinding(ZIndexProperty, new Binding(nameof(TrackEntity.Layer), BindingMode.TwoWay, source: Entity));
-    //
-    //     if (ShowPointsOverlay) {
-    //         
-    //     }
-    //     
-    //     var absoluteLayout = new AbsoluteLayout();
-    //     AbsoluteLayout.SetLayoutBounds(canvas, new Rect(-GridSize * 0.25, -GridSize * 0.25, GridSize * 1.5, GridSize * 1.5));
-    //     absoluteLayout.Children.Add(canvas);
-    //     return absoluteLayout;
-    // }
-
     protected Microsoft.Maui.Controls.View? CreateTrackTileAsImage(string trackName, int trackRotation, float scale = DefaultScaleFactor) {
         SvgImage = SvgImages.GetImage(trackName, trackRotation);
         var style = GetDefaultStyle();
@@ -196,10 +172,10 @@ public abstract class TrackTile : Tile, ITileTrack {
                 style.Add(e => e.WithName(SvgElementType.Terminator).WithColor(straightEntity.TrackColor ?? Entity.Parent?.TerminatorColor ?? Colors.Gray).Visible());
             }
             
-            if (IsPath && DisplayMode == TileDisplayMode.Normal) {
+            if (IsPath) {
                 var color = Entity.Parent?.ShowPathColor ?? Colors.CornflowerBlue.WithAlpha(HighlightColorAlpha);
                 style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
-            } else if (IsOccupied && DisplayMode == TileDisplayMode.Normal) {
+            } else if (IsOccupied) {
                 var color = Entity.Parent?.OccupiedColor ?? Colors.Tomato.WithAlpha(HighlightColorAlpha);
                 style.Add(e => e.WithName(SvgElementType.Track).WithColor(color).Visible());
             }

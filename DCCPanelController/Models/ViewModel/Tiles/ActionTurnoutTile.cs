@@ -12,7 +12,7 @@ namespace DCCPanelController.Models.ViewModel.Tiles;
 public class ActionTurnoutTile : Tile, ITileInteractive {
     private TurnoutEntity? _turnout;
 
-    public ActionTurnoutTile(TurnoutButtonEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    public ActionTurnoutTile(TurnoutButtonEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         RegisterForTurnoutEvents();
@@ -111,8 +111,6 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("button").AsImage();
 }

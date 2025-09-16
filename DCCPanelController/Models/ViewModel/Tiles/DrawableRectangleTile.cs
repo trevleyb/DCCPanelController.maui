@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Converters;
@@ -7,12 +8,7 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableRectangleTile : Tile, ITileDrawable {
-    public DrawableRectangleTile(RectangleEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        //VisualProperties.Add(nameof(RectangleEntity.BackgroundColor));
-        //VisualProperties.Add(nameof(RectangleEntity.BorderColor));
-        //VisualProperties.Add(nameof(RectangleEntity.BorderRadius));
-        //VisualProperties.Add(nameof(RectangleEntity.BorderWidth));
-    }
+    public DrawableRectangleTile(RectangleEntity entity, double gridSize) : base(entity, gridSize) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is RectangleEntity entity) {
@@ -34,8 +30,6 @@ public class DrawableRectangleTile : Tile, ITileDrawable {
             shape.Scale = 1;
             return shape;
         }
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("rectangle").AsImage();
 }

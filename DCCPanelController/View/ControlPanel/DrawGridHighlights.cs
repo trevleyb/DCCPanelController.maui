@@ -65,8 +65,8 @@ public class DrawGridHighlights : GraphicsView, IDrawable {
     public void Add(ITile tile, CellHighlightAction action) {
         if (!IsActive) return;
         if (tile is { Entity: { } entity }) {
-            _bounded.Remove(tile.Guid);
-            _bounded.Add(tile.Guid, new CellHighlight(entity.Col, entity.Row, entity.Width, entity.Height, action));
+            _bounded.Remove(tile.Entity.Guid);
+            _bounded.Add(tile.Entity.Guid, new CellHighlight(entity.Col, entity.Row, entity.Width, entity.Height, action));
             Invalidate();
         }
     }
@@ -82,7 +82,7 @@ public class DrawGridHighlights : GraphicsView, IDrawable {
     // ---------------------------------------------------------------------------------
     public void Remove(ITile tile) {
         if (!IsActive) return;
-        if (_bounded.Remove(tile.Guid)) Invalidate();
+        if (_bounded.Remove(tile.Entity.Guid)) Invalidate();
     }
 
     // Remove all items from the grid

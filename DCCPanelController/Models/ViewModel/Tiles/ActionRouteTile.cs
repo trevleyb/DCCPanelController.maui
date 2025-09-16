@@ -9,7 +9,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionRouteTile : Tile, ITileInteractive {
-    public ActionRouteTile(RouteEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    public ActionRouteTile(RouteEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         if (Entity is RouteEntity { Route: { } route } routeEntity) {
@@ -78,8 +78,6 @@ public class ActionRouteTile : Tile, ITileInteractive {
             absoluteLayout.Children.Add(canvas);
             return absoluteLayout;
         }
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("route").AsImage();
 }

@@ -4,7 +4,6 @@ using DCCPanelController.Models.ViewModel.Helpers;
 namespace DCCPanelController.Models.ViewModel.Interfaces;
 
 public interface ITile {
-    Guid Guid { get; }
     Entity Entity { get; }
 
     public double TileWidth { get; }

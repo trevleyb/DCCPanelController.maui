@@ -35,7 +35,7 @@ public class TileSelectorPaletteCache {
                 categories.Add(category);
                 byCategory[category] = new List<ITile>();
                 foreach (var e in entities) {
-                    var tile = TileFactory.CreateTile(e, 32, TileDisplayMode.Symbol);
+                    var tile = TileFactory.CreateTile(e, 32);
                     if (tile is { }) byCategory[category].Add(tile);
                 }
             }
@@ -86,7 +86,7 @@ public class TileSelectorPaletteCache {
                 new CircleLabelEntity(panel),
                 new RectangleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new LineEntity(panel) { Height = 1, Width = 1, LineColor = Colors.Black, LineWidth = 4 },
-                new CircleEntity(panel) { Height = 1, Width = 1, BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
+                new CircleEntity(panel) { BackgroundColor = Colors.Silver, BorderColor = Colors.Black },
                 new ImageEntity(panel),
             ]);
             return new PaletteResult(byCategory, categories);

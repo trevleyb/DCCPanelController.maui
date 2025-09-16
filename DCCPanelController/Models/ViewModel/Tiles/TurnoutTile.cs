@@ -8,7 +8,7 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public abstract class TurnoutTile : TrackTile, ITileInteractive {
-    protected TurnoutTile(TurnoutEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
+    protected TurnoutTile(TurnoutEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(TurnoutEntity.State));
         VisualProperties.Add(nameof(TurnoutEntity.TrackNotSelectedColor));
         VisualProperties.Add(nameof(TurnoutEntity.TurnoutStyle));

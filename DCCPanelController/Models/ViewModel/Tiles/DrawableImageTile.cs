@@ -1,5 +1,6 @@
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Converters;
@@ -10,18 +11,14 @@ using Shape = Microsoft.Maui.Controls.Shapes.Shape;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableImageTile : Tile, ITileDrawable {
-    public DrawableImageTile(ImageEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        //VisualProperties.Add(nameof(ImageEntity.BorderColor));
-        //VisualProperties.Add(nameof(ImageEntity.BorderWidth));
-        //VisualProperties.Add(nameof(ImageEntity.AspectRatio));
-        //VisualProperties.Add(nameof(ImageEntity.BorderRadius));
+    public DrawableImageTile(ImageEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ImageEntity.Image));
     }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        if (Entity is ImageEntity entity && !string.IsNullOrEmpty(entity.Image)) {
+        if (Entity is ImageEntity entity) {
             var image = new Image {
-                Source = ImageHelper.ImageFromBase64(entity.Image),
+                Source = string.IsNullOrEmpty(entity.Image) ? SvgImages.GetImage("image").AsImageSource() : ImageHelper.ImageFromBase64(entity.Image),
                 HorizontalOptions = LayoutOptions.Start,
                 VerticalOptions = LayoutOptions.Start,
                 ZIndex = entity.Layer,
@@ -46,16 +43,14 @@ public class DrawableImageTile : Tile, ITileDrawable {
                     CornerRadius = new CornerRadius(entity.BorderRadius),
                 },
             };
-            border.SetBinding(RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
-            border.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
-            border.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: entity));
-            border.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: entity));
+            border.SetBinding(Border.RotationProperty, new Binding(nameof(Rotation), BindingMode.OneWay, source: this));
+            border.SetBinding(Border.OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.TwoWay, source: entity));
+            border.SetBinding(Border.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.TwoWay, new ColorToSolidColorConverter(), source: entity));
+            border.SetBinding(Border.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.TwoWay, source: entity));
             border.SetBinding(RoundRectangle.CornerRadiusProperty, new Binding(nameof(entity.BorderRadius), BindingMode.TwoWay, new CornerRadiusConverter(), source: entity));
             border.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.TwoWay, source: entity));
             return border;
         }
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("image").AsImage();
 }

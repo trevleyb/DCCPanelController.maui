@@ -3,7 +3,7 @@ using DCCPanelController.Models.DataModel.Entities;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class TrackStraightTile : TrackTile {
-    public TrackStraightTile(StraightEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) { }
+    public TrackStraightTile(StraightEntity entity, double gridSize) : base(entity, gridSize) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() =>
         ((StraightEntity)Entity).TrackStyle switch {
@@ -17,7 +17,4 @@ public class TrackStraightTile : TrackTile {
             TrackStyleEnum.Rounded    => CreateTrackTile("rounded", Entity.Rotation),
             _                         => CreateTrackTile("straight", Entity.Rotation),
         };
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => CreateTile(); 
-    
 }

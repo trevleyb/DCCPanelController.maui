@@ -12,7 +12,6 @@ internal readonly record struct TileRenderKey(
     int PixelWidth,
     int PixelHeight,
     string StyleHash,        // hash of SvgStyle applied
-    TileDisplayMode Mode,
     bool ShowPointsOverlay,  // overlays affect pixels
     string? ExtraFlags       // e.g., "Occupied", "Path"
 );

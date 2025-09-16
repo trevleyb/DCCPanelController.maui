@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Converters;
@@ -7,19 +8,7 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableCircleLabelTile : Tile, ITileDrawable {
-    public DrawableCircleLabelTile(CircleLabelEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        // These are all bound so shuld not need to be added to the visual properties
-        //VisualProperties.Add(nameof(CircleLabelEntity.BackgroundColor));
-        //VisualProperties.Add(nameof(CircleLabelEntity.BorderColor));
-        //VisualProperties.Add(nameof(CircleLabelEntity.BorderWidth));
-        //VisualProperties.Add(nameof(CircleLabelEntity.BorderInnerColor));
-        //VisualProperties.Add(nameof(CircleLabelEntity.BorderInnerGap));
-        //VisualProperties.Add(nameof(CircleLabelEntity.BorderInnerWidth));
-        //VisualProperties.Add(nameof(CircleLabelEntity.FontSize));
-        //VisualProperties.Add(nameof(CircleLabelEntity.Label));
-        //VisualProperties.Add(nameof(CircleLabelEntity.TextColor));
-        //VisualProperties.Add(nameof(CircleLabelEntity.Scale));
-    }
+    public DrawableCircleLabelTile(CircleLabelEntity entity, double gridSize) : base(entity, gridSize) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         var grid = new Grid {
@@ -84,9 +73,6 @@ public class DrawableCircleLabelTile : Tile, ITileDrawable {
             grid.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: Entity));
             return grid;
         }
-
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("label").AsImage();
 }

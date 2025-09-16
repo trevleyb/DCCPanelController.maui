@@ -1,4 +1,5 @@
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.ViewModel.Helpers;
 using DCCPanelController.Models.ViewModel.ImageManager;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.View.Converters;
@@ -7,10 +8,7 @@ using Microsoft.Maui.Controls.Shapes;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class DrawableLineTile : Tile, ITileDrawable {
-    public DrawableLineTile(LineEntity entity, double gridSize, TileDisplayMode displayMode = TileDisplayMode.Normal) : base(entity, gridSize, displayMode) {
-        //VisualProperties.Add(nameof(LineEntity.LineColor));
-        //VisualProperties.Add(nameof(LineEntity.LineWidth));
-    }
+    public DrawableLineTile(LineEntity entity, double gridSize) : base(entity, gridSize) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is LineEntity entity) {
@@ -46,8 +44,6 @@ public class DrawableLineTile : Tile, ITileDrawable {
             shape.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: entity));
             return shape;
         }
-        return CreateSymbol();
+        throw new TileRenderException(this.GetType(), Entity.GetType());
     }
-
-    protected override Microsoft.Maui.Controls.View? CreateSymbol() => SvgImages.GetImage("line").AsImage();
 }
