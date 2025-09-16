@@ -13,23 +13,21 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         VisualProperties.Add(nameof(TurnoutEntity.TrackNotSelectedColor));
         VisualProperties.Add(nameof(TurnoutEntity.TurnoutStyle));
         if (Entity is TurnoutEntity { Turnout: { } turnout } turnoutEntity) {
-            turnout.PropertyChanged += (_, _) => { turnoutEntity.State = turnout.State; };
+            turnout.StateChanged += (_, _) => {
+                turnoutEntity.State = turnout.State;
+            };
         }
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is TurnoutEntity { } turnout) {
-            if (UseClickSounds) await ClickSounds.PlayTurnoutClickSoundAsync();
-            var newState = turnout.State switch {
-                TurnoutStateEnum.Closed  => TurnoutStateEnum.Thrown,
-                TurnoutStateEnum.Thrown  => TurnoutStateEnum.Closed,
-                TurnoutStateEnum.Unknown => TurnoutStateEnum.Closed,
-                _                        => TurnoutStateEnum.Unknown,
-            };
-            turnout.SetState(newState, StateChangeSource.Internal);
-            if (connectionService?.Client is { } client && turnout.Turnout is { }) {
-                await client.SendTurnoutCmdAsync(turnout.Turnout, newState != TurnoutStateEnum.Closed);
+        if (Entity is TurnoutEntity {Turnout: { } turnout} ) {
+            if (connectionService?.Client is { } client) {
+                if (UseClickSounds) await ClickSounds.PlayTurnoutClickSoundAsync();
+                turnout.ToggleState();
+                await client.SendTurnoutCmdAsync(turnout, turnout.State != TurnoutStateEnum.Closed);
             }
+            // Move Cascade code here as it belongs here 
+            //turnout.SetState(newState, StateChangeSource.Internal);
             return true;
         }
         return false;
