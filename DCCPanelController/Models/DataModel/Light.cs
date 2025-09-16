@@ -25,4 +25,11 @@ public partial class Light : ObservableObject {
 
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
+    
+    public event EventHandler<bool>? StateChanged;
+    partial void OnStateChanged(bool value) => StateChanged?.Invoke(this, value);
+    public void ToggleState() {
+        State = !State;
+    }
+
 }

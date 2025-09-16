@@ -20,4 +20,11 @@ public partial class Block : ObservableObject {
 
     [JsonIgnore]
     public string State => IsOccupied ? "Occupied" : "Free";
+    
+    public event EventHandler<bool>? StateChanged;
+    partial void OnIsOccupiedChanged(bool value) => StateChanged?.Invoke(this, value);
+    public void ToggleState() {
+        IsOccupied = !IsOccupied;
+    }
+
 }

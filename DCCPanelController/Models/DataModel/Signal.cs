@@ -25,4 +25,8 @@ public partial class Signal : ObservableObject {
 
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
+    
+    public event EventHandler<string>? AspectChanged;
+    partial void OnAspectChanged(string value) => AspectChanged?.Invoke(this, value);
+
 }

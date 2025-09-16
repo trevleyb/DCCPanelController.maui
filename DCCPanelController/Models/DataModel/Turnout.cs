@@ -21,4 +21,16 @@ public partial class Turnout : ObservableObject {
 
     [JsonIgnore]
     public string DisplayFormat => $"{Name} ({Id})";
+    
+    public event EventHandler<TurnoutStateEnum>? StateChanged;
+    partial void OnStateChanged(TurnoutStateEnum value) => StateChanged?.Invoke(this, value);
+   
+    public void ToggleState() {
+        var newState = State switch {
+            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+            _                       => TurnoutStateEnum.Closed,
+        };
+        State = newState;
+    }
 }
