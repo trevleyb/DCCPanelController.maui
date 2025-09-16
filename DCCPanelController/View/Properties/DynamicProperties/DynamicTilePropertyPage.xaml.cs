@@ -2,6 +2,7 @@ using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
+using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Resources.Styles;
 using DCCPanelController.View.Converters;
@@ -53,15 +54,17 @@ public partial class DynamicTilePropertyPage {
         propertyHost.Children.Clear();
         State = FormState.Normal;
 
-        // Lets make sure we have some valid Tiles to work with
+        // Let's make sure we have some valid Tiles to work with
         // ---------------------------------------------------------------
         var entities = EntitySource?.ToList();
         if (entities == null || entities.Count == 0) return FormState.NoSelectedTiles;
 
         // Valid the for and ensure we have some common properties
         // ---------------------------------------------------------------
-        Form = DynamicTilePropertyForm.CreateForm(entities, Width, Height);
-        await Form.ValidateAsync();
+        using (new CodeTimer("RebuildAsync: CreateForm")) {
+            Form = DynamicTilePropertyForm.CreateForm(entities, Width, Height);
+            await Form.ValidateAsync();
+        }
 
         if (!Form.HasCommonProperties) return FormState.NoCommonProperties;
 
@@ -75,14 +78,12 @@ public partial class DynamicTilePropertyPage {
 
             // Add the rows to the expander
             // -----------------------------------------------------------
-            var children = 0;
             foreach (var row in group.Rows) {
                 if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
                     expander.children?.Add(v);
-                    if (++children < group.Rows.Count) expander.children?.Add(FieldDivider());
                 }
             }
-            if (children > 0) PropertyHost.Children.Add(expander.expander);
+            PropertyHost.Children.Add(expander.expander);
         }
         return FormState.Normal;
     }
