@@ -95,6 +95,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         if (Entity is TurnoutButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("TurnoutLarge", Entity.Rotation),
+                ButtonSizeEnum.Small => SvgImages.GetImage("TurnoutSmall", Entity.Rotation),
                 _                    => SvgImages.GetImage("Turnout", Entity.Rotation),
             };
 

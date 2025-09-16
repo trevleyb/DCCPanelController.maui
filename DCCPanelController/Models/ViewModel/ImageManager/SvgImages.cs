@@ -27,15 +27,19 @@ public static class SvgImages {
 
         AddImage("Button", "button_push", "button_push_corner");
         AddImage("ButtonLarge", "button_push_large");
+        AddImage("ButtonSmall", "button_push_small");
 
         AddImage("Route", "button_route");
         AddImage("RouteLarge", "button_route_large");
+        AddImage("RouteSmall", "button_route_small");
 
         AddImage("Turnout", "button_turnout");
         AddImage("TurnoutLarge", "button_turnout_large");
+        AddImage("TurnoutSmall", "button_turnout_small");
 
         AddImage("Light", "button_light");
         AddImage("LightLarge", "button_light_large");
+        AddImage("LightSmall", "button_light_small");
 
         AddImage("Switch", "switch_on");
         AddImage("SwitchOn", "switch_on");

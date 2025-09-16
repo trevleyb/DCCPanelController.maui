@@ -46,6 +46,7 @@ public class ActionRouteTile : Tile, ITileInteractive {
         if (Entity is RouteEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("routeLarge", Entity.Rotation),
+                ButtonSizeEnum.Small => SvgImages.GetImage("RouteSmall", Entity.Rotation),
                 _                    => SvgImages.GetImage("route", Entity.Rotation),
             };
 

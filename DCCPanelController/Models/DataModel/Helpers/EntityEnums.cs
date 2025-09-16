@@ -10,7 +10,7 @@ public enum TurnoutStateEnum { Unknown, Closed, Thrown }
 
 public enum RouteStateEnum { Unknown, Active, Inactive }
 
-public enum ButtonSizeEnum { Normal, Large }
+public enum ButtonSizeEnum { Normal, Small, Large }
 
 public enum TrackTypeEnum { MainLine, BranchLine }
 

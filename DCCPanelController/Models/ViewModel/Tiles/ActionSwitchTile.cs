@@ -45,6 +45,7 @@ public class ActionSwitchTile : Tile, ITileInteractive {
                 SwitchStyleEnum.Light =>
                     button.ButtonSize switch {
                         ButtonSizeEnum.Large => SvgImages.GetImage("lightLarge", Entity.Rotation),
+                        ButtonSizeEnum.Small => SvgImages.GetImage("lightSmall", Entity.Rotation),
                         _                    => SvgImages.GetImage("light", Entity.Rotation),
                     },
                 SwitchStyleEnum.Button =>

@@ -101,6 +101,9 @@
         <!-- App Icon -->
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <EmbeddedResource Include="Models\TileImages\button_light_large.svg"/>
+        <EmbeddedResource Include="Models\TileImages\button_light_small.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_push_small.svg" />
+        <EmbeddedResource Include="Models\TileImages\button_route_small.svg" />
         <EmbeddedResource Include="Models\TileImages\button_turnout_large.svg"/>
         <EmbeddedResource Include="Models\TileImages\button_turnout.svg"/>
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
@@ -113,6 +116,7 @@
 
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#7CC504" BaseSize="172,220"/>
+        <EmbeddedResource Include="Models\TileImages\button_turnout_small.svg" />
         <EmbeddedResource Include="Models\TileImages\draw_circle.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_line.svg"/>
         <EmbeddedResource Include="Models\TileImages\draw_rectangle.svg"/>

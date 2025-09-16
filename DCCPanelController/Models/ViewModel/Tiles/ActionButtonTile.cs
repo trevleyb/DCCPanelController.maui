@@ -40,6 +40,7 @@ public class ActionButtonTile : Tile, ITileInteractive {
         if (Entity is ActionButtonEntity button) {
             SvgImage = button.ButtonSize switch {
                 ButtonSizeEnum.Large => SvgImages.GetImage("ButtonLarge", Entity.Rotation),
+                ButtonSizeEnum.Small => SvgImages.GetImage("ButtonSmall", Entity.Rotation),
                 _                    => SvgImages.GetImage("button", Entity.Rotation),
             };
 
