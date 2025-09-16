@@ -19,25 +19,6 @@
                       fill="#90C418" fill-rule="evenodd" transform="matrix(1 0.017 -0.017 1 1.611 0.948)"/>
             </g>
         </g>
-        <g transform="translate(17 13)">
-            <g>
-                <g>
-                    <rect id="Indicator" width="4.562" height="10.833" fill="#000000" fill-rule="evenodd"
-                          transform="translate(1.908 4.583)"/>
-                    <path id="Indicator" d="M8.06459 0L11.2904 3.06413L3.22584 10.7245L0 7.66032L8.06459 0Z"
-                          fill="#000000" fill-rule="evenodd" transform="translate(3.128 3)"/>
-                    <path id="Indicator"
-                          d="M0 4.66667C0 4.66667 4.2111 0 4.2111 0L8.4222 4.66667C8.4222 4.66667 0 4.66667 0 4.66667Z"
-                          fill="#000000"/>
-                    <path id="Indicator"
-                          d="M0 0.883883C0 0.883883 5.89336 0 5.89336 0L4.96283 5.59793C4.96283 5.59793 0 0.883883 0 0.883883Z"
-                          fill="#000000" transform="translate(10.107 1.324)"/>
-                    <rect id="Indicator" width="4.562" height="10.5" fill="#000000" fill-rule="evenodd"
-                          transform="translate(1.93 11.5)"/>
-                </g>
-            </g>
-        </g>
-
     </g>
 </svg>
 

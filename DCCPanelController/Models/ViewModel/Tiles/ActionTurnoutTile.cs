@@ -92,12 +92,9 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
                 _                   => button.ColorUnknownBorder ?? button.Parent?.ButtonBorder ?? Colors.Black,
             };
 
-            var indicatorColor = button.ShowIndicator ? button.ColorIndicator ?? AppleCrayonColors.GetContrastingTextColor(buttonColor) ?? Colors.White : buttonColor;
-
             var style = new SvgStyleBuilder();
             style.Add(e => e.WithName(SvgElementType.Button).WithColor(buttonColor));
             style.Add(e => e.WithName(SvgElementType.ButtonOutline).WithColor(buttonOutline));
-            style.Add(e => e.WithName(SvgElementType.Indicator).WithColor(indicatorColor));
             SvgImage.ApplyStyle(style.Build());
 
             var canvas = SvgImage.AsCanvas(SvgImage.Rotation, 1);

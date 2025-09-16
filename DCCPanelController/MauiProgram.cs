@@ -43,8 +43,8 @@ public static class MauiProgram {
                     fonts.AddFont("OpenSans-Medium.ttf", "OpenSansMedium");
                     fonts.AddFont("OpenSans-MediumItalic.ttf", "OpenSansMediumItalic");
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-                    fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansBold");
-                    fonts.AddFont("OpenSans-SemiBoldItalic.ttf", "OpenSansBoldItalic");
+                    fonts.AddFont("OpenSans-SemiBold.ttf", "OpenSansSemiBold");
+                    fonts.AddFont("OpenSans-SemiBoldItalic.ttf", "OpenSansSemiBoldItalic");
                 });
 
         FormHelper.RemoveBorders();

@@ -88,6 +88,21 @@ public static class EnumHelpers {
         _                                => TextAlignment.Center,
     };
 
+    public static HorizontalAlignment ConvertHorizontalAlignmentToDraw(TextAlignmentHorizontalEnum alignment) => alignment switch {
+        TextAlignmentHorizontalEnum.Left    => HorizontalAlignment.Left,
+        TextAlignmentHorizontalEnum.Right   => HorizontalAlignment.Right,
+        TextAlignmentHorizontalEnum.Center  => HorizontalAlignment.Center,
+        TextAlignmentHorizontalEnum.Justify => HorizontalAlignment.Justified,
+        _                                   => HorizontalAlignment.Left
+    };
+
+    public static VerticalAlignment ConvertVerticalAlignmentToDraw(TextAlignmentVerticalEnum alignment) => alignment switch {
+        TextAlignmentVerticalEnum.Top    => VerticalAlignment.Top,
+        TextAlignmentVerticalEnum.Bottom => VerticalAlignment.Bottom,
+        TextAlignmentVerticalEnum.Center => VerticalAlignment.Center,
+        _                                => VerticalAlignment.Center,
+    };
+
     public static TurnoutStateEnum ConvertTurnout(string state) => state switch {
         "Closed" => TurnoutStateEnum.Closed,
         "Thrown" => TurnoutStateEnum.Thrown,

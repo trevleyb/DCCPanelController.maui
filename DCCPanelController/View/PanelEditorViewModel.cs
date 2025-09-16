@@ -236,6 +236,7 @@ public partial class PanelEditorViewModel : ObservableObject {
         } else {
             await EditPanelPropertiesPopupAsync();
         }
+        EditMode = EditModeEnum.Move;   // Reset the edit mode after editing properties
     }
 
     private async Task EditPanelPropertiesPopupAsync() {
