@@ -46,31 +46,11 @@ public class DrawableCircleTile : Tile, ITileDrawable {
             var t = (float)Math.Max(0, e.BorderWidth);
             if (t > 0f) {
                 canvas.StrokeColor = e.BorderColor;
-                canvas.StrokeSize  = t;
+                canvas.StrokeSize = t;
                 var inset = dirty.Inflate(new SizeF(-t / 2f));
                 canvas.DrawEllipse(inset);
             }
             canvas.RestoreState();
         }
     }
-
-    
-    // protected override Microsoft.Maui.Controls.View? CreateTile() {
-    //     using (new CodeTimer("Draw Circle Maui")) {
-    //         if (Entity is CircleEntity entity) {
-    //             var circle = new Ellipse {
-    //                 HorizontalOptions = LayoutOptions.Start,
-    //                 VerticalOptions = LayoutOptions.Start,
-    //                 InputTransparent = true,
-    //             };
-    //             circle.SetBinding(OpacityProperty, new Binding(nameof(entity.Opacity), BindingMode.OneWay, source: entity));
-    //             circle.SetBinding(Shape.FillProperty, new Binding(nameof(entity.BackgroundColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: entity));
-    //             circle.SetBinding(Shape.StrokeProperty, new Binding(nameof(entity.BorderColor), BindingMode.OneWay, new ColorToSolidColorConverter(), source: entity));
-    //             circle.SetBinding(Shape.StrokeThicknessProperty, new Binding(nameof(entity.BorderWidth), BindingMode.OneWay, source: entity));
-    //             circle.SetBinding(ZIndexProperty, new Binding(nameof(entity.Layer), BindingMode.OneWay, source: entity));
-    //             return circle;
-    //         }
-    //         throw new TileRenderException(this.GetType(), Entity.GetType());
-    //     }
-    // }
 }
