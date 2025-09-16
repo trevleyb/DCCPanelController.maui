@@ -2,9 +2,11 @@ using CommunityToolkit.Maui.Behaviors;
 using CommunityToolkit.Maui.Markup;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Resources.Styles;
+using DCCPanelController.Services;
 using DCCPanelController.View.Converters;
 using Microsoft.Maui.Controls.Shapes;
 using Syncfusion.Maui.Toolkit.Popup;
@@ -30,13 +32,20 @@ public partial class DynamicTilePropertyPage {
     [ObservableProperty] private FormState _state = FormState.Normal;
     [ObservableProperty] private string    _title = "Properties";
     [ObservableProperty] private double    _width;
-    public                       SfPopup?  Popup;
 
-    private DynamicTilePropertyPage(double width, double height) {
+    private bool     _isPopup;
+    public  SfPopup? Popup;
+
+    private DynamicTilePropertyPage(double width, double height, bool isPopup) {
         InitializeComponent();
         BindingContext = this;
         Width = width;
         Height = height;
+        _isPopup = isPopup;
+
+        if (!_isPopup) {
+            
+        }
     }
 
     public bool ShowInformation => !string.IsNullOrWhiteSpace(Information);
@@ -61,10 +70,8 @@ public partial class DynamicTilePropertyPage {
 
         // Valid the for and ensure we have some common properties
         // ---------------------------------------------------------------
-        using (new CodeTimer("RebuildAsync: CreateForm")) {
-            Form = DynamicTilePropertyForm.CreateForm(entities, Width, Height);
-            await Form.ValidateAsync();
-        }
+        Form = DynamicTilePropertyForm.CreateForm(entities, Width, Height);
+        await Form.ValidateAsync();
 
         if (!Form.HasCommonProperties) return FormState.NoCommonProperties;
 
@@ -108,14 +115,31 @@ public partial class DynamicTilePropertyPage {
     #endregion
 
     #region Helpers for Launching the PropertyPage
-    public static async Task CreatePropertyPage(List<Entity> selectedEntities, double width, double height) {
+
+    [RelayCommand]
+    private async Task BackButtonPressedAsync() {
+        ApplyButtonClicked(this, EventArgs.Empty);
+    }
+    
+    public static async Task<DynamicTilePropertyPage?> CreatePropertyPage(List<Entity> selectedEntities, double width, double height, bool isPopup = false) {
         try {
-            var content = new DynamicTilePropertyPage(width, height) {
+            var content = new DynamicTilePropertyPage(width, height, isPopup) {
                 Title = GetTitle(selectedEntities),
                 Information = GetInformation(selectedEntities),
                 EntitySource = selectedEntities,
             };
+            return content;
+        } catch (Exception ex) {
+            Console.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
+        }
+        return null;
+    }
 
+    public static async Task CreatePropertyPagePopup(List<Entity> selectedEntities, double width, double height) {
+        try {
+            var content = await CreatePropertyPage(selectedEntities, width, height, true);
+            if (content is null) return;
+            
             content.Popup = new SfPopup {
                 ContentTemplate = new DataTemplate(() => content),
                 ShowHeader = false,
@@ -140,10 +164,12 @@ public partial class DynamicTilePropertyPage {
         }
     }
 
-    public void ClosePropertyPage() {
-        if (Popup is { } popup) {
+    public async void ClosePropertyPage() {
+        if (_isPopup && Popup is { } popup) {
             popup.IsOpen = false;
             popup.Dismiss();
+        } else {
+            await Navigation.PopAsync();
         }
     }
 

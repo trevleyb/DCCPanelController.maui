@@ -11,6 +11,14 @@
     xmlns:markdown="clr-namespace:Indiko.Maui.Controls.Markdown;assembly=Indiko.Maui.Controls.Markdown"
     xmlns:components="clr-namespace:DCCPanelController.View.Components">
 
+    <Shell.BackButtonBehavior>
+        <BackButtonBehavior
+            IsEnabled="False"
+            IsVisible="False"
+            x:DataType="dynamicProperties:DynamicTilePropertyPage"
+            Command="{Binding BackButtonPressedCommand}"/>
+    </Shell.BackButtonBehavior>
+    
     <ContentView.Resources>
         <toolkit:EnumToBoolConverter x:Key="EnumToBool"/>
     </ContentView.Resources>

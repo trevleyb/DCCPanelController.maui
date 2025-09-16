@@ -58,21 +58,19 @@ public sealed class DynamicTilePropertyForm {
     public static DynamicTilePropertyForm CreateForm(IEnumerable<Entity> selection,
         double width, double height) {
 
-        using (new CodeTimer("Building Property Form")) {
-            var extractor = new EditableExtractorCache();
-            var renderers = new PropertyRendererRegistry();
-            EditorKinds.RegisterDefaults(renderers);
-            var validator = new CompositeValidator([
-                new PropertyRendererRules.RequiredRule(),
-                new PropertyRendererRules.RangeRule(),
-                new PropertyRendererRules.RegexRule(),
-            ]);
+        var extractor = new EditableExtractorCache();
+        var renderers = new PropertyRendererRegistry();
+        EditorKinds.RegisterDefaults(renderers);
+        var validator = new CompositeValidator([
+            new PropertyRendererRules.RequiredRule(),
+            new PropertyRendererRules.RangeRule(),
+            new PropertyRendererRules.RegexRule(),
+        ]);
 
-            var equality = new DefaultEqualityPolicy();
-            var undo = new DefaultUndoService();
-            var kindResolver = new EditableExtractorResolver();
-            return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, width, height);
-        }
+        var equality = new DefaultEqualityPolicy();
+        var undo = new DefaultUndoService();
+        var kindResolver = new EditableExtractorResolver();
+        return new DynamicTilePropertyForm(selection, extractor, renderers, validator, equality, undo, kindResolver, width, height);
     }
 
     private static Type UnwrapNullable(Type t) => Nullable.GetUnderlyingType(t) ?? t;
@@ -176,12 +174,10 @@ public sealed class DynamicTilePropertyForm {
     }
 
     public object GetRendererView(PropertyRow row) {
-        using (new CodeTimer($"Rendering:{row.Field.Accessor.Name}")) {
-            var kind = _kindResolver.Resolve(row.Field, _width);
-            var ctx = new PropertyContext(kind, row, _width, _height, SelectedEntities);
-            var renderer = _renderers.Resolve(kind);
-            return!renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
-        }
+        var kind = _kindResolver.Resolve(row.Field, _width);
+        var ctx = new PropertyContext(kind, row, _width, _height, SelectedEntities);
+        var renderer = _renderers.Resolve(kind);
+        return!renderer.CanRender(ctx) ? new InvalidRenderer($"Invalid Renderer: {kind}").CreateView(ctx) : renderer.CreateView(ctx);
     }
 
     public async Task<ValidationSummary> ValidateAsync() {

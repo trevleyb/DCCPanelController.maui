@@ -104,6 +104,10 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
 
+    public event Action? ForcePanelRefresh;
+    public event Action? OnBeginPushModal;
+    public event Action? OnBeginPopModal;
+    
     public string GetEditModeIconFilename =>
         EditMode switch {
             EditModeEnum.Copy => "copy.png",
@@ -232,7 +236,8 @@ public partial class PanelEditorViewModel : ObservableObject {
     [RelayCommand]
     public async Task EditPropertiesAsync() {
         if (SelectedEntities.Count > 0) {
-            await EditTilePropertiesPopupAsync();
+            //await EditTilePropertiesPopupAsync();
+            await EditTilePropertiesNavPage();
         } else {
             await EditPanelPropertiesPopupAsync();
         }
@@ -255,6 +260,31 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
+    private async Task EditTilePropertiesNavPage() {
+        try {
+            //var layer = SelectedEntities.First().Layer;
+            if (Panel is { } panel && SelectedEntities?.Count > 0) {
+                OnBeginPushModal?.Invoke();
+                if (SelectedEntities?.Count > 0 && _panelEditor is { }) {
+                    var content = await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
+                    var page = new ContentPage() { Content = content };
+                    await _panelEditorContainer.Navigation.PushAsync(page);
+                }
+                _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
+                OnBeginPopModal?.Invoke();
+            }
+            
+            // if the layer of the item changed, then we need to force a refresh of the panel
+            // ------------------------------------------------------------------------------
+            //if (layer != SelectedEntities?.First()?.Layer) {
+            //    Console.WriteLine("Layer was changed, so forcing a Panel redraw");
+            //    ForcePanelRefresh?.Invoke();
+            //}
+        } catch (Exception ex) {
+            _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
+        }
+    }
+    
     private async Task EditTilePropertiesPopupAsync() {
         try {
             IsProcessing = true;
