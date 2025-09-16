@@ -11,6 +11,7 @@ using DCCPanelController.View.Properties.DynamicProperties;
 namespace DCCPanelController.Models.DataModel.Entities;
 
 public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, IInteractiveEntity, ITrackEntity, IActionEntity {
+
     [ObservableProperty] [property: Editable("Turnout Name", "Unique name for this Turnout", 0, "General")]
     private string _id = string.Empty;
 
@@ -36,9 +37,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
 
     [JsonConstructor]
     protected TurnoutEntity() { }
-
     protected TurnoutEntity(Panel panel) : base(panel) { }
-
     protected TurnoutEntity(TurnoutEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") {
         ButtonPanelActions = new ButtonActions(entity.ButtonPanelActions);
         TurnoutPanelActions = new TurnoutActions(entity.TurnoutPanelActions);
@@ -64,21 +63,21 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
 
     public override string ToString() => TurnoutID;
 
-    public void ToggleState() {
-        var newState = State switch {
-            TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
-            TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
-            _                       => TurnoutStateEnum.Closed,
-        };
-        SetState(newState, _stateChangeSource);
-    }
+    // public void ToggleState() {
+    //     var newState = State switch {
+    //         TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+    //         TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+    //         _                       => TurnoutStateEnum.Closed,
+    //     };
+    //     SetState(newState, _stateChangeSource);
+    // }
 
     public void SetState(TurnoutStateEnum newState, StateChangeSource source, ActionExecutionContext? context = null) {
         if (State == newState) return;
 
         _stateChangeSource = source;
         State = newState;
-
+        
         // Only trigger cascading if this is an external change or we're not already cascading this entity
         if (source == StateChangeSource.External || context?.CanCascade(TurnoutID) == true) {
             context ??= new ActionExecutionContext();

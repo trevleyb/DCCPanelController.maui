@@ -16,16 +16,34 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
         RegisterForTurnoutEvents();
-        if (Entity is TurnoutButtonEntity button) button.State = ButtonStateEnum.Unknown;
+
+        if (Entity is TurnoutButtonEntity button) {
+            if (button.Turnout is { } turnout) {
+                SetButtonState(button, turnout.State);
+                turnout.StateChanged += (_, state) => SetButtonState(button, state);
+            } else button.State = ButtonStateEnum.Unknown;
+
+        }
     }
 
+    private void SetButtonState(TurnoutButtonEntity button, TurnoutStateEnum state) {
+        button.State = state switch {
+            TurnoutStateEnum.Unknown => ButtonStateEnum.Unknown,
+            TurnoutStateEnum.Closed  => button.WhenNormal,
+            TurnoutStateEnum.Thrown  => button.WhenThrown,
+            _                        => button.State
+        };
+    }
+    
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is TurnoutButtonEntity { IsEnabled: true }) {
-            if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-            _turnout?.ToggleState();
-            return true;
+        if (Entity is TurnoutButtonEntity { IsEnabled: true } button) {
+            if (connectionService?.Client is { } client) {
+                if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+                button.Turnout?.ToggleState();
+                return true;
+            }
         }
         return false;
     }

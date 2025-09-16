@@ -14,7 +14,8 @@ public partial class SwitchEntity : ButtonEntity, IEntityID, IInteractiveEntity 
     [property: Editable("Light", "Select the ID of the light controlled by this button", 1, "General", EditorKind = EditorKinds.Light)]
     private string _id = string.Empty;
 
-    [ObservableProperty] private ButtonStateEnum _state = ButtonStateEnum.Off;
+    [ObservableProperty] 
+    private ButtonStateEnum _state = ButtonStateEnum.Off;
 
     [ObservableProperty]
     [property: Editable("Switch Style", Order = 3)]
@@ -22,7 +23,6 @@ public partial class SwitchEntity : ButtonEntity, IEntityID, IInteractiveEntity 
 
     [JsonConstructor]
     public SwitchEntity() { }
-
     public SwitchEntity(Panel panel) : base(panel) { }
     public SwitchEntity(SwitchEntity entity) : base(entity) { }
 

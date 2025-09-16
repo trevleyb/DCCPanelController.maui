@@ -22,15 +22,17 @@ public class ActionSwitchTile : Tile, ITileInteractive {
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
         if (Entity is SwitchEntity switchEntity) {
-            if (UseClickSounds) await ClickSounds.PlaySwitchClickSoundAsync();
-            switchEntity.State = switchEntity.State switch {
-                ButtonStateEnum.Unknown => ButtonStateEnum.On,
-                ButtonStateEnum.On      => ButtonStateEnum.Off,
-                ButtonStateEnum.Off     => ButtonStateEnum.On,
-                _                       => ButtonStateEnum.Unknown,
-            };
-            if (connectionService?.Client is { } client && switchEntity is { Light: { } }) await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
-            return true;
+            if (connectionService?.Client is { } client) {
+                if (UseClickSounds) await ClickSounds.PlaySwitchClickSoundAsync();
+                switchEntity.State = switchEntity.State switch {
+                    ButtonStateEnum.Unknown => ButtonStateEnum.On,
+                    ButtonStateEnum.On      => ButtonStateEnum.Off,
+                    ButtonStateEnum.Off     => ButtonStateEnum.On,
+                    _                       => ButtonStateEnum.Unknown,
+                };
+                if (switchEntity is { Light: { } }) await client.SendLightCmdAsync(switchEntity.Light, switchEntity.State == ButtonStateEnum.On);
+                return true;
+            }
         }
         return false;
     }

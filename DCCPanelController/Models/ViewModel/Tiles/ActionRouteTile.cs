@@ -21,19 +21,21 @@ public class ActionRouteTile : Tile, ITileInteractive {
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
-        if (Entity is RouteEntity route) {
-            route.State = route.State switch {
-                RouteStateEnum.Unknown  => RouteStateEnum.Active,
-                RouteStateEnum.Active   => RouteStateEnum.Inactive,
-                RouteStateEnum.Inactive => RouteStateEnum.Active,
-                _                       => RouteStateEnum.Unknown,
-            };
+        if (connectionService?.Client is { } client) {
+            if (UseClickSounds) await ClickSounds.PlayRouteClickSoundAsync();
+            if (Entity is RouteEntity route) {
+                route.State = route.State switch {
+                    RouteStateEnum.Unknown  => RouteStateEnum.Active,
+                    RouteStateEnum.Active   => RouteStateEnum.Inactive,
+                    RouteStateEnum.Inactive => RouteStateEnum.Active,
+                    _                       => RouteStateEnum.Unknown,
+                };
 
-            if (connectionService is { } && Entity is RouteEntity { Route.Id: { } id } routeEntity) {
-                if (connectionService.Client is { } client) await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
+                if (Entity is RouteEntity { Route.Id: { } id } routeEntity) {
+                    await client.SendRouteCmdAsync(routeEntity.Route, routeEntity.State != RouteStateEnum.Inactive);
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }

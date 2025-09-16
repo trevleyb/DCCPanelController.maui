@@ -19,14 +19,16 @@ public class ActionButtonTile : Tile, ITileInteractive {
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
         if (Entity is ActionButtonEntity button) {
-            if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-            var newState = button.State switch {
-                ButtonStateEnum.Unknown => ButtonStateEnum.On,
-                ButtonStateEnum.On      => ButtonStateEnum.Off,
-                ButtonStateEnum.Off     => ButtonStateEnum.On,
-                _                       => ButtonStateEnum.Unknown,
-            };
-            button.SetState(newState, StateChangeSource.External);
+            if (connectionService?.Client is { } client) {
+                if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
+                var newState = button.State switch {
+                    ButtonStateEnum.Unknown => ButtonStateEnum.On,
+                    ButtonStateEnum.On      => ButtonStateEnum.Off,
+                    ButtonStateEnum.Off     => ButtonStateEnum.On,
+                    _                       => ButtonStateEnum.Unknown,
+                };
+                button.SetState(newState, StateChangeSource.External);
+            }
             return true;
         }
         return false;

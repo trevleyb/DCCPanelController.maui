@@ -28,7 +28,7 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
     [ObservableProperty] [property: Editable("DCC Turnout", "Turnout to Control with this button", 5, "Turnout", EditorKind = EditorKinds.Turnout)]
-    private string? _turnoutID;
+    private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: Editable("Straight/Normal", "When Turnout is Straight/Thrown set Button to?", 8, "Turnout", EditorKind = EditorKinds.ButtonState)]
     private ButtonStateEnum _whenNormal;
@@ -41,6 +41,9 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
 
     public TurnoutButtonEntity(Panel panel) : base(panel) { }
     public TurnoutButtonEntity(TurnoutButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
+
+    [JsonIgnore]
+    public Turnout? Turnout => Parent?.Turnout(TurnoutID);
 
     [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "T-Button";
