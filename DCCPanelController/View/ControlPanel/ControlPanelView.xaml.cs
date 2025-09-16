@@ -183,7 +183,7 @@ public partial class ControlPanelView {
 
         // Turn off Double tap as it causes a noticable delay in the UI 
         _gridGestures.EnableDoubleTap = false;
-        
+
         // And wire up the Drop Recognisers for the Dropping of a tile from 
         // the tile palette. 
         // ----------------------------------------------------------------
@@ -521,22 +521,20 @@ public partial class ControlPanelView {
     ///     Given an Entity, create a tile and add it to the panel grid.
     /// </summary>
     private ITile? AddEntityToGrid(Entity entity) {
-        using (new CodeTimer($"Add Entity to Grid: {entity.EntityName}:{entity.Guid} @ {entity.Col},{entity.Row}", ShowCodeTimer, 10)) {
-            var tile = TileFactory.CreateTile(entity, _gridSize);
-            if (tile is { }) {
-                tile.TileChanged += TileOnPropertiesChanged;
-                if (tile is ContentView view) {
-                    view.ClassId = entity.Guid.ToString();
-                    view.ZIndex = entity.Layer;
-                    SetTileGridPosition(tile);
-                    _dynamicGrid.Children.Add(view);
-                    if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
-                }
-                return tile;
+        var tile = TileFactory.CreateTile(entity, _gridSize);
+        if (tile is { }) {
+            tile.TileChanged += TileOnPropertiesChanged;
+            if (tile is ContentView view) {
+                view.ClassId = entity.Guid.ToString();
+                view.ZIndex = entity.Layer;
+                SetTileGridPosition(tile);
+                _dynamicGrid.Children.Add(view);
+                if (tile is TrackTile trackTile) _pathTracer.RegisterTile(trackTile);
             }
-            _logger.LogError("Unable to create the tile for '{Entity}'", entity.EntityName);
-            return null;
+            return tile;
         }
+        _logger.LogError("Unable to create the tile for '{Entity}'", entity.EntityName);
+        return null;
     }
 
     /// <summary>

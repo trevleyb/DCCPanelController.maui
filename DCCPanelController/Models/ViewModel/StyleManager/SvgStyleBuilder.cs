@@ -5,6 +5,8 @@ public class SvgStyleBuilder {
 
     public SvgStyle Build() => _style;
 
+    public override string ToString() => _style.ToString();
+    
     public SvgStyleBuilder Add(Action<SvgElementBuilder> buildElement) {
         var builder = new SvgElementBuilder(string.Empty);
         buildElement(builder);

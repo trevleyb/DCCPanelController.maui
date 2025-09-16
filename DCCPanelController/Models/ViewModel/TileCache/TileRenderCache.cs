@@ -6,16 +6,6 @@ using System.Text;
 
 namespace DCCPanelController.Models.ViewModel.Helpers;
 
-internal readonly record struct TileRenderKey(
-    string ImageName,
-    int RotationDeg,
-    int PixelWidth,
-    int PixelHeight,
-    string StyleHash,        // hash of SvgStyle applied
-    bool ShowPointsOverlay,  // overlays affect pixels
-    string? ExtraFlags       // e.g., "Occupied", "Path"
-);
-
 internal sealed class TileRenderCache : IDisposable {
     private readonly ConcurrentDictionary<TileRenderKey, (SKImage Img, int Gen)> _map = new();
     private readonly LinkedList<TileRenderKey> _lru = new();

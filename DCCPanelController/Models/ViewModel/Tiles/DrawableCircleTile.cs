@@ -12,21 +12,19 @@ public class DrawableCircleTile : Tile, ITileDrawable {
     public DrawableCircleTile(CircleEntity entity, double gridSize) : base(entity, gridSize) { }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
-        using (new CodeTimer("Draw Circle Tile")) {
-            if (Entity is not CircleEntity e) throw new TileRenderException(GetType(), Entity.GetType());
+        if (Entity is not CircleEntity e) throw new TileRenderException(GetType(), Entity.GetType());
 
-            var gv = new GraphicsView {
-                WidthRequest = TileWidth,
-                HeightRequest = TileHeight,
-                InputTransparent = true,
-                Drawable = new CircleDrawable(e)
-            };
-            gv.SetBinding(ZIndexProperty, new Binding(nameof(e.Layer), source: e));
-            gv.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
+        var gv = new GraphicsView {
+            WidthRequest = TileWidth,
+            HeightRequest = TileHeight,
+            InputTransparent = true,
+            Drawable = new CircleDrawable(e)
+        };
+        gv.SetBinding(ZIndexProperty, new Binding(nameof(e.Layer), source: e));
+        gv.SetBinding(OpacityProperty, new Binding(nameof(e.Opacity), source: e));
 
-            e.PropertyChanged += (_, __) => gv.Invalidate(); // redraw on visual changes
-            return gv;
-        }
+        e.PropertyChanged += (_, __) => gv.Invalidate(); // redraw on visual changes
+        return gv;
     }
 
     private sealed class CircleDrawable : IDrawable {

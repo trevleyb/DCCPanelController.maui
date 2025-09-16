@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace DCCPanelController.Models.ViewModel.StyleManager;
 
 public class SvgStyle {
@@ -16,5 +18,13 @@ public class SvgStyle {
         foreach (var element in style.Elements.Values) {
             AddElement(element);
         }
+    }
+
+    public override string ToString() {
+        var sb = new StringBuilder();
+        foreach (var element in Elements) {
+            sb.Append(element.Value.ToString());
+        }
+        return sb.ToString();
     }
 }
