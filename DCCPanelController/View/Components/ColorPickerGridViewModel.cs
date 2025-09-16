@@ -31,7 +31,6 @@ public partial class ColorPickerGridViewModel : ObservableObject {
     [RelayCommand]
     private async Task OnColorSelected(Color color) {
         SelectedColor = color;
-        Console.WriteLine($"Color selected: {color}");
     }
 
     [RelayCommand]

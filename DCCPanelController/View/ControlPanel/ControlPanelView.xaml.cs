@@ -227,16 +227,16 @@ public partial class ControlPanelView {
                         MarkTileUnSelected(tilesAtPosition[0]);
                     }
 
-                    // Case 3: A tile is selected at this position and there are multiple tiles -> cycle selection.
+                    // Case 3: A tile is selected at this position, and there are multiple tiles -> cycle selection.
                     // -------------------------------------------------------------------------------------------
                     else {
-                        var nextIndex = (selectedIndexAtPos + 1) % tilesAtPosition.Count;
                         foreach (var t in tilesAtPosition.Where(t => t.IsSelected)) {
                             MarkTileUnSelected(t);
                         }
 
                         // Select the next tile in the stack
-                        MarkTileSelected(tilesAtPosition[nextIndex]);
+                        var nextIndex = (selectedIndexAtPos + 1) % (tilesAtPosition.Count + 1);
+                        if (nextIndex < tilesAtPosition.Count) MarkTileSelected(tilesAtPosition[nextIndex]);
                     }
                 }
                 OnTileSelected(1);
@@ -282,10 +282,7 @@ public partial class ControlPanelView {
         try {
             if (DesignMode && DebugMode.IsDebug) {
                 var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
-                if (tile is TrackTile trackTile) {
-                    trackTile.ShowPointsOverlay = !trackTile.ShowPointsOverlay;
-                    trackTile.ForceRedraw();
-                }
+                /* We are currently doing nothing on long-press in design mode */
             } else {
                 var tile = GridPositionHelper.GetTrackTilesAt(e.Col, e.Row, _dynamicGrid).FirstOrDefault();
                 if (tile is TrackTile trackTile) await _pathTracer.StartPathTracing(trackTile);
@@ -538,15 +535,43 @@ public partial class ControlPanelView {
         return null;
     }
 
+    private Microsoft.Maui.Controls.View? GetTileViewInGrid(Tile tile) {
+        var id = tile.Entity.Guid.ToString();
+        return _dynamicGrid.Children.OfType<Tile>().FirstOrDefault(x => x.ClassId == id);
+    }
+    
+    private void FixZIndex() {
+        foreach (var tile in _dynamicGrid.Children.OfType<Tile>()) {
+            if (tile.ZIndex != tile.Entity.Layer) tile.ZIndex = tile.Entity.Layer;
+        }
+    }
+
     /// <summary>
     ///     Manage if any of the properties on the tile change and the tile needs to be redraw.
     /// </summary>
     private void TileOnPropertiesChanged(object? sender, TileChangedEventArgs e) {
         if (sender is Tile tile) {
-            if (e.ChangeType == TileChangeType.Dimensions) {
-                SetTileGridPosition(tile);
-                tile.ForceRedraw();
+            switch (e.ChangeType) {
+                case TileChangeType.Dimensions:
+                    SetTileGridPosition(tile);
+                    tile.ForceRedraw();
+                    break;
+
+                case TileChangeType.Visual:
+                    var gridTile = GetTileViewInGrid(tile);
+                    gridTile?.ZIndex = tile.Entity.Layer;
+                    gridTile?.InvalidateMeasure();
+                    break;
             }
+        }
+    }
+
+    private void SetTileGridPosition(ITile tile) {
+        if (tile is ContentView view) {
+            _dynamicGrid.SetColumn(view, tile.Entity.Col);
+            _dynamicGrid.SetRow(view, tile.Entity.Row);
+            _dynamicGrid.SetColumnSpan(view, tile.Entity.Width);
+            _dynamicGrid.SetRowSpan(view, tile.Entity.Height);
         }
     }
 
@@ -608,15 +633,6 @@ public partial class ControlPanelView {
         SetTileGridPosition(tile);
         tile.ForceRedraw();
         OnTileChanged(tile);
-    }
-
-    private void SetTileGridPosition(ITile tile) {
-        if (tile is ContentView view) {
-            _dynamicGrid.SetColumn(view, tile.Entity.Col);
-            _dynamicGrid.SetRow(view, tile.Entity.Row);
-            _dynamicGrid.SetColumnSpan(view, tile.Entity.Width);
-            _dynamicGrid.SetRowSpan(view, tile.Entity.Height);
-        }
     }
     #endregion
 

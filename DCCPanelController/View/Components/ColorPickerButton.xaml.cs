@@ -5,13 +5,13 @@ using Syncfusion.Maui.Toolkit.Popup;
 namespace DCCPanelController.View.Components;
 
 public partial class ColorPickerButton : ContentView {
-    public static readonly BindableProperty          SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty          AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty          IsMultiValueProperty  = BindableProperty.Create(nameof(IsMultiValue), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty          DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty          BorderColorProperty   = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty          BorderWidthProperty   = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1, propertyChanged: ColorPropertyChanged);
-    public static readonly BindableProperty          CornerRadiusProperty  = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10, propertyChanged: ColorPropertyChanged);
+    public static readonly BindableProperty          SelectedColorProperty = BindableProperty.Create(nameof(SelectedColor), typeof(Color), typeof(ColorPickerButton), propertyChanged: OnSelectedColorChanged);
+    public static readonly BindableProperty          AllowsNoColorProperty = BindableProperty.Create(nameof(AllowsNoColor), typeof(bool), typeof(ColorPickerButton), false, propertyChanged: (_, __, ___) => ((ColorPickerButton) _).OnPropertyChanged(nameof(ShowClearColorButton)));
+    public static readonly BindableProperty          IsMultiValueProperty  = BindableProperty.Create(nameof(IsMultiValue), typeof(bool), typeof(ColorPickerButton), false);
+    public static readonly BindableProperty          DefaultColorProperty  = BindableProperty.Create(nameof(DefaultColor), typeof(Color), typeof(ColorPickerButton), Colors.White);
+    public static readonly BindableProperty          BorderColorProperty   = BindableProperty.Create(nameof(BorderColor), typeof(Color), typeof(ColorPickerButton), Colors.Gray);
+    public static readonly BindableProperty          BorderWidthProperty   = BindableProperty.Create(nameof(BorderWidth), typeof(int), typeof(ColorPickerButton), 1);
+    public static readonly BindableProperty          CornerRadiusProperty  = BindableProperty.Create(nameof(CornerRadius), typeof(int), typeof(ColorPickerButton), 10);
     private                SfPopup?                  _popup;
     private                DataTemplate?             _popupTemplate;
     private                ColorPickerGrid?          _view;
@@ -86,11 +86,6 @@ public partial class ColorPickerButton : ContentView {
         }
     }
 
-    protected override async void OnHandlerChanged() {
-        base.OnHandlerChanged();
-        await EnsurePopup();
-    }
-
     private async Task EnsurePopup() {
         if (_popup != null) return;
 
@@ -120,20 +115,16 @@ public partial class ColorPickerButton : ContentView {
             if (color is { }) SelectedColor = color;
         };
         _vm.SelectionCancelled += () => _popup?.Dismiss();
-        _view.Measure(double.PositiveInfinity, double.PositiveInfinity);
     }
 
-    private static void ColorPropertyChanged(BindableObject bindable, object oldvalue, object newvalue) {
+    private static void OnSelectedColorChanged(BindableObject bindable, object oldValue, object newValue) {
         var control = (ColorPickerButton)bindable;
         control.OnPropertyChanged(nameof(ActiveColor));
-        control.OnPropertyChanged(nameof(SelectedColor));
-        control.OnPropertyChanged(nameof(ShowClearColorButton));
-        control.OnPropertyChanged(nameof(SelectedColorText));
-        control.OnPropertyChanged(nameof(AllowsNoColor));
-        control.OnPropertyChanged(nameof(SelectedColorProperty));
         control.OnPropertyChanged(nameof(SelectedOffsetColor));
+        control.OnPropertyChanged(nameof(SelectedColorText));
+        control.OnPropertyChanged(nameof(ShowClearColorButton));
     }
-
+    
     [RelayCommand]
     private async Task ClearColorAsync() {
         IsMultiValue = false;
@@ -146,8 +137,8 @@ public partial class ColorPickerButton : ContentView {
 
     [RelayCommand]
     private async Task ShowDropdownAsync() {
-        await EnsurePopup();
-        _vm?.SelectedColor = SelectedColor ?? Colors.White;
-        _popup?.Show();
+        if (_popup is null) await EnsurePopup();
+        _vm!.SelectedColor = SelectedColor ?? Colors.White;
+        _popup!.Show();
     }
 }

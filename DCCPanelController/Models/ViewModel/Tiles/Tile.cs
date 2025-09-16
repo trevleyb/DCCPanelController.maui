@@ -126,6 +126,7 @@ public abstract class Tile : ContentView, ITile, IDisposable {
                      await MainThread.InvokeOnMainThreadAsync(() => {
                          if (HaveVisualPropertiesChanged) {
                              SetContent();
+                             OnTileChanged(TileChangeType.Visual);
                              HaveVisualPropertiesChanged = false; // Reset flag
                          }
                      });

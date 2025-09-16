@@ -263,6 +263,11 @@ public partial class PanelEditorViewModel : ObservableObject {
                 await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
             }
             _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
+            
+            //if (SelectedEntities?.Count > 0 && _panelEditor is { }) {
+            //    foreach (var tile in SelectedTiles) tile.ForceRedraw();
+            //}
+
         } catch (Exception ex) {
             _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
         } finally {

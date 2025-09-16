@@ -12,24 +12,17 @@ public sealed class ColorPickerRenderer : BaseRenderer, IPropertyRenderer {
     public object CreateView(PropertyContext ctx) {
         var row = ctx.Row;
         var picker = new ColorPickerButton {
-            SelectedColor = row.OriginalValue is Color c ? c : null,
+            SelectedColor = TryGetRowColor(row, out var start) ? start : null,
             AllowsNoColor = true,
             IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode,
             IsMultiValue = ctx.Row.HasMixedValues,
         };
-
-        // Seed SelectedColor from value (Color or string)
-        picker.SelectedColor = TryGetRowColor(row, out var start) ? start : null; // will render as "Use Default" in your control
-
-        Microsoft.Maui.Controls.View visual = picker;
-
-        // Push changes back into the form row
         picker.PropertyChanged += (_, e) => {
-            if (e.PropertyName is nameof(ColorPickerButton.SelectedColor) or"SelectedColorProperty") {
+            if (e.PropertyName is nameof(ColorPickerButton.SelectedColor) or nameof(ColorPickerButton.SelectedColorProperty)) {
                 SetValue(row, picker.SelectedColor);
             }
         };
-        return WrapWithLabel(ctx, visual);
+        return WrapWithLabel(ctx, picker);
     }
 
     // Read a Color from the row's value (supports Color or hex string)
