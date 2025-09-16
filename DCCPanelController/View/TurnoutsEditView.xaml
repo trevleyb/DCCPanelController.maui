@@ -14,14 +14,14 @@
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" Text="System Name (ID)" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}">
-                <Entry HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Id}"/>
+                <Entry Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Id}"/>
             </Border>
         </HorizontalStackLayout>
 
         <HorizontalStackLayout HeightRequest="40">
             <Label WidthRequest="175" HorizontalOptions="Start" Text="User Name" VerticalOptions="Center"/>
             <Border Padding="0,0,0,0" Style="{StaticResource EntryBorderStyle}">
-                <Entry HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Name}"/>
+                <Entry Margin="5" HorizontalOptions="Fill" IsEnabled="{Binding Turnout.IsEditable}" Text="{Binding Turnout.Name}"/>
             </Border>
         </HorizontalStackLayout>
 
