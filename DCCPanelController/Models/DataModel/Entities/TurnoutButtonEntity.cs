@@ -21,10 +21,14 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
     private bool _showIndicator = true;
 
     [ObservableProperty]
+    [property: Editable("Is Enabled?", "Does this button perform an action", 10, "Colors")]
+    private bool _isEnabled = true;
+
+    [ObservableProperty]
     private ButtonStateEnum _state = ButtonStateEnum.Unknown;
 
-    [ObservableProperty] [property: Editable("Turnout", "Turnout to Control with this button", 5, "Turnout", EditorKind = EditorKinds.Turnout)]
-    private string? _turnout;
+    [ObservableProperty] [property: Editable("DCC Turnout", "Turnout to Control with this button", 5, "Turnout", EditorKind = EditorKinds.Turnout)]
+    private string? _turnoutID;
 
     [ObservableProperty] [property: Editable("Straight/Normal", "When Turnout is Straight/Thrown set Button to?", 8, "Turnout", EditorKind = EditorKinds.ButtonState)]
     private ButtonStateEnum _whenNormal;

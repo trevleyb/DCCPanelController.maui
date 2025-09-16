@@ -22,7 +22,7 @@ public abstract partial class TurnoutEntity : TrackEntity, IEntityGeneratingID, 
     [ObservableProperty] [property: Editable("Not Selected Track", "The color of the track of the track not selected", 6, "Color")]
     private Color? _trackNotSelectedColor;
 
-    [ObservableProperty] [property: Editable("Turnout Address", "Turnout ID on the layout that will be controlled.", 5, "General", EditorKind = EditorKinds.Turnout)]
+    [ObservableProperty] [property: Editable("DCC Turnout", "Turnout ID on the layout that will be controlled.", 5, "General", EditorKind = EditorKinds.Turnout)]
     private string _turnoutID = string.Empty;
 
     [ObservableProperty] [property: Editable("Turnout Actions", "Sets Turnouts based on the state of this turnout", 10, "Turnout Actions")]

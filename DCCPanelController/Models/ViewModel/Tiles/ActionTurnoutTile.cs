@@ -22,7 +22,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is TurnoutButtonEntity button) {
+        if (Entity is TurnoutButtonEntity { IsEnabled: true }) {
             if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
             _turnout?.ToggleState();
             return true;
@@ -34,7 +34,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
 
     new protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
         base.OnTilePropertyChanged(sender, e);
-        if (e.PropertyName == nameof(TurnoutButtonEntity.Turnout)) {
+        if (e.PropertyName == nameof(TurnoutButtonEntity.TurnoutID)) {
             if (_turnout is { }) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
             RegisterForTurnoutEvents();
         }
@@ -44,7 +44,7 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
         // Find the related Turnout for this Tile and subscribe 
         // to its events so we can change states. 
         // -----------------------------------------------------------------
-        if (Entity is TurnoutButtonEntity { Turnout: { } turnoutRef } entity) {
+        if (Entity is TurnoutButtonEntity { TurnoutID: { } turnoutRef } entity) {
             _turnout = entity?.Parent?.GetTurnoutEntityByRef(turnoutRef);
             if (_turnout is { }) {
                 _turnout.PropertyChanged += TurnoutOnPropertyChanged;
