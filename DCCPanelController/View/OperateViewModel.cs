@@ -14,9 +14,13 @@ namespace DCCPanelController.View;
 
 public partial class OperateViewModel : ConnectionViewModel {
     private readonly ProfileService _profileService;
-
+    private readonly ConnectionService _connectionService;
+    
     [ObservableProperty] private Panel? _activePanel;
     [ObservableProperty] private int    _currentPanelIndex;
+
+    [ObservableProperty] private string _connectionStateText = "Connection State Unknown";
+    [ObservableProperty] private Color  _connectionStateColor = Colors.LightGray;
 
     [NotifyPropertyChangedFor(nameof(IsNotMaximized))]
     [ObservableProperty] private bool _isMaximized;
@@ -33,10 +37,23 @@ public partial class OperateViewModel : ConnectionViewModel {
 
     public OperateViewModel(ILogger<OperateViewModel> logger, ProfileService profileService, ConnectionService connectionService) : base(profileService, connectionService) {
         _logger = logger;
+        _connectionService = connectionService;
+        _connectionService.ConnectStateChanged += OnConnectStateChanged;
         _profileService = profileService;
         _profileService.ActiveProfileChanged += (_, _) => OnProfileChanged();
         PropertyChanged += OnPropertyChanged;
         OnProfileChanged();
+        OnConnectStateChanged(this, _connectionService.IsConnected);
+    }
+
+    private void OnConnectStateChanged(object? sender, bool e) {
+        if (e) {
+            ConnectionStateText = "Connected";
+            ConnectionStateColor = Colors.LightGray;
+        } else {
+            ConnectionStateText = "Not Connected to DCC Server";
+            ConnectionStateColor = Colors.Red;
+        }
     }
 
     public bool IsNotMaximized => !IsMaximized;

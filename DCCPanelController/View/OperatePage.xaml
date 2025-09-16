@@ -177,6 +177,17 @@
                     IsVisible="{Binding HideWelcomePage}"
                     Position="{Binding CurrentPanelIndex}"/>
 
+                <Label Margin="10,0,10,5"
+                       FontSize="10"
+                       Text="{Binding ConnectionStateText}"
+                       HorizontalOptions="Start"
+                       VerticalOptions="End" IsVisible="{Binding IsMaximized}"
+                       BackgroundColor="Transparent" TextColor="{Binding ConnectionStateColor}">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ToggleConnectionCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+
                 <Label Margin="0,0,10,5"
                        FontSize="8"
                        Text="{Binding ProfileName}"
