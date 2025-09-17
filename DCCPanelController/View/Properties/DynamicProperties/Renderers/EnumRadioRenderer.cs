@@ -5,6 +5,7 @@ using Microsoft.Maui.Layouts;
 namespace DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
+    protected override int FieldHeight => -1;
     public bool CanRender(PropertyContext ctx) {
         var t = ctx.Row.Field.Accessor.PropertyType;
         var u = Nullable.GetUnderlyingType(t) ?? t;
@@ -24,7 +25,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
         var stack = new FlexLayout {
             AlignContent = FlexAlignContent.Start,
             AlignItems = FlexAlignItems.Start,
-            Direction = FlexDirection.Column,
+            Direction = FlexDirection.Row,
             Wrap = FlexWrap.Wrap,
         };
 
@@ -34,7 +35,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
                 Content = it.Text,
                 FontSize = FieldFontSize,
                 GroupName = groupName,
-                Margin = new Thickness(0, 0, 10, 0),
+                Margin = new Thickness(0, 0, 0, 0),
                 IsEnabled = !row.Field.Meta.IsReadOnlyInRunMode,
                 IsChecked = row is { HasMixedValues: false, OriginalValue: { } } && Equals(it.Value, row.OriginalValue), // nothing selected when mixed until the user chooses
             };
@@ -46,15 +47,7 @@ internal sealed class EnumRadioRenderer : BaseRenderer, IPropertyRenderer {
         }
 
         stack.HorizontalOptions = LayoutOptions.Fill;
-        var scroll = new ScrollView {
-            Orientation = ScrollOrientation.Horizontal,
-            HorizontalOptions = LayoutOptions.Fill,
-            Content = stack,
-            Margin = new Thickness(0, 0, 0, 0),
-        };
-
-        // Wrap with your standard label/description/error grid
-        return WrapWithLabel(ctx, scroll);
+        return WrapWithLabel(ctx, stack);
     }
 
     private static List<(string Text, object? Value)> BuildEnumItems(Type enumType, bool includeNone) {

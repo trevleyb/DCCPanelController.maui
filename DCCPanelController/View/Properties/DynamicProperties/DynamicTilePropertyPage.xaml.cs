@@ -33,19 +33,13 @@ public partial class DynamicTilePropertyPage {
     [ObservableProperty] private string    _title = "Properties";
     [ObservableProperty] private double    _width;
 
-    private bool     _isPopup;
     public  SfPopup? Popup;
 
-    private DynamicTilePropertyPage(double width, double height, bool isPopup) {
+    private DynamicTilePropertyPage(double width, double height) {
         InitializeComponent();
         BindingContext = this;
         Width = width;
         Height = height;
-        _isPopup = isPopup;
-
-        if (!_isPopup) {
-            
-        }
     }
 
     public bool ShowInformation => !string.IsNullOrWhiteSpace(Information);
@@ -78,9 +72,9 @@ public partial class DynamicTilePropertyPage {
         // Build up the Properties by Group and Sort order. 
         // Each Group is in its own Expander View so can be collaposed
         // ---------------------------------------------------------------
+        var children = 0;
         foreach (var group in Form.Groups) {
             if (group.Rows.Count == 0) continue;
-
             var expander = CreateExpanderGroup(group.Name);
 
             // Add the rows to the expander
@@ -88,6 +82,7 @@ public partial class DynamicTilePropertyPage {
             foreach (var row in group.Rows) {
                 if (Form.GetRendererView(row) is Microsoft.Maui.Controls.View v) {
                     expander.children?.Add(v);
+                    if (++children < group.Rows.Count) expander.children?.Add(FieldDivider());
                 }
             }
             PropertyHost.Children.Add(expander.expander);
@@ -123,7 +118,7 @@ public partial class DynamicTilePropertyPage {
     
     public static async Task<DynamicTilePropertyPage?> CreatePropertyPage(List<Entity> selectedEntities, double width, double height, bool isPopup = false) {
         try {
-            var content = new DynamicTilePropertyPage(width, height, isPopup) {
+            var content = new DynamicTilePropertyPage(width, height) {
                 Title = GetTitle(selectedEntities),
                 Information = GetInformation(selectedEntities),
                 EntitySource = selectedEntities,
@@ -135,13 +130,10 @@ public partial class DynamicTilePropertyPage {
         return null;
     }
 
-    public static async Task CreatePropertyPagePopup(List<Entity> selectedEntities, double width, double height) {
+    public static async Task CreatePropertyPagePopup(DynamicTilePropertyPage page) {
         try {
-            var content = await CreatePropertyPage(selectedEntities, width, height, true);
-            if (content is null) return;
-            
-            content.Popup = new SfPopup {
-                ContentTemplate = new DataTemplate(() => content),
+            page.Popup = new SfPopup {
+                ContentTemplate = new DataTemplate(() => page),
                 ShowHeader = false,
                 ShowFooter = false,
                 BackgroundColor = Colors.WhiteSmoke,
@@ -158,14 +150,14 @@ public partial class DynamicTilePropertyPage {
                 AnimationMode = PopupAnimationMode.None,
                 OverlayMode = PopupOverlayMode.Transparent,
             };
-            content.Popup.Show();
+            page.Popup.Show();
         } catch (Exception ex) {
             Console.WriteLine($"Error Launching DynamicTilePropertyPopupContent: {ex.Message}");
         }
     }
 
     public async void ClosePropertyPage() {
-        if (_isPopup && Popup is { } popup) {
+        if (Popup is { } popup) {
             popup.IsOpen = false;
             popup.Dismiss();
         } else {

@@ -171,7 +171,7 @@ public partial class PanelEditor : ContentPage {
 
                 case 1:
                     var selectedEntity = _viewModel.SelectedTiles[0].Entity;
-                    SelectionText.Text = $"Selected Tile: {selectedEntity.EntityName} @ {selectedEntity.Rotation}°";
+                    SelectionText.Text = $"Selected Tile: {selectedEntity.EntityName} @ Layer:{selectedEntity.Layer} ";
                     if (selectedEntity is IEntityID entityID) {
                         SelectionText.Text += $" ({entityID.Id})";
                     }

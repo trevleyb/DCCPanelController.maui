@@ -11,6 +11,7 @@ public abstract class BaseRenderer {
     protected static readonly Color DescColor       = Colors.LightSteelBlue;
     protected static readonly Color ModifiedColor   = Colors.Green;
     protected static readonly Color MixedValueColor = Colors.Blue;
+    
     protected virtual int LabelWidth => 125; // Allow this to be overriden
     protected virtual int FieldHeight => 35;
     protected virtual int FieldWidth => -1;

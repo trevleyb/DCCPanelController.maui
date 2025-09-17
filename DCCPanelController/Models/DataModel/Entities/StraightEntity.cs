@@ -14,7 +14,7 @@ public partial class StraightEntity : TrackEntity, ITrackEntity {
 
     public StraightEntity(StraightEntity entity) : base(entity) { }
 
-    [ObservableProperty] [property: Editable("Track Decorator Style", "Select how this track is terminated.", 4, "Track")]
+    [ObservableProperty] [property: Editable("Track Decorator", "Select how this track is terminated.", 4, "Track")]
     private TrackStyleEnum _trackStyle = TrackStyleEnum.Normal;
 
     [ObservableProperty] [property: Editable("Decorator Color", "Color for the terminator if defined.", 5, "Color")]
