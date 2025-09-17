@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using CommunityToolkit.Maui.Core.Extensions;
 using DCCPanelController.Models.DataModel;
+using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 using DCCPanelController.Models.ViewModel.Interfaces;
 using DCCPanelController.Resources.Styles;
@@ -17,8 +18,6 @@ public partial class PanelEditor : ContentPage {
     private readonly TaskCompletionSource<bool> _closeTcs = new();
     private readonly ILogger<PanelEditor>       _logger;
     private readonly PanelEditorViewModel       _viewModel;
-    private          bool                       _isPushingModal; // Flag to track modal presentation
-
 
     private TileSelectorDockSide? _currentState;
 
@@ -38,9 +37,6 @@ public partial class PanelEditor : ContentPage {
         PanelView.TileChanged += PanelViewOnTileChanged;
         PanelView.TileTapped += PanelViewOnTileTapped;
         _viewModel.PropertyChanged += ViewModelOnPropertyChanged;
-        _viewModel.OnBeginPushModal += OnBeginPushModal; // Subscribe to the custom event
-        _viewModel.OnBeginPopModal += OnBeginPopModal;   // Subscribe to the custom event
-        _viewModel.ForcePanelRefresh += ViewModelOnForcePanelRefresh;
 
         BindingContext = _viewModel;
         AppStateService.Instance.IsEditingPanel = true;
@@ -59,14 +55,6 @@ public partial class PanelEditor : ContentPage {
         UpdateScreenDimensions(width, height);
     }
 
-    private void OnBeginPushModal() {
-        _isPushingModal = true;
-    }
-
-    private void OnBeginPopModal() {
-        _isPushingModal = false;
-    }
-    
     private void UpdateScreenDimensions(double width, double height) {
         _viewModel.ScreenHeight = height;
         _viewModel.ScreenWidth = width;
@@ -79,25 +67,18 @@ public partial class PanelEditor : ContentPage {
 
     protected override async void OnNavigatedFrom(NavigatedFromEventArgs args) {
         base.OnNavigatedFrom(args);
-        
-        if (_isPushingModal) {
-            _isPushingModal = false;
-        } else {
-            if (!_viewModel.ExitViaBackButton) {
-                Console.WriteLine("WARNING! Exiting Editor NOT via Back Button. No SAVE");
-            }
 
-            PanelView.TileSelected -= PanelViewOnTileSelected;
-            PanelView.TileChanged -= PanelViewOnTileChanged;
-            PanelView.TileTapped -= PanelViewOnTileTapped;
-            _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
-            _viewModel.OnBeginPushModal -= OnBeginPushModal; // Subscribe to the custom event
-            _viewModel.OnBeginPopModal -= OnBeginPopModal;   // Subscribe to the custom event
-            _viewModel.ForcePanelRefresh -= ViewModelOnForcePanelRefresh;
-
-            _closeTcs.TrySetResult(true); // or return data as needed
-            AppStateService.Instance.IsEditingPanel = false;
+        if (!_viewModel.ExitViaBackButton) {
+            Console.WriteLine("WARNING! Exiting Editor NOT via Back Button. No SAVE");
         }
+
+        PanelView.TileSelected -= PanelViewOnTileSelected;
+        PanelView.TileChanged -= PanelViewOnTileChanged;
+        PanelView.TileTapped -= PanelViewOnTileTapped;
+        _viewModel.PropertyChanged -= ViewModelOnPropertyChanged;
+
+        _closeTcs.TrySetResult(true); // or return data as needed
+        AppStateService.Instance.IsEditingPanel = false;
     }
 
     #region Manage the showing and hiding of the Palettes
@@ -172,7 +153,9 @@ public partial class PanelEditor : ContentPage {
                 case 1:
                     var selectedEntity = _viewModel.SelectedTiles[0].Entity;
                     SelectionText.Text = $"Selected Tile: {selectedEntity.EntityName} @ Layer:{selectedEntity.Layer} ";
-                    if (selectedEntity is IEntityID entityID) {
+                    if (selectedEntity is TurnoutEntity turnout) {
+                        SelectionText.Text += $" ({turnout.Turnout?.Name ?? "Undefined"} [{turnout.Turnout?.Id ?? "000"}])";
+                    } else if (selectedEntity is IEntityID entityID) {
                         SelectionText.Text += $" ({entityID.Id})";
                     }
                 break;
@@ -197,6 +180,7 @@ public partial class PanelEditor : ContentPage {
     private void ViewModelOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
         switch (e.PropertyName) {
             case nameof(PanelEditorViewModel.HavePropertiesChanged):
+                Console.WriteLine("Properties Have Changed? " + _viewModel.HavePropertiesChanged);
             break;
 
             case nameof(PanelEditorViewModel.GridVisible):

@@ -31,10 +31,7 @@ public partial class TextEntity : DrawingEntity, ITextEntity, IDrawingEntity {
     public TextEntity() { }
 
     public TextEntity(Panel panel) : this() => Parent = panel;
-
-    public TextEntity(TextEntity entity) : base(entity) {
-        Layer = EntityPresets.Label;    // Override
-    }
+    public TextEntity(TextEntity entity) : base(entity) { }
     
     [JsonIgnore] protected override int RotationFactor => 90;
 

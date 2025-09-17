@@ -1062,15 +1062,15 @@ public partial class ControlPanelView {
     ///     Responds to property changes on the currently assigned Panel object.
     /// </summary>
     private async void OnPanelPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (e.PropertyName is nameof(Panel.Cols) or nameof(Panel.Rows)) {
-            Dispatcher.Dispatch(async void () => {
-                try {
-                    await ForceRefreshAsync();
-                } catch (Exception ex) {
-                    _logger.LogCritical("Error Forcing a Refresh on Col/Row Change: {Message}", ex.Message);
-                }
-            });
-        }
+        // if (e.PropertyName is nameof(Panel.Cols) or nameof(Panel.Rows)) {
+        //     Dispatcher.Dispatch(async void () => {
+        //         try {
+        //             await ForceRefreshAsync();
+        //         } catch (Exception ex) {
+        //             _logger.LogCritical("Error Forcing a Refresh on Col/Row Change: {Message}", ex.Message);
+        //         }
+        //     });
+        // }
     }
 
     private static void OnShowGridChanged(BindableObject bindable, object oldvalue, object newvalue) {

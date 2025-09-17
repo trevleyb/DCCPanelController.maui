@@ -4,8 +4,8 @@
             <polygon id="Border" fill="#000000" points="7 18 34 18 34 20 7 20"></polygon>
             <polygon id="Border" fill="#000000" points="7 27 34 28 34 30 7 30"></polygon>
             <polygon id="Track" fill="#BDBDBD" points="7 20 34 20 34 28 7 28"></polygon>
-            <path id="Border" d="M 34 18 C 37.865456 18 40.999023 20.686296 40.999023 24 C 40.999023 27.313704 37.865456 30 34 30 L 34 18" fill="#000000"/>
-            <path id="Track" d="M 34 20 C 36.761425 20 39 21.790864 39 24 C 39 26.209136 36.761425 28 34 28 L 34 20" fill="#BDBDBD"/>
+            <path id="Border" d="M 34 18 C 37 18 41 20 41 24 C 41 27 38 30 34 30 L 34 18" fill="#000000"/>
+            <path id="Track"  d="M 34 20 C 37 20 39 22 39 24 C 39 26 37 28 34 28 L 34 18" fill="#BDBDBD"/>
             <line x1="11" y1="24" x2="35" y2="24" id="Dashline" stroke="#686868" stroke-width="4"
                   stroke-linecap="square" stroke-dasharray="2,6"></line>
         </g>

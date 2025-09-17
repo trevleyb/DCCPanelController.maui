@@ -17,6 +17,8 @@ public abstract class TrackTile : Tile, ITileTrack {
         VisualProperties.Add(nameof(TrackEntity.Rotation));
         VisualProperties.Add(nameof(TrackEntity.TrackType));
         VisualProperties.Add(nameof(TrackEntity.TrackAttribute));
+        VisualProperties.Add(nameof(StraightEntity.TrackStyle));
+        VisualProperties.Add(nameof(StraightEntity.TerminatorColor));
         VisualProperties.Add(nameof(TrackEntity.TrackColor));
         VisualProperties.Add(nameof(TrackEntity.TrackBorderColor));
         VisualProperties.Add(nameof(IsOccupied));

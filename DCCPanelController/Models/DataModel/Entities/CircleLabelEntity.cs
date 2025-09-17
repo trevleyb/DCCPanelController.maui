@@ -45,7 +45,6 @@ public partial class CircleLabelEntity : DrawingEntity, ITextEntity, IDrawingEnt
 
     public CircleLabelEntity(Panel panel) : this() {
         Parent = panel;
-        Layer = 8;
     }
 
     public CircleLabelEntity(CircleLabelEntity entity) : base(entity) { }

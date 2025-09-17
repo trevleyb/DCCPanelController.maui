@@ -104,10 +104,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     public bool MultipleEntitiesSelected => SelectedEntitiesCount > 1;
     public bool SingleEntitySelected => SelectedEntitiesCount == 1;
 
-    public event Action? ForcePanelRefresh;
-    public event Action? OnBeginPushModal;
-    public event Action? OnBeginPopModal;
-    
     public string GetEditModeIconFilename =>
         EditMode switch {
             EditModeEnum.Copy => "copy.png",
@@ -144,6 +140,13 @@ public partial class PanelEditorViewModel : ObservableObject {
             var result = await DisplayAlertHelper.DisplayAlertAsync("Unsaved Changes", null, "Save & Leave", "Discard Changes");
             if (result) await SaveAsync();
         }
+        ExitViaBackButton = true;
+        await Shell.Current.GoToAsync("..");
+    }
+
+    [RelayCommand]
+    private async Task SaveButtonPressedAsync() {
+        await SaveAsync();
         ExitViaBackButton = true;
         await Shell.Current.GoToAsync("..");
     }
@@ -237,7 +240,6 @@ public partial class PanelEditorViewModel : ObservableObject {
     public async Task EditPropertiesAsync() {
         if (SelectedEntities.Count > 0) {
             await EditTilePropertiesPopupAsync();
-            //await EditTilePropertiesNavPage();
         } else {
             await EditPanelPropertiesPopupAsync();
         }
@@ -261,38 +263,39 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    private async Task EditTilePropertiesNavPage() {
-        try {
-            if (Panel is { } panel && SelectedEntities is {Count: > 0}) {
-                IsProcessing = true;
-                var originalLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
-
-                OnBeginPushModal?.Invoke();
-                if (SelectedEntities.Count > 0 && _panelEditor is { }) {
-                    var content = await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
-                    var page = new ContentPage() { Content = content };
-                    await _panelEditorContainer.Navigation.PushAsync(page);
-                }
-                OnBeginPopModal?.Invoke();
-
-                // Redraw if we changed any Layers
-                // --------------------------------------------------------------------
-                var newLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
-                if (newLayers.Count != originalLayers?.Count ||
-                    newLayers.Except(originalLayers).Any() ||
-                    originalLayers.Except(newLayers).Any()) {
-                    Console.WriteLine("Layer(s) were changed, so forcing a Panel redraw");
-                    ForcePanelRefresh?.Invoke();
-                }
-
-                _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
-            }
-        } catch (Exception ex) {
-            _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
-        } finally {
-            IsProcessing = false;
-        }
-    }
+    // Attempted to use a Navigation Page, but caused other issues???
+    // private async Task EditTilePropertiesNavPage() {
+    //     try {
+    //         if (Panel is { } panel && SelectedEntities is {Count: > 0}) {
+    //             IsProcessing = true;
+    //             var originalLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
+    //
+    //             OnBeginPushModal?.Invoke();
+    //             if (SelectedEntities.Count > 0 && _panelEditor is { }) {
+    //                 var content = await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
+    //                 var page = new ContentPage() { Content = content };
+    //                 await _panelEditorContainer.Navigation.PushAsync(page);
+    //             }
+    //             OnBeginPopModal?.Invoke();
+    //
+    //             // Redraw if we changed any Layers
+    //             // --------------------------------------------------------------------
+    //             var newLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
+    //             if (newLayers.Count != originalLayers?.Count ||
+    //                 newLayers.Except(originalLayers).Any() ||
+    //                 originalLayers.Except(newLayers).Any()) {
+    //                 Console.WriteLine("Layer(s) were changed, so forcing a Panel redraw");
+    //                 ForcePanelRefresh?.Invoke();
+    //             }
+    //
+    //             _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
+    //         }
+    //     } catch (Exception ex) {
+    //         _logger.LogCritical("Error Launching Tile Properties Page: " + ex.Message);
+    //     } finally {
+    //         IsProcessing = false;
+    //     }
+    // }
     
     private async Task EditTilePropertiesPopupAsync() {
         try {
@@ -302,7 +305,7 @@ public partial class PanelEditorViewModel : ObservableObject {
                 var originalLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
                 var page = await DynamicTilePropertyPage.CreatePropertyPage(SelectedEntities, _panelView.Width, _panelView.Height);
                 if (page is { }) {
-                    page.Applied += (_, _) => PageOnApplied(page, originalLayers);
+                    page.Applied += PageOnApplied;
                     await DynamicTilePropertyPage.CreatePropertyPagePopup(page);
                 }
             }
@@ -315,16 +318,9 @@ public partial class PanelEditorViewModel : ObservableObject {
         }
     }
 
-    private void PageOnApplied(DynamicTilePropertyPage page, List<int> originalLayers) {
-        // Redraw if we changed any Layers
-        // --------------------------------------------------------------------
-        //var newLayers = SelectedEntities.Select(entity => entity.Layer).ToList();
-        //if (newLayers.Count != originalLayers?.Count ||
-        //    newLayers.Except(originalLayers).Any() ||
-        //    originalLayers.Except(newLayers).Any()) {
-        //    Console.WriteLine("Layer(s) were changed, so forcing a Panel redraw");
-        //    ForcePanelRefresh?.Invoke();
-        //}
+    private void PageOnApplied(object? sender, DynamicTilePropertyPageEventArgs e) {
+        Console.WriteLine("Property Page Changed applied.");
+        e.Page.Applied -= PageOnApplied;
         _panelView.ClearAllSelectedTiles(); // Reset all selected tiles for clarity
     }
 

@@ -52,7 +52,7 @@
             IconImageSource="{Binding CanPressBackButton, Converter={StaticResource BoolToIcon}, ConverterParameter=save}"
             Text="Save" x:Name="SaveToolbar"
             IsEnabled="{Binding CanPressBackButton}"
-            Command="{Binding Path=BackButtonPressedCommand}"/>
+            Command="{Binding Path=SaveButtonPressedCommand}"/>
 
 
     </ContentPage.ToolbarItems>

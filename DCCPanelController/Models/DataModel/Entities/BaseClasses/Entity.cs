@@ -14,20 +14,19 @@ public abstract partial class Entity() : ObservableObject, IEntity {
     [ObservableProperty] private int  _col;              // What Grid Position (Horizontal) is this component?
     [ObservableProperty] private int  _height    = 1;    // What Height is this component? 
     [ObservableProperty] private bool _isEnabled = true; // Is this item actually in use?
-
-    [ObservableProperty] [property: Editable("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
-    private int _layer = 1;
-
-    [ObservableProperty] [property: Editable("Opacity", "Allows for a level of transparency", 9, "Visibility", EditorKind = EditorKinds.Opacity)]
-    private double _opacity = 1.0;
-
     [ObservableProperty] private int _rotation;  // Is the track rotated?
     [ObservableProperty] private int _row;       // What Grid Position (Vertical) is this component?
     [ObservableProperty] private int _width = 1; // What width is this component?
 
+    [ObservableProperty] [property: Editable("Layer", "A higher number places this tile on top of tiles with a lower number.", 9, "Visibility")]
+    private int _layer = -1;
+
+    [ObservableProperty] [property: Editable("Opacity", "Allows for a level of transparency", 9, "Visibility", EditorKind = EditorKinds.Opacity)]
+    private double _opacity = 1.0;
+
     protected Entity(Panel panel) : this() {
         Parent = panel;
-        Layer = EntityPresets.DefaultLayer(this);
+        if (Layer < 0) Layer = EntityPresets.DefaultLayer(this);
     }
 
     protected Entity(Entity entity, params string[] excludeProperties) : this() {
@@ -57,14 +56,14 @@ public abstract partial class Entity() : ObservableObject, IEntity {
     public virtual void RotateRight() => Rotation = (Rotation + RotationFactor) % 360;
 
     protected void HandleRotation() {
-        // Calculate current center point before swapping
+        // Calculate the current center point before swapping
         var centerX = Col + (Width - 1) / 2.0;
         var centerY = Row + (Height - 1) / 2.0;
 
         // ALWAYS swap dimensions on every 90-degree rotation
         (Width, Height) = (Height, Width);
 
-        // Calculate new position to maintain center
+        // Calculate the new position to maintain center
         var newCol = (int)Math.Round(centerX - (Width - 1) / 2.0);
         var newRow = (int)Math.Round(centerY - (Height - 1) / 2.0);
 

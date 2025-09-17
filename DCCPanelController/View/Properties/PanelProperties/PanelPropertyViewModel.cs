@@ -14,6 +14,9 @@ public partial class PanelPropertyViewModel : BaseViewModel {
     [ObservableProperty] private Panel  _panel;
     [ObservableProperty] private string _title;
 
+    public ObservableCollection<ColorItemGroup> GroupedColorSettings { get; set; }
+    public ObservableCollection<PanelColorItem> ColorSettings { get; }
+    
     public PanelPropertyViewModel(Panel panel) {
         Panel = panel;
         Title = $"{panel.Id} Properties" ?? "Panel Properties";
@@ -21,9 +24,6 @@ public partial class PanelPropertyViewModel : BaseViewModel {
         ColorSettings = Panel.InitializeColorSettings();
         GroupedColorSettings = Panel.InitializeGroupedColorSettings();
     }
-
-    public ObservableCollection<ColorItemGroup> GroupedColorSettings { get; set; }
-    public ObservableCollection<PanelColorItem> ColorSettings { get; }
 
     public Task ApplyChangesAsync() => Task.CompletedTask;
 

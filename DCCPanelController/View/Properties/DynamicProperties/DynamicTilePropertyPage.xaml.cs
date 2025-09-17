@@ -46,8 +46,8 @@ public partial class DynamicTilePropertyPage {
 
     public DynamicTilePropertyForm? Form { get; private set; }
 
-    public event EventHandler? Applied;
-    public event EventHandler? Cancelled;
+    public event EventHandler<DynamicTilePropertyPageEventArgs>? Applied;
+    public event EventHandler<DynamicTilePropertyPageEventArgs>? Cancelled;
 
     #region Build the Properties form
     /// <summary>
@@ -207,7 +207,7 @@ public partial class DynamicTilePropertyPage {
                         return;
                     }
                     var ok = await Form.ApplyAsync(false);
-                    if (ok) Applied?.Invoke(this, EventArgs.Empty);
+                    if (ok) Applied?.Invoke(this, new DynamicTilePropertyPageEventArgs(this) );
                 }
                 page.ClosePropertyPage();
             }
@@ -220,7 +220,7 @@ public partial class DynamicTilePropertyPage {
         try {
             if (sender is Button { BindingContext: DynamicTilePropertyPage { } page }) {
                 await _undo.UndoAsync();
-                Cancelled?.Invoke(this, EventArgs.Empty);
+                Cancelled?.Invoke(this, new DynamicTilePropertyPageEventArgs(this));
                 page.ClosePropertyPage();
             }
         } catch (Exception ex) {
@@ -352,4 +352,8 @@ public partial class DynamicTilePropertyPage {
         };
     }
     #endregion
+}
+
+public class DynamicTilePropertyPageEventArgs(DynamicTilePropertyPage page) : EventArgs {
+    public DynamicTilePropertyPage Page { get; } = page;
 }
