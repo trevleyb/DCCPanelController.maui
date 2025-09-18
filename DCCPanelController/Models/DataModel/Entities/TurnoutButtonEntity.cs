@@ -40,6 +40,7 @@ public partial class TurnoutButtonEntity : ButtonEntity, IEntityGeneratingID, II
     public TurnoutButtonEntity() => Id = NextID();
 
     public TurnoutButtonEntity(Panel panel) : base(panel) { }
+    //public TurnoutButtonEntity(TurnoutButtonEntity entity) : base(entity) { }
     public TurnoutButtonEntity(TurnoutButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
 
     [JsonIgnore]

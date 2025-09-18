@@ -1,5 +1,7 @@
+using System.Collections;
 using DCCPanelController.Helpers;
 using DCCPanelController.Models.DataModel.Entities;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.View.Properties.DynamicProperties.Renderers;
 
 namespace DCCPanelController.View.Properties.DynamicProperties;
@@ -150,10 +152,20 @@ public sealed class DynamicTilePropertyForm {
             var firstVal = values[0];
             var allEqual = values.All(v => _equality.AreEqual(v, firstVal, repField.Accessor.PropertyType));
 
-            row.OriginalValue = allEqual ? firstVal : null;
-            row.CurrentValue = row.OriginalValue;
-            row.HasMixedValues = !allEqual;
+            var isCollection = typeof(IEnumerable).IsAssignableFrom(repField.Accessor.PropertyType) 
+                            && repField.Accessor.PropertyType != typeof(string);
 
+            if (isCollection) {
+                var baseline = allEqual ? DeepCloneIfSupported(firstVal) : null;
+                row.OriginalValue = baseline;
+                row.CurrentValue  = baseline is null ? null : DeepCloneIfSupported(baseline);
+                row.HasMixedValues = !allEqual;
+            } else {
+                row.OriginalValue = allEqual ? firstVal : null;
+                row.CurrentValue  = row.OriginalValue;
+                row.HasMixedValues = !allEqual;
+            }
+            
             group.Rows.Add(row);
             flatRows.Add(row);
         }
@@ -212,6 +224,31 @@ public sealed class DynamicTilePropertyForm {
         }
         return changes;
     }
+    
+    // helper (inside DynamicTilePropertyForm)
+    private static object? DeepCloneIfSupported(object? v) {
+        if (v is null) return null;
+
+        // Prefer ICloneable collections like your TurnoutActions
+        if (v is ICloneable cloneable) return cloneable.Clone();
+
+        // Fallback for IEnumerable<TurnoutAction>
+        if (v is IEnumerable<TurnoutAction> src) {
+            var copy = new TurnoutActions();
+            foreach (var a in src)
+                copy.Add(new TurnoutAction(a)); // uses your copy-ctor
+            return copy;
+        }
+
+        if (v is IEnumerable<ButtonAction> btnsrc) {
+            var copy = new ButtonActions();
+            foreach (var a in btnsrc)
+                copy.Add(new ButtonAction(a)); // uses your copy-ctor
+            return copy;
+        }
+        return v;
+    }
+
 
     public async Task<bool> ApplyAsync(bool requireAtomic = false) {
         if (!HasCommonProperties) return false;

@@ -23,7 +23,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
         var logger = LogHelper.CreateLogger("TurnoutActionsApply");
         try {
             foreach (var action in turnout.ButtonPanelActions) {
-                if (turnout.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
+                if (turnout.Parent?.GetButtonEntity(action.ActionID) is { } actionButton) {
                     var newState = turnout.State switch {
                         TurnoutStateEnum.Closed => action.WhenOn,
                         TurnoutStateEnum.Thrown => action.WhenOff,
@@ -34,7 +34,7 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
             }
 
             foreach (var action in turnout.TurnoutPanelActions) {
-                if (turnout.Parent?.GetTurnoutEntity(action.Id) is { } actionTurnout) {
+                if (turnout.Parent?.GetTurnoutEntity(action.ActionID) is { } actionTurnout) {
                     var newState = turnout.State switch {
                         TurnoutStateEnum.Closed => action.WhenClosed,
                         TurnoutStateEnum.Thrown => action.WhenThrown,
@@ -53,14 +53,14 @@ public class TurnoutActions : ObservableCollection<TurnoutAction>, ICloneable {
 }
 
 public partial class TurnoutAction : ObservableObject {
-    [ObservableProperty] private string           _id         = string.Empty;
+    [ObservableProperty] private string           _actionID   = string.Empty;
     [ObservableProperty] private TurnoutStateEnum _whenClosed = TurnoutStateEnum.Unknown;
     [ObservableProperty] private TurnoutStateEnum _whenThrown = TurnoutStateEnum.Unknown;
 
     public TurnoutAction() { }
 
     public TurnoutAction(TurnoutAction action) {
-        Id = action.Id;
+        ActionID = action.ActionID;
         WhenClosed = action.WhenClosed;
         WhenThrown = action.WhenThrown;
     }

@@ -11,35 +11,35 @@ public interface IActionsGridViewModel {
 public abstract partial class ActionsGridViewModel<TAction, TCollection> : ObservableObject, IActionsGridViewModel
     where TAction : class, new()
     where TCollection : ICollection<TAction> {
-    protected                      ActionsContext _actionContext;
-    protected                      List<string>   _availableItems;
-    [ObservableProperty] protected IActionEntity  _entity;
 
-    [ObservableProperty] private List<string> _selectableItems = [];
-
-    protected ActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableItems) {
-        _actionContext = context;
-        _availableItems = availableItems;
-        Entity = entity;
-        CleanupInvalidActions();
-        UpdateSelectableItems();
-    }
-
-    public bool IsTurnoutContext => _actionContext == ActionsContext.Turnout;
-    public bool IsButtonContext => _actionContext == ActionsContext.Button;
-    public bool IsGridVisible => PanelActions.Count > 0;
-    public bool IsAddButtonEnabled => SelectableItems.Count > 0;
-    public double ControlHeight => PanelActions.Count * 40;
-
-    // Abstract properties and methods that subclasses must implement
     protected abstract TCollection PanelActions { get; }
     protected abstract string ItemTypeName { get; }
 
+    protected ActionsContext ActionContext;
+    protected List<string>   AvailableItems;
+    protected Action?        ChangedAction;
+
+    [ObservableProperty] private   List<string>  _selectableItems = [];
+
+    public ListView? ActionsGridListView;
+    
+    protected ActionsGridViewModel(ActionsContext context, List<string> availableItems, Action? changedAction) {
+        ActionContext = context;
+        AvailableItems = availableItems;
+        ChangedAction = changedAction;
+    }
+
+    public bool IsTurnoutContext => ActionContext == ActionsContext.Turnout;
+    public bool IsButtonContext => ActionContext == ActionsContext.Button;
+    public bool IsGridVisible => PanelActions?.Count > 0;
+    public bool IsAddButtonEnabled => SelectableItems?.Count > 0;
+    public double ControlHeight => PanelActions?.Count ?? 1 * 40;
+
     public string NoDataText {
         get {
-            if (_availableItems.Count == 0) return$"No available {ItemTypeName}s defined.";
-            if (PanelActions.Count == 0 && IsAddButtonEnabled) return$"Add {ItemTypeName.ToLower()} actions.";
-            if (SelectableItems.Count == 0) return$"All available {ItemTypeName.ToLower()}s are assigned.";
+            if (AvailableItems?.Count == 0) return$"No available {ItemTypeName}s defined.";
+            if (PanelActions?.Count == 0 && IsAddButtonEnabled) return$"Add {ItemTypeName.ToLower()} actions.";
+            if (SelectableItems?.Count == 0) return$"All available {ItemTypeName.ToLower()}s are assigned.";
             return$"Use the + key to add more {ItemTypeName.ToLower()} actions.";
         }
     }
@@ -62,7 +62,7 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
 
         foreach (var action in PanelActions) {
             var actionId = GetActionId(action);
-            if (!string.IsNullOrEmpty(actionId) && !_availableItems.Contains(actionId)) {
+            if (!string.IsNullOrEmpty(actionId) && !AvailableItems.Contains(actionId)) {
                 actionsToRemove.Add(action);
             }
         }
@@ -80,12 +80,12 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
 
     protected void RaisePropertiesChanged() {
         OnPropertyChanged(nameof(PanelActions));
-        OnPropertyChanged(nameof(ControlHeight));
         OnPropertyChanged(nameof(NoDataText));
         OnPropertyChanged(nameof(IsAddButtonEnabled));
         OnPropertyChanged(nameof(IsGridVisible));
         OnPropertyChanged(nameof(IsTurnoutContext));
         OnPropertyChanged(nameof(IsButtonContext));
+        OnPropertyChanged(nameof(ControlHeight));
     }
 
     [RelayCommand]
@@ -94,8 +94,10 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
             var newAction = CreateNewAction(SelectableItems[0]);
             PanelActions.Add(newAction);
         }
+        ChangedAction?.Invoke();
         UpdateSelectableItems();
         RaisePropertiesChanged();
+        ActionsGridListView?.InvalidateMeasure();
     }
 
     [RelayCommand]
@@ -106,15 +108,19 @@ public abstract partial class ActionsGridViewModel<TAction, TCollection> : Obser
                 PanelActions.Remove(itemToRemove);
             }
         }
+        ChangedAction?.Invoke();
         UpdateSelectableItems();
         RaisePropertiesChanged();
     }
 
     [RelayCommand]
-    private void IdValueChanged(string id) => RaisePropertiesChanged();
+    private void IdValueChanged(string id) {
+        ChangedAction?.Invoke();
+        RaisePropertiesChanged();
+    }
 
     public void UpdateSelectableItems(string? activeItem = null) {
-        foreach (var item in _availableItems) {
+        foreach (var item in AvailableItems) {
             var used = PanelActions.Any(x => GetActionId(x) == item);
             var current = !string.IsNullOrEmpty(activeItem) && activeItem.Equals(item);
 

@@ -1,11 +1,14 @@
+using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
 public partial class TurnoutActionsGrid : ContentView {
-    public TurnoutActionsGrid(IActionEntity entity, ActionsContext context, List<string> availableTurnouts) {
+    public TurnoutActionsGrid(TurnoutActions actions, ActionsContext context, List<string> availableTurnouts, Action? changedAction) {
         InitializeComponent();
-        BindingContext = new TurnoutActionsGridViewModel(entity, context, availableTurnouts);
-        Resources["Vm"] = BindingContext;
+        var viewModel = new TurnoutActionsGridViewModel(actions, context, availableTurnouts, changedAction);
+        viewModel.ActionsGridListView = ListView;
+        BindingContext = viewModel;
+        Resources["Vm"] = viewModel;
     }
 }

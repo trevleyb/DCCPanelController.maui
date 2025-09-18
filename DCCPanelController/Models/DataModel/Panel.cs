@@ -64,13 +64,7 @@ public partial class Panel : ObservableObject, IEntityGeneratingID {
 
     public TurnoutEntity? GetTurnoutEntity(string id) {
         var allEntitiesWithID = GetAllEntitiesByType<TurnoutEntity>();
-        var foundItem = allEntitiesWithID.FirstOrDefault(b => b.TurnoutID == id) ?? null;
-        return foundItem;
-    }
-
-    public TurnoutEntity? GetTurnoutEntityByRef(string id) {
-        var allEntitiesWithID = GetAllEntitiesByType<TurnoutEntity>();
-        var foundItem = allEntitiesWithID.FirstOrDefault(b => b?.Turnout?.Id == id) ?? null;
+        var foundItem = allEntitiesWithID.FirstOrDefault(b => b.Id == id) ?? null;
         return foundItem;
     }
 

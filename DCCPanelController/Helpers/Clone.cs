@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Reflection;
 using DCCPanelController.Helpers.Attributes;
+using DCCPanelController.Models.DataModel.Entities.Actions;
 
 namespace DCCPanelController.Helpers;
 
@@ -76,6 +77,10 @@ public static class ObjectCloner {
     private static object? CloneObject(object? source, Dictionary<object, object> referenceMap, HashSet<string> exclusions) {
         if (source == null) return null;
 
+        if (source is ButtonActions or TurnoutActions) {
+            Console.WriteLine("Cloning actions");
+        }
+        
         var type = source.GetType();
 
         // Handle circular references

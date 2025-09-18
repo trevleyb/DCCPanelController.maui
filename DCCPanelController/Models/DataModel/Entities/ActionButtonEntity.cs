@@ -30,7 +30,9 @@ public partial class ActionButtonEntity : ButtonEntity, IEntityGeneratingID, IIn
     public ActionButtonEntity() => Id = NextID();
 
     public ActionButtonEntity(Panel panel) : base(panel) { }
-    public ActionButtonEntity(ActionButtonEntity entity) : base(entity, "TurnoutPanelActions", "ButtonPanelActions") { }
+
+    // Why was I excluding these before?
+    public ActionButtonEntity(ActionButtonEntity entity) : base(entity) { }
 
     [JsonIgnore] protected override int RotationFactor => 90;
     public override string EntityName => "A-Button";

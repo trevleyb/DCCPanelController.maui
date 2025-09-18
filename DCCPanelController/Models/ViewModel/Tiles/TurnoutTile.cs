@@ -1,3 +1,4 @@
+using DCCPanelController.Models.DataModel;
 using DCCPanelController.Models.DataModel.Entities;
 using DCCPanelController.Models.DataModel.Entities.Actions;
 using DCCPanelController.Models.ViewModel.Helpers;
@@ -12,23 +13,21 @@ public abstract class TurnoutTile : TrackTile, ITileInteractive {
         VisualProperties.Add(nameof(TurnoutEntity.State));
         VisualProperties.Add(nameof(TurnoutEntity.TrackNotSelectedColor));
         VisualProperties.Add(nameof(TurnoutEntity.TurnoutStyle));
-        if (Entity is TurnoutEntity { Turnout: { } turnout } turnoutEntity) {
-            turnout.StateChanged += (_, _) => {
-                turnoutEntity.State = turnout.State;
-            };
-        }
     }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is TurnoutEntity {Turnout: { } turnout} ) {
+        if (Entity is TurnoutEntity { Turnout: { } turnout } turnoutEntity) {
             if (connectionService?.Client is { } client) {
                 if (UseClickSounds) await ClickSounds.PlayTurnoutClickSoundAsync();
-                turnout.ToggleState();
+                var newState = turnout.State switch {
+                    TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+                    TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+                    _                       => TurnoutStateEnum.Closed,
+                };
                 await client.SendTurnoutCmdAsync(turnout, turnout.State != TurnoutStateEnum.Closed);
+                turnoutEntity.SetState(newState, StateChangeSource.Internal);
+                return true;
             }
-            // Move Cascade code here as it belongs here 
-            //turnout.SetState(newState, StateChangeSource.Internal);
-            return true;
         }
         return false;
     }

@@ -4,22 +4,27 @@ using DCCPanelController.Models.DataModel.Entities.Interfaces;
 
 namespace DCCPanelController.View.Actions;
 
-public class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutAction, TurnoutActions>, IActionsGridViewModel {
-    public TurnoutActionsGridViewModel(IActionEntity entity, ActionsContext context, List<string> availableTurnouts) : base(entity, context, availableTurnouts) => PropertyChanged += (sender, args) => {
-        if (args.PropertyName == nameof(PanelActions)) {
-            OnPropertyChanged(nameof(TurnoutPanelActions));
-        }
-    };
+public partial class TurnoutActionsGridViewModel : ActionsGridViewModel<TurnoutAction, TurnoutActions>, IActionsGridViewModel {
+    public TurnoutActionsGridViewModel(TurnoutActions actions, ActionsContext context, List<string> availableTurnouts, Action? changedAction) : base(context, availableTurnouts, changedAction) {
+        TurnoutPanelActions = actions;
+        PropertyChanged += (sender, args) => {
+            if (args.PropertyName == nameof(PanelActions)) {
+                OnPropertyChanged(nameof(TurnoutPanelActions));
+            }
+        };
+        CleanupInvalidActions();
+        UpdateSelectableItems();
+    }
 
-    public TurnoutActions TurnoutPanelActions => Entity.TurnoutPanelActions;
+    public TurnoutActions TurnoutPanelActions { get; init; }
     protected override TurnoutActions PanelActions => TurnoutPanelActions;
     protected override string ItemTypeName => "Turnout";
 
     protected override TurnoutAction CreateNewAction(string id) => new() {
-        Id = id,
+        ActionID = id,
         WhenClosed = TurnoutStateEnum.Closed,
         WhenThrown = TurnoutStateEnum.Thrown,
     };
 
-    protected override string GetActionId(TurnoutAction action) => action.Id;
+    protected override string GetActionId(TurnoutAction action) => action.ActionID;
 }

@@ -43,7 +43,9 @@
 
             <Grid Grid.Row="1" IsVisible="{Binding IsGridVisible}">
                 <ListView
-                    HorizontalOptions="Fill"
+                    x:Name="ListView"
+                    WidthRequest="{OnIdiom Phone='360', Default='550'}"
+                    HorizontalOptions="Start"
                     ItemsSource="{Binding ButtonPanelActions}"
                     SelectionMode="None"
                     VerticalOptions="Fill">
@@ -129,7 +131,7 @@
                                         BackgroundColor="Transparent"
                                         TextColor="Black"
                                         TextSize="15"
-                                        SelectedValue="{Binding Id, Mode=TwoWay}"
+                                        SelectedValue="{Binding ActionID, Mode=TwoWay, FallbackValue='Select Button'}"
                                         ViewModel="{DynamicResource Vm}"
                                         Placeholder="Select a Button"/>
 

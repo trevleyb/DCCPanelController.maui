@@ -41,8 +41,11 @@
 
             <Grid Grid.Row="1" IsVisible="{Binding IsGridVisible}">
                 <ListView
+                    x:Name="ListView"
                     SelectionMode="None"
-                    HorizontalOptions="Fill"
+                    WidthRequest="{OnIdiom Phone='360', Default='550'}"
+                    HorizontalOptions="Start"
+                    SeparatorVisibility="Default"
                     ItemsSource="{Binding TurnoutPanelActions }"
                     VerticalOptions="Fill">
 
@@ -127,7 +130,7 @@
                                         BackgroundColor="Transparent"
                                         TextColor="Black"
                                         TextSize="15"
-                                        SelectedValue="{Binding Id, Mode=TwoWay}"
+                                        SelectedValue="{Binding ActionID, Mode=TwoWay, FallbackValue='Select Turnout'}"
                                         ViewModel="{DynamicResource Vm}"
                                         Placeholder="Select a Turnout"/>
 

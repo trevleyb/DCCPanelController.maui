@@ -10,19 +10,15 @@ using DCCPanelController.Services;
 namespace DCCPanelController.Models.ViewModel.Tiles;
 
 public class ActionTurnoutTile : Tile, ITileInteractive {
-    private TurnoutEntity? _turnout;
-
     public ActionTurnoutTile(TurnoutButtonEntity entity, double gridSize) : base(entity, gridSize) {
         VisualProperties.Add(nameof(ActionButtonEntity.State));
         VisualProperties.Add(nameof(ActionButtonEntity.ButtonSize));
-        RegisterForTurnoutEvents();
 
         if (Entity is TurnoutButtonEntity button) {
             if (button.Turnout is { } turnout) {
                 SetButtonState(button, turnout.State);
                 turnout.StateChanged += (_, state) => SetButtonState(button, state);
             } else button.State = ButtonStateEnum.Unknown;
-
         }
     }
 
@@ -38,10 +34,16 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
     public SvgImage? SvgImage { get; protected set; }
 
     public async Task<bool> Interact(ConnectionService? connectionService) {
-        if (Entity is TurnoutButtonEntity { IsEnabled: true } button) {
+        if (Entity is TurnoutButtonEntity { IsEnabled: true, Turnout: {} turnout } button) {
             if (connectionService?.Client is { } client) {
                 if (UseClickSounds) await ClickSounds.PlayButtonClickSoundAsync();
-                button.Turnout?.ToggleState();
+                var newState = turnout.State switch {
+                    TurnoutStateEnum.Closed => TurnoutStateEnum.Thrown,
+                    TurnoutStateEnum.Thrown => TurnoutStateEnum.Closed,
+                    _                       => TurnoutStateEnum.Closed,
+                };
+                await client.SendTurnoutCmdAsync(turnout, turnout.State != TurnoutStateEnum.Closed);
+                turnout.State = newState;
                 return true;
             }
         }
@@ -50,46 +52,6 @@ public class ActionTurnoutTile : Tile, ITileInteractive {
 
     public async Task<bool> Secondary(ConnectionService? connectionService) => false;
 
-    new protected void OnTilePropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        base.OnTilePropertyChanged(sender, e);
-        if (e.PropertyName == nameof(TurnoutButtonEntity.TurnoutID)) {
-            if (_turnout is { }) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
-            RegisterForTurnoutEvents();
-        }
-    }
-
-    private void RegisterForTurnoutEvents() {
-        // Find the related Turnout for this Tile and subscribe 
-        // to its events so we can change states. 
-        // -----------------------------------------------------------------
-        if (Entity is TurnoutButtonEntity { TurnoutID: { } turnoutRef } entity) {
-            _turnout = entity?.Parent?.GetTurnoutEntityByRef(turnoutRef);
-            if (_turnout is { }) {
-                _turnout.PropertyChanged += TurnoutOnPropertyChanged;
-                UpdateEntityStateBasedOnTurnout();
-            }
-        }
-    }
-
-    private void TurnoutOnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
-        if (Entity is TurnoutButtonEntity entity && _turnout is { }) {
-            UpdateEntityStateBasedOnTurnout();
-        }
-    }
-
-    private void UpdateEntityStateBasedOnTurnout() {
-        if (Entity is TurnoutButtonEntity entity) {
-            entity!.State = _turnout?.State switch {
-                TurnoutStateEnum.Closed => entity.WhenNormal,
-                TurnoutStateEnum.Thrown => entity.WhenThrown,
-                _                       => ButtonStateEnum.Unknown,
-            };
-        }
-    }
-
-    protected override void Cleanup() {
-        if (_turnout is { }) _turnout.PropertyChanged -= TurnoutOnPropertyChanged;
-    }
 
     protected override Microsoft.Maui.Controls.View? CreateTile() {
         if (Entity is TurnoutButtonEntity button) {

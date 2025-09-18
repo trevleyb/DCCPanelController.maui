@@ -23,7 +23,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
         var logger = LogHelper.CreateLogger("ButtonActionsApply");
         try {
             foreach (var action in button.ButtonPanelActions) {
-                if (button.Parent?.GetButtonEntity(action.Id) is { } actionButton) {
+                if (button.Parent?.GetButtonEntity(action.ActionID) is { } actionButton) {
                     var newState = button.State switch {
                         ButtonStateEnum.On  => action.WhenOn,
                         ButtonStateEnum.Off => action.WhenOff,
@@ -34,7 +34,7 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
             }
 
             foreach (var action in button.TurnoutPanelActions) {
-                if (button.Parent?.GetTurnoutEntity(action.Id) is { } actionTurnout) {
+                if (button.Parent?.GetTurnoutEntity(action.ActionID) is { } actionTurnout) {
                     var newState = button.State switch {
                         ButtonStateEnum.On  => action.WhenClosed,
                         ButtonStateEnum.Off => action.WhenThrown,
@@ -53,14 +53,14 @@ public class ButtonActions : ObservableCollection<ButtonAction>, ICloneable {
 }
 
 public partial class ButtonAction : ObservableObject {
-    [ObservableProperty] private string          _id      = string.Empty;
-    [ObservableProperty] private ButtonStateEnum _whenOff = ButtonStateEnum.Unknown;
-    [ObservableProperty] private ButtonStateEnum _whenOn  = ButtonStateEnum.Unknown;
+    [ObservableProperty] private string          _actionID = string.Empty;
+    [ObservableProperty] private ButtonStateEnum _whenOff  = ButtonStateEnum.Unknown;
+    [ObservableProperty] private ButtonStateEnum _whenOn   = ButtonStateEnum.Unknown;
 
     public ButtonAction() { }
 
     public ButtonAction(ButtonAction action) {
-        Id = action.Id;
+        ActionID = action.ActionID;
         WhenOn = action.WhenOn;
         WhenOff = action.WhenOff;
     }
